@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
 import Collapsible from '../../components/collapsible.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MusicLearningBlockIconRenderer from './music-learning-block-icon-renderer.js';
+import MusicAccentuationIconRenderer from './music-accentuation-icon-renderer.js';
 
-export default function MusicLearningBlockDisplay({ content }) {
-  const { t } = useTranslation('musicLearningBlock');
+export default function MusicAccentuationDisplay({ content }) {
+  const { t } = useTranslation('musicAccentuation');
 
   const { type, colorScheme, behavior, width } = content;
 
@@ -17,15 +17,15 @@ export default function MusicLearningBlockDisplay({ content }) {
       title={t(`type_${type}`)}
       isCollapsible={behavior !== BEHAVIOR.static}
       isCollapsed={behavior === BEHAVIOR.expandable}
-      icon={<MusicLearningBlockIconRenderer type={type} />}
-      className="MusicLearningBlockDisplay"
-      headerClassName={`MusicLearningBlock-colorScheme MusicLearningBlock-colorScheme--${colorScheme}`}
+      icon={<MusicAccentuationIconRenderer type={type} />}
+      className="MusicAccentuationDisplay"
+      headerClassName={`MusicAccentuation-colorScheme MusicAccentuation-colorScheme--${colorScheme}`}
       >
       <Markdown>{content.text}</Markdown>
     </Collapsible>
   );
 }
 
-MusicLearningBlockDisplay.propTypes = {
+MusicAccentuationDisplay.propTypes = {
   ...sectionDisplayProps
 };

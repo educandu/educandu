@@ -8,14 +8,14 @@ import { BEHAVIOR, TYPE, COLOR_SCHEME } from './constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import MusicLearningBlockIconRenderer from './music-learning-block-icon-renderer.js';
+import MusicAccentuationIconRenderer from './music-accentuation-icon-renderer.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-export default function MusicLearningBlockEditor({ content, onContentChanged }) {
-  const { t } = useTranslation('musicLearningBlock');
+export default function MusicAccentuationEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('musicAccentuation');
   const { text, behavior, type, colorScheme, width } = content;
 
   const updateContent = newContentValues => {
@@ -44,9 +44,9 @@ export default function MusicLearningBlockEditor({ content, onContentChanged }) 
 
   const renderTypeRadio = typeValue => {
     return (
-      <Radio key={typeValue} className="MusicLearningBlockEditor-typeRadio" value={typeValue}>
-        <div className="MusicLearningBlockEditor-typeRadioLabel">
-          <MusicLearningBlockIconRenderer className="MusicLearningBlockEditor-typeRadioIcon" type={typeValue} />
+      <Radio key={typeValue} className="MusicAccentuationEditor-typeRadio" value={typeValue}>
+        <div className="MusicAccentuationEditor-typeRadioLabel">
+          <MusicAccentuationIconRenderer className="MusicAccentuationEditor-typeRadioIcon" type={typeValue} />
           {t(`type_${typeValue}`)}
         </div>
       </Radio>
@@ -55,13 +55,13 @@ export default function MusicLearningBlockEditor({ content, onContentChanged }) 
 
   const renderColorSchemeRadio = colorSchemeValue => {
     const colorBlockClassName = classNames(
-      'MusicLearningBlock-colorScheme',
-      'MusicLearningBlock-colorScheme--editor',
-      `MusicLearningBlock-colorScheme--${colorSchemeValue}`
+      'MusicAccentuation-colorScheme',
+      'MusicAccentuation-colorScheme--editor',
+      `MusicAccentuation-colorScheme--${colorSchemeValue}`
     );
 
     return (
-      <Radio key={colorSchemeValue} className="MusicLearningBlockEditor-colorSchemeRadio" value={colorSchemeValue}>
+      <Radio key={colorSchemeValue} className="MusicAccentuationEditor-colorSchemeRadio" value={colorSchemeValue}>
         <div className={colorBlockClassName} />
       </Radio>
     );
@@ -92,15 +92,15 @@ export default function MusicLearningBlockEditor({ content, onContentChanged }) 
   ];
 
   return (
-    <div className="MusicLearningBlockEditor">
+    <div className="MusicAccentuationEditor">
       <Form labelAlign="left">
         <FormItem label={t('common:type')} {...FORM_ITEM_LAYOUT}>
-          <RadioGroup className="MusicLearningBlockEditor-radioGroup" value={type} onChange={handleTypeChange}>
+          <RadioGroup className="MusicAccentuationEditor-radioGroup" value={type} onChange={handleTypeChange}>
             {sortedTypes.map(renderTypeRadio)}
           </RadioGroup>
         </FormItem>
         <FormItem label={t('colorScheme')} {...FORM_ITEM_LAYOUT}>
-          <RadioGroup className="MusicLearningBlockEditor-radioGroup" value={colorScheme} onChange={handleColorSchemeChange}>
+          <RadioGroup className="MusicAccentuationEditor-radioGroup" value={colorScheme} onChange={handleColorSchemeChange}>
             {sortedColorSchemes.map(renderColorSchemeRadio)}
           </RadioGroup>
         </FormItem>
@@ -125,6 +125,6 @@ export default function MusicLearningBlockEditor({ content, onContentChanged }) 
   );
 }
 
-MusicLearningBlockEditor.propTypes = {
+MusicAccentuationEditor.propTypes = {
   ...sectionEditorProps
 };

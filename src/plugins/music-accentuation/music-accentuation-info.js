@@ -2,33 +2,33 @@ import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import { BEHAVIOR, COLOR_SCHEME, TYPE } from './constants.js';
-import MusicLearningBlockIcon from './music-learning-block-icon.js';
+import MusicAccentuationIcon from './music-accentuation-icon.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
-class MusicLearningBlockInfo {
+class MusicAccentuationInfo {
   static dependencies = [GithubFlavoredMarkdown];
 
-  static typeName = 'music-learning-block';
+  static typeName = 'music-accentuation';
 
   constructor(gfm) {
     this.gfm = gfm;
   }
 
   getDisplayName(t) {
-    return t('musicLearningBlock:name');
+    return t('musicAccentuation:name');
   }
 
   getIcon() {
-    return <MusicLearningBlockIcon />;
+    return <MusicAccentuationIcon />;
   }
 
   async resolveDisplayComponent() {
-    return (await import('./music-learning-block-display.js')).default;
+    return (await import('./music-accentuation-display.js')).default;
   }
 
   async resolveEditorComponent() {
-    return (await import('./music-learning-block-editor.js')).default;
+    return (await import('./music-accentuation-editor.js')).default;
   }
 
   getDefaultContent() {
@@ -75,4 +75,4 @@ class MusicLearningBlockInfo {
   }
 }
 
-export default MusicLearningBlockInfo;
+export default MusicAccentuationInfo;

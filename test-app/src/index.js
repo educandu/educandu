@@ -15,7 +15,7 @@ const plugins = [
   'catalog',
   'separator',
   'annotation',
-  'music-learning-block',
+  'music-accentuation',
   'audio',
   'video',
   'table',
