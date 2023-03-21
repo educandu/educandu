@@ -3185,11 +3185,6 @@ create-hmac@^1.1.0, create-hmac@^1.1.4, create-hmac@^1.1.7:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-croner@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/croner/-/croner-6.0.0.tgz#f1ae1ad524079f3b1a0711dc66d3e5b8d798aa18"
-  integrity sha512-4+TeqBIlRqqynl+/Q4gQqQJQXfjzKTfsqdGlm2zI6i+cC1FR3v7pk+MW7yOaZwHUJXQoDOMPOCgeTrxt5djbZQ==
-
 cropperjs@^1.5.13:
   version "1.5.13"
   resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.5.13.tgz#eb1682f01d17c70ed5244317091d745c9a249ef8"
@@ -9549,11 +9544,6 @@ to-through@^2.0.0:
   integrity sha512-+QIz37Ly7acM4EMdw2PRN389OneM5+d844tirkGp4dPKzI5OE72V9OsbFp+CIYJDahZ41ZV05hNtcPAQUAm9/Q==
   dependencies:
     through2 "^2.0.3"
-
-toad-scheduler@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/toad-scheduler/-/toad-scheduler-2.2.0.tgz#e24dd009f3a5566a89555b0e811f1e56af528395"
-  integrity sha512-o/3na7CMVfW40x8H/Vw078GNIR6F7jNmPnuSRY2yVqFIPXRrQttcfRlkQk0dwFiw7fQCqpCGXoC/vo7QtoQMhw==
 
 toggle-selection@^1.0.6:
   version "1.0.6"
