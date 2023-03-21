@@ -15,6 +15,7 @@ const jobs = {
   // * has to have an async `process(context)` function that resolves to truthy if there is more work, or to falsy if it can switch to idle
   // * has to have a unique `name` field in order for the scheduler to create a meaningful log message in case an error occurs
   // * has to have an `idlePollIntervalInMs` field to specify how long to wait for the next `process(context)` call when idle
+  // * has to have an `busyPollIntervalInMs` field to specify how long to wait for the next `process(context)` call when there is more data to process
   alwaysRunning: [ProcessEventsJob, ProcessBatchesJob],
 
   // An interval based job ...

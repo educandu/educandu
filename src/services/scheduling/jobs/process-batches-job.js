@@ -7,6 +7,7 @@ import TaskProcessor from '../batch-task-processors/task-processor.js';
 const logger = new Logger(import.meta.url);
 
 const IDLE_POLL_INTERVAL_IN_MS = 10000;
+const BUSY_POLL_INTERVAL_IN_MS = 0;
 
 export default class ProcessBatchesJob {
   static dependencies = [BatchStore, TaskStore, TaskProcessor];
@@ -16,7 +17,8 @@ export default class ProcessBatchesJob {
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.taskProcessor = taskProcessor;
-    this.idlePollIntervalInMs = IDLE_POLL_INTERVAL_IN_MS;
+    this.idlePollIntervalInMs = Number(process.env.IDLE_POLL_INTERVAL_IN_MS) || IDLE_POLL_INTERVAL_IN_MS;
+    this.busyPollIntervalInMs = Number(process.env.BUSY_POLL_INTERVAL_IN_MS) || BUSY_POLL_INTERVAL_IN_MS;
   }
 
   async process(context) {

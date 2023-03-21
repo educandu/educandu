@@ -1,3 +1,4 @@
+import { hrtime } from 'node:process';
 import Logger from '../../common/logger.js';
 
 const logger = new Logger(import.meta.url);
@@ -26,15 +27,19 @@ class JobRunner {
       let isThereMoreWork;
 
       try {
+        const startInNs = hrtime.bigint();
         isThereMoreWork = await this.job.process(this.context);
-        logger.debug(`Job '${this.job.name}' finished successfully`);
+        const endInNs = hrtime.bigint();
+        const durationInMs = (endInNs - startInNs) / 1000000n;
+        logger.debug(`Job '${this.job.name}' finished successfully in ${durationInMs} ms`);
       } catch (error) {
         logger.error(`Error in job '${this.job.name}':`, error);
         isThereMoreWork = false;
       }
 
       if (!this.context.cancellationRequested) {
-        const nextPollTimeSpan = isThereMoreWork ? 0 : this.job.idlePollIntervalInMs;
+        const nextPollTimeSpan = isThereMoreWork ? this.job.busyPollIntervalInMs : this.job.idlePollIntervalInMs;
+        logger.debug(`Waiting ${nextPollTimeSpan} ms before starting next job of type '${this.job.name}'`);
         this.timeout = setTimeout(() => this._tick(), nextPollTimeSpan);
       }
     })();
