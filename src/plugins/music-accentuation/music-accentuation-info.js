@@ -1,7 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-import { BEHAVIOR, COLOR_SCHEME, TYPE } from './constants.js';
+import { BEHAVIOR, ICON, COLOR_SCHEME } from './constants.js';
 import MusicAccentuationIcon from './music-accentuation-icon.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -33,7 +33,8 @@ class MusicAccentuationInfo {
 
   getDefaultContent() {
     return {
-      type: TYPE.hint,
+      title: '',
+      icon: ICON.hint,
       colorScheme: COLOR_SCHEME.blue,
       behavior: BEHAVIOR.expandable,
       text: '',
@@ -43,7 +44,8 @@ class MusicAccentuationInfo {
 
   validateContent(content) {
     const schema = joi.object({
-      type: joi.string().valid(...Object.values(TYPE)).required(),
+      title: joi.string().allow('').required(),
+      icon: joi.string().valid(...Object.values(ICON)).required(),
       colorScheme: joi.string().valid(...Object.values(COLOR_SCHEME)).required(),
       behavior: joi.string().valid(...Object.values(BEHAVIOR)).required(),
       text: joi.string().allow('').required(),
@@ -60,6 +62,11 @@ class MusicAccentuationInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
+    redactedContent.title = this.gfm.redactCdnResources(
+      redactedContent.title,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
+
     redactedContent.text = this.gfm.redactCdnResources(
       redactedContent.text,
       url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
@@ -69,7 +76,10 @@ class MusicAccentuationInfo {
   }
 
   getCdnResources(content) {
-    const cdnResources = [...this.gfm.extractCdnResources(content.text)];
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.title));
+    cdnResources.push(...this.gfm.extractCdnResources(content.text));
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }

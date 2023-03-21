@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TYPE } from './constants.js';
+import { ICON } from './constants.js';
 import HintIcon from '../../components/icons/music-accentuation/hint-icon.js';
 import MelodyIcon from '../../components/icons/music-accentuation/melody-icon.js';
 import RhythmIcon from '../../components/icons/music-accentuation/rhythm-icon.js';
@@ -12,27 +12,27 @@ import ResearchIcon from '../../components/icons/music-accentuation/research-ico
 import AssignmentIcon from '../../components/icons/music-accentuation/assignment-icon.js';
 import StandardSolutionIcon from '../../components/icons/music-accentuation/standard-solution-icon.js';
 
-function MusicAccentuationIconRenderer({ type, className }) {
-  switch (type) {
-    case TYPE.assignment:
+function MusicAccentuationIconRenderer({ icon, className }) {
+  switch (icon) {
+    case ICON.assignment:
       return <div className={className}><AssignmentIcon /></div>;
-    case TYPE.harmony:
+    case ICON.harmony:
       return <div className={className}><HarmonyIcon /></div>;
-    case TYPE.hint:
+    case ICON.hint:
       return <div className={className}><HintIcon /></div>;
-    case TYPE.melody:
+    case ICON.melody:
       return <div className={className}><MelodyIcon /></div>;
-    case TYPE.movement:
+    case ICON.movement:
       return <div className={className}><MovementIcon /></div>;
-    case TYPE.playing:
+    case ICON.playing:
       return <div className={className}><PlayingIcon /></div>;
-    case TYPE.reading:
+    case ICON.reading:
       return <div className={className}><ReadingIcon /></div>;
-    case TYPE.research:
+    case ICON.research:
       return <div className={className}><ResearchIcon /></div>;
-    case TYPE.rhythm:
+    case ICON.rhythm:
       return <div className={className}><RhythmIcon /></div>;
-    case TYPE.standardSolution:
+    case ICON.standardSolution:
       return <div className={className}><StandardSolutionIcon /></div>;
     default:
       return null;
@@ -40,7 +40,7 @@ function MusicAccentuationIconRenderer({ type, className }) {
 }
 
 MusicAccentuationIconRenderer.propTypes = {
-  type: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired,
   className: PropTypes.string
 };
 

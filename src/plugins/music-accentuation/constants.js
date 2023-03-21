@@ -4,7 +4,7 @@ export const BEHAVIOR = {
   collapsible: 'collapsible'
 };
 
-export const TYPE = {
+export const ICON = {
   assignment: 'assignment',
   harmony: 'harmony',
   hint: 'hint',

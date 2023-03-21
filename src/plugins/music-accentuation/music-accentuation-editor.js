@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
-import { BEHAVIOR, TYPE, COLOR_SCHEME } from './constants.js';
+import { BEHAVIOR, ICON, COLOR_SCHEME } from './constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
@@ -16,14 +16,18 @@ const RadioButton = Radio.Button;
 
 export default function MusicAccentuationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('musicAccentuation');
-  const { text, behavior, type, colorScheme, width } = content;
+  const { title, text, behavior, icon, colorScheme, width } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
   };
 
-  const handleTypeChange = event => {
-    updateContent({ type: event.target.value });
+  const handleTitleChange = event => {
+    updateContent({ title: event.target.value });
+  };
+
+  const handleIconChange = event => {
+    updateContent({ icon: event.target.value });
   };
 
   const handleColorSchemeChange = event => {
@@ -42,12 +46,12 @@ export default function MusicAccentuationEditor({ content, onContentChanged }) {
     updateContent({ width: value });
   };
 
-  const renderTypeRadio = typeValue => {
+  const renderIconRadio = iconValue => {
     return (
-      <Radio key={typeValue} className="MusicAccentuationEditor-typeRadio" value={typeValue}>
-        <div className="MusicAccentuationEditor-typeRadioLabel">
-          <MusicAccentuationIconRenderer className="MusicAccentuationEditor-typeRadioIcon" type={typeValue} />
-          {t(`type_${typeValue}`)}
+      <Radio key={iconValue} className="MusicAccentuationEditor-iconRadio" value={iconValue}>
+        <div className="MusicAccentuationEditor-iconRadioLabel">
+          <MusicAccentuationIconRenderer className="MusicAccentuationEditor-iconRadioIcon" icon={iconValue} />
+          {t(`icon_${iconValue}`)}
         </div>
       </Radio>
     );
@@ -67,17 +71,17 @@ export default function MusicAccentuationEditor({ content, onContentChanged }) {
     );
   };
 
-  const sortedTypes = [
-    TYPE.assignment,
-    TYPE.harmony,
-    TYPE.hint,
-    TYPE.melody,
-    TYPE.movement,
-    TYPE.playing,
-    TYPE.reading,
-    TYPE.research,
-    TYPE.rhythm,
-    TYPE.standardSolution
+  const sortedIcons = [
+    ICON.assignment,
+    ICON.harmony,
+    ICON.hint,
+    ICON.melody,
+    ICON.movement,
+    ICON.playing,
+    ICON.reading,
+    ICON.research,
+    ICON.rhythm,
+    ICON.standardSolution
   ];
 
   const sortedColorSchemes = [
@@ -94,9 +98,12 @@ export default function MusicAccentuationEditor({ content, onContentChanged }) {
   return (
     <div className="MusicAccentuationEditor">
       <Form labelAlign="left">
-        <FormItem label={t('common:type')} {...FORM_ITEM_LAYOUT}>
-          <RadioGroup className="MusicAccentuationEditor-radioGroup" value={type} onChange={handleTypeChange}>
-            {sortedTypes.map(renderTypeRadio)}
+        <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput value={title} onChange={handleTitleChange} inline />
+        </FormItem>
+        <FormItem label={t('icon')} {...FORM_ITEM_LAYOUT}>
+          <RadioGroup className="MusicAccentuationEditor-radioGroup" value={icon} onChange={handleIconChange}>
+            {sortedIcons.map(renderIconRadio)}
           </RadioGroup>
         </FormItem>
         <FormItem label={t('colorScheme')} {...FORM_ITEM_LAYOUT}>
