@@ -5,6 +5,8 @@ import { LOG_LEVEL_COOKIE_NAME } from '../domain/constants.js';
 const getServerLevel = () => process.env.EDUCANDU_LOG_LEVEL || 'debug';
 const getBrowserLevel = () => getCookie(LOG_LEVEL_COOKIE_NAME) || 'debug';
 
+const supportsColor = isBrowser() || process.env.EDUCANDU_LOG_COLOR === true.toString();
+
 const shortenNodeUrl = url => {
   const relativePath = url.match(/(\/(src|dist)\/.+)/)?.[1];
   return relativePath || url;
@@ -67,8 +69,10 @@ const logInBrowserConsole = (level, timestamp, path, args) => {
 
 const logInServerConsole = (level, timestamp, path, args) => {
   const { serverLevelColor, serverMessageColor } = logLevels[level];
+  const levelColorOn = supportsColor ? `\u001b${serverLevelColor}` : '';
+  const messageColorOn = supportsColor ? `\u001b${serverMessageColor}` : '';
   // eslint-disable-next-line no-console
-  console.log(`\u001b${serverLevelColor}${level}\u001b${serverMessageColor} [${timestamp}] [${path}]`, ...args);
+  console.log(`${levelColorOn}${level}${messageColorOn} [${timestamp}] [${path}]`, ...args);
 };
 
 class Logger {
