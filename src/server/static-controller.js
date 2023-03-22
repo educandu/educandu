@@ -14,12 +14,12 @@ class StaticController {
     const imagesDirPath = fileURLToPath(imagesDirUrl);
 
     const mergedConfig = [
-      { root: '/images/', destination: imagesDirPath },
-      ...this.serverConfig.publicFolders.map(x => ({ root: '/', destination: x }))
+      { publicPath: '/images/', destination: imagesDirPath, setHeaders: null },
+      ...this.serverConfig.publicFolders
     ];
 
-    mergedConfig.forEach(({ root, destination }) => {
-      router.use(root, express.static(destination));
+    mergedConfig.forEach(({ publicPath, destination, setHeaders }) => {
+      router.use(publicPath, express.static(destination, { setHeaders }));
     });
   }
 }

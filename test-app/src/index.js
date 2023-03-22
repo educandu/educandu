@@ -74,6 +74,8 @@ const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)
   }
   : null;
 
+const jsWithChecksumPathPattern = /\w+-[A-Z0-9]{8}\.js$/;
+
 const config = {
   appName: 'educandu',
   appRootUrl: process.env.TEST_APP_APP_ROOT_URL,
@@ -88,7 +90,20 @@ const config = {
   cdnBucketName: process.env.TEST_APP_CDN_BUCKET_NAME,
   cdnRootUrl: process.env.TEST_APP_CDN_ROOT_URL,
   customResolvers,
-  publicFolders: ['../dist', '../static'].map(x => path.resolve(thisDir, x)),
+  publicFolders: [
+    {
+      publicPath: '/',
+      destination: path.resolve(thisDir, '../dist'),
+      setHeaders: (res, requestPath) => {
+        const maxAge = jsWithChecksumPathPattern.test(requestPath) ? 604800 : 0;
+        res.setHeader('Cache-Control', `public, max-age=${maxAge}`);
+      }
+    },
+    {
+      publicPath: '/',
+      destination: path.resolve(thisDir, '../static')
+    }
+  ],
   resources: ['./resources.json', './custom-plugin/server-time.json'].map(x => path.resolve(thisDir, x)),
   themeFile: path.resolve(thisDir, './theme.less'),
   allowedLicenses: ['CC0-1.0', 'CC-BY-4.0', 'CC-BY-SA-4.0', 'CC-BY-NC-4.0', 'CC-BY-NC-SA-4.0', 'CC-BY-ND-4.0', 'CC-BY-NC-ND-4.0', 'MIT'],
