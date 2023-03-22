@@ -522,9 +522,18 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const renderMessageBoard = () => {
+    if (viewMode !== VIEW_MODE.owner && !room.messages.length) {
+      return null;
+    }
+
     return (
       <section className="RoomPage-messageBoard">
         <div className="RoomPage-messageBoardHeadline">{t('messageBoardSectionHeadline')}</div>
+        {viewMode === VIEW_MODE.owner && !room.messages.length && (
+          <div className="RoomPage-messageBoardOwnerInfo">
+            <Markdown>{t('messageBoardOwnerInfoMarkdown')}</Markdown>
+          </div>
+        )}
         {viewMode === VIEW_MODE.owner && renderMessagePostingSection()}
         {renderMessages()}
       </section>

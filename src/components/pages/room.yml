@@ -47,6 +47,13 @@ room:
   messageBoardSectionHeadline:
     en: Message board
     de: Message-Board
+  messageBoardOwnerInfoMarkdown:
+    en: |
+      As the room owner, you can post messages to the board in order to inform room members about various room related topics.\
+      Members see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.
+    de: |
+      Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über raumbezogene Themen zu informieren.\
+      Mitglieder sehen das Message-Board auf der Raum-Seite, und sie bekommen eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.
   postMessageButtonText:
     en: Post message
     de: Nachricht abschicken
