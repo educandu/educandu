@@ -1,10 +1,11 @@
-import { Rate } from 'antd';
+import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+import StarIcon from './icons/general/star-icon.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
@@ -17,7 +18,7 @@ function getIsSet(user, type, id) {
   return !!user?.favorites.find(x => x.type === type && x.id === id);
 }
 
-function FavoriteStar({ type, id, disabled, onToggle, submitChange }) {
+function FavoriteStar({ type, id, tooltipPlacement, disabled, onToggle, submitChange }) {
   const user = useUser();
   const setUser = useSetUser();
   const { t } = useTranslation('favoriteStar');
@@ -28,12 +29,16 @@ function FavoriteStar({ type, id, disabled, onToggle, submitChange }) {
     setIsSet(getIsSet(user, type, id));
   }, [user, type, id]);
 
-  const handleChange = async value => {
+  const handleClick = async () => {
+    if (disabled) {
+      return;
+    }
+
     if (!user) {
       window.location = routes.getLoginUrl(getCurrentUrl());
     }
 
-    const newIsSet = value === 1;
+    const newIsSet = !isSet;
     setIsSet(newIsSet);
     try {
       if (submitChange) {
@@ -53,19 +58,16 @@ function FavoriteStar({ type, id, disabled, onToggle, submitChange }) {
 
   const classes = classNames(
     'FavoriteStar',
-    { 'is-set': isSet }
+    { 'is-filled': isSet },
+    { 'is-disabled': disabled }
   );
 
   return (
-    <div className={classes}>
-      <Rate
-        count={1}
-        value={isSet ? 1 : 0}
-        onChange={handleChange}
-        tooltips={[t(isSet ? 'common:removeFavorite' : 'common:addFavorite')]}
-        disabled={disabled}
-        />
-    </div>
+    <Tooltip placement={tooltipPlacement} title={isSet ? t('common:removeFavorite') : t('common:addFavorite')}>
+      <div className={classes} onClick={handleClick}>
+        <StarIcon isFilled={isSet} />
+      </div>
+    </Tooltip>
   );
 }
 
@@ -73,12 +75,14 @@ FavoriteStar.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  tooltipPlacement: PropTypes.string,
   submitChange: PropTypes.bool,
   onToggle: PropTypes.func
 };
 
 FavoriteStar.defaultProps = {
   disabled: false,
+  tooltipPlacement: 'top',
   submitChange: true,
   onToggle: () => {}
 };

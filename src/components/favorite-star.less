@@ -1,15 +1,14 @@
 .FavoriteStar {
   display: flex;
-  height: 20px !important;
-  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
 
-  .anticon {
-    color: @edu-disabled-color !important;
+  &.is-filled {
+    color: @edu-secondary-color-dark;
   }
 
-  &.is-set {
-    .anticon {
-      color: @edu-secondary-color-dark !important;
-    }
+  &.is-disabled {
+    color: @edu-border-color-base;
+    cursor: not-allowed;
   }
 }
