@@ -17,7 +17,9 @@ import EditIcon from '../icons/general/edit-icon.js';
 import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
-import { Breadcrumb, Button, message, Tooltip } from 'antd';
+import HistoryIcon from '../icons/general/history-icon.js';
+import CommentIcon from '../icons/general/comment-icon.js';
+import EditDocIcon from '../icons/general/edit-doc-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -27,6 +29,7 @@ import { RoomMediaContextProvider } from '../room-media-context.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
@@ -122,6 +125,7 @@ function Document({ initialState, PageTemplate }) {
   const pageRef = useRef(null);
   const request = useRequest();
   const isMounted = useIsMounted();
+  const sectionsWrapperRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
@@ -134,6 +138,8 @@ function Document({ initialState, PageTemplate }) {
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
   const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
+
+  const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
 
   const [comments, setComments] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
@@ -162,6 +168,33 @@ function Document({ initialState, PageTemplate }) {
     setPreSetView(null);
     setView(newView);
   };
+
+  const ensureActionsPanelPosition = useCallback(() => {
+    const windowWidth = Math.min(window.innerWidth, window.outerWidth);
+
+    const sectionsWrapperBoundingRect = sectionsWrapperRef.current.getBoundingClientRect();
+    const position = {
+      top: sectionsWrapperBoundingRect.top
+    };
+
+    const left = sectionsWrapperBoundingRect.left + sectionsWrapperBoundingRect.width + 40;
+    if (left >= windowWidth) {
+      position.right = 0;
+    } else {
+      position.left = left;
+    }
+    setActionsPanelPositionInPx(position);
+  }, [sectionsWrapperRef]);
+
+  useEffect(() => {
+    ensureActionsPanelPosition();
+
+    window.addEventListener('resize', ensureActionsPanelPosition);
+
+    return () => {
+      window.removeEventListener('resize', ensureActionsPanelPosition);
+    };
+  }, [ensureActionsPanelPosition]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
@@ -614,59 +647,33 @@ function Document({ initialState, PageTemplate }) {
             </Breadcrumb>
           )}
           <div className="DocumentPage-badges">
-            {!!userCanEdit && (
-              <Tooltip title={t('duplicateDocument')}>
-                <Button
-                  type="text"
-                  shape="circle"
-                  icon={<DuplicateIcon />}
-                  className="DocumentPage-cloneButton"
-                  onClick={() => handleDocumentCloneClick()}
-                  />
-              </Tooltip>
-            )}
             {!!doc.publicContext?.verified && (
               <Tooltip title={t('common:verifiedDocumentBadge')}>
                 <LikeOutlined className="u-large-badge" />
               </Tooltip>
             )}
-            <FavoriteStar className="DocumentPage-badge" type={FAVORITE_TYPE.document} id={doc._id} />
-            {view === VIEW.display && (
-              <div style={{ display: 'flex', gap: '5px', marginLeft: '10px' }}>
-                <Button size="small" shape="circle" type="primary" title="HISTORY" onClick={handleHistoryOpen}>H</Button>
-                <Button size="small" shape="circle" type="primary" title="COMMENTS" onClick={handleCommentsOpen}>C</Button>
-                <Button
-                  size="small"
-                  shape="circle"
-                  type="primary"
-                  disabled={!userCanEdit || !userCanEditDoc}
-                  title={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : 'EDIT'}
-                  onClick={handleEditOpen}
-                  >
-                  E
-                </Button>
-              </div>
-            )}
           </div>
-          <SectionsDisplay
-            sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
-            pendingSectionKeys={pendingTemplateSectionKeys}
-            editedSectionKeys={editedSectionKeys}
-            canEdit={view === VIEW.edit}
-            canHardDelete={!!userCanHardDelete && view === VIEW.history}
-            onPendingSectionApply={handlePendingSectionApply}
-            onPendingSectionDiscard={handlePendingSectionDiscard}
-            onSectionContentChange={handleSectionContentChange}
-            onSectionCopyToClipboard={handleSectionCopyToClipboard}
-            onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
-            onSectionMove={handleSectionMove}
-            onSectionInsert={handleSectionInsert}
-            onSectionDuplicate={handleSectionDuplicate}
-            onSectionDelete={handleSectionDelete}
-            onSectionHardDelete={handleSectionHardDelete}
-            onSectionEditEnter={handleSectionEditEnter}
-            onSectionEditLeave={handleSectionEditLeave}
-            />
+          <div ref={sectionsWrapperRef}>
+            <SectionsDisplay
+              sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
+              pendingSectionKeys={pendingTemplateSectionKeys}
+              editedSectionKeys={editedSectionKeys}
+              canEdit={view === VIEW.edit}
+              canHardDelete={!!userCanHardDelete && view === VIEW.history}
+              onPendingSectionApply={handlePendingSectionApply}
+              onPendingSectionDiscard={handlePendingSectionDiscard}
+              onSectionContentChange={handleSectionContentChange}
+              onSectionCopyToClipboard={handleSectionCopyToClipboard}
+              onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
+              onSectionMove={handleSectionMove}
+              onSectionInsert={handleSectionInsert}
+              onSectionDuplicate={handleSectionDuplicate}
+              onSectionDelete={handleSectionDelete}
+              onSectionHardDelete={handleSectionHardDelete}
+              onSectionEditEnter={handleSectionEditEnter}
+              onSectionEditLeave={handleSectionEditLeave}
+              />
+          </div>
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
 
           {view === VIEW.comments && !!isMounted.current && (
@@ -683,6 +690,25 @@ function Document({ initialState, PageTemplate }) {
           )}
         </div>
       </PageTemplate>
+      {!!actionsPanelPositionInPx && view === VIEW.display && (
+        <div className="DocumentPage-actionsPanelWrapper">
+          <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }} className="DocumentPage-actionsPanel">
+            <FloatButton icon={<FavoriteStar tooltipPlacement="left" type={FAVORITE_TYPE.document} id={doc._id} />} />
+            <Tooltip placement="left" title={t('duplicateDocument')}>
+              <FloatButton icon={<DuplicateIcon />} disabled={!userCanEdit} onClick={() => handleDocumentCloneClick()} />
+            </Tooltip>
+            <Tooltip placement="left" title={t('history')}>
+              <FloatButton onClick={handleHistoryOpen} icon={<HistoryIcon />} />
+            </Tooltip>
+            <Tooltip placement="left" title={t('comments')}>
+              <FloatButton icon={<CommentIcon />} onClick={handleCommentsOpen} />
+            </Tooltip>
+            <Tooltip placement="left" title={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : t('common:edit')}>
+              <FloatButton icon={<EditDocIcon />} disabled={!userCanEdit || !userCanEditDoc} onClick={handleEditOpen} />
+            </Tooltip>
+          </FloatButton.Group>
+        </div>
+      )}
 
       <DocumentMetadataModal
         {...documentMetadataModalState}
