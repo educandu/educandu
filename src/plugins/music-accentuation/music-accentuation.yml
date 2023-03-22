@@ -1,35 +1,38 @@
-musicLearningBlock:
+musicAccentuation:
   name:
     en: Accentuation
     de: Hervorhebung
-  type_assignment:
+  icon:
+    en: Icon
+    de: Icon
+  icon_assignment:
     en: Assignment
     de: Aufgabe
-  type_harmony:
+  icon_harmony:
     en: Harmony
     de: Harmonie
-  type_hint:
+  icon_hint:
     en: Hint
     de: Hinweis
-  type_melody:
+  icon_melody:
     en: Melody
     de: Melodie
-  type_movement:
+  icon_movement:
     en: Movement
     de: Bewegung
-  type_playing:
+  icon_playing:
     en: Playing
     de: Musizieren
-  type_reading:
+  icon_reading:
     en: Reading
     de: Lesen
-  type_research:
+  icon_research:
     en: Research
     de: Recherche
-  type_rhythm:
+  icon_rhythm:
     en: Rhythm
     de: Rhythmus
-  type_standard-solution:
+  icon_standard-solution:
     en: Standard solution
     de: Musterlösung
   colorScheme:

@@ -10,7 +10,7 @@ export const COLLAPSIBLE_COLOR = {
   red: 'red'
 };
 
-export default function Collapsible({ title, icon, color, width, children, isCollapsible, isCollapsed, headerClassName }) {
+export default function Collapsible({ title, icon, color, width, children, isCollapsible, isCollapsed, customColorSchemeClassName }) {
 
   const [isExpanded, setIsExpanded] = useState((isCollapsible && !isCollapsed) || !isCollapsed);
 
@@ -23,23 +23,24 @@ export default function Collapsible({ title, icon, color, width, children, isCol
       return null;
     }
 
-    const iconClasses = classNames({
-      'Collapsible-icon': true,
-      'Collapsible-icon--standalone': standalone
-    });
+    const iconClasses = classNames(
+      'Collapsible-icon',
+      { 'Collapsible-icon--standalone': standalone }
+    );
 
     return (<div className={iconClasses}>{icon}</div>);
   };
 
   const renderContent = ({ standalone }) => {
-    const contentClasses = classNames({
-      'Collapsible-content': true,
-      'Collapsible-content--standalone': standalone,
-      'Collapsible-content--green': color === COLLAPSIBLE_COLOR.green,
-      'Collapsible-content--blue': color === COLLAPSIBLE_COLOR.blue,
-      'Collapsible-content--orange': color === COLLAPSIBLE_COLOR.orange,
-      'Collapsible-content--red': color === COLLAPSIBLE_COLOR.red
-    });
+    const contentClasses = classNames(
+      'Collapsible-content',
+      { 'Collapsible-content--standalone': standalone },
+      { 'Collapsible-content--green': color === COLLAPSIBLE_COLOR.green },
+      { 'Collapsible-content--blue': color === COLLAPSIBLE_COLOR.blue },
+      { 'Collapsible-content--orange': color === COLLAPSIBLE_COLOR.orange },
+      { 'Collapsible-content--red': color === COLLAPSIBLE_COLOR.red },
+      standalone ? customColorSchemeClassName : null
+    );
 
     return (
       <div className={contentClasses}>
@@ -56,7 +57,7 @@ export default function Collapsible({ title, icon, color, width, children, isCol
     { 'Collapsible-header--orange': color === COLLAPSIBLE_COLOR.orange },
     { 'Collapsible-header--red': color === COLLAPSIBLE_COLOR.red },
     { 'is-above-content': isExpanded || (!isCollapsible && title) },
-    headerClassName
+    customColorSchemeClassName
   );
 
   return (
@@ -89,7 +90,7 @@ export default function Collapsible({ title, icon, color, width, children, isCol
 
 Collapsible.propTypes = {
   children: PropTypes.node,
-  headerClassName: PropTypes.string,
+  customColorSchemeClassName: PropTypes.string,
   color: PropTypes.oneOf(Object.values(COLLAPSIBLE_COLOR)),
   icon: PropTypes.node,
   isCollapsed: PropTypes.bool,
@@ -100,7 +101,7 @@ Collapsible.propTypes = {
 
 Collapsible.defaultProps = {
   children: null,
-  headerClassName: '',
+  customColorSchemeClassName: '',
   color: null,
   icon: null,
   isCollapsed: true,

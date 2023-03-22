@@ -22,8 +22,8 @@ import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
 import TableOfContentsInfo from './table-of-contents/table-of-contents-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
+import MusicAccentuationInfo from './music-accentuation/music-accentuation-info.js';
 import MarkdownWithImageInfo from './markdown-with-image/markdown-with-image-info.js';
-import MusicLearningBlockInfo from './music-learning-block/music-learning-block-info.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -50,8 +50,8 @@ const builtInPluginInfos = [
   TableOfContentsInfo,
   MultitrackMediaInfo,
   InteractiveMediaInfo,
-  MarkdownWithImageInfo,
-  MusicLearningBlockInfo
+  MusicAccentuationInfo,
+  MarkdownWithImageInfo
 ];
 
 class PluginRegistry {
