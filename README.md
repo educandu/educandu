@@ -85,7 +85,7 @@ educandu({
     resolveCustomSiteLogo: null,
     resolveCustomPluginInfos: null
   }).required(),
-  publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
+  publicFolders: [{ publicPath: '/', destination: path.resolve(thisDir, '../static') }],
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
   themeFile: path.resolve('./test-app/theme.less'),
   additionalControllers: [MyCustomPageController],
