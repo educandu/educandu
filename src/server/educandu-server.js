@@ -73,7 +73,7 @@ export default class EducanduServer {
     logger.info('Registering basic auth middleware');
     this.registerBasicAuthMiddleware(router);
 
-    logger.info('Registering  pages');
+    logger.info('Registering pages');
     controllers.filter(c => c.registerBeforePages).forEach(c => c.registerBeforePages(router));
     controllers.filter(c => c.registerPages).forEach(c => c.registerPages(router));
     controllers.filter(c => c.registerAfterPages).forEach(c => c.registerAfterPages(router));
