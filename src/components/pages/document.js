@@ -32,10 +32,10 @@ import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
-import { CloudOutlined, CloudUploadOutlined, LikeOutlined } from '@ant-design/icons';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CloudOutlined, CloudUploadOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
@@ -149,6 +149,7 @@ function Document({ initialState, PageTemplate }) {
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
+  const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
@@ -162,6 +163,7 @@ function Document({ initialState, PageTemplate }) {
     hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
   }));
 
+  const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
   const isFavoriteDocument = useMemo(() => user?.favorites.find(favorite => favorite.id === doc._id), [doc._id, user]);
 
   const switchView = newView => {
@@ -173,19 +175,24 @@ function Document({ initialState, PageTemplate }) {
   const ensureActionsPanelPosition = useCallback(() => {
     const windowWidth = Math.min(window.innerWidth, window.outerWidth);
 
+    const fixedItemsTopOffset = 20;
+    const fixedItemsLeftOffset = 40;
+    const reservedFixedItemsWidth = 40;
+
     const sectionsWrapperBoundingRect = sectionsWrapperRef.current.getBoundingClientRect();
-    const position = {
-      top: sectionsWrapperBoundingRect.top
+    const left = sectionsWrapperBoundingRect.left + sectionsWrapperBoundingRect.width + fixedItemsLeftOffset;
+
+    const fixedItemsPosition = {
+      top: sectionsWrapperBoundingRect.top + fixedItemsTopOffset,
+      right: left + reservedFixedItemsWidth >= windowWidth ? 0 : 'unset',
+      left: left + reservedFixedItemsWidth >= windowWidth ? 'unset' : left
     };
 
-    const left = sectionsWrapperBoundingRect.left + sectionsWrapperBoundingRect.width + 40;
-    if (left >= windowWidth) {
-      position.right = 0;
-    } else {
-      position.left = left;
-    }
-    setActionsPanelPositionInPx(position);
-  }, [sectionsWrapperRef]);
+    const actionsPanelTopOffset = isVerifiedDocument ? 50 : 0;
+
+    setVerifiedBadgePositionInPx(fixedItemsPosition);
+    setActionsPanelPositionInPx({ ...fixedItemsPosition, top: fixedItemsPosition.top + actionsPanelTopOffset });
+  }, [isVerifiedDocument, sectionsWrapperRef]);
 
   useEffect(() => {
     ensureActionsPanelPosition();
@@ -647,13 +654,6 @@ function Document({ initialState, PageTemplate }) {
               <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
             </Breadcrumb>
           )}
-          <div className="DocumentPage-badges">
-            {!!doc.publicContext?.verified && (
-              <Tooltip title={t('common:verifiedDocumentBadge')}>
-                <LikeOutlined className="u-large-badge" />
-              </Tooltip>
-            )}
-          </div>
           <div ref={sectionsWrapperRef}>
             <SectionsDisplay
               sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
@@ -692,37 +692,46 @@ function Document({ initialState, PageTemplate }) {
         </div>
       </PageTemplate>
       {!!actionsPanelPositionInPx && view === VIEW.display && (
-        <div className="DocumentPage-actionsPanelWrapper">
-          <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }}>
-            <FloatButton
-              disabled={!user}
-              icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
-              tooltip={isFavoriteDocument ? t('common:removeFavorite') : t('common:addFavorite')}
-              />
-            <FloatButton
-              icon={<DuplicateIcon />}
-              disabled={!userCanEdit}
-              tooltip={userCanEdit ? t('duplicateDocument') : t('duplicateRestrictionTooltip')}
-              onClick={() => handleDocumentCloneClick()}
-              />
-            <FloatButton
-              icon={<HistoryIcon />}
-              tooltip={t('historyActionTooltip')}
-              onClick={handleHistoryOpen}
-              />
-            <FloatButton
-              icon={<CommentIcon />}
-              tooltip={t('commentsActionTooltip')}
-              onClick={handleCommentsOpen}
-              />
-            <FloatButton
-              icon={<EditDocIcon />}
-              disabled={!userCanEdit || !userCanEditDoc}
-              tooltip={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : t('editActionTooltip')}
-              onClick={handleEditOpen}
-              />
-          </FloatButton.Group>
-        </div>
+        <Fragment>
+          {!!isVerifiedDocument && (
+            <div className="DocumentPage-verifiedBadge" style={{ ...verifiedBadgePositionInPx }}>
+              <Tooltip title={t('common:verifiedDocumentBadge')} placement="left">
+                <SafetyCertificateOutlined />
+              </Tooltip>
+            </div>
+          )}
+          <div className="DocumentPage-actionsPanelWrapper">
+            <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }}>
+              <FloatButton
+                disabled={!user}
+                icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
+                tooltip={isFavoriteDocument ? t('common:removeFavorite') : t('common:addFavorite')}
+                />
+              <FloatButton
+                icon={<DuplicateIcon />}
+                disabled={!userCanEdit}
+                tooltip={userCanEdit ? t('duplicateDocument') : t('duplicateRestrictionTooltip')}
+                onClick={() => handleDocumentCloneClick()}
+                />
+              <FloatButton
+                icon={<HistoryIcon />}
+                tooltip={t('historyActionTooltip')}
+                onClick={handleHistoryOpen}
+                />
+              <FloatButton
+                icon={<CommentIcon />}
+                tooltip={t('commentsActionTooltip')}
+                onClick={handleCommentsOpen}
+                />
+              <FloatButton
+                icon={<EditDocIcon />}
+                disabled={!userCanEdit || !userCanEditDoc}
+                tooltip={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : t('editActionTooltip')}
+                onClick={handleEditOpen}
+                />
+            </FloatButton.Group>
+          </div>
+        </Fragment>
       )}
 
       <DocumentMetadataModal
