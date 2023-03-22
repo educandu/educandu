@@ -5,13 +5,13 @@ import reactDropzoneNs from 'react-dropzone';
 import CustomAlert from '../../custom-alert.js';
 import { useUser } from '../../user-context.js';
 import { Trans, useTranslation } from 'react-i18next';
-import { useService } from '../../container-context.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
 import ActionInvitation from '../shared/action-invitation.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
 import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
+import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
@@ -49,7 +49,7 @@ function MediaLibrarySearchScreen({
   const user = useUser();
   const dropzoneRef = useRef();
   const { t } = useTranslation('mediaLibrarySearchScreen');
-  const mediaLibraryApiClient = useService(MediaLibraryApiClient);
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
   const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
   const [initialMediaLibraryItem, setInitialMediaLibraryItem] = useState(null);
