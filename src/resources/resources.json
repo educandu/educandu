@@ -2030,9 +2030,9 @@
     }
   },
   "resourceSearchBar": {
-    "searchTerm": {
-      "en": "Search term",
-      "de": "Suchbegriff"
+    "searchTerms": {
+      "en": "Search terms",
+      "de": "Suchbegriffe"
     }
   },
   "selectedResourceDisplay": {
@@ -3799,8 +3799,8 @@
       "de": "Ziehe eine andere Datei hierher"
     },
     "useSearchToChangeFile": {
-      "en": "Use the search above to select a different file",
-      "de": "Benutze die Suche oben, um eine andere Datei auszuwählen"
+      "en": "Use the search above to select a different file.",
+      "de": "Benutze die Suche oben, um eine andere Datei auszuwählen."
     },
     "searchInvitationDescription": {
       "en": "Enter your search term above",
@@ -3843,24 +3843,28 @@
       "de": "(nicht verfügbar)"
     },
     "resourceType_unknown": {
-      "en": "Other",
+      "en": "other",
       "de": "Andere"
     },
     "resourceType_audio": {
-      "en": "Audio",
+      "en": "audio",
       "de": "Audio"
     },
     "resourceType_video": {
-      "en": "Video",
+      "en": "video",
       "de": "Video"
     },
     "resourceType_image": {
-      "en": "Image",
+      "en": "image",
       "de": "Bild"
     },
     "resourceType_pdf": {
       "en": "PDF",
       "de": "PDF"
+    },
+    "any": {
+      "en": "any",
+      "de": "Alle"
     },
     "creator": {
       "en": "Creator",

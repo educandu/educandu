@@ -1,16 +1,9 @@
 import urlUtils from './url-utils.js';
-import { RESOURCE_TYPE } from '../domain/constants.js';
+import { SEARCH_RESOURCE_TYPE } from '../domain/constants.js';
 
 const WIKIMEDIA_COMMONS_PAGE_URL_PREFIX = 'https://commons.wikimedia.org/wiki/File:';
 
 export const WIKIMEDIA_COMMONS_API_URL = 'https://commons.wikimedia.org/w/api.php';
-
-export const ALLOWED_WIKIMEDIA_RESOURCE_TYPES = [
-  RESOURCE_TYPE.image,
-  RESOURCE_TYPE.audio,
-  RESOURCE_TYPE.video,
-  RESOURCE_TYPE.pdf
-];
 
 export const WIKIMEDIA_API_FILE_TYPE = {
   bitmap: 'bitmap',
@@ -20,29 +13,22 @@ export const WIKIMEDIA_API_FILE_TYPE = {
   pdf: 'pdf'
 };
 
-export function mapResourceTypesToWikimediaApiFileTypes(resourceTypes) {
-  return [
-    ...resourceTypes.reduce((set, searchResourceType) => {
-      switch (searchResourceType) {
-        case RESOURCE_TYPE.image:
-          set.add(WIKIMEDIA_API_FILE_TYPE.bitmap);
-          set.add(WIKIMEDIA_API_FILE_TYPE.drawing);
-          break;
-        case RESOURCE_TYPE.video:
-          set.add(WIKIMEDIA_API_FILE_TYPE.video);
-          break;
-        case RESOURCE_TYPE.audio:
-          set.add(WIKIMEDIA_API_FILE_TYPE.audio);
-          break;
-        case RESOURCE_TYPE.pdf:
-          set.add(WIKIMEDIA_API_FILE_TYPE.pdf);
-          break;
-        default:
-          throw new Error(`Invalid search file type '${searchResourceType}'`);
-      }
-      return set;
-    }, new Set())
-  ];
+export function mapSearchResourceTypeToWikimediaApiFileTypes(searchResourceType) {
+  const fileTypes = [];
+  if (searchResourceType === SEARCH_RESOURCE_TYPE.image || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+    fileTypes.push(WIKIMEDIA_API_FILE_TYPE.bitmap);
+    fileTypes.push(WIKIMEDIA_API_FILE_TYPE.drawing);
+  }
+  if (searchResourceType === SEARCH_RESOURCE_TYPE.video || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+    fileTypes.push(WIKIMEDIA_API_FILE_TYPE.video);
+  }
+  if (searchResourceType === SEARCH_RESOURCE_TYPE.audio || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+    fileTypes.push(WIKIMEDIA_API_FILE_TYPE.audio);
+  }
+  if (searchResourceType === SEARCH_RESOURCE_TYPE.pdf || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+    fileTypes.push(WIKIMEDIA_API_FILE_TYPE.pdf);
+  }
+  return fileTypes;
 }
 
 export function processWikimediaResponse(responseData) {

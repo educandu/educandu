@@ -9,8 +9,8 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useService } from '../../container-context.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../../utils/source-utils.js';
-import { commonFileShape, mediaLibraryItemShape } from '../../../ui/default-prop-types.js';
 import MediaLibraryMetadataDisplay from '../media-library/media-library-metadata-display.js';
+import { commonFileShape, mediaLibraryItemShape, wikimediaFileShape } from '../../../ui/default-prop-types.js';
 
 function ResourcePreviewScreen({ file, renderMediaLibraryMetadata, onBackClick, onCancelClick, onSelectClick }) {
   const clientConfig = useService(ClientConfig);
@@ -54,7 +54,7 @@ function ResourcePreviewScreen({ file, renderMediaLibraryMetadata, onBackClick, 
 }
 
 ResourcePreviewScreen.propTypes = {
-  file: PropTypes.oneOfType([commonFileShape, mediaLibraryItemShape]).isRequired,
+  file: PropTypes.oneOfType([commonFileShape, mediaLibraryItemShape, wikimediaFileShape]).isRequired,
   renderMediaLibraryMetadata: PropTypes.bool,
   onBackClick: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired,

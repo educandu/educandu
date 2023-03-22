@@ -39,6 +39,11 @@ class MediaLibraryService {
       .sort(by(item => item.relevance).thenBy(item => item.url));
   }
 
+  async getMediaLibraryItemByUrl({ url }) {
+    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions([{ url }]);
+    return mediaLibraryItems[0] || null;
+  }
+
   async createMediaLibraryItem({ file, metadata, user }) {
     const now = new Date();
     const mediaLibraryItemId = uniqueId.create();

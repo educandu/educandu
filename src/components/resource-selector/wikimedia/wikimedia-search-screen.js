@@ -8,9 +8,9 @@ import { Trans, useTranslation } from 'react-i18next';
 import ActionInvitation from '../shared/action-invitation.js';
 import WikimediaFilesViewer from './wikimedia-files-viewer.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
+import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import { wikimediaFileShape } from '../../../ui/default-prop-types.js';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
-import { ALLOWED_WIKIMEDIA_RESOURCE_TYPES } from '../../../utils/wikimedia-utils.js';
 
 const SCREEN = {
   search: 'search',
@@ -85,12 +85,7 @@ function WikimediaSearchScreen({
   return (
     <div className={classNames('WikimediaSearchScreen', { 'is-hidden': isHidden })}>
       <div className="u-resource-selector-screen">
-        <ResourceSearchBar
-          isLoading={isLoading}
-          initialSearchParams={searchParams}
-          allowedResourceTypes={ALLOWED_WIKIMEDIA_RESOURCE_TYPES}
-          onSearch={handleSearch}
-          />
+        <ResourceSearchBar isLoading={isLoading} initialSearchParams={searchParams} onSearch={handleSearch} />
         {currentScreen === SCREEN.search && (
         <Fragment>
           <div className="WikimediaSearchScreen-filesViewer">
@@ -156,7 +151,7 @@ WikimediaSearchScreen.propTypes = {
   onSelectInitialUrlClick: PropTypes.func.isRequired,
   searchParams: PropTypes.shape({
     searchTerm: PropTypes.string.isRequired,
-    searchResourceTypes: PropTypes.arrayOf(PropTypes.oneOf(ALLOWED_WIKIMEDIA_RESOURCE_TYPES)).isRequired
+    searchResourceType: PropTypes.oneOf(Object.values(SEARCH_RESOURCE_TYPE)).isRequired
   }).isRequired
 };
 

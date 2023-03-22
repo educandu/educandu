@@ -1,4 +1,4 @@
 resourceSearchBar:
-  searchTerm:
-    en: Search term
-    de: Suchbegriff
+  searchTerms:
+    en: Search terms
+    de: Suchbegriffe

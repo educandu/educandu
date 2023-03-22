@@ -43,8 +43,8 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop
                     <Fragment>
                       <div>{t('fileWillBeAddedToMediaLibrary')}</div>
                       {!!canEditImage && (
-                        <div>
-                          <Button type="primary" onClick={onEditImageClick}>
+                        <div className="MediaLibraryFileDropzone-contentButton">
+                          <Button onClick={onEditImageClick}>
                             {t('common:edit')}
                           </Button>
                         </div>
@@ -61,7 +61,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop
               icon={<CloudUploadOutlined />}
               title={file ? t('common:dropDifferentFileInvitation') : t('common:dropFileInvitation')}
               subtitle={(
-                <Button type="primary" onClick={handleUploadButtonClick}>
+                <Button onClick={handleUploadButtonClick}>
                   {t('common:browseFilesButtonLabel')}
                 </Button>
               )}

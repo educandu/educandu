@@ -10,6 +10,7 @@ import { handleApiError } from '../../../ui/error-helper.js';
 import LanguageSelect from '../../localization/language-select.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
+import { maxMediaLibraryItemDescriptionLength } from '../../../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 const TextArea = Input.TextArea;
@@ -41,7 +42,7 @@ function MediaLibraryMetadataForm({ form, file, useOptimizeImage, disableOptimiz
   return (
     <Form form={form} layout="vertical" initialValues={initialFormValues} onFinish={onFinish}>
       <FormItem name="description" label={t('common:description')}>
-        <TextArea rows={3} />
+        <TextArea rows={3} maxLength={maxMediaLibraryItemDescriptionLength} />
       </FormItem>
       <FormItem name="languages" label={t('common:languages')}>
         <LanguageSelect multi />

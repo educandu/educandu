@@ -1,26 +1,11 @@
 .ResourceSearchBar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   justify-content: center;
-
-  @media @edu-media-phone {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+  .m-fake-flex-gap(@edu-control-spacing-wide);
 }
 
-.ResourceSearchBar-item {
-  white-space: nowrap;
-  margin: @edu-control-spacing-base @edu-control-spacing-wide 0 @edu-control-spacing-wide;
-
-  &.ResourceSearchBar-item--long {
-    .ant-checkbox-group {
-      @media @edu-media-phone {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-  }
+.ResourceSearchBar-input {
+  width: 100%;
+  max-width: 500px;
 }

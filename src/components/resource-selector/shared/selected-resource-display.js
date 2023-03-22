@@ -5,7 +5,7 @@ import ResourcePreview from './resource-preview.js';
 import BreakIntoWords from '../../break-into-words.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 
-function SelectedResourceDisplay({ urlOrFile, footer }) {
+function SelectedResourceDisplay({ urlOrFile, metadata, footer }) {
   const { t } = useTranslation('selectedResourceDisplay');
 
   let subtitle;
@@ -24,6 +24,7 @@ function SelectedResourceDisplay({ urlOrFile, footer }) {
         {!!subtitle && <div className="SelectedResourceDisplay-subtitle"><BreakIntoWords>{subtitle}</BreakIntoWords></div>}
       </div>
       <ResourcePreview urlOrFile={urlOrFile} />
+      {!!metadata && <div className="SelectedResourceDisplay-metadata">{metadata}</div>}
       {!!footer && <div className="SelectedResourceDisplay-footer">{footer}</div>}
     </div>
   );
@@ -34,10 +35,12 @@ SelectedResourceDisplay.propTypes = {
     PropTypes.string,
     browserFileType
   ]).isRequired,
+  metadata: PropTypes.node,
   footer: PropTypes.node
 };
 
 SelectedResourceDisplay.defaultProps = {
+  metadata: null,
   footer: null
 };
 
