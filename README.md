@@ -28,7 +28,7 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | cdnBucketName | The name of the AWS S3 bucket storing the CDN data | `string` | yes |
  | cdnRootUrl | The root url of the CDN | `string` | yes |
  | customResolvers | The same object that is also used to hydrate the app on the client side | `{ resolveCustomPageTemplate, resolveCustomHomePageTemplate, resolveCustomSiteLogo, resolveCustomPluginInfos }` | yes, accepts `null` for either property and it will default to the internal setup
- | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
+ | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of `{ publicPath: <string>, destination: <string>, setHeaders: <function(res, path){}> }` | no, also `setHeaders` is optional |
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
  | themeFile | URL to overrides of educandu LESS variables, through which the AntDesign theme is set | `string`  | no |
  | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |

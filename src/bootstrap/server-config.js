@@ -23,7 +23,11 @@ const configSchema = joi.object({
     resolveCustomSiteLogo: joi.func().required().allow(null),
     resolveCustomPluginInfos: joi.func().required().allow(null)
   }).required(),
-  publicFolders: joi.array().items(joi.string()).default([]),
+  publicFolders: joi.array().items(joi.object({
+    publicPath: joi.string().required(),
+    destination: joi.string().required(),
+    setHeaders: joi.function().optional().default(null)
+  })).optional().default([]),
   resources: joi.array().items(joi.string()).default([]),
   themeFile: joi.string().default(''),
   additionalControllers: joi.array().items(joi.function().class()).default([]),
