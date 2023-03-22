@@ -1684,6 +1684,10 @@
       "en": "Message board",
       "de": "Message-Board"
     },
+    "messageBoardOwnerInfoMarkdown": {
+      "en": "As the room owner, you can post messages to the board in order to inform room members about various room related topics.\\\nMembers see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.\n",
+      "de": "As the room owner, you can post messages to the board in order to inform room members about various room related topics.\\\nMembers see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.\n"
+    },
     "postMessageButtonText": {
       "en": "Post message",
       "de": "Nachricht abschicken"
