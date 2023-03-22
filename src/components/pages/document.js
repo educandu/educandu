@@ -175,7 +175,6 @@ function Document({ initialState, PageTemplate }) {
   const ensureActionsPanelPosition = useCallback(() => {
     const windowWidth = Math.min(window.innerWidth, window.outerWidth);
 
-    const fixedItemsTopOffset = 20;
     const fixedItemsLeftOffset = 40;
     const reservedFixedItemsWidth = 40;
 
@@ -183,7 +182,7 @@ function Document({ initialState, PageTemplate }) {
     const left = sectionsWrapperBoundingRect.left + sectionsWrapperBoundingRect.width + fixedItemsLeftOffset;
 
     const fixedItemsPosition = {
-      top: sectionsWrapperBoundingRect.top + fixedItemsTopOffset,
+      top: 130,
       right: left + reservedFixedItemsWidth >= windowWidth ? 0 : 'unset',
       left: left + reservedFixedItemsWidth >= windowWidth ? 'unset' : left
     };
