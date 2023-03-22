@@ -4,11 +4,11 @@ import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
 import StarIcon from './icons/general/star-icon.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 
@@ -18,7 +18,7 @@ function getIsSet(user, type, id) {
   return !!user?.favorites.find(x => x.type === type && x.id === id);
 }
 
-function FavoriteStar({ type, id, tooltipPlacement, disabled, onToggle, submitChange }) {
+function FavoriteStar({ type, id, useTooltip, disabled, onToggle, submitChange }) {
   const user = useUser();
   const setUser = useSetUser();
   const { t } = useTranslation('favoriteStar');
@@ -62,12 +62,21 @@ function FavoriteStar({ type, id, tooltipPlacement, disabled, onToggle, submitCh
     { 'is-disabled': disabled }
   );
 
+  const renderStar = () => (
+    <div className={classes} onClick={handleClick}>
+      <StarIcon isFilled={isSet} />
+    </div>
+  );
+
   return (
-    <Tooltip placement={tooltipPlacement} title={isSet ? t('common:removeFavorite') : t('common:addFavorite')}>
-      <div className={classes} onClick={handleClick}>
-        <StarIcon isFilled={isSet} />
-      </div>
-    </Tooltip>
+    <Fragment>
+      {!!useTooltip && (
+        <Tooltip title={isSet ? t('common:removeFavorite') : t('common:addFavorite')}>
+          {renderStar()}
+        </Tooltip>
+      )}
+      {!useTooltip && renderStar()}
+    </Fragment>
   );
 }
 
@@ -75,14 +84,14 @@ FavoriteStar.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  tooltipPlacement: PropTypes.string,
+  useTooltip: PropTypes.bool,
   submitChange: PropTypes.bool,
   onToggle: PropTypes.func
 };
 
 FavoriteStar.defaultProps = {
   disabled: false,
-  tooltipPlacement: 'top',
+  useTooltip: true,
   submitChange: true,
   onToggle: () => {}
 };

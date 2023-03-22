@@ -8,6 +8,9 @@ document:
   commentsPanelTitle:
     en: You are viewing the document page in "comments" mode
     de: Du befindest dich im Kommentar-Modus
+  duplicateRestrictionTooltip:
+    en: Log in in order to duplicate this document
+    de: Melde dich an, um dieses Dokument zu duplizieren
   editRestrictionTooltip_anonymous:
     en: Log in in order to edit this document
     de: Melde dich an, um dieses Dokument zu bearbeiten
@@ -38,9 +41,18 @@ document:
   saveChanges:
     en: Save changes
     de: Änderungen speichern
+  editActionTooltip:
+    en: Open edit mode
+    de: Bearbeitungs-Modus öffnen
   comments:
     en: Comments
     de: Komentare
+  commentsActionTooltip:
+    en: Open comments mode
+    de: Komentar-Modus öffnen
   history:
     en: Version history
     de: Versionshistorie
+  historyActionTooltip:
+    en: Open version history mode
+    de: Versionshistorie-Modus öffnen

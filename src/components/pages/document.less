@@ -18,6 +18,20 @@
   & > * {
     height: fit-content;
   }
+
+  button {
+    &:disabled {
+      cursor: not-allowed;
+
+      &:hover > * {
+        background-color: transparent !important;
+      }
+
+      .anticon {
+        color: @edu-text-color-secondary;
+      }
+    }
+  }
 }
 
 .DocumentPage-focusHeaderButton {
@@ -30,7 +44,9 @@
 }
 
 .DocumentPage-focusHeaderDirtyInfoText {
+  font-size: @edu-font-size-sm;
   margin-left: @edu-control-spacing-base;
+  margin-right: @edu-control-spacing-wide;
 
   @media @edu-media-not-desktop {
     display: none;

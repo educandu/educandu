@@ -28,11 +28,11 @@ import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { CloudOutlined, CloudUploadOutlined, LikeOutlined } from '@ant-design/icons';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
@@ -139,8 +139,6 @@ function Document({ initialState, PageTemplate }) {
   const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
-  const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
-
   const [comments, setComments] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -150,6 +148,7 @@ function Document({ initialState, PageTemplate }) {
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
+  const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
@@ -162,6 +161,8 @@ function Document({ initialState, PageTemplate }) {
     view,
     hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
   }));
+
+  const isFavoriteDocument = useMemo(() => user?.favorites.find(favorite => favorite.id === doc._id), [doc._id, user]);
 
   const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
@@ -692,20 +693,34 @@ function Document({ initialState, PageTemplate }) {
       </PageTemplate>
       {!!actionsPanelPositionInPx && view === VIEW.display && (
         <div className="DocumentPage-actionsPanelWrapper">
-          <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }} className="DocumentPage-actionsPanel">
-            <FloatButton icon={<FavoriteStar tooltipPlacement="left" type={FAVORITE_TYPE.document} id={doc._id} />} />
-            <Tooltip placement="left" title={t('duplicateDocument')}>
-              <FloatButton icon={<DuplicateIcon />} disabled={!userCanEdit} onClick={() => handleDocumentCloneClick()} />
-            </Tooltip>
-            <Tooltip placement="left" title={t('history')}>
-              <FloatButton onClick={handleHistoryOpen} icon={<HistoryIcon />} />
-            </Tooltip>
-            <Tooltip placement="left" title={t('comments')}>
-              <FloatButton icon={<CommentIcon />} onClick={handleCommentsOpen} />
-            </Tooltip>
-            <Tooltip placement="left" title={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : t('common:edit')}>
-              <FloatButton icon={<EditDocIcon />} disabled={!userCanEdit || !userCanEditDoc} onClick={handleEditOpen} />
-            </Tooltip>
+          <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }}>
+            <FloatButton
+              disabled={!user}
+              icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
+              tooltip={isFavoriteDocument ? t('common:removeFavorite') : t('common:addFavorite')}
+              />
+            <FloatButton
+              icon={<DuplicateIcon />}
+              disabled={!userCanEdit}
+              tooltip={userCanEdit ? t('duplicateDocument') : t('duplicateRestrictionTooltip')}
+              onClick={() => handleDocumentCloneClick()}
+              />
+            <FloatButton
+              icon={<HistoryIcon />}
+              tooltip={t('historyActionTooltip')}
+              onClick={handleHistoryOpen}
+              />
+            <FloatButton
+              icon={<CommentIcon />}
+              tooltip={t('commentsActionTooltip')}
+              onClick={handleCommentsOpen}
+              />
+            <FloatButton
+              icon={<EditDocIcon />}
+              disabled={!userCanEdit || !userCanEditDoc}
+              tooltip={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : t('editActionTooltip')}
+              onClick={handleEditOpen}
+              />
           </FloatButton.Group>
         </div>
       )}
