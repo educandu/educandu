@@ -17,7 +17,7 @@
   height: @edu-control-height-lg;
   color: @edu-primary-color-light;
   background-color: @edu-white;
-  border-radius: @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
 }
 
 .DocumentPage-actionsPanelWrapper {
@@ -47,12 +47,17 @@
 .DocumentPage-focusHeaderDirtyInfo {
   display: flex;
   align-items: center;
+
+  @media @edu-media-phone-portrait {
+    display: none;
+  }
 }
 
 .DocumentPage-focusHeaderDirtyInfoText {
   font-size: @edu-font-size-sm;
   margin-left: @edu-control-spacing-base;
   margin-right: @edu-control-spacing-wide;
+  font-style: italic;
 
   @media @edu-media-not-desktop {
     display: none;
