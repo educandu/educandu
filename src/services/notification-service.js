@@ -1,3 +1,4 @@
+import by from 'thenby';
 import moment from 'moment';
 import Logger from '../common/logger.js';
 import UserStore from '../stores/user-store.js';
@@ -20,7 +21,8 @@ class EventService {
   }
 
   async getNotificationGroups({ user }) {
-    const notifications = await this.notificationStore.getNotificationsByNotifiedUserId(user._id);
+    let notifications = await this.notificationStore.getNotificationsByNotifiedUserId(user._id);
+    notifications = notifications.sort(by(n => n.createdOn, 'desc'));
     return notificationUtils.groupNotifications(notifications);
   }
 
