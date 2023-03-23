@@ -5,8 +5,8 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import { SAVE_USER_RESULT } from './domain/constants.js';
-import CommentService from './services/comment-service.js';
 import DocumentService from './services/document-service.js';
+import DocumentCommentService from './services/document-comment-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 async function purgeDatabase(db) {
@@ -173,10 +173,10 @@ export async function createTestRoom(container, roomValues = {}) {
   return room;
 }
 
-export function createTestComment(container, user, data) {
-  const documentService = container.get(CommentService);
+export function createTestDocumentComment(container, user, data) {
+  const documentCommentService = container.get(DocumentCommentService);
 
-  return documentService.createComment({
+  return documentCommentService.createDocumentComment({
     data: {
       documentId: uniqueId.create(),
       topic: 'Test comment topic',

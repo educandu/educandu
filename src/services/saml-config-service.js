@@ -118,7 +118,7 @@ export default class SamlConfigService {
 
     for (const provider of this.serverConfig.samlAuth?.identityProviders || []) {
       const xml = await loadXmlMemoized(provider.metadata.url);
-      const resolvedMetadata = this.resolveMetadata(xml, provider.metadata.entityId);
+      const resolvedMetadata = await this.resolveMetadata(xml, provider.metadata.entityId);
       if (resolvedMetadata) {
         this._identityProviderMap.set(provider.key, {
           ...provider,

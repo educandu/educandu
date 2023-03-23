@@ -521,7 +521,7 @@ describe('client-data-mapping-service', () => {
     });
   });
 
-  describe('mapComment', () => {
+  describe('mapDocumentComment', () => {
     let result;
     let comment;
 
@@ -533,7 +533,7 @@ describe('client-data-mapping-service', () => {
         deletedOn: new Date(),
         deletedBy: user2._id
       };
-      result = await sut.mapComment(comment);
+      result = await sut.mapDocumentComment(comment);
     });
 
     it('should map comment data', () => {

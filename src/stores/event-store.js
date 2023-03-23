@@ -33,10 +33,10 @@ class EventStore {
     );
   }
 
-  recordDocumentCommentCreatedEvent({ comment, document, user }, { session } = {}) {
+  recordDocumentCommentCreatedEvent({ documentComment, document, user }, { session } = {}) {
     return this._recordEvent(
       EVENT_TYPE.documentCommentCreated,
-      { userId: user._id, documentId: comment.documentId, commentId: comment._id, roomId: document.roomId },
+      { userId: user._id, documentId: documentComment.documentId, documentCommentId: documentComment._id, roomId: document.roomId },
       { session }
     );
   }

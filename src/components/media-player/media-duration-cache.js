@@ -86,7 +86,6 @@ class MediaDurationCache {
   }
 
   _notifySubscribers() {
-    logger.info(`Notifying ${this._subscribers.size} subscribers`);
     for (const subscriber of this._subscribers) {
       try {
         subscriber();

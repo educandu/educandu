@@ -465,7 +465,7 @@ export const userActivitiesShape = PropTypes.shape({
   isDeprecated: PropTypes.bool.isRequired
 });
 
-export const commentShape = PropTypes.shape({
+export const documentCommentShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   topic: PropTypes.string.isRequired,
   text: PropTypes.string,

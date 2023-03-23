@@ -12,8 +12,8 @@ const documentRevisionCreatedParamsSchema = joi.object({
 const documentCommentCreatedParamsSchema = joi.object({
   userId: idOrKeySchema.required(),
   documentId: idOrKeySchema.required(),
-  roomId: idOrKeySchema.allow(null).required(),
-  commentId: idOrKeySchema.required()
+  documentCommentId: idOrKeySchema.required(),
+  roomId: idOrKeySchema.allow(null).required()
 });
 
 const roomMessageCreatedParamsSchema = joi.object({

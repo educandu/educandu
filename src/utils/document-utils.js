@@ -135,7 +135,7 @@ export function getSectionElementDataAttributes(section) {
 }
 
 export function getDocumentRevisionHistoryVersionInfo(documentRevisions, documentRevisionId) {
-  const sortedDocumentRevisions = documentRevisions.sort(by(r => r.createdOn, 'desc'));
+  const sortedDocumentRevisions = [...documentRevisions].sort(by(r => r.createdOn, 'desc'));
   const documentRevisionIndex = sortedDocumentRevisions.findIndex(r => r._id === documentRevisionId);
 
   return {

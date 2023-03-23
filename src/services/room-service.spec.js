@@ -8,9 +8,9 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import { assert, createSandbox, match } from 'sinon';
-import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { EVENT_TYPE, INVALID_ROOM_INVITATION_REASON } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -27,9 +27,9 @@ const { BadRequest, NotFound } = httpErrors;
 
 describe('room-service', () => {
   let documentRevisionStore;
+  let documentCommentStore;
   let roomInvitationStore;
   let documentStore;
-  let commentStore;
   let roomStore;
   let userStore;
   let lockStore;
@@ -50,9 +50,9 @@ describe('room-service', () => {
     lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
     userStore = container.get(UserStore);
-    commentStore = container.get(CommentStore);
     documentStore = container.get(DocumentStore);
     roomInvitationStore = container.get(RoomInvitationStore);
+    documentCommentStore = container.get(DocumentCommentStore);
     documentRevisionStore = container.get(DocumentRevisionStore);
 
     db = container.get(Database);
@@ -130,7 +130,7 @@ describe('room-service', () => {
       lockStore.releaseLock.resolves();
 
       sandbox.stub(documentStore, 'getDocumentsMetadataByRoomId').resolves(roomDocuments);
-      sandbox.stub(commentStore, 'deleteCommentsByDocumentIds').resolves();
+      sandbox.stub(documentCommentStore, 'deleteDocumentCommentsByDocumentIds').resolves();
       sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId').resolves();
       sandbox.stub(documentStore, 'deleteDocumentsByRoomId').resolves();
       sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId').resolves();
@@ -150,8 +150,8 @@ describe('room-service', () => {
       assert.calledWith(documentStore.getDocumentsMetadataByRoomId, room._id, { session: match.object });
     });
 
-    it('should call commentStore.deleteCommentsByDocumentIds', () => {
-      assert.calledWith(commentStore.deleteCommentsByDocumentIds, roomDocuments.map(d => d._id), { session: match.object });
+    it('should call commentStore.deleteDocumentCommentsByDocumentIds', () => {
+      assert.calledWith(documentCommentStore.deleteDocumentCommentsByDocumentIds, roomDocuments.map(d => d._id), { session: match.object });
     });
 
     it('should call documentStore.deleteDocumentsByRoomId', () => {

@@ -10,10 +10,10 @@ import MarkdownInput from './markdown-input.js';
 import React, { useState, useEffect } from 'react';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
-import { commentShape } from '../ui/default-prop-types.js';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
-import { confirmCommentDelete } from './confirmation-dialogs.js';
-import { groupCommentsByTopic } from '../utils/comment-utils.js';
+import { documentCommentShape } from '../ui/default-prop-types.js';
+import { confirmDocumentCommentDelete } from './confirmation-dialogs.js';
+import { groupDocumentCommentsByTopic } from '../utils/document-comment-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxDocumentCommentTextLength, maxDocumentCommentTopicLength } from '../domain/validation-constants.js';
 
@@ -21,10 +21,10 @@ const { Panel } = Collapse;
 
 const NEW_TOPIC_PANEL_KEY = '__NEW_TOPIC__';
 
-function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeClick, onCommentDeleteClick }) {
+function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentPostClick, onTopicChangeClick, onDocumentCommentDeleteClick }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('commentsPanel');
+  const { t } = useTranslation('documentCommentsPanel');
 
   const [newTopic, setNewTopic] = useState('');
   const [editedTopic, setEditedTopic] = useState('');
@@ -42,7 +42,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
       return;
     }
 
-    const newCommentGroups = groupCommentsByTopic(comments);
+    const newCommentGroups = groupDocumentCommentsByTopic(documentComments);
     const newCommentGroupKeys = Object.keys(newCommentGroups);
     setCommentGroups(newCommentGroups);
     setExpandedTopic(previousExpandedTopic => {
@@ -50,7 +50,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
         ? previousExpandedTopic
         : newCommentGroupKeys[0] || NEW_TOPIC_PANEL_KEY;
     });
-  }, [comments, isLoading]);
+  }, [documentComments, isLoading]);
 
   const handleCollapseChange = panelTopic => {
     setCurrentComment('');
@@ -64,7 +64,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
     };
 
     setIsSavingComment(true);
-    await onCommentPostClick(newComment);
+    await onDocumentCommentPostClick(newComment);
     setIsSavingComment(false);
     setNewTopic('');
     setCurrentComment('');
@@ -128,31 +128,31 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
   const handleDeleteCommentClick = comment => {
     const author = comment.createdBy.displayName;
     const timestamp = formatDate(comment.createdOn);
-    confirmCommentDelete(t, author, timestamp, async () => {
-      await onCommentDeleteClick(comment._id);
+    confirmDocumentCommentDelete(t, author, timestamp, async () => {
+      await onDocumentCommentDeleteClick(comment._id);
     });
   };
 
   const renderComment = comment => {
     const userUrl = routes.getUserProfileUrl(comment.createdBy._id);
     return (
-      <div className="CommentsPanel-comment" key={comment._id}>
-        <div className="CommentsPanel-metadata">
+      <div className="DocumentCommentsPanel-comment" key={comment._id}>
+        <div className="DocumentCommentsPanel-metadata">
           <a href={userUrl}>{comment.createdBy.displayName}</a>
-          <div className="CommentsPanel-date">{formatDate(comment.createdOn)}</div>
+          <div className="DocumentCommentsPanel-date">{formatDate(comment.createdOn)}</div>
         </div>
         {!comment.deletedOn && (
-          <div className="CommentsPanel-text">
+          <div className="DocumentCommentsPanel-text">
             <Markdown>{comment.text}</Markdown>
           </div>
         )}
         {!!comment.deletedOn && (
-          <div className="CommentsPanel-text CommentsPanel-text--deleted">
+          <div className="DocumentCommentsPanel-text DocumentCommentsPanel-text--deleted">
             {t('commentDeleted')}
           </div>
         )}
         <Restricted to={permissions.MANAGE_PUBLIC_CONTENT}>
-          <div className="CommentsPanel-commentDeleteButton">
+          <div className="DocumentCommentsPanel-commentDeleteButton">
             <DeleteButton onClick={() => handleDeleteCommentClick(comment)} disabled={comment.deletedOn} />
           </div>
         </Restricted>
@@ -162,10 +162,10 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
 
   const renderTopicHeader = topic => {
     return (
-      <div className="CommentsPanel-topicHeader">
-        <div className="CommentsPanel-topicInputPrefix">{t('topicHeaderPrefix')}:</div>
+      <div className="DocumentCommentsPanel-topicHeader">
+        <div className="DocumentCommentsPanel-topicInputPrefix">{t('topicHeaderPrefix')}:</div>
         {topic === editedTopic && (
-          <div className="CommentsPanel-topicInput CommentsPanel-topicInput--edit" onClick={handleTopicInputClick}>
+          <div className="DocumentCommentsPanel-topicInput DocumentCommentsPanel-topicInput--edit" onClick={handleTopicInputClick}>
             <MarkdownInput
               inline
               value={editedTopicNewText}
@@ -189,7 +189,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
 
     if (topic === editedTopic) {
       return (
-        <div className="CommentsPanel-editTopicButtonsGroup">
+        <div className="DocumentCommentsPanel-editTopicButtonsGroup">
           <Button
             icon={<CloseOutlined />}
             disabled={isRenamingTopic}
@@ -225,7 +225,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
     const showAsLoading = !isPostingDisabled && isSavingComment;
     return (
       <Restricted to={permissions.CREATE_CONTENT}>
-        <div className="CommentsPanel-comment">
+        <div className="DocumentCommentsPanel-comment">
           <MarkdownInput
             preview
             value={currentComment}
@@ -237,7 +237,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
             />
           <Button
             type="primary"
-            className="CommentsPanel-postCommentButton"
+            className="DocumentCommentsPanel-postCommentButton"
             onClick={handlePostCommentClick}
             loading={showAsLoading}
             disabled={isPostingDisabled}
@@ -253,7 +253,7 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
     return (
       <Panel
         key={topic}
-        className="CommentsPanel-topicPanel"
+        className="DocumentCommentsPanel-topicPanel"
         header={renderTopicHeader(topic)}
         extra={renderEditTopicButton(topic)}
         >
@@ -272,11 +272,11 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
     return (
       <Panel
         key={NEW_TOPIC_PANEL_KEY}
-        className="CommentsPanel-topicPanel"
+        className="DocumentCommentsPanel-topicPanel"
         header={
-          <div className="CommentsPanel-topicHeader">
-            <div className="CommentsPanel-topicInputPrefix">{t('newTopicHeaderPrefix')}:</div>
-            <div className="CommentsPanel-topicInput" onClick={handleTopicInputClick}>
+          <div className="DocumentCommentsPanel-topicHeader">
+            <div className="DocumentCommentsPanel-topicInputPrefix">{t('newTopicHeaderPrefix')}:</div>
+            <div className="DocumentCommentsPanel-topicInput" onClick={handleTopicInputClick}>
               <MarkdownInput
                 inline
                 autoFocus
@@ -301,22 +301,22 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
 
   if (isLoading) {
     return (
-      <div className="CommentsPanel">
+      <div className="DocumentCommentsPanel">
         <Spin className="u-spin" />
       </div>
     );
   }
 
   return (
-    <div className="CommentsPanel">
-      <Collapse accordion onChange={handleCollapseChange} className="CommentsPanel" activeKey={expandedTopic}>
+    <div className="DocumentCommentsPanel">
+      <Collapse accordion onChange={handleCollapseChange} className="DocumentCommentsPanel" activeKey={expandedTopic}>
         {topics.map(renderTopicPanel)}
         {!!userCanWriteComments && !!shouldShowNewTopicPanel && renderNewTopicPanel()}
       </Collapse>
       {!!userCanWriteComments && !shouldShowNewTopicPanel && (
         <Button
           type="primary"
-          className="CommentsPanel-newTopicButton"
+          className="DocumentCommentsPanel-newTopicButton"
           onClick={handleNewTopicButtonClick}
           >
           {t('addNewTopicButtonText')}
@@ -326,12 +326,12 @@ function CommentsPanel({ comments, isLoading, onCommentPostClick, onTopicChangeC
   );
 }
 
-CommentsPanel.propTypes = {
-  comments: PropTypes.arrayOf(commentShape).isRequired,
+DocumentCommentsPanel.propTypes = {
+  documentComments: PropTypes.arrayOf(documentCommentShape).isRequired,
   isLoading: PropTypes.bool.isRequired,
-  onCommentDeleteClick: PropTypes.func.isRequired,
-  onCommentPostClick: PropTypes.func.isRequired,
+  onDocumentCommentDeleteClick: PropTypes.func.isRequired,
+  onDocumentCommentPostClick: PropTypes.func.isRequired,
   onTopicChangeClick: PropTypes.func.isRequired
 };
 
-export default CommentsPanel;
+export default DocumentCommentsPanel;

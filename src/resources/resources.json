@@ -317,36 +317,6 @@
       "de": "Bitte kontaktiere einen <0>Administrator</0>."
     }
   },
-  "commentsPanel": {
-    "newCommentPlaceholder": {
-      "en": "Enter your comment here",
-      "de": "Gib hier deinen Kommentar ein"
-    },
-    "postCommentButtonText": {
-      "en": "Post comment",
-      "de": "Kommentar abschicken"
-    },
-    "addNewTopicButtonText": {
-      "en": "Add new topic",
-      "de": "Neues Thema hinzufügen"
-    },
-    "topicHeaderPrefix": {
-      "en": "Topic",
-      "de": "Thema"
-    },
-    "newTopicHeaderPrefix": {
-      "en": "New topic",
-      "de": "Neues Thema"
-    },
-    "newTopicPlaceholder": {
-      "en": "E.g. orthography, citation, etc.",
-      "de": "Z.B. Rechtschreibung, Quellennachweise, etc."
-    },
-    "commentDeleted": {
-      "en": "The content of this comment was deleted by maintainers.",
-      "de": "Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht."
-    }
-  },
   "confirmationDialogs": {
     "attention": {
       "en": "Attention!",
@@ -452,7 +422,7 @@
       "en": "Do you really want to exit the editor? Your current changes will be lost.",
       "de": "Möchtest du die Bearbeitungsansicht wirklich verlassen? Deine Änderungen gehen verloren."
     },
-    "deleteCommentConfirmation": {
+    "deleteDocumentCommentConfirmation": {
       "en": "Do you really want to delete this comment from \"{author}\" posted on {timestamp}?",
       "de": "Möchtest du den Kommentar von \"{author}\", geschrieben am {timestamp}, wirklich löschen?"
     },
@@ -775,6 +745,36 @@
     "updateDetail": {
       "en": "Last updated on {date} by",
       "de": "Zuletzt geändert am {date} von"
+    }
+  },
+  "documentCommentsPanel": {
+    "newCommentPlaceholder": {
+      "en": "Enter your comment here",
+      "de": "Gib hier deinen Kommentar ein"
+    },
+    "postCommentButtonText": {
+      "en": "Post comment",
+      "de": "Kommentar abschicken"
+    },
+    "addNewTopicButtonText": {
+      "en": "Add new topic",
+      "de": "Neues Thema hinzufügen"
+    },
+    "topicHeaderPrefix": {
+      "en": "Topic",
+      "de": "Thema"
+    },
+    "newTopicHeaderPrefix": {
+      "en": "New topic",
+      "de": "Neues Thema"
+    },
+    "newTopicPlaceholder": {
+      "en": "E.g. orthography, citation, etc.",
+      "de": "Z.B. Rechtschreibung, Quellennachweise, etc."
+    },
+    "commentDeleted": {
+      "en": "The content of this comment was deleted by maintainers.",
+      "de": "Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht."
     }
   },
   "documentMetadataModal": {
@@ -1518,7 +1518,7 @@
   "document": {
     "favoriteRestrictionTooltip": {
       "en": "Log in to add the document to your favorites",
-      "de": "Melde dich an, um dieses Dokument zu den Favoriten hinzufügen"
+      "de": "Melde dich an, um dieses Dokument zu den Favoriten hinzuzufügen"
     },
     "duplicateRestrictionTooltip": {
       "en": "Log in to duplicate this document",

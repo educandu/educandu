@@ -303,14 +303,14 @@ class ClientDataMappingService {
     return mappedUserFavorites;
   }
 
-  async mapComment(comment) {
+  async mapDocumentComment(comment) {
     const userMap = await this._getUserMapForComments([comment]);
-    return this._mapComment(comment, userMap);
+    return this._mapDocumentComment(comment, userMap);
   }
 
-  async mapComments(comments) {
+  async mapDocumentComments(comments) {
     const userMap = await this._getUserMapForComments(comments);
-    return comments.map(comment => this._mapComment(comment, userMap));
+    return comments.map(comment => this._mapDocumentComment(comment, userMap));
   }
 
   async _mapFavorite({ favorite, user }) {
@@ -340,7 +340,7 @@ class ClientDataMappingService {
     }
   }
 
-  _mapComment(comment, userMap) {
+  _mapDocumentComment(comment, userMap) {
     const mappedComment = cloneDeep(comment);
     const createdBy = this._mapOtherUser({ user: userMap.get(comment.createdBy) });
     const deletedBy = this._mapOtherUser({ user: userMap.get(comment.deletedBy) });
