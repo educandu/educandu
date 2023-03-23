@@ -929,6 +929,26 @@
     "latest": {
       "en": "latest",
       "de": "letzte"
+    },
+    "permalinkButtonTooltip": {
+      "en": "Copy version permalink",
+      "de": "Version-Permalink kopieren"
+    },
+    "permalinkCopied": {
+      "en": "The permalink was copied to the clipboard",
+      "de": "Der Permalink wurde in die Zwischenablage kopiert"
+    },
+    "permalinkCouldNotBeCopied": {
+      "en": "The permalink could not be copied to the clipboard",
+      "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
+    },
+    "restoreButtonToltip": {
+      "en": "Restore version",
+      "de": "Version wiederherstellen"
+    },
+    "viewButtonTooltip": {
+      "en": "View version",
+      "de": "Version ansehen"
     }
   },
   "editControlPanel": {
@@ -1496,18 +1516,6 @@
     }
   },
   "document": {
-    "permalinkCopied": {
-      "en": "The permalink was copied to the clipboard",
-      "de": "Der Permalink wurde in die Zwischenablage kopiert"
-    },
-    "permalinkCouldNotBeCopied": {
-      "en": "The permalink could not be copied to the clipboard",
-      "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
-    },
-    "commentsPanelTitle": {
-      "en": "You are viewing the document page in \"comments\" mode",
-      "de": "Du befindest dich im Kommentar-Modus"
-    },
     "favoriteRestrictionTooltip": {
       "en": "Log in to add the document to your favorites",
       "de": "Melde dich an, um dieses Dokument zu den Favoriten hinzufügen"

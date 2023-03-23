@@ -6,7 +6,6 @@ import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
 import FavoriteStar from '../favorite-star.js';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
 import CommentsPanel from '../comments-panel.js';
@@ -140,6 +139,8 @@ function Document({ initialState, PageTemplate }) {
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
   const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+  const userCanRestoreDocumentRevisions = userCanEditDocument && hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
@@ -148,15 +149,15 @@ function Document({ initialState, PageTemplate }) {
   const [isSaving, setIsSaving] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
-  const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
-  const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
+  const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
+  const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -252,19 +253,19 @@ function Document({ initialState, PageTemplate }) {
     setAlerts(createPageAlerts({
       t,
       doc,
-      docRevision: selectedHistoryRevision,
+      docRevision: historySelectedDocumentRevision,
       view,
       hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
     }));
-  }, [doc, selectedHistoryRevision, view, pendingTemplateSectionKeys, t]);
+  }, [doc, historySelectedDocumentRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
     if (preSetView === VIEW.history) {
       (async () => {
         try {
           const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
-          setHistoryRevisions(documentRevisions);
-          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+          setHistoryDocumentRevisions(documentRevisions);
+          setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
         } catch (error) {
           handleApiError({ error, t, logger });
         }
@@ -390,8 +391,8 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryOpen = async () => {
     try {
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
-      setHistoryRevisions(documentRevisions);
-      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+      setHistoryDocumentRevisions(documentRevisions);
+      setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
       switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -399,8 +400,8 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleHistoryClose = () => {
-    setHistoryRevisions([]);
-    setSelectedHistoryRevision(null);
+    setHistoryDocumentRevisions([]);
+    setHistorySelectedDocumentRevision(null);
     switchView(VIEW.display);
     return true;
   };
@@ -513,45 +514,26 @@ function Document({ initialState, PageTemplate }) {
     setIsDirty(true);
   }, [currentSections]);
 
-  // eslint-disable-next-line no-unused-vars
-  const handlePermalinkRequest = async () => {
-    const permalinkUrl = urlUtils.createFullyQualifiedUrl(routes.getDocumentRevisionUrl(selectedHistoryRevision._id));
-    try {
-      await window.navigator.clipboard.writeText(permalinkUrl);
-      message.success(t('permalinkCopied'));
-    } catch (error) {
-      const msg = (
-        <span>
-          <span>{t('permalinkCouldNotBeCopied')}:</span>
-          <br />
-          <a href={permalinkUrl}>{permalinkUrl}</a>
-        </span>
-      );
-      message.error(msg, 10);
-    }
+  const handleViewDocumentRevisionClick = documentRevisionId => {
+    const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
+    setHistorySelectedDocumentRevision(documentRevisionToView);
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleSelectedRevisionChange = index => {
-    setSelectedHistoryRevision(historyRevisions[index]);
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const handleRestoreRevision = () => {
+  const handleRestoreDocumentRevisionClick = ({ documentRevisionId, documentId }) => {
     confirmDocumentRevisionRestoration(
       t,
-      selectedHistoryRevision,
+      historySelectedDocumentRevision,
       async () => {
         try {
           const { document: updatedDoc, documentRevisions } = await documentApiClient.restoreDocumentRevision({
-            documentId: selectedHistoryRevision.documentId,
-            revisionId: selectedHistoryRevision._id
+            documentId,
+            revisionId: documentRevisionId
           });
 
           setDoc(updatedDoc);
           setCurrentSections(updatedDoc.sections);
-          setHistoryRevisions(documentRevisions);
-          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+          setHistoryDocumentRevisions(documentRevisions);
+          setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
         } catch (error) {
           handleApiError({ error, logger, t });
           throw error;
@@ -576,19 +558,19 @@ function Document({ initialState, PageTemplate }) {
 
     const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentId);
 
-    setHistoryRevisions(documentRevisions);
-    setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+    setHistoryDocumentRevisions(documentRevisions);
+    setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
   }, [doc, documentApiClient, t]);
 
   const handleSectionHardDelete = useCallback(index => {
     confirmSectionHardDelete(
       t,
       async ({ reason, deleteAllRevisions }) => {
-        const section = selectedHistoryRevision.sections[index];
+        const section = historySelectedDocumentRevision.sections[index];
         await hardDeleteSection({ section, reason, deleteAllRevisions });
       }
     );
-  }, [hardDeleteSection, selectedHistoryRevision, t]);
+  }, [hardDeleteSection, historySelectedDocumentRevision, t]);
 
   const handleCommentPostClick = async ({ topic, text }) => {
     try {
@@ -679,7 +661,7 @@ function Document({ initialState, PageTemplate }) {
 
             <div>
               <SectionsDisplay
-                sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
+                sections={view === VIEW.history ? historySelectedDocumentRevision?.sections || [] : currentSections}
                 pendingSectionKeys={pendingTemplateSectionKeys}
                 editedSectionKeys={editedSectionKeys}
                 canEdit={view === VIEW.edit}
@@ -698,7 +680,7 @@ function Document({ initialState, PageTemplate }) {
                 onSectionEditLeave={handleSectionEditLeave}
                 />
             </div>
-            <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
+            <CreditsFooter doc={historySelectedDocumentRevision ? null : doc} revision={historySelectedDocumentRevision} />
 
             {view === VIEW.comments && !!isMounted.current && (
               <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
@@ -719,7 +701,11 @@ function Document({ initialState, PageTemplate }) {
       {view === VIEW.history && (
         <div className="DocumentPage-historyPanel" style={{ ...historyPanelPositionInPx }}>
           <DocumentVersionHistory
-            documentRevisions={historyRevisions}
+            canRestore={userCanRestoreDocumentRevisions}
+            documentRevisions={historyDocumentRevisions}
+            selectedDocumentRevision={historySelectedDocumentRevision}
+            onViewClick={handleViewDocumentRevisionClick}
+            onRestoreClick={handleRestoreDocumentRevisionClick}
             />
         </div>
       )}
