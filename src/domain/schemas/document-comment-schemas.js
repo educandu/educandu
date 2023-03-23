@@ -2,23 +2,23 @@ import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 import { maxDocumentCommentTextLength, maxDocumentCommentTopicLength } from '../validation-constants.js';
 
-export const putCommentBodySchema = joi.object({
+export const putDocumentCommentBodySchema = joi.object({
   documentId: idOrKeySchema.required(),
   topic: joi.string().required(),
   text: joi.string().required()
 });
 
-export const postCommentsTopicBodySchema = joi.object({
+export const postDocumentCommentsTopicBodySchema = joi.object({
   documentId: idOrKeySchema.required(),
   oldTopic: joi.string().required(),
   newTopic: joi.string().required()
 });
 
-export const commentIdParamsOrQuerySchema = joi.object({
-  commentId: idOrKeySchema.required()
+export const documentCommentIdParamsOrQuerySchema = joi.object({
+  documentCommentId: idOrKeySchema.required()
 });
 
-export const commentDBSchema = joi.object({
+export const documentCommentDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   documentId: idOrKeySchema.required(),
   createdOn: joi.date().required(),

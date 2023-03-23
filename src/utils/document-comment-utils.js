@@ -2,7 +2,7 @@ import by from 'thenby';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from './room-utils.js';
 
-export function groupCommentsByTopic(comments) {
+export function groupDocumentCommentsByTopic(comments) {
   const commentsSortedAsc = [...comments].sort(by(comment => comment.createdOn, 'asc'));
   const topicsSortedDesc = [...new Set(commentsSortedAsc.map(comment => comment.topic))].reverse();
 
@@ -14,7 +14,7 @@ export function groupCommentsByTopic(comments) {
   return commentGroups;
 }
 
-export function checkPermissionsOnCommentCreation({ document, room, user }) {
+export function checkPermissionsOnDocumentCommentCreation({ document, room, user }) {
   if (!hasUserPermission(user, permissions.CREATE_CONTENT)) {
     throw new Error('User is not allowed to create comments');
   }

@@ -10,11 +10,11 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import EventStore from '../stores/event-store.js';
-import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import { createUniqueStorageFileName, getRoomMediaRoomPath } from '../utils/storage-utils.js';
@@ -31,8 +31,8 @@ export default class RoomService {
     RoomStore,
     RoomInvitationStore,
     DocumentRevisionStore,
+    DocumentCommentStore,
     DocumentStore,
-    CommentStore,
     UserStore,
     StoragePlanStore,
     EventStore,
@@ -45,8 +45,8 @@ export default class RoomService {
     roomStore,
     roomInvitationStore,
     documentRevisionStore,
+    documentCommentStore,
     documentStore,
-    commentStore,
     userStore,
     storagePlanStore,
     eventStore,
@@ -58,11 +58,11 @@ export default class RoomService {
     this.lockStore = lockStore;
     this.userStore = userStore;
     this.eventStore = eventStore;
-    this.commentStore = commentStore;
     this.documentStore = documentStore;
     this.storagePlanStore = storagePlanStore;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
+    this.documentCommentStore = documentCommentStore;
     this.documentRevisionStore = documentRevisionStore;
   }
 
@@ -165,7 +165,7 @@ export default class RoomService {
         const documents = await this.documentStore.getDocumentsMetadataByRoomId(room._id, { session });
         const documentIds = documents.map(doc => doc._id);
 
-        await this.commentStore.deleteCommentsByDocumentIds(documentIds, { session });
+        await this.documentCommentStore.deleteDocumentCommentsByDocumentIds(documentIds, { session });
         await this.documentRevisionStore.deleteDocumentsByRoomId(room._id, { session });
         await this.documentStore.deleteDocumentsByRoomId(room._id, { session });
         await this.roomInvitationStore.deleteRoomInvitationsByRoomId(room._id, { session });

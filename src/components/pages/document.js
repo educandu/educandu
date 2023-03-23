@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
-import CommentsPanel from '../comments-panel.js';
 import CreditsFooter from '../credits-footer.js';
 import { useIsMounted } from '../../ui/hooks.js';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -22,17 +21,18 @@ import CommentIcon from '../icons/general/comment-icon.js';
 import EditDocIcon from '../icons/general/edit-doc-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
+import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
-import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import DocumentCommentApiClient from '../../api-clients/document-comment-api-client.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CloudOutlined, CloudUploadOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
@@ -130,8 +130,8 @@ function Document({ initialState, PageTemplate }) {
   const commentsSectionRef = useRef(null);
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
-  const commentApiClient = useSessionAwareApiClient(CommentApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const documentCommentApiClient = useSessionAwareApiClient(DocumentCommentApiClient);
 
   const { room } = initialState;
 
@@ -141,19 +141,19 @@ function Document({ initialState, PageTemplate }) {
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
-  const [comments, setComments] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
+  const [documentComments, setDocumentComments] = useState([]);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
-  const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
+  const [areDocumentCommentsInitiallyLoaded, setAreDocumentCommentsInitiallyLoaded] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -214,15 +214,15 @@ function Document({ initialState, PageTemplate }) {
     }
   }, [view, lastViewInfo, commentsSectionRef]);
 
-  const fetchComments = useCallback(async () => {
+  const fetchDocumentComments = useCallback(async () => {
     try {
-      const response = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
-      setAreCommentsInitiallyLoaded(true);
-      setComments(response.comments);
+      const response = await documentCommentApiClient.getAllDocumentComments({ documentId: doc._id });
+      setAreDocumentCommentsInitiallyLoaded(true);
+      setDocumentComments(response.documentComments);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
-  }, [doc, commentApiClient, t]);
+  }, [doc, documentCommentApiClient, t]);
 
   useEffect(() => {
     setAlerts(createPageAlerts({
@@ -249,10 +249,10 @@ function Document({ initialState, PageTemplate }) {
 
     if (preSetView === VIEW.comments) {
       (async () => {
-        await fetchComments();
+        await fetchDocumentComments();
       })();
     }
-  }, [preSetView, doc._id, view, t, documentApiClient, fetchComments]);
+  }, [preSetView, doc._id, view, t, documentApiClient, fetchDocumentComments]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -350,15 +350,15 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
-  const handleCommentsOpen = async () => {
-    setAreCommentsInitiallyLoaded(false);
+  const handleDocumentCommentsOpen = async () => {
+    setAreDocumentCommentsInitiallyLoaded(false);
     switchView(VIEW.comments);
-    await fetchComments();
+    await fetchDocumentComments();
   };
 
-  const handleCommentsClose = () => {
+  const handleDocumentCommentsClose = () => {
     switchView(VIEW.display);
-    setComments([]);
+    setDocumentComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
   };
@@ -566,28 +566,28 @@ function Document({ initialState, PageTemplate }) {
     );
   }, [hardDeleteSection, selectedHistoryRevision, t]);
 
-  const handleCommentPostClick = async ({ topic, text }) => {
+  const handleDocumentCommentPostClick = async ({ topic, text }) => {
     try {
-      await commentApiClient.addComment({ documentId: doc._id, topic, text });
-      await fetchComments();
+      await documentCommentApiClient.addDocumentComment({ documentId: doc._id, topic, text });
+      await fetchDocumentComments();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
   };
 
-  const handleCommentsTopicChangeClick = async ({ oldTopic, newTopic }) => {
+  const handleDocumentCommentsTopicChangeClick = async ({ oldTopic, newTopic }) => {
     try {
-      await commentApiClient.updateCommentsTopic({ documentId: doc._id, oldTopic, newTopic });
-      await fetchComments();
+      await documentCommentApiClient.updateDocumentCommentsTopic({ documentId: doc._id, oldTopic, newTopic });
+      await fetchDocumentComments();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
   };
 
-  const handleCommentDeleteClick = async commentId => {
+  const handleDocumentCommentDeleteClick = async documentCommentId => {
     try {
-      await commentApiClient.deleteComment({ commentId });
-      await fetchComments();
+      await documentCommentApiClient.deleteDocumentComment({ documentCommentId });
+      await fetchDocumentComments();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -620,7 +620,7 @@ function Document({ initialState, PageTemplate }) {
   );
 
   const renderCommentsFocusHeader = () => (
-    <FocusHeader title={t('comments')} onClose={handleCommentsClose} />
+    <FocusHeader title={t('comments')} onClose={handleDocumentCommentsClose} />
   );
 
   const renderHistoryFocusHeader = () => (
@@ -680,12 +680,12 @@ function Document({ initialState, PageTemplate }) {
           {view === VIEW.comments && !!isMounted.current && (
             <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
               <div className="DocumentPage-commentsSectionHeader">{t('comments')}</div>
-              <CommentsPanel
-                comments={comments}
-                isLoading={!areCommentsInitiallyLoaded}
-                onCommentPostClick={handleCommentPostClick}
-                onCommentDeleteClick={handleCommentDeleteClick}
-                onTopicChangeClick={handleCommentsTopicChangeClick}
+              <DocumentCommentsPanel
+                documentComments={documentComments}
+                isLoading={!areDocumentCommentsInitiallyLoaded}
+                onDocumentCommentPostClick={handleDocumentCommentPostClick}
+                onDocumentCommentDeleteClick={handleDocumentCommentDeleteClick}
+                onTopicChangeClick={handleDocumentCommentsTopicChangeClick}
                 />
             </section>
           )}
@@ -721,7 +721,7 @@ function Document({ initialState, PageTemplate }) {
               <FloatButton
                 icon={<CommentIcon />}
                 tooltip={t('commentsActionTooltip')}
-                onClick={handleCommentsOpen}
+                onClick={handleDocumentCommentsOpen}
                 />
               <FloatButton
                 icon={<EditDocIcon />}

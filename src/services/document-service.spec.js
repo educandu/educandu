@@ -18,7 +18,7 @@ import {
   pruneTestEnvironment,
   setupTestEnvironment,
   createTestUser,
-  createTestComment
+  createTestDocumentComment
 } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -445,7 +445,7 @@ describe('document-service', () => {
 
       room = await createTestRoom(container, { owner: user._id });
       documentToDelete = await createTestDocument(container, user, { roomId: room._id });
-      await createTestComment(container, user, { documentId: documentToDelete._id });
+      await createTestDocumentComment(container, user, { documentId: documentToDelete._id });
 
       await db.rooms.updateOne({ _id: room._id }, { $set: { documents: ['otherDocumentId', documentToDelete._id] } });
 
@@ -476,7 +476,7 @@ describe('document-service', () => {
     });
 
     it('deletes the comments for the document', async () => {
-      const commentAfterDeletion = await db.comments.findOne({ documentId: documentToDelete._id });
+      const commentAfterDeletion = await db.documentComments.findOne({ documentId: documentToDelete._id });
       expect(commentAfterDeletion).toEqual(null);
     });
 

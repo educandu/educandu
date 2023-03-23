@@ -1,17 +1,17 @@
 import { assert, createSandbox } from 'sinon';
-import CommentService from './comment-service.js';
 import EventStore from '../stores/event-store.js';
-import CommentStore from '../stores/comment-store.js';
+import DocumentCommentService from './document-comment-service.js';
+import DocumentCommentStore from '../stores/document-comment-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser, createTestDocument } from '../test-helper.js';
 
-describe('comment-service', () => {
+describe('document-comment-service', () => {
   let sut;
   let user;
   let result;
   let container;
   let eventStore;
-  let commentStore;
+  let documentCommentStore;
 
   const now = new Date();
   const sandbox = createSandbox();
@@ -19,8 +19,8 @@ describe('comment-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     eventStore = container.get(EventStore);
-    commentStore = container.get(CommentStore);
-    sut = container.get(CommentService);
+    documentCommentStore = container.get(DocumentCommentStore);
+    sut = container.get(DocumentCommentService);
   });
 
   afterAll(async () => {
@@ -37,7 +37,7 @@ describe('comment-service', () => {
     await pruneTestEnvironment(container);
   });
 
-  describe('createComment', () => {
+  describe('createDocumentComment', () => {
     let document;
 
     beforeEach(async () => {
@@ -45,7 +45,7 @@ describe('comment-service', () => {
 
       document = await createTestDocument(container, user, {});
 
-      result = await sut.createComment({
+      result = await sut.createDocumentComment({
         data: {
           documentId: document._id,
           topic: '  comment-topic  ',
@@ -69,7 +69,7 @@ describe('comment-service', () => {
     });
 
     it('should write it to the database', async () => {
-      const retrievedComment = await commentStore.getCommentById(result._id);
+      const retrievedComment = await documentCommentStore.getDocumentCommentById(result._id);
       expect(result).toEqual(retrievedComment);
     });
 
@@ -78,7 +78,7 @@ describe('comment-service', () => {
     });
   });
 
-  describe('updateCommentsTopic', () => {
+  describe('updateDocumentCommentsTopic', () => {
     let comments;
     let document;
     let otherDocument;
@@ -87,7 +87,7 @@ describe('comment-service', () => {
       document = await createTestDocument(container, user, {});
       otherDocument = await createTestDocument(container, user, {});
 
-      const comment1 = await sut.createComment({
+      const comment1 = await sut.createDocumentComment({
         data: {
           documentId: document._id,
           topic: 'comment-topic',
@@ -96,7 +96,7 @@ describe('comment-service', () => {
         user,
         silentCreation: true
       });
-      const comment2 = await sut.createComment({
+      const comment2 = await sut.createDocumentComment({
         data: {
           documentId: document._id,
           topic: 'comment-topic',
@@ -105,7 +105,7 @@ describe('comment-service', () => {
         user,
         silentCreation: true
       });
-      const comment3 = await sut.createComment({
+      const comment3 = await sut.createDocumentComment({
         data: {
           documentId: document._id,
           topic: 'other-comment-topic',
@@ -114,7 +114,7 @@ describe('comment-service', () => {
         user,
         silentCreation: true
       });
-      const comment4 = await sut.createComment({
+      const comment4 = await sut.createDocumentComment({
         data: {
           documentId: otherDocument._id,
           topic: 'comment-topic',
@@ -124,12 +124,12 @@ describe('comment-service', () => {
         silentCreation: true
       });
 
-      await sut.updateCommentsTopic({ documentId: document._id, oldTopic: 'comment-topic', newTopic: 'new-comment-topic' });
+      await sut.updateDocumentCommentsTopic({ documentId: document._id, oldTopic: 'comment-topic', newTopic: 'new-comment-topic' });
       comments = await Promise.all([
-        commentStore.getCommentById(comment1._id),
-        commentStore.getCommentById(comment2._id),
-        commentStore.getCommentById(comment3._id),
-        commentStore.getCommentById(comment4._id)
+        documentCommentStore.getDocumentCommentById(comment1._id),
+        documentCommentStore.getDocumentCommentById(comment2._id),
+        documentCommentStore.getDocumentCommentById(comment3._id),
+        documentCommentStore.getDocumentCommentById(comment4._id)
       ]);
     });
 
@@ -145,14 +145,14 @@ describe('comment-service', () => {
     });
   });
 
-  describe('deleteComment', () => {
+  describe('deleteDocumentComment', () => {
     let document;
     let comment;
 
     beforeEach(async () => {
       document = await createTestDocument(container, user, {});
 
-      comment = await sut.createComment({
+      comment = await sut.createDocumentComment({
         data: {
           documentId: document._id,
           topic: 'comment-topic',
@@ -162,11 +162,11 @@ describe('comment-service', () => {
         silentCreation: true
       });
 
-      await sut.deleteComment({ commentId: comment._id, user });
+      await sut.deleteDocumentComment({ documentCommentId: comment._id, user });
     });
 
     it('should soft delete the comment', async () => {
-      result = await commentStore.getCommentById(comment._id);
+      result = await documentCommentStore.getDocumentCommentById(comment._id);
       expect(result).toEqual({
         ...comment,
         deletedOn: now,
