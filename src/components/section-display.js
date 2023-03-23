@@ -24,8 +24,8 @@ import DuplicateIcon from './icons/general/duplicate-icon.js';
 import { memoAndTransformProps } from '../ui/react-helper.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { getSectionElementDataAttributes } from '../utils/doc-utils.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
+import { getSectionElementDataAttributes } from '../utils/document-utils.js';
 
 const createComponents = registeredPlugin => ({
   editorComponent: registeredPlugin?.editorComponent || null,

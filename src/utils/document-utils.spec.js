@@ -1,14 +1,14 @@
 import uniqueId from './unique-id.js';
-import { canEditDoc } from './doc-utils.js';
 import { ROLE } from '../domain/constants.js';
+import { canEditDocument } from './document-utils.js';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-describe('doc-utils', () => {
+describe('document-utils', () => {
   let doc;
   let user;
   let room;
 
-  describe('canEditDoc', () => {
+  describe('canEditDocument', () => {
     beforeEach(() => {
       doc = {};
       room = null;
@@ -17,17 +17,17 @@ describe('doc-utils', () => {
 
     it('should throw when no document is not provided', () => {
       doc = null;
-      expect(() => canEditDoc({ user, doc, room })).toThrow(Error);
+      expect(() => canEditDocument({ user, doc, room })).toThrow(Error);
     });
 
     it('should throw when the document has a room ID but the room is not provided', () => {
       doc.roomId = uniqueId.create();
-      expect(() => canEditDoc({ user, doc, room })).toThrow(Error);
+      expect(() => canEditDocument({ user, doc, room })).toThrow(Error);
     });
 
     it('should return false when the user is not provided', () => {
       user = null;
-      expect(canEditDoc({ user, doc, room })).toBe(false);
+      expect(canEditDocument({ user, doc, room })).toBe(false);
     });
 
     describe('if the document is in a room', () => {
@@ -38,33 +38,33 @@ describe('doc-utils', () => {
       });
 
       it('should return false when the user is not owner or collaborator of the room', () => {
-        expect(canEditDoc({ user, doc, room })).toBe(false);
+        expect(canEditDocument({ user, doc, room })).toBe(false);
       });
 
       it('should return true when the user is collaborator of the room and the document is not a draft', () => {
         room.members = [{ userId: user._id }];
         room.isCollaborative = true;
-        expect(canEditDoc({ user, doc, room })).toBe(true);
+        expect(canEditDocument({ user, doc, room })).toBe(true);
       });
 
       it('should return false when the user is collaborator of the room and the document is a draft', () => {
         doc.roomContext.draft = true;
         room.members = [{ userId: user._id }];
         room.isCollaborative = true;
-        expect(canEditDoc({ user, doc, room })).toBe(false);
+        expect(canEditDocument({ user, doc, room })).toBe(false);
       });
 
       it('should return true when the user is owner of the room and the document is a draft', () => {
         doc.roomContext.draft = true;
         room.owner = user._id;
         room.isCollaborative = true;
-        expect(canEditDoc({ user, doc, room })).toBe(true);
+        expect(canEditDocument({ user, doc, room })).toBe(true);
       });
 
       it('should return false when the user is only a member of the room', () => {
         room.member = [{ userId: user._id }];
         room.isCollaborative = false;
-        expect(canEditDoc({ user, doc, room })).toBe(false);
+        expect(canEditDocument({ user, doc, room })).toBe(false);
       });
     });
 
@@ -75,29 +75,29 @@ describe('doc-utils', () => {
 
       it('should return false when the public document does not allow editing', () => {
         doc.publicContext.protected = true;
-        expect(canEditDoc({ user, doc, room: null })).toBe(false);
+        expect(canEditDocument({ user, doc, room: null })).toBe(false);
       });
 
       it(`should return false when the public document does not allow editing but the user is a ${ROLE.maintainer}`, () => {
         doc.publicContext.protected = true;
         user.role = ROLE.maintainer;
-        expect(canEditDoc({ user, doc, room: null })).toBe(true);
+        expect(canEditDocument({ user, doc, room: null })).toBe(true);
       });
 
       it(`should return false when the public document does not allow editing but the user is an ${ROLE.admin}`, () => {
         doc.publicContext.protected = true;
         user.role = ROLE.admin;
-        expect(canEditDoc({ user, doc, room: null })).toBe(true);
+        expect(canEditDocument({ user, doc, room: null })).toBe(true);
       });
 
       it('should return true when the public document allows editing', () => {
         doc.publicContext.protected = false;
-        expect(canEditDoc({ user, doc, room: null })).toBe(true);
+        expect(canEditDocument({ user, doc, room: null })).toBe(true);
       });
 
       it('should return false when the document is archived', () => {
         doc.publicContext.archived = true;
-        expect(canEditDoc({ user, doc, room })).toBe(false);
+        expect(canEditDocument({ user, doc, room })).toBe(false);
       });
     });
   });

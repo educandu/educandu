@@ -46,11 +46,12 @@ import {
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
 import {
-  canEditDoc,
+  canEditDocument,
   findCurrentlyWorkedOnSectionKey,
   getEditDocRestrictionTooltip,
+  getFavoriteActionTooltip,
   tryBringSectionIntoView
-} from '../../utils/doc-utils.js';
+} from '../../utils/document-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -134,9 +135,10 @@ function Document({ initialState, PageTemplate }) {
 
   const { room } = initialState;
 
-  const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
-  const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
+  const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
+  const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+  const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
   const [comments, setComments] = useState([]);
@@ -164,7 +166,6 @@ function Document({ initialState, PageTemplate }) {
   }));
 
   const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
-  const isFavoriteDocument = useMemo(() => user?.favorites.find(favorite => favorite.id === doc._id), [doc._id, user]);
 
   const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
@@ -703,8 +704,8 @@ function Document({ initialState, PageTemplate }) {
             <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }}>
               <FloatButton
                 disabled={!user}
+                tooltip={favoriteActionTooltip}
                 icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
-                tooltip={isFavoriteDocument ? t('common:removeFavorite') : t('common:addFavorite')}
                 />
               <FloatButton
                 icon={<DuplicateIcon />}
@@ -724,8 +725,8 @@ function Document({ initialState, PageTemplate }) {
                 />
               <FloatButton
                 icon={<EditDocIcon />}
-                disabled={!userCanEdit || !userCanEditDoc}
-                tooltip={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : t('editActionTooltip')}
+                disabled={!userCanEdit || !userCanEditDocument}
+                tooltip={!userCanEdit || !userCanEditDocument ? editDocRestrictionTooltip : t('editDocument')}
                 onClick={handleEditOpen}
                 />
             </FloatButton.Group>
