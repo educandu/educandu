@@ -28,15 +28,18 @@ describe('saml-config-service', () => {
   });
 
   describe('resolveMetadata', () => {
-    let testXml;
+    let test1Xml;
+    let test2Xml;
 
     beforeEach(async () => {
-      const testDocFileName = fileURLToPath(new URL('./saml-config-service-test-file.xml', import.meta.url));
-      testXml = await fs.readFile(testDocFileName, 'utf8');
+      const testFile1Name = fileURLToPath(new URL('./saml-config-service-test-file-1.xml', import.meta.url));
+      const testFile2Name = fileURLToPath(new URL('./saml-config-service-test-file-2.xml', import.meta.url));
+      test1Xml = await fs.readFile(testFile1Name, 'utf8');
+      test2Xml = await fs.readFile(testFile2Name, 'utf8');
     });
 
     it('parses the metadata correctly for an existing entity ID', async () => {
-      const metadata = await sut.resolveMetadata(testXml, 'https://samltest.id/saml/idp');
+      const metadata = await sut.resolveMetadata(test1Xml, 'https://samltest.id/saml/idp');
       expect(metadata).toStrictEqual({
         entryPoint: 'https://samltest.id/idp/profile/SAML2/Redirect/SSO',
         certificates: [expect.any(String), expect.any(String), expect.any(String)]
@@ -44,8 +47,16 @@ describe('saml-config-service', () => {
     });
 
     it('returns null for a non-existing entity ID', async () => {
-      const metadata = await sut.resolveMetadata(testXml, 'https://somewhere.over/the/rainbow');
+      const metadata = await sut.resolveMetadata(test1Xml, 'https://somewhere.over/the/rainbow');
       expect(metadata).toBe(null);
+    });
+
+    it('parses the metadata correctly for an existing entity ID amongst multiple descriptors', async () => {
+      const metadata = await sut.resolveMetadata(test2Xml, 'https://login.rz.rwth-aachen.de/shibboleth');
+      expect(metadata).toStrictEqual({
+        entryPoint: 'https://sso.rwth-aachen.de/idp/profile/SAML2/Redirect/SSO',
+        certificates: [expect.any(String)]
+      });
     });
   });
 

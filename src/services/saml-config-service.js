@@ -49,38 +49,42 @@ export default class SamlConfigService {
       const parser = sax.parser(true, { xmlns: true });
 
       parser.onopentag = node => {
-        if (node.local === 'X509Certificate' && node.uri === XMLSN_URI_DS) {
-          readNextTextAsCertificate = currentEntityIdValue === entityId;
-          return;
-        }
-
-        readNextTextAsCertificate = false;
-
-        if (node.local === 'SingleSignOnService' && node.uri === XMLNS_URI_SM) {
-          if (currentEntityIdValue !== entityId) {
-            return;
-          }
-
-          const { binding, location } = Object.values(node.attributes).reduce((data, attr) => {
-            if (attr.local === 'Binding' && attr.uri === '') {
-              return { ...data, binding: attr.value };
-            }
-            if (attr.local === 'Location' && attr.uri === '') {
-              return { ...data, location: attr.value };
-            }
-            return data;
-          }, {});
-
-          if (binding === REDIRECT_BINDING && !!location) {
-            entryPoint = location;
-          }
-
-          return;
-        }
-
         if (node.local === 'EntityDescriptor' && node.uri === XMLNS_URI_SM) {
           currentEntityIdValue = node.attributes.entityID?.value || null;
         }
+
+        if (currentEntityIdValue !== entityId) {
+          return;
+        }
+
+        // From here on we can be sure that we are inside the `EntityDescriptor`
+        // parent element belonging to the `entityId` we are interested in.
+
+        if (node.local === 'X509Certificate' && node.uri === XMLSN_URI_DS) {
+          readNextTextAsCertificate = true;
+          return;
+        }
+
+        if (node.local === 'SingleSignOnService' && node.uri === XMLNS_URI_SM) {
+          let isRedirectBinding = false;
+          let foundEntryPoint = null;
+          for (const attr of Object.values(node.attributes)) {
+            if (attr.local === 'Binding' && attr.uri === '' && attr.value === REDIRECT_BINDING) {
+              isRedirectBinding = true;
+            }
+            if (attr.local === 'Location' && attr.uri === '' && !!attr.value) {
+              foundEntryPoint = attr.value;
+            }
+          }
+
+          if (isRedirectBinding && !!foundEntryPoint) {
+            entryPoint = foundEntryPoint;
+          }
+        }
+      };
+
+      parser.onclosetag = () => {
+        readNextTextAsCertificate = false;
       };
 
       parser.ontext = text => {
