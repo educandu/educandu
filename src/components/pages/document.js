@@ -205,6 +205,8 @@ function Document({ initialState, PageTemplate }) {
       left: left + reservedFixedItemsWidth >= windowWidth ? 'unset' : left
     };
 
+    console.log({ left, reservedFixedItemsWidth, windowWidth });
+
     const actionsPanelTopOffset = isVerifiedDocument ? 50 : 0;
 
     setVerifiedBadgePositionInPx(fixedItemsPosition);
@@ -681,7 +683,7 @@ function Document({ initialState, PageTemplate }) {
 
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
-      <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} mainRef={pageRef} headerRef={headerRef}>
+      <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} headerRef={headerRef} contentRef={pageRef}>
         <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history && !isHistoryPanelMinimized })}>
           <div className="DocumentPage-document">
             {!!room && (
