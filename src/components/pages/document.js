@@ -36,7 +36,7 @@ import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CloudOutlined, CloudUploadOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { CloudOutlined, CloudUploadOutlined, EyeOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
@@ -49,6 +49,7 @@ import {
 import {
   canEditDocument,
   findCurrentlyWorkedOnSectionKey,
+  getDocumentRevisionHistoryVersionInfo,
   getEditDocRestrictionTooltip,
   getFavoriteActionTooltip,
   tryBringSectionIntoView
@@ -151,6 +152,7 @@ function Document({ initialState, PageTemplate }) {
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
+  const [focusHeaderHistoryInfo, setFocusHeaderHistoryInfo] = useState(null);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
@@ -264,8 +266,11 @@ function Document({ initialState, PageTemplate }) {
       (async () => {
         try {
           const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
+          const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
+
           setHistoryDocumentRevisions(documentRevisions);
-          setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
+          setHistorySelectedDocumentRevision(latestDocumentRevision);
+          setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
         } catch (error) {
           handleApiError({ error, t, logger });
         }
@@ -391,8 +396,11 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryOpen = async () => {
     try {
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
+      const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
+
       setHistoryDocumentRevisions(documentRevisions);
-      setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
+      setHistorySelectedDocumentRevision(latestDocumentRevision);
+      setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
       switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -402,6 +410,7 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryClose = () => {
     setHistoryDocumentRevisions([]);
     setHistorySelectedDocumentRevision(null);
+    setFocusHeaderHistoryInfo(null);
     switchView(VIEW.display);
     return true;
   };
@@ -516,7 +525,10 @@ function Document({ initialState, PageTemplate }) {
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
     const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
+    const versionInfo = getDocumentRevisionHistoryVersionInfo(historyDocumentRevisions, documentRevisionToView._id);
+
     setHistorySelectedDocumentRevision(documentRevisionToView);
+    setFocusHeaderHistoryInfo(versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version }));
   };
 
   const handleRestoreDocumentRevisionClick = ({ documentRevisionId, documentId }) => {
@@ -529,11 +541,13 @@ function Document({ initialState, PageTemplate }) {
             documentId,
             revisionId: documentRevisionId
           });
+          const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 
           setDoc(updatedDoc);
           setCurrentSections(updatedDoc.sections);
           setHistoryDocumentRevisions(documentRevisions);
-          setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
+          setHistorySelectedDocumentRevision(latestDocumentRevision);
+          setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
         } catch (error) {
           handleApiError({ error, logger, t });
           throw error;
@@ -557,9 +571,11 @@ function Document({ initialState, PageTemplate }) {
     }
 
     const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentId);
+    const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 
     setHistoryDocumentRevisions(documentRevisions);
-    setHistorySelectedDocumentRevision(documentRevisions[documentRevisions.length - 1]);
+    setHistorySelectedDocumentRevision(latestDocumentRevision);
+    setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
   }, [doc, documentApiClient, t]);
 
   const handleSectionHardDelete = useCallback(index => {
@@ -630,7 +646,11 @@ function Document({ initialState, PageTemplate }) {
   );
 
   const renderHistoryFocusHeader = () => (
-    <FocusHeader title={t('history')} onClose={handleHistoryClose} />
+    <FocusHeader title={t('history')} onClose={handleHistoryClose}>
+      <div className="DocumentPage-focusHeaderVersionHistoryInfo">
+        <EyeOutlined />{focusHeaderHistoryInfo}
+      </div>
+    </FocusHeader>
   );
 
   const renderFocusHeader = () => {

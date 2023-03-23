@@ -47,3 +47,9 @@ document:
   historyActionTooltip:
     en: Show version history
     de: Versionshistorie anzeigen
+  historyVersion:
+    en: Version {version}
+    de: Version {version}
+  latestHistoryVersion:
+    en: Latest version
+    de: Latest version

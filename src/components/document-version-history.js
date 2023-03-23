@@ -10,6 +10,7 @@ import { documentRevisionShape } from '../ui/default-prop-types.js';
 import { Button, Collapse, message, Timeline, Tooltip } from 'antd';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import { EyeOutlined, PaperClipOutlined, UndoOutlined } from '@ant-design/icons';
+import { getDocumentRevisionHistoryVersionInfo } from '../utils/document-utils.js';
 
 const { Panel } = Collapse;
 const TimelineItem = Timeline.Item;
@@ -21,11 +22,12 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
 
   const mappedDocumentRevisions = documentRevisions
     .sort(by(r => r.createdOn, 'desc'))
-    .map((revision, index) => {
+    .map(documentRevision => {
+      const versionInfo = getDocumentRevisionHistoryVersionInfo(documentRevisions, documentRevision._id);
       return {
-        ...revision,
-        version: documentRevisions.length - index,
-        isLatestVersion: index === 0
+        ...documentRevision,
+        version: versionInfo.version,
+        isLatestVersion: versionInfo.isLatestVersion
       };
     });
 
