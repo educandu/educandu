@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
-import CommentsPanel from '../comments-panel.js';
 import CreditsFooter from '../credits-footer.js';
 import { LikeOutlined } from '@ant-design/icons';
 import { useIsMounted } from '../../ui/hooks.js';
@@ -23,10 +22,10 @@ import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import CommentsIcon from '../icons/multi-color/comments-icon.js';
+import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
-import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
@@ -34,6 +33,7 @@ import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { isTouchDevice, supportsClipboardPaste } from '../../ui/browser-helper.js';
+import DocumentCommentApiClient from '../../api-clients/document-comment-api-client.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
@@ -126,10 +126,10 @@ function Doc({ initialState, PageTemplate }) {
   const isMounted = useIsMounted();
   const { t } = useTranslation('doc');
   const controlPanelsRef = useRef(null);
-  const commentsSectionRef = useRef(null);
+  const documentCommentsSectionRef = useRef(null);
   const pluginRegistry = useService(PluginRegistry);
-  const commentApiClient = useSessionAwareApiClient(CommentApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const documentCommentApiClient = useSessionAwareApiClient(DocumentCommentApiClient);
 
   const { room } = initialState;
 
@@ -138,18 +138,18 @@ function Doc({ initialState, PageTemplate }) {
   const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
-  const [comments, setComments] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
+  const [documentComments, setDocumentComments] = useState([]);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [controPanelTopInPx, setControlPanelTopInPx] = useState(null);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [controlPanelMarginRightInPx, setControlPanelMarginRightInPx] = useState(0);
-  const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
+  const [areDocumentCommentsInitiallyLoaded, setAreDocumentCommentsInitiallyLoaded] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -200,20 +200,20 @@ function Doc({ initialState, PageTemplate }) {
       setTimeout(() => tryBringSectionIntoView(lastViewInfo.sectionKeyToScrollTo), 500);
     }
 
-    if (view === VIEW.comments && !!commentsSectionRef.current) {
-      commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (view === VIEW.comments && !!documentCommentsSectionRef.current) {
+      documentCommentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [view, lastViewInfo, commentsSectionRef]);
+  }, [view, lastViewInfo, documentCommentsSectionRef]);
 
   const fetchComments = useCallback(async () => {
     try {
-      const response = await commentApiClient.getAllDocumentComments({ documentId: doc._id });
-      setAreCommentsInitiallyLoaded(true);
-      setComments(response.comments);
+      const response = await documentCommentApiClient.getAllDocumentComments({ documentId: doc._id });
+      setAreDocumentCommentsInitiallyLoaded(true);
+      setDocumentComments(response.documentComments);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
-  }, [doc, commentApiClient, t]);
+  }, [doc, documentCommentApiClient, t]);
 
   useEffect(() => {
     setAlerts(createPageAlerts({
@@ -340,15 +340,15 @@ function Doc({ initialState, PageTemplate }) {
     });
   };
 
-  const handleCommentsOpen = async () => {
-    setAreCommentsInitiallyLoaded(false);
+  const handleDocumentCommentsOpen = async () => {
+    setAreDocumentCommentsInitiallyLoaded(false);
     switchView(VIEW.comments);
     await fetchComments();
   };
 
-  const handleCommentsClose = () => {
+  const handleDocumentCommentsClose = () => {
     switchView(VIEW.display);
-    setComments([]);
+    setDocumentComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
   };
@@ -553,27 +553,27 @@ function Doc({ initialState, PageTemplate }) {
     );
   }, [hardDeleteSection, selectedHistoryRevision, t]);
 
-  const handleCommentPostClick = async ({ topic, text }) => {
+  const handleDocumentCommentPostClick = async ({ topic, text }) => {
     try {
-      await commentApiClient.addComment({ documentId: doc._id, topic, text });
+      await documentCommentApiClient.addDocumentComment({ documentId: doc._id, topic, text });
       await fetchComments();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
   };
 
-  const handleCommentsTopicChangeClick = async ({ oldTopic, newTopic }) => {
+  const handleDocumentCommentsTopicChangeClick = async ({ oldTopic, newTopic }) => {
     try {
-      await commentApiClient.updateCommentsTopic({ documentId: doc._id, oldTopic, newTopic });
+      await documentCommentApiClient.updateDocumentCommentsTopic({ documentId: doc._id, oldTopic, newTopic });
       await fetchComments();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
   };
 
-  const handleCommentDeleteClick = async commentId => {
+  const handleDocumentCommentDeleteClick = async documentCommentId => {
     try {
-      await commentApiClient.deleteComment({ commentId });
+      await documentCommentApiClient.deleteDocumentComment({ documentCommentId });
       await fetchComments();
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -644,14 +644,14 @@ function Doc({ initialState, PageTemplate }) {
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
 
           {view === VIEW.comments && !!isMounted.current && (
-            <section ref={commentsSectionRef} className="DocPage-commentsSection">
+            <section ref={documentCommentsSectionRef} className="DocPage-commentsSection">
               <div className="DocPage-commentsSectionHeader">{t('commentsHeader')}</div>
-              <CommentsPanel
-                comments={comments}
-                isLoading={!areCommentsInitiallyLoaded}
-                onCommentPostClick={handleCommentPostClick}
-                onCommentDeleteClick={handleCommentDeleteClick}
-                onTopicChangeClick={handleCommentsTopicChangeClick}
+              <DocumentCommentsPanel
+                documentComments={documentComments}
+                isLoading={!areDocumentCommentsInitiallyLoaded}
+                onDocumentCommentPostClick={handleDocumentCommentPostClick}
+                onDocumentCommentDeleteClick={handleDocumentCommentDeleteClick}
+                onTopicChangeClick={handleDocumentCommentsTopicChangeClick}
                 />
             </section>
           )}
@@ -677,8 +677,8 @@ function Doc({ initialState, PageTemplate }) {
             <ControlPanel
               startOpen={preSetView === VIEW.comments}
               openIcon={<CommentsIcon />}
-              onOpen={handleCommentsOpen}
-              onClose={handleCommentsClose}
+              onOpen={handleDocumentCommentsOpen}
+              onClose={handleDocumentCommentsClose}
               leftSideContent={<div>{t('commentsPanelTitle')}</div>}
               tooltipWhenClosed={t('commentsControlPanelTooltip')}
               />

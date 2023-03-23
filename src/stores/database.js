@@ -12,7 +12,6 @@ import locksSpec from './collection-specs/locks.js';
 import eventsSpec from './collection-specs/events.js';
 import batchesSpec from './collection-specs/batches.js';
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import commentsSpec from './collection-specs/comments.js';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
@@ -21,6 +20,7 @@ import notificationsSpec from './collection-specs/notifications.js';
 import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
+import documentCommentsSpec from './collection-specs/document-comments.js';
 import externalAccountsSpec from './collection-specs/external-accounts.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
 import mediaLibraryItemsSpec from './collection-specs/media-library-items.js';
@@ -39,7 +39,6 @@ const collectionSpecs = [
   roomsSpec,
   eventsSpec,
   batchesSpec,
-  commentsSpec,
   settingsSpec,
   sessionsSpec,
   documentsSpec,
@@ -47,6 +46,7 @@ const collectionSpecs = [
   notificationsSpec,
   documentOrdersSpec,
   roomInvitationsSpec,
+  documentCommentsSpec,
   externalAccountsSpec,
   documentRevisionsSpec,
   mediaLibraryItemsSpec,

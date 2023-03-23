@@ -1,13 +1,13 @@
-import { groupCommentsByTopic } from './comment-utils.js';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { groupDocumentCommentsByTopic } from './document-comment-utils.js';
 
-describe('comment-utils', () => {
+describe('document-comment-utils', () => {
   let result;
 
-  describe('groupCommentsByTopic', () => {
+  describe('groupDocumentCommentsByTopic', () => {
     describe('when comments are empty string', () => {
       beforeEach(() => {
-        result = groupCommentsByTopic([]);
+        result = groupDocumentCommentsByTopic([]);
       });
       it('should return empty object', () => {
         expect(result).toEqual({});
@@ -23,7 +23,7 @@ describe('comment-utils', () => {
           { _id: 21, topic: 'topic-2', createdOn: new Date('2023-01-03').toISOString() },
           { _id: 22, topic: 'topic-2', createdOn: new Date('2023-01-04').toISOString() }
         ];
-        result = groupCommentsByTopic(comments);
+        result = groupDocumentCommentsByTopic(comments);
       });
       it('should return a grouping sorted by most recently created topics descending and within each topic the comments sorted ascending by createdOn', () => {
         expect(result).toEqual({

@@ -4,39 +4,39 @@ import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import EventStore from '../stores/event-store.js';
-import CommentStore from '../stores/comment-store.js';
 import DocumentStore from '../stores/document-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { checkPermissionsOnCommentCreation } from '../utils/comment-utils.js';
+import DocumentCommentStore from '../stores/document-comment-store.js';
+import { checkPermissionsOnDocumentCommentCreation } from '../utils/document-comment-utils.js';
 
 const logger = new Logger(import.meta.url);
 
 const { Forbidden, NotFound } = httpErrors;
 
-class CommentService {
-  static dependencies = [CommentStore, DocumentStore, RoomStore, EventStore, TransactionRunner];
+class DocumentCommentService {
+  static dependencies = [DocumentCommentStore, DocumentStore, RoomStore, EventStore, TransactionRunner];
 
-  constructor(commentStore, documentStore, roomStore, eventStore, transactionRunner) {
-    this.commentStore = commentStore;
+  constructor(documentCommentStore, documentStore, roomStore, eventStore, transactionRunner) {
+    this.documentCommentStore = documentCommentStore;
     this.documentStore = documentStore;
     this.roomStore = roomStore;
     this.eventStore = eventStore;
     this.transactionRunner = transactionRunner;
   }
 
-  getCommentById(commentId) {
-    return this.commentStore.getCommentById(commentId);
+  getDocumentCommentById(documentCommentId) {
+    return this.documentCommentStore.getDocumentCommentById(documentCommentId);
   }
 
   async getAllDocumentComments(documentId) {
-    const comments = await this.commentStore.getAllCommentsByDocumentId(documentId);
+    const comments = await this.documentCommentStore.getAllDocumentCommentsByDocumentId(documentId);
     return comments.sort(by(comment => comment.createdOn, 'desc'));
   }
 
-  async createComment({ data, user, silentCreation = false }) {
+  async createDocumentComment({ data, user, silentCreation = false }) {
     const { documentId, topic, text } = data;
 
-    let newComment;
+    let newDocumentComment;
     await this.transactionRunner.run(async session => {
       const document = await this.documentStore.getDocumentById(documentId, { session });
       if (!document) {
@@ -48,13 +48,13 @@ class CommentService {
         : null;
 
       try {
-        checkPermissionsOnCommentCreation({ document, room, user });
+        checkPermissionsOnDocumentCommentCreation({ document, room, user });
       } catch (error) {
         logger.error(error);
         throw new Forbidden(error.message);
       }
 
-      newComment = {
+      newDocumentComment = {
         _id: uniqueId.create(),
         documentId,
         createdOn: new Date(),
@@ -65,24 +65,24 @@ class CommentService {
         text: text.trim()
       };
 
-      await this.commentStore.saveComment(newComment, { session });
+      await this.documentCommentStore.saveDocumentComment(newDocumentComment, { session });
       if (!silentCreation) {
-        await this.eventStore.recordDocumentCommentCreatedEvent({ comment: newComment, document, user }, { session });
+        await this.eventStore.recordDocumentCommentCreatedEvent({ documentComment: newDocumentComment, document, user }, { session });
       }
     });
 
-    return newComment;
+    return newDocumentComment;
   }
 
-  async updateCommentsTopic({ documentId, oldTopic, newTopic }) {
-    await this.commentStore.updateCommentsTopic({ documentId, oldTopic, newTopic });
+  async updateDocumentCommentsTopic({ documentId, oldTopic, newTopic }) {
+    await this.documentCommentStore.updateDocumentCommentsTopic({ documentId, oldTopic, newTopic });
   }
 
-  async deleteComment({ commentId, user }) {
-    const comment = await this.commentStore.getCommentById(commentId);
+  async deleteDocumentComment({ documentCommentId, user }) {
+    const documentComment = await this.documentCommentStore.getDocumentCommentById(documentCommentId);
 
-    await this.commentStore.saveComment({
-      ...comment,
+    await this.documentCommentStore.saveDocumentComment({
+      ...documentComment,
       deletedOn: new Date(),
       deletedBy: user._id,
       text: ''
@@ -91,4 +91,4 @@ class CommentService {
 
 }
 
-export default CommentService;
+export default DocumentCommentService;

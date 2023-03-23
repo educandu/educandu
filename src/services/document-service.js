@@ -12,13 +12,13 @@ import RoomStore from '../stores/room-store.js';
 import BatchStore from '../stores/batch-store.js';
 import EventStore from '../stores/event-store.js';
 import { isRoomOwner } from '../utils/room-utils.js';
-import CommentStore from '../stores/comment-store.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import { createTagSearchQuery } from '../utils/tag-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
+import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { DOCUMENT_VERIFIED_RELEVANCE_POINTS } from '../domain/constants.js';
@@ -35,10 +35,10 @@ class DocumentService {
   static dependencies = [
     Cdn,
     DocumentRevisionStore,
+    DocumentCommentStore,
     DocumentOrderStore,
     DocumentStore,
     RoomStore,
-    CommentStore,
     BatchStore,
     TaskStore,
     LockStore,
@@ -50,10 +50,10 @@ class DocumentService {
   constructor(
     cdn,
     documentRevisionStore,
+    documentCommentStore,
     documentOrderStore,
     documentStore,
     roomStore,
-    commentStore,
     batchStore,
     taskStore,
     lockStore,
@@ -63,10 +63,10 @@ class DocumentService {
   ) {
     this.cdn = cdn;
     this.documentRevisionStore = documentRevisionStore;
+    this.documentCommentStore = documentCommentStore;
     this.documentOrderStore = documentOrderStore;
     this.documentStore = documentStore;
     this.roomStore = roomStore;
-    this.commentStore = commentStore;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
@@ -369,7 +369,7 @@ class DocumentService {
         await this.roomStore.saveRoom(room, { session });
         await this.documentStore.deleteDocumentById(documentId, { session });
         await this.documentRevisionStore.deleteDocumentRevisionsByDocumentId(documentId, { session });
-        await this.commentStore.deleteCommentsByDocumentId(documentId, { session });
+        await this.documentCommentStore.deleteDocumentCommentsByDocumentId(documentId, { session });
       });
     } finally {
       if (documentLock) {

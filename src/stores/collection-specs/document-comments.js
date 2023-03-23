@@ -1,5 +1,5 @@
 export default {
-  name: 'comments',
+  name: 'documentComments',
   indexes: [
     {
       name: '_idx_documentId_',
