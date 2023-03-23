@@ -921,6 +921,16 @@
       "de": "Nach Dokument-Titel suchen"
     }
   },
+  "documentVersionHistory": {
+    "version": {
+      "en": "Version",
+      "de": "Version"
+    },
+    "latest": {
+      "en": "latest",
+      "de": "letzte"
+    }
+  },
   "editControlPanel": {
     "statusIconTooltipSaved": {
       "en": "There are no unsaved changes",

@@ -1,1 +1,60 @@
-.DocumentVersionHistory {}
+.DocumentVersionHistory {
+  display: grid;
+  gap: 30px;
+  grid-auto-flow: row;
+  padding: 30px 15px 0 30px;
+}
+
+.DocumentVersionHistory-timelineItem {
+  .ant-collapse-header {
+    padding: 0 !important;
+  }
+
+  .ant-collapse-content-box {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+.DocumentVersionHistory-timelineItemDot {
+  &.DocumentVersionHistory-timelineItemDot--circle {
+    border-radius: 50%;
+    height: 10px;
+    width: 10px;
+    border: 2px solid @edu-border-color-light;
+  }
+
+  &.DocumentVersionHistory-timelineItemDot--icon {
+    color: @edu-text-color;
+  }
+}
+
+.DocumentVersionHistory-timelineItemHeader {
+  display: grid;
+  gap: 2px;
+  grid-auto-flow: row;
+}
+
+.DocumentVersionHistory-timelineItemHeaderText {
+  &.is-panel-open {
+    font-weight: bold;
+  }
+}
+
+.DocumentVersionHistory-timelineItemHeaderSubtext {
+  color: @edu-text-color-secondary;
+}
+
+.DocumentVersionHistory-timelineContentRow {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.DocumentVersionHistory-timelineContentRowValue {
+  margin-left: 5px;
+  color: @edu-text-color-secondary;
+}
+
+.DocumentVersionHistory-userProfileLink {
+  color: @edu-text-color-secondary !important;
+}
