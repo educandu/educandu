@@ -17,7 +17,7 @@ import DocumentMetadataModal from '../document-metadata-modal.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { InboxOutlined, LikeOutlined, SafetyCertificateOutlined, TeamOutlined } from '@ant-design/icons';
+import { InboxOutlined, SafetyCertificateOutlined, TeamOutlined, KeyOutlined } from '@ant-design/icons';
 
 function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.create, document = null, isOpen = false }) {
   let initialDocumentMetadata;
@@ -248,12 +248,12 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
         )}
         {!!row.verified && (
           <Tooltip title={t('common:verifiedDocumentBadge')}>
-            <LikeOutlined className="u-large-badge" />
+            <SafetyCertificateOutlined className="u-large-badge" />
           </Tooltip>
         )}
         {!!row.protected && (
           <Tooltip title={t('protectedDocumentBadge')}>
-            <SafetyCertificateOutlined className="u-large-badge" />
+            <KeyOutlined className="u-large-badge" />
           </Tooltip>
         )}
         {!!row.accreditedEditors.length && (

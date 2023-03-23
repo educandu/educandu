@@ -45,11 +45,11 @@ import {
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
 import {
-  canEditDoc,
+  canEditDocument,
   findCurrentlyWorkedOnSectionKey,
   getEditDocRestrictionTooltip,
   tryBringSectionIntoView
-} from '../../utils/doc-utils.js';
+} from '../../utils/document-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -135,7 +135,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
-  const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
+  const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
   const [comments, setComments] = useState([]);
@@ -662,7 +662,7 @@ function Doc({ initialState, PageTemplate }) {
               <HistoryControlPanel
                 revisions={historyRevisions}
                 selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
-                canRestoreRevisions={userCanEditDoc}
+                canRestoreRevisions={userCanEditDocument}
                 startOpen={preSetView === VIEW.history}
                 onOpen={handleHistoryOpen}
                 onClose={handleHistoryClose}
@@ -689,7 +689,7 @@ function Doc({ initialState, PageTemplate }) {
               <EditControlPanel
                 isDirtyState={isDirty}
                 startOpen={preSetView === VIEW.edit}
-                disabled={!userCanEdit || !userCanEditDoc}
+                disabled={!userCanEdit || !userCanEditDocument}
                 tooltipWhenDisabled={editDocRestrictionTooltip}
                 onOpen={handleEditOpen}
                 onMetadataOpen={handleEditMetadataOpen}

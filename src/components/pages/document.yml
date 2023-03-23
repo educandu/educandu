@@ -8,8 +8,14 @@ document:
   commentsPanelTitle:
     en: You are viewing the document page in "comments" mode
     de: Du befindest dich im Kommentar-Modus
+  favoriteRestrictionTooltip:
+    en: Log in to add the document to your favorites
+    de: Melde dich an, um dieses Dokument zu den Favoriten hinzufügen
+  duplicateRestrictionTooltip:
+    en: Log in to duplicate this document
+    de: Melde dich an, um dieses Dokument zu duplizieren
   editRestrictionTooltip_anonymous:
-    en: Log in in order to edit this document
+    en: Log in to edit this document
     de: Melde dich an, um dieses Dokument zu bearbeiten
   editRestrictionTooltip_protected:
     en: This document cannot be edited because it is protected
@@ -41,6 +47,12 @@ document:
   comments:
     en: Comments
     de: Komentare
+  commentsActionTooltip:
+    en: Show comments
+    de: Komentare anzeigen
   history:
     en: Version history
     de: Versionshistorie
+  historyActionTooltip:
+    en: Show version history
+    de: Versionshistorie anzeigen

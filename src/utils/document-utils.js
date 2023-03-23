@@ -1,7 +1,7 @@
 import by from 'thenby';
-import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getViewportMeasurementsForElement } from '../ui/browser-helper.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
 
 const DATA_ATTRIBUTE_SECTION_KEY = 'data-section-key';
 const DATA_ATTRIBUTE_SECTION_TYPE = 'data-section-type';
@@ -23,7 +23,7 @@ function userIsAccreditedEditor({ user, doc }) {
     .includes(user._id);
 }
 
-function getEditDocRestrictionReason({ user, doc, room }) {
+function getEditDocumentRestrictionReason({ user, doc, room }) {
   if (!doc || (doc.roomId && !room)) {
     throw new Error('Inconsistent arguments');
   }
@@ -58,7 +58,7 @@ function getEditDocRestrictionReason({ user, doc, room }) {
 }
 
 export function getEditDocRestrictionTooltip({ t, user, doc, room }) {
-  const restrictionReason = getEditDocRestrictionReason({ user, doc, room });
+  const restrictionReason = getEditDocumentRestrictionReason({ user, doc, room });
   switch (restrictionReason) {
     case DOCUMENT_EDIT_RESTRICTION_REASON.anonymous:
       return t('doc:editRestrictionTooltip_anonymous');
@@ -73,8 +73,16 @@ export function getEditDocRestrictionTooltip({ t, user, doc, room }) {
   }
 }
 
-export function canEditDoc({ user, doc, room }) {
-  return getEditDocRestrictionReason({ user, doc, room }) === DOCUMENT_EDIT_RESTRICTION_REASON.none;
+export function getFavoriteActionTooltip({ t, user, doc }) {
+  if (!user) {
+    return t('favoriteRestrictionTooltip');
+  }
+  const isFavoriteDocument = user?.favorites.find(favorite => favorite.id === doc._id);
+  return isFavoriteDocument ? t('common:removeFavorite') : t('common:addFavorite');
+}
+
+export function canEditDocument({ user, doc, room }) {
+  return getEditDocumentRestrictionReason({ user, doc, room }) === DOCUMENT_EDIT_RESTRICTION_REASON.none;
 }
 
 export function findCurrentlyWorkedOnSectionKey() {

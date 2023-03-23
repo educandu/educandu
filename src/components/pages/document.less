@@ -8,22 +8,36 @@
   .m-content-headline;
 }
 
-.DocumentPage-badges {
-  .m-control-group;
-  justify-content: end;
-  margin-bottom: 10px;
+.DocumentPage-verifiedBadge {
+  display: flex;
+  position: fixed;
+  font-size: 23px;
+  justify-content: center;
+  width: @edu-control-height-lg;
+  height: @edu-control-height-lg;
+  color: @edu-primary-color-light;
+  background-color: @edu-white;
+  border-radius: @edu-border-radius-base;
 }
 
-.DocumentPage-badge {
-  padding: 8px;
-  font-size: @edu-font-size-lg;
-  color: @edu-text-color-secondary;
-  background-color: @edu-background-color-base;
-  border-radius: 50%;
-}
+.DocumentPage-actionsPanelWrapper {
+  & > * {
+    height: fit-content;
+  }
 
-.DocumentPage-cloneButton {
-  background-color: @edu-background-color-base !important;
+  button {
+    &:disabled {
+      cursor: not-allowed;
+
+      &:hover > * {
+        background-color: transparent !important;
+      }
+
+      .anticon {
+        color: @edu-text-color-secondary;
+      }
+    }
+  }
 }
 
 .DocumentPage-focusHeaderButton {
@@ -33,10 +47,17 @@
 .DocumentPage-focusHeaderDirtyInfo {
   display: flex;
   align-items: center;
+
+  @media @edu-media-phone-portrait {
+    display: none;
+  }
 }
 
 .DocumentPage-focusHeaderDirtyInfoText {
+  font-size: @edu-font-size-sm;
   margin-left: @edu-control-spacing-base;
+  margin-right: @edu-control-spacing-wide;
+  font-style: italic;
 
   @media @edu-media-not-desktop {
     display: none;

@@ -5,11 +5,11 @@ import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { canEditDoc } from '../utils/doc-utils.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import SettingService from '../services/setting-service.js';
+import { canEditDocument } from '../utils/document-utils.js';
 import DocumentService from '../services/document-service.js';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -121,7 +121,7 @@ class DocumentController {
       roomMediaContext = null;
     }
 
-    if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDoc({ user, doc, room })) {
+    if (view === DOC_VIEW_QUERY_PARAM.edit && !canEditDocument({ user, doc, room })) {
       return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug }));
     }
 

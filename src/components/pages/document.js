@@ -17,7 +17,9 @@ import EditIcon from '../icons/general/edit-icon.js';
 import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
-import { Breadcrumb, Button, message, Tooltip } from 'antd';
+import HistoryIcon from '../icons/general/history-icon.js';
+import CommentIcon from '../icons/general/comment-icon.js';
+import EditDocIcon from '../icons/general/edit-doc-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -26,13 +28,14 @@ import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
-import { CloudOutlined, CloudUploadOutlined, LikeOutlined } from '@ant-design/icons';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CloudOutlined, CloudUploadOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
@@ -43,11 +46,12 @@ import {
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
 import {
-  canEditDoc,
+  canEditDocument,
   findCurrentlyWorkedOnSectionKey,
   getEditDocRestrictionTooltip,
+  getFavoriteActionTooltip,
   tryBringSectionIntoView
-} from '../../utils/doc-utils.js';
+} from '../../utils/document-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -122,6 +126,7 @@ function Document({ initialState, PageTemplate }) {
   const pageRef = useRef(null);
   const request = useRequest();
   const isMounted = useIsMounted();
+  const sectionsWrapperRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
@@ -130,9 +135,10 @@ function Document({ initialState, PageTemplate }) {
 
   const { room } = initialState;
 
-  const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
-  const userCanEditDoc = canEditDoc({ user, doc: initialState.doc, room });
+  const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
+  const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+  const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
   const [comments, setComments] = useState([]);
@@ -144,6 +150,8 @@ function Document({ initialState, PageTemplate }) {
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
+  const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
+  const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
@@ -157,11 +165,44 @@ function Document({ initialState, PageTemplate }) {
     hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
   }));
 
+  const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
+
   const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
     setPreSetView(null);
     setView(newView);
   };
+
+  const ensureActionsPanelPosition = useCallback(() => {
+    const windowWidth = Math.min(window.innerWidth, window.outerWidth);
+
+    const fixedItemsLeftOffset = 40;
+    const reservedFixedItemsWidth = 40;
+
+    const sectionsWrapperBoundingRect = sectionsWrapperRef.current.getBoundingClientRect();
+    const left = sectionsWrapperBoundingRect.left + sectionsWrapperBoundingRect.width + fixedItemsLeftOffset;
+
+    const fixedItemsPosition = {
+      top: 130,
+      right: left + reservedFixedItemsWidth >= windowWidth ? 0 : 'unset',
+      left: left + reservedFixedItemsWidth >= windowWidth ? 'unset' : left
+    };
+
+    const actionsPanelTopOffset = isVerifiedDocument ? 50 : 0;
+
+    setVerifiedBadgePositionInPx(fixedItemsPosition);
+    setActionsPanelPositionInPx({ ...fixedItemsPosition, top: fixedItemsPosition.top + actionsPanelTopOffset });
+  }, [isVerifiedDocument, sectionsWrapperRef]);
+
+  useEffect(() => {
+    ensureActionsPanelPosition();
+
+    window.addEventListener('resize', ensureActionsPanelPosition);
+
+    return () => {
+      window.removeEventListener('resize', ensureActionsPanelPosition);
+    };
+  }, [ensureActionsPanelPosition]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
@@ -613,60 +654,27 @@ function Document({ initialState, PageTemplate }) {
               <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
             </Breadcrumb>
           )}
-          <div className="DocumentPage-badges">
-            {!!userCanEdit && (
-              <Tooltip title={t('duplicateDocument')}>
-                <Button
-                  type="text"
-                  shape="circle"
-                  icon={<DuplicateIcon />}
-                  className="DocumentPage-cloneButton"
-                  onClick={() => handleDocumentCloneClick()}
-                  />
-              </Tooltip>
-            )}
-            {!!doc.publicContext?.verified && (
-              <Tooltip title={t('common:verifiedDocumentBadge')}>
-                <LikeOutlined className="u-large-badge" />
-              </Tooltip>
-            )}
-            <FavoriteStar className="DocumentPage-badge" type={FAVORITE_TYPE.document} id={doc._id} />
-            {view === VIEW.display && (
-              <div style={{ display: 'flex', gap: '5px', marginLeft: '10px' }}>
-                <Button size="small" shape="circle" type="primary" title="HISTORY" onClick={handleHistoryOpen}>H</Button>
-                <Button size="small" shape="circle" type="primary" title="COMMENTS" onClick={handleCommentsOpen}>C</Button>
-                <Button
-                  size="small"
-                  shape="circle"
-                  type="primary"
-                  disabled={!userCanEdit || !userCanEditDoc}
-                  title={!userCanEdit || !userCanEditDoc ? editDocRestrictionTooltip : 'EDIT'}
-                  onClick={handleEditOpen}
-                  >
-                  E
-                </Button>
-              </div>
-            )}
+          <div ref={sectionsWrapperRef}>
+            <SectionsDisplay
+              sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
+              pendingSectionKeys={pendingTemplateSectionKeys}
+              editedSectionKeys={editedSectionKeys}
+              canEdit={view === VIEW.edit}
+              canHardDelete={!!userCanHardDelete && view === VIEW.history}
+              onPendingSectionApply={handlePendingSectionApply}
+              onPendingSectionDiscard={handlePendingSectionDiscard}
+              onSectionContentChange={handleSectionContentChange}
+              onSectionCopyToClipboard={handleSectionCopyToClipboard}
+              onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
+              onSectionMove={handleSectionMove}
+              onSectionInsert={handleSectionInsert}
+              onSectionDuplicate={handleSectionDuplicate}
+              onSectionDelete={handleSectionDelete}
+              onSectionHardDelete={handleSectionHardDelete}
+              onSectionEditEnter={handleSectionEditEnter}
+              onSectionEditLeave={handleSectionEditLeave}
+              />
           </div>
-          <SectionsDisplay
-            sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
-            pendingSectionKeys={pendingTemplateSectionKeys}
-            editedSectionKeys={editedSectionKeys}
-            canEdit={view === VIEW.edit}
-            canHardDelete={!!userCanHardDelete && view === VIEW.history}
-            onPendingSectionApply={handlePendingSectionApply}
-            onPendingSectionDiscard={handlePendingSectionDiscard}
-            onSectionContentChange={handleSectionContentChange}
-            onSectionCopyToClipboard={handleSectionCopyToClipboard}
-            onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
-            onSectionMove={handleSectionMove}
-            onSectionInsert={handleSectionInsert}
-            onSectionDuplicate={handleSectionDuplicate}
-            onSectionDelete={handleSectionDelete}
-            onSectionHardDelete={handleSectionHardDelete}
-            onSectionEditEnter={handleSectionEditEnter}
-            onSectionEditLeave={handleSectionEditLeave}
-            />
           <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
 
           {view === VIEW.comments && !!isMounted.current && (
@@ -683,6 +691,48 @@ function Document({ initialState, PageTemplate }) {
           )}
         </div>
       </PageTemplate>
+      {!!actionsPanelPositionInPx && view === VIEW.display && (
+        <Fragment>
+          {!!isVerifiedDocument && (
+            <div className="DocumentPage-verifiedBadge" style={{ ...verifiedBadgePositionInPx }}>
+              <Tooltip title={t('common:verifiedDocumentBadge')} placement="left">
+                <SafetyCertificateOutlined />
+              </Tooltip>
+            </div>
+          )}
+          <div className="DocumentPage-actionsPanelWrapper">
+            <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }}>
+              <FloatButton
+                disabled={!user}
+                tooltip={favoriteActionTooltip}
+                icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
+                />
+              <FloatButton
+                icon={<DuplicateIcon />}
+                disabled={!userCanEdit}
+                tooltip={userCanEdit ? t('duplicateDocument') : t('duplicateRestrictionTooltip')}
+                onClick={() => handleDocumentCloneClick()}
+                />
+              <FloatButton
+                icon={<HistoryIcon />}
+                tooltip={t('historyActionTooltip')}
+                onClick={handleHistoryOpen}
+                />
+              <FloatButton
+                icon={<CommentIcon />}
+                tooltip={t('commentsActionTooltip')}
+                onClick={handleCommentsOpen}
+                />
+              <FloatButton
+                icon={<EditDocIcon />}
+                disabled={!userCanEdit || !userCanEditDocument}
+                tooltip={!userCanEdit || !userCanEditDocument ? editDocRestrictionTooltip : t('editDocument')}
+                onClick={handleEditOpen}
+                />
+            </FloatButton.Group>
+          </div>
+        </Fragment>
+      )}
 
       <DocumentMetadataModal
         {...documentMetadataModalState}

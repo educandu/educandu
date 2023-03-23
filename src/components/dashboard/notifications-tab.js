@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { EVENT_TYPE } from '../../domain/constants.js';
+import CommentIcon from '../icons/general/comment-icon.js';
+import MessageIcon from '../icons/general/message-icon.js';
+import EditDocIcon from '../icons/general/edit-doc-icon.js';
 import { notificationGroupShape } from '../../ui/default-prop-types.js';
-import CommentsIcon from '../icons/user-notifications/comments-icon.js';
-import RoomMessageIcon from '../icons/user-notifications/room-message-icon.js';
-import { EditDocIconComponent } from '../icons/user-notifications/edit-doc-icon.js';
 
 function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGroup, onRemoveNotifications }) {
   const { formatDate } = useDateFormat();
@@ -25,7 +25,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     const documentNotAvailable = !notificationGroup.eventParams.document;
 
     if (notificationGroup.eventType === EVENT_TYPE.documentRevisionCreated) {
-      icon = <EditDocIconComponent />;
+      icon = <EditDocIcon />;
       title = documentNotAvailable ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
       href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
 
@@ -37,7 +37,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     }
 
     if (notificationGroup.eventType === EVENT_TYPE.documentCommentCreated) {
-      icon = <CommentsIcon />;
+      icon = <CommentIcon />;
       title = documentNotAvailable ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
       href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
 
@@ -49,7 +49,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     }
 
     if (notificationGroup.eventType === EVENT_TYPE.roomMessageCreated) {
-      icon = <RoomMessageIcon />;
+      icon = <MessageIcon />;
       title = roomNotAvailable ? t('roomNotAvailable') : notificationGroup.eventParams.room.name;
       href = roomNotAvailable ? null : routes.getRoomUrl(notificationGroup.eventParams.room._id);
       description = t('roomMessageCreatedNotification');
