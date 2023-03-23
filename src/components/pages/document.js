@@ -205,8 +205,6 @@ function Document({ initialState, PageTemplate }) {
       left: left + reservedFixedItemsWidth >= windowWidth ? 'unset' : left
     };
 
-    console.log({ left, reservedFixedItemsWidth, windowWidth });
-
     const actionsPanelTopOffset = isVerifiedDocument ? 50 : 0;
 
     setVerifiedBadgePositionInPx(fixedItemsPosition);
