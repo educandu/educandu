@@ -36,7 +36,7 @@ import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CloudOutlined, CloudUploadOutlined, EyeOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, ArrowRightOutlined, CloudOutlined, CloudUploadOutlined, EyeOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
@@ -154,6 +154,7 @@ function Document({ initialState, PageTemplate }) {
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [focusHeaderHistoryInfo, setFocusHeaderHistoryInfo] = useState(null);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
+  const [isHistoryPanelMinimized, setIsHistoryPanelMinimized] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
@@ -401,6 +402,7 @@ function Document({ initialState, PageTemplate }) {
       setHistoryDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
       setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
+      setIsHistoryPanelMinimized(false);
       switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -522,6 +524,10 @@ function Document({ initialState, PageTemplate }) {
     setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
     setIsDirty(true);
   }, [currentSections]);
+
+  const handleHistoryPanelToggleClick = () => {
+    setIsHistoryPanelMinimized(!isHistoryPanelMinimized);
+  };
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
     const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
@@ -669,7 +675,7 @@ function Document({ initialState, PageTemplate }) {
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} mainRef={pageRef} headerRef={headerRef}>
-        <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history })}>
+        <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history && !isHistoryPanelMinimized })}>
           <div className="DocumentPage-document">
             {!!room && (
               <Breadcrumb className="Breadcrumbs">
@@ -719,14 +725,24 @@ function Document({ initialState, PageTemplate }) {
       </PageTemplate>
 
       {view === VIEW.history && (
-        <div className="DocumentPage-historyPanel" style={{ ...historyPanelPositionInPx }}>
-          <DocumentVersionHistory
-            canRestore={userCanRestoreDocumentRevisions}
-            documentRevisions={historyDocumentRevisions}
-            selectedDocumentRevision={historySelectedDocumentRevision}
-            onViewClick={handleViewDocumentRevisionClick}
-            onRestoreClick={handleRestoreDocumentRevisionClick}
-            />
+        <div
+          style={{ ...historyPanelPositionInPx }}
+          className={classNames('DocumentPage-historyPanel', { 'is-minimized': isHistoryPanelMinimized })}
+          >
+          <div className="DocumentPage-historyPanelContentWrapper">
+            <div className="DocumentPage-historyPanelContentToggle" onClick={handleHistoryPanelToggleClick}>
+              {isHistoryPanelMinimized ? <ArrowLeftOutlined /> : <ArrowRightOutlined />}
+            </div>
+            <div className="DocumentPage-historyPanelContent">
+              <DocumentVersionHistory
+                canRestore={userCanRestoreDocumentRevisions}
+                documentRevisions={historyDocumentRevisions}
+                selectedDocumentRevision={historySelectedDocumentRevision}
+                onViewClick={handleViewDocumentRevisionClick}
+                onRestoreClick={handleRestoreDocumentRevisionClick}
+                />
+            </div>
+          </div>
         </div>
       )}
 

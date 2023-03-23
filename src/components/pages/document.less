@@ -1,4 +1,5 @@
-@document-page-history-panel-width: 320px;
+@document-page-history-panel-width: 350px;
+@document-page-history-panel-toggle-width: 25px;
 
 .DocumentPage {
   display: grid;
@@ -9,13 +10,42 @@
 }
 
 .DocumentPage-historyPanel {
-  .m-box-shadow;
-  overflow: auto;
   position: fixed;
   right: 0;
-  background-color: @edu-white;
   width: @document-page-history-panel-width;
+
+  &.is-minimized {
+    width: @document-page-history-panel-toggle-width;
+  }
+}
+
+.DocumentPage-historyPanelContentWrapper {
+  display: grid;
+  height: inherit;
+  grid-template-columns: auto 1fr;
+}
+
+.DocumentPage-historyPanelContent {
+  .m-box-shadow;
+  overflow: auto;
+  background-color: @edu-white;
   border-left: 1px solid @edu-border-color-base;
+
+}
+
+.DocumentPage-historyPanelContentToggle {
+  cursor: pointer;
+  margin-top: 10px;
+  height: 30px;
+  width: @document-page-history-panel-toggle-width;
+  display: flex;
+  justify-content: center;
+  border-right: none;
+  background-color: @edu-white;
+  border: 1px solid @edu-border-color-base;
+  border-top-left-radius: @edu-border-radius-base;
+  border-bottom-left-radius: @edu-border-radius-base;
+  z-index: @edu-z-index-sticky-content-layer;
 }
 
 .DocumentPage-commentsSection {
