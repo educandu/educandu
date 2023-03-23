@@ -133,3 +133,13 @@ export function getSectionElementDataAttributes(section) {
     [DATA_ATTRIBUTE_SECTION_REVISION]: section.revision
   };
 }
+
+export function getDocumentRevisionHistoryVersionInfo(documentRevisions, documentRevisionId) {
+  const sortedDocumentRevisions = [...documentRevisions].sort(by(r => r.createdOn, 'desc'));
+  const documentRevisionIndex = sortedDocumentRevisions.findIndex(r => r._id === documentRevisionId);
+
+  return {
+    version: documentRevisions.length - documentRevisionIndex,
+    isLatestVersion: documentRevisionIndex === 0
+  };
+}

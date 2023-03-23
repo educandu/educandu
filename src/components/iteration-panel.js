@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons';
 
 function IterationPanel({ itemCount, selectedItemIndex, alwaysAllowPreviousClick, disabled, onNextClick, onPreviousClick, onResetClick }) {
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ function IterationPanel({ itemCount, selectedItemIndex, alwaysAllowPreviousClick
       <Tooltip title={t('common:reset')} disabled={disabled}>
         <Button
           shape="circle"
-          icon={<ReloadOutlined />}
+          icon={<UndoOutlined />}
           disabled={disabled}
           onClick={onResetClick}
           />

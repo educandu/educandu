@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
 import FavoriteStar from '../favorite-star.js';
 import { useTranslation } from 'react-i18next';
-import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
 import CreditsFooter from '../credits-footer.js';
@@ -24,6 +24,7 @@ import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentVersionHistory from '../document-version-history.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
@@ -35,10 +36,17 @@ import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.j
 import DocumentCommentApiClient from '../../api-clients/document-comment-api-client.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CloudOutlined, CloudUploadOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  CloudOutlined,
+  CloudUploadOutlined,
+  EyeOutlined,
+  SafetyCertificateOutlined
+} from '@ant-design/icons';
 import {
   confirmDiscardUnsavedChanges,
   confirmDocumentRevisionRestoration,
@@ -48,6 +56,7 @@ import {
 import {
   canEditDocument,
   findCurrentlyWorkedOnSectionKey,
+  getDocumentRevisionHistoryVersionInfo,
   getEditDocRestrictionTooltip,
   getFavoriteActionTooltip,
   tryBringSectionIntoView
@@ -125,8 +134,8 @@ function Document({ initialState, PageTemplate }) {
   const user = useUser();
   const pageRef = useRef(null);
   const request = useRequest();
+  const headerRef = useRef(null);
   const isMounted = useIsMounted();
-  const sectionsWrapperRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
@@ -138,6 +147,8 @@ function Document({ initialState, PageTemplate }) {
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
   const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+  const userCanRestoreDocumentRevisions = userCanEditDocument && hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
@@ -146,13 +157,16 @@ function Document({ initialState, PageTemplate }) {
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [documentComments, setDocumentComments] = useState([]);
-  const [historyRevisions, setHistoryRevisions] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
-  const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
+  const [focusHeaderHistoryInfo, setFocusHeaderHistoryInfo] = useState(null);
+  const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
+  const [isHistoryPanelMinimized, setIsHistoryPanelMinimized] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
+  const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
+  const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
   const [areDocumentCommentsInitiallyLoaded, setAreDocumentCommentsInitiallyLoaded] = useState(false);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
@@ -174,13 +188,16 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const ensureActionsPanelPosition = useCallback(() => {
+    if (view !== VIEW.display) {
+      return;
+    }
+
     const windowWidth = Math.min(window.innerWidth, window.outerWidth);
+    const pageBoundingRect = pageRef.current.getBoundingClientRect();
 
     const fixedItemsLeftOffset = 40;
     const reservedFixedItemsWidth = 40;
-
-    const sectionsWrapperBoundingRect = sectionsWrapperRef.current.getBoundingClientRect();
-    const left = sectionsWrapperBoundingRect.left + sectionsWrapperBoundingRect.width + fixedItemsLeftOffset;
+    const left = pageBoundingRect.left + pageBoundingRect.width + fixedItemsLeftOffset;
 
     const fixedItemsPosition = {
       top: 130,
@@ -192,17 +209,35 @@ function Document({ initialState, PageTemplate }) {
 
     setVerifiedBadgePositionInPx(fixedItemsPosition);
     setActionsPanelPositionInPx({ ...fixedItemsPosition, top: fixedItemsPosition.top + actionsPanelTopOffset });
-  }, [isVerifiedDocument, sectionsWrapperRef]);
+  }, [view, isVerifiedDocument, pageRef]);
+
+  const ensureHistoryPanelPosition = useCallback(() => {
+    if (view !== VIEW.history) {
+      return;
+    }
+
+    const headerBoundingRect = headerRef.current.getBoundingClientRect();
+
+    const historyVerticalPadding = 10;
+    const top = headerBoundingRect.height + historyVerticalPadding;
+    const height = window.innerHeight - top - historyVerticalPadding;
+
+    setHistoryPanelPositionInPx({ top, height });
+  }, [view, headerRef]);
 
   useEffect(() => {
     ensureActionsPanelPosition();
-
     window.addEventListener('resize', ensureActionsPanelPosition);
 
-    return () => {
-      window.removeEventListener('resize', ensureActionsPanelPosition);
-    };
+    return () => window.removeEventListener('resize', ensureActionsPanelPosition);
   }, [ensureActionsPanelPosition]);
+
+  useEffect(() => {
+    ensureHistoryPanelPosition();
+    window.addEventListener('resize', ensureHistoryPanelPosition);
+
+    return () => window.removeEventListener('resize', ensureHistoryPanelPosition);
+  }, [ensureHistoryPanelPosition]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
@@ -228,19 +263,22 @@ function Document({ initialState, PageTemplate }) {
     setAlerts(createPageAlerts({
       t,
       doc,
-      docRevision: selectedHistoryRevision,
+      docRevision: historySelectedDocumentRevision,
       view,
       hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
     }));
-  }, [doc, selectedHistoryRevision, view, pendingTemplateSectionKeys, t]);
+  }, [doc, historySelectedDocumentRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
     if (preSetView === VIEW.history) {
       (async () => {
         try {
           const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
-          setHistoryRevisions(documentRevisions);
-          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+          const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
+
+          setHistoryDocumentRevisions(documentRevisions);
+          setHistorySelectedDocumentRevision(latestDocumentRevision);
+          setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
         } catch (error) {
           handleApiError({ error, t, logger });
         }
@@ -366,8 +404,12 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryOpen = async () => {
     try {
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
-      setHistoryRevisions(documentRevisions);
-      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+      const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
+
+      setHistoryDocumentRevisions(documentRevisions);
+      setHistorySelectedDocumentRevision(latestDocumentRevision);
+      setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
+      setIsHistoryPanelMinimized(false);
       switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -375,8 +417,9 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleHistoryClose = () => {
-    setHistoryRevisions([]);
-    setSelectedHistoryRevision(null);
+    setHistoryDocumentRevisions([]);
+    setHistorySelectedDocumentRevision(null);
+    setFocusHeaderHistoryInfo(null);
     switchView(VIEW.display);
     return true;
   };
@@ -489,45 +532,35 @@ function Document({ initialState, PageTemplate }) {
     setIsDirty(true);
   }, [currentSections]);
 
-  // eslint-disable-next-line no-unused-vars
-  const handlePermalinkRequest = async () => {
-    const permalinkUrl = urlUtils.createFullyQualifiedUrl(routes.getDocumentRevisionUrl(selectedHistoryRevision._id));
-    try {
-      await window.navigator.clipboard.writeText(permalinkUrl);
-      message.success(t('permalinkCopied'));
-    } catch (error) {
-      const msg = (
-        <span>
-          <span>{t('permalinkCouldNotBeCopied')}:</span>
-          <br />
-          <a href={permalinkUrl}>{permalinkUrl}</a>
-        </span>
-      );
-      message.error(msg, 10);
-    }
+  const handleHistoryPanelToggleClick = () => {
+    setIsHistoryPanelMinimized(!isHistoryPanelMinimized);
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleSelectedRevisionChange = index => {
-    setSelectedHistoryRevision(historyRevisions[index]);
+  const handleViewDocumentRevisionClick = documentRevisionId => {
+    const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
+    const versionInfo = getDocumentRevisionHistoryVersionInfo(historyDocumentRevisions, documentRevisionToView._id);
+
+    setHistorySelectedDocumentRevision(documentRevisionToView);
+    setFocusHeaderHistoryInfo(versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version }));
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleRestoreRevision = () => {
+  const handleRestoreDocumentRevisionClick = ({ documentRevisionId, documentId }) => {
     confirmDocumentRevisionRestoration(
       t,
-      selectedHistoryRevision,
+      historySelectedDocumentRevision,
       async () => {
         try {
           const { document: updatedDoc, documentRevisions } = await documentApiClient.restoreDocumentRevision({
-            documentId: selectedHistoryRevision.documentId,
-            revisionId: selectedHistoryRevision._id
+            documentId,
+            revisionId: documentRevisionId
           });
+          const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 
           setDoc(updatedDoc);
           setCurrentSections(updatedDoc.sections);
-          setHistoryRevisions(documentRevisions);
-          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+          setHistoryDocumentRevisions(documentRevisions);
+          setHistorySelectedDocumentRevision(latestDocumentRevision);
+          setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
         } catch (error) {
           handleApiError({ error, logger, t });
           throw error;
@@ -551,20 +584,22 @@ function Document({ initialState, PageTemplate }) {
     }
 
     const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentId);
+    const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 
-    setHistoryRevisions(documentRevisions);
-    setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+    setHistoryDocumentRevisions(documentRevisions);
+    setHistorySelectedDocumentRevision(latestDocumentRevision);
+    setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
   }, [doc, documentApiClient, t]);
 
   const handleSectionHardDelete = useCallback(index => {
     confirmSectionHardDelete(
       t,
       async ({ reason, deleteAllRevisions }) => {
-        const section = selectedHistoryRevision.sections[index];
+        const section = historySelectedDocumentRevision.sections[index];
         await hardDeleteSection({ section, reason, deleteAllRevisions });
       }
     );
-  }, [hardDeleteSection, selectedHistoryRevision, t]);
+  }, [hardDeleteSection, historySelectedDocumentRevision, t]);
 
   const handleDocumentCommentPostClick = async ({ topic, text }) => {
     try {
@@ -624,73 +659,100 @@ function Document({ initialState, PageTemplate }) {
   );
 
   const renderHistoryFocusHeader = () => (
-    <FocusHeader title={t('history')} onClose={handleHistoryClose} />
+    <FocusHeader title={t('history')} onClose={handleHistoryClose}>
+      <div className="DocumentPage-focusHeaderVersionHistoryInfo">
+        <EyeOutlined />{focusHeaderHistoryInfo}
+      </div>
+    </FocusHeader>
   );
 
-  let focusHeader;
-  switch (view) {
-    case VIEW.edit:
-      focusHeader = renderEditFocusHeader();
-      break;
-    case VIEW.comments:
-      focusHeader = renderCommentsFocusHeader();
-      break;
-    case VIEW.history:
-      focusHeader = renderHistoryFocusHeader();
-      break;
-    default:
-      focusHeader = null;
-      break;
-  }
+  const renderFocusHeader = () => {
+    switch (view) {
+      case VIEW.edit:
+        return renderEditFocusHeader();
+      case VIEW.comments:
+        return renderCommentsFocusHeader();
+      case VIEW.history:
+        return renderHistoryFocusHeader();
+      default:
+        return null;
+    }
+  };
 
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
-      <PageTemplate alerts={alerts} focusHeader={focusHeader}>
-        <div className="DocumentPage" ref={pageRef}>
-          {!!room && (
-            <Breadcrumb className="Breadcrumbs">
-              <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
-              <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
-              <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
-            </Breadcrumb>
-          )}
-          <div ref={sectionsWrapperRef}>
-            <SectionsDisplay
-              sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
-              pendingSectionKeys={pendingTemplateSectionKeys}
-              editedSectionKeys={editedSectionKeys}
-              canEdit={view === VIEW.edit}
-              canHardDelete={!!userCanHardDelete && view === VIEW.history}
-              onPendingSectionApply={handlePendingSectionApply}
-              onPendingSectionDiscard={handlePendingSectionDiscard}
-              onSectionContentChange={handleSectionContentChange}
-              onSectionCopyToClipboard={handleSectionCopyToClipboard}
-              onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
-              onSectionMove={handleSectionMove}
-              onSectionInsert={handleSectionInsert}
-              onSectionDuplicate={handleSectionDuplicate}
-              onSectionDelete={handleSectionDelete}
-              onSectionHardDelete={handleSectionHardDelete}
-              onSectionEditEnter={handleSectionEditEnter}
-              onSectionEditLeave={handleSectionEditLeave}
-              />
-          </div>
-          <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
+      <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} mainRef={pageRef} headerRef={headerRef}>
+        <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history && !isHistoryPanelMinimized })}>
+          <div className="DocumentPage-document">
+            {!!room && (
+              <Breadcrumb className="Breadcrumbs">
+                <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+                <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
+                <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
+              </Breadcrumb>
+            )}
 
-          {view === VIEW.comments && !!isMounted.current && (
-            <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
-              <div className="DocumentPage-commentsSectionHeader">{t('comments')}</div>
-              <DocumentCommentsPanel
-                documentComments={documentComments}
-                isLoading={!areDocumentCommentsInitiallyLoaded}
-                onDocumentCommentPostClick={handleDocumentCommentPostClick}
-                onDocumentCommentDeleteClick={handleDocumentCommentDeleteClick}
-                onTopicChangeClick={handleDocumentCommentsTopicChangeClick}
+            <div>
+              <SectionsDisplay
+                sections={view === VIEW.history ? historySelectedDocumentRevision?.sections || [] : currentSections}
+                pendingSectionKeys={pendingTemplateSectionKeys}
+                editedSectionKeys={editedSectionKeys}
+                canEdit={view === VIEW.edit}
+                canHardDelete={!!userCanHardDelete && view === VIEW.history}
+                onPendingSectionApply={handlePendingSectionApply}
+                onPendingSectionDiscard={handlePendingSectionDiscard}
+                onSectionContentChange={handleSectionContentChange}
+                onSectionCopyToClipboard={handleSectionCopyToClipboard}
+                onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
+                onSectionMove={handleSectionMove}
+                onSectionInsert={handleSectionInsert}
+                onSectionDuplicate={handleSectionDuplicate}
+                onSectionDelete={handleSectionDelete}
+                onSectionHardDelete={handleSectionHardDelete}
+                onSectionEditEnter={handleSectionEditEnter}
+                onSectionEditLeave={handleSectionEditLeave}
                 />
-            </section>
-          )}
+            </div>
+            <CreditsFooter doc={historySelectedDocumentRevision ? null : doc} revision={historySelectedDocumentRevision} />
+
+            {view === VIEW.comments && !!isMounted.current && (
+              <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
+                <div className="DocumentPage-commentsSectionHeader">{t('comments')}</div>
+                <DocumentCommentsPanel
+                  documentComments={documentComments}
+                  isLoading={!areDocumentCommentsInitiallyLoaded}
+                  onDocumentCommentPostClick={handleDocumentCommentPostClick}
+                  onDocumentCommentDeleteClick={handleDocumentCommentDeleteClick}
+                  onTopicChangeClick={handleDocumentCommentsTopicChangeClick}
+                  />
+              </section>
+            )}
+          </div>
         </div>
       </PageTemplate>
+
+      {view === VIEW.history && (
+        <div
+          style={{ ...historyPanelPositionInPx }}
+          className={classNames('DocumentPage-historyPanel', { 'is-minimized': isHistoryPanelMinimized })}
+          >
+          <div className="DocumentPage-historyPanelContentWrapper">
+            <div className="DocumentPage-historyPanelContentToggle" onClick={handleHistoryPanelToggleClick}>
+              {isHistoryPanelMinimized ? <ArrowLeftOutlined /> : <ArrowRightOutlined />}
+            </div>
+            <div className="DocumentPage-historyPanelContent">
+              <DocumentVersionHistory
+                canRestore={userCanRestoreDocumentRevisions}
+                documentRevisions={historyDocumentRevisions}
+                selectedDocumentRevision={historySelectedDocumentRevision}
+                onViewClick={handleViewDocumentRevisionClick}
+                onRestoreClick={handleRestoreDocumentRevisionClick}
+                />
+            </div>
+          </div>
+        </div>
+      )}
+
       {!!actionsPanelPositionInPx && view === VIEW.display && (
         <Fragment>
           {!!isVerifiedDocument && (

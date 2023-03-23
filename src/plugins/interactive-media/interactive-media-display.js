@@ -12,7 +12,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { ensureIsIncluded, replaceItemAt } from '../../utils/array-utils.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import { CheckOutlined, CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, LeftOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons';
 
 const RadioGroup = Radio.Group;
 
@@ -124,7 +124,7 @@ function InteractiveMediaDisplay({ content }) {
             <Button type="primary" icon={<RightOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
           )}
           {interactingChapterIndex === chapters.length - 1 && (
-            <Button type="primary" icon={<ReloadOutlined />} onClick={handleResetChaptersClick}>{t('common:reset')}</Button>
+            <Button type="primary" icon={<UndoOutlined />} onClick={handleResetChaptersClick}>{t('common:reset')}</Button>
           )}
         </div>
       </div>

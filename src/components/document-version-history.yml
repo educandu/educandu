@@ -1,0 +1,22 @@
+documentVersionHistory:
+  version:
+    en: Version
+    de: Version
+  latest:
+    en: latest
+    de: letzte
+  permalinkButtonTooltip:
+    en: Copy version permalink
+    de: Version-Permalink kopieren
+  permalinkCopied:
+    en: The permalink was copied to the clipboard
+    de: Der Permalink wurde in die Zwischenablage kopiert
+  permalinkCouldNotBeCopied:
+    en: The permalink could not be copied to the clipboard
+    de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
+  restoreButtonToltip:
+    en: Restore version
+    de: Version wiederherstellen
+  viewButtonTooltip:
+    en: View version
+    de: Version ansehen
