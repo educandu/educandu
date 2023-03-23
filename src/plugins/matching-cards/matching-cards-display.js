@@ -3,7 +3,7 @@ import { SIZE } from './constants.js';
 import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useIsMounted } from '../../ui/hooks.js';
-import { ReloadOutlined } from '@ant-design/icons';
+import { UndoOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import FlipCard from '../../components/flip-card.js';
 import MatchingCardsTile from './matching-cards-tile-display.js';
@@ -118,7 +118,7 @@ function MatchingCardsDisplay({ content }) {
       <Tooltip title={t('common:reset')}>
         <Button
           shape="circle"
-          icon={<ReloadOutlined />}
+          icon={<UndoOutlined />}
           onClick={handleResetClick}
           className="MatchingCardsDisplay-resetButton"
           />
