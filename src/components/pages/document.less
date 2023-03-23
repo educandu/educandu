@@ -1,4 +1,21 @@
-.DocumentPage {}
+@document-page-history-panel-width: 250px;
+
+.DocumentPage {
+  display: grid;
+
+  &.DocumentPage--historyView {
+    grid-template-columns: 1fr @document-page-history-panel-width;
+  }
+}
+
+.DocumentPage-historyPanel {
+  .m-box-shadow;
+  position: fixed;
+  right: 0;
+  background-color: @edu-white;
+  width: @document-page-history-panel-width;
+  border-left: 1px solid @edu-border-color-base;
+}
 
 .DocumentPage-commentsSection {
   margin: 60px 0;

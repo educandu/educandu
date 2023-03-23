@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -24,6 +25,7 @@ import PluginRegistry from '../../plugins/plugin-registry.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentVersionHistory from '../document-version-history.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import CommentApiClient from '../../api-clients/comment-api-client.js';
@@ -125,8 +127,8 @@ function Document({ initialState, PageTemplate }) {
   const user = useUser();
   const pageRef = useRef(null);
   const request = useRequest();
+  const headerRef = useRef(null);
   const isMounted = useIsMounted();
-  const sectionsWrapperRef = useRef(null);
   const commentsSectionRef = useRef(null);
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
@@ -151,6 +153,7 @@ function Document({ initialState, PageTemplate }) {
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
+  const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [areCommentsInitiallyLoaded, setAreCommentsInitiallyLoaded] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
@@ -174,13 +177,16 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const ensureActionsPanelPosition = useCallback(() => {
+    if (view !== VIEW.display) {
+      return;
+    }
+
     const windowWidth = Math.min(window.innerWidth, window.outerWidth);
+    const pageBoundingRect = pageRef.current.getBoundingClientRect();
 
     const fixedItemsLeftOffset = 40;
     const reservedFixedItemsWidth = 40;
-
-    const sectionsWrapperBoundingRect = sectionsWrapperRef.current.getBoundingClientRect();
-    const left = sectionsWrapperBoundingRect.left + sectionsWrapperBoundingRect.width + fixedItemsLeftOffset;
+    const left = pageBoundingRect.left + pageBoundingRect.width + fixedItemsLeftOffset;
 
     const fixedItemsPosition = {
       top: 130,
@@ -192,17 +198,35 @@ function Document({ initialState, PageTemplate }) {
 
     setVerifiedBadgePositionInPx(fixedItemsPosition);
     setActionsPanelPositionInPx({ ...fixedItemsPosition, top: fixedItemsPosition.top + actionsPanelTopOffset });
-  }, [isVerifiedDocument, sectionsWrapperRef]);
+  }, [view, isVerifiedDocument, pageRef]);
+
+  const ensureHistoryPanelPosition = useCallback(() => {
+    if (view !== VIEW.history) {
+      return;
+    }
+
+    const headerBoundingRect = headerRef.current.getBoundingClientRect();
+
+    const historyVerticalPadding = 10;
+    const top = headerBoundingRect.height + historyVerticalPadding;
+    const height = window.innerHeight - top - historyVerticalPadding;
+
+    setHistoryPanelPositionInPx({ top, height });
+  }, [view, headerRef]);
 
   useEffect(() => {
     ensureActionsPanelPosition();
-
     window.addEventListener('resize', ensureActionsPanelPosition);
 
-    return () => {
-      window.removeEventListener('resize', ensureActionsPanelPosition);
-    };
+    return () => window.removeEventListener('resize', ensureActionsPanelPosition);
   }, [ensureActionsPanelPosition]);
+
+  useEffect(() => {
+    ensureHistoryPanelPosition();
+    window.addEventListener('resize', ensureHistoryPanelPosition);
+
+    return () => window.removeEventListener('resize', ensureHistoryPanelPosition);
+  }, [ensureHistoryPanelPosition]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
@@ -627,70 +651,79 @@ function Document({ initialState, PageTemplate }) {
     <FocusHeader title={t('history')} onClose={handleHistoryClose} />
   );
 
-  let focusHeader;
-  switch (view) {
-    case VIEW.edit:
-      focusHeader = renderEditFocusHeader();
-      break;
-    case VIEW.comments:
-      focusHeader = renderCommentsFocusHeader();
-      break;
-    case VIEW.history:
-      focusHeader = renderHistoryFocusHeader();
-      break;
-    default:
-      focusHeader = null;
-      break;
-  }
+  const renderFocusHeader = () => {
+    switch (view) {
+      case VIEW.edit:
+        return renderEditFocusHeader();
+      case VIEW.comments:
+        return renderCommentsFocusHeader();
+      case VIEW.history:
+        return renderHistoryFocusHeader();
+      default:
+        return null;
+    }
+  };
 
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
-      <PageTemplate alerts={alerts} focusHeader={focusHeader}>
-        <div className="DocumentPage" ref={pageRef}>
-          {!!room && (
-            <Breadcrumb className="Breadcrumbs">
-              <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
-              <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
-              <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
-            </Breadcrumb>
-          )}
-          <div ref={sectionsWrapperRef}>
-            <SectionsDisplay
-              sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
-              pendingSectionKeys={pendingTemplateSectionKeys}
-              editedSectionKeys={editedSectionKeys}
-              canEdit={view === VIEW.edit}
-              canHardDelete={!!userCanHardDelete && view === VIEW.history}
-              onPendingSectionApply={handlePendingSectionApply}
-              onPendingSectionDiscard={handlePendingSectionDiscard}
-              onSectionContentChange={handleSectionContentChange}
-              onSectionCopyToClipboard={handleSectionCopyToClipboard}
-              onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
-              onSectionMove={handleSectionMove}
-              onSectionInsert={handleSectionInsert}
-              onSectionDuplicate={handleSectionDuplicate}
-              onSectionDelete={handleSectionDelete}
-              onSectionHardDelete={handleSectionHardDelete}
-              onSectionEditEnter={handleSectionEditEnter}
-              onSectionEditLeave={handleSectionEditLeave}
-              />
-          </div>
-          <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
+      <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} mainRef={pageRef} headerRef={headerRef}>
+        <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history })}>
+          <div className="DocumentPage-document">
+            {!!room && (
+              <Breadcrumb className="Breadcrumbs">
+                <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+                <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
+                <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
+              </Breadcrumb>
+            )}
 
-          {view === VIEW.comments && !!isMounted.current && (
-            <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
-              <div className="DocumentPage-commentsSectionHeader">{t('comments')}</div>
-              <CommentsPanel
-                comments={comments}
-                isLoading={!areCommentsInitiallyLoaded}
-                onCommentPostClick={handleCommentPostClick}
-                onCommentDeleteClick={handleCommentDeleteClick}
-                onTopicChangeClick={handleCommentsTopicChangeClick}
+            <div>
+              <SectionsDisplay
+                sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
+                pendingSectionKeys={pendingTemplateSectionKeys}
+                editedSectionKeys={editedSectionKeys}
+                canEdit={view === VIEW.edit}
+                canHardDelete={!!userCanHardDelete && view === VIEW.history}
+                onPendingSectionApply={handlePendingSectionApply}
+                onPendingSectionDiscard={handlePendingSectionDiscard}
+                onSectionContentChange={handleSectionContentChange}
+                onSectionCopyToClipboard={handleSectionCopyToClipboard}
+                onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
+                onSectionMove={handleSectionMove}
+                onSectionInsert={handleSectionInsert}
+                onSectionDuplicate={handleSectionDuplicate}
+                onSectionDelete={handleSectionDelete}
+                onSectionHardDelete={handleSectionHardDelete}
+                onSectionEditEnter={handleSectionEditEnter}
+                onSectionEditLeave={handleSectionEditLeave}
                 />
-            </section>
-          )}
+            </div>
+            <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
+
+            {view === VIEW.comments && !!isMounted.current && (
+              <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
+                <div className="DocumentPage-commentsSectionHeader">{t('comments')}</div>
+                <CommentsPanel
+                  comments={comments}
+                  isLoading={!areCommentsInitiallyLoaded}
+                  onCommentPostClick={handleCommentPostClick}
+                  onCommentDeleteClick={handleCommentDeleteClick}
+                  onTopicChangeClick={handleCommentsTopicChangeClick}
+                  />
+              </section>
+            )}
+          </div>
         </div>
       </PageTemplate>
+
+      {view === VIEW.history && (
+        <div className="DocumentPage-historyPanel" style={{ ...historyPanelPositionInPx }}>
+          <DocumentVersionHistory
+            documentRevisions={historyRevisions}
+            />
+        </div>
+      )}
+
       {!!actionsPanelPositionInPx && view === VIEW.display && (
         <Fragment>
           {!!isVerifiedDocument && (
