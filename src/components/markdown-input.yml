@@ -3,5 +3,5 @@ markdownInput:
     en: Preview area
     de: Vorschaubereich
   resourceSelectorTooltip:
-    en: Click here to insert a link to a selected resource
-    de: Klicke hier, um einen Link zu einer ausgewählten Ressource einzufügen
+    en: Insert a link to a selected resource
+    de: Link zu einer ausgewählten Ressource einfügen
