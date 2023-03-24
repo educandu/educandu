@@ -3,8 +3,14 @@ import { createSandbox } from 'sinon';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
-import { ERROR_CODES, FAVORITE_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  EMAIL_NOTIFICATION_FREQUENCY,
+  ERROR_CODES,
+  FAVORITE_TYPE,
+  ROLE,
+  USER_ACTIVITY_TYPE
+} from '../domain/constants.js';
 import {
   destroyTestEnvironment,
   setupTestEnvironment,
@@ -951,6 +957,44 @@ describe('user-service', () => {
             }
           }
         ]);
+      });
+    });
+  });
+
+  describe('closeUserAccount', () => {
+    let userFetchFromDbAfterAccountWasClosed;
+
+    beforeEach(async () => {
+      user.organization = 'My Organization';
+      user.introduction = 'Hello World';
+      user.role = ROLE.maintainer;
+      user.emailNotificationFrequency = EMAIL_NOTIFICATION_FREQUENCY.daily;
+      await updateTestUser(container, user);
+      await sut.closeUserAccount(user._id);
+      userFetchFromDbAfterAccountWasClosed = await db.users.findOne({ _id: user._id });
+    });
+
+    it('resets all user fields except for _id, email, displayName', () => {
+      expect(userFetchFromDbAfterAccountWasClosed).toStrictEqual({
+        _id: user._id,
+        email: user.email,
+        passwordHash: null,
+        displayName: user.displayName,
+        organization: '',
+        introduction: '',
+        role: ROLE.user,
+        expiresOn: null,
+        verificationCode: null,
+        storage: {
+          planId: null,
+          usedBytes: 0,
+          reminders: []
+        },
+        favorites: [],
+        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.never,
+        accountLockedOn: null,
+        accountClosedOn: expect.any(Date),
+        lastLoggedInOn: null
       });
     });
   });

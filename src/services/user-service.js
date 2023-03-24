@@ -546,7 +546,7 @@ class UserService {
       displayName: null,
       organization: '',
       introduction: '',
-      role: '',
+      role: DEFAULT_ROLE,
       expiresOn: null,
       verificationCode: null,
       storage: {
