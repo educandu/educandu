@@ -257,6 +257,20 @@
   min-height: 255px;
 }
 
+.m-row-card(@countPerRow) {
+  .ant-card-body {
+    padding: @edu-content-padding !important;
+  }
+
+  .ant-card-actions > * {
+    display: flex;
+    align-items: centerce;
+    justify-content: center;
+  }
+
+  width: ((@edu-content-width-wide - ((@countPerRow - 1) * 25px) - 2 * @edu-page-content-padding) / @countPerRow);
+}
+
 .m-card-wrapper {
   display: flex;
   flex-wrap: wrap;

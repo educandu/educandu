@@ -60,21 +60,14 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
 
   const renderFavoriteUserState = favoriteUserState => {
     return (
-      <div className="FavoritesTab-cardWrapper" key={favoriteUserState.id}>
+      <div key={favoriteUserState.id}>
         <UserCard
           userId={favoriteUserState.id}
-          displayName={favoriteUserState.data.displayName}
+          title={favoriteUserState.data.displayName}
+          detail={favoriteUserState.data.organization}
           avatarUrl={favoriteUserState.data.avatarUrl}
+          onFavorite={handleToggleFavoriteUser}
           />
-        {!favoriteUserState.isFavorite && <div className="FavoritesTab-cardOverlay" />}
-        <div className="FavoritesTab-favoriteStart" >
-          <FavoriteStar
-            type={FAVORITE_TYPE.user}
-            id={favoriteUserState.id}
-            submitChange={false}
-            onToggle={isFavorite => handleToggleFavoriteUser(favoriteUserState.id, isFavorite)}
-            />
-        </div>
       </div>
     );
   };

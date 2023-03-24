@@ -1637,12 +1637,12 @@
       "de": "Raum-Mitgliedschaft beenden"
     },
     "invitedOn": {
-      "en": "Invited on",
-      "de": "Eingeladen am"
+      "en": "Invited",
+      "de": "Eingeladen"
     },
     "expiresOn": {
-      "en": "Expires on",
-      "de": "Läuft ab am"
+      "en": "Expires",
+      "de": "Läuft ab"
     },
     "inviteMembersButton": {
       "en": "Invite members",
@@ -2191,12 +2191,6 @@
     "storageSpaceExceeded": {
       "en": "Exceedance",
       "de": "Überschreitung"
-    }
-  },
-  "userCard": {
-    "profileButton": {
-      "en": "View profile",
-      "de": "Profil ansehen"
     }
   },
   "userStepsForm": {

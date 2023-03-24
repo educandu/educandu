@@ -1,59 +1,94 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Button } from 'antd';
+import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
+import { Avatar, Card, Tooltip } from 'antd';
+import FavoriteStar from './favorite-star.js';
+import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { MailOutlined } from '@ant-design/icons';
-import { AVATAR_SIZE } from '../domain/constants.js';
+import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
 
-function UserCard({ userId, displayName, email, avatarUrl, detail }) {
-  const { t } = useTranslation('userCard');
-
-  const handleButtonClick = () => {
-    window.location = routes.getUserProfileUrl(userId);
+function UserCard({ userId, title, detail, email, avatarUrl, onFavorite, deleteTooltip, onDelete }) {
+  const handleCardClick = () => {
+    if (userId) {
+      window.location = routes.getUserProfileUrl(userId);
+    }
   };
 
-  return (
-    <div className="UserCard">
-      <div>
-        <div className="UserCard-displayName">{displayName}</div>
-        {!!email && (
-          <div className="UserCard-email">
-            <MailOutlined />
-            <a className="UserCard-emailLink" href={`mailto:${encodeURI(email)}`}>{email}</a>
-          </div>
-        )}
+  const renderFavoriteAction = () => {
+    return (
+      <div key="favorite" className="UserCard-favoriteAction">
+        <FavoriteStar
+          id={userId}
+          submitChange={false}
+          type={FAVORITE_TYPE.user}
+          onToggle={isFavorite => onFavorite(userId, isFavorite)}
+          />
       </div>
-      <div className="UserCard-content">
+    );
+  };
+
+  const renderDeleteAction = () => {
+    return (
+      <Tooltip title={deleteTooltip} key="delete">
+        <DeleteButton onClick={onDelete} />
+      </Tooltip>
+    );
+  };
+
+  const actions = [];
+  if (onFavorite) {
+    actions.push(renderFavoriteAction());
+  }
+  if (onDelete) {
+    actions.push(renderDeleteAction());
+  }
+
+  return (
+    <Card className="UserCard" actions={actions} >
+      <div className={classNames('UserCard-content', { 'UserCard-content-clickable': !!userId })} onClick={handleCardClick}>
         <Avatar
           shape="circle"
           size={AVATAR_SIZE}
           className="UserCard-avatar u-avatar"
           src={avatarUrl || urlUtils.getGravatarUrl()}
           />
-        {detail}
+        <div className="UserCard-title">{title}</div>
+        <div className={classNames('UserCard-details', { 'UserCard-details--includesEmail': !!email })}>
+          {!!email && (
+            <div className="UserCard-email">
+              <MailOutlined />
+              <a className="UserCard-emailLink" href={`mailto:${encodeURI(email)}`}>{email}</a>
+            </div>
+          )}
+          {detail}
+        </div>
       </div>
-      <Button type="primary" className="UserCard-button" onClick={handleButtonClick} disabled={!userId}>
-        {t('profileButton')}
-      </Button>
-    </div>
+    </Card>
   );
 }
 
 UserCard.propTypes = {
   userId: PropTypes.string,
   email: PropTypes.string,
-  displayName: PropTypes.node.isRequired,
+  title: PropTypes.node.isRequired,
   avatarUrl: PropTypes.string,
-  detail: PropTypes.node
+  detail: PropTypes.node,
+  deleteTooltip: PropTypes.string,
+  onFavorite: PropTypes.func,
+  onDelete: PropTypes.func
 };
 
 UserCard.defaultProps = {
   userId: null,
   email: null,
   avatarUrl: '',
-  detail: null
+  detail: null,
+  deleteTooltip: null,
+  onFavorite: null,
+  onDelete: null
 };
 
 export default UserCard;

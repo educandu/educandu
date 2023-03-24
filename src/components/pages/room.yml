@@ -30,11 +30,11 @@ room:
     en: Cancel room membership
     de: Raum-Mitgliedschaft beenden
   invitedOn:
-    en: Invited on
-    de: Eingeladen am
+    en: Invited
+    de: Eingeladen
   expiresOn:
-    en: Expires on
-    de: Läuft ab am
+    en: Expires
+    de: Läuft ab
   inviteMembersButton:
     en: Invite members
     de: Mitglieder einladen

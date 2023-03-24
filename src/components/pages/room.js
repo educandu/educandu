@@ -546,18 +546,17 @@ export default function Room({ PageTemplate, initialState }) {
       <div className="RoomPage-member" key={member.userId}>
         <UserCard
           userId={member.userId}
-          displayName={member.displayName}
-          email={member.email}
+          title={member.displayName}
           avatarUrl={member.avatarUrl}
+          email={member.email}
           detail={
             <div className="RoomPage-memberDetails">
               {`${t('common:joined')}: ${formatDate(member.joinedOn)}`}
             </div>
           }
+          deleteTooltip={t('removeMember')}
+          onDelete={() => handleDeleteRoomMemberClick(member)}
           />
-        <Tooltip title={t('removeMember')}>
-          <DeleteButton className="RoomPage-memberDeleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
-        </Tooltip>
       </div>
     );
   };
@@ -567,21 +566,18 @@ export default function Room({ PageTemplate, initialState }) {
       <div className="RoomPage-member" key={invitation._id}>
         <UserCard
           userId={invitation.userId}
-          displayName={<i>{t('pendingInvitation')}</i>}
-          email={invitation.email}
+          title={<i>{t('pendingInvitation')}</i>}
           avatarUrl={invitation.avatarUrl}
+          email={invitation.email}
           detail={
             <div className="RoomPage-memberDetails">
               <span className="RoomPage-memberDetail">{`${t('invitedOn')}: ${formatDate(invitation.sentOn)}`}</span>
               <span className="RoomPage-memberDetail">{`${t('expiresOn')}: ${formatDate(invitation.expiresOn)}`}</span>
             </div>
           }
+          deleteTooltip={t('revokeInvitation')}
+          onDelete={() => handleRemoveRoomInvitationClick(invitation)}
           />
-        {viewMode === VIEW_MODE.owner && (
-        <Tooltip title={t('revokeInvitation')}>
-          <DeleteButton className="RoomPage-memberDeleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
-        </Tooltip>
-        )}
       </div>
     );
   };
