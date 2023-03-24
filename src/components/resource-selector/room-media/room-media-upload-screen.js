@@ -10,10 +10,10 @@ import FileIcon from '../../icons/general/file-icon.js';
 import ResourceDetails from '../shared/resource-details.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useRoomMediaContext } from '../../room-media-context.js';
 import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../../../domain/constants.js';
+import { useRoomMediaContext, useSetRoomMediaContext } from '../../room-media-context.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
@@ -49,11 +49,13 @@ function RoomMediaUploadScreen({
   onSelectFileClick
 }) {
   const { uiLocale } = useLocale();
+  const roomMediaContext = useRoomMediaContext();
+  const setRoomMediaContext = useSetRoomMediaContext();
   const { t } = useTranslation('roomMediaUploadScreen');
+
   const [optimizeImages, setOptimizeImages] = useState(true);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [previewedFileIndex, setPreviewedFileIndex] = useState(-1);
-  const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext();
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
 

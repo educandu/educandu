@@ -24,6 +24,7 @@ import DragAndDropContainer from '../drag-and-drop-container.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
+import { RoomMediaContextProvider } from '../room-media-context.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
@@ -34,7 +35,7 @@ import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
-import { roomShape, invitationShape, documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
+import { roomShape, invitationShape, documentExtendedMetadataShape, roomMediaContextShape } from '../../ui/default-prop-types.js';
 import {
   confirmDocumentDelete,
   confirmRoomDelete,
@@ -598,134 +599,136 @@ export default function Room({ PageTemplate, initialState }) {
     : t('inviteMembersButton');
 
   return (
-    <PageTemplate>
-      <div className="RoomPage">
-        <Breadcrumb className="Breadcrumbs">
-          <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
-          <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
-        </Breadcrumb>
-        <div className="RoomPage-title">
-          <div>{room.name}</div>
-          <div className="RoomPage-titleStar">
-            <FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />
+    <RoomMediaContextProvider context={initialState.roomMediaContext}>
+      <PageTemplate>
+        <div className="RoomPage">
+          <Breadcrumb className="Breadcrumbs">
+            <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+            <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
+          </Breadcrumb>
+          <div className="RoomPage-title">
+            <div>{room.name}</div>
+            <div className="RoomPage-titleStar">
+              <FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />
+            </div>
           </div>
-        </div>
-        <div className="RoomPage-subtitle">
-          <div>
-            {t('common:by')} <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
+          <div className="RoomPage-subtitle">
+            <div>
+              {t('common:by')} <a className="RoomPage-subtitleLink" href={routes.getUserProfileUrl(room.owner._id)}>{room.owner.displayName}</a>
+            </div>
+            {viewMode !== VIEW_MODE.owner && (
+              <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('cancelRoomMembership')}</a>
+            )}
           </div>
+
           {viewMode !== VIEW_MODE.owner && (
-            <a className="RoomPage-leaveRoomLink" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('cancelRoomMembership')}</a>
+            <div className="RoomPage-documents RoomPage-documents--roomMemberView">
+              {renderRoomDescription()}
+              {viewMode === VIEW_MODE.collaboratingMember && renderCreateDocumentButton()}
+              {!visibleDocumentsCount && t('documentsPlaceholder')}
+              {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
+              {viewMode === VIEW_MODE.collaboratingMember && renderDocumentsAsDraggable()}
+              {renderMessageBoard()}
+            </div>
           )}
-        </div>
 
-        {viewMode !== VIEW_MODE.owner && (
-          <div className="RoomPage-documents RoomPage-documents--roomMemberView">
-            {renderRoomDescription()}
-            {viewMode === VIEW_MODE.collaboratingMember && renderCreateDocumentButton()}
-            {!visibleDocumentsCount && t('documentsPlaceholder')}
-            {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
-            {viewMode === VIEW_MODE.collaboratingMember && renderDocumentsAsDraggable()}
-            {renderMessageBoard()}
-          </div>
-        )}
-
-        {viewMode === VIEW_MODE.owner && (
-          <Tabs
-            className="Tabs"
-            defaultActiveKey="1"
-            type="line"
-            size="middle"
-            items={[
-              {
-                key: '1',
-                label: t('roomViewTitle'),
-                children: (
-                  <div className="Tabs-tabPane">
-                    {renderRoomDescription()}
-                    {renderCreateDocumentButton()}
-                    {!visibleDocumentsCount && t('documentsPlaceholder')}
-                    {renderDocumentsAsDraggable()}
-                    {renderMessageBoard()}
-                  </div>
-                )
-              },
-              {
-                key: '2',
-                label: membersTabTitle,
-                children: (
-                  <div className="Tabs-tabPane">
-                    <Button
-                      type="primary"
-                      icon={<MailOutlined />}
-                      className="RoomPage-tabCreateItemButton"
-                      onClick={handleCreateInvitationButtonClick}
-                      >
-                      {inviteMemberButtonText}
-                    </Button>
-                    <div className="RoomPage-members">
-                      {room.members.map(renderRoomMember)}
-                      {invitations.map(renderRoomInvitation)}
+          {viewMode === VIEW_MODE.owner && (
+            <Tabs
+              className="Tabs"
+              defaultActiveKey="1"
+              type="line"
+              size="middle"
+              items={[
+                {
+                  key: '1',
+                  label: t('roomViewTitle'),
+                  children: (
+                    <div className="Tabs-tabPane">
+                      {renderRoomDescription()}
+                      {renderCreateDocumentButton()}
+                      {!visibleDocumentsCount && t('documentsPlaceholder')}
+                      {renderDocumentsAsDraggable()}
+                      {renderMessageBoard()}
                     </div>
-                    <RoomInvitationCreationModal
-                      isOpen={isRoomInvitationModalOpen}
-                      onOk={handleInvitationModalClose}
-                      onCancel={handleInvitationModalClose}
-                      roomId={room._id}
-                      />
-                  </div>
-                )
-              },
-              {
-                key: '3',
-                label: t('common:settings'),
-                children: (
-                  <div className="Tabs-tabPane" >
-                    <div className="RoomPage-sectionHeadline">{t('roomMetadataHeadline')}</div>
-                    <section className="RoomPage-metadataSection">
-                      <RoomMetadataForm
-                        formRef={formRef}
-                        room={room}
-                        editMode
-                        onSubmit={handleRoomMetadataFormSubmitted}
-                        onFieldsChange={handleRoomMetadataFormFieldsChanged}
-                        />
+                  )
+                },
+                {
+                  key: '2',
+                  label: membersTabTitle,
+                  children: (
+                    <div className="Tabs-tabPane">
                       <Button
                         type="primary"
-                        disabled={isRoomUpdateButtonDisabled}
-                        onClick={handleUpdateRoomClick}
+                        icon={<MailOutlined />}
+                        className="RoomPage-tabCreateItemButton"
+                        onClick={handleCreateInvitationButtonClick}
                         >
-                        {t('common:update')}
+                        {inviteMemberButtonText}
                       </Button>
-                    </section>
-                    <IrreversibleActionsSection
-                      className="RoomPage-irreversibleActionsSection"
-                      actions={[
-                        {
-                          name: t('deleteRoomTitle'),
-                          description: t('deleteRoomDescription'),
-                          button: {
-                            text: t('deleteRoomButton'),
-                            icon: <DeleteIcon />,
-                            onClick: handleDeleteRoomClick
+                      <div className="RoomPage-members">
+                        {room.members.map(renderRoomMember)}
+                        {invitations.map(renderRoomInvitation)}
+                      </div>
+                      <RoomInvitationCreationModal
+                        isOpen={isRoomInvitationModalOpen}
+                        onOk={handleInvitationModalClose}
+                        onCancel={handleInvitationModalClose}
+                        roomId={room._id}
+                        />
+                    </div>
+                  )
+                },
+                {
+                  key: '3',
+                  label: t('common:settings'),
+                  children: (
+                    <div className="Tabs-tabPane" >
+                      <div className="RoomPage-sectionHeadline">{t('roomMetadataHeadline')}</div>
+                      <section className="RoomPage-metadataSection">
+                        <RoomMetadataForm
+                          formRef={formRef}
+                          room={room}
+                          editMode
+                          onSubmit={handleRoomMetadataFormSubmitted}
+                          onFieldsChange={handleRoomMetadataFormFieldsChanged}
+                          />
+                        <Button
+                          type="primary"
+                          disabled={isRoomUpdateButtonDisabled}
+                          onClick={handleUpdateRoomClick}
+                          >
+                          {t('common:update')}
+                        </Button>
+                      </section>
+                      <IrreversibleActionsSection
+                        className="RoomPage-irreversibleActionsSection"
+                        actions={[
+                          {
+                            name: t('deleteRoomTitle'),
+                            description: t('deleteRoomDescription'),
+                            button: {
+                              text: t('deleteRoomButton'),
+                              icon: <DeleteIcon />,
+                              onClick: handleDeleteRoomClick
+                            }
                           }
-                        }
-                      ]}
-                      />
-                  </div>
-                )
-              }
-            ]}
-            />
-        )}
+                        ]}
+                        />
+                    </div>
+                  )
+                }
+              ]}
+              />
+          )}
 
-        <DocumentMetadataModal
-          {...documentMetadataModalState}
-          onSave={handleDocumentMetadataModalSave}
-          onClose={handleDocumentMetadataModalCancel}
-          />
-      </div>
-    </PageTemplate>
+          <DocumentMetadataModal
+            {...documentMetadataModalState}
+            onSave={handleDocumentMetadataModalSave}
+            onClose={handleDocumentMetadataModalCancel}
+            />
+        </div>
+      </PageTemplate>
+    </RoomMediaContextProvider>
   );
 }
 
@@ -734,6 +737,7 @@ Room.propTypes = {
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(invitationShape).isRequired,
-    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+    roomMediaContext: roomMediaContextShape
   }).isRequired
 };

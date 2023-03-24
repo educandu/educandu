@@ -12,6 +12,7 @@ import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentService from '../services/document-service.js';
+import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -350,13 +351,26 @@ export default class RoomController {
       ? await this.roomService.getRoomInvitations(roomId)
       : [];
 
+    const { storagePlan, usedBytes } = await this.roomService.getAllRoomMedia({ user, roomId });
+    const roomMediaContext = storagePlan || usedBytes
+      ? {
+        roomId: room._id,
+        path: getRoomMediaRoomPath(room._id),
+        usedBytes: usedBytes || 0,
+        maxBytes: storagePlan?.maxBytes || 0,
+        isDeletionEnabled: isRoomOwner({ room: room || null, userId: user._id })
+      }
+      : null;
+
     const documentsMetadata = await this.documentService.getDocumentsExtendedMetadataByIds(room.documents);
 
     const mappedRoom = await this.clientDataMappingService.mapRoom({ room, viewingUser: user });
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, documents: mappedDocumentsMetadata, invitations: mappedInvitations });
+    const initialState = { room: mappedRoom, documents: mappedDocumentsMetadata, invitations: mappedInvitations, roomMediaContext };
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, initialState);
   }
 
   async handleAuthorizeResourcesAccess(req, res) {
