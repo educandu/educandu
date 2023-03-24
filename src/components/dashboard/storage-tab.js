@@ -148,15 +148,17 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
       <RoomMediaContextProvider context={roomMediaContext}>
         <div className="StorageTab-tabInfo">{t('info')}</div>
         <section className="StorageTab-content">
-          {!roomMediaOverview?.storagePlan && !!loading && <Spin className="u-spin" />}
-          {!roomMediaOverview?.storagePlan && !loading && t('noStoragePlan')}
-          {!!roomMediaOverview?.storagePlan && (
+          {!!loading && <Spin className="u-spin" />}
+          <div className="StorageTab-planName">
+            {!loading && !roomMediaOverview?.storagePlan && t('noStoragePlan')}
+            {!loading && !!roomMediaOverview?.storagePlan && (
+              <div>{t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b></div>
+            )}
+          </div>
+          {!loading && !!(roomMediaOverview?.storagePlan || roomMediaOverview?.usedBytes) && (
             <Fragment>
-              <div className="StorageTab-planName">
-                {t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b>
-              </div>
               <div className="StorageTab-usedStorage">
-                <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan.maxBytes} showLabel />
+                <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan?.maxBytes} showLabel />
               </div>
               {!!selectedRoomId && (
                 <Fragment>
@@ -178,7 +180,11 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
                       />
                   </div>
                   <div>
-                    <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={loading || isUpdating}>
+                    <Button
+                      icon={<UploadIcon />}
+                      disabled={loading || isUpdating || !roomMediaOverview?.storagePlan}
+                      onClick={handleUploadButtonClick}
+                      >
                       {t('common:uploadFiles')}
                     </Button>
                   </div>
