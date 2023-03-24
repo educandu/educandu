@@ -84,7 +84,8 @@ export const EMAIL_NOTIFICATION_FREQUENCY = {
 export const INVALID_ROOM_INVITATION_REASON = {
   token: 'token',
   room: 'room',
-  user: 'user'
+  differenUser: 'different-user',
+  unconfirmedUser: 'unconfirmed-user'
 };
 
 export const RESOURCE_TYPE = {

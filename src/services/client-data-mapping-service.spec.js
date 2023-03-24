@@ -419,6 +419,52 @@ describe('client-data-mapping-service', () => {
       });
     });
 
+    describe('when the viewingUser is the room owner and one member is a non existent users', () => {
+      beforeEach(async () => {
+        userStore.getUsersByIds.resolves([member1]);
+        result = await sut.mapRoom({ room, viewingUser: { _id: owner._id, role: ROLE.admin } });
+      });
+
+      it('should call getUserById with "owner"', () => {
+        assert.calledWith(userStore.getUserById, 'owner');
+      });
+
+      it('should call getUsersById with "[member1, member2]"', () => {
+        assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
+      });
+
+      it('should return the mapped result', () => {
+        expect(result).toEqual({
+          ...room,
+          createdOn: room.createdOn.toISOString(),
+          updatedOn: room.updatedOn.toISOString(),
+          owner: {
+            displayName: owner.displayName,
+            email: owner.email,
+            _id: owner._id
+          },
+          members: [
+            {
+              userId: room.members[0].userId,
+              email: member1.email,
+              displayName: member1.displayName,
+              joinedOn: room.members[0].joinedOn.toISOString(),
+              avatarUrl: 'www://avatar.domain/member1@test.com'
+            }
+          ],
+          messages: [
+            {
+              key: room.messages[0].key,
+              text: room.messages[0].text,
+              emailNotification: room.messages[0].emailNotification,
+              createdOn: room.messages[0].createdOn.toISOString()
+            }
+          ],
+          documents: ['documentId1']
+        });
+      });
+    });
+
     describe('when the viewingUser is not set', () => {
       beforeEach(async () => {
         result = await sut.mapRoom({ room });

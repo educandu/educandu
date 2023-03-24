@@ -1644,9 +1644,13 @@
       "en": "The invitation code is invalid or expired.",
       "de": "Der Einladungs-Code ist ungültig oder abgelaufen."
     },
-    "invalidUser": {
+    "differentUser": {
       "en": "The invitation was addressed to a different user.",
       "de": "Der Einladung war an einen anderen Benutzer adressiert."
+    },
+    "unconfirmedUser": {
+      "en": "Your user account has not been confirmed yet.",
+      "de": "Dein Benutzerkonto wurde noch nicht bestätigt."
     },
     "invalidRoom": {
       "en": "The room no longer exists.",

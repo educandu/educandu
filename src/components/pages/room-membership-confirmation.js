@@ -71,8 +71,9 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
           {!invalidInvitationReason && !confirmed && renderSpinner()}
           {!invalidInvitationReason && !!confirmed && renderSuccessMessage()}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.token && renderInvalidMessage(t('invalidToken'))}
-          {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.user && renderInvalidMessage(t('invalidUser'))}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.room && renderInvalidMessage(t('invalidRoom'))}
+          {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.differenUser && renderInvalidMessage(t('differentUser'))}
+          {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.unconfirmedUser && renderInvalidMessage(t('unconfirmedUser'))}
         </div>
       </div>
     </PageTemplate>

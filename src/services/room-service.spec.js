@@ -257,9 +257,18 @@ describe('room-service', () => {
       expect(roomSlug).toBeNull();
     });
 
-    it('should be invalid if token is valid but user is invalid', async () => {
+    it('should be invalid if token is valid but user different', async () => {
       const { roomId, roomName, roomSlug, invalidInvitationReason } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
-      expect(invalidInvitationReason).toBe(INVALID_ROOM_INVITATION_REASON.user);
+      expect(invalidInvitationReason).toBe(INVALID_ROOM_INVITATION_REASON.differenUser);
+      expect(roomId).toBeNull();
+      expect(roomName).toBeNull();
+      expect(roomSlug).toBeNull();
+    });
+
+    it('should be invalid if token is valid but user unconfirmed', async () => {
+      myUser.expiresOn = now;
+      const { roomId, roomName, roomSlug, invalidInvitationReason } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
+      expect(invalidInvitationReason).toBe(INVALID_ROOM_INVITATION_REASON.unconfirmedUser);
       expect(roomId).toBeNull();
       expect(roomName).toBeNull();
       expect(roomSlug).toBeNull();
