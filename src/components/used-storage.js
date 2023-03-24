@@ -31,11 +31,12 @@ function UsedStorage({ usedBytes, maxBytes, showLabel }) {
 UsedStorage.propTypes = {
   maxBytes: PropTypes.number,
   showLabel: PropTypes.bool,
-  usedBytes: PropTypes.number.isRequired
+  usedBytes: PropTypes.number
 };
 
 UsedStorage.defaultProps = {
   maxBytes: 0,
+  usedBytes: 0,
   showLabel: false
 };
 
