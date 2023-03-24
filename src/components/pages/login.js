@@ -25,6 +25,7 @@ function Login({ initialState, PageTemplate, SiteLogo }) {
             onLoginSucceeded={handleLoginSucceeded}
             showInPanel
             showPasswordReset
+            showRegistration
             showLoginButtons
             samlIdentityProviders={initialState.samlIdentityProviders}
             />

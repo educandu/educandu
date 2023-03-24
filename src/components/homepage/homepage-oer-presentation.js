@@ -24,7 +24,7 @@ function HomepageOerPresentation() {
       <div className="HomepageOerPresentation-button">
         <Button type="primary" size="large" onClick={handleSignUpClick}>{t('signUp')}</Button>
       </div>
-      <a href={logInUrl}>{t('logIn')}</a>
+      <a href={logInUrl}>{t('common:logInAlternative')}</a>
     </div>
   );
 }

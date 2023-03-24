@@ -1025,10 +1025,6 @@
     "signUp": {
       "en": "Sign up for your free account",
       "de": "Jetzt kostenlos registrieren"
-    },
-    "logIn": {
-      "en": "Already have an account? Log in",
-      "de": "Du hast schon ein Konto? Anmelden"
     }
   },
   "homepageProjectPresentation": {
@@ -1147,6 +1143,10 @@
     "forgotPassword": {
       "en": "Forgot your password?",
       "de": "Kennwort vergessen?"
+    },
+    "registrationLink": {
+      "en": "No account? Sign up",
+      "de": "Kein Konto? Registrieren"
     },
     "logInWithShibboleth": {
       "en": "Log in with Shibboleth",
@@ -3304,13 +3304,13 @@
       "en": "Log in",
       "de": "Anmelden"
     },
+    "logInAlternative": {
+      "en": "Already have an account? Log in",
+      "de": "Du hast schon ein Konto? Anmelden"
+    },
     "logOut": {
       "en": "Log out",
       "de": "Abmelden"
-    },
-    "register": {
-      "en": "Sign up",
-      "de": "Registrieren"
     },
     "createdOn": {
       "en": "Creation date",

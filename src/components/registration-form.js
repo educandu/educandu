@@ -87,6 +87,9 @@ function RegistrationForm() {
               />
           </Checkbox>
         </FormItem>
+        <div className="RegistrationForm-alternativeActionLink">
+          <a href={routes.getLoginUrl()}>{t('common:logInAlternative')}</a>
+        </div>
       </Fragment>
     );
   };

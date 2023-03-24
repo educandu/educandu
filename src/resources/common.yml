@@ -130,12 +130,12 @@ common:
   logIn:
     en: Log in
     de: Anmelden
+  logInAlternative:
+    en: Already have an account? Log in
+    de: Du hast schon ein Konto? Anmelden
   logOut:
     en: Log out
     de: Abmelden
-  register:
-    en: Sign up
-    de: Registrieren
   createdOn:
     en: Creation date
     de: Erstellungsdatum

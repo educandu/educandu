@@ -28,6 +28,7 @@ export default function LoginForm({
   showInPanel,
   showLoginButtons,
   showPasswordReset,
+  showRegistration,
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
@@ -158,8 +159,13 @@ export default function LoginForm({
           <div className="LoginForm-errorMessage">{t('loginFailed')}</div>
         )}
         {!hasBlockingError && !!showPasswordReset && (
-          <div className="LoginForm-forgotPasswordLink">
+          <div className="LoginForm-alternativeActionLink">
             <a href={routes.getResetPasswordUrl()}>{t('forgotPassword')}</a>
+          </div>
+        )}
+        {!hasBlockingError && !!showRegistration && (
+          <div className="LoginForm-alternativeActionLink">
+            <a href={routes.getRegisterUrl()}>{t('registrationLink')}</a>
           </div>
         )}
         {!hasBlockingError && !!showLoginButtons && (
@@ -203,6 +209,7 @@ LoginForm.propTypes = {
   showInPanel: PropTypes.bool,
   showLoginButtons: PropTypes.bool,
   showPasswordReset: PropTypes.bool,
+  showRegistration: PropTypes.bool,
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
   onLoginSucceeded: PropTypes.func,
@@ -219,6 +226,7 @@ LoginForm.defaultProps = {
   showInPanel: false,
   showLoginButtons: false,
   showPasswordReset: false,
+  showRegistration: false,
   onLoginFailed: () => {},
   onLoginStarted: () => {},
   onLoginSucceeded: () => {},
