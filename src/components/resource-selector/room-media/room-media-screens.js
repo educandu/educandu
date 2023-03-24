@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import RoomMediaUploadScreen from './room-media-upload-screen.js';
-import { useRoomMediaContext } from '../../room-media-context.js';
 import RoomMediaDefaultScreen from './room-media-default-screen.js';
 import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
 import RoomApiClient from '../../../api-clients/room-api-client.js';
@@ -12,6 +11,7 @@ import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import { confirmMediaFileHardDelete } from '../../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { useRoomMediaContext, useSetRoomMediaContext } from '../../room-media-context.js';
 
 const SCREEN = {
   default: 'default',
@@ -22,15 +22,17 @@ const SCREEN = {
 
 function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation('');
+  const roomMediaContext = useRoomMediaContext(null);
+  const setRoomMediaContext = useSetRoomMediaContext();
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+
   const [files, setFiles] = useState([]);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
-  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
-  const { roomMediaContext, setRoomMediaContext } = useRoomMediaContext(null);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
