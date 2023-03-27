@@ -966,7 +966,8 @@ describe('user-service', () => {
 
     beforeEach(async () => {
       user.organization = 'My Organization';
-      user.introduction = 'Hello World';
+      user.profileOverview = 'More about me';
+      user.shortDescription = 'About me';
       user.role = ROLE.maintainer;
       user.emailNotificationFrequency = EMAIL_NOTIFICATION_FREQUENCY.daily;
       await updateTestUser(container, user);
@@ -981,7 +982,8 @@ describe('user-service', () => {
         passwordHash: null,
         displayName: user.displayName,
         organization: '',
-        introduction: '',
+        profileOverview: '',
+        shortDescription: '',
         role: ROLE.user,
         expiresOn: null,
         verificationCode: null,

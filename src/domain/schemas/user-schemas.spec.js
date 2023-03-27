@@ -222,7 +222,8 @@ describe('postUserProfileBodySchema', () => {
       expect(() => validate({
         displayName: '',
         organization: '',
-        introduction: ''
+        profileOverview: '',
+        shortDescription: ''
       }, postUserProfileBodySchema)).toThrow();
     });
   });
@@ -232,7 +233,8 @@ describe('postUserProfileBodySchema', () => {
       expect(() => validate({
         displayName: 'Educandu User',
         organization: '',
-        introduction: ''
+        profileOverview: '',
+        shortDescription: ''
       }, postUserProfileBodySchema)).not.toThrow();
     });
   });

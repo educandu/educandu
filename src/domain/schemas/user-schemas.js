@@ -6,7 +6,7 @@ import {
   minUserDisplayNameLength,
   passwordValidationPattern,
   maxUserDisplayNameLength,
-  maxUserIntroductionLength,
+  maxShortDescriptionLength,
   maxUserOrganizationLength
 } from '../validation-constants.js';
 
@@ -36,7 +36,8 @@ export const postUserAccountBodySchema = joi.object({
 export const postUserProfileBodySchema = joi.object({
   displayName: displayNameSchema.required(),
   organization: joi.string().allow(''),
-  introduction: joi.string().allow('')
+  profileOverview: joi.string().allow(''),
+  shortDescription: joi.string().allow('')
 });
 
 export const postUserNotificationSettingsBodySchema = joi.object({
@@ -115,6 +116,7 @@ export const userDBSchema = joi.object({
   accountClosedOn: joi.date().allow(null).required(),
   lastLoggedInOn: joi.date().allow(null).required(),
   displayName: joi.string().required(),
-  introduction: joi.string().allow('').max(maxUserIntroductionLength).required(),
-  organization: joi.string().allow('').max(maxUserOrganizationLength).required()
+  organization: joi.string().allow('').max(maxUserOrganizationLength).required(),
+  profileOverview: joi.string().allow('').required(),
+  shortDescription: joi.string().allow('').max(maxShortDescriptionLength).required()
 });

@@ -123,7 +123,8 @@ export const userShape = PropTypes.shape({
   email: PropTypes.string,
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,
-  introduction: PropTypes.string,
+  profileOverview: PropTypes.string,
+  shortDescription: PropTypes.string,
   role: PropTypes.string.isRequired,
   expiresOn: PropTypes.string,
   accountLockedOn: PropTypes.string,
@@ -137,7 +138,8 @@ export const publicUserShape = PropTypes.shape({
   email: PropTypes.string,
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,
-  introduction: PropTypes.string,
+  profileOverview: PropTypes.string,
+  shortDescription: PropTypes.string,
   avatarUrl: PropTypes.string,
   accountClosedOn: PropTypes.string
 });

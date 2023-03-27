@@ -8,8 +8,9 @@ export const maxDocumentCommentTextLength = 2000;
 export const minUserDisplayNameLength = 6;
 export const maxUserDisplayNameLength = 30;
 export const maxUserOrganizationLength = 100;
-export const maxUserIntroductionLength = 1500;
 export const minUserPasswordLength = 8;
+
+export const maxShortDescriptionLength = 100;
 
 export const maxMediaLibraryItemDescriptionLength = 1000;
 

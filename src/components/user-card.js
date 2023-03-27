@@ -6,7 +6,6 @@ import urlUtils from '../utils/url-utils.js';
 import { Avatar, Card, Tooltip } from 'antd';
 import FavoriteStar from './favorite-star.js';
 import DeleteButton from './delete-button.js';
-import { useTranslation } from 'react-i18next';
 import { MailOutlined } from '@ant-design/icons';
 import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
 

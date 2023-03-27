@@ -230,6 +230,9 @@ common:
   description:
     en: Description
     de: Beschreibung
+  shortDescription:
+    en: Short description
+    de: Kurze Beschreibung
   url:
     en: URL
     de: URL

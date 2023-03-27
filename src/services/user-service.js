@@ -107,10 +107,10 @@ class UserService {
     return { result: SAVE_USER_RESULT.success, user: updatedUser };
   }
 
-  async updateUserProfile({ userId, displayName, organization, introduction }) {
+  async updateUserProfile({ userId, displayName, organization, profileOverview, shortDescription }) {
     logger.info(`Updating profile for user with id ${userId}`);
     const user = await this.userStore.getUserById(userId);
-    const updatedUser = { ...user, displayName, organization, introduction };
+    const updatedUser = { ...user, displayName, organization, profileOverview, shortDescription };
 
     await this.userStore.saveUser(updatedUser);
     return updatedUser;
@@ -545,7 +545,8 @@ class UserService {
       passwordHash: null,
       displayName: null,
       organization: '',
-      introduction: '',
+      profileOverview: '',
+      shortDescription: '',
       role: DEFAULT_ROLE,
       expiresOn: null,
       verificationCode: null,

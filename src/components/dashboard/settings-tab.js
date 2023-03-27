@@ -17,7 +17,7 @@ import { Form, Input, Avatar, Button, message, Radio } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import { EMAIL_NOTIFICATION_FREQUENCY, SAVE_USER_RESULT } from '../../domain/constants.js';
-import { maxUserIntroductionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
+import { maxShortDescriptionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -103,12 +103,13 @@ function SettingsTab() {
     setIsUserProfileFormDirty(true);
   };
 
-  const handleUserProfileFormFinish = async ({ displayName, organization, introduction }) => {
+  const handleUserProfileFormFinish = async ({ displayName, organization, profileOverview, shortDescription }) => {
     try {
       const { user: updatedUser } = await userApiClient.saveUserProfile({
         displayName,
         organization,
-        introduction
+        profileOverview,
+        shortDescription
       });
       setUser(updatedUser);
       setIsUserProfileFormDirty(false);
@@ -154,7 +155,7 @@ function SettingsTab() {
     }
   };
 
-  const renderOrganizationInputCount = ({ count, maxLength }) => {
+  const renderInputCount = ({ count, maxLength }) => {
     return (
       <div className="u-input-count">{`${count} / ${maxLength}`}</div>
     );
@@ -194,15 +195,27 @@ function SettingsTab() {
             <Input
               type="text"
               maxLength={maxUserOrganizationLength}
-              showCount={{ formatter: renderOrganizationInputCount }}
+              showCount={{ formatter: renderInputCount }}
               />
           </FormItem>
           <FormItem
-            name="introduction"
-            label={t('introduction')}
-            initialValue={user.introduction || ''}
+            name="shortDescription"
+            label={t('common:shortDescription')}
+            className="AccountSettingsTab-input"
+            initialValue={user.shortDescription || ''}
             >
-            <MarkdownInput preview minRows={5} maxLength={maxUserIntroductionLength} />
+            <Input
+              type="text"
+              maxLength={maxShortDescriptionLength}
+              showCount={{ formatter: renderInputCount }}
+              />
+          </FormItem>
+          <FormItem
+            name="profileOverview"
+            label={t('profileOverview')}
+            initialValue={user.profileOverview || ''}
+            >
+            <MarkdownInput preview minRows={5} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" disabled={!isUserProfileFormDirty}>{t('common:save')}</Button>

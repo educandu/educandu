@@ -63,9 +63,9 @@ export default function UserProfile({ PageTemplate, initialState }) {
           </div>
         </div>
 
-        {!!user.introduction && (
-          <section className="UserProfilePage-introduction">
-            <Markdown>{user.introduction}</Markdown>
+        {!!user.profileOverview && (
+          <section className="UserProfilePage-profileOverview">
+            <Markdown>{user.profileOverview}</Markdown>
           </section>
         )}
 

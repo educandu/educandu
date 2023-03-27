@@ -64,7 +64,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
         <UserCard
           userId={favoriteUserState.id}
           title={favoriteUserState.data.displayName}
-          detail={favoriteUserState.data.organization}
+          detail={favoriteUserState.data.shortDescription || favoriteUserState.data.organization}
           avatarUrl={favoriteUserState.data.avatarUrl}
           onFavorite={handleToggleFavoriteUser}
           />

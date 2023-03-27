@@ -3,11 +3,11 @@
 }
 
 .UserCard-content {
-  height: 220px;
+  height: 210px;
   display: grid;
-  gap: 10px;
-  grid-auto-flow: row;
+  gap: 5px;
   align-items: center;
+  grid-template-rows: auto auto 1fr;
   overflow: hidden;
 
   &.UserCard-content-clickable {
@@ -28,7 +28,7 @@
 .UserCard-details {
   text-align: center;
   font-size: @edu-font-size-sm;
-  .m-line-clamp(2);
+  .m-line-clamp(3);
 
   &.UserCard-details--includesEmail {
     .m-line-clamp(1);
