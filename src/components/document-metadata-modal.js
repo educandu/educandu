@@ -18,6 +18,7 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
+import { maxDocumentShortDescriptionLength } from '../domain/validation-constants.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
@@ -334,6 +335,10 @@ function DocumentMetadataModal({
     }
   };
 
+  const renderShortDescriptionCount = () => (
+    <div className="u-input-count">{shortDescription.length} / {maxDocumentShortDescriptionLength}</div>
+  );
+
   const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
     && hasPublicContextPermissions && !!publicContext;
   const isDocInRoomContext = !!documentRoomId && !!roomContext;
@@ -369,8 +374,14 @@ function DocumentMetadataModal({
         <FormItem label={t('common:title')} {...validationState.title}>
           <Input value={title} onChange={handleTitleChange} />
         </FormItem>
-        <FormItem label={t('common:shortDescription')} {...validationState.shortDescription}>
-          <NeverScrollingTextArea value={shortDescription} onChange={handleShortDescriptionChange} />
+        <FormItem
+          {...validationState.shortDescription}
+          label={
+            <Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>
+          }
+          >
+          <NeverScrollingTextArea maxLength={maxDocumentShortDescriptionLength} value={shortDescription} onChange={handleShortDescriptionChange} />
+          {renderShortDescriptionCount()}
         </FormItem>
         <FormItem label={t('common:language')}>
           <LanguageSelect value={language} onChange={handleLanguageChange} />

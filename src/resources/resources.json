@@ -3376,6 +3376,10 @@
       "en": "Short description",
       "de": "Kurze Beschreibung"
     },
+    "shortDescriptionInfo": {
+      "en": "This information will be shown as preview text.",
+      "de": "This information will be shown as preview text."
+    },
     "url": {
       "en": "URL",
       "de": "URL"

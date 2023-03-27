@@ -1,3 +1,4 @@
+import Info from '../info.js';
 import gravatar from 'gravatar';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -200,9 +201,9 @@ function SettingsTab() {
           </FormItem>
           <FormItem
             name="shortDescription"
-            label={t('common:shortDescription')}
             className="AccountSettingsTab-input"
             initialValue={user.shortDescription || ''}
+            label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
             >
             <Input
               type="text"

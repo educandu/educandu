@@ -75,7 +75,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       <FormItem
         {...formInputsLayouts}
         name="shortDescription"
-        label={t('common:shortDescription')}
+        label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
         initialValue={room.shortDescription}
         >
         <Input maxLength={maxShortDescriptionLength} showCount={{ formatter: renderInputCount }} />
