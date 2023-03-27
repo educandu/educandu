@@ -569,19 +569,11 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderRoomMember = member => {
     return (
-      <div className="RoomPage-member" key={member.userId}>
+      <div key={member.userId}>
         <UserCard
-          userId={member.userId}
-          title={member.displayName}
+          roomMember={member}
           avatarUrl={member.avatarUrl}
-          email={member.email}
-          detail={
-            <div className="RoomPage-memberDetails">
-              {`${t('common:joined')}: ${formatDate(member.joinedOn)}`}
-            </div>
-          }
-          deleteTooltip={t('removeMember')}
-          onDelete={() => handleDeleteRoomMemberClick(member)}
+          onDeleteRoomMember={() => handleDeleteRoomMemberClick(member)}
           />
       </div>
     );
@@ -591,18 +583,9 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="RoomPage-member" key={invitation._id}>
         <UserCard
-          userId={invitation.userId}
-          title={<i>{t('pendingInvitation')}</i>}
+          roomInvitation={invitation}
           avatarUrl={invitation.avatarUrl}
-          email={invitation.email}
-          detail={
-            <div className="RoomPage-memberDetails">
-              <span className="RoomPage-memberDetail">{`${t('invitedOn')}: ${formatDate(invitation.sentOn)}`}</span>
-              <span className="RoomPage-memberDetail">{`${t('expiresOn')}: ${formatDate(invitation.expiresOn)}`}</span>
-            </div>
-          }
-          deleteTooltip={t('revokeInvitation')}
-          onDelete={() => handleRemoveRoomInvitationClick(invitation)}
+          onDeleteRoomInvitation={() => handleRemoveRoomInvitationClick(invitation)}
           />
       </div>
     );
