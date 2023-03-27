@@ -1,7 +1,6 @@
 export const minDocumentTagLength = 1;
 export const maxDocumentTagLength = 30;
 export const documentTagValidationPattern = /^\S{1,30}$/;
-export const maxDocumentDescriptionLength = 1000;
 export const maxDocumentCommentTopicLength = 200;
 export const maxDocumentCommentTextLength = 2000;
 
@@ -11,6 +10,7 @@ export const maxUserOrganizationLength = 100;
 export const minUserPasswordLength = 8;
 
 export const maxShortDescriptionLength = 100;
+export const maxDocumentShortDescriptionLength = 1000;
 
 export const maxMediaLibraryItemDescriptionLength = 1000;
 

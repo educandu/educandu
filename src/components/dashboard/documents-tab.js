@@ -33,7 +33,7 @@ function DocumentsTab({ documents, loading }) {
     let filteredDocuments = filterText
       ? documents.filter(doc => {
         return doc.title.toLowerCase().includes(lowerCasedFilter)
-            || doc.description.toLowerCase().includes(lowerCasedFilter)
+            || doc.shortDescription.toLowerCase().includes(lowerCasedFilter)
             || doc.createdBy.displayName.toLowerCase().includes(lowerCasedFilter)
             || doc.updatedBy.displayName.toLowerCase().includes(lowerCasedFilter);
       })

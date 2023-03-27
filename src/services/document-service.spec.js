@@ -1068,7 +1068,7 @@ describe('document-service', () => {
     beforeEach(async () => {
       doc1 = await createTestDocument(container, adminUser, {
         title: 'Doc 1',
-        description: 'Description 1',
+        shortDescription: 'Description 1',
         slug: 'doc-1',
         sections: [],
         tags: ['music', 'instructor', 'Dj.D', 'Cretu', '1'],
@@ -1086,7 +1086,7 @@ describe('document-service', () => {
 
       doc2 = await createTestDocument(container, adminUser, {
         title: 'Doc 2',
-        description: 'Description 2',
+        shortDescription: 'Description 2',
         slug: 'doc-2',
         sections: [],
         tags: ['Music', 'Instructor', 'Goga', '2'],
@@ -1104,7 +1104,7 @@ describe('document-service', () => {
 
       doc3 = await createTestDocument(container, adminUser, {
         title: 'Doc 3',
-        description: 'Description 3',
+        shortDescription: 'Description 3',
         slug: 'doc-3',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
@@ -1122,7 +1122,7 @@ describe('document-service', () => {
 
       await createTestDocument(container, adminUser, {
         title: 'Doc 4',
-        description: 'Description 4',
+        shortDescription: 'Description 4',
         slug: 'doc-4',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
@@ -1141,7 +1141,7 @@ describe('document-service', () => {
       const room = await createTestRoom(container, { owner: adminUser._id });
       await createTestDocument(container, adminUser, {
         title: 'Doc 5',
-        description: 'Description 5',
+        shortDescription: 'Description 5',
         slug: 'doc-5',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],

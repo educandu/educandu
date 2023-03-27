@@ -1,5 +1,5 @@
 import inputValidators from '../utils/input-validators.js';
-import { maxDocumentDescriptionLength, maxDocumentTagLength, minDocumentTagLength } from '../domain/validation-constants.js';
+import { maxDocumentShortDescriptionLength, maxDocumentTagLength, minDocumentTagLength } from '../domain/validation-constants.js';
 
 export const DOCUMENT_METADATA_MODAL_MODE = {
   create: 'create',
@@ -53,10 +53,10 @@ export function getCloningOptions({ mode, documentToClone, availableRooms, t }) 
   return { strategyOptions, roomOptions };
 }
 
-export function getValidationState({ cloningStrategy, cloningTargetRoomId, title, description, slug, tags, t }) {
+export function getValidationState({ cloningStrategy, cloningTargetRoomId, title, shortDescription, slug, tags, t }) {
   const isValidCloningTargetRoomId = cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom || !!cloningTargetRoomId;
   const isValidTitle = !!title.trim();
-  const isValidDescription = description.length <= maxDocumentDescriptionLength;
+  const isValidShortDescription = shortDescription.length <= maxDocumentShortDescriptionLength;
   const isValidSlug = !slug || inputValidators.isValidSlug(slug);
   const areValidTags = tags.every(tag => inputValidators.isValidTag({ tag }));
 
@@ -71,9 +71,9 @@ export function getValidationState({ cloningStrategy, cloningTargetRoomId, title
       validateStatus: isValidTitle ? 'success' : 'error',
       help: isValidTitle ? null : t('titleRequired')
     },
-    description: {
-      validateStatus: isValidDescription ? 'success' : 'error',
-      help: isValidDescription ? null : t('descriptionTooLong', { maxChars: maxDocumentDescriptionLength })
+    shortDescription: {
+      validateStatus: isValidShortDescription ? 'success' : 'error',
+      help: isValidShortDescription ? null : t('descriptionTooLong', { maxChars: maxDocumentShortDescriptionLength })
     },
     slug: {
       validateStatus: isValidSlug ? 'success' : 'error',

@@ -644,7 +644,7 @@
     },
     "profileOverview": {
       "en": "Profile overview",
-      "de": "Profil-Ansicht"
+      "de": "Profil-Überblick"
     },
     "avatarDescription": {
       "en": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n",
@@ -1686,7 +1686,7 @@
     },
     "overview": {
       "en": "Overview",
-      "de": "Ansicht"
+      "de": "Überblick"
     }
   },
   "search": {

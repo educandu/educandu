@@ -188,7 +188,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     return (
       <ResourceInfoCell
         title={doc.title}
-        description={doc.description}
+        description={doc.shortDescription}
         subtext={
           <div className="RedactionDocumentsTab-titleSubtext">
             <div>

@@ -1,7 +1,7 @@
 import joi from 'joi';
 import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { idOrKeySchema, slugSchema } from './shared-schemas.js';
-import { maxDocumentDescriptionLength } from '../validation-constants.js';
+import { maxDocumentShortDescriptionLength } from '../validation-constants.js';
 
 const sectionSchema = joi.object({
   key: idOrKeySchema.required(),
@@ -60,7 +60,7 @@ export const roomContextConditionalSchema = joi.alternatives().conditional(
 
 export const createDocumentDataBodySchema = joi.object({
   title: joi.string().required(),
-  description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
+  shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
   slug: slugSchema.required(),
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
@@ -72,7 +72,7 @@ export const createDocumentDataBodySchema = joi.object({
 
 export const updateDocumentMetadataBodySchema = joi.object({
   title: joi.string().required(),
-  description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
+  shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
   slug: slugSchema.required(),
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
@@ -117,7 +117,7 @@ export const documentRevisionDBSchema = joi.object({
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
   title: joi.string().required(),
-  description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
+  shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
   slug: slugSchema.required(),
   language: joi.string().case('lower').required(),
   sections: joi.array().items(documentSectionDBSchema).required(),
@@ -138,7 +138,7 @@ export const documentDBSchema = joi.object({
   updatedOn: joi.date().required(),
   updatedBy: idOrKeySchema.required(),
   title: joi.string().required(),
-  description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
+  shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
   slug: slugSchema.required(),
   language: joi.string().case('lower').required(),
   sections: joi.array().items(documentSectionDBSchema).required(),

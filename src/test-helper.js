@@ -195,7 +195,7 @@ export function createTestDocument(container, user, data) {
     data: {
       ...data,
       title: data.title ?? 'Title',
-      description: data.description ?? 'Description',
+      shortDescription: data.shortDescription ?? 'Description',
       slug: data.slug ?? 'my-doc',
       language: data.language ?? 'en',
       publicContext: data.roomId
@@ -232,7 +232,7 @@ export async function createTestRevisions(container, user, revisions) {
   for (const revision of revisions) {
     const data = {
       title: revision.title ?? lastCreatedDocument?.title ?? 'Title',
-      description: revision.description ?? lastCreatedDocument?.description ?? 'Description',
+      shortDescription: revision.shortDescription ?? lastCreatedDocument?.shortDescription ?? 'Description',
       slug: revision.slug ?? lastCreatedDocument?.slug ?? 'my-doc',
       language: revision.language ?? lastCreatedDocument?.language ?? 'en',
       sections: (revision.sections ?? lastCreatedDocument?.sections ?? []).map(s => ({

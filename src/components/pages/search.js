@@ -115,7 +115,7 @@ function Search({ PageTemplate }) {
     return (
       <ResourceInfoCell
         title={row.document.title}
-        description={row.document.description}
+        description={row.document.shortDescription}
         subtext={subtext}
         url={routes.getDocUrl({ id: row.document._id, slug: row.document.slug })}
         />

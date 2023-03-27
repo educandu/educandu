@@ -81,7 +81,7 @@ function HomepageDocumentCards() {
         >
         <div className="HomepageDocumentCards-cardContent">
           <div className="HomepageDocumentCards-cardContentDescription">
-            {doc.description}
+            {doc.shortDescription}
           </div>
           <div className="HomepageDocumentCards-cardContentDate">
             {formatDate(doc.updatedOn)}

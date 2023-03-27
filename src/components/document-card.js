@@ -22,7 +22,7 @@ function DocumentCard({ doc }) {
       <div className="DocumentCard-content">
         {!isDeletedDocument && (
           <Fragment>
-            <div className="DocumentCard-description">{doc.description}</div>
+            <div className="DocumentCard-description">{doc.shortDescription}</div>
             <div className="DocumentCard-dateDetails">
               <div className="DocumentCard-dateDetail">
                 {t('creationDetail', { date: formatDate(doc.createdOn) })} <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>

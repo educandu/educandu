@@ -171,7 +171,7 @@ export const sectionShape = PropTypes.shape({
 const commonDocumentOrRevisionProps = {
   order: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
@@ -200,7 +200,7 @@ export const documentExtendedMetadataShape = PropTypes.shape({
 const contributedDocumentMetadataProps = {
   _id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
   updatedOn: PropTypes.string.isRequired,
@@ -221,7 +221,7 @@ export const documentPublicContextShape = PropTypes.shape({
 
 export const documentMetadataEditShape = PropTypes.shape({
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,

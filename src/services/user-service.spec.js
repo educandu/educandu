@@ -422,7 +422,7 @@ describe('user-service', () => {
           slug: favoriteDocument.slug,
           title: favoriteDocument.title,
           language: favoriteDocument.language,
-          description: favoriteDocument.description,
+          shortDescription: favoriteDocument.shortDescription,
           createdBy: favoriteDocument.createdBy,
           createdOn: favoriteDocument.createdOn,
           updatedOn: favoriteDocument.updatedOn,
