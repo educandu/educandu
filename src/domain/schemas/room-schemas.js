@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { ROOM_USER_ROLE } from '../constants.js';
-import { maxShortDescriptionLength } from '../validation-constants.js';
+import { maxRoomShortDescriptionLength } from '../validation-constants.js';
 import { emailSchema, idOrKeySchema, slugSchema } from './shared-schemas.js';
 
 export const getAllRoomMediaParamsSchema = joi.object({
@@ -115,7 +115,7 @@ const roomMetadataDBProps = {
   slug: slugSchema.required(),
   updatedOn: joi.date().required(),
   isCollaborative: joi.boolean().required(),
-  shortDescription: joi.string().allow('').max(maxShortDescriptionLength).required()
+  shortDescription: joi.string().allow('').max(maxRoomShortDescriptionLength).required()
 };
 
 const roomContentDBProps = {

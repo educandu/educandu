@@ -6,7 +6,7 @@ import {
   minUserDisplayNameLength,
   passwordValidationPattern,
   maxUserDisplayNameLength,
-  maxShortDescriptionLength,
+  maxUserShortDescriptionLength,
   maxUserOrganizationLength
 } from '../validation-constants.js';
 
@@ -118,5 +118,5 @@ export const userDBSchema = joi.object({
   displayName: joi.string().required(),
   organization: joi.string().allow('').max(maxUserOrganizationLength).required(),
   profileOverview: joi.string().allow('').required(),
-  shortDescription: joi.string().allow('').max(maxShortDescriptionLength).required()
+  shortDescription: joi.string().allow('').max(maxUserShortDescriptionLength).required()
 });

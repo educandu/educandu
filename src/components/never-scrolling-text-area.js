@@ -47,6 +47,10 @@ function NeverScrollingTextArea({ className, disabled, embeddable, debounced, de
     className
   );
 
+  const renderCount = () => !!textAreaProps.maxLength && (
+    <div className="u-input-count">{(textAreaProps.value || '').length} / {textAreaProps.maxLength}</div>
+  );
+
   return (
     <div className={componentClasses}>
       <div onClick={disabled ? null : handleTopContainerClick} />
@@ -59,6 +63,7 @@ function NeverScrollingTextArea({ className, disabled, embeddable, debounced, de
         )}
       </FormItemInputContext.Provider>
       <div onClick={disabled ? null : handleBottomContainerClick} />
+      {renderCount()}
     </div>
   );
 }

@@ -18,7 +18,7 @@ import { Form, Input, Avatar, Button, message, Radio } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import { EMAIL_NOTIFICATION_FREQUENCY, SAVE_USER_RESULT } from '../../domain/constants.js';
-import { maxShortDescriptionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
+import { maxUserShortDescriptionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -207,7 +207,7 @@ function SettingsTab() {
             >
             <Input
               type="text"
-              maxLength={maxShortDescriptionLength}
+              maxLength={maxUserShortDescriptionLength}
               showCount={{ formatter: renderInputCount }}
               />
           </FormItem>

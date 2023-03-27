@@ -5,7 +5,7 @@ import { Checkbox, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import inputValidators from '../utils/input-validators.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
-import { maxShortDescriptionLength } from '../domain/validation-constants.js';
+import { maxRoomShortDescriptionLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 
@@ -78,7 +78,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
         label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
         initialValue={room.shortDescription}
         >
-        <Input maxLength={maxShortDescriptionLength} showCount={{ formatter: renderInputCount }} />
+        <Input maxLength={maxRoomShortDescriptionLength} showCount={{ formatter: renderInputCount }} />
       </FormItem>
     </Form>
   );

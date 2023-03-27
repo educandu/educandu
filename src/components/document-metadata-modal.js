@@ -335,10 +335,6 @@ function DocumentMetadataModal({
     }
   };
 
-  const renderShortDescriptionCount = () => (
-    <div className="u-input-count">{shortDescription.length} / {maxDocumentShortDescriptionLength}</div>
-  );
-
   const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
     && hasPublicContextPermissions && !!publicContext;
   const isDocInRoomContext = !!documentRoomId && !!roomContext;
@@ -380,8 +376,11 @@ function DocumentMetadataModal({
             <Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>
           }
           >
-          <NeverScrollingTextArea maxLength={maxDocumentShortDescriptionLength} value={shortDescription} onChange={handleShortDescriptionChange} />
-          {renderShortDescriptionCount()}
+          <NeverScrollingTextArea
+            value={shortDescription}
+            maxLength={maxDocumentShortDescriptionLength}
+            onChange={handleShortDescriptionChange}
+            />
         </FormItem>
         <FormItem label={t('common:language')}>
           <LanguageSelect value={language} onChange={handleLanguageChange} />
