@@ -18,10 +18,10 @@ function UserCard({ userId, title, detail, email, avatarUrl, onFavorite, deleteT
 
   const renderFavoriteAction = () => {
     return (
-      <div key="favorite" className="UserCard-favoriteAction">
+      <div key="favorite">
         <FavoriteStar
           id={userId}
-          submitChange={false}
+          disabled={!userId}
           type={FAVORITE_TYPE.user}
           onToggle={isFavorite => onFavorite(userId, isFavorite)}
           />
@@ -37,17 +37,14 @@ function UserCard({ userId, title, detail, email, avatarUrl, onFavorite, deleteT
     );
   };
 
-  const actions = [];
-  if (onFavorite) {
-    actions.push(renderFavoriteAction());
-  }
+  const actions = [renderFavoriteAction()];
   if (onDelete) {
     actions.push(renderDeleteAction());
   }
 
   return (
-    <Card className="UserCard" actions={actions} >
-      <div className={classNames('UserCard-content', { 'UserCard-content-clickable': !!userId })} onClick={handleCardClick}>
+    <Card className="UserCard" actions={actions}>
+      <div className={classNames('UserCard-content', { 'UserCard-content--clickable': !!userId })} onClick={handleCardClick}>
         <Avatar
           shape="circle"
           size={AVATAR_SIZE}
@@ -86,7 +83,7 @@ UserCard.defaultProps = {
   avatarUrl: '',
   detail: null,
   deleteTooltip: null,
-  onFavorite: null,
+  onFavorite: () => {},
   onDelete: null
 };
 

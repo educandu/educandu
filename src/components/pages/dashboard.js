@@ -161,14 +161,6 @@ function Dashboard({ PageTemplate }) {
     history.replaceState(null, '', routes.getDashboardUrl({ tab }));
   };
 
-  const handleAddFavorite = async (type, id) => {
-    await userApiClient.addFavorite({ type, id });
-  };
-
-  const handleRemoveFavorite = async (type, id) => {
-    await userApiClient.removeFavorite({ type, id });
-  };
-
   const handleRemoveNotificationGroup = async notificationGroup => {
     const response = await notificationsApiClient.removeNotifications(notificationGroup.notificationIds);
     setNotificationGroups(response.notificationGroups);
@@ -206,8 +198,6 @@ function Dashboard({ PageTemplate }) {
             favoriteRooms={favoriteRooms}
             favoriteDocuments={favoriteDocuments}
             loading={fetchingFavorites}
-            onAddFavorite={handleAddFavorite}
-            onRemoveFavorite={handleRemoveFavorite}
             />
         </div>
       )

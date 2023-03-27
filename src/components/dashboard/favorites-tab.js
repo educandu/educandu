@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import { favoriteDocumentShape, favoriteRoomShape, favoriteUserShape } from '../../ui/default-prop-types.js';
 
-function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading, onAddFavorite, onRemoveFavorite }) {
+function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading }) {
   const { t } = useTranslation('favoritesTab');
   const [favoriteUsersStates, setFavoriteUsersStates] = useState([]);
   const [favoriteRoomsStates, setFavoriteRoomsStates] = useState([]);
@@ -25,29 +25,14 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
 
   const handleToggleFavoriteUser = (id, isFavorite) => {
     setFavoriteUsersStates(prevState => toggleFavoriteState(prevState, id, isFavorite));
-    if (isFavorite) {
-      onAddFavorite(FAVORITE_TYPE.user, id);
-    } else {
-      onRemoveFavorite(FAVORITE_TYPE.user, id);
-    }
   };
 
   const handleToggleFavoriteRoom = (id, isFavorite) => {
     setFavoriteRoomsStates(prevState => toggleFavoriteState(prevState, id, isFavorite));
-    if (isFavorite) {
-      onAddFavorite(FAVORITE_TYPE.room, id);
-    } else {
-      onRemoveFavorite(FAVORITE_TYPE.room, id);
-    }
   };
 
   const handleToggleFavoriteDocument = (id, isFavorite) => {
     setFavoriteDocumentsStates(prevState => toggleFavoriteState(prevState, id, isFavorite));
-    if (isFavorite) {
-      onAddFavorite(FAVORITE_TYPE.document, id);
-    } else {
-      onRemoveFavorite(FAVORITE_TYPE.document, id);
-    }
   };
 
   useEffect(() => {
@@ -75,16 +60,11 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
   const renderFavoriteRoomState = favoriteRoomState => {
     return (
       <div className="FavoritesTab-cardWrapper" key={favoriteRoomState.id}>
-        <RoomCard room={favoriteRoomState.data} alwaysRenderOwner />
-        {!favoriteRoomState.isFavorite && <div className="FavoritesTab-cardOverlay" />}
-        <div className="FavoritesTab-favoriteStart" >
-          <FavoriteStar
-            type={FAVORITE_TYPE.room}
-            id={favoriteRoomState.id}
-            submitChange={false}
-            onToggle={isFavorite => handleToggleFavoriteRoom(favoriteRoomState.id, isFavorite)}
-            />
-        </div>
+        <RoomCard
+          alwaysRenderOwner
+          room={favoriteRoomState.data}
+          onFavorite={handleToggleFavoriteRoom}
+          />
       </div>
     );
   };
@@ -154,9 +134,7 @@ FavoritesTab.propTypes = {
     setOn: PropTypes.string.isRequired,
     data: favoriteDocumentShape.isRequired
   })).isRequired,
-  loading: PropTypes.bool.isRequired,
-  onAddFavorite: PropTypes.func.isRequired,
-  onRemoveFavorite: PropTypes.func.isRequired
+  loading: PropTypes.bool.isRequired
 };
 
 export default FavoritesTab;
