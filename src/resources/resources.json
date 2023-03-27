@@ -1612,6 +1612,10 @@
       "en": "Delete room",
       "de": "Raum löschen"
     },
+    "roomContentHeadline": {
+      "en": "Room content",
+      "de": "Raum-Inhalt"
+    },
     "roomMetadataHeadline": {
       "en": "Room metadata",
       "de": "Raum-Metadaten"
@@ -1679,6 +1683,10 @@
     "messageEmailNotificationIconTooltip": {
       "en": "An email was sent to all room members when this message was posted.",
       "de": "Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde."
+    },
+    "overview": {
+      "en": "Overview",
+      "de": "Ansicht"
     }
   },
   "search": {

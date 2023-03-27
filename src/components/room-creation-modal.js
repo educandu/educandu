@@ -37,10 +37,10 @@ function RoomCreationModal({ isOpen, onClose }) {
     }
   };
 
-  const handleFormSubmitted = async ({ name, slug, isCollaborative }) => {
+  const handleFormSubmitted = async ({ name, slug, isCollaborative, shortDescription }) => {
     try {
       setLoading(true);
-      const newRoom = await roomApiClient.addRoom({ name, slug, isCollaborative });
+      const newRoom = await roomApiClient.addRoom({ name, slug, isCollaborative, shortDescription });
       setLoading(false);
       onClose();
 

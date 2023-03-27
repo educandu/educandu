@@ -3,9 +3,9 @@ import Info from './info.js';
 import PropTypes from 'prop-types';
 import { Checkbox, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
-import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
+import { maxShortDescriptionLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 
@@ -35,12 +35,18 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     }
   ];
 
-  const handleFinish = async ({ name, slug, isCollaborative, description }) => {
-    await onSubmit({ name, slug, isCollaborative, description });
+  const handleFinish = async ({ name, slug, isCollaborative, shortDescription }) => {
+    await onSubmit({ name, slug, isCollaborative, shortDescription });
   };
 
   const handleFieldsChange = async (...args) => {
     await onFieldsChange(...args);
+  };
+
+  const renderInputCount = ({ count, maxLength }) => {
+    return (
+      <div className="u-input-count">{`${count} / ${maxLength}`}</div>
+    );
   };
 
   const formInputsLayouts = editMode ? editModeFormInputLayouts : {};
@@ -66,11 +72,14 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
           </Info>
         </Checkbox>
       </FormItem>
-      {!!editMode && (
-        <FormItem label={t('common:description')} name="description" initialValue={room.description}>
-          <MarkdownInput preview />
-        </FormItem>
-      )}
+      <FormItem
+        {...formInputsLayouts}
+        name="shortDescription"
+        label={t('common:shortDescription')}
+        initialValue={room.shortDescription}
+        >
+        <Input maxLength={maxShortDescriptionLength} showCount={{ formatter: renderInputCount }} />
+      </FormItem>
     </Form>
   );
 }

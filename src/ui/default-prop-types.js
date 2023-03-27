@@ -426,7 +426,7 @@ export const roomMetadataProps = {
   slug: PropTypes.string,
   createdOn: PropTypes.string,
   isCollaborative: PropTypes.bool.isRequired,
-  description: PropTypes.string
+  shortDescription: PropTypes.string
 };
 
 export const roomMinimalMetadataShape = PropTypes.shape({

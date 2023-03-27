@@ -86,7 +86,7 @@ export default class RoomService {
     return this.roomStore.getRoomsByOwnerOrCollaboratorUser({ userId });
   }
 
-  async createRoom({ name, slug, isCollaborative, user }) {
+  async createRoom({ name, slug, isCollaborative, shortDescription, user }) {
     const roomId = uniqueId.create();
     const roomMediaDirectoryPath = getRoomMediaRoomPath(roomId);
 
@@ -97,11 +97,12 @@ export default class RoomService {
       name,
       slug: slug?.trim() || '',
       isCollaborative,
-      description: '',
+      shortDescription: shortDescription?.trim() || '',
       owner: user._id,
       createdBy: user._id,
       createdOn: new Date(),
       updatedOn: new Date(),
+      overview: '',
       members: [],
       messages: [],
       documents: []
@@ -117,14 +118,27 @@ export default class RoomService {
     return newRoom;
   }
 
-  async updateRoomMetadata(roomId, { name, slug, isCollaborative, description }) {
+  async updateRoomMetadata(roomId, { name, slug, isCollaborative, shortDescription }) {
     await this.roomStore.updateRoomMetadata(
       roomId,
       {
         name: name.trim(),
         slug: (slug || '').trim(),
         isCollaborative,
-        description: (description || '').trim(),
+        shortDescription: (shortDescription || '').trim(),
+        updatedOn: new Date()
+      }
+    );
+    const updatedRoom = await this.roomStore.getRoomById(roomId);
+
+    return updatedRoom;
+  }
+
+  async updateRoomContent(roomId, { overview }) {
+    await this.roomStore.updateRoomContent(
+      roomId,
+      {
+        overview: (overview || '').trim(),
         updatedOn: new Date()
       }
     );

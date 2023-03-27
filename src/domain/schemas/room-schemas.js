@@ -1,5 +1,6 @@
 import joi from 'joi';
 import { ROOM_USER_ROLE } from '../constants.js';
+import { maxShortDescriptionLength } from '../validation-constants.js';
 import { emailSchema, idOrKeySchema, slugSchema } from './shared-schemas.js';
 
 export const getAllRoomMediaParamsSchema = joi.object({
@@ -26,7 +27,8 @@ export const getRoomsQuerySchema = joi.object({
 export const postRoomBodySchema = joi.object({
   name: joi.string().required(),
   slug: slugSchema.required(),
-  isCollaborative: joi.boolean().required()
+  isCollaborative: joi.boolean().required(),
+  shortDescription: joi.string().allow('').required()
 });
 
 export const postRoomInvitationsBodySchema = joi.object({
@@ -64,7 +66,11 @@ export const patchRoomMetadataBodySchema = joi.object({
   name: joi.string().required(),
   slug: slugSchema.required(),
   isCollaborative: joi.boolean().required(),
-  description: joi.string().allow('')
+  shortDescription: joi.string().allow('')
+});
+
+export const patchRoomContentBodySchema = joi.object({
+  overview: joi.string().allow('').required()
 });
 
 export const patchRoomDocumentsBodySchema = joi.object({
@@ -107,9 +113,14 @@ export const roomMessageDBSchema = joi.object({
 const roomMetadataDBProps = {
   name: joi.string().required(),
   slug: slugSchema.required(),
-  description: joi.string().allow('').required(),
   updatedOn: joi.date().required(),
-  isCollaborative: joi.boolean().required()
+  isCollaborative: joi.boolean().required(),
+  shortDescription: joi.string().allow('').max(maxShortDescriptionLength).required()
+};
+
+const roomContentDBProps = {
+  overview: joi.string().allow('').required(),
+  updatedOn: joi.date().required()
 };
 
 const roomMembersDBProps = {
@@ -126,6 +137,8 @@ const roomDocumentsDBProps = {
 
 export const roomMetadataDBSchema = joi.object(roomMetadataDBProps);
 
+export const roomContentDBSchema = joi.object(roomContentDBProps);
+
 export const roomMembersDBSchema = joi.object(roomMembersDBProps);
 
 export const roomMessagesDBSchema = joi.object(roomMessagesDBProps);
@@ -134,6 +147,7 @@ export const roomDocumentsDBSchema = joi.array().required().items(idOrKeySchema)
 
 export const roomDBSchema = joi.object({
   ...roomMetadataDBProps,
+  ...roomContentDBProps,
   ...roomMembersDBProps,
   ...roomMessagesDBProps,
   ...roomDocumentsDBProps,

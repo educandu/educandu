@@ -4,6 +4,7 @@ import {
   roomDBSchema,
   roomMemberDBSchema,
   roomMembersDBSchema,
+  roomContentDBSchema,
   roomMetadataDBSchema,
   roomMessagesDBSchema,
   roomDocumentsDBSchema
@@ -83,6 +84,11 @@ class RoomStore {
   updateRoomMetadata(roomId, metadata, { session } = {}) {
     validate(metadata, roomMetadataDBSchema);
     return this.collection.updateOne({ _id: roomId }, { $set: { ...metadata } }, { session });
+  }
+
+  updateRoomContent(roomId, content, { session } = {}) {
+    validate(content, roomContentDBSchema);
+    return this.collection.updateOne({ _id: roomId }, { $set: { ...content } }, { session });
   }
 
   updateRoomDocuments(roomId, documentIds, { session } = {}) {
