@@ -501,6 +501,11 @@ common:
   addFavorite:
     en: Add to favorites
     de: Zu den Favoriten hinzufügen
+  favoritedByTooltip:
+    en: |
+      Favorited by: {count, plural, =1 {# user} other {# users}}
+    de: |
+      Als Favorit markiert von: {count, plural, =1 {# Benutzer} other {# Benutzern}}
   createDocument:
     en: Create document
     de: Dokument erstellen
@@ -522,9 +527,6 @@ common:
   collaborators:
     en: Collaborators
     de: Mitarbeiter
-  joined:
-    en: Joined
-    de: Eingetreten
   changesSavedSuccessfully:
     en: Your changes have been saved
     de: Deine Änderungen wurden gespeichert

@@ -2026,11 +2026,23 @@
       "en": "Role",
       "de": "Rolle"
     },
+    "created": {
+      "en": "Created",
+      "de": "Erstellt"
+    },
     "updated": {
       "en": "Updated",
       "de": "Aktualisiert"
     },
-    "joinButton": {
+    "joined": {
+      "en": "Joined",
+      "de": "Eingetreten"
+    },
+    "collaborativeRoom": {
+      "en": "Collaborative room",
+      "de": "Kollaborativer Raum"
+    },
+    "acceptRoomInvitation": {
       "en": "Accept invitation",
       "de": "Einladung annehmen"
     },
@@ -2182,10 +2194,6 @@
     }
   },
   "userCard": {
-    "favoritedByTooltip": {
-      "en": "Favorited by {count, plural, =1 {# user} other {# users}}",
-      "de": "Von {count, plural, =1 {# Benutzer} other {# Benutzern}} als Favorit markiert"
-    },
     "sendEmailTo": {
       "en": "Send email to {email}",
       "de": "E-Mail an {email} schicken"
@@ -3734,6 +3742,10 @@
       "en": "Add to favorites",
       "de": "Zu den Favoriten hinzufügen"
     },
+    "favoritedByTooltip": {
+      "en": "Favorited by: {count, plural, =1 {# user} other {# users}}\n",
+      "de": "Als Favorit markiert von: {count, plural, =1 {# Benutzer} other {# Benutzern}}\n"
+    },
     "createDocument": {
       "en": "Create document",
       "de": "Dokument erstellen"
@@ -3761,10 +3773,6 @@
     "collaborators": {
       "en": "Collaborators",
       "de": "Mitarbeiter"
-    },
-    "joined": {
-      "en": "Joined",
-      "de": "Eingetreten"
     },
     "changesSavedSuccessfully": {
       "en": "Your changes have been saved",

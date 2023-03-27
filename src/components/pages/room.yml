@@ -23,30 +23,15 @@ room:
   deleteRoomDescription:
     en: All room data and resources will be deleted.
     de: Alle Raum-Daten und -Ressourcen werden gelöscht.
-  removeMember:
-    en: Remove member
-    de: Mitglied entfernen
-  revokeInvitation:
-    en: Revoke invitation
-    de: Einladung widerrufen
   cancelRoomMembership:
     en: Cancel room membership
     de: Raum-Mitgliedschaft beenden
-  invitedOn:
-    en: Invited
-    de: Eingeladen
-  expiresOn:
-    en: Expires
-    de: Läuft ab
   inviteMembersButton:
     en: Invite members
     de: Mitglieder einladen
   inviteCollaboratorsButton:
     en: Invite collaborators
     de: Mitarbeiter einladen
-  pendingInvitation:
-    en: Pending invitation
-    de: Ausstehende Einladung
   messageBoardSectionHeadline:
     en: Message board
     de: Message-Board

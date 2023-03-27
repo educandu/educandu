@@ -83,7 +83,7 @@ function RoomsTab({ rooms, invitations, loading }) {
       <section className="RoomsTab-roomsGroup">
         {!!loading && <Spin className="u-spin" />}
         {!loading && displayedMemberOfRooms.map(room => <RoomCard key={room._id} room={room} />)}
-        {!loading && displayedInvitations.map(invitation => <RoomCard key={invitation._id} room={invitation.room} invitation={invitation} />)}
+        {!loading && displayedInvitations.map(invitation => <RoomCard key={invitation._id} room={invitation.room} roomInvitation={invitation} />)}
         {!loading && !filterText && !displayedMemberOfRooms.length && !displayedInvitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMemberRooms')}</div>}
         {!loading && !!filterText && !displayedMemberOfRooms.length && !displayedInvitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMatchingRooms')}</div>}
       </section>

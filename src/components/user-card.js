@@ -71,7 +71,7 @@ function UserCard({
     }
 
     if (Number.isInteger(favoritedByCount)) {
-      actions.push(renderInfoAction(t('favoritedByTooltip', { count: favoritedByCount })));
+      actions.push(renderInfoAction(t('common:favoritedByTooltip', { count: favoritedByCount })));
     }
   }
 
@@ -99,7 +99,7 @@ function UserCard({
 
   return (
     <Card className="UserCard" actions={actions}>
-      <div className={classNames('UserCard-content', { 'UserCard-content--clickable': !!user })} onClick={handleCardClick}>
+      <div className={classNames('UserCard-content', { 'UserCard-content--nonClickable': !user })} onClick={handleCardClick}>
         <Avatar
           shape="circle"
           size={AVATAR_SIZE}

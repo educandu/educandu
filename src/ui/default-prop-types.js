@@ -443,16 +443,16 @@ export const roomShape = PropTypes.shape({
   members: PropTypes.arrayOf(roomMemberShape)
 });
 
-export const invitationBasicProps = {
+export const roomInvitationBasicProps = {
   _id: PropTypes.string.isRequired,
   sentOn: PropTypes.string.isRequired,
   expiresOn: PropTypes.string.isRequired
 };
 
-export const invitationBasicShape = PropTypes.shape(invitationBasicProps);
+export const roomInvitationBasicShape = PropTypes.shape(roomInvitationBasicProps);
 
 export const invitationShape = PropTypes.shape({
-  ...invitationBasicProps,
+  ...roomInvitationBasicProps,
   email: PropTypes.string.isRequired
 });
 

@@ -2,10 +2,19 @@ roomCard:
   role:
     en: Role
     de: Rolle
+  created:
+    en: Created
+    de: Erstellt
   updated:
     en: Updated
     de: Aktualisiert
-  joinButton:
+  joined:
+    en: Joined
+    de: Eingetreten
+  collaborativeRoom:
+    en: Collaborative room
+    de: Kollaborativer Raum
+  acceptRoomInvitation:
     en: Accept invitation
     de: Einladung annehmen
   invited:

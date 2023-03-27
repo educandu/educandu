@@ -1,7 +1,4 @@
 userCard:
-  favoritedByTooltip:
-    en: Favorited by {count, plural, =1 {# user} other {# users}}
-    de: Von {count, plural, =1 {# Benutzer} other {# Benutzern}} als Favorit markiert
   sendEmailTo:
     en: Send email to {email}
     de: E-Mail an {email} schicken

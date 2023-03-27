@@ -60,9 +60,9 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     return (
       <div className="FavoritesTab-cardWrapper" key={favoriteRoomState.id}>
         <RoomCard
-          alwaysRenderOwner
           room={favoriteRoomState.data}
-          onFavorite={handleToggleFavoriteRoom}
+          favoritedByCount={favoriteRoomState.favoritedByCount}
+          onToggleFavorite={handleToggleFavoriteRoom}
           />
       </div>
     );
