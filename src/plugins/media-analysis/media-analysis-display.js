@@ -111,7 +111,7 @@ function MediaAnalysisDisplay({ content }) {
         </div>
         {!!chapterTextsAreSet && (
           <Fragment>
-            <div className={classNames('MediaAnalysisDisplay-chapterTexts', { 'is-expanded': areTextsExpanded })}>
+            <div className="MediaAnalysisDisplay-chapterTexts">
               {chapters.map(renderChapterText)}
             </div>
             <a onClick={handleChaptersTextsToggleClick} className="MediaAnalysisDisplay-chaptersTextsToggle">
