@@ -1023,8 +1023,8 @@
       "de": "Unser Ziel ist, ein Gemeinschaftsprojekt zu schaffen, das von möglichst vielen Menschen auf der ganzen Welt getragen und unterstützt wird.\nWenn du von der Idee des kostenlosen Lernens und einer offenen Lernplattform begeistert bist und selbst Inhalte generieren möchtest, tritt unserer Community **kostenlos** bei.\n"
     },
     "signUp": {
-      "en": "Sign up for your free account",
-      "de": "Jetzt kostenlos registrieren"
+      "en": "Create your free account",
+      "de": "Erstelle dein kostenloses Konto"
     }
   },
   "homepageProjectPresentation": {
@@ -1145,8 +1145,8 @@
       "de": "Kennwort vergessen?"
     },
     "registrationLink": {
-      "en": "No account? Sign up",
-      "de": "Kein Konto? Registrieren"
+      "en": "No account? Create one",
+      "de": "Kein Konto? Erstelle eines"
     },
     "logInWithShibboleth": {
       "en": "Log in with Shibboleth",
@@ -1897,8 +1897,8 @@
   },
   "registrationForm": {
     "register": {
-      "en": "Sign up",
-      "de": "Registrieren"
+      "en": "Create account",
+      "de": "Konto erstellen"
     },
     "termsAndConditionsConfirmation": {
       "en": "I have read the <0>terms and conditions</0> and agree to them.",

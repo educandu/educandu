@@ -1,7 +1,7 @@
 registrationForm:
   register:
-    en: Sign up
-    de: Registrieren
+    en: Create account
+    de: Konto erstellen
   termsAndConditionsConfirmation:
     en: I have read the <0>terms and conditions</0> and agree to them.
     de: Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.
