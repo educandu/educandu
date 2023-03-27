@@ -4,12 +4,16 @@ import React, { useState } from 'react';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
+import { ToolOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
+import UsersIcon from '../icons/main-menu/users-icon.js';
+import PrivateIcon from '../icons/general/private-icon.js';
 import UserAccountsTab from '../admin/user-accounts-tab.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
 import AdminSettingsTab from '../admin/admin-settings-tab.js';
+import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import TechnicalMaintenanceTab from '../admin/technical-maintenance-tab.js';
 
@@ -51,7 +55,7 @@ function Admin({ PageTemplate }) {
   const items = [
     {
       key: TABS.settings,
-      label: t('common:settings'),
+      label: <div><SettingsIcon />{t('common:settings')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <AdminSettingsTab onDirtyStateChange={setIsCurrentTabDirty} />
@@ -60,7 +64,7 @@ function Admin({ PageTemplate }) {
     },
     {
       key: TABS.userAccounts,
-      label: t('userAccountsTabTitle'),
+      label: <div><UsersIcon />{t('userAccountsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <UserAccountsTab />
@@ -69,7 +73,7 @@ function Admin({ PageTemplate }) {
     },
     {
       key: TABS.storagePlans,
-      label: t('storagePlansTabTitle'),
+      label: <div><PrivateIcon />{t('storagePlansTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <StoragePlansTab />
@@ -78,7 +82,7 @@ function Admin({ PageTemplate }) {
     },
     {
       key: TABS.technicalMaintenance,
-      label: t('technicalMaintenanceTabTitle'),
+      label: <div><ToolOutlined />{t('technicalMaintenanceTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <TechnicalMaintenanceTab />
@@ -99,7 +103,7 @@ function Admin({ PageTemplate }) {
           ]}
           >
           <Tabs
-            className="Tabs"
+            className="Tabs Tabs--withIcons"
             type="line"
             size="middle"
             activeKey={currentTab}

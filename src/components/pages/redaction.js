@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
+import FileIcon from '../icons/general/file-icon.js';
+import { BankOutlined, TagOutlined } from '@ant-design/icons';
 import RedactionTagsTab from '../redaction/redaction-tags-tab.js';
 import RedactionDocumentsTab from '../redaction/redaction-documents-tab.js';
 import RedactionMediaLibraryTab from '../redaction/redaction-media-library-tab.js';
@@ -36,7 +38,7 @@ function Redaction({ initialState, PageTemplate }) {
   const tabItems = [
     {
       key: TABS.documents,
-      label: t('documentsTabTitle'),
+      label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <RedactionDocumentsTab documents={documents} onDocumentsChange={setDocuments} />
@@ -45,7 +47,7 @@ function Redaction({ initialState, PageTemplate }) {
     },
     {
       key: TABS.mediaLibrary,
-      label: t('mediaLibraryTabTitle'),
+      label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <RedactionMediaLibraryTab mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
@@ -54,7 +56,7 @@ function Redaction({ initialState, PageTemplate }) {
     },
     {
       key: TABS.tags,
-      label: t('tagsTabTitle'),
+      label: <div><TagOutlined />{t('tagsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <RedactionTagsTab documents={documents} mediaLibraryItems={mediaLibraryItems} />
@@ -70,7 +72,7 @@ function Redaction({ initialState, PageTemplate }) {
         <Tabs
           type="line"
           size="middle"
-          className="Tabs"
+          className="Tabs Tabs--withIcons"
           items={tabItems}
           activeKey={currentTab}
           destroyInactiveTabPane
