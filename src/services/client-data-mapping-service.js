@@ -249,21 +249,27 @@ class ClientDataMappingService {
 
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 
-    mappedRoom.members = room.members.map(member => {
+    mappedRoom.members = room.members.reduce((existingMemberUsers, member) => {
       const memberUser = memberUsers.find(m => member.userId === m._id);
-      const mappedMemberUser = this.mapWebsitePublicUser({ viewedUser: memberUser, viewingUser });
-      const memberEmail = viewingUserIsRoomOwner ? memberUser.email : mappedMemberUser.email || null;
-      const result = {
-        userId: member.userId,
-        joinedOn: member.joinedOn?.toISOString() || null,
-        displayName: mappedMemberUser.displayName,
-        avatarUrl: mappedMemberUser.avatarUrl
-      };
-      if (memberEmail) {
-        result.email = memberEmail;
+
+      if (memberUser) {
+        const memberUserProfileData = this.mapWebsitePublicUser({ viewedUser: memberUser, viewingUser });
+        const memberEmail = viewingUserIsRoomOwner ? memberUser.email : memberUserProfileData.email || null;
+
+        const mappedMemberUser = {
+          userId: member.userId,
+          joinedOn: member.joinedOn?.toISOString() || null,
+          displayName: memberUserProfileData.displayName,
+          avatarUrl: memberUserProfileData.avatarUrl
+        };
+        if (memberEmail) {
+          mappedMemberUser.email = memberEmail;
+        }
+        existingMemberUsers.push(mappedMemberUser);
       }
-      return result;
-    });
+
+      return existingMemberUsers;
+    }, []);
 
     mappedRoom.messages = room.messages.map(message => ({
       ...message,

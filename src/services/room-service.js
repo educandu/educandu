@@ -352,6 +352,12 @@ export default class RoomService {
       invalidInvitationReason: null
     };
 
+    if (user.expiresOn) {
+      response.invalidInvitationReason = INVALID_ROOM_INVITATION_REASON.unconfirmedUser;
+      logger.debug(`Registration of user account with email '${user.email}' has not been confirmed.`);
+      return response;
+    }
+
     const invitation = await this.roomInvitationStore.getRoomInvitationByToken(token);
     if (!invitation) {
       response.invalidInvitationReason = INVALID_ROOM_INVITATION_REASON.token;
@@ -359,7 +365,7 @@ export default class RoomService {
     }
 
     if (invitation.email !== user.email) {
-      response.invalidInvitationReason = INVALID_ROOM_INVITATION_REASON.user;
+      response.invalidInvitationReason = INVALID_ROOM_INVITATION_REASON.differenUser;
       logger.debug(`Invitation ${invitation._id} was sent to email '${invitation?.email}' but accessed by user with email '${user.email}'`);
       return response;
     }
