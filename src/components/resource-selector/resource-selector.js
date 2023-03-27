@@ -22,8 +22,8 @@ const possibleSourceTypes = [
 
 function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }) {
   const clientConfig = useService(ClientConfig);
+  const roomMediaContext = useRoomMediaContext();
   const { t } = useTranslation('resourceSelector');
-  const { roomMediaContext } = useRoomMediaContext();
   const [visibleSourceTypes, setVisibleSourceTypes] = useState([]);
   const [selectedSourceType, setSelectedSourceType] = useState(null);
 

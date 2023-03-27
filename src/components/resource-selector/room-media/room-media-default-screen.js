@@ -25,7 +25,7 @@ function RoomMediaDefaultScreen({
   onFilesDropped
 }) {
   const filesViewerApiRef = useRef();
-  const { roomMediaContext } = useRoomMediaContext();
+  const roomMediaContext = useRoomMediaContext();
   const { t } = useTranslation('roomMediaDefaultScreen');
 
   const handleSelectHighlightedFileClick = () => {

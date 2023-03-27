@@ -1189,8 +1189,8 @@
       "de": "Vorschaubereich"
     },
     "resourceSelectorTooltip": {
-      "en": "Click here to insert a link to a selected resource",
-      "de": "Klicke hier, um einen Link zu einer ausgewählten Ressource einzufügen"
+      "en": "Insert a link to a selected resource",
+      "de": "Link zu einer ausgewählten Ressource einfügen"
     }
   },
   "mediaPlayerControls": {
@@ -2775,8 +2775,8 @@
       "de": "Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren"
     },
     "startPlaybackFromHere": {
-      "en": "Click here to play from this part",
-      "de": "Klicke hier, um die Wiedergabe ab diesem Teil zu starten"
+      "en": "Play from this part",
+      "de": "Ab diesem Teil abspeilen"
     }
   },
   "mediaSlideshow": {

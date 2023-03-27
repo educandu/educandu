@@ -43,7 +43,8 @@ describe('room-controller', () => {
       removeRoomMember: sandbox.stub(),
       deleteRoomInvitation: sandbox.stub(),
       createRoomMessage: sandbox.stub(),
-      deleteRoomMessage: sandbox.stub()
+      deleteRoomMessage: sandbox.stub(),
+      getAllRoomMedia: sandbox.stub()
     };
     documentService = {
       getDocumentsExtendedMetadataByIds: sandbox.stub()
@@ -627,6 +628,8 @@ describe('room-controller', () => {
         documents: [uniqueId.create(), uniqueId.create()]
       };
       mappedRoom = { ...room };
+
+      roomService.getAllRoomMedia.resolves({});
     });
 
     describe('when the request is made by the room owner', () => {
@@ -693,7 +696,7 @@ describe('room-controller', () => {
           request,
           {},
           PAGE_NAME.room,
-          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
+          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations, roomMediaContext: null }
         );
       });
     });
@@ -754,7 +757,7 @@ describe('room-controller', () => {
           request,
           {},
           PAGE_NAME.room,
-          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations }
+          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations, roomMediaContext: null }
         );
       });
     });

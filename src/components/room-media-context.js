@@ -5,7 +5,13 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 const RoomMediaContextContext = React.createContext();
 
 export function useRoomMediaContext() {
-  return useContext(RoomMediaContextContext);
+  const context = useContext(RoomMediaContextContext);
+  return context?.roomMediaContext;
+}
+
+export function useSetRoomMediaContext() {
+  const context = useContext(RoomMediaContextContext);
+  return context?.setRoomMediaContext;
 }
 
 export function RoomMediaContextProvider({ context, children }) {
