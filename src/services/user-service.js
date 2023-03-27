@@ -255,18 +255,29 @@ class UserService {
       userIds.length ? await this.userStore.getUsersByIds(userIds) : []
     ]);
 
-    return user.favorites.map(f => {
-      switch (f.type) {
+    const mappedFavorites = [];
+
+    for (const favorite of user.favorites) {
+      const favoritedByCount = await this.userStore.getFavoritesCount(favorite.id);
+      const mappedFavorite = { ...favorite, favoritedByCount };
+
+      switch (favorite.type) {
         case FAVORITE_TYPE.user:
-          return { ...f, data: users.find(u => u._id === f.id) };
+          Object.assign(mappedFavorite, { data: users.find(u => u._id === favorite.id) });
+          break;
         case FAVORITE_TYPE.room:
-          return { ...f, data: rooms.find(r => r._id === f.id) };
+          Object.assign(mappedFavorite, { data: rooms.find(r => r._id === favorite.id) });
+          break;
         case FAVORITE_TYPE.document:
-          return { ...f, data: documents.find(d => d._id === f.id) };
+          Object.assign(mappedFavorite, { data: documents.find(d => d._id === favorite.id) });
+          break;
         default:
-          return { ...f };
+          break;
       }
-    });
+
+      mappedFavorites.push(mappedFavorite);
+    }
+    return mappedFavorites;
   }
 
   async addFavorite({ type, id, user }) {

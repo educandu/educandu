@@ -463,6 +463,7 @@ describe('user-service', () => {
             id: favoriteRoom._id,
             type: FAVORITE_TYPE.room,
             setOn: new Date('2022-03-09T10:01:00.000Z'),
+            favoritedByCount: 0,
             data: {
               ...favoriteRoom
             }
@@ -471,6 +472,7 @@ describe('user-service', () => {
             id: favoriteDocumentMetadata._id,
             type: FAVORITE_TYPE.document,
             setOn: new Date('2022-03-09T10:03:00.000Z'),
+            favoritedByCount: 0,
             data: {
               ...favoriteDocumentMetadata
             }
@@ -479,6 +481,7 @@ describe('user-service', () => {
             id: favoriteUser._id,
             type: FAVORITE_TYPE.user,
             setOn: new Date('2022-03-09T10:05:00.000Z'),
+            favoritedByCount: 0,
             data: {
               ...favoriteUser
             }

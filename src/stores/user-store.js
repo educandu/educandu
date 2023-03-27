@@ -54,6 +54,10 @@ class UserStore {
       : Promise.resolve([]);
   }
 
+  getFavoritesCount(favoriteItemId, { session } = {}) {
+    return this.collection.count({ 'favorites.id': favoriteItemId }, { session });
+  }
+
   getUsersByEmailAddress(email, { session } = {}) {
     return this.collection.find({ email }, { session }).toArray();
   }

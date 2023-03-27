@@ -529,16 +529,16 @@
       "de": "Du hast noch keine Favoriten markiert."
     },
     "favoriteUsers": {
-      "en": "Your favorite users ({count})",
-      "de": "Deine Lieblingsnutzer ({count})"
+      "en": "Your favorite users",
+      "de": "Deine Lieblingsnutzer"
     },
     "favoriteRooms": {
-      "en": "Your favorite rooms ({count})",
-      "de": "Deine Lieblingsräume ({count})"
+      "en": "Your favorite rooms",
+      "de": "Deine Lieblingsräume"
     },
     "favoriteDocuments": {
-      "en": "Your favorite documents ({count})",
-      "de": "Deine Lieblingsdokumente ({count})"
+      "en": "Your favorite documents",
+      "de": "Deine Lieblingsdokumente"
     }
   },
   "notificationsTab": {
@@ -1628,25 +1628,9 @@
       "en": "All room data and resources will be deleted.",
       "de": "Alle Raum-Daten und -Ressourcen werden gelöscht."
     },
-    "removeMember": {
-      "en": "Remove member",
-      "de": "Mitglied entfernen"
-    },
-    "revokeInvitation": {
-      "en": "Revoke invitation",
-      "de": "Einladung widerrufen"
-    },
     "cancelRoomMembership": {
       "en": "Cancel room membership",
       "de": "Raum-Mitgliedschaft beenden"
-    },
-    "invitedOn": {
-      "en": "Invited",
-      "de": "Eingeladen"
-    },
-    "expiresOn": {
-      "en": "Expires",
-      "de": "Läuft ab"
     },
     "inviteMembersButton": {
       "en": "Invite members",
@@ -1655,10 +1639,6 @@
     "inviteCollaboratorsButton": {
       "en": "Invite collaborators",
       "de": "Mitarbeiter einladen"
-    },
-    "pendingInvitation": {
-      "en": "Pending invitation",
-      "de": "Ausstehende Einladung"
     },
     "messageBoardSectionHeadline": {
       "en": "Message board",
@@ -2199,6 +2179,40 @@
     "storageSpaceExceeded": {
       "en": "Exceedance",
       "de": "Überschreitung"
+    }
+  },
+  "userCard": {
+    "favoritedByTooltip": {
+      "en": "Favorited by {count, plural, =1 {# user} other {# users}}",
+      "de": "Von {count, plural, =1 {# Benutzer} other {# Benutzern}} als Favorit markiert"
+    },
+    "sendEmailTo": {
+      "en": "Send email to {email}",
+      "de": "E-Mail an {email} schicken"
+    },
+    "pendingInvitation": {
+      "en": "Pending invitation",
+      "de": "Ausstehende Einladung"
+    },
+    "userInvitedOn": {
+      "en": "Invited",
+      "de": "Eingeladen"
+    },
+    "invitationExpiresOn": {
+      "en": "Expires",
+      "de": "Läuft ab"
+    },
+    "joinedOn": {
+      "en": "Joined on",
+      "de": "Eingetreten am"
+    },
+    "revokeInvitation": {
+      "en": "Revoke invitation",
+      "de": "Einladung widerrufen"
+    },
+    "removeMember": {
+      "en": "Remove member",
+      "de": "Mitglied entfernen"
     }
   },
   "userStepsForm": {

@@ -47,11 +47,10 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     return (
       <div key={favoriteUserState.id}>
         <UserCard
-          userId={favoriteUserState.id}
-          title={favoriteUserState.data.displayName}
-          detail={favoriteUserState.data.shortDescription || favoriteUserState.data.organization}
+          user={favoriteUserState.data}
           avatarUrl={favoriteUserState.data.avatarUrl}
-          onFavorite={handleToggleFavoriteUser}
+          favoritedByCount={favoriteUserState.favoritedByCount}
+          onToggleFavorite={handleToggleFavoriteUser}
           />
       </div>
     );
@@ -94,19 +93,28 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
         <span>{t('noFavorites')}</span>
       )}
       <div className="FavoriteTab-headline">
-        {t('favoriteUsers', { count: favoriteUsersStates.filter(item => item.isFavorite).length })}
+        {t('favoriteUsers')}
+        <div className="FavoriteTab-headlineCounter">
+          {`(${favoriteUsersStates.filter(item => item.isFavorite).length})`}
+        </div>
       </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--small">
         {favoriteUsersStates.map(renderFavoriteUserState)}
       </section>
       <div className="FavoriteTab-headline">
-        {t('favoriteRooms', { count: favoriteRoomsStates.filter(item => item.isFavorite).length })}
+        {t('favoriteRooms')}
+        <div className="FavoriteTab-headlineCounter">
+          {`(${favoriteRoomsStates.filter(item => item.isFavorite).length})`}
+        </div>
       </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--small">
         {favoriteRoomsStates.map(renderFavoriteRoomState)}
       </section>
       <div className="FavoriteTab-headline">
-        {t('favoriteDocuments', { count: favoriteDocumentsStates.filter(item => item.isFavorite).length })}
+        {t('favoriteDocuments')}
+        <div className="FavoriteTab-headlineCounter">
+          {`(${favoriteDocumentsStates.filter(item => item.isFavorite).length})`}
+        </div>
       </div>
       <section className="FavoritesTab-cards FavoritesTab-cards--wide">
         {favoriteDocumentsStates.map(renderFavoriteDocumentState)}

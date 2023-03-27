@@ -262,6 +262,8 @@ class ClientDataMappingService {
           userId: member.userId,
           joinedOn: member.joinedOn?.toISOString() || null,
           displayName: memberUserProfileData.displayName,
+          shortDescription: memberUserProfileData.shortDescription,
+          organization: memberUserProfileData.organization,
           avatarUrl: memberUserProfileData.avatarUrl
         };
         if (memberEmail) {

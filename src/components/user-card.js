@@ -6,85 +6,158 @@ import urlUtils from '../utils/url-utils.js';
 import { Avatar, Card, Tooltip } from 'antd';
 import FavoriteStar from './favorite-star.js';
 import DeleteButton from './delete-button.js';
-import { MailOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import { useDateFormat } from './locale-context.js';
 import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
+import { InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
+import { invitationShape, publicUserShape, roomMemberShape } from '../ui/default-prop-types.js';
 
-function UserCard({ userId, title, detail, email, avatarUrl, onFavorite, deleteTooltip, onDelete }) {
+function UserCard({
+  user,
+  roomMember,
+  roomInvitation,
+  avatarUrl,
+  favoritedByCount,
+  onToggleFavorite,
+  onDeleteRoomMember,
+  onDeleteRoomInvitation
+}) {
+  const { formatDate } = useDateFormat();
+  const { t } = useTranslation('userCard');
+
   const handleCardClick = () => {
-    if (userId) {
-      window.location = routes.getUserProfileUrl(userId);
+    if (user?.id) {
+      window.location = routes.getUserProfileUrl(user?.id);
     }
   };
 
-  const renderFavoriteAction = () => {
+  const renderFavoriteAction = userId => {
     return (
       <div key="favorite">
         <FavoriteStar
           id={userId}
           disabled={!userId}
           type={FAVORITE_TYPE.user}
-          onToggle={isFavorite => onFavorite(userId, isFavorite)}
+          onToggle={isFavorite => onToggleFavorite(userId, isFavorite)}
           />
       </div>
     );
   };
 
-  const renderDeleteAction = () => {
+  const renderEmailAction = email => {
     return (
-      <Tooltip title={deleteTooltip} key="delete">
-        <DeleteButton onClick={onDelete} />
+      <Tooltip title={t('sendEmailTo', { email })} key="email">
+        <a href={`mailto:${encodeURIComponent(email)}`} >
+          <MailOutlined />
+        </a>
       </Tooltip>
     );
   };
 
-  const actions = [renderFavoriteAction()];
-  if (onDelete) {
-    actions.push(renderDeleteAction());
+  const renderInfoAction = info => {
+    return (
+      <Tooltip title={info} key="info">
+        <InfoCircleOutlined />
+      </Tooltip>
+    );
+  };
+
+  const actions = [];
+
+  if (user) {
+    actions.push(renderFavoriteAction(user._id));
+    if (user.email) {
+      actions.push(renderEmailAction(user.email));
+    }
+
+    if (Number.isInteger(favoritedByCount)) {
+      actions.push(renderInfoAction(t('favoritedByTooltip', { count: favoritedByCount })));
+    }
+  }
+
+  if (roomMember) {
+    actions.push(renderFavoriteAction(roomMember.userId));
+    if (roomMember.email) {
+      actions.push(renderEmailAction(roomMember.email));
+    }
+    actions.push(renderInfoAction(`${t('joinedOn')} ${formatDate(roomMember.joinedOn)}`));
+
+    actions.push((
+      <Tooltip title={t('removeMember')} key="removeMember">
+        <DeleteButton onClick={onDeleteRoomMember} />
+      </Tooltip>
+    ));
+  }
+
+  if (roomInvitation) {
+    actions.push((
+      <Tooltip title={t('revokeInvitation')} key="revokeInvitation">
+        <DeleteButton onClick={onDeleteRoomInvitation} />
+      </Tooltip>
+    ));
   }
 
   return (
     <Card className="UserCard" actions={actions}>
-      <div className={classNames('UserCard-content', { 'UserCard-content--clickable': !!userId })} onClick={handleCardClick}>
+      <div className={classNames('UserCard-content', { 'UserCard-content--clickable': !!user })} onClick={handleCardClick}>
         <Avatar
           shape="circle"
           size={AVATAR_SIZE}
           className="UserCard-avatar u-avatar"
           src={avatarUrl || urlUtils.getGravatarUrl()}
           />
-        <div className="UserCard-title">{title}</div>
-        <div className={classNames('UserCard-details', { 'UserCard-details--includesEmail': !!email })}>
-          {!!email && (
-            <div className="UserCard-email">
-              <MailOutlined />
-              <a className="UserCard-emailLink" href={`mailto:${encodeURI(email)}`}>{email}</a>
-            </div>
-          )}
-          {detail}
+        <div className="UserCard-title">
+          {!!user && user.displayName}
+          {!!roomMember && roomMember.displayName}
+          {!!roomInvitation && t('pendingInvitation')}
         </div>
+        {!!user && (
+          <div className="UserCard-details">
+            {user.shortDescription || user.organization}
+          </div>
+        )}
+        {!!roomMember && (
+          <div className="UserCard-details">
+            {roomMember.shortDescription || roomMember.organization}
+          </div>
+        )}
+        {!!roomInvitation && (
+          <div className="UserCard-details UserCard-details--roomInvitation">
+            {!!roomInvitation.email && (
+              <div className="UserCard-roomInvitationEmail">
+                <MailOutlined />
+                <a className="UserCard-roomInvitationEmailLink" href={`mailto:${encodeURI(roomInvitation.email)}`}>{roomInvitation.email}</a>
+              </div>
+            )}
+            <span className="UserCard-roomInvitationDetail">{`${t('userInvitedOn')}: ${formatDate(roomInvitation.sentOn)}`}</span>
+            <span className="UserCard-roomInvitationDetail">{`${t('invitationExpiresOn')}: ${formatDate(roomInvitation.expiresOn)}`}</span>
+          </div>
+        )}
       </div>
     </Card>
   );
 }
 
 UserCard.propTypes = {
-  userId: PropTypes.string,
-  email: PropTypes.string,
-  title: PropTypes.node.isRequired,
+  user: publicUserShape,
+  roomMember: roomMemberShape,
+  roomInvitation: invitationShape,
   avatarUrl: PropTypes.string,
-  detail: PropTypes.node,
-  deleteTooltip: PropTypes.string,
-  onFavorite: PropTypes.func,
-  onDelete: PropTypes.func
+  favoritedByCount: PropTypes.number,
+  onToggleFavorite: PropTypes.func,
+  onDeleteRoomMember: PropTypes.func,
+  onDeleteRoomInvitation: PropTypes.func
 };
 
 UserCard.defaultProps = {
-  userId: null,
-  email: null,
+  user: null,
+  roomMember: null,
+  roomInvitation: null,
   avatarUrl: '',
-  detail: null,
-  deleteTooltip: null,
-  onFavorite: () => {},
-  onDelete: null
+  favoritedByCount: null,
+  onToggleFavorite: () => {},
+  onDeleteRoomMember: () => {},
+  onDeleteRoomInvitation: () => {}
 };
 
 export default UserCard;

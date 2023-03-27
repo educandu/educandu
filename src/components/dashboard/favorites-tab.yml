@@ -6,11 +6,11 @@ favoritesTab:
     en: You have not marked any favorites so far.
     de: Du hast noch keine Favoriten markiert.
   favoriteUsers:
-    en: Your favorite users ({count})
-    de: Deine Lieblingsnutzer ({count})
+    en: Your favorite users
+    de: Deine Lieblingsnutzer
   favoriteRooms:
-    en: Your favorite rooms ({count})
-    de: Deine Lieblingsräume ({count})
+    en: Your favorite rooms
+    de: Deine Lieblingsräume
   favoriteDocuments:
-    en: Your favorite documents ({count})
-    de: Deine Lieblingsdokumente ({count})
+    en: Your favorite documents
+    de: Deine Lieblingsdokumente

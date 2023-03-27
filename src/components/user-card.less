@@ -30,18 +30,26 @@
   font-size: @edu-font-size-sm;
   .m-line-clamp(3);
 
-  &.UserCard-details--includesEmail {
-    .m-line-clamp(1);
+  &.UserCard-details--roomInvitation {
+    display: flex;
+    margin: 0 auto;
+    width: fit-content;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 
+.UserCard-roomInvitationDetail {
+  align-self: flex-end;
+}
 
-.UserCard-email {
+
+.UserCard-roomInvitationEmail {
   .m-overflow-ellipsis;
   color: @edu-text-color-secondary;
 }
 
-.UserCard-emailLink {
+.UserCard-roomInvitationEmailLink {
   .m-link(inherit);
   margin-left: 5px;
 }
