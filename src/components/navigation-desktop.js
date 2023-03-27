@@ -71,10 +71,6 @@ function NavigationDesktop() {
     window.location = routes.getLoginUrl(getCurrentUrl());
   };
 
-  const handleRegisterClick = () => {
-    window.location = routes.getRegisterUrl();
-  };
-
   const handleLogOutClick = () => {
     window.location = routes.getLogoutUrl();
   };
@@ -198,11 +194,7 @@ function NavigationDesktop() {
   };
 
   const renderAnonymousUserComponent = () => (
-    <div className="NavigationDesktop-anonymousUser">
-      <a className="NavigationDesktop-anonymousUserLink" onClick={handleLogInClick}>{t('common:logIn')}</a>
-      <span>/</span>
-      <a className="NavigationDesktop-anonymousUserLink" onClick={handleRegisterClick}>{t('common:register')}</a>
-    </div>
+    <a className="NavigationDesktop-anonymousUserLink" onClick={handleLogInClick}>{t('common:logIn')}</a>
   );
 
   return (

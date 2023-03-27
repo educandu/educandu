@@ -8,6 +8,9 @@ loginForm:
   forgotPassword:
     en: Forgot your password?
     de: Kennwort vergessen?
+  registrationLink:
+    en: No account? Create one
+    de: Kein Konto? Erstelle eines
   logInWithShibboleth:
     en: Log in with Shibboleth
     de: Mit Shibboleth anmelden

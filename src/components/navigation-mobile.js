@@ -43,10 +43,6 @@ function NavigationMobile() {
     window.location = routes.getLoginUrl(getCurrentUrl());
   };
 
-  const handleRegisterClick = () => {
-    window.location = routes.getRegisterUrl();
-  };
-
   const handleLogOutClick = () => {
     window.location = routes.getLogoutUrl();
   };
@@ -118,10 +114,7 @@ function NavigationMobile() {
   const renderDrawerFooter = () => {
     if (!user) {
       return (
-        <div className="NavigationMobile-anonymousUserButtons">
-          <Button size="large" type="primary" onClick={handleLogInClick}>{t('common:logIn')}</Button>
-          <Button size="large" onClick={handleRegisterClick}>{t('common:register')}</Button>
-        </div>
+        <Button size="large" type="primary" onClick={handleLogInClick}>{t('common:logIn')}</Button>
       );
     }
 
