@@ -10,7 +10,7 @@ export const maxUserOrganizationLength = 100;
 export const minUserPasswordLength = 8;
 
 export const maxShortDescriptionLength = 100;
-export const maxDocumentShortDescriptionLength = 1000;
+export const maxDocumentShortDescriptionLength = 300;
 
 export const maxMediaLibraryItemDescriptionLength = 1000;
 
