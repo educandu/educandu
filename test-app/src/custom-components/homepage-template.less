@@ -1,3 +1,5 @@
+@homepage-template-hero-transition-breathing-room: 5px;
+
 .HomepageTemplate {
   width: 100%;
   display: flex;
@@ -13,9 +15,9 @@
 
 .HomepageTemplate-aboveFold {
   width: 100%;
-  min-height: calc(100vh - 5px);
   display: grid;
   grid-template-rows: auto 1fr;
+  min-height: calc(100vh - @homepage-template-hero-transition-breathing-room);
 }
 
 .HomepageTemplate-aboveFoldContentWrapper {

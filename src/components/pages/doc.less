@@ -3,7 +3,7 @@
 
 // `has:` works in all modern browsers except Firefox
 *:has(> .DocPage-controlPanels) > .DocPage {
-  min-height: %(~"calc(100vh - %s)", @control-panel-height);
+  min-height: calc(100vh - @control-panel-height);
 }
 
 .DocPage {
