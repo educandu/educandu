@@ -3,8 +3,10 @@
 }
 
 .RoomCard-title {
+  .m-overflow-ellipsis;
   cursor: pointer;
   font-weight: bold;
+  text-align: left;
   font-size: @edu-font-size-base;
 
   &.RoomCard-title--nonClickable {
@@ -29,36 +31,10 @@
   grid-auto-flow: row;
 }
 
-.RoomCard-title {
-  .m-overflow-ellipsis;
-  text-align: center;
-  font-weight: bold;
-}
-
 .RoomCard-details {
   font-size: @edu-font-size-sm;
 }
 
-.RoomCard-owner {
-  .m-overflow-ellipsis;
-  width: 100%;
-  align-self: center;
-  text-align: center;
-  font-size: @edu-font-size-sm;
-  padding-top: 3px;
-  color: @edu-text-color-secondary;
+.RoomCard-description {
+  .m-line-clamp(3);
 }
-
-.RoomCard-infoRow {
-  display: flex;
-  gap: 10px;
-  padding-bottom: 5px;
-}
-
-.RoomCard-infoLabel {
-  flex: 0 0 70px;
-}
-
-// .RoomCard-description {
-//   .m-clamp-lines(3);
-// }

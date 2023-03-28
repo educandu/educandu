@@ -2,6 +2,16 @@
   .m-row-card(4);
 }
 
+.UserCard-avatar {
+  margin: 0 auto !important;
+}
+
+.UserCard-title {
+  .m-overflow-ellipsis;
+  text-align: center;
+  font-weight: bold;
+}
+
 .UserCard-content {
   height: 210px;
   display: grid;
@@ -14,16 +24,6 @@
   &.UserCard-content--nonClickable {
     cursor: default;
   }
-}
-
-.UserCard-avatar {
-  margin: 0 auto !important;
-}
-
-.UserCard-title {
-  .m-overflow-ellipsis;
-  text-align: center;
-  font-weight: bold;
 }
 
 .UserCard-details {

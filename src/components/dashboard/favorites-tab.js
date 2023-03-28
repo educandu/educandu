@@ -2,12 +2,10 @@ import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import RoomCard from '../room-card.js';
 import UserCard from '../user-card.js';
-import FavoriteStar from '../favorite-star.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import React, { useEffect, useState } from 'react';
-import { FAVORITE_TYPE } from '../../domain/constants.js';
 import { favoriteDocumentShape, favoriteRoomShape, favoriteUserShape } from '../../ui/default-prop-types.js';
 
 function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading }) {
@@ -58,7 +56,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
 
   const renderFavoriteRoomState = favoriteRoomState => {
     return (
-      <div className="FavoritesTab-cardWrapper" key={favoriteRoomState.id}>
+      <div key={favoriteRoomState.id}>
         <RoomCard
           room={favoriteRoomState.data}
           favoritedByCount={favoriteRoomState.favoritedByCount}
@@ -70,17 +68,12 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
 
   const renderFavoriteDocumentState = favoriteDocumentState => {
     return (
-      <div className="FavoritesTab-cardWrapper" key={favoriteDocumentState.id}>
-        <DocumentCard doc={favoriteDocumentState.data} />
-        {!favoriteDocumentState.isFavorite && <div className="FavoritesTab-cardOverlay" />}
-        <div className="FavoritesTab-favoriteStart" >
-          <FavoriteStar
-            type={FAVORITE_TYPE.document}
-            id={favoriteDocumentState.id}
-            submitChange={false}
-            onToggle={isFavorite => handleToggleFavoriteDocument(favoriteDocumentState.id, isFavorite)}
-            />
-        </div>
+      <div key={favoriteDocumentState.id}>
+        <DocumentCard
+          doc={favoriteDocumentState.data}
+          favoritedByCount={favoriteDocumentState.favoritedByCount}
+          onToggleFavorite={handleToggleFavoriteDocument}
+          />
       </div>
     );
   };

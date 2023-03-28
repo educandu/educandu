@@ -136,6 +136,9 @@ common:
   logOut:
     en: Log out
     de: Abmelden
+  created:
+    en: Created
+    de: Erstellt
   createdOn:
     en: Creation date
     de: Erstellungsdatum
@@ -145,6 +148,9 @@ common:
   completedOn:
     en: Completion date
     de: Abgeschlossen am
+  updated:
+    en: Updated
+    de: Aktualisiert
   updatedOn:
     en: Update date
     de: Änderungsdatum
@@ -527,6 +533,9 @@ common:
   collaborators:
     en: Collaborators
     de: Mitarbeiter
+  contributionsBy:
+    en: Contributions by
+    de: Bearbeitungen durch
   changesSavedSuccessfully:
     en: Your changes have been saved
     de: Deine Änderungen wurden gespeichert

@@ -26,7 +26,8 @@ const contributedDocumentMetadataProjection = {
   createdOn: 1,
   createdBy: 1,
   updatedOn: 1,
-  updatedBy: 1
+  updatedBy: 1,
+  contributors: 1
 };
 
 const documentExtendedMetadataProjection = {

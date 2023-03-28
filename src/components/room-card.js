@@ -90,8 +90,8 @@ function RoomCard({ room, roomInvitation, favoritedByCount, onToggleFavorite }) 
         {Number.isInteger(favoritedByCount) && (
           <div>{t('common:favoritedByTooltip', { count: favoritedByCount })}</div>
         )}
-        <div>{t('created')}: {formatDate(room.createdOn)}</div>
-        <div>{t('updated')}: {formatDate(room.updatedOn)}</div>
+        <div>{t('common:created')}: {formatDate(room.createdOn)}</div>
+        <div>{t('common:updated')}: {formatDate(room.updatedOn)}</div>
         {userAsMember ? <div>{t('joined')}: {formatDate(userAsMember.joinedOn)}</div> : null}
       </div>
     )));

@@ -1,13 +1,4 @@
 roomCard:
-  role:
-    en: Role
-    de: Rolle
-  created:
-    en: Created
-    de: Erstellt
-  updated:
-    en: Updated
-    de: Aktualisiert
   joined:
     en: Joined
     de: Eingetreten
