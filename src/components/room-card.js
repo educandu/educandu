@@ -14,7 +14,7 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { InfoCircleOutlined, MailOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { favoriteRoomShape, roomInvitationBasicShape, roomShape } from '../ui/default-prop-types.js';
 
-function RoomCard({ room, favoriteRoom, roomInvitation, favoritedByCount, onToggleFavorite }) {
+function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
@@ -88,22 +88,22 @@ function RoomCard({ room, favoriteRoom, roomInvitation, favoritedByCount, onTogg
       userAccessibleRoom.isCollaborative,
       (
         <div className="RoomCard-infoTooltip">
-          {!!userAccessibleRoom.isCollaborative && <div>{t('collaborativeRoom')}</div>}
+          {!!userAccessibleRoom.isCollaborative && <div>{t('collaborativeRoom')}.</div>}
           <div>{t('createdBy')} {userAccessibleRoom.owner?.displayName}</div>
-          <div>{!userAccessibleRoom.isCollaborative && t('hasCountMembers', { count: membersCount })}</div>
-          <div>{!!userAccessibleRoom.isCollaborative && t('hasCountCollaborators', { count: membersCount })}</div>
+          <div>{!userAccessibleRoom.isCollaborative && t('hasCountMembers', { count: membersCount })}.</div>
+          <div>{!!userAccessibleRoom.isCollaborative && t('hasCountCollaborators', { count: membersCount })}.</div>
         </div>
       )
     ));
 
     actions.push(renderInfoAction((
       <div className="RoomCard-infoTooltip">
-        {Number.isInteger(favoritedByCount) && (
-          <div>{t('common:favoritedByTooltip', { count: favoritedByCount })}</div>
+        {!!favoriteRoom && (
+          <div>{t('common:favoritedByTooltip', { count: favoriteRoom.favoritedByCount })}</div>
         )}
-        <div>{t('createdOn')} {formatDate(userAccessibleRoom.createdOn)}</div>
-        <div>{t('updatedOn')} {formatDate(userAccessibleRoom.updatedOn)}</div>
-        {userAsMember ? <div>{t('common:joinedOn')} {formatDate(userAsMember.joinedOn)}</div> : null}
+        <div>{t('createdOn')} {formatDate(userAccessibleRoom.createdOn)}.</div>
+        <div>{t('updatedOn')} {formatDate(userAccessibleRoom.updatedOn)}.</div>
+        {userAsMember ? <div>{t('common:joinedOn')} {formatDate(userAsMember.joinedOn)}.</div> : null}
       </div>
     )));
   }
@@ -113,16 +113,16 @@ function RoomCard({ room, favoriteRoom, roomInvitation, favoritedByCount, onTogg
       roomInvitation.room?.isCollaborative,
       (
         <div className="RoomCard-infoTooltip">
-          {!!roomInvitation.room?.isCollaborative && <div>{t('collaborativeRoom')}</div>}
-          <div>{t('createdBy')} {roomInvitation.room?.owner?.displayName}</div>
+          {!!roomInvitation.room?.isCollaborative && <div>{t('collaborativeRoom')}.</div>}
+          <div>{t('createdBy')} {roomInvitation.room?.owner?.displayName}.</div>
         </div>
       )
     ));
 
     actions.push(renderInfoAction((
       <div className="RoomCard-infoTooltip">
-        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}</div>
-        <div><Markdown>{t('acceptInvitation', { date: formatDate(roomInvitation.expiresOn) })}</Markdown></div>
+        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}.</div>
+        <div><Markdown>{t('acceptInvitation', { date: formatDate(roomInvitation.expiresOn) })}.</Markdown></div>
       </div>
     )));
 
@@ -160,10 +160,10 @@ RoomCard.propTypes = {
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     setOn: PropTypes.string.isRequired,
+    favoritedByCount: PropTypes.number,
     data: favoriteRoomShape
   }),
   roomInvitation: roomInvitationBasicShape,
-  favoritedByCount: PropTypes.number,
   onToggleFavorite: PropTypes.func
 };
 
@@ -171,7 +171,6 @@ RoomCard.defaultProps = {
   room: null,
   favoriteRoom: null,
   roomInvitation: null,
-  favoritedByCount: null,
   onToggleFavorite: () => {}
 };
 

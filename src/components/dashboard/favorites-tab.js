@@ -46,8 +46,6 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
       <div key={favoriteUserState.id}>
         <UserCard
           favoriteUser={favoriteUserState}
-          avatarUrl={favoriteUserState.data.avatarUrl}
-          favoritedByCount={favoriteUserState.favoritedByCount}
           onToggleFavorite={handleToggleFavoriteUser}
           />
       </div>
@@ -59,7 +57,6 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
       <div key={favoriteRoomState.id}>
         <RoomCard
           favoriteRoom={favoriteRoomState}
-          favoritedByCount={favoriteRoomState.favoritedByCount}
           onToggleFavorite={handleToggleFavoriteRoom}
           />
       </div>
@@ -71,8 +68,6 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
       <div key={favoriteDocumentState.id}>
         <DocumentCard
           favoriteDocument={favoriteDocumentState}
-          // change
-          favoritedByCount={favoriteDocumentState.favoritedByCount}
           onToggleFavorite={handleToggleFavoriteDocument}
           />
       </div>

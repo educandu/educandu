@@ -10,7 +10,7 @@ import { FAVORITE_TYPE } from '../domain/constants.js';
 import { InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { contributedDocumentMetadataShape, favoriteDocumentShape } from '../ui/default-prop-types.js';
 
-function DocumentCard({ doc, favoriteDocument, favoritedByCount, onToggleFavorite }) {
+function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentCard');
 
@@ -69,21 +69,22 @@ function DocumentCard({ doc, favoriteDocument, favoritedByCount, onToggleFavorit
 
     actions.push(renderUserAction((
       <div className="DocumentCard-infoTooltip">
-        <div>{t('common:contributionsBy')}: {contributors}</div>
+        <div>{t('common:contributionsBy')}: {contributors}.</div>
       </div>
     )));
 
+    const createdOn = formatDate(userAccessibleDocument.createdOn);
+    const updatedOn = formatDate(userAccessibleDocument.updatedOn);
+    const createdBy = userAccessibleDocument.createdBy.displayName;
+    const updatedBy = userAccessibleDocument.updatedBy.displayName;
+
     actions.push(renderInfoAction((
       <div className="DocumentCard-infoTooltip">
-        {Number.isInteger(favoritedByCount) && (
-          <div>{t('common:favoritedByTooltip', { count: favoritedByCount })}</div>
+        {!!favoriteDocument && (
+          <div>{t('common:favoritedByTooltip', { count: favoriteDocument.favoritedByCount })}</div>
         )}
-        <div>
-          {t('common:createdOnBy', { date: formatDate(userAccessibleDocument.createdOn) })} {userAccessibleDocument.createdBy.displayName}
-        </div>
-        <div>
-          {t('common:updatedOnBy', { date: formatDate(userAccessibleDocument.updatedOn) })} {userAccessibleDocument.updatedBy.displayName}
-        </div>
+        <div>{t('common:createdOnBy', { date: createdOn })} {createdBy}.</div>
+        <div>{t('common:updatedOnBy', { date: updatedOn })} {updatedBy}.</div>
       </div>
     )));
   }
@@ -110,16 +111,15 @@ DocumentCard.propTypes = {
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     setOn: PropTypes.string.isRequired,
+    favoritedByCount: PropTypes.number,
     data: favoriteDocumentShape
   }),
-  favoritedByCount: PropTypes.number,
   onToggleFavorite: PropTypes.func
 };
 
 DocumentCard.defaultProps = {
   doc: null,
   favoriteDocument: null,
-  favoritedByCount: null,
   onToggleFavorite: () => {}
 };
 

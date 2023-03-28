@@ -16,8 +16,6 @@ function UserCard({
   favoriteUser,
   roomMember,
   roomInvitation,
-  avatarUrl,
-  favoritedByCount,
   onToggleFavorite,
   onDeleteRoomMember,
   onDeleteRoomInvitation
@@ -26,8 +24,9 @@ function UserCard({
   const { t } = useTranslation('userCard');
 
   const accessibleUser = favoriteUser?.data || roomMember;
-  const userId = favoriteUser?.data._id || roomMember?.userId || roomInvitation?.userId;
-  const userEmail = favoriteUser?.data.email || roomMember?.email || roomInvitation?.email;
+  const userId = favoriteUser?.id || roomMember?.userId || roomInvitation?.userId;
+  const userEmail = favoriteUser?.data?.email || roomMember?.email || roomInvitation?.email;
+  const avatarUrl = favoriteUser?.data?.avatarUrl || roomMember?.avatarUrl || roomInvitation?.avatarUrl;
 
   const handleCardClick = () => {
     if (accessibleUser) {
@@ -76,13 +75,11 @@ function UserCard({
   }
 
   if (favoriteUser) {
-    if (Number.isInteger(favoritedByCount)) {
-      actions.push(renderInfoAction(t('common:favoritedByTooltip', { count: favoritedByCount })));
-    }
+    actions.push(renderInfoAction(`${t('common:favoritedByTooltip', { count: favoriteUser.favoritedByCount })}.`));
   }
 
   if (roomMember) {
-    actions.push(renderInfoAction(`${t('common:joinedOn')} ${formatDate(roomMember.joinedOn)}`));
+    actions.push(renderInfoAction(`${t('common:joinedOn')} ${formatDate(roomMember.joinedOn)}.`));
 
     actions.push((
       <Tooltip title={t('removeMember')} key="removeMember">
@@ -95,8 +92,8 @@ function UserCard({
     actions.push(renderEmailAction());
     actions.push(renderInfoAction((
       <div className="UserCard-infoTooltip">
-        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}</div>
-        <div>{t('invitationExpiresOn')} {formatDate(roomInvitation.expiresOn)}</div>
+        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}.</div>
+        <div>{t('invitationExpiresOn')} {formatDate(roomInvitation.expiresOn)}.</div>
       </div>
     )));
 
@@ -142,12 +139,11 @@ UserCard.propTypes = {
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     setOn: PropTypes.string.isRequired,
+    favoritedByCount: PropTypes.number,
     data: favoriteUserShape.isRequired
   }),
   roomMember: roomMemberShape,
   roomInvitation: invitationShape,
-  avatarUrl: PropTypes.string,
-  favoritedByCount: PropTypes.number,
   onToggleFavorite: PropTypes.func,
   onDeleteRoomMember: PropTypes.func,
   onDeleteRoomInvitation: PropTypes.func
@@ -157,8 +153,6 @@ UserCard.defaultProps = {
   favoriteUser: null,
   roomMember: null,
   roomInvitation: null,
-  avatarUrl: '',
-  favoritedByCount: null,
   onToggleFavorite: () => {},
   onDeleteRoomMember: () => {},
   onDeleteRoomInvitation: () => {}

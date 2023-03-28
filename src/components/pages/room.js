@@ -572,7 +572,6 @@ export default function Room({ PageTemplate, initialState }) {
       <div key={member.userId}>
         <UserCard
           roomMember={member}
-          avatarUrl={member.avatarUrl}
           onDeleteRoomMember={() => handleDeleteRoomMemberClick(member)}
           />
       </div>
@@ -584,7 +583,6 @@ export default function Room({ PageTemplate, initialState }) {
       <div className="RoomPage-member" key={invitation._id}>
         <UserCard
           roomInvitation={invitation}
-          avatarUrl={invitation.avatarUrl}
           onDeleteRoomInvitation={() => handleRemoveRoomInvitationClick(invitation)}
           />
       </div>
