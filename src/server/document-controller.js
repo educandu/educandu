@@ -273,7 +273,7 @@ class DocumentController {
       validateQuery(getDocumentQuerySchema),
       needsPermission({
         value: permissions.CREATE_CONTENT,
-        condition: req => Object.values(DOC_VIEW_QUERY_PARAM).includes(req.query.view)
+        condition: req => req.query.view === DOC_VIEW_QUERY_PARAM.edit
       }),
       (req, res) => this.handleGetDocPage(req, res)
     );
