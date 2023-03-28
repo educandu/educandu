@@ -86,10 +86,6 @@ class UserService {
     return this.userStore.getUserById(id);
   }
 
-  getActiveUserByEmail(email) {
-    return email ? this.userStore.findActiveUserByEmail(email.toLowerCase()) : null;
-  }
-
   getActiveConfirmedUserByEmail(email) {
     return email ? this.userStore.findActiveConfirmedUserByEmail(email.toLowerCase()) : null;
   }
