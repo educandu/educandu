@@ -1,3 +1,4 @@
+import Info from '../info.js';
 import gravatar from 'gravatar';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -15,9 +16,10 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { Form, Input, Avatar, Button, message, Radio } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import { EMAIL_NOTIFICATION_FREQUENCY, SAVE_USER_RESULT } from '../../domain/constants.js';
-import { maxUserIntroductionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
+import { maxUserShortDescriptionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -103,12 +105,13 @@ function SettingsTab() {
     setIsUserProfileFormDirty(true);
   };
 
-  const handleUserProfileFormFinish = async ({ displayName, organization, introduction }) => {
+  const handleUserProfileFormFinish = async ({ displayName, organization, profileOverview, shortDescription }) => {
     try {
       const { user: updatedUser } = await userApiClient.saveUserProfile({
         displayName,
         organization,
-        introduction
+        profileOverview,
+        shortDescription
       });
       setUser(updatedUser);
       setIsUserProfileFormDirty(false);
@@ -154,7 +157,7 @@ function SettingsTab() {
     }
   };
 
-  const renderOrganizationInputCount = ({ count, maxLength }) => {
+  const renderInputCount = ({ count, maxLength }) => {
     return (
       <div className="u-input-count">{`${count} / ${maxLength}`}</div>
     );
@@ -194,15 +197,23 @@ function SettingsTab() {
             <Input
               type="text"
               maxLength={maxUserOrganizationLength}
-              showCount={{ formatter: renderOrganizationInputCount }}
+              showCount={{ formatter: renderInputCount }}
               />
           </FormItem>
           <FormItem
-            name="introduction"
-            label={t('introduction')}
-            initialValue={user.introduction || ''}
+            name="shortDescription"
+            className="AccountSettingsTab-input"
+            initialValue={user.shortDescription || ''}
+            label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
             >
-            <MarkdownInput preview minRows={5} maxLength={maxUserIntroductionLength} />
+            <NeverScrollingTextArea minRows={2} maxLength={maxUserShortDescriptionLength} />
+          </FormItem>
+          <FormItem
+            name="profileOverview"
+            label={t('profileOverview')}
+            initialValue={user.profileOverview || ''}
+            >
+            <MarkdownInput preview minRows={5} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" disabled={!isUserProfileFormDirty}>{t('common:save')}</Button>

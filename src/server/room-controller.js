@@ -45,7 +45,8 @@ import {
   getRoomMembershipConfirmationParamsSchema,
   deleteRoomMediaParamsSchema,
   getAllRoomMediaParamsSchema,
-  postRoomMediaParamsSchema
+  postRoomMediaParamsSchema,
+  patchRoomContentBodySchema
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
@@ -147,8 +148,8 @@ export default class RoomController {
 
   async handlePostRoom(req, res) {
     const { user } = req;
-    const { name, slug, isCollaborative } = req.body;
-    const newRoom = await this.roomService.createRoom({ name, slug, isCollaborative, user });
+    const { name, slug, isCollaborative, shortDescription } = req.body;
+    const newRoom = await this.roomService.createRoom({ name, slug, isCollaborative, shortDescription, user });
 
     return res.status(201).send(newRoom);
   }
@@ -156,7 +157,7 @@ export default class RoomController {
   async handlePatchRoomMetadata(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const { name, slug, isCollaborative, description } = req.body;
+    const { name, slug, isCollaborative, shortDescription } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -168,7 +169,28 @@ export default class RoomController {
       throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
     }
 
-    const updatedRoom = await this.roomService.updateRoomMetadata(roomId, { name, slug, isCollaborative, description });
+    const updatedRoom = await this.roomService.updateRoomMetadata(roomId, { name, slug, isCollaborative, shortDescription });
+    const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
+
+    return res.status(201).send({ room: mappedRoom });
+  }
+
+  async handlePatchRoomContent(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+    const { overview } = req.body;
+
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    if (!isRoomOwner({ room, userId: user._id })) {
+      throw new Forbidden(NOT_ROOM_OWNER_ERROR_MESSAGE);
+    }
+
+    const updatedRoom = await this.roomService.updateRoomContent(roomId, { overview });
     const mappedRoom = await this.clientDataMappingService.mapRoom({ room: updatedRoom, viewingUser: user });
 
     return res.status(201).send({ room: mappedRoom });
@@ -421,6 +443,12 @@ export default class RoomController {
       '/api/v1/rooms/:roomId/metadata',
       [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomMetadataBodySchema)],
       (req, res) => this.handlePatchRoomMetadata(req, res)
+    );
+
+    router.patch(
+      '/api/v1/rooms/:roomId/content',
+      [needsPermission(permissions.CREATE_CONTENT), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomContentBodySchema)],
+      (req, res) => this.handlePatchRoomContent(req, res)
     );
 
     router.patch(

@@ -81,7 +81,7 @@ describe('amb-service', () => {
       beforeEach(async () => {
         document1 = await createTestDocument(container, creatorUser, {
           title: 'Bach concert',
-          description: 'Concert for piano and orchestra',
+          shortDescription: 'Concert for piano and orchestra',
           tags: ['Music', 'Bach', 'Piano', 'Orchestra'],
           language: 'en',
           publicContext: { archived: false }
@@ -89,7 +89,7 @@ describe('amb-service', () => {
         await updateTestDocument({ container, documentId: document1._id, user: contributorUser, data: { ...document1 } });
         document2 = await createTestDocument(container, creatorUser, {
           title: 'Beethoven concert',
-          description: 'Draft document',
+          shortDescription: 'Draft document',
           tags: [],
           language: 'en',
           roomId: null,
@@ -99,7 +99,7 @@ describe('amb-service', () => {
         const room = createTestRoom(container, { owner: creatorUser._id });
         await createTestDocument(container, creatorUser, {
           title: 'Private closed-doors concert',
-          description: 'Room document',
+          shortDescription: 'Room document',
           tags: [],
           language: 'en',
           roomId: room._id,

@@ -18,6 +18,7 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
+import { maxDocumentShortDescriptionLength } from '../domain/validation-constants.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape, roomShape } from '../ui/default-prop-types.js';
@@ -79,9 +80,9 @@ function DocumentMetadataModal({
   const [tags, setTags] = useState([]);
   const [title, setTitle] = useState('');
   const [language, setLanguage] = useState(null);
-  const [description, setDescription] = useState('');
   const [roomContext, setRoomContext] = useState(null);
   const [publicContext, setPublicContext] = useState(null);
+  const [shortDescription, setShortDescription] = useState('');
 
   const [sequenceCount, setSequenceCount] = useState(0);
   const [generateSequence, setGenerateSequence] = useState(false);
@@ -111,13 +112,13 @@ function DocumentMetadataModal({
   const canSelectCloningStrategy = mode === DOCUMENT_METADATA_MODAL_MODE.clone && cloningOptions.strategyOptions.length > 1;
 
   const validationState = useMemo(
-    () => getValidationState({ t, title, description, slug, tags, cloningStrategy, cloningTargetRoomId }),
-    [t, title, description, slug, tags, cloningStrategy, cloningTargetRoomId]
+    () => getValidationState({ t, title, shortDescription, slug, tags, cloningStrategy, cloningTargetRoomId }),
+    [t, title, shortDescription, slug, tags, cloningStrategy, cloningTargetRoomId]
   );
 
   const resetStates = useCallback(() => {
     setTitle(initialDocumentMetadata.title || t('newDocument'));
-    setDescription(initialDocumentMetadata.description || '');
+    setShortDescription(initialDocumentMetadata.shortDescription || '');
     setSlug(initialDocumentMetadata.slug || '');
     setTags(initialDocumentMetadata.tags || []);
     setLanguage(initialDocumentMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage));
@@ -200,9 +201,9 @@ function DocumentMetadataModal({
     setTitle(value);
   };
 
-  const handleDescriptionChange = event => {
+  const handleShortDescriptionChange = event => {
     const { value } = event.target;
-    setDescription(value);
+    setShortDescription(value);
   };
 
   const handleLanguageChange = value => {
@@ -295,7 +296,7 @@ function DocumentMetadataModal({
       const mappedDocument = {
         title: title.trim(),
         slug: slug.trim(),
-        description,
+        shortDescription,
         language,
         tags,
         publicContext: documentRoomId ? null : mappedPublicContext,
@@ -369,8 +370,17 @@ function DocumentMetadataModal({
         <FormItem label={t('common:title')} {...validationState.title}>
           <Input value={title} onChange={handleTitleChange} />
         </FormItem>
-        <FormItem label={t('common:description')} {...validationState.description}>
-          <NeverScrollingTextArea value={description} onChange={handleDescriptionChange} />
+        <FormItem
+          {...validationState.shortDescription}
+          label={
+            <Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>
+          }
+          >
+          <NeverScrollingTextArea
+            value={shortDescription}
+            maxLength={maxDocumentShortDescriptionLength}
+            onChange={handleShortDescriptionChange}
+            />
         </FormItem>
         <FormItem label={t('common:language')}>
           <LanguageSelect value={language} onChange={handleLanguageChange} />

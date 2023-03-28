@@ -71,8 +71,8 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   const sortingOptions = useMemo(() => {
     const options = [
       { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: 'name' },
-      { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-      { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
+      { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+      { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
       { label: t('common:user'), appliedLabel: t('common:sortedByCreator'), value: 'user' },
       { label: t('common:size'), appliedLabel: t('common:sortedBySize'), value: 'size' },
       { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'type' }
@@ -156,11 +156,11 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
         subtext={
           <div className="RedactionDocumentsTab-titleSubtext">
             <div>
-              <span>{`${t('common:createdOnBy', { date: formatDate(row.createdOn) })} `}</span>
+              <span>{`${t('common:createdOnDateBy', { date: formatDate(row.createdOn) })} `}</span>
               <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>
             </div>
             <div>
-              <span>{`${t('common:updatedOnBy', { date: formatDate(row.updatedOn) })} `}</span>
+              <span>{`${t('common:updatedOnDateBy', { date: formatDate(row.updatedOn) })} `}</span>
               <a href={routes.getUserProfileUrl(row.updatedBy._id)}>{row.updatedBy.displayName}</a>
             </div>
           </div>

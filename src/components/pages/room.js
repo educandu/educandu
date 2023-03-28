@@ -28,10 +28,10 @@ import { RoomMediaContextProvider } from '../room-media-context.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Button, Tabs, message, Tooltip, Breadcrumb, Checkbox } from 'antd';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import { Button, Tabs, message, Tooltip, Breadcrumb, Checkbox, Form } from 'antd';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
@@ -46,6 +46,8 @@ import {
 } from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
+
+const FormItem = Form.Item;
 
 const VIEW_MODE = {
   owner: 'owner',
@@ -83,7 +85,8 @@ function getSortedDocuments(room, documents) {
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
-  const formRef = useRef(null);
+  const contentFormRef = useRef(null);
+  const metadataFormRef = useRef(null);
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
   const droppableIdRef = useRef(useId());
@@ -94,10 +97,11 @@ export default function Room({ PageTemplate, initialState }) {
   const [newMessageText, setNewMessageText] = useState('');
   const [isPostingNewMessage, setIsPostingNewMessage] = useLoadingState(false);
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
-  const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [newMessageEmailNotification, setNewMessageEmailNotification] = useState(false);
   const [documents, setDocuments] = useState(getSortedDocuments(room, initialState.documents));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
+  const [isRoomContentUpdateButtonDisabled, setIsRoomContentUpdateButtonDisabled] = useState(true);
+  const [isRoomMetadataUpdateButtonDisabled, setIsRoomMetadataUpdateButtonDisabled] = useState(true);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, room }));
 
   const viewMode = useMemo(() => {
@@ -163,6 +167,28 @@ export default function Room({ PageTemplate, initialState }) {
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, room, documentToClone, isOpen: true }));
   };
 
+  const handleUpdateRoomContentClick = () => {
+    if (contentFormRef.current) {
+      contentFormRef.current.submit();
+    }
+  };
+
+  const handleRoomContentFormFieldsChanged = () => {
+    setIsRoomContentUpdateButtonDisabled(false);
+  };
+
+  const handleRoomContentFormSubmitted = async ({ overview }) => {
+    try {
+      const response = await roomApiClient.updateRoomContent({ roomId: room._id, overview });
+
+      setRoom(response.room);
+      setIsRoomContentUpdateButtonDisabled(true);
+      message.success(t('common:changesSavedSuccessfully'));
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
   const handleDocumentMetadataModalSave = async (createdDocuments, templateDocumentId) => {
     const clonedOrTemplateDocumentId = documentMetadataModalState.cloneDocumentId || templateDocumentId;
     const shouldNavigateToCreatedDocument = createdDocuments.length === 1;
@@ -187,18 +213,18 @@ export default function Room({ PageTemplate, initialState }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const handleUpdateRoomClick = () => {
-    if (formRef.current) {
-      formRef.current.submit();
+  const handleUpdateRoomMetadataClick = () => {
+    if (metadataFormRef.current) {
+      metadataFormRef.current.submit();
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, isCollaborative, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, isCollaborative, shortDescription }) => {
     try {
-      const response = await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, isCollaborative, description });
+      const response = await roomApiClient.updateRoomMetadata({ roomId: room._id, name, slug, isCollaborative, shortDescription });
 
       setRoom(response.room);
-      setIsRoomUpdateButtonDisabled(true);
+      setIsRoomMetadataUpdateButtonDisabled(true);
       message.success(t('common:changesSavedSuccessfully'));
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -206,7 +232,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleRoomMetadataFormFieldsChanged = () => {
-    setIsRoomUpdateButtonDisabled(false);
+    setIsRoomMetadataUpdateButtonDisabled(false);
   };
 
   const handleDeleteDocumentClick = doc => {
@@ -330,8 +356,8 @@ export default function Room({ PageTemplate, initialState }) {
     });
   };
 
-  const renderRoomDescription = () => {
-    return !!room.description && <Markdown className="RoomPage-description">{room.description}</Markdown>;
+  const renderRoomOverview = () => {
+    return !!room.overview && <Markdown className="RoomPage-overview">{room.overview}</Markdown>;
   };
 
   const renderCreateDocumentButton = () => {
@@ -543,21 +569,11 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderRoomMember = member => {
     return (
-      <div className="RoomPage-member" key={member.userId}>
+      <div key={member.userId}>
         <UserCard
-          userId={member.userId}
-          displayName={member.displayName}
-          email={member.email}
-          avatarUrl={member.avatarUrl}
-          detail={
-            <div className="RoomPage-memberDetails">
-              {`${t('common:joined')}: ${formatDate(member.joinedOn)}`}
-            </div>
-          }
+          roomMember={member}
+          onDeleteRoomMember={() => handleDeleteRoomMemberClick(member)}
           />
-        <Tooltip title={t('removeMember')}>
-          <DeleteButton className="RoomPage-memberDeleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
-        </Tooltip>
       </div>
     );
   };
@@ -566,22 +582,9 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="RoomPage-member" key={invitation._id}>
         <UserCard
-          userId={invitation.userId}
-          displayName={<i>{t('pendingInvitation')}</i>}
-          email={invitation.email}
-          avatarUrl={invitation.avatarUrl}
-          detail={
-            <div className="RoomPage-memberDetails">
-              <span className="RoomPage-memberDetail">{`${t('invitedOn')}: ${formatDate(invitation.sentOn)}`}</span>
-              <span className="RoomPage-memberDetail">{`${t('expiresOn')}: ${formatDate(invitation.expiresOn)}`}</span>
-            </div>
-          }
+          roomInvitation={invitation}
+          onDeleteRoomInvitation={() => handleRemoveRoomInvitationClick(invitation)}
           />
-        {viewMode === VIEW_MODE.owner && (
-        <Tooltip title={t('revokeInvitation')}>
-          <DeleteButton className="RoomPage-memberDeleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
-        </Tooltip>
-        )}
       </div>
     );
   };
@@ -623,7 +626,7 @@ export default function Room({ PageTemplate, initialState }) {
 
           {viewMode !== VIEW_MODE.owner && (
             <div className="RoomPage-documents RoomPage-documents--roomMemberView">
-              {renderRoomDescription()}
+              {renderRoomOverview()}
               {viewMode === VIEW_MODE.collaboratingMember && renderCreateDocumentButton()}
               {!visibleDocumentsCount && t('documentsPlaceholder')}
               {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
@@ -631,7 +634,6 @@ export default function Room({ PageTemplate, initialState }) {
               {renderMessageBoard()}
             </div>
           )}
-
           {viewMode === VIEW_MODE.owner && (
             <Tabs
               className="Tabs"
@@ -644,7 +646,7 @@ export default function Room({ PageTemplate, initialState }) {
                   label: t('roomViewTitle'),
                   children: (
                     <div className="Tabs-tabPane">
-                      {renderRoomDescription()}
+                      {renderRoomOverview()}
                       {renderCreateDocumentButton()}
                       {!visibleDocumentsCount && t('documentsPlaceholder')}
                       {renderDocumentsAsDraggable()}
@@ -683,19 +685,40 @@ export default function Room({ PageTemplate, initialState }) {
                   label: t('common:settings'),
                   children: (
                     <div className="Tabs-tabPane" >
+                      <div className="RoomPage-sectionHeadline">{t('roomContentHeadline')}</div>
+                      <section className="RoomPage-settingsSection">
+                        <Form
+                          layout="vertical"
+                          ref={contentFormRef}
+                          name="room-content-form"
+                          onFinish={handleRoomContentFormSubmitted}
+                          onFieldsChange={handleRoomContentFormFieldsChanged}
+                          >
+                          <FormItem label={t('overview')} name="overview" initialValue={room.overview}>
+                            <MarkdownInput preview />
+                          </FormItem>
+                        </Form>
+                        <Button
+                          type="primary"
+                          disabled={isRoomContentUpdateButtonDisabled}
+                          onClick={handleUpdateRoomContentClick}
+                          >
+                          {t('common:update')}
+                        </Button>
+                      </section>
                       <div className="RoomPage-sectionHeadline">{t('roomMetadataHeadline')}</div>
-                      <section className="RoomPage-metadataSection">
+                      <section className="RoomPage-settingsSection">
                         <RoomMetadataForm
-                          formRef={formRef}
-                          room={room}
                           editMode
+                          room={room}
+                          formRef={metadataFormRef}
                           onSubmit={handleRoomMetadataFormSubmitted}
                           onFieldsChange={handleRoomMetadataFormFieldsChanged}
                           />
                         <Button
                           type="primary"
-                          disabled={isRoomUpdateButtonDisabled}
-                          onClick={handleUpdateRoomClick}
+                          disabled={isRoomMetadataUpdateButtonDisabled}
+                          onClick={handleUpdateRoomMetadataClick}
                           >
                           {t('common:update')}
                         </Button>

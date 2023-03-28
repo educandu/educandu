@@ -159,12 +159,13 @@ export async function createTestRoom(container, roomValues = {}) {
     _id: roomValues._id || uniqueId.create(),
     slug: roomValues.slug || '',
     name: roomValues.name || 'my-room',
-    description: roomValues.description || '',
+    shortDescription: roomValues.shortDescription || '',
     isCollaborative: roomValues.isCollaborative || false,
     owner: roomValues.owner || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),
     createdOn: roomValues.createdOn || new Date(),
     updatedOn: roomValues.updatedOn || new Date(),
+    overview: roomValues.overview || '',
     members: roomValues.members || [],
     messages: roomValues.messages || [],
     documents: roomValues.documents || []
@@ -194,7 +195,7 @@ export function createTestDocument(container, user, data) {
     data: {
       ...data,
       title: data.title ?? 'Title',
-      description: data.description ?? 'Description',
+      shortDescription: data.shortDescription ?? 'Description',
       slug: data.slug ?? 'my-doc',
       language: data.language ?? 'en',
       publicContext: data.roomId
@@ -231,7 +232,7 @@ export async function createTestRevisions(container, user, revisions) {
   for (const revision of revisions) {
     const data = {
       title: revision.title ?? lastCreatedDocument?.title ?? 'Title',
-      description: revision.description ?? lastCreatedDocument?.description ?? 'Description',
+      shortDescription: revision.shortDescription ?? lastCreatedDocument?.shortDescription ?? 'Description',
       slug: revision.slug ?? lastCreatedDocument?.slug ?? 'my-doc',
       language: revision.language ?? lastCreatedDocument?.language ?? 'en',
       sections: (revision.sections ?? lastCreatedDocument?.sections ?? []).map(s => ({

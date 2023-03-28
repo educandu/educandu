@@ -122,11 +122,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  saveUserProfile({ displayName, organization, introduction }) {
+  saveUserProfile({ displayName, organization, profileOverview, shortDescription }) {
     return this.httpClient
       .post(
         '/api/v1/users/profile',
-        { displayName, organization, introduction },
+        { displayName, organization, profileOverview, shortDescription },
         { responseType: 'json' }
       )
       .then(res => res.data);

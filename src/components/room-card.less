@@ -1,70 +1,52 @@
 .RoomCard {
-  .m-card;
-  position: relative;
-  display: grid;
-  gap: 10px;
-  grid-template-rows: 55px auto auto;
-  padding: @edu-content-padding;
-  border-radius: @edu-border-radius-base;
-  background-color: @edu-background-color-base;
+  .m-row-card(3);
+}
+
+.RoomCard-title {
+  .m-overflow-ellipsis;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: left;
+  font-size: @edu-font-size-base;
+
+  &.RoomCard-title--deletedRoom {
+    .m-data-unavailable;
+  }
+
+  &.RoomCard-title--disabledNavigation {
+    cursor: default;
+    color: @edu-text-color-secondary;
+  }
 }
 
 .RoomCard-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+  height: 70px;
+  cursor: pointer;
+  .m-line-clamp(3);
 
-.RoomCard-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+  &.RoomCard-content--deletedRoom {
+    .m-data-unavailable;
+  }
 
-.RoomCard-divider {
-  margin: 12px 0;
-}
-
-.RoomCard-name {
-  .m-line-clamp(1);
-  align-self: center;
-  text-align: center;
-
-  &.RoomCard-name--doubleLine {
-    .m-line-clamp(2);
+  &.RoomCard-content--disabledNavigation {
+    cursor: default;
+    color: @edu-text-color-secondary;
   }
 }
 
-.RoomCard-owner {
-  .m-overflow-ellipsis;
-  width: 100%;
-  align-self: center;
-  text-align: center;
+.RoomCard-helpAction {
+  cursor: help;
+}
+
+.RoomCard-infoTooltip {
+  display: grid;
+  grid-auto-flow: row;
+}
+
+.RoomCard-details {
   font-size: @edu-font-size-sm;
-  padding-top: 3px;
-  color: @edu-text-color-secondary;
 }
 
-.RoomCard-divider {
-  margin: 0 !important;
-}
-
-.RoomCard-infoRow {
-  display: flex;
-  gap: 10px;
-  font-size: @edu-font-size-sm;
-  padding-bottom: 5px;
-  color: lighten(@edu-text-color, 10%);
-
-  &:last-of-type {
-    padding-bottom: 0;
-  }
-}
-
-.RoomCard-infoLabel {
-  flex: 0 0 70px;
-}
-
-.RoomCard-button {
-  margin-top: auto;
+.RoomCard-description {
+  .m-line-clamp(3);
 }

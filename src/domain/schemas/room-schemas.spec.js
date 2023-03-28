@@ -8,7 +8,8 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        isCollaborative: false
+        isCollaborative: false,
+        shortDescription: ''
       };
       expect(() => validate(body, postRoomBodySchema)).not.toThrow();
     });
@@ -18,7 +19,8 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         slug: '',
-        isCollaborative: false
+        isCollaborative: false,
+        shortDescription: ''
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -29,7 +31,8 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        isCollaborative: false
+        isCollaborative: false,
+        shortDescription: ''
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -41,7 +44,8 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: null,
-        isCollaborative: false
+        isCollaborative: false,
+        shortDescription: ''
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -55,7 +59,8 @@ describe('patchRoomMetadataBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        isCollaborative: false
+        isCollaborative: false,
+        shortDescription: ''
       };
       expect(() => validate(body, patchRoomMetadataBodySchema)).not.toThrow();
     });
@@ -65,7 +70,8 @@ describe('patchRoomMetadataBodySchema', () => {
     it('should throw', () => {
       const body = {
         slug: '',
-        isCollaborative: false
+        isCollaborative: false,
+        shortDescription: ''
       };
 
       expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
@@ -76,7 +82,8 @@ describe('patchRoomMetadataBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        isCollaborative: false
+        isCollaborative: false,
+        shortDescription: ''
       };
 
       expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
@@ -87,7 +94,8 @@ describe('patchRoomMetadataBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        slug: null
+        slug: null,
+        shortDescription: ''
       };
 
       expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();
@@ -98,7 +106,8 @@ describe('patchRoomMetadataBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        slug: ''
+        slug: '',
+        shortDescription: ''
       };
 
       expect(() => validate(body, patchRoomMetadataBodySchema)).toThrow();

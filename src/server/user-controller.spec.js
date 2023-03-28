@@ -111,7 +111,8 @@ describe('user-controller', () => {
           _id: uniqueId.create(),
           email: 'educandu@test.com',
           organization: 'Educandu',
-          introduction: 'Educandu test user',
+          profileOverview: 'About Educandu test user',
+          shortDescription: 'Educandu test user',
           accountClosedOn: new Date()
         };
         const viewingUser = { _id: uniqueId.create() };
@@ -413,14 +414,15 @@ describe('user-controller', () => {
     describe('with all data correctly provided', () => {
       const displayName = 'John Doe';
       const organization = 'Educandu';
-      const introduction = 'Educandu test user';
+      const profileOverview = 'About Educandu test user';
+      const shortDescription = 'Educandu test user';
 
       beforeEach(() => new Promise((resolve, reject) => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
           user: { _id: 1234 },
-          body: { displayName, organization, introduction }
+          body: { displayName, organization, profileOverview, shortDescription }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
 
@@ -433,7 +435,7 @@ describe('user-controller', () => {
       }));
 
       it('should call userService.updateUserProfile', () => {
-        assert.calledWith(userService.updateUserProfile, { userId: 1234, displayName, organization, introduction });
+        assert.calledWith(userService.updateUserProfile, { userId: 1234, displayName, organization, profileOverview, shortDescription });
       });
 
       it('should set the status code on the response to 201', () => {

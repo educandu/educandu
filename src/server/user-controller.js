@@ -297,8 +297,8 @@ class UserController {
 
   async handlePostUserProfile(req, res) {
     const userId = req.user._id;
-    const { displayName, organization, introduction } = req.body;
-    const updatedUser = await this.userService.updateUserProfile({ userId, displayName, organization, introduction });
+    const { displayName, organization, profileOverview, shortDescription } = req.body;
+    const updatedUser = await this.userService.updateUserProfile({ userId, displayName, organization, profileOverview, shortDescription });
 
     if (!updatedUser) {
       throw new NotFound();

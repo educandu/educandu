@@ -3,9 +3,10 @@ import Info from './info.js';
 import PropTypes from 'prop-types';
 import { Checkbox, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
-import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
+import NeverScrollingTextArea from './never-scrolling-text-area.js';
+import { maxRoomShortDescriptionLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 
@@ -35,8 +36,8 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     }
   ];
 
-  const handleFinish = async ({ name, slug, isCollaborative, description }) => {
-    await onSubmit({ name, slug, isCollaborative, description });
+  const handleFinish = async ({ name, slug, isCollaborative, shortDescription }) => {
+    await onSubmit({ name, slug, isCollaborative, shortDescription });
   };
 
   const handleFieldsChange = async (...args) => {
@@ -49,6 +50,14 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     <Form onFinish={handleFinish} onFieldsChange={handleFieldsChange} name="room-metadata-form" ref={formRef} layout="vertical">
       <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name} {...formInputsLayouts}>
         <Input />
+      </FormItem>
+      <FormItem
+        {...formInputsLayouts}
+        name="shortDescription"
+        label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
+        initialValue={room.shortDescription}
+        >
+        <NeverScrollingTextArea minRows={2} maxLength={maxRoomShortDescriptionLength} />
       </FormItem>
       <FormItem
         {...formInputsLayouts}
@@ -66,11 +75,6 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
           </Info>
         </Checkbox>
       </FormItem>
-      {!!editMode && (
-        <FormItem label={t('common:description')} name="description" initialValue={room.description}>
-          <MarkdownInput preview />
-        </FormItem>
-      )}
     </Form>
   );
 }

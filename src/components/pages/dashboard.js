@@ -7,12 +7,19 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import RoomsTab from '../dashboard/rooms-tab.js';
 import ProfileHeader from '../profile-header.js';
+import { BellOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
+import RoomIcon from '../icons/general/room-icon.js';
+import StarIcon from '../icons/general/star-icon.js';
 import StorageTab from '../dashboard/storage-tab.js';
+import FileIcon from '../icons/general/file-icon.js';
 import SettingsTab from '../dashboard/settings-tab.js';
 import FavoritesTab from '../dashboard/favorites-tab.js';
 import DocumentsTab from '../dashboard/documents-tab.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
+import HistoryIcon from '../icons/general/history-icon.js';
+import PrivateIcon from '../icons/general/private-icon.js';
+import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -161,14 +168,6 @@ function Dashboard({ PageTemplate }) {
     history.replaceState(null, '', routes.getDashboardUrl({ tab }));
   };
 
-  const handleAddFavorite = async (type, id) => {
-    await userApiClient.addFavorite({ type, id });
-  };
-
-  const handleRemoveFavorite = async (type, id) => {
-    await userApiClient.removeFavorite({ type, id });
-  };
-
   const handleRemoveNotificationGroup = async notificationGroup => {
     const response = await notificationsApiClient.removeNotifications(notificationGroup.notificationIds);
     setNotificationGroups(response.notificationGroups);
@@ -189,7 +188,7 @@ function Dashboard({ PageTemplate }) {
   const items = [
     {
       key: TAB_KEYS.activities,
-      label: t('activitiesTabTitle'),
+      label: <div><HistoryIcon />{t('activitiesTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <ActivitiesTab activities={activities} loading={fetchingActivities} />
@@ -198,7 +197,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: TAB_KEYS.favorites,
-      label: t('favoritesTabTitle'),
+      label: <div><StarIcon />{t('favoritesTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <FavoritesTab
@@ -206,15 +205,13 @@ function Dashboard({ PageTemplate }) {
             favoriteRooms={favoriteRooms}
             favoriteDocuments={favoriteDocuments}
             loading={fetchingFavorites}
-            onAddFavorite={handleAddFavorite}
-            onRemoveFavorite={handleRemoveFavorite}
             />
         </div>
       )
     },
     {
       key: TAB_KEYS.documents,
-      label: t('documentsTabTitle'),
+      label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <DocumentsTab documents={documents} loading={fetchingDocuments} />
@@ -223,7 +220,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: TAB_KEYS.rooms,
-      label: t('roomsTabTitle'),
+      label: <div><RoomIcon />{t('roomsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
@@ -235,7 +232,7 @@ function Dashboard({ PageTemplate }) {
       label: (
         <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
           <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
-            {t('common:notifications')}
+            <div><BellOutlined /> {t('common:notifications')}</div>
           </Badge>
         </Tooltip>
       ),
@@ -252,7 +249,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: TAB_KEYS.storage,
-      label: t('common:storage'),
+      label: <div><PrivateIcon />{t('common:storage')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <StorageTab
@@ -265,7 +262,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: TAB_KEYS.settings,
-      label: t('common:settings'),
+      label: <div><SettingsIcon />{t('common:settings')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <SettingsTab />
@@ -284,7 +281,7 @@ function Dashboard({ PageTemplate }) {
           organization={user.organization}
           />
         <Tabs
-          className="Tabs"
+          className="Tabs Tabs--withIcons"
           type="line"
           size="middle"
           defaultActiveKey={initialTab}

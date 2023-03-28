@@ -123,7 +123,8 @@ export const userShape = PropTypes.shape({
   email: PropTypes.string,
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,
-  introduction: PropTypes.string,
+  profileOverview: PropTypes.string,
+  shortDescription: PropTypes.string,
   role: PropTypes.string.isRequired,
   expiresOn: PropTypes.string,
   accountLockedOn: PropTypes.string,
@@ -137,7 +138,8 @@ export const publicUserShape = PropTypes.shape({
   email: PropTypes.string,
   displayName: PropTypes.string.isRequired,
   organization: PropTypes.string,
-  introduction: PropTypes.string,
+  profileOverview: PropTypes.string,
+  shortDescription: PropTypes.string,
   avatarUrl: PropTypes.string,
   accountClosedOn: PropTypes.string
 });
@@ -169,7 +171,7 @@ export const sectionShape = PropTypes.shape({
 const commonDocumentOrRevisionProps = {
   order: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
@@ -198,7 +200,7 @@ export const documentExtendedMetadataShape = PropTypes.shape({
 const contributedDocumentMetadataProps = {
   _id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
   updatedOn: PropTypes.string.isRequired,
@@ -219,7 +221,7 @@ export const documentPublicContextShape = PropTypes.shape({
 
 export const documentMetadataEditShape = PropTypes.shape({
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -424,7 +426,7 @@ export const roomMetadataProps = {
   slug: PropTypes.string,
   createdOn: PropTypes.string,
   isCollaborative: PropTypes.bool.isRequired,
-  description: PropTypes.string
+  shortDescription: PropTypes.string
 };
 
 export const roomMinimalMetadataShape = PropTypes.shape({
@@ -441,16 +443,16 @@ export const roomShape = PropTypes.shape({
   members: PropTypes.arrayOf(roomMemberShape)
 });
 
-export const invitationBasicProps = {
+export const roomInvitationBasicProps = {
   _id: PropTypes.string.isRequired,
   sentOn: PropTypes.string.isRequired,
   expiresOn: PropTypes.string.isRequired
 };
 
-export const invitationBasicShape = PropTypes.shape(invitationBasicProps);
+export const roomInvitationBasicShape = PropTypes.shape(roomInvitationBasicProps);
 
 export const invitationShape = PropTypes.shape({
-  ...invitationBasicProps,
+  ...roomInvitationBasicProps,
   email: PropTypes.string.isRequired
 });
 
@@ -481,10 +483,7 @@ export const documentCommentShape = PropTypes.shape({
   })
 });
 
-export const favoriteUserShape = PropTypes.shape({
-  displayName: PropTypes.string.isRequired,
-  avatarUrl: PropTypes.string
-});
+export const favoriteUserShape = publicUserShape;
 
 export const favoriteRoomShape = PropTypes.shape({
   ...roomMetadataProps,

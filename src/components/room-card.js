@@ -2,131 +2,180 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
-import { Button, Divider } from 'antd';
+import { Card, Tooltip } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
+import FavoriteStar from './favorite-star.js';
 import { useTranslation } from 'react-i18next';
-import { MailOutlined } from '@ant-design/icons';
 import { useDateFormat } from './locale-context.js';
+import { FAVORITE_TYPE } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
-import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
+import { InfoCircleOutlined, MailOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { favoriteRoomShape, roomInvitationBasicShape, roomShape } from '../ui/default-prop-types.js';
 
-function RoomCard({ room, invitation, alwaysRenderOwner }) {
+function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
-  const isDeletedRoom = !room;
-  const userAsMember = room?.members?.find(member => member.userId === user?._id);
-  const showOwner = !!(userAsMember || invitation || alwaysRenderOwner);
+  const userAccessibleRoom = room || favoriteRoom?.data;
+  const isDeletedRoom = !userAccessibleRoom && !roomInvitation?.room;
+  const roomId = room?._id || favoriteRoom?.id || roomInvitation?.room?._id;
 
-  const renderOwner = () => {
+  const handleCardClick = () => {
+    if (userAccessibleRoom) {
+      window.location = routes.getRoomUrl(roomId);
+    }
+  };
+
+  const handleAcceptInvitationClick = async () => {
+    await roomApiClient.confirmInvitation({ token: roomInvitation.token });
+    window.location = routes.getRoomUrl(roomId);
+  };
+
+  const renderTitle = () => {
+    const roomName = room?.name || favoriteRoom?.data?.name || roomInvitation?.room?.name;
+    const title = isDeletedRoom ? t('common:roomNotAvailable') : roomName;
+
+    const classes = classNames(
+      'RoomCard-title',
+      { 'RoomCard-title--deletedRoom': isDeletedRoom },
+      { 'RoomCard-title--disabledNavigation': !userAccessibleRoom }
+    );
+
     return (
-      <span className="RoomCard-owner">
-        {t('common:by')} <a href={routes.getUserProfileUrl(room.owner?._id)}>{room.owner?.displayName}</a>
-      </span>
+      <div className={classes} onClick={handleCardClick}>{title}</div>
     );
   };
 
-  const handleEnterButtonClick = () => {
-    window.location = routes.getRoomUrl(room._id, room.slug);
+  const renderUserAction = (isCollaborative, tooltip) => {
+    return (
+      <Tooltip title={tooltip}>
+        <div className="RoomCard-helpAction">
+          {isCollaborative ? <TeamOutlined /> : <UserOutlined />}
+        </div>
+      </Tooltip>
+    );
   };
 
-  const handleJoinButtonClick = async () => {
-    await roomApiClient.confirmInvitation({ token: invitation.token });
-    window.location = routes.getRoomUrl(invitation.room._id);
+  const renderInfoAction = tooltip => {
+    return (
+      <Tooltip title={tooltip}>
+        <div className="RoomCard-helpAction"><InfoCircleOutlined /></div>
+      </Tooltip>
+    );
   };
 
-  const roomName = isDeletedRoom ? `[${t('common:deletedRoom')}]` : room.name;
+  const actions = [];
+
+  if (userAccessibleRoom || isDeletedRoom) {
+    actions.push((
+      <div key="favorite">
+        <FavoriteStar
+          id={roomId}
+          type={FAVORITE_TYPE.room}
+          onToggle={isFavorite => onToggleFavorite(roomId, isFavorite)}
+          />
+      </div>
+    ));
+  }
+
+  if (userAccessibleRoom) {
+    const userAsMember = userAccessibleRoom.members?.find(member => member.userId === user?._id);
+    const membersCount = userAccessibleRoom.members?.length || 0;
+
+    actions.push(renderUserAction(
+      userAccessibleRoom.isCollaborative,
+      (
+        <div className="RoomCard-infoTooltip">
+          {!!userAccessibleRoom.isCollaborative && <div>{t('collaborativeRoom')}</div>}
+          <div>{t('createdByUser', { user: userAccessibleRoom.owner?.displayName })}</div>
+          <div>{!userAccessibleRoom.isCollaborative && t('hasCountMembers', { count: membersCount })}</div>
+          <div>{!!userAccessibleRoom.isCollaborative && t('hasCountCollaborators', { count: membersCount })}</div>
+        </div>
+      )
+    ));
+
+    actions.push(renderInfoAction((
+      <div className="RoomCard-infoTooltip">
+        {!!favoriteRoom && (
+          <div>{t('common:favoritedByTooltip', { count: favoriteRoom.favoritedByCount })}</div>
+        )}
+        <div>{t('createdOnDate', { date: formatDate(userAccessibleRoom.createdOn) })}</div>
+        <div>{t('updatedOnDate', { date: formatDate(userAccessibleRoom.updatedOn) })}</div>
+        {!!userAsMember && (
+          <div>{t('common:joinedOnDate', { date: formatDate(userAsMember.joinedOn) })}</div>
+        )}
+      </div>
+    )));
+  }
+
+  if (roomInvitation) {
+    actions.push(renderUserAction(
+      roomInvitation.room?.isCollaborative,
+      (
+        <div className="RoomCard-infoTooltip">
+          {!!roomInvitation.room?.isCollaborative && <div>{t('collaborativeRoom')}.</div>}
+          <div>{t('createdByUser', { user: roomInvitation.room?.owner?.displayName })}</div>
+        </div>
+      )
+    ));
+
+    actions.push(renderInfoAction((
+      <div className="RoomCard-infoTooltip">
+        <div>{t('common:invitedOnDate', { date: formatDate(roomInvitation.sentOn) })}</div>
+        <div><Markdown>{t('invitationValidUntilDate', { date: formatDate(roomInvitation.expiresOn) })}</Markdown></div>
+      </div>
+    )));
+
+    actions.push((
+      <Tooltip title={t('acceptRoomInvitation')}>
+        <div onClick={handleAcceptInvitationClick}>
+          <MailOutlined />
+        </div>
+      </Tooltip>
+    ));
+  }
+
+  const contentClasses = classNames(
+    'RoomCard-content',
+    { 'RoomCard-content--deletedRoom': isDeletedRoom },
+    { 'RoomCard-content--disabledNavigation': !userAccessibleRoom }
+  );
 
   return (
-    <div className="RoomCard">
-      <div className="RoomCard-header">
-        <div className={classNames('RoomCard-name', { 'RoomCard-name--doubleLine': !showOwner })}>{roomName}</div>
-        {!!showOwner && !isDeletedRoom && renderOwner()}
+    <Card className="RoomCard" actions={actions} title={renderTitle()}>
+      <div className={contentClasses} onClick={handleCardClick}>
+        <div className="RoomCard-details">
+          <div className="RoomCard-description">
+            {userAccessibleRoom?.shortDescription || roomInvitation?.room?.shortDescription}
+          </div>
+        </div>
       </div>
-      <Divider className="RoomCard-divider" />
-      <div className="RoomCard-content">
-        {!invitation && !!userAsMember && (
-          <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">{t('role')}:</span>
-            <div>
-              { room?.isCollaborative ? t('common:collaborator') : t('common:member') }
-            </div>
-          </div>
-        )}
-        {!!room?.updatedOn && (
-          <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">{t('updated')}:</span>
-            <div>{formatDate(room.updatedOn)}</div>
-          </div>
-        )}
-        {!userAsMember && !!room?.members && (
-          <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">
-              { room?.isCollaborative ? `${t('common:collaborators')}:` : `${t('common:members')}:`}
-            </span>
-            <div>{room.members.length}</div>
-          </div>
-        )}
-        {!!userAsMember && (
-          <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">{t('common:joined')}:</span>
-            <div>{formatDate(userAsMember.joinedOn)}</div>
-          </div>
-        )}
-        {!!invitation?.sentOn && (
-          <div className="RoomCard-infoRow">
-            <span className="RoomCard-infoLabel">{t('invited')}:</span>
-            <div>{formatDate(invitation.sentOn)}</div>
-          </div>
-        )}
-        {!!invitation?.expiresOn && (
-          <div className="RoomCard-infoRow">
-            <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expiresOn) })}</Markdown>
-          </div>
-        )}
-      </div>
-      {!invitation && (
-        <Button className="RoomCard-button" type="primary" disabled={!!isDeletedRoom} onClick={handleEnterButtonClick}>
-          <RoomJoinedIcon />
-          {t('common:enterRoom')}
-        </Button>
-      )}
-      {!!invitation && (
-        <Button className="RoomCard-button" onClick={handleJoinButtonClick}>
-          <MailOutlined />
-          {t('joinButton')}
-        </Button>
-      )}
-    </div>
+    </Card>
   );
 }
 
-const roomProps = {
-  ...roomMetadataProps,
-  _id: PropTypes.string,
-  updatedOn: PropTypes.string,
-  owner: PropTypes.shape({
-    email: PropTypes.string,
-    displayName: PropTypes.string.isRequired
-  }),
-  members: PropTypes.arrayOf(roomMemberShape)
-};
-
 RoomCard.propTypes = {
-  alwaysRenderOwner: PropTypes.bool,
-  invitation: invitationBasicShape,
-  room: PropTypes.shape(roomProps)
+  room: roomShape,
+  favoriteRoom: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    setOn: PropTypes.string.isRequired,
+    favoritedByCount: PropTypes.number,
+    data: favoriteRoomShape
+  }),
+  roomInvitation: roomInvitationBasicShape,
+  onToggleFavorite: PropTypes.func
 };
 
 RoomCard.defaultProps = {
-  alwaysRenderOwner: false,
-  invitation: null,
-  room: null
+  room: null,
+  favoriteRoom: null,
+  roomInvitation: null,
+  onToggleFavorite: () => {}
 };
 
 export default RoomCard;

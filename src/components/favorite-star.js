@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
+import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import StarIcon from './icons/general/star-icon.js';
 import { handleApiError } from '../ui/error-helper.js';
-import { useSetUser, useUser } from './user-context.js';
 import { getCurrentUrl } from '../ui/browser-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
@@ -18,9 +18,8 @@ function getIsSet(user, type, id) {
   return !!user?.favorites.find(x => x.type === type && x.id === id);
 }
 
-function FavoriteStar({ type, id, useTooltip, disabled, onToggle, submitChange }) {
+function FavoriteStar({ type, id, useTooltip, disabled, onToggle }) {
   const user = useUser();
-  const setUser = useSetUser();
   const { t } = useTranslation('favoriteStar');
   const [isSet, setIsSet] = useState(getIsSet(user, type, id));
   const userApiClient = useSessionAwareApiClient(UserApiClient);
@@ -41,12 +40,10 @@ function FavoriteStar({ type, id, useTooltip, disabled, onToggle, submitChange }
     const newIsSet = !isSet;
     setIsSet(newIsSet);
     try {
-      if (submitChange) {
-        const newUser = newIsSet
-          ? await userApiClient.addFavorite({ type, id })
-          : await userApiClient.removeFavorite({ type, id });
-
-        setUser(newUser);
+      if (newIsSet) {
+        await userApiClient.addFavorite({ type, id });
+      } else {
+        await userApiClient.removeFavorite({ type, id });
       }
 
       onToggle(newIsSet);
@@ -85,14 +82,12 @@ FavoriteStar.propTypes = {
   id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   useTooltip: PropTypes.bool,
-  submitChange: PropTypes.bool,
   onToggle: PropTypes.func
 };
 
 FavoriteStar.defaultProps = {
   disabled: false,
   useTooltip: true,
-  submitChange: true,
   onToggle: () => {}
 };
 

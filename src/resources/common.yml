@@ -136,24 +136,24 @@ common:
   logOut:
     en: Log out
     de: Abmelden
-  createdOn:
+  creationDate:
     en: Creation date
     de: Erstellungsdatum
-  createdOnBy:
+  createdOnDateBy:
     en: Created on {date} by
     de: Erstellt am {date} von
-  completedOn:
-    en: Completion date
-    de: Abgeschlossen am
-  updatedOn:
+  updateDate:
     en: Update date
     de: Änderungsdatum
-  updatedOnBy:
+  updatedOnDateBy:
     en: Updated on {date} by
     de: Geändert am {date} von
-  startedOn:
-    en: Started on
-    de: Gestartet am
+  invitedOnDate:
+    en: Invited on {date}.
+    de: Eingeladen am {date}.
+  joinedOnDate:
+    en: Joined on {date}.
+    de: Eingetreten am {date}.
   relevance:
     en: Relevance
     de: Relevanz
@@ -230,6 +230,12 @@ common:
   description:
     en: Description
     de: Beschreibung
+  shortDescription:
+    en: Short description
+    de: Kurze Beschreibung
+  shortDescriptionInfo:
+    en: This information will be shown as preview text.
+    de: This information will be shown as preview text.
   url:
     en: URL
     de: URL
@@ -383,15 +389,9 @@ common:
   answer:
     en: Answer
     de: Antwort
-  deletedDocument:
-    en: Deleted document
-    de: Gelöschtes Dokument
   targetDeletedMessage:
     en: The target of this link has been deleted
     de: Das Ziel dieses Links wurde gelöscht
-  deletedRoom:
-    en: Deleted room
-    de: Gelöschter Raum
   reset:
     en: Reset
     de: Zurücksetzen
@@ -495,6 +495,11 @@ common:
   addFavorite:
     en: Add to favorites
     de: Zu den Favoriten hinzufügen
+  favoritedByTooltip:
+    en: |
+      Favorited by {count, plural, =1 {# user} other {# users}}.
+    de: |
+      Als Favorit markiert von {count} Benutzer.
   createDocument:
     en: Create document
     de: Dokument erstellen
@@ -516,9 +521,9 @@ common:
   collaborators:
     en: Collaborators
     de: Mitarbeiter
-  joined:
-    en: Joined
-    de: Eingetreten
+  contributionsBy:
+    en: Contributions by
+    de: Bearbeitungen durch
   changesSavedSuccessfully:
     en: Your changes have been saved
     de: Deine Änderungen wurden gespeichert
@@ -603,3 +608,18 @@ common:
   uploadFiles:
     en: Upload files
     de: Dateien hochladen
+  documentNotAvailable:
+    en: |
+      [Document no longer available]
+    de: |
+      [Dokument nicht mehr verfügbar]
+  roomNotAvailable:
+    en: |
+      [Room no longer available]
+    de: |
+      [Raum nicht mehr verfügbar]
+  accountClosed:
+    en: |
+      [This user account was closed]
+    de: |
+      [Dieses Benutzerkonto wurde geschlossen]

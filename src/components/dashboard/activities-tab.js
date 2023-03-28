@@ -27,13 +27,13 @@ function ActivitiesTab({ activities, loading }) {
         case USER_ACTIVITY_TYPE.documentCreated:
         case USER_ACTIVITY_TYPE.documentUpdated:
         case USER_ACTIVITY_TYPE.documentMarkedFavorite:
-          deprecatedTitle = t('common:deletedDocument');
+          deprecatedTitle = t('common:documentNotAvailable');
           break;
         case USER_ACTIVITY_TYPE.roomCreated:
         case USER_ACTIVITY_TYPE.roomUpdated:
         case USER_ACTIVITY_TYPE.roomMarkedFavorite:
         case USER_ACTIVITY_TYPE.roomJoined:
-          deprecatedTitle = t('common:deletedRoom');
+          deprecatedTitle = t('common:roomNotAvailable');
           break;
         default:
           throw new Error(`Invalid activity type: ${type}`);
@@ -50,7 +50,7 @@ function ActivitiesTab({ activities, loading }) {
         >
         <div className="ActivitiesTab-activity">
           <span className="ActivitiesTab-activityDescription">{description}: </span>
-          {!!isDeprecated && <span>[{deprecatedTitle}]</span>}
+          {!!isDeprecated && <span className="ActivitiesTab-activityDeprecatedTitle">{deprecatedTitle}</span>}
           {!isDeprecated && <span className="ActivitiesTab-activityLink"><a href={href}>{title}</a></span>}
         </div>
       </TimelineItem>

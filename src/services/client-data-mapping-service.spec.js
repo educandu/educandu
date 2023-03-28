@@ -55,7 +55,8 @@ describe('client-data-mapping-service', () => {
         expiresOn: null,
         verificationCode: null,
         organization: 'Educandu',
-        introduction: 'Educandu test user',
+        profileOverview: 'About Educandu test user',
+        shortDescription: 'Educandu test user',
         storage: {},
         favorites: [],
         accountLockedOn: null,
@@ -75,7 +76,8 @@ describe('client-data-mapping-service', () => {
           _id: 'k991UQneLdmDGrAgqR7s6q',
           displayName: 'Test user',
           organization: 'Educandu',
-          introduction: 'Educandu test user',
+          profileOverview: 'About Educandu test user',
+          shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
           accountClosedOn: null
         });
@@ -98,7 +100,8 @@ describe('client-data-mapping-service', () => {
           _id: 'k991UQneLdmDGrAgqR7s6q',
           displayName: 'Test user',
           organization: 'Educandu',
-          introduction: 'Educandu test user',
+          profileOverview: 'About Educandu test user',
+          shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/placeholder',
           accountClosedOn: accountClosedOn.toISOString()
         });
@@ -116,7 +119,8 @@ describe('client-data-mapping-service', () => {
           _id: 'k991UQneLdmDGrAgqR7s6q',
           displayName: 'Test user',
           organization: 'Educandu',
-          introduction: 'Educandu test user',
+          profileOverview: 'About Educandu test user',
+          shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
           accountClosedOn: null
         });
@@ -135,7 +139,8 @@ describe('client-data-mapping-service', () => {
           displayName: 'Test user',
           email: 'test@test.com',
           organization: 'Educandu',
-          introduction: 'Educandu test user',
+          profileOverview: 'About Educandu test user',
+          shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
           accountClosedOn: null
         });
@@ -159,7 +164,8 @@ describe('client-data-mapping-service', () => {
         verificationCode: null,
         accountLockedOn: null,
         organization: 'Educandu',
-        introduction: 'Educandu test user',
+        profileOverview: 'About Educandu test user',
+        shortDescription: 'Educandu test user',
         storage: {
           plan: 'lkdkgfj',
           usedBytes: 0,
@@ -189,7 +195,8 @@ describe('client-data-mapping-service', () => {
         email: 'test@test.com',
         role: 'admin',
         organization: 'Educandu',
-        introduction: 'Educandu test user',
+        profileOverview: 'About Educandu test user',
+        shortDescription: 'Educandu test user',
         favorites: [
           {
             type: FAVORITE_TYPE.document,
@@ -558,6 +565,7 @@ describe('client-data-mapping-service', () => {
           _id: room._id,
           name: room.name,
           isCollaborative: room.isCollaborative,
+          shortDescription: '',
           owner: {
             _id: user1._id,
             displayName: user1.displayName

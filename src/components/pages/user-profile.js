@@ -63,14 +63,14 @@ export default function UserProfile({ PageTemplate, initialState }) {
           </div>
         </div>
 
-        {!!user.introduction && (
-          <section className="UserProfilePage-introduction">
-            <Markdown>{user.introduction}</Markdown>
+        {!!user.profileOverview && (
+          <section className="UserProfilePage-profileOverview">
+            <Markdown>{user.profileOverview}</Markdown>
           </section>
         )}
 
         {!!user.accountClosedOn && (
-          <div className="UserProfilePage-accountClosed">{t('accountClosed')}</div>
+          <div className="UserProfilePage-accountClosed">{t('common:accountClosed')}</div>
         )}
 
         {!!fetchingDocuments && <Spin className="u-spin" />}

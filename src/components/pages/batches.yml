@@ -2,6 +2,12 @@ batches:
   batchType:
     en: Batch type
     de: Chargentyp
+  startedOn:
+    en: Started on
+    de: Gestartet am
+  completedOn:
+    en: Completion date
+    de: Abgeschlossen am
   batchTypeDocumentValidation:
     en: Document validation
     de: Dokumentvalidierung

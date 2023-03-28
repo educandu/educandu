@@ -47,7 +47,7 @@ function CreditsFooter({ doc, revision }) {
       </Fragment>
     ));
 
-    return <span><b>{t('contributionsBy')}:</b> {mappedContributors}</span>;
+    return <span><b>{t('common:contributionsBy')}:</b> {mappedContributors}</span>;
   };
 
   const renderRevisionAuthor = () => (

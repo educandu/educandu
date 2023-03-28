@@ -98,10 +98,11 @@ describe('room-service', () => {
         slug: 'my-room',
         owner: myUser._id,
         isCollaborative: false,
-        description: '',
+        shortDescription: '',
         createdOn: now,
         createdBy: myUser._id,
         updatedOn: now,
+        overview: '',
         members: [],
         messages: [],
         documents: []
@@ -404,12 +405,13 @@ describe('room-service', () => {
         _id: roomId,
         name: 'my room',
         slug: 'my-slug',
-        description: '',
+        shortDescription: '',
         isCollaborative: false,
         createdBy: myUser._id,
         createdOn: new Date(),
         updatedOn: new Date(),
         owner: myUser._id,
+        overview: '',
         members: [],
         messages: [],
         documents: []
@@ -498,10 +500,11 @@ describe('room-service', () => {
         slug: '',
         owner: myUser._id,
         isCollaborative: false,
-        description: '',
+        shortDescription: '',
         createdOn: now,
         createdBy: myUser._id,
         updatedOn: now,
+        overview: '',
         members: [],
         messages: [
           {
@@ -553,10 +556,11 @@ describe('room-service', () => {
         slug: '',
         owner: myUser._id,
         isCollaborative: false,
-        description: '',
+        shortDescription: '',
         createdOn: now,
         createdBy: myUser._id,
         updatedOn: now,
+        overview: '',
         members: [],
         messages: [
           {

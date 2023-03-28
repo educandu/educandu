@@ -422,7 +422,7 @@ describe('user-service', () => {
           slug: favoriteDocument.slug,
           title: favoriteDocument.title,
           language: favoriteDocument.language,
-          description: favoriteDocument.description,
+          shortDescription: favoriteDocument.shortDescription,
           createdBy: favoriteDocument.createdBy,
           createdOn: favoriteDocument.createdOn,
           updatedOn: favoriteDocument.updatedOn,
@@ -463,6 +463,7 @@ describe('user-service', () => {
             id: favoriteRoom._id,
             type: FAVORITE_TYPE.room,
             setOn: new Date('2022-03-09T10:01:00.000Z'),
+            favoritedByCount: 0,
             data: {
               ...favoriteRoom
             }
@@ -471,6 +472,7 @@ describe('user-service', () => {
             id: favoriteDocumentMetadata._id,
             type: FAVORITE_TYPE.document,
             setOn: new Date('2022-03-09T10:03:00.000Z'),
+            favoritedByCount: 0,
             data: {
               ...favoriteDocumentMetadata
             }
@@ -479,6 +481,7 @@ describe('user-service', () => {
             id: favoriteUser._id,
             type: FAVORITE_TYPE.user,
             setOn: new Date('2022-03-09T10:05:00.000Z'),
+            favoritedByCount: 0,
             data: {
               ...favoriteUser
             }
@@ -966,7 +969,8 @@ describe('user-service', () => {
 
     beforeEach(async () => {
       user.organization = 'My Organization';
-      user.introduction = 'Hello World';
+      user.profileOverview = 'More about me';
+      user.shortDescription = 'About me';
       user.role = ROLE.maintainer;
       user.emailNotificationFrequency = EMAIL_NOTIFICATION_FREQUENCY.daily;
       await updateTestUser(container, user);
@@ -981,7 +985,8 @@ describe('user-service', () => {
         passwordHash: null,
         displayName: user.displayName,
         organization: '',
-        introduction: '',
+        profileOverview: '',
+        shortDescription: '',
         role: ROLE.user,
         expiresOn: null,
         verificationCode: null,

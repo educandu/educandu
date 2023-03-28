@@ -450,10 +450,6 @@
       "en": "License",
       "de": "Lizenz"
     },
-    "contributionsBy": {
-      "en": "Contributions by",
-      "de": "Bearbeitungen durch"
-    },
     "versionCreatedBy": {
       "en": "Version created by",
       "de": "Version erstellt von"
@@ -529,16 +525,16 @@
       "de": "Du hast noch keine Favoriten markiert."
     },
     "favoriteUsers": {
-      "en": "Your favorite users ({count})",
-      "de": "Deine Lieblingsnutzer ({count})"
+      "en": "Your favorite users",
+      "de": "Deine Lieblingsnutzer"
     },
     "favoriteRooms": {
-      "en": "Your favorite rooms ({count})",
-      "de": "Deine Lieblingsräume ({count})"
+      "en": "Your favorite rooms",
+      "de": "Deine Lieblingsräume"
     },
     "favoriteDocuments": {
-      "en": "Your favorite documents ({count})",
-      "de": "Deine Lieblingsdokumente ({count})"
+      "en": "Your favorite documents",
+      "de": "Deine Lieblingsdokumente"
     }
   },
   "notificationsTab": {
@@ -577,14 +573,6 @@
     "roomMessageCreatedNotification": {
       "en": "New message in room",
       "de": "Neue Nachricht im Raum"
-    },
-    "documentNotAvailable": {
-      "en": "Document no longer available",
-      "de": "Dokument nicht mehr verfügbar"
-    },
-    "roomNotAvailable": {
-      "en": "Room no longer available",
-      "de": "Raum nicht mehr verfügbar"
     },
     "remove": {
       "en": "Remove",
@@ -642,9 +630,9 @@
       "en": "Organization",
       "de": "Organisation"
     },
-    "introduction": {
-      "en": "Introduction",
-      "de": "Vorstellung"
+    "profileOverview": {
+      "en": "Profile overview",
+      "de": "Profil-Überblick"
     },
     "avatarDescription": {
       "en": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n",
@@ -730,21 +718,13 @@
     }
   },
   "documentCard": {
-    "coauthors": {
-      "en": "Co-authors",
-      "de": "Mitautoren"
+    "createdOnDateByUser": {
+      "en": "Created on {date} by {user}.",
+      "de": "Erstellt am {date} von {user}."
     },
-    "documentButton": {
-      "en": "View document",
-      "de": "Dokument ansehen"
-    },
-    "creationDetail": {
-      "en": "Created on {date} by",
-      "de": "Erstellt am {date} von"
-    },
-    "updateDetail": {
-      "en": "Last updated on {date} by",
-      "de": "Zuletzt geändert am {date} von"
+    "updatedOnDateByUser": {
+      "en": "Updated on {date} by {user}.",
+      "de": "Geändert am {date} von {user}."
     }
   },
   "documentCommentsPanel": {
@@ -971,10 +951,6 @@
     "headline": {
       "en": "Recommended documents",
       "de": "Empfohlene Dokumente"
-    },
-    "contributorsTooltipPrefix": {
-      "en": "Contributions by",
-      "de": "Beiträge von"
     }
   },
   "homepageOerPresentation": {
@@ -1291,6 +1267,14 @@
     "batchType": {
       "en": "Batch type",
       "de": "Chargentyp"
+    },
+    "startedOn": {
+      "en": "Started on",
+      "de": "Gestartet am"
+    },
+    "completedOn": {
+      "en": "Completion date",
+      "de": "Abgeschlossen am"
     },
     "batchTypeDocumentValidation": {
       "en": "Document validation",
@@ -1612,6 +1596,10 @@
       "en": "Delete room",
       "de": "Raum löschen"
     },
+    "roomContentHeadline": {
+      "en": "Room content",
+      "de": "Raum-Inhalt"
+    },
     "roomMetadataHeadline": {
       "en": "Room metadata",
       "de": "Raum-Metadaten"
@@ -1624,25 +1612,9 @@
       "en": "All room data and resources will be deleted.",
       "de": "Alle Raum-Daten und -Ressourcen werden gelöscht."
     },
-    "removeMember": {
-      "en": "Remove member",
-      "de": "Mitglied entfernen"
-    },
-    "revokeInvitation": {
-      "en": "Revoke invitation",
-      "de": "Einladung widerrufen"
-    },
     "cancelRoomMembership": {
       "en": "Cancel room membership",
       "de": "Raum-Mitgliedschaft beenden"
-    },
-    "invitedOn": {
-      "en": "Invited on",
-      "de": "Eingeladen am"
-    },
-    "expiresOn": {
-      "en": "Expires on",
-      "de": "Läuft ab am"
     },
     "inviteMembersButton": {
       "en": "Invite members",
@@ -1651,10 +1623,6 @@
     "inviteCollaboratorsButton": {
       "en": "Invite collaborators",
       "de": "Mitarbeiter einladen"
-    },
-    "pendingInvitation": {
-      "en": "Pending invitation",
-      "de": "Ausstehende Einladung"
     },
     "messageBoardSectionHeadline": {
       "en": "Message board",
@@ -1679,6 +1647,10 @@
     "messageEmailNotificationIconTooltip": {
       "en": "An email was sent to all room members when this message was posted.",
       "de": "Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde."
+    },
+    "overview": {
+      "en": "Overview",
+      "de": "Überblick"
     }
   },
   "search": {
@@ -1704,10 +1676,6 @@
     }
   },
   "userProfile": {
-    "accountClosed": {
-      "en": "This user account was closed.",
-      "de": "Dieses Benutzerkonto wurde geschlossen."
-    },
     "documentsHeadline": {
       "en": "Recent contributions",
       "de": "Letzte Beiträge"
@@ -2034,25 +2002,37 @@
     }
   },
   "roomCard": {
-    "role": {
-      "en": "Role",
-      "de": "Rolle"
+    "createdOnDate": {
+      "en": "Created on {date}.",
+      "de": "Erstellt am {date}."
     },
-    "updated": {
-      "en": "Updated",
-      "de": "Aktualisiert"
+    "createdByUser": {
+      "en": "Created by {user}.",
+      "de": "Erstellt von {user}."
     },
-    "joinButton": {
+    "updatedOnDate": {
+      "en": "Updated on {date}.",
+      "de": "Aktualisiert am {date}."
+    },
+    "collaborativeRoom": {
+      "en": "Collaborative room.",
+      "de": "Kollaborativer Raum."
+    },
+    "acceptRoomInvitation": {
       "en": "Accept invitation",
       "de": "Einladung annehmen"
     },
-    "invited": {
-      "en": "Invited",
-      "de": "Eingeladen"
+    "invitationValidUntilDate": {
+      "en": "The invitation is valid until {date}.",
+      "de": "Die Einladung ist bis {date} gültig."
     },
-    "acceptInvitation": {
-      "en": "The invitation is valid until **{date}**.",
-      "de": "Die Einladung ist bis **{date}** gültig."
+    "hasCountMembers": {
+      "en": "Has {count, plural, =1 {# user} other {# users}}.",
+      "de": "Hat {count} Benutzer."
+    },
+    "hasCountCollaborators": {
+      "en": "Has {count, plural, =1 {# collaborator} other {# collaborators}}.",
+      "de": "Hat {count} Mitarbeiter."
     }
   },
   "roomCreationModal": {
@@ -2194,9 +2174,25 @@
     }
   },
   "userCard": {
-    "profileButton": {
-      "en": "View profile",
-      "de": "Profil ansehen"
+    "sendEmailTo": {
+      "en": "Send email to {email}.",
+      "de": "E-Mail an {email} schicken."
+    },
+    "pendingInvitation": {
+      "en": "[Pending invitation]\n",
+      "de": "[Ausstehende Einladung]\n"
+    },
+    "invitationExpiresOnDate": {
+      "en": "Expires on {date}.",
+      "de": "Läuft ab am {date}."
+    },
+    "revokeInvitation": {
+      "en": "Revoke invitation",
+      "de": "Einladung widerrufen"
+    },
+    "removeMember": {
+      "en": "Remove member",
+      "de": "Mitglied entfernen"
     }
   },
   "userStepsForm": {
@@ -3250,29 +3246,29 @@
       "en": "Log out",
       "de": "Abmelden"
     },
-    "createdOn": {
+    "creationDate": {
       "en": "Creation date",
       "de": "Erstellungsdatum"
     },
-    "createdOnBy": {
+    "createdOnDateBy": {
       "en": "Created on {date} by",
       "de": "Erstellt am {date} von"
     },
-    "completedOn": {
-      "en": "Completion date",
-      "de": "Abgeschlossen am"
-    },
-    "updatedOn": {
+    "updateDate": {
       "en": "Update date",
       "de": "Änderungsdatum"
     },
-    "updatedOnBy": {
+    "updatedOnDateBy": {
       "en": "Updated on {date} by",
       "de": "Geändert am {date} von"
     },
-    "startedOn": {
-      "en": "Started on",
-      "de": "Gestartet am"
+    "invitedOnDate": {
+      "en": "Invited on {date}.",
+      "de": "Eingeladen am {date}."
+    },
+    "joinedOnDate": {
+      "en": "Joined on {date}.",
+      "de": "Eingetreten am {date}."
     },
     "relevance": {
       "en": "Relevance",
@@ -3369,6 +3365,14 @@
     "description": {
       "en": "Description",
       "de": "Beschreibung"
+    },
+    "shortDescription": {
+      "en": "Short description",
+      "de": "Kurze Beschreibung"
+    },
+    "shortDescriptionInfo": {
+      "en": "This information will be shown as preview text.",
+      "de": "This information will be shown as preview text."
     },
     "url": {
       "en": "URL",
@@ -3574,17 +3578,9 @@
       "en": "Answer",
       "de": "Antwort"
     },
-    "deletedDocument": {
-      "en": "Deleted document",
-      "de": "Gelöschtes Dokument"
-    },
     "targetDeletedMessage": {
       "en": "The target of this link has been deleted",
       "de": "Das Ziel dieses Links wurde gelöscht"
-    },
-    "deletedRoom": {
-      "en": "Deleted room",
-      "de": "Gelöschter Raum"
     },
     "reset": {
       "en": "Reset",
@@ -3710,6 +3706,10 @@
       "en": "Add to favorites",
       "de": "Zu den Favoriten hinzufügen"
     },
+    "favoritedByTooltip": {
+      "en": "Favorited by {count, plural, =1 {# user} other {# users}}.\n",
+      "de": "Als Favorit markiert von {count} Benutzer.\n"
+    },
     "createDocument": {
       "en": "Create document",
       "de": "Dokument erstellen"
@@ -3738,9 +3738,9 @@
       "en": "Collaborators",
       "de": "Mitarbeiter"
     },
-    "joined": {
-      "en": "Joined",
-      "de": "Eingetreten"
+    "contributionsBy": {
+      "en": "Contributions by",
+      "de": "Bearbeitungen durch"
     },
     "changesSavedSuccessfully": {
       "en": "Your changes have been saved",
@@ -3853,6 +3853,18 @@
     "uploadFiles": {
       "en": "Upload files",
       "de": "Dateien hochladen"
+    },
+    "documentNotAvailable": {
+      "en": "[Document no longer available]\n",
+      "de": "[Dokument nicht mehr verfügbar]\n"
+    },
+    "roomNotAvailable": {
+      "en": "[Room no longer available]\n",
+      "de": "[Raum nicht mehr verfügbar]\n"
+    },
+    "accountClosed": {
+      "en": "[This user account was closed]\n",
+      "de": "[Dieses Benutzerkonto wurde geschlossen]\n"
     }
   },
   "pageNames": {

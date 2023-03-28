@@ -33,7 +33,8 @@ class ClientDataMappingService {
       _id: viewedUser._id,
       displayName: viewedUser.displayName,
       organization: viewedUser.organization,
-      introduction: viewedUser.introduction,
+      profileOverview: viewedUser.profileOverview,
+      shortDescription: viewedUser.shortDescription,
       avatarUrl: urlUtils.getGravatarUrl(viewedUser.accountClosedOn ? null : viewedUser.email),
       accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
     };
@@ -56,7 +57,8 @@ class ClientDataMappingService {
       email: user.email,
       role: user.role,
       organization: user.organization,
-      introduction: user.introduction,
+      profileOverview: user.profileOverview,
+      shortDescription: user.shortDescription,
       favorites: user.favorites.map(favorite => ({
         ...favorite,
         setOn: favorite.setOn.toISOString()
@@ -230,6 +232,7 @@ class ClientDataMappingService {
       room: {
         _id: room._id,
         name: room.name,
+        shortDescription: room.shortDescription,
         isCollaborative: room.isCollaborative,
         owner: {
           _id: owner._id,
@@ -260,6 +263,8 @@ class ClientDataMappingService {
           userId: member.userId,
           joinedOn: member.joinedOn?.toISOString() || null,
           displayName: memberUserProfileData.displayName,
+          shortDescription: memberUserProfileData.shortDescription,
+          organization: memberUserProfileData.organization,
           avatarUrl: memberUserProfileData.avatarUrl
         };
         if (memberEmail) {

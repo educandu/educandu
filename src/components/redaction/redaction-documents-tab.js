@@ -85,8 +85,8 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
 
   const documentsSortingOptions = useMemo(() => [
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
-    { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-    { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
+    { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+    { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
     { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: 'creator' },
     { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' },
     { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: 'protected' },
@@ -188,15 +188,15 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     return (
       <ResourceInfoCell
         title={doc.title}
-        description={doc.description}
+        description={doc.shortDescription}
         subtext={
           <div className="RedactionDocumentsTab-titleSubtext">
             <div>
-              <span>{`${t('common:createdOnBy', { date: formatDate(doc.createdOn) })} `}</span>
+              <span>{`${t('common:createdOnDateBy', { date: formatDate(doc.createdOn) })} `}</span>
               <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
             </div>
             <div>
-              <span>{`${t('common:updatedOnBy', { date: formatDate(doc.updatedOn) })} `}</span>
+              <span>{`${t('common:updatedOnDateBy', { date: formatDate(doc.updatedOn) })} `}</span>
               <a href={routes.getUserProfileUrl(doc.updatedBy._id)}>{doc.updatedBy.displayName}</a>
             </div>
           </div>

@@ -67,7 +67,7 @@ class AmbService {
       result.name = doc.title;
       result.creator = [{ type: 'Person', name: createdByUser.displayName }];
       result.contributor = contributorUsers.map(user => ({ type: 'Person', name: user.displayName }));
-      result.description = doc.description;
+      result.description = doc.shortDescription;
       result.keywords = doc.tags;
       if (licenseUrl) {
         result.license = { id: licenseUrl };

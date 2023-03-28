@@ -318,12 +318,12 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           isCollaborative: false,
-          description: 'description'
+          shortDescription: 'shortDescription'
         };
         requestBody = {
           name: 'new name',
           slug: 'new-slug',
-          description: 'new description',
+          shortDescription: 'new shortDescription',
           isCollaborative: true
         };
         updatedRoom = {
@@ -412,7 +412,7 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           isCollaborative: true,
-          description: 'description',
+          shortDescription: 'shortDescription',
           members: [{ userId: user._id }],
           documents: []
         };

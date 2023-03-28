@@ -217,8 +217,8 @@ function Batches({ initialState, PageTemplate }) {
   );
 
   const attemtpsTableColumns = [
-    { title: t('common:startedOn'), dataIndex: 'startedOn', width: '50px', render: renderDate },
-    { title: t('common:completedOn'), dataIndex: 'completedOn', width: '150px', render: renderDate },
+    { title: t('startedOn'), dataIndex: 'startedOn', width: '50px', render: renderDate },
+    { title: t('completedOn'), dataIndex: 'completedOn', width: '150px', render: renderDate },
     { title: t('errorsCount'), width: '150px', render: renderErrorCount }
   ];
 
@@ -288,8 +288,8 @@ function Batches({ initialState, PageTemplate }) {
         </div>
         <div className="BatchesPage-batchInfo">
           <div>{t('common:status')}: {renderBatchStatus()}</div>
-          <div>{t('common:createdOn')}: {renderDate(batch.createdOn)}</div>
-          <div>{t('common:completedOn')}: {renderDate(batch.completedOn)}</div>
+          <div>{t('common:creationDate')}: {renderDate(batch.createdOn)}</div>
+          <div>{t('completedOn')}: {renderDate(batch.completedOn)}</div>
           <div>{t('common:user')}: {batch.createdBy.displayName}</div>
         </div>
         {!!batch.errors.length && (

@@ -1,16 +1,25 @@
 roomCard:
-  role:
-    en: Role
-    de: Rolle
-  updated:
-    en: Updated
-    de: Aktualisiert
-  joinButton:
+  createdOnDate:
+    en: Created on {date}.
+    de: Erstellt am {date}.
+  createdByUser:
+    en: Created by {user}.
+    de: Erstellt von {user}.
+  updatedOnDate:
+    en: Updated on {date}.
+    de: Aktualisiert am {date}.
+  collaborativeRoom:
+    en: Collaborative room.
+    de: Kollaborativer Raum.
+  acceptRoomInvitation:
     en: Accept invitation
     de: Einladung annehmen
-  invited:
-    en: Invited
-    de: Eingeladen
-  acceptInvitation:
-    en: The invitation is valid until **{date}**.
-    de: Die Einladung ist bis **{date}** gültig.
+  invitationValidUntilDate:
+    en: The invitation is valid until {date}.
+    de: Die Einladung ist bis {date} gültig.
+  hasCountMembers:
+    en: Has {count, plural, =1 {# user} other {# users}}.
+    de: Hat {count} Benutzer.
+  hasCountCollaborators:
+    en: Has {count, plural, =1 {# collaborator} other {# collaborators}}.
+    de: Hat {count} Mitarbeiter.

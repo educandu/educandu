@@ -1,41 +1,47 @@
 .UserCard {
-  .m-card;
-  display: grid;
-  text-align: center;
-  align-items: center;
-  gap: 10px;
-  padding: @edu-content-padding;
-  grid-template-rows: 1fr auto 1fr;
-  border-radius: @edu-border-radius-base;
-  border: 1px solid @edu-border-color-light;
-  border-radius: @edu-border-radius-base;
-}
-
-.UserCard-displayName {
-  .m-overflow-ellipsis;
-}
-
-.UserCard-email {
-  .m-overflow-ellipsis;
-  font-size: @edu-font-size-sm;
-  color: @edu-text-color-secondary;
-}
-
-.UserCard-emailLink {
-  .m-link(inherit);
-  margin-left: 5px;
-}
-
-.UserCard-content {
-  display: grid;
-  gap: 5px;
-  grid-auto-flow: row;
+  .m-row-card(4);
 }
 
 .UserCard-avatar {
   margin: 0 auto !important;
 }
 
-.UserCard-button {
-  width: 100%;
+.UserCard-title {
+  .m-overflow-ellipsis;
+  text-align: center;
+  font-weight: bold;
+}
+
+.UserCard-content {
+  height: 210px;
+  display: grid;
+  gap: 5px;
+  align-items: center;
+  grid-template-rows: auto auto 1fr;
+  overflow: hidden;
+  cursor: pointer;
+
+  &.UserCard-content--noAccount {
+    cursor: default;
+  }
+}
+
+.UserCard-details {
+  text-align: center;
+  font-size: @edu-font-size-sm;
+  .m-line-clamp(3);
+
+}
+
+.UserCard-detailsMissingData {
+  .m-data-unavailable;
+}
+
+.UserCard-helpAction {
+  cursor: help;
+}
+
+.UserCard-infoTooltip {
+  display: grid;
+  grid-auto-flow: row;
 }

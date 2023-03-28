@@ -22,11 +22,12 @@ const documentMetadataProjection = {
 const contributedDocumentMetadataProjection = {
   _id: 1,
   title: 1,
-  description: 1,
+  shortDescription: 1,
   createdOn: 1,
   createdBy: 1,
   updatedOn: 1,
-  updatedBy: 1
+  updatedBy: 1,
+  contributors: 1
 };
 
 const documentExtendedMetadataProjection = {
@@ -35,7 +36,7 @@ const documentExtendedMetadataProjection = {
   'order': 1,
   'revision': 1,
   'title': 1,
-  'description': 1,
+  'shortDescription': 1,
   'slug': 1,
   'language': 1,
   'createdOn': 1,

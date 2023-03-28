@@ -225,7 +225,8 @@
 .m-section-headline {
   margin: 30px 0 15px 0;
   color: @edu-text-color;
-  font-size: @edu-font-size-lg;
+  font-weight: bold;
+  font-size: @edu-heading-4-size;
 
   &:first-of-type {
     margin-top: 0;
@@ -233,7 +234,7 @@
 }
 
 .m-content-headline {
-  font-size: @edu-heading-5-size;
+  font-size: @edu-heading-4-size;
   font-weight: bold;
   margin-bottom: 20px;
 }
@@ -255,6 +256,24 @@
 .m-card {
   width: 255px;
   min-height: 255px;
+}
+
+.m-row-card(@countPerRow) {
+  .ant-card-head {
+    padding: 0 @edu-content-padding !important;
+  }
+
+  .ant-card-body {
+    padding: @edu-content-padding !important;
+  }
+
+  .ant-card-actions > * {
+    display: flex;
+    align-items: centerce;
+    justify-content: center;
+  }
+
+  width: ((@edu-content-width-wide - ((@countPerRow - 1) * 25px) - 2 * @edu-page-content-padding) / @countPerRow);
 }
 
 .m-card-wrapper {
@@ -411,4 +430,11 @@
   max-width: @edu-content-width-narrow;
   line-height: 160%;
   text-align: center;
+}
+
+.m-data-unavailable {
+  cursor: default;
+  font-style: italic;
+  pointer-events: none;
+  color: @edu-text-color-secondary;
 }

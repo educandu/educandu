@@ -26,21 +26,31 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  addRoom({ name, slug, isCollaborative }) {
+  addRoom({ name, slug, isCollaborative, shortDescription }) {
     return this.httpClient
       .post(
         '/api/v1/rooms',
-        { name, slug, isCollaborative },
+        { name, slug, isCollaborative, shortDescription },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  updateRoomMetadata({ roomId, name, slug, isCollaborative, description }) {
+  updateRoomMetadata({ roomId, name, slug, isCollaborative, shortDescription }) {
     return this.httpClient
       .patch(
         `/api/v1/rooms/${encodeURIComponent(roomId)}/metadata`,
-        { name, slug, isCollaborative, description },
+        { name, slug, isCollaborative, shortDescription },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  updateRoomContent({ roomId, overview }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/content`,
+        { overview },
         { responseType: 'json' }
       )
       .then(res => res.data);
