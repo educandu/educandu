@@ -25,13 +25,16 @@ function UserCard({
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('userCard');
 
+  const userId = user?._id || roomMember?.userId;
+  const userEmail = user?.email || roomMember?.email || roomInvitation?.email;
+
   const handleCardClick = () => {
-    if (user?.id) {
-      window.location = routes.getUserProfileUrl(user?.id);
+    if (userId) {
+      window.location = routes.getUserProfileUrl(userId);
     }
   };
 
-  const renderFavoriteAction = userId => {
+  const renderFavoriteAction = () => {
     return (
       <div key="favorite">
         <FavoriteStar
@@ -44,10 +47,10 @@ function UserCard({
     );
   };
 
-  const renderEmailAction = email => {
+  const renderEmailAction = () => {
     return (
-      <Tooltip title={t('sendEmailTo', { email })} key="email">
-        <a href={`mailto:${encodeURIComponent(email)}`} >
+      <Tooltip title={t('sendEmailTo', { email: userEmail })} key="email">
+        <a href={`mailto:${encodeURIComponent(userEmail)}`} >
           <MailOutlined />
         </a>
       </Tooltip>
@@ -65,9 +68,9 @@ function UserCard({
   const actions = [];
 
   if (user) {
-    actions.push(renderFavoriteAction(user._id));
-    if (user.email) {
-      actions.push(renderEmailAction(user.email));
+    actions.push(renderFavoriteAction());
+    if (userEmail) {
+      actions.push(renderEmailAction());
     }
 
     if (Number.isInteger(favoritedByCount)) {
@@ -76,9 +79,9 @@ function UserCard({
   }
 
   if (roomMember) {
-    actions.push(renderFavoriteAction(roomMember.userId));
-    if (roomMember.email) {
-      actions.push(renderEmailAction(roomMember.email));
+    actions.push(renderFavoriteAction());
+    if (userEmail) {
+      actions.push(renderEmailAction());
     }
     actions.push(renderInfoAction(`${t('common:joinedOn')} ${formatDate(roomMember.joinedOn)}`));
 
@@ -90,6 +93,14 @@ function UserCard({
   }
 
   if (roomInvitation) {
+    actions.push(renderEmailAction());
+    actions.push(renderInfoAction((
+      <div className="UserCard-infoTooltip">
+        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}</div>
+        <div>{t('invitationExpiresOn')} {formatDate(roomInvitation.expiresOn)}</div>
+      </div>
+    )));
+
     actions.push((
       <Tooltip title={t('revokeInvitation')} key="revokeInvitation">
         <DeleteButton onClick={onDeleteRoomInvitation} />
@@ -99,7 +110,10 @@ function UserCard({
 
   return (
     <Card className="UserCard" actions={actions}>
-      <div className={classNames('UserCard-content', { 'UserCard-content--nonClickable': !user })} onClick={handleCardClick}>
+      <div
+        className={classNames('UserCard-content', { 'UserCard-content--nonClickable': !userId })}
+        onClick={handleCardClick}
+        >
         <Avatar
           shape="circle"
           size={AVATAR_SIZE}
@@ -116,23 +130,10 @@ function UserCard({
             {user.shortDescription || user.organization}
           </div>
         )}
-        {!!roomMember && (
-          <div className="UserCard-details">
-            {roomMember.shortDescription || roomMember.organization}
-          </div>
-        )}
-        {!!roomInvitation && (
-          <div className="UserCard-details UserCard-details--roomInvitation">
-            {!!roomInvitation.email && (
-              <div className="UserCard-roomInvitationEmail">
-                <MailOutlined />
-                <a className="UserCard-roomInvitationEmailLink" href={`mailto:${encodeURI(roomInvitation.email)}`}>{roomInvitation.email}</a>
-              </div>
-            )}
-            <span className="UserCard-roomInvitationDetail">{`${t('common:invitedOn')} ${formatDate(roomInvitation.sentOn)}`}</span>
-            <span className="UserCard-roomInvitationDetail">{`${t('invitationExpiresOn')} ${formatDate(roomInvitation.expiresOn)}`}</span>
-          </div>
-        )}
+        <div className="UserCard-details">
+          {!!roomMember && (roomMember.shortDescription || roomMember.organization)}
+          {!!roomInvitation && roomInvitation.email}
+        </div>
       </div>
     </Card>
   );
