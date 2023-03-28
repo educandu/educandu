@@ -1,4 +1,7 @@
 registrationForm:
+  formTitle:
+    en: Steps for account creation
+    de: Schritte zur Kontoerstellung
   register:
     en: Create account
     de: Konto erstellen

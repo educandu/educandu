@@ -33,7 +33,7 @@ describe('user-controller', () => {
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
       getUserById: sandbox.stub(),
-      getActiveUserByEmailAddress: sandbox.stub(),
+      getActiveConfirmedUserByEmail: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
       createPasswordResetRequest: sandbox.stub(),
       deleteAllUserStorageReminders: sandbox.stub(),
@@ -487,7 +487,7 @@ describe('user-controller', () => {
 
         res.on('end', resolve);
 
-        userService.getActiveUserByEmailAddress.resolves(user);
+        userService.getActiveConfirmedUserByEmail.resolves(user);
         userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId', verificationCode: 'je8ghFD7Gg88jkdhfjkh48' });
 
         sut.handlePostUserPasswordResetRequest(req, res).catch(reject);
@@ -515,6 +515,42 @@ describe('user-controller', () => {
       });
     });
 
+    describe('with known email of unconfirmed user', () => {
+      beforeEach(() => new Promise((resolve, reject) => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          user: { _id: 1234 },
+          body: { email: 'john.doe@gmail.com', password: 'hushhush' }
+        });
+        res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+        res.on('end', resolve);
+
+        userService.getActiveConfirmedUserByEmail.resolves(null);
+        userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId', verificationCode: 'je8ghFD7Gg88jkdhfjkh48' });
+
+        sut.handlePostUserPasswordResetRequest(req, res).catch(reject);
+      }));
+
+      it('should no call userService.createPasswordResetRequest', () => {
+        assert.notCalled(userService.createPasswordResetRequest);
+      });
+
+      it('should not call mailService.sendPasswordResetEmail', () => {
+        assert.notCalled(mailService.sendPasswordResetEmail);
+      });
+
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should return the empty result object', () => {
+        const response = res._getData();
+        expect(response).toEqual({});
+      });
+    });
+
     describe('with unknown email', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
@@ -528,7 +564,7 @@ describe('user-controller', () => {
 
         res.on('end', resolve);
 
-        userService.getActiveUserByEmailAddress.resolves(null);
+        userService.getActiveConfirmedUserByEmail.resolves(null);
 
         sut.handlePostUserPasswordResetRequest(req, res).catch(reject);
       }));
@@ -545,7 +581,7 @@ describe('user-controller', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should return the result object', () => {
+      it('should return the empty result object', () => {
         const response = res._getData();
         expect(response).toEqual({});
       });

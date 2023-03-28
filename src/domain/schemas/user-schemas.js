@@ -26,7 +26,7 @@ export const postUserRegistrationRequestBodySchema = joi.object({
 
 export const postUserRegistrationCompletionBodySchema = joi.object({
   userId: idOrKeySchema.required(),
-  verificationCode: idOrKeySchema.required()
+  verificationCode: joi.string().required()
 });
 
 export const postUserAccountBodySchema = joi.object({
@@ -50,7 +50,7 @@ export const postUserPasswordResetRequestBodySchema = joi.object({
 
 export const postUserPasswordResetCompletionBodySchema = joi.object({
   passwordResetRequestId: idOrKeySchema.required(),
-  verificationCode: idOrKeySchema.required()
+  verificationCode: joi.string().required()
 });
 
 export const postUserRoleBodySchema = joi.object({

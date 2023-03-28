@@ -97,6 +97,7 @@ function RegistrationForm() {
   return (
     <div className="RegistrationForm">
       <UserStepsForm
+        title={t('formTitle')}
         enterDataForm={enterDataForm}
         enterDataFormContent={renderEnterDataFormContent()}
         enterDataFormButtonText={t('register')}

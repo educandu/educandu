@@ -56,9 +56,11 @@ const setStepSuccess = (steps, key) => steps.map(step => step.key === key ? { ..
 const setStepProcess = (steps, key) => steps.map(step => step.key === key ? { ...step, status: STEP_STATE.process } : step);
 
 function UserStepsForm({
+  title,
   enterDataForm,
   enterDataFormContent,
   enterDataFormButtonText,
+  verificationMessageDisclaimer,
   codeExpirationInMinutes,
   completedMessageTitle,
   completedMessageSubtitle,
@@ -172,9 +174,12 @@ function UserStepsForm({
     ];
     return (
       <div>
-        <Markdown className="UserStepsForm-verificationMessage">
-          {t('verificationMessage', { validityInMinutes: formatDuration(codeExpirationInMinutes, 'minutes') })}
-        </Markdown>
+        <div className="UserStepsForm-verificationMessageWrapper">
+          <Markdown className="UserStepsForm-verificationMessage">
+            {t('verificationMessage', { validityInMinutes: formatDuration(codeExpirationInMinutes, 'minutes') })}
+          </Markdown>
+          {verificationMessageDisclaimer}
+        </div>
         <Form
           layout="vertical"
           scrollToFirstError
@@ -237,6 +242,7 @@ function UserStepsForm({
 
   return (
     <div className="UserStepsForm u-panel">
+      <div className="UserStepsForm-title">{title}</div>
       {renderSteps()}
       {currentStepKey === STEP.enterData && renderEnterDataForm()}
       {currentStepKey === STEP.enterCode && renderEnterCodeForm()}
@@ -246,9 +252,11 @@ function UserStepsForm({
 }
 
 UserStepsForm.propTypes = {
+  title: PropTypes.string.isRequired,
   enterDataForm: PropTypes.object.isRequired,
   enterDataFormContent: PropTypes.node.isRequired,
   enterDataFormButtonText: PropTypes.string.isRequired,
+  verificationMessageDisclaimer: PropTypes.node,
   codeExpirationInMinutes: PropTypes.number.isRequired,
   completedMessageTitle: PropTypes.string.isRequired,
   completedMessageSubtitle: PropTypes.string.isRequired,
@@ -258,6 +266,7 @@ UserStepsForm.propTypes = {
 };
 
 UserStepsForm.defaultProps = {
+  verificationMessageDisclaimer: null,
   onEnterDataStart: () => {}
 };
 

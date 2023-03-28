@@ -1610,6 +1610,10 @@
     }
   },
   "resetPassword": {
+    "formTitle": {
+      "en": "Steps for changing password",
+      "de": "Schritte zur Kennwortänderung"
+    },
     "newPassword": {
       "en": "New password",
       "de": "Neues Kennwort"
@@ -1617,6 +1621,10 @@
     "requestPasswordReset": {
       "en": "Change password",
       "de": "Kennwort ändern"
+    },
+    "requestDisclaimer": {
+      "en": "You only receive an email if you already have a confirmed account.",
+      "de": "Du bekommst nur dann eine E-Mail, wenn du bereits ein bestätigtest Konto hast."
     },
     "completedMessageTitle": {
       "en": "Password changed successfully!",
@@ -1900,6 +1908,10 @@
     }
   },
   "registrationForm": {
+    "formTitle": {
+      "en": "Steps for account creation",
+      "de": "Schritte zur Kontoerstellung"
+    },
     "register": {
       "en": "Create account",
       "de": "Konto erstellen"
