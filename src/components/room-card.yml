@@ -19,7 +19,7 @@ roomCard:
     de: Die Einladung ist bis {date} gültig.
   hasCountMembers:
     en: Has {count, plural, =1 {# user} other {# users}}.
-    de: Hat {count, plural, =1 {# Benutzer} other {# Benutzern}}.
+    de: Hat {count} Benutzer.
   hasCountCollaborators:
     en: Has {count, plural, =1 {# collaborator} other {# collaborators}}.
-    de: Hat {count, plural, =1 {# Mitarbeiter} other {# Mitarbeiter}}.
+    de: Hat {count} Mitarbeiter.

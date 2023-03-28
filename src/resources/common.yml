@@ -499,7 +499,7 @@ common:
     en: |
       Favorited by {count, plural, =1 {# user} other {# users}}.
     de: |
-      Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}.
+      Als Favorit markiert von {count} Benutzer.
   createDocument:
     en: Create document
     de: Dokument erstellen

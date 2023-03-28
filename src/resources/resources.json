@@ -2028,11 +2028,11 @@
     },
     "hasCountMembers": {
       "en": "Has {count, plural, =1 {# user} other {# users}}.",
-      "de": "Hat {count, plural, =1 {# Benutzer} other {# Benutzern}}."
+      "de": "Hat {count} Benutzer."
     },
     "hasCountCollaborators": {
       "en": "Has {count, plural, =1 {# collaborator} other {# collaborators}}.",
-      "de": "Hat {count, plural, =1 {# Mitarbeiter} other {# Mitarbeiter}}."
+      "de": "Hat {count} Mitarbeiter."
     }
   },
   "roomCreationModal": {
@@ -3708,7 +3708,7 @@
     },
     "favoritedByTooltip": {
       "en": "Favorited by {count, plural, =1 {# user} other {# users}}.\n",
-      "de": "Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}.\n"
+      "de": "Als Favorit markiert von {count} Benutzer.\n"
     },
     "createDocument": {
       "en": "Create document",
