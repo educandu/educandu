@@ -618,3 +618,8 @@ common:
       [Room no longer available]
     de: |
       [Raum nicht mehr verfügbar]
+  accountClosed:
+    en: |
+      [This user account was closed]
+    de: |
+      [Dieses Benutzerkonto wurde geschlossen]

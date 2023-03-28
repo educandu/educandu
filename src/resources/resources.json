@@ -1666,10 +1666,6 @@
     }
   },
   "userProfile": {
-    "accountClosed": {
-      "en": "This user account was closed.",
-      "de": "Dieses Benutzerkonto wurde geschlossen."
-    },
     "documentsHeadline": {
       "en": "Recent contributions",
       "de": "Letzte Beiträge"
@@ -2187,10 +2183,6 @@
     "removeMember": {
       "en": "Remove member",
       "de": "Mitglied entfernen"
-    },
-    "closedAccount": {
-      "en": "Closed account",
-      "de": "Geschlossenes Konto"
     }
   },
   "userStepsForm": {
@@ -3859,6 +3851,10 @@
     "roomNotAvailable": {
       "en": "[Room no longer available]\n",
       "de": "[Raum nicht mehr verfügbar]\n"
+    },
+    "accountClosed": {
+      "en": "[This user account was closed]\n",
+      "de": "[Dieses Benutzerkonto wurde geschlossen]\n"
     }
   },
   "pageNames": {

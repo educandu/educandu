@@ -25,12 +25,12 @@ function UserCard({
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('userCard');
 
-  const isClosedAccount = !!favoriteUser?.data.accountClosedOn;
-  const userId = favoriteUser?.data._id || roomMember?.userId;
+  const accessibleUser = favoriteUser?.data || roomMember;
+  const userId = favoriteUser?.data._id || roomMember?.userId || roomInvitation?.userId;
   const userEmail = favoriteUser?.data.email || roomMember?.email || roomInvitation?.email;
 
   const handleCardClick = () => {
-    if (userId) {
+    if (accessibleUser) {
       window.location = routes.getUserProfileUrl(userId);
     }
   };
@@ -40,7 +40,6 @@ function UserCard({
       <div key="favorite">
         <FavoriteStar
           id={userId}
-          disabled={!userId}
           type={FAVORITE_TYPE.user}
           onToggle={isFavorite => onToggleFavorite(userId, isFavorite)}
           />
@@ -68,22 +67,21 @@ function UserCard({
 
   const actions = [];
 
-  if (favoriteUser) {
+  if (accessibleUser) {
     actions.push(renderFavoriteAction());
-    if (userEmail) {
-      actions.push(renderEmailAction());
-    }
+  }
 
+  if (userEmail) {
+    actions.push(renderEmailAction());
+  }
+
+  if (favoriteUser) {
     if (Number.isInteger(favoritedByCount)) {
       actions.push(renderInfoAction(t('common:favoritedByTooltip', { count: favoritedByCount })));
     }
   }
 
   if (roomMember) {
-    actions.push(renderFavoriteAction());
-    if (userEmail) {
-      actions.push(renderEmailAction());
-    }
     actions.push(renderInfoAction(`${t('common:joinedOn')} ${formatDate(roomMember.joinedOn)}`));
 
     actions.push((
@@ -112,7 +110,7 @@ function UserCard({
   return (
     <Card className="UserCard" actions={actions}>
       <div
-        className={classNames('UserCard-content', { 'UserCard-content--noAccount': !userId })}
+        className={classNames('UserCard-content', { 'UserCard-content--noAccount': !accessibleUser })}
         onClick={handleCardClick}
         >
         <Avatar
@@ -122,22 +120,16 @@ function UserCard({
           src={avatarUrl || urlUtils.getGravatarUrl()}
           />
         <div className="UserCard-title">
-          {!!favoriteUser && favoriteUser.data.displayName}
-          {!!roomMember && roomMember.displayName}
+          {accessibleUser?.displayName}
           {!!roomInvitation && t('pendingInvitation')}
         </div>
-        {!!favoriteUser && (
-          <div className="UserCard-details">
-            {favoriteUser.data.shortDescription || favoriteUser.data.organization}
-          </div>
-        )}
-        {!!isClosedAccount && (
-          <div className="UserCard-details UserCard-details--closedAccount">
-            [{t('closedAccount')}]
-          </div>
-        )}
         <div className="UserCard-details">
-          {!!roomMember && (roomMember.shortDescription || roomMember.organization)}
+          {!!accessibleUser && !accessibleUser.accounClosedOn && (accessibleUser.shortDescription || accessibleUser.organization)}
+          {!!accessibleUser?.accountClosedOn && (
+            <div className="UserCard-detailsClosedAccount">
+              {t('common:accountClosed')}
+            </div>
+          )}
           {!!roomInvitation && roomInvitation.email}
         </div>
       </div>

@@ -70,7 +70,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
         )}
 
         {!!user.accountClosedOn && (
-          <div className="UserProfilePage-accountClosed">{t('accountClosed')}</div>
+          <div className="UserProfilePage-accountClosed">{t('common:accountClosed')}</div>
         )}
 
         {!!fetchingDocuments && <Spin className="u-spin" />}

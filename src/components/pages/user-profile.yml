@@ -1,7 +1,4 @@
 userProfile:
-  accountClosed:
-    en: This user account was closed.
-    de: Dieses Benutzerkonto wurde geschlossen.
   documentsHeadline:
     en: Recent contributions
     de: Letzte Beiträge
