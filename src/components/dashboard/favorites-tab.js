@@ -45,7 +45,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     return (
       <div key={favoriteUserState.id}>
         <UserCard
-          user={favoriteUserState.data}
+          favoriteUser={favoriteUserState}
           avatarUrl={favoriteUserState.data.avatarUrl}
           favoritedByCount={favoriteUserState.favoritedByCount}
           onToggleFavorite={handleToggleFavoriteUser}
@@ -58,7 +58,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     return (
       <div key={favoriteRoomState.id}>
         <RoomCard
-          room={favoriteRoomState.data}
+          favoriteRoom={favoriteRoomState}
           favoritedByCount={favoriteRoomState.favoritedByCount}
           onToggleFavorite={handleToggleFavoriteRoom}
           />
@@ -70,7 +70,8 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     return (
       <div key={favoriteDocumentState.id}>
         <DocumentCard
-          doc={favoriteDocumentState.data}
+          favoriteDocument={favoriteDocumentState}
+          // change
           favoritedByCount={favoriteDocumentState.favoritedByCount}
           onToggleFavorite={handleToggleFavoriteDocument}
           />
@@ -127,13 +128,13 @@ FavoritesTab.propTypes = {
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     setOn: PropTypes.string.isRequired,
-    data: favoriteRoomShape.isRequired
+    data: favoriteRoomShape
   })).isRequired,
   favoriteDocuments: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     setOn: PropTypes.string.isRequired,
-    data: favoriteDocumentShape.isRequired
+    data: favoriteDocumentShape
   })).isRequired,
   loading: PropTypes.bool.isRequired
 };

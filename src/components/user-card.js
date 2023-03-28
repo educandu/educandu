@@ -10,10 +10,10 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
 import { InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
-import { invitationShape, publicUserShape, roomMemberShape } from '../ui/default-prop-types.js';
+import { favoriteUserShape, invitationShape, roomMemberShape } from '../ui/default-prop-types.js';
 
 function UserCard({
-  user,
+  favoriteUser,
   roomMember,
   roomInvitation,
   avatarUrl,
@@ -25,8 +25,9 @@ function UserCard({
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('userCard');
 
-  const userId = user?._id || roomMember?.userId;
-  const userEmail = user?.email || roomMember?.email || roomInvitation?.email;
+  const isClosedAccount = !!favoriteUser?.data.accountClosedOn;
+  const userId = favoriteUser?.data._id || roomMember?.userId;
+  const userEmail = favoriteUser?.data.email || roomMember?.email || roomInvitation?.email;
 
   const handleCardClick = () => {
     if (userId) {
@@ -67,7 +68,7 @@ function UserCard({
 
   const actions = [];
 
-  if (user) {
+  if (favoriteUser) {
     actions.push(renderFavoriteAction());
     if (userEmail) {
       actions.push(renderEmailAction());
@@ -111,7 +112,7 @@ function UserCard({
   return (
     <Card className="UserCard" actions={actions}>
       <div
-        className={classNames('UserCard-content', { 'UserCard-content--nonClickable': !userId })}
+        className={classNames('UserCard-content', { 'UserCard-content--noAccount': !userId })}
         onClick={handleCardClick}
         >
         <Avatar
@@ -121,13 +122,18 @@ function UserCard({
           src={avatarUrl || urlUtils.getGravatarUrl()}
           />
         <div className="UserCard-title">
-          {!!user && user.displayName}
+          {!!favoriteUser && favoriteUser.data.displayName}
           {!!roomMember && roomMember.displayName}
           {!!roomInvitation && t('pendingInvitation')}
         </div>
-        {!!user && (
+        {!!favoriteUser && (
           <div className="UserCard-details">
-            {user.shortDescription || user.organization}
+            {favoriteUser.data.shortDescription || favoriteUser.data.organization}
+          </div>
+        )}
+        {!!isClosedAccount && (
+          <div className="UserCard-details UserCard-details--closedAccount">
+            [{t('closedAccount')}]
           </div>
         )}
         <div className="UserCard-details">
@@ -140,7 +146,12 @@ function UserCard({
 }
 
 UserCard.propTypes = {
-  user: publicUserShape,
+  favoriteUser: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    setOn: PropTypes.string.isRequired,
+    data: favoriteUserShape.isRequired
+  }),
   roomMember: roomMemberShape,
   roomInvitation: invitationShape,
   avatarUrl: PropTypes.string,
@@ -151,7 +162,7 @@ UserCard.propTypes = {
 };
 
 UserCard.defaultProps = {
-  user: null,
+  favoriteUser: null,
   roomMember: null,
   roomInvitation: null,
   avatarUrl: '',

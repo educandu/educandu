@@ -574,14 +574,6 @@
       "en": "New message in room",
       "de": "Neue Nachricht im Raum"
     },
-    "documentNotAvailable": {
-      "en": "Document no longer available",
-      "de": "Dokument nicht mehr verfügbar"
-    },
-    "roomNotAvailable": {
-      "en": "Room no longer available",
-      "de": "Raum nicht mehr verfügbar"
-    },
     "remove": {
       "en": "Remove",
       "de": "Entfernen"
@@ -2195,6 +2187,10 @@
     "removeMember": {
       "en": "Remove member",
       "de": "Mitglied entfernen"
+    },
+    "closedAccount": {
+      "en": "Closed account",
+      "de": "Geschlossenes Konto"
     }
   },
   "userStepsForm": {
@@ -3580,17 +3576,9 @@
       "en": "Answer",
       "de": "Antwort"
     },
-    "deletedDocument": {
-      "en": "Deleted document",
-      "de": "Gelöschtes Dokument"
-    },
     "targetDeletedMessage": {
       "en": "The target of this link has been deleted",
       "de": "Das Ziel dieses Links wurde gelöscht"
-    },
-    "deletedRoom": {
-      "en": "Deleted room",
-      "de": "Gelöschter Raum"
     },
     "reset": {
       "en": "Reset",
@@ -3863,6 +3851,14 @@
     "uploadFiles": {
       "en": "Upload files",
       "de": "Dateien hochladen"
+    },
+    "documentNotAvailable": {
+      "en": "[Document no longer available]\n",
+      "de": "[Dokument nicht mehr verfügbar]\n"
+    },
+    "roomNotAvailable": {
+      "en": "[Room no longer available]\n",
+      "de": "[Raum nicht mehr verfügbar]\n"
     }
   },
   "pageNames": {

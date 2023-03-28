@@ -19,8 +19,6 @@ function HomepageDocumentCards() {
     })();
   }, [settings, documentApiClient]);
 
-  const renderCard = doc => <DocumentCard doc={doc} key={doc._id} />;
-
   if (!documents.length) {
     return null;
   }
@@ -29,7 +27,7 @@ function HomepageDocumentCards() {
     <div className="HomepageDocumentCards">
       <div className="HomepageDocumentCards-headline">{t('headline')}</div>
       <div className="HomepageDocumentCards-cards">
-        {documents.map(renderCard)}
+        {documents.map(doc => <DocumentCard doc={doc} key={doc._id} />)}
       </div>
     </div>
   );

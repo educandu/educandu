@@ -9,9 +9,8 @@
   text-align: left;
   font-size: @edu-font-size-base;
 
-  &.DocumentCard-title--nonClickable {
-    cursor: not-allowed;
-    color: @edu-text-color-secondary;
+  &.DocumentCard-title--deletedDocument {
+    .m-deleted-data;
   }
 }
 
@@ -20,9 +19,8 @@
   cursor: pointer;
   .m-line-clamp(3);
 
-  &.DocumentCard-content--nonClickable {
-    cursor: not-allowed;
-    color: @edu-text-color-secondary;
+  &.DocumentCard-content--deletedDocument {
+    .m-deleted-data;
   }
 }
 

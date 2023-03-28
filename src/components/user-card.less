@@ -21,8 +21,7 @@
   overflow: hidden;
   cursor: pointer;
 
-  &.UserCard-content--nonClickable {
-    cursor: not-allowed;
+  &.UserCard-content--noAccount {
     color: @edu-text-color-secondary;
   }
 }
@@ -31,6 +30,10 @@
   text-align: center;
   font-size: @edu-font-size-sm;
   .m-line-clamp(3);
+
+  &.UserCard-details--closedAccount {
+    .m-deleted-data;
+  }
 }
 
 .RoomCard-infoTooltip {

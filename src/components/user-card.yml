@@ -14,3 +14,6 @@ userCard:
   removeMember:
     en: Remove member
     de: Mitglied entfernen
+  closedAccount:
+    en: Closed account
+    de: Geschlossenes Konto

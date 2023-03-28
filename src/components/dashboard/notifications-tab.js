@@ -26,7 +26,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
 
     if (notificationGroup.eventType === EVENT_TYPE.documentRevisionCreated) {
       icon = <EditDocIcon />;
-      title = documentNotAvailable ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
+      title = documentNotAvailable ? t('common:documentNotAvailable') : notificationGroup.eventParams.document.title;
       href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
 
       if (!notificationGroup.eventParams.document) {
@@ -38,7 +38,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
 
     if (notificationGroup.eventType === EVENT_TYPE.documentCommentCreated) {
       icon = <CommentIcon />;
-      title = documentNotAvailable ? t('documentNotAvailable') : notificationGroup.eventParams.document.title;
+      title = documentNotAvailable ? t('common:documentNotAvailable') : notificationGroup.eventParams.document.title;
       href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
 
       if (!notificationGroup.eventParams.document) {
@@ -50,7 +50,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
 
     if (notificationGroup.eventType === EVENT_TYPE.roomMessageCreated) {
       icon = <MessageIcon />;
-      title = roomNotAvailable ? t('roomNotAvailable') : notificationGroup.eventParams.room.name;
+      title = roomNotAvailable ? t('common:roomNotAvailable') : notificationGroup.eventParams.room.name;
       href = roomNotAvailable ? null : routes.getRoomUrl(notificationGroup.eventParams.room._id);
       description = t('roomMessageCreatedNotification');
     }
@@ -62,7 +62,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
           <div className="NotificationsTab-notificationContentText">
             <div className="NotificationsTab-notificationContentTextMain">
               <span className="NotificationsTab-notificationDescription">{description}:</span>
-              {!href && <span className="NotificationsTab-notificationTitle">[{ title }]</span>}
+              {!href && <span className="NotificationsTab-notificationMissingDataTitle">{title}</span>}
               {!!href && <span className="NotificationsTab-notificationLink"><a href={href}>{title}</a></span>}
             </div>
             <span className="NotificationsTab-notificationContentTextSecondary">{formatDate(notificationGroup.lastCreatedOn)}</span>

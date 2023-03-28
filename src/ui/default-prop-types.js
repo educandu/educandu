@@ -483,10 +483,7 @@ export const documentCommentShape = PropTypes.shape({
   })
 });
 
-export const favoriteUserShape = PropTypes.shape({
-  displayName: PropTypes.string.isRequired,
-  avatarUrl: PropTypes.string
-});
+export const favoriteUserShape = publicUserShape;
 
 export const favoriteRoomShape = PropTypes.shape({
   ...roomMetadataProps,

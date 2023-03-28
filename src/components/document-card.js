@@ -8,28 +8,31 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
 import { InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
-import { contributedDocumentMetadataShape } from '../ui/default-prop-types.js';
+import { contributedDocumentMetadataShape, favoriteDocumentShape } from '../ui/default-prop-types.js';
 
-function DocumentCard({ doc, favoritedByCount, onToggleFavorite }) {
+function DocumentCard({ doc, favoriteDocument, favoritedByCount, onToggleFavorite }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentCard');
 
+  const documentId = doc?._id || favoriteDocument?.id;
+  const userAccessibleDocument = doc || favoriteDocument?.data;
+
   const handleCardClick = () => {
-    if (doc) {
-      window.location = routes.getDocUrl({ id: doc._id, slug: doc.slug });
+    if (userAccessibleDocument) {
+      window.location = routes.getDocUrl({ id: documentId });
     }
   };
 
   const renderTitle = () => {
-    const title = doc ? doc.title : `[${t('common:deletedDocument')}]`;
+    const title = userAccessibleDocument?.title || t('common:documentNotAvailable');
+
+    const classes = classNames(
+      'DocumentCard-title',
+      { 'DocumentCard-title--deletedDocument': !userAccessibleDocument }
+    );
 
     return (
-      <div
-        className={classNames('DocumentCard-title', { 'DocumentCard-title--nonClickable': !doc })}
-        onClick={handleCardClick}
-        >
-        {title}
-      </div>
+      <div className={classes} onClick={handleCardClick}>{title}</div>
     );
   };
 
@@ -51,20 +54,22 @@ function DocumentCard({ doc, favoritedByCount, onToggleFavorite }) {
 
   const actions = [];
 
-  if (doc) {
-    actions.push((
-      <div key="favorite" className="UserCard-favoriteAction">
-        <FavoriteStar
-          id={doc._id}
-          type={FAVORITE_TYPE.document}
-          onToggle={isFavorite => onToggleFavorite(doc._id, isFavorite)}
-          />
-      </div>
-    ));
+  actions.push((
+    <div key="favorite" className="UserCard-favoriteAction">
+      <FavoriteStar
+        id={documentId}
+        type={FAVORITE_TYPE.document}
+        onToggle={isFavorite => onToggleFavorite(documentId, isFavorite)}
+        />
+    </div>
+  ));
+
+  if (userAccessibleDocument) {
+    const contributors = userAccessibleDocument.contributors?.map(c => c.displayName).join(', ');
 
     actions.push(renderUserAction((
       <div className="DocumentCard-infoTooltip">
-        <div>{t('common:contributionsBy')}: {doc.contributors?.map(c => c.displayName).join(', ')}</div>
+        <div>{t('common:contributionsBy')}: {contributors}</div>
       </div>
     )));
 
@@ -73,17 +78,26 @@ function DocumentCard({ doc, favoritedByCount, onToggleFavorite }) {
         {Number.isInteger(favoritedByCount) && (
           <div>{t('common:favoritedByTooltip', { count: favoritedByCount })}</div>
         )}
-        <div>{t('common:createdOnBy', { date: formatDate(doc.createdOn) })} {doc.createdBy.displayName}</div>
-        <div>{t('common:updatedOnBy', { date: formatDate(doc.updatedOn) })} {doc.updatedBy.displayName}</div>
+        <div>
+          {t('common:createdOnBy', { date: formatDate(userAccessibleDocument.createdOn) })} {userAccessibleDocument.createdBy.displayName}
+        </div>
+        <div>
+          {t('common:updatedOnBy', { date: formatDate(userAccessibleDocument.updatedOn) })} {userAccessibleDocument.updatedBy.displayName}
+        </div>
       </div>
     )));
   }
 
+  const contentClasses = classNames(
+    'DocumentCard-content',
+    { 'DocumentCard-content--deletedDocument': !userAccessibleDocument }
+  );
+
   return (
     <Card className="DocumentCard" actions={actions} title={renderTitle()}>
-      <div className={classNames('DocumentCard-content', { 'DocumentCard-content--nonClickable': !doc })} onClick={handleCardClick}>
+      <div className={contentClasses} onClick={handleCardClick}>
         <div className="DocumentCard-details">
-          <div className="DocumentCard-description">{doc?.shortDescription}</div>
+          <div className="DocumentCard-description">{userAccessibleDocument?.shortDescription}</div>
         </div>
       </div>
     </Card>
@@ -92,12 +106,19 @@ function DocumentCard({ doc, favoritedByCount, onToggleFavorite }) {
 
 DocumentCard.propTypes = {
   doc: contributedDocumentMetadataShape,
+  favoriteDocument: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    setOn: PropTypes.string.isRequired,
+    data: favoriteDocumentShape
+  }),
   favoritedByCount: PropTypes.number,
   onToggleFavorite: PropTypes.func
 };
 
 DocumentCard.defaultProps = {
   doc: null,
+  favoriteDocument: null,
   favoritedByCount: null,
   onToggleFavorite: () => {}
 };
