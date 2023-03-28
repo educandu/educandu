@@ -80,7 +80,7 @@ function UserCard({
     if (roomMember.email) {
       actions.push(renderEmailAction(roomMember.email));
     }
-    actions.push(renderInfoAction(`${t('joinedOn')} ${formatDate(roomMember.joinedOn)}`));
+    actions.push(renderInfoAction(`${t('common:joinedOn')} ${formatDate(roomMember.joinedOn)}`));
 
     actions.push((
       <Tooltip title={t('removeMember')} key="removeMember">
@@ -129,8 +129,8 @@ function UserCard({
                 <a className="UserCard-roomInvitationEmailLink" href={`mailto:${encodeURI(roomInvitation.email)}`}>{roomInvitation.email}</a>
               </div>
             )}
-            <span className="UserCard-roomInvitationDetail">{`${t('userInvitedOn')}: ${formatDate(roomInvitation.sentOn)}`}</span>
-            <span className="UserCard-roomInvitationDetail">{`${t('invitationExpiresOn')}: ${formatDate(roomInvitation.expiresOn)}`}</span>
+            <span className="UserCard-roomInvitationDetail">{`${t('common:invitedOn')} ${formatDate(roomInvitation.sentOn)}`}</span>
+            <span className="UserCard-roomInvitationDetail">{`${t('invitationExpiresOn')} ${formatDate(roomInvitation.expiresOn)}`}</span>
           </div>
         )}
       </div>

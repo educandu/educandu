@@ -725,24 +725,6 @@
       "de": "Der Anzeigename muss mindestens {length} Zeichen lang sein"
     }
   },
-  "documentCard": {
-    "coauthors": {
-      "en": "Co-authors",
-      "de": "Mitautoren"
-    },
-    "documentButton": {
-      "en": "View document",
-      "de": "Dokument ansehen"
-    },
-    "creationDetail": {
-      "en": "Created on {date} by",
-      "de": "Erstellt am {date} von"
-    },
-    "updateDetail": {
-      "en": "Last updated on {date} by",
-      "de": "Zuletzt geändert am {date} von"
-    }
-  },
   "documentCommentsPanel": {
     "newCommentPlaceholder": {
       "en": "Enter your comment here",
@@ -1283,6 +1265,14 @@
     "batchType": {
       "en": "Batch type",
       "de": "Chargentyp"
+    },
+    "startedOn": {
+      "en": "Started on",
+      "de": "Gestartet am"
+    },
+    "completedOn": {
+      "en": "Completion date",
+      "de": "Abgeschlossen am"
     },
     "batchTypeDocumentValidation": {
       "en": "Document validation",
@@ -2014,9 +2004,17 @@
     }
   },
   "roomCard": {
-    "joined": {
-      "en": "Joined",
-      "de": "Eingetreten"
+    "createdOn": {
+      "en": "Created on",
+      "de": "Erstellt am"
+    },
+    "createdBy": {
+      "en": "Created by",
+      "de": "Erstellt von"
+    },
+    "updatedOn": {
+      "en": "Updated on",
+      "de": "Aktualisiert am"
     },
     "collaborativeRoom": {
       "en": "Collaborative room",
@@ -2026,13 +2024,17 @@
       "en": "Accept invitation",
       "de": "Einladung annehmen"
     },
-    "invited": {
-      "en": "Invited",
-      "de": "Eingeladen"
-    },
     "acceptInvitation": {
       "en": "The invitation is valid until **{date}**.",
       "de": "Die Einladung ist bis **{date}** gültig."
+    },
+    "hasCountMembers": {
+      "en": "Has {count, plural, =1 {# user} other {# users}}",
+      "de": "Hat {count, plural, =1 {# Benutzer} other {# Benutzern}}"
+    },
+    "hasCountCollaborators": {
+      "en": "Has {count, plural, =1 {# collaborator} other {# collaborators}}",
+      "de": "Hat {count, plural, =1 {# Mitarbeiter} other {# Mitarbeiter}}"
     }
   },
   "roomCreationModal": {
@@ -2182,17 +2184,9 @@
       "en": "Pending invitation",
       "de": "Ausstehende Einladung"
     },
-    "userInvitedOn": {
-      "en": "Invited",
-      "de": "Eingeladen"
-    },
     "invitationExpiresOn": {
-      "en": "Expires",
-      "de": "Läuft ab"
-    },
-    "joinedOn": {
-      "en": "Joined on",
-      "de": "Eingetreten am"
+      "en": "Expires on",
+      "de": "Läuft ab am"
     },
     "revokeInvitation": {
       "en": "Revoke invitation",
@@ -3254,11 +3248,7 @@
       "en": "Log out",
       "de": "Abmelden"
     },
-    "created": {
-      "en": "Created",
-      "de": "Erstellt"
-    },
-    "createdOn": {
+    "creationDate": {
       "en": "Creation date",
       "de": "Erstellungsdatum"
     },
@@ -3266,15 +3256,7 @@
       "en": "Created on {date} by",
       "de": "Erstellt am {date} von"
     },
-    "completedOn": {
-      "en": "Completion date",
-      "de": "Abgeschlossen am"
-    },
-    "updated": {
-      "en": "Updated",
-      "de": "Aktualisiert"
-    },
-    "updatedOn": {
+    "updateDate": {
       "en": "Update date",
       "de": "Änderungsdatum"
     },
@@ -3282,9 +3264,13 @@
       "en": "Updated on {date} by",
       "de": "Geändert am {date} von"
     },
-    "startedOn": {
-      "en": "Started on",
-      "de": "Gestartet am"
+    "invitedOn": {
+      "en": "Invited on",
+      "de": "Eingeladen am"
+    },
+    "joinedOn": {
+      "en": "Joined on",
+      "de": "Eingetreten am"
     },
     "relevance": {
       "en": "Relevance",
@@ -3731,8 +3717,8 @@
       "de": "Zu den Favoriten hinzufügen"
     },
     "favoritedByTooltip": {
-      "en": "Favorited by: {count, plural, =1 {# user} other {# users}}\n",
-      "de": "Als Favorit markiert von: {count, plural, =1 {# Benutzer} other {# Benutzern}}\n"
+      "en": "Favorited by {count, plural, =1 {# user} other {# users}}\n",
+      "de": "Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}\n"
     },
     "createDocument": {
       "en": "Create document",

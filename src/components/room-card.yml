@@ -1,16 +1,25 @@
 roomCard:
-  joined:
-    en: Joined
-    de: Eingetreten
+  createdOn:
+    en: Created on
+    de: Erstellt am
+  createdBy:
+    en: Created by
+    de: Erstellt von
+  updatedOn:
+    en: Updated on
+    de: Aktualisiert am
   collaborativeRoom:
     en: Collaborative room
     de: Kollaborativer Raum
   acceptRoomInvitation:
     en: Accept invitation
     de: Einladung annehmen
-  invited:
-    en: Invited
-    de: Eingeladen
   acceptInvitation:
     en: The invitation is valid until **{date}**.
     de: Die Einladung ist bis **{date}** gültig.
+  hasCountMembers:
+    en: Has {count, plural, =1 {# user} other {# users}}
+    de: Hat {count, plural, =1 {# Benutzer} other {# Benutzern}}
+  hasCountCollaborators:
+    en: Has {count, plural, =1 {# collaborator} other {# collaborators}}
+    de: Hat {count, plural, =1 {# Mitarbeiter} other {# Mitarbeiter}}

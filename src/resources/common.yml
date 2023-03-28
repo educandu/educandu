@@ -136,30 +136,24 @@ common:
   logOut:
     en: Log out
     de: Abmelden
-  created:
-    en: Created
-    de: Erstellt
-  createdOn:
+  creationDate:
     en: Creation date
     de: Erstellungsdatum
   createdOnBy:
     en: Created on {date} by
     de: Erstellt am {date} von
-  completedOn:
-    en: Completion date
-    de: Abgeschlossen am
-  updated:
-    en: Updated
-    de: Aktualisiert
-  updatedOn:
+  updateDate:
     en: Update date
     de: Änderungsdatum
   updatedOnBy:
     en: Updated on {date} by
     de: Geändert am {date} von
-  startedOn:
-    en: Started on
-    de: Gestartet am
+  invitedOn:
+    en: Invited on
+    de: Eingeladen am
+  joinedOn:
+    en: Joined on
+    de: Eingetreten am
   relevance:
     en: Relevance
     de: Relevanz
@@ -509,9 +503,9 @@ common:
     de: Zu den Favoriten hinzufügen
   favoritedByTooltip:
     en: |
-      Favorited by: {count, plural, =1 {# user} other {# users}}
+      Favorited by {count, plural, =1 {# user} other {# users}}
     de: |
-      Als Favorit markiert von: {count, plural, =1 {# Benutzer} other {# Benutzern}}
+      Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}
   createDocument:
     en: Create document
     de: Dokument erstellen

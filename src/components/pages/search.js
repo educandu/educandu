@@ -41,8 +41,8 @@ function Search({ PageTemplate }) {
     { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: 'relevance' },
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
     { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
-    { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-    { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' }
+    { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+    { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' }
   ];
 
   const sorters = useMemo(() => ({

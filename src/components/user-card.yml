@@ -5,15 +5,9 @@ userCard:
   pendingInvitation:
     en: Pending invitation
     de: Ausstehende Einladung
-  userInvitedOn:
-    en: Invited
-    de: Eingeladen
   invitationExpiresOn:
-    en: Expires
-    de: Läuft ab
-  joinedOn:
-    en: Joined on
-    de: Eingetreten am
+    en: Expires on
+    de: Läuft ab am
   revokeInvitation:
     en: Revoke invitation
     de: Einladung widerrufen

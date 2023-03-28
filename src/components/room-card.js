@@ -80,8 +80,9 @@ function RoomCard({ room, roomInvitation, favoritedByCount, onToggleFavorite }) 
     actions.push(renderUserAction((
       <div className="RoomCard-infoTooltip">
         {!!room.isCollaborative && <div>{t('collaborativeRoom')}</div>}
-        <div>{t('common:by')}: {room.owner?.displayName}</div>
-        <div>{room?.isCollaborative ? t('common:collaborators') : t('common:members')}: {room.members.length}</div>
+        <div>{t('createdBy')} {room.owner?.displayName}</div>
+        <div>{!room?.isCollaborative && t('hasCountMembers', { count: room.members.length })}</div>
+        <div>{!!room?.isCollaborative && t('hasCountCollaborators', { count: room.members.length })}</div>
       </div>
     )));
 
@@ -90,9 +91,9 @@ function RoomCard({ room, roomInvitation, favoritedByCount, onToggleFavorite }) 
         {Number.isInteger(favoritedByCount) && (
           <div>{t('common:favoritedByTooltip', { count: favoritedByCount })}</div>
         )}
-        <div>{t('common:created')}: {formatDate(room.createdOn)}</div>
-        <div>{t('common:updated')}: {formatDate(room.updatedOn)}</div>
-        {userAsMember ? <div>{t('joined')}: {formatDate(userAsMember.joinedOn)}</div> : null}
+        <div>{t('createdOn')} {formatDate(room.createdOn)}</div>
+        <div>{t('updatedOn')} {formatDate(room.updatedOn)}</div>
+        {userAsMember ? <div>{t('common:joinedOn')} {formatDate(userAsMember.joinedOn)}</div> : null}
       </div>
     )));
   }
@@ -101,13 +102,13 @@ function RoomCard({ room, roomInvitation, favoritedByCount, onToggleFavorite }) 
     actions.push(renderUserAction((
       <div className="RoomCard-infoTooltip">
         {!!room.isCollaborative && <div>{t('collaborativeRoom')}</div>}
-        <div>{t('common:by')}: {room.owner?.displayName}</div>
+        <div>{t('createdBy')} {room.owner?.displayName}</div>
       </div>
     )));
 
     actions.push(renderInfoAction((
       <div className="RoomCard-infoTooltip">
-        <div>{t('invited')}: {formatDate(roomInvitation.sentOn)}</div>
+        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}</div>
         <div><Markdown>{t('acceptInvitation', { date: formatDate(roomInvitation.expiresOn) })}</Markdown></div>
       </div>
     )));
