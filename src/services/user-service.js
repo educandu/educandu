@@ -86,8 +86,12 @@ class UserService {
     return this.userStore.getUserById(id);
   }
 
-  getActiveUserByEmailAddress(email) {
-    return email ? this.userStore.getActiveUserByEmailAddress(email.toLowerCase()) : null;
+  getActiveUserByEmail(email) {
+    return email ? this.userStore.findActiveUserByEmail(email.toLowerCase()) : null;
+  }
+
+  getActiveConfirmedUserByEmail(email) {
+    return email ? this.userStore.findActiveConfirmedUserByEmail(email.toLowerCase()) : null;
   }
 
   async updateUserAccount({ userId, email }) {

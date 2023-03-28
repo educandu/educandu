@@ -40,6 +40,10 @@ class UserStore {
     return this.collection.findOne({ email, accountClosedOn: null }, { session });
   }
 
+  findActiveConfirmedUserByEmail(email, { session } = {}) {
+    return this.collection.findOne({ email, accountClosedOn: null, expiresOn: null }, { session });
+  }
+
   getUserById(userId, { session } = {}) {
     return this.collection.findOne({ _id: userId }, { session });
   }
@@ -48,10 +52,6 @@ class UserStore {
     return ids.length
       ? this.collection.find({ _id: { $in: ids } }, { session }).toArray()
       : Promise.resolve([]);
-  }
-
-  getActiveUserByEmailAddress(email, { session } = {}) {
-    return this.collection.findOne({ email, accountClosedOn: null }, { session });
   }
 
   getUsersByEmailAddress(email, { session } = {}) {

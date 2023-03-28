@@ -7,6 +7,7 @@ import React, { Fragment, useState } from 'react';
 import { useService } from '../container-context.js';
 import PasswordFormItem from '../password-form-item.js';
 import { useSetUser, useUser } from '../user-context.js';
+import WarningIcon from '../icons/general/warning-icon.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES } from '../../domain/constants.js';
 
@@ -48,6 +49,7 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
         </div>
         <div className="ResetPasswordPage-form">
           <UserStepsForm
+            title={t('formTitle')}
             enterDataForm={enterDataForm}
             enterDataFormContent={(
               <Fragment>
@@ -56,6 +58,12 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
               </Fragment>
             )}
             enterDataFormButtonText={t('requestPasswordReset')}
+            verificationMessageDisclaimer={
+              <div className="ResetPasswordPage-disclaimer">
+                <div className="ResetPasswordPage-disclaimerIcon"><WarningIcon /></div>
+                <div className="ResetPasswordPage-disclaimerText">{t('requestDisclaimer')}</div>
+              </div>
+            }
             codeExpirationInMinutes={PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES}
             completedMessageTitle={t('completedMessageTitle')}
             completedMessageSubtitle={t('completedMessageSubTitle')}

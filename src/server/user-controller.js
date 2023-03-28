@@ -367,7 +367,7 @@ class UserController {
 
   async handlePostUserPasswordResetRequest(req, res) {
     const { email, password } = req.body;
-    const user = await this.userService.getActiveUserByEmailAddress(email);
+    const user = await this.userService.getActiveConfirmedUserByEmail(email);
 
     let createdRequest;
     if (user) {
