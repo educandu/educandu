@@ -58,6 +58,14 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       </FormItem>
       <FormItem
         {...formInputsLayouts}
+        name="shortDescription"
+        label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
+        initialValue={room.shortDescription}
+        >
+        <Input maxLength={maxRoomShortDescriptionLength} showCount={{ formatter: renderInputCount }} />
+      </FormItem>
+      <FormItem
+        {...formInputsLayouts}
         name="slug"
         initialValue={room.slug}
         rules={slugValidationRules}
@@ -71,14 +79,6 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
             <span className="u-label">{t('isCollaborativeLabel')}</span>
           </Info>
         </Checkbox>
-      </FormItem>
-      <FormItem
-        {...formInputsLayouts}
-        name="shortDescription"
-        label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
-        initialValue={room.shortDescription}
-        >
-        <Input maxLength={maxRoomShortDescriptionLength} showCount={{ formatter: renderInputCount }} />
       </FormItem>
     </Form>
   );
