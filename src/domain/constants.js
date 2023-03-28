@@ -31,7 +31,6 @@ export const TASK_TYPE = {
 };
 
 export const FEATURE_TOGGLES = {
-  newDocumentPage: 'new-document-page'
 };
 
 export const ROOM_USER_ROLE = {

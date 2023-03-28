@@ -1,5 +1,4 @@
 export const PAGE_NAME = {
-  doc: 'doc',
   room: 'room',
   index: 'index',
   login: 'login',

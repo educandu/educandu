@@ -951,24 +951,6 @@
       "de": "Version ansehen"
     }
   },
-  "editControlPanel": {
-    "statusIconTooltipSaved": {
-      "en": "There are no unsaved changes",
-      "de": "Keine ungespeicherten Änderungen"
-    },
-    "statusIconTooltipDirty": {
-      "en": "There are unsaved changes",
-      "de": "Änderungen nicht gespeichert"
-    },
-    "statusIconTooltipInvalid": {
-      "en": "Please correct all errors before saving",
-      "de": "Bitte korrigiere alle Fehler vor dem Speichern"
-    },
-    "editMetadata": {
-      "en": "Edit metadata",
-      "de": "Metadaten bearbeiten"
-    }
-  },
   "emailFormItem": {
     "emailIsInUse": {
       "en": "The email address is already registered",
@@ -983,24 +965,6 @@
     "explanation": {
       "en": "Please select the institution you're associated with in order to login.",
       "de": "Bitte wähle die Institution aus, der du angehörst, um dich einzuloggen."
-    }
-  },
-  "historyControlPanel": {
-    "restoredFrom": {
-      "en": "Restored from",
-      "de": "Wiederhergestellt aus"
-    },
-    "permalink": {
-      "en": "Permalink",
-      "de": "Permalink"
-    },
-    "restore": {
-      "en": "Restore",
-      "de": "Wiederherstellen"
-    },
-    "tooltip": {
-      "en": "Document versions",
-      "de": "Dokumentversionen"
     }
   },
   "homepageDocumentCards": {
@@ -1471,48 +1435,6 @@
     "roomsTabTitle": {
       "en": "Rooms",
       "de": "Räume"
-    }
-  },
-  "doc": {
-    "permalinkCopied": {
-      "en": "The permalink was copied to the clipboard",
-      "de": "Der Permalink wurde in die Zwischenablage kopiert"
-    },
-    "permalinkCouldNotBeCopied": {
-      "en": "The permalink could not be copied to the clipboard",
-      "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
-    },
-    "commentsPanelTitle": {
-      "en": "You are viewing the document page in \"comments\" mode",
-      "de": "Du befindest dich im Kommentar-Modus"
-    },
-    "commentsHeader": {
-      "en": "Comments",
-      "de": "Kommentare"
-    },
-    "editRestrictionTooltip_anonymous": {
-      "en": "Log in in order to edit this document",
-      "de": "Melde dich an, um dieses Dokument zu bearbeiten"
-    },
-    "editRestrictionTooltip_protected": {
-      "en": "This document cannot be edited because it is protected",
-      "de": "Dieses Dokument kann nicht bearbeitet werden, da es geschützt ist"
-    },
-    "editRestrictionTooltip_archive": {
-      "en": "This document cannot be edited because it is archived",
-      "de": "Dieses Dokument kann nicht bearbeitet werden, da es archiviert ist"
-    },
-    "editRestrictionTooltip_room": {
-      "en": "Editing this document is only allowed for the room owner",
-      "de": "Die Bearbeitung dieses Dokuments ist nur für den Raumbesitzer erlaubt"
-    },
-    "commentsControlPanelTooltip": {
-      "en": "Comments",
-      "de": "Komentare"
-    },
-    "duplicateDocument": {
-      "en": "Duplicate document",
-      "de": "Dokument duplizieren"
     }
   },
   "document": {

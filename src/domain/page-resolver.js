@@ -3,7 +3,6 @@ import DefaultSiteLogoComponent from '../components/default-site-logo.js';
 import DefaultPageTemplateComponent from '../components/default-page-template.js';
 
 const pageImporters = {
-  [PAGE_NAME.doc]: async () => (await import('../components/pages/doc.js')).default,
   [PAGE_NAME.room]: async () => (await import('../components/pages/room.js')).default,
   [PAGE_NAME.index]: async () => (await import('../components/pages/index.js')).default,
   [PAGE_NAME.login]: async () => (await import('../components/pages/login.js')).default,
