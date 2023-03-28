@@ -59,7 +59,7 @@ function UserCard({
   const renderInfoAction = info => {
     return (
       <Tooltip title={info} key="info">
-        <InfoCircleOutlined />
+        <div className="UserCard-helpAction"><InfoCircleOutlined /></div>
       </Tooltip>
     );
   };
@@ -75,11 +75,11 @@ function UserCard({
   }
 
   if (favoriteUser) {
-    actions.push(renderInfoAction(`${t('common:favoritedByTooltip', { count: favoriteUser.favoritedByCount })}.`));
+    actions.push(renderInfoAction(t('common:favoritedByTooltip', { count: favoriteUser.favoritedByCount })));
   }
 
   if (roomMember) {
-    actions.push(renderInfoAction(`${t('common:joinedOn')} ${formatDate(roomMember.joinedOn)}.`));
+    actions.push(renderInfoAction(t('common:joinedOnDate', { date: formatDate(roomMember.joinedOn) })));
 
     actions.push((
       <Tooltip title={t('removeMember')} key="removeMember">
@@ -89,11 +89,10 @@ function UserCard({
   }
 
   if (roomInvitation) {
-    actions.push(renderEmailAction());
     actions.push(renderInfoAction((
       <div className="UserCard-infoTooltip">
-        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}.</div>
-        <div>{t('invitationExpiresOn')} {formatDate(roomInvitation.expiresOn)}.</div>
+        <div>{t('common:invitedOnDate', { date: formatDate(roomInvitation.sentOn) })}</div>
+        <div>{t('invitationExpiresOnDate', { date: formatDate(roomInvitation.expiresOn) })}</div>
       </div>
     )));
 

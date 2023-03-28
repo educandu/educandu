@@ -53,7 +53,9 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
   const renderUserAction = (isCollaborative, tooltip) => {
     return (
       <Tooltip title={tooltip}>
-        {isCollaborative ? <TeamOutlined /> : <UserOutlined />}
+        <div className="RoomCard-helpAction">
+          {isCollaborative ? <TeamOutlined /> : <UserOutlined />}
+        </div>
       </Tooltip>
     );
   };
@@ -61,7 +63,7 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
   const renderInfoAction = tooltip => {
     return (
       <Tooltip title={tooltip}>
-        <InfoCircleOutlined />
+        <div className="RoomCard-helpAction"><InfoCircleOutlined /></div>
       </Tooltip>
     );
   };
@@ -70,7 +72,7 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
 
   if (userAccessibleRoom || isDeletedRoom) {
     actions.push((
-      <div key="favorite" className="UserCard-favoriteAction">
+      <div key="favorite">
         <FavoriteStar
           id={roomId}
           type={FAVORITE_TYPE.room}
@@ -88,10 +90,10 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
       userAccessibleRoom.isCollaborative,
       (
         <div className="RoomCard-infoTooltip">
-          {!!userAccessibleRoom.isCollaborative && <div>{t('collaborativeRoom')}.</div>}
-          <div>{t('createdBy')} {userAccessibleRoom.owner?.displayName}</div>
-          <div>{!userAccessibleRoom.isCollaborative && t('hasCountMembers', { count: membersCount })}.</div>
-          <div>{!!userAccessibleRoom.isCollaborative && t('hasCountCollaborators', { count: membersCount })}.</div>
+          {!!userAccessibleRoom.isCollaborative && <div>{t('collaborativeRoom')}</div>}
+          <div>{t('createdByUser', { user: userAccessibleRoom.owner?.displayName })}</div>
+          <div>{!userAccessibleRoom.isCollaborative && t('hasCountMembers', { count: membersCount })}</div>
+          <div>{!!userAccessibleRoom.isCollaborative && t('hasCountCollaborators', { count: membersCount })}</div>
         </div>
       )
     ));
@@ -101,9 +103,11 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
         {!!favoriteRoom && (
           <div>{t('common:favoritedByTooltip', { count: favoriteRoom.favoritedByCount })}</div>
         )}
-        <div>{t('createdOn')} {formatDate(userAccessibleRoom.createdOn)}.</div>
-        <div>{t('updatedOn')} {formatDate(userAccessibleRoom.updatedOn)}.</div>
-        {userAsMember ? <div>{t('common:joinedOn')} {formatDate(userAsMember.joinedOn)}.</div> : null}
+        <div>{t('createdOnDate', { date: formatDate(userAccessibleRoom.createdOn) })}</div>
+        <div>{t('updatedOnDate', { date: formatDate(userAccessibleRoom.updatedOn) })}</div>
+        {!!userAsMember && (
+          <div>{t('common:joinedOnDate', { date: formatDate(userAsMember.joinedOn) })}</div>
+        )}
       </div>
     )));
   }
@@ -114,15 +118,15 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
       (
         <div className="RoomCard-infoTooltip">
           {!!roomInvitation.room?.isCollaborative && <div>{t('collaborativeRoom')}.</div>}
-          <div>{t('createdBy')} {roomInvitation.room?.owner?.displayName}.</div>
+          <div>{t('createdByUser', { user: roomInvitation.room?.owner?.displayName })}</div>
         </div>
       )
     ));
 
     actions.push(renderInfoAction((
       <div className="RoomCard-infoTooltip">
-        <div>{t('common:invitedOn')} {formatDate(roomInvitation.sentOn)}.</div>
-        <div><Markdown>{t('acceptInvitation', { date: formatDate(roomInvitation.expiresOn) })}.</Markdown></div>
+        <div>{t('common:invitedOnDate', { date: formatDate(roomInvitation.sentOn) })}</div>
+        <div><Markdown>{t('invitationValidUntilDate', { date: formatDate(roomInvitation.expiresOn) })}</Markdown></div>
       </div>
     )));
 

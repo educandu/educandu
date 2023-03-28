@@ -717,6 +717,16 @@
       "de": "Der Anzeigename muss mindestens {length} Zeichen lang sein"
     }
   },
+  "documentCard": {
+    "createdOnDateByUser": {
+      "en": "Created on {date} by {user}.",
+      "de": "Erstellt am {date} von {user}."
+    },
+    "updatedOnDateByUser": {
+      "en": "Updated on {date} by {user}.",
+      "de": "Geändert am {date} von {user}."
+    }
+  },
   "documentCommentsPanel": {
     "newCommentPlaceholder": {
       "en": "Enter your comment here",
@@ -1992,37 +2002,37 @@
     }
   },
   "roomCard": {
-    "createdOn": {
-      "en": "Created on",
-      "de": "Erstellt am"
+    "createdOnDate": {
+      "en": "Created on {date}.",
+      "de": "Erstellt am {date}."
     },
-    "createdBy": {
-      "en": "Created by",
-      "de": "Erstellt von"
+    "createdByUser": {
+      "en": "Created by {user}.",
+      "de": "Erstellt von {user}."
     },
-    "updatedOn": {
-      "en": "Updated on",
-      "de": "Aktualisiert am"
+    "updatedOnDate": {
+      "en": "Updated on {date}.",
+      "de": "Aktualisiert am {date}."
     },
     "collaborativeRoom": {
-      "en": "Collaborative room",
-      "de": "Kollaborativer Raum"
+      "en": "Collaborative room.",
+      "de": "Kollaborativer Raum."
     },
     "acceptRoomInvitation": {
       "en": "Accept invitation",
       "de": "Einladung annehmen"
     },
-    "acceptInvitation": {
-      "en": "The invitation is valid until **{date}**.",
-      "de": "Die Einladung ist bis **{date}** gültig."
+    "invitationValidUntilDate": {
+      "en": "The invitation is valid until {date}.",
+      "de": "Die Einladung ist bis {date} gültig."
     },
     "hasCountMembers": {
-      "en": "Has {count, plural, =1 {# user} other {# users}}",
-      "de": "Hat {count, plural, =1 {# Benutzer} other {# Benutzern}}"
+      "en": "Has {count, plural, =1 {# user} other {# users}}.",
+      "de": "Hat {count, plural, =1 {# Benutzer} other {# Benutzern}}."
     },
     "hasCountCollaborators": {
-      "en": "Has {count, plural, =1 {# collaborator} other {# collaborators}}",
-      "de": "Hat {count, plural, =1 {# Mitarbeiter} other {# Mitarbeiter}}"
+      "en": "Has {count, plural, =1 {# collaborator} other {# collaborators}}.",
+      "de": "Hat {count, plural, =1 {# Mitarbeiter} other {# Mitarbeiter}}."
     }
   },
   "roomCreationModal": {
@@ -2165,16 +2175,16 @@
   },
   "userCard": {
     "sendEmailTo": {
-      "en": "Send email to {email}",
-      "de": "E-Mail an {email} schicken"
+      "en": "Send email to {email}.",
+      "de": "E-Mail an {email} schicken."
     },
     "pendingInvitation": {
       "en": "Pending invitation",
       "de": "Ausstehende Einladung"
     },
-    "invitationExpiresOn": {
-      "en": "Expires on",
-      "de": "Läuft ab am"
+    "invitationExpiresOnDate": {
+      "en": "Expires on {date}.",
+      "de": "Läuft ab am {date}."
     },
     "revokeInvitation": {
       "en": "Revoke invitation",
@@ -3240,7 +3250,7 @@
       "en": "Creation date",
       "de": "Erstellungsdatum"
     },
-    "createdOnBy": {
+    "createdOnDateBy": {
       "en": "Created on {date} by",
       "de": "Erstellt am {date} von"
     },
@@ -3248,17 +3258,17 @@
       "en": "Update date",
       "de": "Änderungsdatum"
     },
-    "updatedOnBy": {
+    "updatedOnDateBy": {
       "en": "Updated on {date} by",
       "de": "Geändert am {date} von"
     },
-    "invitedOn": {
-      "en": "Invited on",
-      "de": "Eingeladen am"
+    "invitedOnDate": {
+      "en": "Invited on {date}.",
+      "de": "Eingeladen am {date}."
     },
-    "joinedOn": {
-      "en": "Joined on",
-      "de": "Eingetreten am"
+    "joinedOnDate": {
+      "en": "Joined on {date}.",
+      "de": "Eingetreten am {date}."
     },
     "relevance": {
       "en": "Relevance",
@@ -3697,8 +3707,8 @@
       "de": "Zu den Favoriten hinzufügen"
     },
     "favoritedByTooltip": {
-      "en": "Favorited by {count, plural, =1 {# user} other {# users}}\n",
-      "de": "Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}\n"
+      "en": "Favorited by {count, plural, =1 {# user} other {# users}}.\n",
+      "de": "Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}.\n"
     },
     "createDocument": {
       "en": "Create document",

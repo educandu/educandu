@@ -139,21 +139,21 @@ common:
   creationDate:
     en: Creation date
     de: Erstellungsdatum
-  createdOnBy:
+  createdOnDateBy:
     en: Created on {date} by
     de: Erstellt am {date} von
   updateDate:
     en: Update date
     de: Änderungsdatum
-  updatedOnBy:
+  updatedOnDateBy:
     en: Updated on {date} by
     de: Geändert am {date} von
-  invitedOn:
-    en: Invited on
-    de: Eingeladen am
-  joinedOn:
-    en: Joined on
-    de: Eingetreten am
+  invitedOnDate:
+    en: Invited on {date}.
+    de: Eingeladen am {date}.
+  joinedOnDate:
+    en: Joined on {date}.
+    de: Eingetreten am {date}.
   relevance:
     en: Relevance
     de: Relevanz
@@ -497,9 +497,9 @@ common:
     de: Zu den Favoriten hinzufügen
   favoritedByTooltip:
     en: |
-      Favorited by {count, plural, =1 {# user} other {# users}}
+      Favorited by {count, plural, =1 {# user} other {# users}}.
     de: |
-      Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}
+      Als Favorit markiert von {count, plural, =1 {# Benutzer} other {# Benutzern}}.
   createDocument:
     en: Create document
     de: Dokument erstellen

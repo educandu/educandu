@@ -192,11 +192,11 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
         subtext={
           <div className="RedactionDocumentsTab-titleSubtext">
             <div>
-              <span>{`${t('common:createdOnBy', { date: formatDate(doc.createdOn) })} `}</span>
+              <span>{`${t('common:createdOnDateBy', { date: formatDate(doc.createdOn) })} `}</span>
               <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
             </div>
             <div>
-              <span>{`${t('common:updatedOnBy', { date: formatDate(doc.updatedOn) })} `}</span>
+              <span>{`${t('common:updatedOnDateBy', { date: formatDate(doc.updatedOn) })} `}</span>
               <a href={routes.getUserProfileUrl(doc.updatedBy._id)}>{doc.updatedBy.displayName}</a>
             </div>
           </div>

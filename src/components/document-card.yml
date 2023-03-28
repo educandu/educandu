@@ -1,0 +1,7 @@
+documentCard:
+  createdOnDateByUser:
+    en: Created on {date} by {user}.
+    de: Erstellt am {date} von {user}.
+  updatedOnDateByUser:
+    en: Updated on {date} by {user}.
+    de: Geändert am {date} von {user}.

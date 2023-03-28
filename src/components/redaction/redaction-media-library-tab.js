@@ -156,11 +156,11 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
         subtext={
           <div className="RedactionDocumentsTab-titleSubtext">
             <div>
-              <span>{`${t('common:createdOnBy', { date: formatDate(row.createdOn) })} `}</span>
+              <span>{`${t('common:createdOnDateBy', { date: formatDate(row.createdOn) })} `}</span>
               <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>
             </div>
             <div>
-              <span>{`${t('common:updatedOnBy', { date: formatDate(row.updatedOn) })} `}</span>
+              <span>{`${t('common:updatedOnDateBy', { date: formatDate(row.updatedOn) })} `}</span>
               <a href={routes.getUserProfileUrl(row.updatedBy._id)}>{row.updatedBy.displayName}</a>
             </div>
           </div>

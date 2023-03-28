@@ -1,13 +1,13 @@
 userCard:
   sendEmailTo:
-    en: Send email to {email}
-    de: E-Mail an {email} schicken
+    en: Send email to {email}.
+    de: E-Mail an {email} schicken.
   pendingInvitation:
     en: Pending invitation
     de: Ausstehende Einladung
-  invitationExpiresOn:
-    en: Expires on
-    de: Läuft ab am
+  invitationExpiresOnDate:
+    en: Expires on {date}.
+    de: Läuft ab am {date}.
   revokeInvitation:
     en: Revoke invitation
     de: Einladung widerrufen

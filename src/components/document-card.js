@@ -39,7 +39,7 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
   const renderUserAction = tooltip => {
     return (
       <Tooltip title={tooltip}>
-        <UserOutlined />
+        <div className="DocumentCard-helpAction"><UserOutlined /></div>
       </Tooltip>
     );
   };
@@ -47,7 +47,7 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
   const renderInfoAction = tooltip => {
     return (
       <Tooltip title={tooltip}>
-        <InfoCircleOutlined />
+        <div className="DocumentCard-helpAction"><InfoCircleOutlined /></div>
       </Tooltip>
     );
   };
@@ -55,7 +55,7 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
   const actions = [];
 
   actions.push((
-    <div key="favorite" className="UserCard-favoriteAction">
+    <div key="favorite">
       <FavoriteStar
         id={documentId}
         type={FAVORITE_TYPE.document}
@@ -69,7 +69,7 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
 
     actions.push(renderUserAction((
       <div className="DocumentCard-infoTooltip">
-        <div>{t('common:contributionsBy')}: {contributors}.</div>
+        <div>{t('common:contributionsBy')} {contributors}.</div>
       </div>
     )));
 
@@ -83,8 +83,8 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
         {!!favoriteDocument && (
           <div>{t('common:favoritedByTooltip', { count: favoriteDocument.favoritedByCount })}</div>
         )}
-        <div>{t('common:createdOnBy', { date: createdOn })} {createdBy}.</div>
-        <div>{t('common:updatedOnBy', { date: updatedOn })} {updatedBy}.</div>
+        <div>{t('createdOnDateByUser', { date: createdOn, user: createdBy })}</div>
+        <div>{t('updatedOnDateByUser', { date: updatedOn, user: updatedBy })}</div>
       </div>
     )));
   }
