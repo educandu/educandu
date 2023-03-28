@@ -22,6 +22,7 @@ function RoomCreationModal({ isOpen, onClose }) {
   const defaultRoom = {
     name: t('newRoom'),
     slug: '',
+    shortDescription: '',
     isCollaborative: false
   };
 
