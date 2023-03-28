@@ -16,6 +16,7 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { Form, Input, Avatar, Button, message, Radio } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import { EMAIL_NOTIFICATION_FREQUENCY, SAVE_USER_RESULT } from '../../domain/constants.js';
 import { maxUserShortDescriptionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
@@ -205,11 +206,7 @@ function SettingsTab() {
             initialValue={user.shortDescription || ''}
             label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
             >
-            <Input
-              type="text"
-              maxLength={maxUserShortDescriptionLength}
-              showCount={{ formatter: renderInputCount }}
-              />
+            <NeverScrollingTextArea minRows={2} maxLength={maxUserShortDescriptionLength} />
           </FormItem>
           <FormItem
             name="profileOverview"

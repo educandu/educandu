@@ -5,6 +5,7 @@ import { Checkbox, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import inputValidators from '../utils/input-validators.js';
 import { roomMetadataProps } from '../ui/default-prop-types.js';
+import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import { maxRoomShortDescriptionLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
@@ -43,12 +44,6 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     await onFieldsChange(...args);
   };
 
-  const renderInputCount = ({ count, maxLength }) => {
-    return (
-      <div className="u-input-count">{`${count} / ${maxLength}`}</div>
-    );
-  };
-
   const formInputsLayouts = editMode ? editModeFormInputLayouts : {};
 
   return (
@@ -62,7 +57,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
         label={<Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>}
         initialValue={room.shortDescription}
         >
-        <Input maxLength={maxRoomShortDescriptionLength} showCount={{ formatter: renderInputCount }} />
+        <NeverScrollingTextArea minRows={2} maxLength={maxRoomShortDescriptionLength} />
       </FormItem>
       <FormItem
         {...formInputsLayouts}
