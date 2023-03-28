@@ -2179,8 +2179,8 @@
       "de": "E-Mail an {email} schicken."
     },
     "pendingInvitation": {
-      "en": "Pending invitation",
-      "de": "Ausstehende Einladung"
+      "en": "[Pending invitation]\n",
+      "de": "[Ausstehende Einladung]\n"
     },
     "invitationExpiresOnDate": {
       "en": "Expires on {date}.",

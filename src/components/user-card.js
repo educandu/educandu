@@ -117,16 +117,14 @@ function UserCard({
           />
         <div className="UserCard-title">
           {accessibleUser?.displayName}
-          {!!roomInvitation && t('pendingInvitation')}
+          {roomInvitation?.email}
         </div>
         <div className="UserCard-details">
           {!!accessibleUser && !accessibleUser.accounClosedOn && (accessibleUser.shortDescription || accessibleUser.organization)}
-          {!!accessibleUser?.accountClosedOn && (
-            <div className="UserCard-detailsClosedAccount">
-              {t('common:accountClosed')}
-            </div>
-          )}
-          {!!roomInvitation && roomInvitation.email}
+          <div className="UserCard-detailsMissingData">
+            {!!accessibleUser?.accountClosedOn && t('common:accountClosed')}
+            {!!roomInvitation && t('pendingInvitation')}
+          </div>
         </div>
       </div>
     </Card>

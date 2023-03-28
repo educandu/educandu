@@ -3,8 +3,10 @@ userCard:
     en: Send email to {email}.
     de: E-Mail an {email} schicken.
   pendingInvitation:
-    en: Pending invitation
-    de: Ausstehende Einladung
+    en: |
+      [Pending invitation]
+    de: |
+      [Ausstehende Einladung]
   invitationExpiresOnDate:
     en: Expires on {date}.
     de: Läuft ab am {date}.
