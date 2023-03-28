@@ -11,9 +11,9 @@ import ServerConfig from '../bootstrap/server-config.js';
 import SettingService from '../services/setting-service.js';
 import { canEditDocument } from '../utils/document-utils.js';
 import DocumentService from '../services/document-service.js';
+import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { DOC_VIEW_QUERY_PARAM, FEATURE_TOGGLES } from '../domain/constants.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -130,7 +130,7 @@ class DocumentController {
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
     const initialState = { doc: mappedDocument, templateSections, room: mappedRoom, roomMediaContext };
-    const pageName = this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.newDocumentPage) ? PAGE_NAME.doc : PAGE_NAME.document;
+    const pageName = PAGE_NAME.document;
     return this.pageRenderer.sendPage(req, res, pageName, initialState);
   }
 
