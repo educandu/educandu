@@ -72,7 +72,7 @@ function Redaction({ initialState, PageTemplate }) {
         <Tabs
           type="line"
           size="middle"
-          className="Tabs Tabs--withIcons"
+          className="Tabs"
           items={tabItems}
           activeKey={currentTab}
           destroyInactiveTabPane

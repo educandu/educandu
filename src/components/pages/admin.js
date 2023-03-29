@@ -103,7 +103,7 @@ function Admin({ PageTemplate }) {
           ]}
           >
           <Tabs
-            className="Tabs Tabs--withIcons"
+            className="Tabs"
             type="line"
             size="middle"
             activeKey={currentTab}
