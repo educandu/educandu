@@ -1,7 +1,10 @@
 storageTab:
-  info:
-    en: Here you can find details about your storage plan and current space status.
-    de: Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung.
+  emptyStateTitle:
+    en: You don't have private storage
+    de: Du hast keinen privater Speicher
+  emptyStateSubtitle:
+    en: With a private storage plan, you receive a dedicated storage space which you can use to upload private resources for your rooms. To receive a storge plan, please contact an administrator.
+    de: With a private storage plan, you receive a dedicated storage space which you can use to upload private resources for your rooms. To receive a storge plan, please contact an administrator.
   storagePlanName:
     en: Your storage plan
     de: Dein Speicherplan

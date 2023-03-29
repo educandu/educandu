@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
+import EmptyState from '../empty-state.js';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
+import FileIcon from '../icons/general/file-icon.js';
 import { Button, Checkbox, Pagination, Spin } from 'antd';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -84,19 +87,37 @@ function DocumentsTab({ documents, loading }) {
     setCurrentPage(page);
   };
 
+  const showEmptyState = !documents.length;
+
   return (
     <div className="DocumentsTab">
-      <div className="DocumentsTab-info">{t('info')}</div>
-
-      <Button className="DocumentsTab-button" type="primary" onClick={handleCreateDocumentClick}>
-        {t('common:createDocument')}
-      </Button>
+      {!showEmptyState && (
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          className="DocumentsTab-button"
+          onClick={handleCreateDocumentClick}
+          >
+          {t('common:createDocument')}
+        </Button>
+      )}
 
       <section>
         {!!loading && <Spin className="u-spin" />}
-        {!loading && !documents.length && t('noDocuments')}
+        {!loading && !!showEmptyState && (
+          <EmptyState
+            icon={<FileIcon />}
+            title={t('emptyStateTitle')}
+            subtitle={t('emptyStateSubtitle')}
+            action={{
+              text: t('common:createDocument'),
+              icon: <PlusOutlined />,
+              onClick: handleCreateDocumentClick
+            }}
+            />
+        )}
 
-        {!loading && !!documents.length && (
+        {!loading && !showEmptyState && (
           <div className="DocumentsTab-documentsPanel">
             <div className="DocumentsTab-filters">
               <FilterInput

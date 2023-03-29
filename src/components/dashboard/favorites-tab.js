@@ -2,10 +2,12 @@ import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import RoomCard from '../room-card.js';
 import UserCard from '../user-card.js';
+import EmptyState from '../empty-state.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
-import React, { useEffect, useState } from 'react';
+import StarIcon from '../icons/general/star-icon.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import { favoriteDocumentShape, favoriteRoomShape, favoriteUserShape } from '../../ui/default-prop-types.js';
 
 function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading }) {
@@ -74,40 +76,45 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     );
   };
 
+  const showEmptyState = !favoriteUsersStates.length && !favoriteRoomsStates.length && !favoriteDocumentsStates.length;
+
   return (
     <div className="FavoritesTab">
-      <div className="FavoritesTab-info">{t('info')}</div>
       {!!loading && <Spin className="u-spin" /> }
-      {!loading && !favoriteUsersStates.length && !favoriteRoomsStates.length && !favoriteDocumentsStates.length && (
-        <span>{t('noFavorites')}</span>
+      {!loading && !!showEmptyState && (
+        <EmptyState icon={<StarIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
       )}
-      <div className="FavoriteTab-headline">
-        {t('favoriteUsers')}
-        <div className="FavoriteTab-headlineCounter">
-          {`(${favoriteUsersStates.filter(item => item.isFavorite).length})`}
-        </div>
-      </div>
-      <section className="FavoritesTab-cards">
-        {favoriteUsersStates.map(renderFavoriteUserState)}
-      </section>
-      <div className="FavoriteTab-headline">
-        {t('favoriteRooms')}
-        <div className="FavoriteTab-headlineCounter">
-          {`(${favoriteRoomsStates.filter(item => item.isFavorite).length})`}
-        </div>
-      </div>
-      <section className="FavoritesTab-cards">
-        {favoriteRoomsStates.map(renderFavoriteRoomState)}
-      </section>
-      <div className="FavoriteTab-headline">
-        {t('favoriteDocuments')}
-        <div className="FavoriteTab-headlineCounter">
-          {`(${favoriteDocumentsStates.filter(item => item.isFavorite).length})`}
-        </div>
-      </div>
-      <section className="FavoritesTab-cards">
-        {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
-      </section>
+      {!loading && !showEmptyState && (
+        <Fragment>
+          <div className="FavoriteTab-headline">
+            {t('favoriteUsers')}
+            <div className="FavoriteTab-headlineCounter">
+              {`(${favoriteUsersStates.filter(item => item.isFavorite).length})`}
+            </div>
+          </div>
+          <section className="FavoritesTab-cards">
+            {favoriteUsersStates.map(renderFavoriteUserState)}
+          </section>
+          <div className="FavoriteTab-headline">
+            {t('favoriteRooms')}
+            <div className="FavoriteTab-headlineCounter">
+              {`(${favoriteRoomsStates.filter(item => item.isFavorite).length})`}
+            </div>
+          </div>
+          <section className="FavoritesTab-cards">
+            {favoriteRoomsStates.map(renderFavoriteRoomState)}
+          </section>
+          <div className="FavoriteTab-headline">
+            {t('favoriteDocuments')}
+            <div className="FavoriteTab-headlineCounter">
+              {`(${favoriteDocumentsStates.filter(item => item.isFavorite).length})`}
+            </div>
+          </div>
+          <section className="FavoritesTab-cards">
+            {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
+          </section>
+        </Fragment>
+      )}
     </div>
   );
 }

@@ -456,13 +456,13 @@
     }
   },
   "activitiesTab": {
-    "info": {
-      "en": "Here you can find your latest activities.",
-      "de": "Hier findest du deine letzten Aktivitäten."
+    "emptyStateTitle": {
+      "en": "You don't have any activities",
+      "de": "Du hast keine Aktivitäten"
     },
-    "noActivities": {
-      "en": "No activities have been recorded so far.",
-      "de": "Bisher wurden keine Aktivitäten aufgezeichnet."
+    "emptyStateSubtitle": {
+      "en": "After you start using the platform you can come back here to see a timeline of your most recen activities, like editing documents, creating and joining rooms, adding favorites, etc.",
+      "de": "After you start using the platform you can come back here to see a timeline of your most recen activities, like editing documents, creating and joining rooms, adding favorites, etc."
     },
     "documentCreatedActivity": {
       "en": "New document created",
@@ -498,13 +498,13 @@
     }
   },
   "documentsTab": {
-    "info": {
-      "en": "Here you can find the public documents you have created or contributed to.",
-      "de": "Hier findest du die öffentlichen Dokumente, die du erstellt oder bearbeitet hast."
+    "emptyStateTitle": {
+      "en": "You don't have any documents",
+      "de": "Du hast noch keine Dokumente"
     },
-    "noDocuments": {
-      "en": "You have not contributed to any public documents yet.",
-      "de": "Du hast noch keine öffentlichen Dokumente bearbeitet."
+    "emptyStateSubtitle": {
+      "en": "Public documents that you have created or contributed to will show up here, so that you can continue to have easy access to them.",
+      "de": "Öffentlichen Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt so, dass du Something Something"
     },
     "ownDocumentOnly": {
       "en": "Only documents created by me",
@@ -516,13 +516,13 @@
     }
   },
   "favoritesTab": {
-    "info": {
-      "en": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
-      "de": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen."
+    "emptyStateTitle": {
+      "en": "You don't have any favorites",
+      "de": "Du hast noch keine Favoriten"
     },
-    "noFavorites": {
-      "en": "You have not marked any favorites so far.",
-      "de": "Du hast noch keine Favoriten markiert."
+    "emptyStateSubtitle": {
+      "en": "Add any document, room, or user to your favorites by clicking the star icon on each of them. Start finding some documents that you most like by using the search in the navigation var at the top.",
+      "de": "Add any document, room, or user to your favorites by clicking the star icon on each of them. Start finding some documents that you most like by using the search in the navigation var at the top."
     },
     "favoriteUsers": {
       "en": "Your favorite users",
@@ -538,13 +538,13 @@
     }
   },
   "notificationsTab": {
-    "info": {
-      "en": "Here you can find notifications about contibutions to your favorite documents, by your favorite users or to documents in rooms that you are a member of.",
-      "de": "Hier findest du Benachrichtigungen über Beiträge zu deinen Lieblingsdokumenten, von deine Lieblingsnutzern, oder zu Dokumenten in Räumen, in denen du Mitglied bist."
+    "emptyStateTitle": {
+      "en": "You don't have any notifications",
+      "de": "Es gibt keine Benachrichtigungen für dich"
     },
-    "noNotifications": {
-      "en": "There are no new notifications for you.",
-      "de": "Es gibt keine neuen Benachrichtigungen für dich."
+    "emptyStateSubtitle": {
+      "en": "You receive notifications about contibutions to your favorite documents, by your favorite users or to documents in rooms that you are a member of.",
+      "de": "Du bekommst Benachrichtigungen über Beiträge zu deinen Lieblingsdokumenten, von deine Lieblingsnutzern, oder zu Dokumenten in Räumen, in denen du Mitglied bist."
     },
     "documentRevisionCreatedNotification": {
       "en": "Document has been edited",
@@ -584,9 +584,13 @@
     }
   },
   "roomsTab": {
-    "info": {
-      "en": "Here you find all the rooms you have created and the rooms that were invited to.",
-      "de": "Hier findest du alle Räume, die du erstellt hast und in die du eingeladen wurdest."
+    "emptyStateTitle": {
+      "en": "You haven't created any rooms",
+      "de": "Du hast noch keine Räume erstellt"
+    },
+    "emptyStateSubtitle": {
+      "en": "Rooms are private spaces to which only invited members have access. Documents in rooms are private as well.",
+      "de": "Rooms are private spaces to which only invited members have access. Documents in rooms are private as well."
     },
     "ownedRoomsHeadline": {
       "en": "Rooms that you created",
@@ -595,10 +599,6 @@
     "memberRoomsHeadline": {
       "en": "Rooms that you were invited to",
       "de": "Räume, in die du eingeladen wurdest"
-    },
-    "noOwnedRooms": {
-      "en": "You have not created any rooms yet.",
-      "de": "Du hast noch keine Räume erstellt."
     },
     "noMemberRooms": {
       "en": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.",
@@ -688,9 +688,13 @@
     }
   },
   "storageTab": {
-    "info": {
-      "en": "Here you can find details about your storage plan and current space status.",
-      "de": "Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung."
+    "emptyStateTitle": {
+      "en": "You don't have private storage",
+      "de": "Du hast keinen privater Speicher"
+    },
+    "emptyStateSubtitle": {
+      "en": "With a private storage plan, you receive a dedicated storage space which you can use to upload private resources for your rooms. To receive a storge plan, please contact an administrator.",
+      "de": "With a private storage plan, you receive a dedicated storage space which you can use to upload private resources for your rooms. To receive a storge plan, please contact an administrator."
     },
     "storagePlanName": {
       "en": "Your storage plan",
