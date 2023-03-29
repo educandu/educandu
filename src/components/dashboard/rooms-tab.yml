@@ -1,10 +1,16 @@
 roomsTab:
-  emptyStateTitle:
+  ownedRoomsEmptyStateTitle:
     en: You haven't created any rooms
     de: Du hast noch keine Räume erstellt
-  emptyStateSubtitle:
+  ownedRoomsEmptyStateSubtitle:
     en: Rooms are private spaces to which only invited members have access. Documents in rooms are private as well.
     de: Rooms are private spaces to which only invited members have access. Documents in rooms are private as well.
+  memberRoomsEmptyStateTitle:
+    en: You haven't received any room invitations
+    de: Du hast noch keine Raum-Einladungen bekommen
+  memberRoomsEmptyStateSubtitle:
+    en: To become member of a room you need to be invited by the room owner.
+    de: To become member of a room you need to be invited by the room owner.
   ownedRoomsHeadline:
     en: Rooms that you created
     de: Räume, die du erstellt hast
@@ -15,5 +21,5 @@ roomsTab:
     en: You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.
     de: Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden.
   noMatchingRooms:
-    en: No matching rooms
-    de: Keine passenden Räume
+    en: No matching rooms.
+    de: Keine passenden Räume.

@@ -94,6 +94,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
           </div>
           <section className="FavoritesTab-cards">
             {favoriteUsersStates.map(renderFavoriteUserState)}
+            {!favoriteUsersStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
           </section>
           <div className="FavoriteTab-headline">
             {t('favoriteRooms')}
@@ -103,6 +104,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
           </div>
           <section className="FavoritesTab-cards">
             {favoriteRoomsStates.map(renderFavoriteRoomState)}
+            {!favoriteRoomsStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
           </section>
           <div className="FavoriteTab-headline">
             {t('favoriteDocuments')}
@@ -112,6 +114,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
           </div>
           <section className="FavoritesTab-cards">
             {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
+            {!favoriteDocumentsStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
           </section>
         </Fragment>
       )}

@@ -1,13 +1,20 @@
 .RoomsTab {}
 
-.RoomsTab-filter {
-  max-width: 300px;
+.RoomsTab-controls {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: column;
+  justify-content: space-between;
+  margin-bottom: @edu-page-content-padding;
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+    justify-content: center;
+  }
 }
 
-.RoomsTab-createRoomButton {
-  display: block !important;
-  margin-left: auto;
-  margin-bottom: @edu-page-content-padding;
+.RoomsTab-filter {
+  max-width: 300px;
 }
 
 .RoomsTab-roomsGroupHeadline {
@@ -24,6 +31,6 @@
   .m-card-wrapper;
 }
 
-.RoomsTab-noRoomsInGroup {
-  width: 100%;
+.RoomsTab-noMatch {
+  .m-data-missing;
 }
