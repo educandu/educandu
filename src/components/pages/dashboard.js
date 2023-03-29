@@ -278,7 +278,7 @@ function Dashboard({ PageTemplate }) {
             <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE_BIG} src={gravatarUrl} alt={user.displayName} />
           </div>
           <div className="Dashboard-profileInfo">
-            <div className="Dashboard-profileInfoTitle">{user.displayName}</div>
+            <div className="u-page-title">{user.displayName}</div>
             <div>{user.organization}</div>
           </div>
         </section>

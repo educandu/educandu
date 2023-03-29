@@ -55,19 +55,16 @@ export default function UserProfile({ PageTemplate, initialState }) {
             <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE_BIG} src={user.avatarUrl} alt={user.displayName} />
           </div>
           <div className="UserProfilePage-profileTitle">
-            {user.displayName}
+            <div className="u-page-title">{user.displayName}</div>
             <div className="UserProfilePage-profileStar">
               <FavoriteStar type={FAVORITE_TYPE.user} id={user._id} />
             </div>
           </div>
           <div className="UserProfilePage-profileOrganization">{user.organization}</div>
-        </div>
-
-        {!!user.profileOverview && (
           <section className="UserProfilePage-profileOverview">
             <Markdown>{user.profileOverview}</Markdown>
           </section>
-        )}
+        </div>
 
         {!!user.accountClosedOn && (
           <div className="UserProfilePage-accountClosed">{t('common:accountClosed')}</div>
@@ -76,7 +73,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
         {!!fetchingDocuments && <Spin className="u-spin" />}
 
         {!fetchingDocuments && !!documents.length && (
-          <section>
+          <section className="UserProfilePage-section">
             <div className="UserProfilePage-sectionHeadline">{t('documentsHeadline')}</div>
             <div className="UserProfilePage-sectionCards">
               {documents.map(renderDocumentCard)}

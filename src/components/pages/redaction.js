@@ -68,7 +68,7 @@ function Redaction({ initialState, PageTemplate }) {
   return (
     <PageTemplate>
       <div className="RedactionPage">
-        <h1>{t('pageNames:redaction')}</h1>
+        <h1 className="u-page-title">{t('pageNames:redaction')}</h1>
         <Tabs
           type="line"
           size="middle"
