@@ -21,19 +21,19 @@ export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, help
       showWhen: !!user
     },
     {
-      key: 'profile',
-      label: t('pageNames:userProfile'),
-      icon: <div><UsersIcon /></div>,
-      badge: null,
-      onClick: () => { window.location = routes.getUserProfileUrl(user._id); },
-      showWhen: !!user
-    },
-    {
       key: 'notifications',
       label: t('common:notifications'),
       icon: <div><BellOutlined /></div>,
       badge: <div><Badge size="small" count={notificationsCount} title="" /></div>,
       onClick: () => { window.location = routes.getDashboardUrl({ tab: 'notifications' }); },
+      showWhen: !!user
+    },
+    {
+      key: 'profile',
+      label: t('pageNames:userProfile'),
+      icon: <div><UsersIcon /></div>,
+      badge: null,
+      onClick: () => { window.location = routes.getUserProfileUrl(user._id); },
       showWhen: !!user
     },
     {
