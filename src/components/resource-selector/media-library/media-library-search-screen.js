@@ -19,7 +19,7 @@ import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
+import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -229,7 +229,7 @@ function MediaLibrarySearchScreen({
 
 MediaLibrarySearchScreen.propTypes = {
   files: PropTypes.arrayOf(mediaLibraryItemWithRelevanceShape).isRequired,
-  highlightedFile: mediaLibraryItemWithRelevanceShape,
+  highlightedFile: mediaLibraryItemShape,
   initialUrl: PropTypes.string,
   isHidden: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,

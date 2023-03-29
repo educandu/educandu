@@ -286,7 +286,7 @@ export const mediaLibraryItemShape = PropTypes.shape({
 
 export const mediaLibraryItemWithRelevanceShape = PropTypes.shape({
   ...mediaLibraryItemProps,
-  relevance: PropTypes.number
+  relevance: PropTypes.number.isRequired
 });
 
 export const wikimediaFileShape = PropTypes.shape({
