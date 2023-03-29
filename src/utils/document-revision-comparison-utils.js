@@ -51,29 +51,30 @@ export function getInterleavedSectionsChanges(oldSectionKeys, newSectionKeys) {
     const oldSectionKey = oldSectionKeys[indexInOldSections] ?? null;
     const newSectionKey = newSectionKeys[indexInNewSections] ?? null;
 
-    if (oldSectionKey === newSectionKey) {
-      // section stayed in the same place
+    const hasSectionBeenInTheSamePlace = oldSectionKey === newSectionKey;
+    const hasSectionBeenAdded = newSectionKey !== null && !oldSectionKeySet.has(newSectionKey);
+    const hasSectionBeenDeleted = oldSectionKey !== null && !newSectionKeySet.has(oldSectionKey);
+    const hasSectionBeenMovedToHere = newSectionKey !== null && movedSectionKeySet.has(newSectionKey);
+    const hasSectionBeenMovedFromHere = oldSectionKey !== null && movedSectionKeySet.has(oldSectionKey);
+
+    if (hasSectionBeenInTheSamePlace) {
       result.push([oldSectionKey, SECTION_CHANGE_TYPE.unchanged]);
       processedSectionKeys.add(oldSectionKey);
       indexInOldSections += 1;
       indexInNewSections += 1;
-    } else if (newSectionKey !== null && !oldSectionKeySet.has(newSectionKey)) {
-      // section was added in `sectionKeys2`
+    } else if (hasSectionBeenAdded) {
       result.push([newSectionKey, SECTION_CHANGE_TYPE.added]);
       processedSectionKeys.add(newSectionKey);
       indexInNewSections += 1;
-    } else if (oldSectionKey !== null && !newSectionKeySet.has(oldSectionKey)) {
-      // section was deleted in `sectionKeys2`
+    } else if (hasSectionBeenDeleted) {
       result.push([oldSectionKey, SECTION_CHANGE_TYPE.removed]);
       processedSectionKeys.add(oldSectionKey);
       indexInOldSections += 1;
-    } else if (newSectionKey !== null && movedSectionKeySet.has(newSectionKey)) {
-      // section was moved to here in `sectionKeys2`
+    } else if (hasSectionBeenMovedToHere) {
       result.push([newSectionKey, SECTION_CHANGE_TYPE.movedHere]);
       processedSectionKeys.add(newSectionKey);
       indexInNewSections += 1;
-    } else if (oldSectionKey !== null && movedSectionKeySet.has(oldSectionKey)) {
-      // section was moved from here to a different place in `sectionKeys2`
+    } else if (hasSectionBeenMovedFromHere) {
       result.push([oldSectionKey, processedSectionKeys.has(oldSectionKey) ? SECTION_CHANGE_TYPE.movedUp : SECTION_CHANGE_TYPE.movedDown]);
       processedSectionKeys.add(oldSectionKey);
       indexInOldSections += 1;
