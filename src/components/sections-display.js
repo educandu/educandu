@@ -8,6 +8,9 @@ import PluginSelectorDialog from './plugin-selector-dialog.js';
 import DragAndDropContainer from './drag-and-drop-container.js';
 import React, { Fragment, memo, useId, useRef, useState } from 'react';
 
+const SECTION_PREVIEW_CONTEXT = { isPreview: true };
+const SECTION_NON_PREVIEW_CONTEXT = { isPreview: false };
+
 function SectionsDisplay({
   sections,
   pendingSectionKeys,
@@ -55,15 +58,17 @@ function SectionsDisplay({
   };
 
   const renderSection = ({ section, index, dragHandleProps = {}, isDragged = false, isOtherDragged = false }) => {
+    const isEditing = editedSectionKeys.includes(section.key);
     return (
       <SectionDisplay
         key={section.key}
+        context={canEdit && !isEditing ? SECTION_PREVIEW_CONTEXT : SECTION_NON_PREVIEW_CONTEXT}
         section={section}
         canEdit={!!dragHandleProps && canEdit}
         canHardDelete={canHardDelete}
         dragHandleProps={dragHandleProps}
         isDragged={isDragged}
-        isEditing={editedSectionKeys.includes(section.key)}
+        isEditing={isEditing}
         isOtherSectionDragged={isOtherDragged}
         isPending={pendingSectionKeys.includes(section.key)}
         onPendingSectionApply={() => onPendingSectionApply(index)}

@@ -11,6 +11,7 @@ export const PAGE_NAME = {
   register: 'register',
   redaction: 'redaction',
   dashboard: 'dashboard',
+  comparison: 'comparison',
   userProfile: 'user-profile',
   resetPassword: 'reset-password',
   browserNotSupported: 'browser-not-supported',

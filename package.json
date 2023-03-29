@@ -63,6 +63,7 @@
     "markdown-it": "^13.0.1",
     "markdown-it-anchor": "^8.6.5",
     "md5": "^2.3.0",
+    "mdiff": "^1.4.2",
     "memoizee": "^0.4.15",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
@@ -88,6 +89,7 @@
     "react-compare-slider": "^2.2.0",
     "react-cool-dimensions": "^3.0.0",
     "react-countdown": "^2.3.5",
+    "react-diff-view": "^3.0.3",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-i18next": "^12.1.1",
@@ -101,7 +103,8 @@
     "stream-to-array": "^2.3.0",
     "thenby": "^1.3.4",
     "toad-scheduler": "^2.2.0",
-    "umzug": "^3.2.1"
+    "umzug": "^3.2.1",
+    "unidiff": "^1.0.2"
   },
   "devDependencies": {
     "@educandu/dev-tools": "^8.0.2",

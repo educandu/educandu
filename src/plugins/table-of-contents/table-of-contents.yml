@@ -8,3 +8,6 @@ tableOfContents:
   levelRange:
     en: Level range
     de: Ebenen-Umfang
+  previewWarning:
+    en: The table of contents cannot be created in preview mode
+    de: Das Inhaltsverzeichnis kann im Vorschaumodus nicht erstellt werden

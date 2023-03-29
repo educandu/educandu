@@ -93,6 +93,9 @@ common:
   version:
     en: Version
     de: Version
+  latest:
+    en: latest
+    de: letzte
   document:
     en: Document
     de: Dokument

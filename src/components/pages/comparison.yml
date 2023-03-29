@@ -1,0 +1,19 @@
+comparison:
+  tooltipTextDisplay:
+    en: Text comparison
+    de: Textvergleich
+  tooltipPreviewDisplay:
+    en: Preview comparison
+    de: Vorschauvergleich
+  sectionMovementInfo:
+    en: The section formerly located here has been moved <0>{placement, select, movedUp {upwards} other {downwards}}</0>
+    de: Der Abschnitt, der sich hier befand, wurde <0>{placement, select, movedUp {nach oben} other {nach unten}}</0> verschoben
+  sectionMovementInfoBack:
+    en: This section was formerly located <0>at a different place</0> in the document
+    de: Dieser Abschnitt befand sich ursprünglich <0>an einer anderen Stelle</0> im Dokument
+  metadata:
+    en: Metadata
+    de: Metadaten
+  nonExistentSection:
+    en: This section does not exist in this version
+    de: Dieser Abschnitt existiert nicht in dieser Version

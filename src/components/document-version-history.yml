@@ -1,10 +1,4 @@
 documentVersionHistory:
-  version:
-    en: Version
-    de: Version
-  latest:
-    en: latest
-    de: letzte
   permalinkButtonTooltip:
     en: Copy version permalink
     de: Version-Permalink kopieren
@@ -17,6 +11,9 @@ documentVersionHistory:
   restoreButtonToltip:
     en: Restore version
     de: Version wiederherstellen
+  compareToLatestTooltip:
+    en: Compare to latest version
+    de: Mit letzter Version vergleichen
   viewButtonTooltip:
     en: View version
     de: Version ansehen

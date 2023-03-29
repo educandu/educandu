@@ -9,7 +9,7 @@ import { useDateFormat } from './locale-context.js';
 import { documentRevisionShape } from '../ui/default-prop-types.js';
 import { Button, Collapse, message, Timeline, Tooltip } from 'antd';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
-import { EyeOutlined, PaperClipOutlined, UndoOutlined } from '@ant-design/icons';
+import { EyeOutlined, PaperClipOutlined, SwapOutlined, UndoOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 const TimelineItem = Timeline.Item;
@@ -20,7 +20,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
   const [idsOfExpandedDocumentRevisions, setIdsOfExpandedDocumentRevisions] = useState([]);
 
   const mappedDocumentRevisions = documentRevisions
-    .sort(by(r => r.createdOn, 'desc'))
+    .sort(by(r => r.order, 'desc'))
     .map((documentRevision, index) => ({
       ...documentRevision,
       version: documentRevisions.length - index,
@@ -52,6 +52,16 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
     }
   };
 
+  const handleCompareToLatestButtonClick = documentRevision => {
+    const url = routes.getDocumentRevisionComparisonUrl({
+      documentId: documentRevision.documentId,
+      oldId: documentRevision._id,
+      newId: mappedDocumentRevisions[0]._id
+    });
+
+    window.open(url, '_blank');
+  };
+
   const handleRestoreButtonClick = documentRevision => {
     onRestoreClick({ documentRevisionId: documentRevision._id, documentId: documentRevision.documentId });
   };
@@ -73,8 +83,8 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
   };
 
   const renderTimelineItemHeader = documentRevision => {
-    const latestVersionText = documentRevision.isLatestVersion ? ` (${t('latest')})` : '';
-    const versionText = `${t('version')} ${documentRevision.version}${latestVersionText}`;
+    const latestVersionText = documentRevision.isLatestVersion ? ` (${t('common:latest')})` : '';
+    const versionText = `${t('common:version')} ${documentRevision.version}${latestVersionText}`;
     const isOpenPanel = idsOfExpandedDocumentRevisions.includes(documentRevision._id);
 
     return (
@@ -106,6 +116,16 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
               className="HistoryControlPanel-button"
               disabled={documentRevision.isLatestVersion}
               onClick={() => handleRestoreButtonClick(documentRevision)}
+              />
+          </Tooltip>
+        )}
+        {!documentRevision.isLatestVersion && (
+          <Tooltip title={t('compareToLatestTooltip')}>
+            <Button
+              icon={<SwapOutlined />}
+              className="HistoryControlPanel-button"
+              disabled={documentRevision.isLatestVersion}
+              onClick={() => handleCompareToLatestButtonClick(documentRevision)}
               />
           </Tooltip>
         )}

@@ -19,7 +19,12 @@ export const samlIdentityProviderClientShape = PropTypes.shape({
   logoUrl: PropTypes.string
 });
 
+export const sectionContextShape = PropTypes.shape({
+  isPreview: PropTypes.bool.isRequired
+});
+
 export const sectionDisplayProps = {
+  context: sectionContextShape.isRequired,
   content: PropTypes.any
 };
 

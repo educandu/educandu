@@ -15,6 +15,7 @@ const pageImporters = {
   [PAGE_NAME.revision]: async () => (await import('../components/pages/revision.js')).default,
   [PAGE_NAME.dashboard]: async () => (await import('../components/pages/dashboard.js')).default,
   [PAGE_NAME.redaction]: async () => (await import('../components/pages/redaction.js')).default,
+  [PAGE_NAME.comparison]: async () => (await import('../components/pages/comparison.js')).default,
   [PAGE_NAME.userProfile]: async () => (await import('../components/pages/user-profile.js')).default,
   [PAGE_NAME.resetPassword]: async () => (await import('../components/pages/reset-password.js')).default,
   [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default,
