@@ -128,11 +128,11 @@ function Comparison({ initialState, PageTemplate }) {
     </section>
   );
 
-  const renderSectionPreview = section => {
+  const renderSectionPreview = (section, keyModifier) => {
     return (
       <SectionDisplay
         canEdit={false}
-        key={section.key}
+        key={`${section.key}-${keyModifier}`}
         section={section}
         isDragged={false}
         isEditing={false}
@@ -259,8 +259,8 @@ function Comparison({ initialState, PageTemplate }) {
           {displayMode === DISPLAY_MODE.preview && (
             <Fragment>
               {sectionComparison.changeType === SECTION_CHANGE_TYPE.added && renderSectionMissingInfo()}
-              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.added && renderSectionPreview(sectionComparison.oldSection)}
-              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.removed && renderSectionPreview(sectionComparison.newSection)}
+              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.added && renderSectionPreview(sectionComparison.oldSection, 'old')}
+              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.removed && renderSectionPreview(sectionComparison.newSection, 'new')}
               {sectionComparison.changeType === SECTION_CHANGE_TYPE.removed && renderSectionMissingInfo()}
             </Fragment>
           )}
