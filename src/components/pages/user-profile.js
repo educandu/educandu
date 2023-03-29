@@ -60,12 +60,12 @@ export default function UserProfile({ PageTemplate, initialState }) {
               <FavoriteStar type={FAVORITE_TYPE.user} id={user._id} />
             </div>
           </div>
-          <div className="UserProfilePage-profileOrganization">{user.organizations}</div>
+          <div className="UserProfilePage-profileOrganization">{user.organization}</div>
         </div>
 
         {!!user.profileOverview && (
           <section className="UserProfilePage-profileOverview">
-            <Markdown>{user.profileOverviews}</Markdown>
+            <Markdown>{user.profileOverview}</Markdown>
           </section>
         )}
 
