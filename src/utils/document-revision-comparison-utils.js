@@ -90,12 +90,15 @@ function getMetadataTextRepresentation(documentRevision) {
     return '';
   }
 
-  const shallowClone = cloneDeep({ ...documentRevision });
+  const clonedRevision = cloneDeep(documentRevision);
 
-  delete shallowClone.sections;
-  shallowClone.createdBy = shallowClone.createdBy._id;
+  delete clonedRevision.sections;
+  clonedRevision.createdBy = clonedRevision.createdBy._id;
+  if (clonedRevision.publicContext) {
+    clonedRevision.publicContext.accreditedEditors = clonedRevision.publicContext.accreditedEditors.map(editor => editor._id);
+  }
 
-  return JSON.stringify(shallowClone, null, 2);
+  return JSON.stringify(clonedRevision, null, 2);
 }
 
 function getSectionTextRepresentation(section, plugin) {
