@@ -16,6 +16,7 @@ import EditIcon from '../icons/general/edit-icon.js';
 import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
+import { useBeforeunload } from 'react-beforeunload';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
 import EditDocIcon from '../icons/general/edit-doc-icon.js';
@@ -180,6 +181,12 @@ function Document({ initialState, PageTemplate }) {
   }));
 
   const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
+
+  useBeforeunload(event => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
 
   const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
