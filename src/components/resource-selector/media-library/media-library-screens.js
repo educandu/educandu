@@ -113,11 +113,13 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     });
   };
 
-  const handleEditFileClick = () => {
+  const handleEditFileClick = file => {
+    setHighlightedFile(file);
     pushScreen(SCREEN.edit);
   };
 
-  const handlePreviewFileClick = () => {
+  const handlePreviewFileClick = file => {
+    setHighlightedFile(file);
     pushScreen(SCREEN.preview);
   };
 
