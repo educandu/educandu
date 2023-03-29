@@ -193,8 +193,8 @@ export function createDocumentRevisionComparison(oldDocumentRevision, newDocumen
   });
 
   for (const section of sections) {
-    if (section.documentPlacement === SECTION_CHANGE_TYPE.movedDown || section.documentPlacement === SECTION_CHANGE_TYPE.movedUp) {
-      const targetSection = sections.find(s => s.documentPlacement === SECTION_CHANGE_TYPE.movedHere);
+    if (section.changeType === SECTION_CHANGE_TYPE.movedDown || section.changeType === SECTION_CHANGE_TYPE.movedUp) {
+      const targetSection = sections.find(s => s.changeType === SECTION_CHANGE_TYPE.movedHere);
       if (targetSection) {
         section.targetKey = targetSection.key;
         targetSection.targetKey = section.key;
