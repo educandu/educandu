@@ -278,16 +278,12 @@ function Dashboard({ PageTemplate }) {
             <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE_BIG} src={gravatarUrl} alt={user.displayName} />
           </div>
           <div className="Dashboard-profileInfo">
-            <span className="Dashboard-profileName">
-              {user.displayName}
-            </span>
-            {!!user.organization && (
-              <span className="Dashboard-profileOrganization">{user.organization}</span>
-            )}
+            <div className="Dashboard-profileInfoTitle">{user.displayName}</div>
+            <div>{user.organization}</div>
           </div>
         </section>
         <Tabs
-          className="Tabs Tabs--withIcons"
+          className="Tabs"
           type="line"
           size="middle"
           defaultActiveKey={initialTab}

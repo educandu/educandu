@@ -1,14 +1,49 @@
-.UserProfilePage {}
-
-.UserProfilePage-header {
-  margin-bottom: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+.UserProfilePage {
+  margin-top: 75px;
 }
 
-.UserProfilePage-headerProfile {
-  flex: 1 1 auto;
+.UserProfilePage-contentHeader {
+  position: absolute;
+  left: 0;
+  height: 180px;
+  width: 100%;
+  background:
+    url('./images/homepage-hero-right.svg') right top no-repeat,
+    url('./images/homepage-hero-left.svg') left top no-repeat;
+  background-color: @edu-primary-color-light;
+  z-index: @edu-z-index-background-layer
+}
+
+.UserProfilePage-profile {
+  display: grid;
+  grid-auto-flow: row;
+  justify-items: center;
+}
+
+.UserProfilePage-profileAvatar {
+  padding: 10px;
+  border-radius: 50%;
+  background-color: @edu-white;
+}
+
+.UserProfilePage-profileTitle {
+  font-weight: bold;
+  font-size: @edu-font-size-logo;
+  line-height: 1.2 * @edu-font-size-logo;
+  color: @edu-text-color-page-title;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.UserProfilePage-profileStar {
+  position: absolute;
+  top: 0px;
+  right: -30px;
+}
+
+.UserProfilePage-profileOrganization {
+  color: @edu-text-color-secondary;
+  margin-bottom: 15px;
 }
 
 .UserProfilePage-profileOverview {
@@ -33,7 +68,7 @@
 
 .UserProfilePage-sectionCards {
   .m-section-content;
-  .m-card-wrapper-wide;
+  .m-card-wrapper;
 }
 
 .UserProfilePage-sectionMoreButton {
