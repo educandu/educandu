@@ -1622,9 +1622,45 @@
       "en": "Room view",
       "de": "Raum-Ansicht"
     },
+    "overviewEmptyStateTitle": {
+      "en": "Overview is missing for this room",
+      "de": "Overview is missing for this room"
+    },
+    "overviewEmptyStateSubtitle": {
+      "en": "An overview provides members with a context of the room and its purpose. You can write an overview on the room settings tab.",
+      "de": "An overview provides members with a context of the room and its purpose. You can write an overview on the room settings tab."
+    },
+    "documentsEmptyStateTitle": {
+      "en": "This room contains no documents",
+      "de": "Dieser Raum enthält keine Dokumente"
+    },
+    "documentsEmptyStateSubtitle": {
+      "en": "Documents created within a room are exclusively available to room members and not accessible to the rest of the community.",
+      "de": "Documents created within a room are exclusively available to room members and not accessible to the rest of the community."
+    },
     "documentsPlaceholder": {
       "en": "The room does not contain any documents",
       "de": "Der Raum enthält keine Dokumente"
+    },
+    "messageBoardEmptyStateTitle": {
+      "en": "There are no messages on the board",
+      "de": "There are no messages on the board"
+    },
+    "messageBoardEmptyStateSubtitle": {
+      "en": "As the room owner, you can post messages to the board in order to inform room members about various room related topics.\nMembers see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.\n",
+      "de": "Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über raumbezogene Themen zu informieren.\nMitglieder sehen das Message-Board auf der Raum-Seite, und sie bekommen eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.\n"
+    },
+    "membersEmptyStateTitle": {
+      "en": "This room has no members",
+      "de": "Dieser Raum hat keine Mitglieder"
+    },
+    "collaboratorsEmptyStateTitle": {
+      "en": "This room has no collaborators",
+      "de": "Dieser Raum hat keine Mitarbeiter"
+    },
+    "membersEmptyStateSubtitle": {
+      "en": "For other users to have access to your room, they need to be invited.",
+      "de": "For other users to have access to your room, they need to be invited."
     },
     "thisWeek": {
       "en": "This week",
@@ -1662,13 +1698,17 @@
       "en": "Invite collaborators",
       "de": "Mitarbeiter einladen"
     },
+    "documentsSectionHeadline": {
+      "en": "Documents",
+      "de": "Dokumente"
+    },
     "messageBoardSectionHeadline": {
       "en": "Message board",
       "de": "Message-Board"
     },
-    "messageBoardOwnerInfoMarkdown": {
-      "en": "As the room owner, you can post messages to the board in order to inform room members about various room related topics.\\\nMembers see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.\n",
-      "de": "Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über raumbezogene Themen zu informieren.\\\nMitglieder sehen das Message-Board auf der Raum-Seite, und sie bekommen eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.\n"
+    "writeMessage": {
+      "en": "Write message",
+      "de": "Nachricht schreibein"
     },
     "postMessageButtonText": {
       "en": "Post message",
