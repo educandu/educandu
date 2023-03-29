@@ -87,7 +87,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
           {`(${favoriteUsersStates.filter(item => item.isFavorite).length})`}
         </div>
       </div>
-      <section className="FavoritesTab-cards FavoritesTab-cards--small">
+      <section className="FavoritesTab-cards">
         {favoriteUsersStates.map(renderFavoriteUserState)}
       </section>
       <div className="FavoriteTab-headline">
@@ -96,7 +96,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
           {`(${favoriteRoomsStates.filter(item => item.isFavorite).length})`}
         </div>
       </div>
-      <section className="FavoritesTab-cards FavoritesTab-cards--small">
+      <section className="FavoritesTab-cards">
         {favoriteRoomsStates.map(renderFavoriteRoomState)}
       </section>
       <div className="FavoriteTab-headline">
@@ -105,7 +105,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
           {`(${favoriteDocumentsStates.filter(item => item.isFavorite).length})`}
         </div>
       </div>
-      <section className="FavoritesTab-cards FavoritesTab-cards--wide">
+      <section className="FavoritesTab-cards">
         {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
       </section>
     </div>
