@@ -462,7 +462,7 @@ common:
     en: |
       No results found for "{text}"
     de: |
-      Keine Ergebnisse gefunden für "{searchTerm}"
+      Keine Ergebnisse gefunden für "{text}"
   searchResultEmptyStateSubtitle:
     en: We couldn't find any media matching your text. Check that spelling is correct and try again, or type something else.
     de: We couldn't find any media matching your text. Check that spelling is correct and try again, or type something else.
