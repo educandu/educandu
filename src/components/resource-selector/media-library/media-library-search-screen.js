@@ -211,7 +211,7 @@ function MediaLibrarySearchScreen({
         )}
         <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
           {currentScreen === SCREEN.search && (
-            <UploadButton intent={UPLOAD_BUTTON_INTENT.upload} orientation={ORIENTATION.vertical} onClick={handleUploadButtonClick} />
+            <UploadButton intent={UPLOAD_BUTTON_INTENT.upload} orientation={ORIENTATION.horizontal} onClick={handleUploadButtonClick} />
           )}
           <div className="u-resource-selector-screen-footer-buttons">
             <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
