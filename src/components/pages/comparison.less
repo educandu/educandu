@@ -1,0 +1,91 @@
+.ComparisonPage {}
+
+.ComparisonPage-versionSelectors {
+  display: grid;
+  gap: 20px;
+  grid-auto-flow: column;
+  margin-bottom: 40px;
+}
+
+.ComparisonPage-selectItemHeader {
+  display: grid;
+  gap: 2px;
+  grid-auto-flow: row;
+  padding: 2px 0;
+}
+
+.ComparisonPage-selectItemHeaderSubtext {
+  color: @edu-text-color-secondary;
+}
+
+.ComparisonPage-comparison {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.ComparisonPage-panel {
+  min-height: 50px;
+  background-color: @edu-white;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-base;
+}
+
+.ComparisonPage-panelToolbar {
+  padding: (@edu-content-padding / 2);
+  display: flex;
+  justify-content: space-between;
+  background-color: @edu-background-color-base;
+  border-top-left-radius: @edu-border-radius-base;
+  border-top-right-radius: @edu-border-radius-base;
+}
+
+.ComparisonPage-panelToolbarInfo {
+  flex: 1 1 100%;
+}
+
+.ComparisonPage-panelToolbarButtons {
+  display: grid;
+  gap: 3px;
+  grid-auto-flow: column;
+}
+
+.ComparisonPage-sectionMovementInfo {
+  font-style: italic;
+  text-align: center;
+  font-size: @edu-font-size-sm;
+}
+
+.ComparisonPage-sectionMovementBackInfo {
+  font-style: italic;
+  text-align: center;
+  font-size: @edu-font-size-sm;
+  padding-top: (@edu-content-padding / 2);
+}
+
+.ComparisonPage-metadataPanelContent {
+  padding: @edu-content-padding;
+}
+
+.ComparisonPage-sectionComparison {
+
+  &.ComparisonPage-sectionComparison--diff {
+    padding: @edu-content-padding;
+  }
+
+  &.ComparisonPage-sectionComparison--split {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ComparisonPage-sectionMissingInfo {
+  height: 100%;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  font-size: @edu-font-size-sm;
+  font-style: italic;
+}

@@ -1,4 +1,7 @@
 pageNames:
+  comparison:
+    en: Version comparison
+    de: Versionsvergleich
   dashboard:
     en: Dashboard
     de: Dashboard
