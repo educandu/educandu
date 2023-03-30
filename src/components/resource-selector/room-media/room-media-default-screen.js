@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import UsedStorage from '../../used-storage.js';
-import UploadIcon from '../../icons/general/upload-icon.js';
+import { ORIENTATION } from '../../../domain/constants.js';
 import RoomMediaFilesViewer from './room-media-files-viewer.js';
 import { useRoomMediaContext } from '../../room-media-context.js';
 import { cdnObjectShape } from '../../../ui/default-prop-types.js';
+import UploadButton, { UPLOAD_BUTTON_INTENT } from '../shared/upload-button.js';
 
 function RoomMediaDefaultScreen({
   files,
@@ -70,9 +71,7 @@ function RoomMediaDefaultScreen({
         {renderStorageInfo()}
       </div>
       <div className="u-resource-selector-screen-footer">
-        <Button onClick={handleUploadButtonClick} icon={<UploadIcon />} disabled={isLoading}>
-          {t('common:uploadFiles')}
-        </Button>
+        <UploadButton intent={UPLOAD_BUTTON_INTENT.upload} orientation={ORIENTATION.horizontal} onClick={handleUploadButtonClick} />
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick}>
             {t('common:cancel')}

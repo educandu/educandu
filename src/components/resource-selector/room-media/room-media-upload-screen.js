@@ -12,7 +12,7 @@ import { replaceItemAt } from '../../../utils/array-utils.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../../../domain/constants.js';
+import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import { useRoomMediaContext, useSetRoomMediaContext } from '../../room-media-context.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -75,10 +75,10 @@ function RoomMediaUploadScreen({
   }, [uploadItems]);
 
   const ensureCanUpload = useCallback(file => {
-    if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
+    if (file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) {
       throw new Error(t('uploadLimitExceeded', {
         uploadSize: prettyBytes(file.size, { locale: uiLocale }),
-        uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: uiLocale })
+        uploadLimit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES, { locale: uiLocale })
       }));
     }
 

@@ -15,11 +15,12 @@ import MediaLibraryMetadataForm from './media-library-metadata-form.js';
 import { mediaLibraryItemShape } from '../../../ui/default-prop-types.js';
 import { processFileBeforeUpload } from '../../../utils/storage-utils.js';
 import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
+import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
-const createFileInfo = file => file ? { file, isEdited: false } : null;
+const createFileInfo = file => file ? { file, isEdited: false, isTooBig: file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } : null;
 
 export const MEDIA_LIBRARY_ITEM_MODAL_MODE = {
   preview: 'preview',
@@ -225,6 +226,7 @@ function MediaLibaryItemModal({
                 dropzoneRef={dropzoneRef}
                 file={fileInfo?.file || null}
                 canAcceptFile={!isSaving}
+                showSizeWarning={!!fileInfo?.isTooBig}
                 onFileDrop={handleFileDrop}
                 onEditImageClick={handleEditImageClick}
                 />
@@ -236,7 +238,7 @@ function MediaLibaryItemModal({
           <div className="MediaLibaryItemModal-footer">
             <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
               <Button onClick={onClose}>{t('common:cancel')}</Button>
-              <Button type="primary" loading={isSaving} disabled={!fileInfo} onClick={handleSaveClick}>{t('common:save')}</Button>
+              <Button type="primary" loading={isSaving} disabled={!fileInfo || !!fileInfo.isTooBig} onClick={handleSaveClick}>{t('common:save')}</Button>
             </div>
           </div>
         );

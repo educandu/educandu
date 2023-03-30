@@ -1,22 +1,22 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import { Select, Spin } from 'antd';
 import Logger from '../../common/logger.js';
-import { Button, Select, Spin } from 'antd';
 import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
-import UploadIcon from '../icons/general/upload-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
-import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { getRoomMediaRoomPath } from '../../utils/storage-utils.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import { roomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import { FILES_VIEWER_DISPLAY, ORIENTATION } from '../../domain/constants.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import RoomMediaUploadModal from '../resource-selector/room-media/room-media-upload-modal.js';
 import RoomMediaFilesViewer from '../resource-selector/room-media/room-media-files-viewer.js';
 import RoomMediaPreviewModal from '../resource-selector/room-media/room-media-preview-modal.js';
+import UploadButton, { UPLOAD_BUTTON_INTENT } from '../resource-selector/shared/upload-button.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -180,13 +180,12 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
                       />
                   </div>
                   <div>
-                    <Button
-                      icon={<UploadIcon />}
+                    <UploadButton
+                      intent={UPLOAD_BUTTON_INTENT.upload}
+                      orientation={ORIENTATION.horizontal}
                       disabled={loading || isUpdating || !roomMediaOverview?.storagePlan}
                       onClick={handleUploadButtonClick}
-                      >
-                      {t('common:uploadFiles')}
-                    </Button>
+                      />
                   </div>
                 </Fragment>
               )}

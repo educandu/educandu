@@ -1,0 +1,19 @@
+.UploadButton {
+  display: inline-grid;
+
+  &.UploadButton--vertical {
+    gap: 2px;
+    grid-auto-flow: row;
+    justify-items: center;
+  }
+
+  &.UploadButton--horizontal {
+    gap: 10px;
+    align-items: baseline;
+    grid-auto-flow: column;
+  }
+}
+
+.UploadButton-uploadLimitInfo {
+  font-size: @edu-font-size-sm;
+}

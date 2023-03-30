@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import MiniPager from '../../mini-pager.js';
+import PdfDocument from '../../pdf-document.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../../container-context.js';
 import MediaPlayer from '../../media-player/media-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getResourceType } from '../../../utils/resource-utils.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
-import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../../domain/constants.js';
 import FileUnknownFilledIcon from '../../icons/files/file-unknown-filled-icon.js';
-import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from '../../pdf-document.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../../utils/source-utils.js';
+import { MEDIA_SCREEN_MODE, ORIENTATION, RESOURCE_TYPE } from '../../../domain/constants.js';
 
 function ResourcePreview({ urlOrFile, onResourceLoad }) {
   const [pdf, setPdf] = useState(null);
@@ -80,7 +80,7 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
       <PdfDocument
         file={pdfFile}
         pageNumber={pdfPageNumber}
-        stretchDirection={PDF_DOCUMENT_STRETCH_DIRECTION.horizontal}
+        stretchDirection={ORIENTATION.horizontal}
         onLoadSuccess={handlePdfLoad}
         />
       {pdf?.numPages > 1 && (

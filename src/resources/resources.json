@@ -1881,10 +1881,6 @@
     "searchInvitationHeader": {
       "en": "Search in the media library",
       "de": "Suche in der Medien-Bibliothek"
-    },
-    "uploadFile": {
-      "en": "Upload file",
-      "de": "Datei hochladen"
     }
   },
   "mediaLibraryUploadScreen": {
@@ -3172,10 +3168,6 @@
       "en": "Create",
       "de": "Erstellen"
     },
-    "upload": {
-      "en": "Upload",
-      "de": "Hochladen"
-    },
     "moveUp": {
       "en": "Move up",
       "de": "Nach oben verschieben"
@@ -3796,9 +3788,21 @@
       "en": "Preview image URL",
       "de": "Vorschau-Bild-URL"
     },
-    "browseFilesButtonLabel": {
+    "browse": {
       "en": "Browse ...",
       "de": "Durchsuchen ..."
+    },
+    "upload": {
+      "en": "Upload",
+      "de": "Hochladen"
+    },
+    "uploadLimitInfo": {
+      "en": "(max. {limit})",
+      "de": "(max. {limit})"
+    },
+    "fileIsTooBig": {
+      "en": "The file is too big. The upload limit is {limit}.",
+      "de": "Die Datei ist zu groß. Das Upload-Limit liegt bei {limit}."
     },
     "dropFileInvitation": {
       "en": "Drag a file here",
@@ -3879,10 +3883,6 @@
     "creator": {
       "en": "Creator",
       "de": "Ersteller"
-    },
-    "uploadFiles": {
-      "en": "Upload files",
-      "de": "Dateien hochladen"
     },
     "documentNotAvailable": {
       "en": "[Document no longer available]\n",

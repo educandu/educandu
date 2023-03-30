@@ -175,7 +175,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
                 title={t('dialogSearchFileInvitationHeader')}
                 subtitle={(
                   <Button onClick={handleSearchAudioFileButtonClick}>
-                    {t('common:browseFilesButtonLabel')}
+                    {t('common:browse')}
                   </Button>
                 )}
                 />
@@ -187,7 +187,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
                 title={t('dialogDropFileInvitationHeader')}
                 subtitle={(
                   <Button onClick={handleUploadAudioFileButtonClick}>
-                    {t('common:browseFilesButtonLabel')}
+                    {t('common:browse')}
                   </Button>
                 )}
                 />
