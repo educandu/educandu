@@ -53,9 +53,6 @@ common:
   create:
     en: Create
     de: Erstellen
-  upload:
-    en: Upload
-    de: Hochladen
   moveUp:
     en: Move up
     de: Nach oben verschieben
@@ -545,9 +542,18 @@ common:
   posterImageUrl:
     en: Preview image URL
     de: Vorschau-Bild-URL
-  browseFilesButtonLabel:
+  browse:
     en: Browse ...
     de: Durchsuchen ...
+  upload:
+    en: Upload
+    de: Hochladen
+  uploadLimitInfo:
+    en: (max. {limit})
+    de: (max. {limit})
+  fileIsTooBig:
+    en: The file is too big. The upload limit is {limit}.
+    de: Die Datei ist zu groß. Das Upload-Limit liegt bei {limit}.
   dropFileInvitation:
     en: Drag a file here
     de: Ziehe eine Datei hierher
@@ -608,9 +614,6 @@ common:
   creator:
     en: Creator
     de: Ersteller
-  uploadFiles:
-    en: Upload files
-    de: Dateien hochladen
   documentNotAvailable:
     en: |
       [Document no longer available]
