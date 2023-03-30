@@ -262,7 +262,7 @@ function Comparison({ initialState, PageTemplate }) {
   return (
     <PageTemplate>
       <div className="ComparisonPage">
-        <h1>{t('pageNames:comparison')}</h1>
+        <h1 className="u-page-title">{t('pageNames:comparison')}</h1>
         <div className="ComparisonPage-versionSelectors">
           <Select value={oldRevisionId} onChange={setOldRevisionId} optionLabelProp="title">
             {versionedRevisions.map(revision => (
