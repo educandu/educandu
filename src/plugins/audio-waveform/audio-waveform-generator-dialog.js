@@ -171,6 +171,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
             <div className="AudioWaveformGeneratorDialog-dropzoneContent">
               <input {...getInputProps()} hidden />
               <EmptyState
+                compact
                 icon={<SearchOutlined />}
                 title={t('searchAudioFileEmptyStateTitle')}
                 subtitle={t('searchAudioFileEmptyStateSubtitle')}
@@ -184,6 +185,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
                 <Divider plain>{t('common:or')}</Divider>
               </div>
               <EmptyState
+                compact
                 icon={<CloudUploadOutlined />}
                 title={t('uploadAudioFileEmptyStateTitle')}
                 subtitle={t('common:mediaUploadEmptyStateSubtitle')}

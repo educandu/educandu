@@ -160,6 +160,7 @@ function MediaLibrarySearchScreen({
                       <input {...getInputProps()} hidden />
                       {!!showEmptyState && (
                         <EmptyState
+                          compact
                           icon={<SearchOutlined />}
                           title={t('emptyStateTitle')}
                           subtitle={t('common:mediaLibraryEmptyStateSubtitle')}
@@ -185,6 +186,7 @@ function MediaLibrarySearchScreen({
                   }
                   option2={
                     <EmptyState
+                      compact
                       icon={<CloudUploadOutlined />}
                       title={initialUrl ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
                       subtitle={t('common:mediaUploadEmptyStateSubtitle')}

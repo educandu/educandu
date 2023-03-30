@@ -125,18 +125,16 @@ function SectionsDisplay({
   return (
     <Fragment>
       {!!showEmptyState && (
-        <div className="u-padded-content">
-          <EmptyState
-            icon={<FileIcon />}
-            title={t('emptyStateTitle')}
-            subtitle={t('emptyStateSubtitle')}
-            button={{
-              icon: <PlusOutlined />,
-              text: t('emptyStateButton'),
-              onClick: () => handleNewSectionClick(0)
-            }}
-            />
-        </div>
+        <EmptyState
+          icon={<FileIcon />}
+          title={t('emptyStateTitle')}
+          subtitle={t('emptyStateSubtitle')}
+          button={{
+            icon: <PlusOutlined />,
+            text: t('emptyStateButton'),
+            onClick: () => handleNewSectionClick(0)
+          }}
+          />
       )}
       {!showEmptyState && (
         <Fragment>

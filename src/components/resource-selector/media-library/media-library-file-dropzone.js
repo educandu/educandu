@@ -58,6 +58,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop
               </Fragment>
             )}
             <EmptyState
+              compact
               icon={<CloudUploadOutlined />}
               title={file ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
               subtitle={t('common:mediaUploadEmptyStateSubtitle')}

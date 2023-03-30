@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Button, Result } from 'antd';
 
-function EmptyState({ icon, title, subtitle, button }) {
+function EmptyState({ icon, title, subtitle, button, compact }) {
 
   const actions = [];
 
@@ -20,7 +21,7 @@ function EmptyState({ icon, title, subtitle, button }) {
   }
 
   return (
-    <div className="EmptyState">
+    <div className={classNames('EmptyState', { 'EmptyState--compact': compact })}>
       <Result
         icon={icon}
         title={title}
@@ -40,14 +41,16 @@ EmptyState.propTypes = {
     text: PropTypes.string.isRequired,
     isDefaultType: PropTypes.bool,
     onClick: PropTypes.func.isRequired
-  })
+  }),
+  compact: PropTypes.bool
 };
 
 EmptyState.defaultProps = {
   icon: null,
   title: null,
   subtitle: null,
-  button: null
+  button: null,
+  compact: false
 };
 
 export default EmptyState;
