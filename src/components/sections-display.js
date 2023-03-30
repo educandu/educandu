@@ -1,8 +1,11 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import EmptyState from './empty-state.js';
+import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import SectionDisplay from './section-display.js';
+import FileIcon from './icons/general/file-icon.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import DragAndDropContainer from './drag-and-drop-container.js';
@@ -31,6 +34,7 @@ function SectionsDisplay({
   onSectionHardDelete
 }) {
   const droppableIdRef = useRef(useId());
+  const { t } = useTranslation('sectionsDisplay');
   const [currentNewSectionIndex, setCurrentNewSectionIndex] = useState(-1);
 
   const handleSectionMove = (fromIndex, toIndex) => {
@@ -116,10 +120,30 @@ function SectionsDisplay({
     }
   }));
 
+  const showEmptyState = !!canEdit && !sections.length && !pendingSectionKeys.length;
+
   return (
     <Fragment>
-      { renderSectionDivider({ insertIndex: 0, isDragged: false }) }
-      <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropItems} onItemMove={handleSectionMove} />
+      {!!showEmptyState && (
+        <div className="u-padded-content">
+          <EmptyState
+            icon={<FileIcon />}
+            title={t('emptyStateTitle')}
+            subtitle={t('emptyStateSubtitle')}
+            button={{
+              icon: <PlusOutlined />,
+              text: t('emptyStateButton'),
+              onClick: () => handleNewSectionClick(0)
+            }}
+            />
+        </div>
+      )}
+      {!showEmptyState && (
+        <Fragment>
+          { renderSectionDivider({ insertIndex: 0, isDragged: false }) }
+          <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropItems} onItemMove={handleSectionMove} />
+        </Fragment>
+      )}
 
       <PluginSelectorDialog
         isOpen={currentNewSectionIndex > -1}

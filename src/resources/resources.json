@@ -945,16 +945,6 @@
       "de": "Die E-Mail-Adresse ist bereits vergeben"
     }
   },
-  "errorPage": {
-    "notFoundEmptyStateTitle": {
-      "en": "Page not found",
-      "de": "Seite nicht gefunden"
-    },
-    "notFoundEmptyStateSubtitle": {
-      "en": "Looks like the page you are looking for doesn't exist. Check that your URL is correct and try again, otherwise go back.",
-      "de": "Looks like the page you are looking for doesn't exist. Check that your URL is correct and try again, otherwise go back."
-    }
-  },
   "externalAccountProviderDialog": {
     "title": {
       "en": "Choose institution",
@@ -2173,6 +2163,20 @@
     "searchPlaceholder": {
       "en": "Search terms",
       "de": "Suchbegriffe"
+    }
+  },
+  "sectionsDisplay": {
+    "emptyStateTitle": {
+      "en": "This document is empty",
+      "de": "Dieses Dokument is leer"
+    },
+    "emptyStateSubtitle": {
+      "en": "For a good reading experience we recommend adding a mixture of content type, such as images, videos, text etc.",
+      "de": "For a good reading experience we recommend adding a mixture of content type, such as images, videos, text etc."
+    },
+    "emptyStateButton": {
+      "en": "Add content",
+      "de": "Inhalt hinzuzufügen"
     }
   },
   "sortingSelector": {
