@@ -195,6 +195,7 @@ export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 export const CDN_URL_PREFIX = 'cdn://';
 
 export const AVATAR_SIZE = 110;
+export const AVATAR_SIZE_BIG = 140;
 
 export const MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS = 20;
 
