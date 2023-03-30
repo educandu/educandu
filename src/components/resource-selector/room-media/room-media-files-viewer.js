@@ -6,6 +6,7 @@ import reactDropzoneNs from 'react-dropzone';
 import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import FilterInput from '../../filter-input.js';
+import FilterIcon from '../../icons/general/filter-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import FilesListViewer from '../shared/files-list-viewer.js';
 import { cdnObjectShape } from '../../../ui/default-prop-types.js';
@@ -112,9 +113,9 @@ function RoomMediaFilesViewer({
             {!isLoading && !!showEmptyState && (
               <div className="RoomMediaFilesViewer-filesViewerContent RoomMediaFilesViewer-filesViewerContent--empty">
                 <EmptyState
-                  icon={<CloudUploadOutlined />}
-                  title={t('emptyStateTitle')}
-                  subtitle={t('emptyStateSubtitle')}
+                  icon={filterText ? <FilterIcon /> : <CloudUploadOutlined />}
+                  title={filterText ? t('noMatchingDataEmptyStateTitle') : t('noDataEmptyStateTitle')}
+                  subtitle={filterText ? t('common:searchResultEmptyStateSubtitle') : t('noDataEmptyStateSubtitle')}
                   />
               </div>
             )}

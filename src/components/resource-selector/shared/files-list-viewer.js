@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
-import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
-import { SearchOutlined } from '@ant-design/icons';
 import DeleteIcon from '../../icons/general/delete-icon.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
 import DimensionsProvider from '../../dimensions-provider.js';
@@ -18,7 +16,6 @@ const HEADER_ROW_HEIGHT_IN_PX = 47;
 
 function FilesListViewer({
   files,
-  searchTerm,
   selectedFileUrl,
   canDelete,
   onFileClick,
@@ -149,49 +146,35 @@ function FilesListViewer({
     };
   });
 
-  const showSearchResultEmptyState = !!searchTerm && !files.length;
-
   return (
     <div className="FilesListViewer">
-      <div className="FilesListViewer-content">
-        <DimensionsProvider>
-          {({ containerHeight }) => {
-            const scrollY = containerHeight - HEADER_ROW_HEIGHT_IN_PX;
-            return (
-              <Table
-                style={{ width: '100%' }}
-                bordered={false}
-                pagination={false}
-                size="middle"
-                columns={columns}
-                dataSource={rows}
-                rowClassName={getRowClassName}
-                onRow={row => ({
-                  onClick: () => handleRowClick(row),
-                  onDoubleClick: () => handleRowDoubleClick(row)
-                })}
-                scroll={{ y: scrollY }}
-                />
-            );
-          }}
-        </DimensionsProvider>
-      </div>
-      {!!showSearchResultEmptyState && (
-        <div className="FilesGridViewer-emptyState">
-          <EmptyState
-            icon={<SearchOutlined />}
-            title={t('common:searchResultEmptyStateTitle', { text: searchTerm })}
-            subtitle={t('common:searchResultEmptyStateSubtitle')}
-            />
-        </div>
-      )}
+      <DimensionsProvider>
+        {({ containerHeight }) => {
+          const scrollY = containerHeight - HEADER_ROW_HEIGHT_IN_PX;
+          return (
+            <Table
+              style={{ width: '100%' }}
+              bordered={false}
+              pagination={false}
+              size="middle"
+              columns={columns}
+              dataSource={rows}
+              rowClassName={getRowClassName}
+              onRow={row => ({
+                onClick: () => handleRowClick(row),
+                onDoubleClick: () => handleRowDoubleClick(row)
+              })}
+              scroll={{ y: scrollY }}
+              />
+          );
+        }}
+      </DimensionsProvider>
     </div>
   );
 }
 
 FilesListViewer.propTypes = {
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
-  searchTerm: PropTypes.string,
   canDelete: PropTypes.bool,
   onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
@@ -201,7 +184,6 @@ FilesListViewer.propTypes = {
 };
 
 FilesListViewer.defaultProps = {
-  searchTerm: null,
   canDelete: false,
   onDeleteFileClick: () => {},
   onFileClick: () => {},

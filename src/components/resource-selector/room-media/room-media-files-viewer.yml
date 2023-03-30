@@ -8,9 +8,12 @@ roomMediaFilesViewer:
   uploadFiles:
     en: Upload files
     de: Dateien hochladen
-  emptyStateTitle:
+  noDataEmptyStateTitle:
     en: There are no files uploaded to this room
     de: There are no files uploaded to this room
-  emptyStateSubtitle:
+  noDataEmptyStateSubtitle:
     en: Drag and drop a files here to upload them or use the upload button to browse your file system
     de: Drag and drop a files here to upload them or use the upload button to browse your file system
+  noMatchingDataEmptyStateTitle:
+    en: No results matching your filter
+    de: No results matching your filter
