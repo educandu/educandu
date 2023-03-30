@@ -2,19 +2,22 @@ import PropTypes from 'prop-types';
 import Markdown from './markdown.js';
 import routes from '../utils/routes.js';
 import Restricted from './restricted.js';
+import EmptyState from './empty-state.js';
 import { useUser } from './user-context.js';
 import DeleteButton from './delete-button.js';
 import { Button, Collapse, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
-import React, { useState, useEffect } from 'react';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
+import WriteIcon from './icons/general/write-icon.js';
+import CommentIcon from './icons/general/comment-icon.js';
+import React, { useState, useEffect, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { documentCommentShape } from '../ui/default-prop-types.js';
 import { confirmDocumentCommentDelete } from './confirmation-dialogs.js';
-import { groupDocumentCommentsByTopic } from '../utils/document-comment-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import { groupDocumentCommentsByTopic } from '../utils/document-comment-utils.js';
 import { maxDocumentCommentTextLength, maxDocumentCommentTopicLength } from '../domain/validation-constants.js';
 
 const { Panel } = Collapse;
@@ -31,6 +34,7 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
   const [commentGroups, setCommentGroups] = useState({});
   const [expandedTopic, setExpandedTopic] = useState(null);
   const [currentComment, setCurrentComment] = useState('');
+  const [showEmptyState, setShowEmptyState] = useState(false);
   const [isSavingComment, setIsSavingComment] = useState(false);
   const [isRenamingTopic, setIsRenamingTopic] = useState(false);
   const [editedTopicNewText, setEditedTopicNewText] = useState('');
@@ -50,6 +54,7 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
         ? previousExpandedTopic
         : newCommentGroupKeys[0] || NEW_TOPIC_PANEL_KEY;
     });
+    setShowEmptyState(!documentComments.length);
   }, [documentComments, isLoading]);
 
   const handleCollapseChange = panelTopic => {
@@ -309,18 +314,36 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
 
   return (
     <div className="DocumentCommentsPanel">
-      <Collapse accordion onChange={handleCollapseChange} className="DocumentCommentsPanel" activeKey={expandedTopic}>
-        {topics.map(renderTopicPanel)}
-        {!!userCanWriteComments && !!shouldShowNewTopicPanel && renderNewTopicPanel()}
-      </Collapse>
-      {!!userCanWriteComments && !shouldShowNewTopicPanel && (
-        <Button
-          type="primary"
-          className="DocumentCommentsPanel-newTopicButton"
-          onClick={handleNewTopicButtonClick}
-          >
-          {t('addNewTopicButtonText')}
-        </Button>
+      {!isLoading && !!showEmptyState && (
+        <EmptyState
+          icon={<CommentIcon />}
+          title={t('emptyStateTitle')}
+          subtitle={t('emptyStateSubtitle')}
+          button={userCanWriteComments
+            ? {
+              icon: <WriteIcon />,
+              text: t('emptyStateButton'),
+              onClick: () => setShowEmptyState(false)
+            }
+            : null}
+          />
+      )}
+      {!isLoading && !showEmptyState && (
+        <Fragment>
+          <Collapse accordion onChange={handleCollapseChange} className="DocumentCommentsPanel" activeKey={expandedTopic}>
+            {topics.map(renderTopicPanel)}
+            {!!userCanWriteComments && !!shouldShowNewTopicPanel && renderNewTopicPanel()}
+          </Collapse>
+          {!!userCanWriteComments && !shouldShowNewTopicPanel && (
+            <Button
+              type="primary"
+              className="DocumentCommentsPanel-newTopicButton"
+              onClick={handleNewTopicButtonClick}
+              >
+              {t('addNewTopicButtonText')}
+            </Button>
+          )}
+        </Fragment>
       )}
     </div>
   );

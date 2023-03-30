@@ -16,12 +16,12 @@ import { useLoadingState } from '../../ui/hooks.js';
 import FileIcon from '../icons/general/file-icon.js';
 import RoomIcon from '../icons/general/room-icon.js';
 import { useDateFormat } from '../locale-context.js';
+import WriteIcon from '../icons/general/write-icon.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MessageIcon from '../icons/general/message-icon.js';
-import EditDocIcon from '../icons/general/edit-doc-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -577,7 +577,7 @@ export default function Room({ PageTemplate, initialState }) {
             subtitle={t('messageBoardEmptyStateSubtitle')}
             button={{
               text: t('writeMessage'),
-              icon: <EditDocIcon />,
+              icon: <WriteIcon />,
               onClick: () => setShowPostMessage(true)
             }}
             />
@@ -682,7 +682,7 @@ export default function Room({ PageTemplate, initialState }) {
                     <div className="Tabs-tabPane">
                       {!!showOverviewEmptyState && (
                         <EmptyState
-                          icon={<EditDocIcon />}
+                          icon={<WriteIcon />}
                           title={t('overviewEmptyStateTitle')}
                           subtitle={t('overviewEmptyStateSubtitle')}
                           />

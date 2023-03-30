@@ -19,7 +19,6 @@ import SectionsDisplay from '../sections-display.js';
 import { useBeforeunload } from 'react-beforeunload';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
-import EditDocIcon from '../icons/general/edit-doc-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
@@ -793,7 +792,7 @@ function Document({ initialState, PageTemplate }) {
                 onClick={handleDocumentCommentsOpen}
                 />
               <FloatButton
-                icon={<EditDocIcon />}
+                icon={<EditIcon />}
                 disabled={!userCanEdit || !userCanEditDocument}
                 tooltip={!userCanEdit || !userCanEditDocument ? editDocRestrictionTooltip : t('editDocument')}
                 onClick={handleEditOpen}

@@ -10,7 +10,7 @@ import CloseIcon from '../icons/general/close-icon.js';
 import { EVENT_TYPE } from '../../domain/constants.js';
 import CommentIcon from '../icons/general/comment-icon.js';
 import MessageIcon from '../icons/general/message-icon.js';
-import EditDocIcon from '../icons/general/edit-doc-icon.js';
+import WriteIconIcon from '../icons/general/write-icon.js';
 import { notificationGroupShape } from '../../ui/default-prop-types.js';
 
 function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGroup, onRemoveNotifications }) {
@@ -27,7 +27,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     const documentNotAvailable = !notificationGroup.eventParams.document;
 
     if (notificationGroup.eventType === EVENT_TYPE.documentRevisionCreated) {
-      icon = <EditDocIcon />;
+      icon = <WriteIconIcon />;
       title = documentNotAvailable ? t('common:documentNotAvailable') : notificationGroup.eventParams.document.title;
       href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
 

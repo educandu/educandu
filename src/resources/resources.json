@@ -740,6 +740,18 @@
     }
   },
   "documentCommentsPanel": {
+    "emptyStateTitle": {
+      "en": "This document has no comments",
+      "de": "Dieses Dokument hat keine Kommentare"
+    },
+    "emptyStateSubtitle": {
+      "en": "Through comments, users can collaborate towards improving the quality of the document content or can debate certain content aspects.",
+      "de": "Through comments, users can collaborate towards improving the quality of the document content or can debate certain content aspects."
+    },
+    "emptyStateButton": {
+      "en": "Write comment",
+      "de": "Kommentar schreiben"
+    },
     "newCommentPlaceholder": {
       "en": "Enter your comment here",
       "de": "Gib hier deinen Kommentar ein"
