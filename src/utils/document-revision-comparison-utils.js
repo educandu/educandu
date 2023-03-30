@@ -1,10 +1,13 @@
 import mdiffNs from 'mdiff';
 import unidiffNs from 'unidiff';
 import cloneDeep from './clone-deep.js';
+import Logger from '../common/logger.js';
 import { parseDiff, tokenize, markEdits } from 'react-diff-view';
 
 const mdiff = mdiffNs.default || mdiffNs;
 const unidiff = unidiffNs.default || unidiffNs;
+
+const logger = new Logger(import.meta.url);
 
 export const SECTION_CHANGE_TYPE = {
   unchanged: 'unchanged',
@@ -79,7 +82,8 @@ export function getInterleavedSectionsChanges(oldSectionKeys, newSectionKeys) {
       processedSectionKeys.add(oldSectionKey);
       indexInOldSections += 1;
     } else {
-      throw new Error('Unexpected case while creating section diff');
+      logger.fatal('Unexpected case while creating section diff', { oldSectionKeys, newSectionKeys, indexInOldSections, indexInNewSections });
+      return [];
     }
   }
 
