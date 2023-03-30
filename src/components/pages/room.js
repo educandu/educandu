@@ -575,7 +575,7 @@ export default function Room({ PageTemplate, initialState }) {
             icon={<MessageIcon />}
             title={t('messageBoardEmptyStateTitle')}
             subtitle={t('messageBoardEmptyStateSubtitle')}
-            action={{
+            button={{
               text: t('writeMessage'),
               icon: <EditDocIcon />,
               onClick: () => setShowPostMessage(true)
@@ -700,7 +700,7 @@ export default function Room({ PageTemplate, initialState }) {
                           icon={<FileIcon />}
                           title={t('documentsEmptyStateTitle')}
                           subtitle={t('documentsEmptyStateSubtitle')}
-                          action={{
+                          button={{
                             text: t('common:createDocument'),
                             icon: <PlusOutlined />,
                             onClick: () => handleNewDocumentClick(null)
@@ -721,7 +721,7 @@ export default function Room({ PageTemplate, initialState }) {
                           icon={roomMembersIcon}
                           title={membersEmptyStateTitle}
                           subtitle={t('membersEmptyStateSubtitle')}
-                          action={{
+                          button={{
                             text: inviteMemberButtonText,
                             icon: <MailOutlined />,
                             onClick: handleCreateInvitationButtonClick

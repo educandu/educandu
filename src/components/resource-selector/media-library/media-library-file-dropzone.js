@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import { Button, Divider } from 'antd';
 import React, { Fragment } from 'react';
 import reactDropzoneNs from 'react-dropzone';
+import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import { CloudUploadOutlined } from '@ant-design/icons';
-import ActionInvitation from '../shared/action-invitation.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { isEditableImageFile } from '../../../utils/storage-utils.js';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
@@ -57,14 +57,15 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop
                 </div>
               </Fragment>
             )}
-            <ActionInvitation
+            <EmptyState
               icon={<CloudUploadOutlined />}
-              title={file ? t('common:dropDifferentFileInvitation') : t('common:dropFileInvitation')}
-              subtitle={(
-                <Button onClick={handleUploadButtonClick}>
-                  {t('common:browseFilesButtonLabel')}
-                </Button>
-              )}
+              title={file ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
+              subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+              button={{
+                isDefaultType: true,
+                text: t('common:browseFilesButtonLabel'),
+                onClick: handleUploadButtonClick
+              }}
               />
           </div>
         </div>

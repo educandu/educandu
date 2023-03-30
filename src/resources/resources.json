@@ -945,6 +945,16 @@
       "de": "Die E-Mail-Adresse ist bereits vergeben"
     }
   },
+  "errorPage": {
+    "notFoundEmptyStateTitle": {
+      "en": "Page not found",
+      "de": "Seite nicht gefunden"
+    },
+    "notFoundEmptyStateSubtitle": {
+      "en": "Looks like the page you are looking for doesn't exist. Check that your URL is correct and try again, otherwise go back.",
+      "de": "Looks like the page you are looking for doesn't exist. Check that your URL is correct and try again, otherwise go back."
+    }
+  },
   "externalAccountProviderDialog": {
     "title": {
       "en": "Choose institution",
@@ -1930,9 +1940,9 @@
     }
   },
   "mediaLibrarySearchScreen": {
-    "searchInvitationHeader": {
-      "en": "Search in the media library",
-      "de": "Suche in der Medien-Bibliothek"
+    "emptyStateTitle": {
+      "en": "Search in media library",
+      "de": "In Medien-Bibliothek suchen"
     },
     "uploadFile": {
       "en": "Upload file",
@@ -1991,6 +2001,14 @@
     "uploadFiles": {
       "en": "Upload files",
       "de": "Dateien hochladen"
+    },
+    "emptyStateTitle": {
+      "en": "There are no files uploaded to this room",
+      "de": "There are no files uploaded to this room"
+    },
+    "emptyStateSubtitle": {
+      "en": "Drag and drop a files here to upload them or use the upload button to browse your file system",
+      "de": "Drag and drop a files here to upload them or use the upload button to browse your file system"
     }
   },
   "roomMediaUploadScreen": {
@@ -2070,9 +2088,9 @@
     }
   },
   "wikimediaSearchScreen": {
-    "searchInvitationHeader": {
-      "en": "Search in the Wikimedia database",
-      "de": "Suche in der Wikimedia-Datenbank"
+    "emptyStateTitle": {
+      "en": "Search Wikimedia Commons",
+      "de": "Wikimedia Commons suchen"
     }
   },
   "roomCard": {
@@ -2420,13 +2438,17 @@
       "en": "Generate waveform image",
       "de": "Wellenform-Bild erstellen"
     },
-    "dialogSearchFileInvitationHeader": {
-      "en": "Search for audio file in all libraries",
-      "de": "Audio-Datei in allen Bibliotheken suchen"
+    "searchAudioFileEmptyStateTitle": {
+      "en": "Search for audio file",
+      "de": "Audio-Datei suchen"
     },
-    "dialogDropFileInvitationHeader": {
-      "en": "Drag an audio file here",
-      "de": "Ziehe eine Audio-Datei hierher"
+    "searchAudioFileEmptyStateSubtitle": {
+      "en": "Find an audio file in one of the libraries",
+      "de": "Audio-Datei in Bibliotheken suchen"
+    },
+    "uploadAudioFileEmptyStateTitle": {
+      "en": "Upload audio file",
+      "de": "Audio-Datei hochladen"
     },
     "dialogRegenerateButton": {
       "en": "Use different audio file",
@@ -3748,9 +3770,13 @@
       "en": "Searching ...",
       "de": "Suche ..."
     },
-    "searchResultInfo": {
-      "en": "{\nresultCount, select,\n0 {No results found for: {searchTerm}}\nother {Found {resultCount, plural, =1 {# result} other {# results}} for: {searchTerm}}\n}\n",
-      "de": "{\nresultCount, select,\n0 {Keine Ergebnisse gefunden für: {searchTerm}}\nother {{resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden für: {searchTerm}}\n}\n"
+    "searchResultEmptyStateTitle": {
+      "en": "No results found for \"{text}\"\n",
+      "de": "Keine Ergebnisse gefunden für \"{searchTerm}\"\n"
+    },
+    "searchResultEmptyStateSubtitle": {
+      "en": "We couldn't find any media matching your text. Check that spelling is correct and try again, or search for something else.",
+      "de": "We couldn't find any media matching your text. Check that spelling is correct and try again, or search for something else."
     },
     "more": {
       "en": "more ...",
@@ -3852,21 +3878,29 @@
       "en": "Browse ...",
       "de": "Durchsuchen ..."
     },
+    "mediaUploadEmptyStateTitle": {
+      "en": "Upload a file",
+      "de": "Eine Datei hochladen"
+    },
+    "mediaUploadAlternativeTitle": {
+      "en": "Upload a different file",
+      "de": "Eine andere Datei hochladen"
+    },
+    "mediaUploadEmptyStateSubtitle": {
+      "en": "Drag and drop a file here to upload it or use the button to browse your file system",
+      "de": "Drag and drop a file here to upload it or use the button to browse your file system"
+    },
     "dropFileInvitation": {
       "en": "Drag a file here",
       "de": "Ziehe eine Datei hierher"
-    },
-    "dropDifferentFileInvitation": {
-      "en": "Drag a different file here",
-      "de": "Ziehe eine andere Datei hierher"
     },
     "useSearchToChangeFile": {
       "en": "Use the search above to select a different file.",
       "de": "Benutze die Suche oben, um eine andere Datei auszuwählen."
     },
-    "searchInvitationDescription": {
-      "en": "Enter your search term above",
-      "de": "Gib deinen Suchbegriff oben ein"
+    "mediaLibraryEmptyStateSubtitle": {
+      "en": "Enter your search term in the field above and choose what kind of media you're looking for, whether it's images, videos, etc.",
+      "de": "Enter your search term in the field above and choose what kind of media you're looking for, whether it's images, videos, etc."
     },
     "licenses": {
       "en": "Licenses",

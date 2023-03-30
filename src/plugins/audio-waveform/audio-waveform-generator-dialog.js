@@ -4,10 +4,11 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { cssUrl } from '../../utils/css-utils.js';
 import * as reactDropzoneNs from 'react-dropzone';
-import { Button, Divider, Form, Modal, Spin } from 'antd';
+import EmptyState from '../../components/empty-state.js';
 import HttpClient from '../../api-clients/http-client.js';
-import { handleApiError } from '../../ui/error-helper.js';
 import ColorPicker from '../../components/color-picker.js';
+import { handleApiError } from '../../ui/error-helper.js';
+import { Button, Divider, Form, Modal, Spin } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { useService } from '../../components/container-context.js';
@@ -17,7 +18,6 @@ import { IMAGE_OPTIMIZATION_THRESHOLD_WIDTH } from '../../domain/constants.js';
 import { createWaveformImageUrl, extractPeaks } from './audio-waveform-utils.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import ActionInvitation from '../../components/resource-selector/shared/action-invitation.js';
 import ResourceSelectorDialog from '../../components/resource-selector/resource-selector-dialog.js';
 import MediaLibraryMetadataForm from '../../components/resource-selector/media-library/media-library-metadata-form.js';
 import { DEFAULT_WAVEFORM_BACKGROUND_COLOR, DEFAULT_WAVEFORM_BASELINE_COLOR, DEFAULT_WAVEFORM_PEN_COLOR } from './constants.js';
@@ -170,26 +170,28 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
           <div {...getRootProps({ className: getDropzoneClasses(isDragActive) })}>
             <div className="AudioWaveformGeneratorDialog-dropzoneContent">
               <input {...getInputProps()} hidden />
-              <ActionInvitation
+              <EmptyState
                 icon={<SearchOutlined />}
-                title={t('dialogSearchFileInvitationHeader')}
-                subtitle={(
-                  <Button onClick={handleSearchAudioFileButtonClick}>
-                    {t('common:browseFilesButtonLabel')}
-                  </Button>
-                )}
+                title={t('searchAudioFileEmptyStateTitle')}
+                subtitle={t('searchAudioFileEmptyStateSubtitle')}
+                button={{
+                  isDefaultType: true,
+                  text: t('common:browseFilesButtonLabel'),
+                  onClick: handleSearchAudioFileButtonClick
+                }}
                 />
               <div className="AudioWaveformGeneratorDialog-dropzoneContentDivider">
                 <Divider plain>{t('common:or')}</Divider>
               </div>
-              <ActionInvitation
+              <EmptyState
                 icon={<CloudUploadOutlined />}
-                title={t('dialogDropFileInvitationHeader')}
-                subtitle={(
-                  <Button onClick={handleUploadAudioFileButtonClick}>
-                    {t('common:browseFilesButtonLabel')}
-                  </Button>
-                )}
+                title={t('uploadAudioFileEmptyStateTitle')}
+                subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+                button={{
+                  isDefaultType: true,
+                  text: t('common:browseFilesButtonLabel'),
+                  onClick: handleUploadAudioFileButtonClick
+                }}
                 />
             </div>
           </div>

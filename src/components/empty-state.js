@@ -2,14 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Result } from 'antd';
 
-function EmptyState({ icon, title, subtitle, action }) {
+function EmptyState({ icon, title, subtitle, button }) {
 
   const actions = [];
 
-  if (action) {
+  if (button) {
     actions.push((
-      <Button type="primary" key="action" icon={action.icon || null} onClick={event => action.onClick(event)}>
-        {action.text}
+      <Button
+        key="button"
+        type={button.isDefaultType ? 'default' : 'primary'}
+        icon={button.icon || null}
+        onClick={event => button.onClick(event)}
+        >
+        {button.text}
       </Button>
     ));
   }
@@ -27,18 +32,22 @@ function EmptyState({ icon, title, subtitle, action }) {
 }
 
 EmptyState.propTypes = {
-  icon: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired,
-  subtitle: PropTypes.string.isRequired,
-  action: PropTypes.shape({
-    text: PropTypes.string.isRequired,
+  icon: PropTypes.node,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  button: PropTypes.shape({
     icon: PropTypes.node,
+    text: PropTypes.string.isRequired,
+    isDefaultType: PropTypes.bool,
     onClick: PropTypes.func.isRequired
   })
 };
 
 EmptyState.defaultProps = {
-  action: null
+  icon: null,
+  title: null,
+  subtitle: null,
+  button: null
 };
 
 export default EmptyState;

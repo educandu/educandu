@@ -1,4 +1,4 @@
 wikimediaSearchScreen:
-  searchInvitationHeader:
-    en: Search in the Wikimedia database
-    de: Suche in der Wikimedia-Datenbank
+  emptyStateTitle:
+    en: Search Wikimedia Commons
+    de: Wikimedia Commons suchen

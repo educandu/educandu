@@ -458,19 +458,14 @@ common:
   searchOngoing:
     en: Searching ...
     de: Suche ...
-  searchResultInfo:
+  searchResultEmptyStateTitle:
     en: |
-      {
-      resultCount, select,
-      0 {No results found for: {searchTerm}}
-      other {Found {resultCount, plural, =1 {# result} other {# results}} for: {searchTerm}}
-      }
+      No results found for "{text}"
     de: |
-      {
-      resultCount, select,
-      0 {Keine Ergebnisse gefunden für: {searchTerm}}
-      other {{resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden für: {searchTerm}}
-      }
+      Keine Ergebnisse gefunden für "{searchTerm}"
+  searchResultEmptyStateSubtitle:
+    en: We couldn't find any media matching your text. Check that spelling is correct and try again, or search for something else.
+    de: We couldn't find any media matching your text. Check that spelling is correct and try again, or search for something else.
   more:
     en: more ...
     de: mehr ...
@@ -548,18 +543,24 @@ common:
   browseFilesButtonLabel:
     en: Browse ...
     de: Durchsuchen ...
+  mediaUploadEmptyStateTitle:
+    en: Upload a file
+    de: Eine Datei hochladen
+  mediaUploadAlternativeTitle:
+    en: Upload a different file
+    de: Eine andere Datei hochladen
+  mediaUploadEmptyStateSubtitle:
+    en: Drag and drop a file here to upload it or use the button to browse your file system
+    de: Drag and drop a file here to upload it or use the button to browse your file system
   dropFileInvitation:
     en: Drag a file here
     de: Ziehe eine Datei hierher
-  dropDifferentFileInvitation:
-    en: Drag a different file here
-    de: Ziehe eine andere Datei hierher
   useSearchToChangeFile:
     en: Use the search above to select a different file.
     de: Benutze die Suche oben, um eine andere Datei auszuwählen.
-  searchInvitationDescription:
-    en: Enter your search term above
-    de: Gib deinen Suchbegriff oben ein
+  mediaLibraryEmptyStateSubtitle:
+    en: Enter your search term in the field above and choose what kind of media you're looking for, whether it's images, videos, etc.
+    de: Enter your search term in the field above and choose what kind of media you're looking for, whether it's images, videos, etc.
   licenses:
     en: Licenses
     de: Lizenzen

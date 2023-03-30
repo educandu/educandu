@@ -2,14 +2,13 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Spin } from 'antd';
 import reactDropzoneNs from 'react-dropzone';
-import CustomAlert from '../../custom-alert.js';
+import EmptyState from '../../empty-state.js';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../../user-context.js';
-import { Trans, useTranslation } from 'react-i18next';
 import EditIcon from '../../icons/general/edit-icon.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
-import ActionInvitation from '../shared/action-invitation.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
 import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
@@ -99,20 +98,6 @@ function MediaLibrarySearchScreen({
     dropzoneRef.current.open();
   };
 
-  const renderSearchInfo = () => {
-    if (isLoading) {
-      return <CustomAlert message={t('common:searchOngoing')} />;
-    }
-
-    if (searchParams.searchTerm) {
-      const messageParams = { resultCount: files.length, searchTerm: searchParams.searchTerm };
-      const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} />;
-      return <CustomAlert message={message} />;
-    }
-
-    return null;
-  };
-
   const getFilesViewerClasses = isDragActive => classNames(
     'MediaLibrarySearchScreen-filesViewer',
     { 'is-dropping': isDragActive && !isLoading },
@@ -124,6 +109,8 @@ function MediaLibrarySearchScreen({
     { 'is-dropping': isDragActive && !isLoading },
     { 'is-drop-rejected': isDragActive && isLoading }
   );
+
+  const showEmptyState = !initialUrl;
 
   return (
     <div className={classNames('MediaLibrarySearchScreen', { 'is-hidden': isHidden })}>
@@ -141,6 +128,7 @@ function MediaLibrarySearchScreen({
                   <div className="MediaLibrarySearchScreen-filesViewerContent">
                     <FilesGridViewer
                       files={files}
+                      searchTerm={searchParams.searchTerm}
                       selectedFileUrl={highlightedFile?.portableUrl}
                       canEdit
                       canDelete={hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)}
@@ -159,10 +147,8 @@ function MediaLibrarySearchScreen({
                 </div>
               )}
             </ReactDropzone>
-
           </div>
         )}
-        {currentScreen === SCREEN.search && renderSearchInfo()}
 
         {currentScreen !== SCREEN.search && (
           <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFileDrop(fs[0])}>
@@ -172,7 +158,14 @@ function MediaLibrarySearchScreen({
                   option1={
                     <Fragment>
                       <input {...getInputProps()} hidden />
-                      {!!initialUrl && (
+                      {!!showEmptyState && (
+                        <EmptyState
+                          icon={<SearchOutlined />}
+                          title={t('emptyStateTitle')}
+                          subtitle={t('common:mediaLibraryEmptyStateSubtitle')}
+                          />
+                      )}
+                      {!showEmptyState && (
                         <SelectedResourceDisplay
                           urlOrFile={initialUrl}
                           actions={!!initialMediaLibraryItem && (
@@ -188,24 +181,18 @@ function MediaLibrarySearchScreen({
                           footer={t('common:useSearchToChangeFile')}
                           />
                       )}
-                      {!initialUrl && (
-                        <ActionInvitation
-                          icon={<SearchOutlined />}
-                          title={t('searchInvitationHeader')}
-                          subtitle={t('common:searchInvitationDescription')}
-                          />
-                      )}
                     </Fragment>
                   }
                   option2={
-                    <ActionInvitation
+                    <EmptyState
                       icon={<CloudUploadOutlined />}
-                      title={initialUrl ? t('common:dropDifferentFileInvitation') : t('common:dropFileInvitation')}
-                      subtitle={(
-                        <Button onClick={handleUploadButtonClick}>
-                          {t('common:browseFilesButtonLabel')}
-                        </Button>
-                      )}
+                      title={initialUrl ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
+                      subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+                      button={{
+                        isDefaultType: true,
+                        text: t('common:browseFilesButtonLabel'),
+                        onClick: handleUploadButtonClick
+                      }}
                       />
                   }
                   />

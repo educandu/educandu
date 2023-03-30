@@ -93,7 +93,7 @@ function RoomsTab({ rooms, invitations, loading }) {
               icon={<RoomCreatedIcon />}
               title={t('ownedRoomsEmptyStateTitle')}
               subtitle={t('ownedRoomsEmptyStateSubtitle')}
-              action={{
+              button={{
                 text: t('common:createRoom'),
                 icon: <PlusOutlined />,
                 onClick: handleCreateRoomClick

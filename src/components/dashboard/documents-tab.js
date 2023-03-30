@@ -109,7 +109,7 @@ function DocumentsTab({ documents, loading }) {
             icon={<FileIcon />}
             title={t('emptyStateTitle')}
             subtitle={t('emptyStateSubtitle')}
-            action={{
+            button={{
               text: t('common:createDocument'),
               icon: <PlusOutlined />,
               onClick: handleCreateDocumentClick

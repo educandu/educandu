@@ -1,11 +1,10 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import CustomAlert from '../../custom-alert.js';
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
+import EmptyState from '../../empty-state.js';
+import { useTranslation } from 'react-i18next';
 import { SearchOutlined } from '@ant-design/icons';
-import { Trans, useTranslation } from 'react-i18next';
-import ActionInvitation from '../shared/action-invitation.js';
 import WikimediaFilesViewer from './wikimedia-files-viewer.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
 import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
@@ -68,55 +67,41 @@ function WikimediaSearchScreen({
     }
   };
 
-  const renderSearchInfo = () => {
-    if (isLoading) {
-      return <CustomAlert message={t('common:searchOngoing')} />;
-    }
-
-    if (searchParams.searchTerm) {
-      const messageParams = { resultCount: files.length, searchTerm: searchParams.searchTerm };
-      const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} />;
-      return <CustomAlert message={message} />;
-    }
-
-    return null;
-  };
+  const showEmptyState = !initialUrl;
 
   return (
     <div className={classNames('WikimediaSearchScreen', { 'is-hidden': isHidden })}>
       <div className="u-resource-selector-screen">
         <ResourceSearchBar isLoading={isLoading} initialSearchParams={searchParams} onSearch={handleSearch} />
         {currentScreen === SCREEN.search && (
-        <Fragment>
-          <div className="WikimediaSearchScreen-filesViewer">
-            <div className="WikimediaSearchScreen-filesViewerContent">
-              <WikimediaFilesViewer
-                files={files}
-                isLoading={isLoading}
-                onLoadMore={onLoadMore}
-                canLoadMore={canLoadMore}
-                onFileClick={onFileClick}
-                onFileDoubleClick={onFileDoubleClick}
-                selectedFileUrl={highlightedFile?.url}
-                onPreviewFileClick={onPreviewFileClick}
-                onOpenWikimediaPageClick={onOpenWikimediaPageClick}
-                />
-            </div>
+        <div className="WikimediaSearchScreen-filesViewer">
+          <div className="WikimediaSearchScreen-filesViewerContent">
+            <WikimediaFilesViewer
+              files={files}
+              isLoading={isLoading}
+              searchTerm={searchParams.searchTerm}
+              onLoadMore={onLoadMore}
+              canLoadMore={canLoadMore}
+              onFileClick={onFileClick}
+              onFileDoubleClick={onFileDoubleClick}
+              selectedFileUrl={highlightedFile?.url}
+              onPreviewFileClick={onPreviewFileClick}
+              onOpenWikimediaPageClick={onOpenWikimediaPageClick}
+              />
           </div>
-          {renderSearchInfo()}
-        </Fragment>
+        </div>
         )}
         {currentScreen !== SCREEN.search && (
         <div className="WikimediaSearchScreen-noSearch">
-          {!!initialUrl && (
-            <SelectedResourceDisplay urlOrFile={initialUrl} footer={t('common:useSearchToChangeFile')} />
-          )}
-          {!initialUrl && (
-            <ActionInvitation
+          {!!showEmptyState && (
+            <EmptyState
               icon={<SearchOutlined />}
-              title={t('searchInvitationHeader')}
-              subtitle={t('common:searchInvitationDescription')}
+              title={t('emptyStateTitle')}
+              subtitle={t('common:mediaLibraryEmptyStateSubtitle')}
               />
+          )}
+          {!showEmptyState && (
+            <SelectedResourceDisplay urlOrFile={initialUrl} footer={t('common:useSearchToChangeFile')} />
           )}
         </div>
         )}
