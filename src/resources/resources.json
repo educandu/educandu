@@ -535,10 +535,6 @@
     "favoriteDocuments": {
       "en": "Your favorite documents",
       "de": "Deine Lieblingsdokumente"
-    },
-    "sectionPlaceholder": {
-      "en": "None",
-      "de": "Keine"
     }
   },
   "notificationsTab": {

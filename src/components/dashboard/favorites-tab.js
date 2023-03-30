@@ -86,36 +86,50 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
       )}
       {!loading && !showEmptyState && (
         <Fragment>
-          <div className="FavoriteTab-headline">
-            {t('favoriteUsers')}
-            <div className="FavoriteTab-headlineCounter">
-              {`(${favoriteUsersStates.filter(item => item.isFavorite).length})`}
-            </div>
-          </div>
-          <section className="FavoritesTab-cards">
-            {favoriteUsersStates.map(renderFavoriteUserState)}
-            {!favoriteUsersStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
-          </section>
-          <div className="FavoriteTab-headline">
-            {t('favoriteRooms')}
-            <div className="FavoriteTab-headlineCounter">
-              {`(${favoriteRoomsStates.filter(item => item.isFavorite).length})`}
-            </div>
-          </div>
-          <section className="FavoritesTab-cards">
-            {favoriteRoomsStates.map(renderFavoriteRoomState)}
-            {!favoriteRoomsStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
-          </section>
-          <div className="FavoriteTab-headline">
-            {t('favoriteDocuments')}
-            <div className="FavoriteTab-headlineCounter">
-              {`(${favoriteDocumentsStates.filter(item => item.isFavorite).length})`}
-            </div>
-          </div>
-          <section className="FavoritesTab-cards">
-            {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
-            {!favoriteDocumentsStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
-          </section>
+          {!!favoriteUsersStates.length && (
+            <Fragment>
+              <div className="FavoriteTab-headline">
+                {t('favoriteUsers')}
+                <div className="FavoriteTab-headlineCounter">
+                  {`(${favoriteUsersStates.filter(item => item.isFavorite).length})`}
+                </div>
+              </div>
+              <section className="FavoritesTab-cards">
+                {favoriteUsersStates.map(renderFavoriteUserState)}
+                {!favoriteUsersStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
+              </section>
+            </Fragment>
+          )}
+
+          {!!favoriteRoomsStates.length && (
+            <Fragment>
+              <div className="FavoriteTab-headline">
+                {t('favoriteRooms')}
+                <div className="FavoriteTab-headlineCounter">
+                  {`(${favoriteRoomsStates.filter(item => item.isFavorite).length})`}
+                </div>
+              </div>
+              <section className="FavoritesTab-cards">
+                {favoriteRoomsStates.map(renderFavoriteRoomState)}
+                {!favoriteRoomsStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
+              </section>
+            </Fragment>
+          )}
+
+          {!!favoriteDocumentsStates.length && (
+            <Fragment>
+              <div className="FavoriteTab-headline">
+                {t('favoriteDocuments')}
+                <div className="FavoriteTab-headlineCounter">
+                  {`(${favoriteDocumentsStates.filter(item => item.isFavorite).length})`}
+                </div>
+              </div>
+              <section className="FavoritesTab-cards">
+                {favoriteDocumentsStates.map(renderFavoriteDocumentState)}
+                {!favoriteDocumentsStates.length && <div className="FavoritesTab-noContent">{t('sectionPlaceholder')}</div>}
+              </section>
+            </Fragment>
+          )}
         </Fragment>
       )}
     </div>
