@@ -34,10 +34,10 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
   const [commentGroups, setCommentGroups] = useState({});
   const [expandedTopic, setExpandedTopic] = useState(null);
   const [currentComment, setCurrentComment] = useState('');
-  const [showEmptyState, setShowEmptyState] = useState(false);
   const [isSavingComment, setIsSavingComment] = useState(false);
   const [isRenamingTopic, setIsRenamingTopic] = useState(false);
   const [editedTopicNewText, setEditedTopicNewText] = useState('');
+  const [showEmptyState, setShowEmptyState] = useState(!documentComments.length);
 
   useEffect(() => {
     if (isLoading) {

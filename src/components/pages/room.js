@@ -89,6 +89,10 @@ function getSortedDocuments(room, documents) {
     .filter(doc => doc);
 }
 
+function getShowMessageBoardEmptyState(viewMode, room) {
+  return viewMode === VIEW_MODE.owner && !room.messages.length;
+}
+
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const contentFormRef = useRef(null);
@@ -101,7 +105,6 @@ export default function Room({ PageTemplate, initialState }) {
 
   const [room, setRoom] = useState(initialState.room);
   const [newMessageText, setNewMessageText] = useState('');
-  const [showPostMessage, setShowPostMessage] = useState(false);
   const [isPostingNewMessage, setIsPostingNewMessage] = useLoadingState(false);
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
   const [newMessageEmailNotification, setNewMessageEmailNotification] = useState(false);
@@ -123,10 +126,15 @@ export default function Room({ PageTemplate, initialState }) {
 
   const showDraftDocuments = useMemo(() => viewMode === VIEW_MODE.owner, [viewMode]);
   const visibleDocumentsCount = useMemo(() => documents.filter(doc => showDraftDocuments || !doc.roomContext.draft).length, [showDraftDocuments, documents]);
+  const [showMessageBoardEmptyState, setShowMessageBoardEmptyState] = useState(getShowMessageBoardEmptyState(viewMode, room));
 
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
   }, [room._id, room.slug]);
+
+  useEffect(() => {
+    setShowMessageBoardEmptyState(getShowMessageBoardEmptyState(viewMode, room));
+  }, [viewMode, room]);
 
   const handleCreateInvitationButtonClick = event => {
     setIsRoomInvitationModalOpen(true);
@@ -565,8 +573,6 @@ export default function Room({ PageTemplate, initialState }) {
       return null;
     }
 
-    const showMessageBoardEmptyState = viewMode === VIEW_MODE.owner && !room.messages.length && !showPostMessage;
-
     return (
       <section className="RoomPage-messageBoard">
         <div className="RoomPage-sectionHeadline">{t('messageBoardSectionHeadline')}</div>
@@ -578,7 +584,7 @@ export default function Room({ PageTemplate, initialState }) {
             button={{
               text: t('writeMessage'),
               icon: <WriteIcon />,
-              onClick: () => setShowPostMessage(true)
+              onClick: () => setShowMessageBoardEmptyState(false)
             }}
             />
         )}
