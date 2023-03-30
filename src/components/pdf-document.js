@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
-import { Empty, Result, Spin } from 'antd';
+import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { pdfjs, Document, Page } from 'react-pdf';
 import DimensionsProvider from './dimensions-provider.js';
 import React, { useEffect, useRef, useState } from 'react';
+import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/api/v1/pdfjs-dist/build/pdf.worker.min.js';
 
@@ -52,18 +53,16 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
 
   const renderNoDataComponent = () => {
     releaseViewerStyle();
-    return (
-      <Empty description={t('noDocument')} />
-    );
+    return null;
   };
 
   const renderDocumentErrorComponent = () => {
     releaseViewerStyle();
     return (
-      <Result
-        status="warning"
+      <EmptyState
         title={t('common:error')}
-        subTitle={t('errorRenderingDocument')}
+        status={EMPTY_STATE_STATUS.error}
+        subtitle={t('errorRenderingDocument')}
         />
     );
   };
@@ -71,10 +70,10 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
   const renderPageErrorComponent = () => {
     releaseViewerStyle();
     return (
-      <Result
-        status="warning"
+      <EmptyState
         title={t('common:error')}
-        subTitle={t('errorRenderingPage')}
+        status={EMPTY_STATE_STATUS.warning}
+        subtitle={t('errorRenderingPage')}
         />
     );
   };

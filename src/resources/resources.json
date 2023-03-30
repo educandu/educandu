@@ -1220,9 +1220,9 @@
     }
   },
   "multitrackMediaPlayer": {
-    "missingSourcesMessage": {
-      "en": "Cannot play because of missing media sources",
-      "de": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
+    "emptyStateSubtitle": {
+      "en": "Media can not be played because not all track sources are provided.",
+      "de": "Media can not be played because not all track sources are provided."
     }
   },
   "timecodeFineTunningInput": {
@@ -2181,6 +2181,16 @@
       "de": "Suchbegriffe"
     }
   },
+  "sectionDisplay": {
+    "notSupportedSectionEmptyStateTitle": {
+      "en": "This content is not supported",
+      "de": "Dieser Inhalt wird nicht unterstützt"
+    },
+    "notSupportedSectionEmptyStateSubtitle": {
+      "en": "This plugin can not be displayed because it is of an unknown or an unsupported type",
+      "de": "This plugin can not be displayed because it is of an unknown or an unsupported type"
+    }
+  },
   "sectionsDisplay": {
     "emptyStateTitle": {
       "en": "This document is empty",
@@ -2682,9 +2692,13 @@
       "en": "Please use the selection rectangle to specify the displayed area",
       "de": "Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen"
     },
-    "imageLoadingErrorMessage": {
+    "loadingErrorEmptyStateTitle": {
       "en": "The image could not be loaded",
       "de": "Das Bild konnte nicht geladen werden"
+    },
+    "loadingErrorEmptyStateSubtitle": {
+      "en": "Check that all URLs provided are correct",
+      "de": "Check that all URLs provided are correct"
     }
   },
   "interactiveMedia": {
@@ -4001,6 +4015,14 @@
     "accountClosed": {
       "en": "[This user account was closed]\n",
       "de": "[Dieses Benutzerkonto wurde geschlossen]\n"
+    },
+    "cannotPlayMediaEmptyStateTitle": {
+      "en": "Cannot play media",
+      "de": "Wiedergabe nicht möglich"
+    },
+    "cannotPlayMediaEmptyStateSubtitle": {
+      "en": "Media can not be played because the source is not provided.",
+      "ede": "Media can not be played because the source is not provided."
     }
   },
   "pageNames": {

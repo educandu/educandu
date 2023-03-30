@@ -1,11 +1,11 @@
 import { Button, Radio, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
-import React, { useMemo, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import IterationPanel from '../../components/iteration-panel.js';
+import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -37,6 +37,7 @@ function InteractiveMediaDisplay({ content }) {
   })), [chapters]);
 
   const sourceUrl = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const canRenderMediaPlayer = !!sourceUrl;
 
   const handleMediaReady = () => {
     setIsMediaReady(true);
@@ -136,48 +137,50 @@ function InteractiveMediaDisplay({ content }) {
   return (
     <div className="InteractiveMediaDisplay">
       <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
-        <MediaPlayer
-          aspectRatio={aspectRatio}
-          canDownload={canDownload}
-          customScreenOverlay={renderInteractionOverlay()}
-          initialVolume={initialVolume}
-          mediaPlayerRef={mediaPlayerRef}
-          parts={playerParts}
-          playbackRange={playbackRange}
-          posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-          sourceUrl={sourceUrl}
-          onPartEndReached={handlePartEndReached}
-          onPlayingPartIndexChange={setCurrentChapterIndex}
-          onReady={handleMediaReady}
-          onSeek={handleSeek}
-          />
-        {!!sourceUrl && (
-          <div className="InteractiveMediaDisplay-progressBar">
-            <div className="InteractiveMediaDisplay-progressBarCards">
-              <div>
-                {t('currentProgress')}:
+        {!!canRenderMediaPlayer && (
+          <Fragment>
+            <MediaPlayer
+              aspectRatio={aspectRatio}
+              canDownload={canDownload}
+              customScreenOverlay={renderInteractionOverlay()}
+              initialVolume={initialVolume}
+              mediaPlayerRef={mediaPlayerRef}
+              parts={playerParts}
+              playbackRange={playbackRange}
+              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+              sourceUrl={sourceUrl}
+              onPartEndReached={handlePartEndReached}
+              onPlayingPartIndexChange={setCurrentChapterIndex}
+              onReady={handleMediaReady}
+              onSeek={handleSeek}
+              />
+            <div className="InteractiveMediaDisplay-progressBar">
+              <div className="InteractiveMediaDisplay-progressBarCards">
+                <div>
+                  {t('currentProgress')}:
+                </div>
+                <CardSelector
+                  cards={chapterCards}
+                  selectedCardIndex={currentChapterIndex}
+                  visitedCardIndices={visitedChapters}
+                  onCardSelected={handleGotoChapterClick}
+                  disabled={!isMediaReady}
+                  />
               </div>
-              <CardSelector
-                cards={chapterCards}
-                selectedCardIndex={currentChapterIndex}
-                visitedCardIndices={visitedChapters}
-                onCardSelected={handleGotoChapterClick}
+              <IterationPanel
+                itemCount={chapters.length}
+                selectedItemIndex={currentChapterIndex}
+                onPreviousClick={handleReplayChapterClick}
+                onResetClick={handleResetChaptersClick}
+                onNextClick={handleNextChapterClick}
                 disabled={!isMediaReady}
+                alwaysAllowPreviousClick
                 />
             </div>
-            <IterationPanel
-              itemCount={chapters.length}
-              selectedItemIndex={currentChapterIndex}
-              onPreviousClick={handleReplayChapterClick}
-              onResetClick={handleResetChaptersClick}
-              onNextClick={handleNextChapterClick}
-              disabled={!isMediaReady}
-              alwaysAllowPreviousClick
-              />
-          </div>
+            <CopyrightNotice value={copyrightNotice} />
+          </Fragment>
         )}
-        <CopyrightNotice value={copyrightNotice} />
       </div>
     </div>
   );

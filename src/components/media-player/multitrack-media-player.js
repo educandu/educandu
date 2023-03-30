@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import TrackMixerDisplay from './track-mixer-display.js';
 import MediaPlayerControls from './media-player-controls.js';
+import EmptyState, { EMPTY_STATE_STATUS } from '../empty-state.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
@@ -242,7 +243,11 @@ function MultitrackMediaPlayer({
   if (!allSourcesAreSet) {
     return (
       <div className="MultitrackMediaPlayer">
-        <div className="MultitrackMediaPlayer-errorMessage">{t('missingSourcesMessage')}</div>
+        <EmptyState
+          title={t('common:cannotPlayMediaEmptyStateTitle')}
+          subtitle={t('emptyStateSubtitle')}
+          status={EMPTY_STATE_STATUS.error}
+          />
       </div>
     );
   }

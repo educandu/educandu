@@ -1,0 +1,7 @@
+sectionDisplay:
+    notSupportedSectionEmptyStateTitle:
+      en: This content is not supported
+      de: Dieser Inhalt wird nicht unterstützt
+    notSupportedSectionEmptyStateSubtitle:
+      en: This plugin can not be displayed because it is of an unknown or an unsupported type
+      de: This plugin can not be displayed because it is of an unknown or an unsupported type

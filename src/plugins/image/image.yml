@@ -38,6 +38,9 @@ image:
   clipEffectHint:
     en: Please use the selection rectangle to specify the displayed area
     de: Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen
-  imageLoadingErrorMessage:
+  loadingErrorEmptyStateTitle:
     en: The image could not be loaded
     de: Das Bild konnte nicht geladen werden
+  loadingErrorEmptyStateSubtitle:
+    en: Check that all URLs provided are correct
+    de: Check that all URLs provided are correct

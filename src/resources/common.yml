@@ -627,3 +627,9 @@ common:
       [This user account was closed]
     de: |
       [Dieses Benutzerkonto wurde geschlossen]
+  cannotPlayMediaEmptyStateTitle:
+    en: Cannot play media
+    de: Wiedergabe nicht möglich
+  cannotPlayMediaEmptyStateSubtitle:
+    en: Media can not be played because the source is not provided.
+    ede: Media can not be played because the source is not provided.

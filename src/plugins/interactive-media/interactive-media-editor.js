@@ -19,6 +19,7 @@ import MediaPlayer from '../../components/media-player/media-player.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import EmptyState, { EMPTY_STATE_STATUS } from '../../components/empty-state.js';
 import { formatMediaPosition, shouldDisableVideo } from '../../utils/media-utils.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
@@ -42,6 +43,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
+  const canRenderMediaPlayer = !!sourceUrl;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
   const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
@@ -238,17 +240,26 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <ItemPanel header={t('common:segments')}>
           <div className="InteractiveMediaEditor-playerPreview">
             <div className="InteractiveMediaEditor-playerPreviewLabel">{t('common:preview')}</div>
-            <MediaPlayer
-              allowPartClick
-              aspectRatio={aspectRatio}
-              parts={playerParts}
-              playbackRange={playbackRange}
-              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-              screenWidth={50}
-              screenMode={!disableVideo && showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-              sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-              volume={initialVolume}
-              />
+            {!canRenderMediaPlayer && (
+              <EmptyState
+                title={t('common:cannotPlayMediaEmptyStateTitle')}
+                subtitle={t('common:cannotPlayMediaEmptyStateSubtitle')}
+                status={EMPTY_STATE_STATUS.error}
+                />
+            )}
+            {!!canRenderMediaPlayer && (
+              <MediaPlayer
+                allowPartClick
+                aspectRatio={aspectRatio}
+                parts={playerParts}
+                playbackRange={playbackRange}
+                posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+                screenWidth={50}
+                screenMode={!disableVideo && showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+                sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+                volume={initialVolume}
+                />
+            )}
           </div>
 
           <Timeline

@@ -1,4 +1,4 @@
 multitrackMediaPlayer:
-  missingSourcesMessage:
-    en: Cannot play because of missing media sources
-    de: Wiedergabe aufgrund fehlender Medienquellen nicht möglich
+  emptyStateSubtitle:
+    en: Media can not be played because not all track sources are provided.
+    de: Media can not be played because not all track sources are provided.
