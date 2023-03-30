@@ -56,7 +56,7 @@ import {
 import {
   canEditDocument,
   findCurrentlyWorkedOnSectionKey,
-  getDocumentRevisionHistoryVersionInfo,
+  getDocumentRevisionVersionInfo,
   getEditDocRestrictionTooltip,
   getFavoriteActionTooltip,
   tryBringSectionIntoView
@@ -538,7 +538,7 @@ function Document({ initialState, PageTemplate }) {
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
     const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
-    const versionInfo = getDocumentRevisionHistoryVersionInfo(historyDocumentRevisions, documentRevisionToView._id);
+    const versionInfo = getDocumentRevisionVersionInfo(historyDocumentRevisions, documentRevisionToView._id);
 
     setHistorySelectedDocumentRevision(documentRevisionToView);
     setFocusHeaderHistoryInfo(versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version }));

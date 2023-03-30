@@ -1,13 +1,13 @@
-import by from 'thenby';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { useState } from 'react';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import { useTranslation } from 'react-i18next';
+import React, { useMemo, useState } from 'react';
 import { useDateFormat } from './locale-context.js';
 import { documentRevisionShape } from '../ui/default-prop-types.js';
 import { Button, Collapse, message, Timeline, Tooltip } from 'antd';
+import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import { EyeOutlined, PaperClipOutlined, SwapOutlined, UndoOutlined } from '@ant-design/icons';
 
@@ -19,13 +19,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
   const { t } = useTranslation('documentVersionHistory');
   const [idsOfExpandedDocumentRevisions, setIdsOfExpandedDocumentRevisions] = useState([]);
 
-  const mappedDocumentRevisions = documentRevisions
-    .sort(by(r => r.order, 'desc'))
-    .map((documentRevision, index) => ({
-      ...documentRevision,
-      version: documentRevisions.length - index,
-      isLatestVersion: index === 0
-    }));
+  const versionedDocumentRevisions = useMemo(() => getVersionedDocumentRevisions(documentRevisions, t), [documentRevisions, t]);
 
   const handleCollapseChange = (documentRevisionId, isOpen) => {
     if (isOpen) {
@@ -56,7 +50,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
     const url = routes.getDocumentRevisionComparisonUrl({
       documentId: documentRevision.documentId,
       oldId: documentRevision._id,
-      newId: mappedDocumentRevisions[0]._id
+      newId: versionedDocumentRevisions[0]._id
     });
 
     window.open(url, '_blank');
@@ -83,14 +77,12 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
   };
 
   const renderTimelineItemHeader = documentRevision => {
-    const latestVersionText = documentRevision.isLatestVersion ? ` (${t('common:latest')})` : '';
-    const versionText = `${t('common:version')} ${documentRevision.version}${latestVersionText}`;
     const isOpenPanel = idsOfExpandedDocumentRevisions.includes(documentRevision._id);
 
     return (
       <span className="DocumentVersionHistory-itemHeader">
         <div className={classNames('DocumentVersionHistory-itemHeaderText', { 'is-open-panel': isOpenPanel })}>
-          {versionText}
+          {documentRevision.versionText}
         </div>
         <div className="DocumentVersionHistory-itemHeaderSubtext">
           {formatDate(documentRevision.createdOn)}
@@ -187,7 +179,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
   return (
     <div className="DocumentVersionHistory">
       <Timeline mode="left">
-        {mappedDocumentRevisions.map(renderTimelineItem)}
+        {versionedDocumentRevisions.map(renderTimelineItem)}
       </Timeline>
     </div>
   );

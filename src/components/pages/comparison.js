@@ -1,4 +1,3 @@
-import by from 'thenby';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import DiffView from '../diff-view.js';
@@ -14,6 +13,7 @@ import PreviewIcon from '../icons/general/preview-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { documentRevisionShape } from '../../ui/default-prop-types.js';
+import { getVersionedDocumentRevisions } from '../../utils/document-utils.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import { createDocumentRevisionComparison, SECTION_CHANGE_TYPE } from '../../utils/document-revision-comparison-utils.js';
 
@@ -55,19 +55,7 @@ function Comparison({ initialState, PageTemplate }) {
   const [newRevisionId, setNewRevisionId] = useState(request.query.newId);
   const [displayModesByMappedRevisionKey, setDisplayModesByMappedRevisionKey] = useState({});
 
-  const mappedRevisions = useMemo(() => [...revisions.sort(by(x => x.order, 'desc'))].map((revision, index) => {
-    const isLatestVersion = index === 0;
-    const version = revisions.length - index;
-    const latestVersionText = isLatestVersion ? ` (${t('common:latest')})` : '';
-    const versionText = `${t('common:version')} ${version}${latestVersionText}`;
-
-    return {
-      ...revision,
-      version,
-      versionText,
-      isLatestVersion
-    };
-  }), [revisions, t]);
+  const versionedRevisions = useMemo(() => getVersionedDocumentRevisions(revisions, t), [revisions, t]);
 
   useEffect(() => {
     const oldRevision = revisions.find(rev => rev._id === oldRevisionId);
@@ -277,14 +265,14 @@ function Comparison({ initialState, PageTemplate }) {
         <h1>{t('pageNames:comparison')}</h1>
         <div className="ComparisonPage-versionSelectors">
           <Select value={oldRevisionId} onChange={setOldRevisionId} optionLabelProp="title">
-            {mappedRevisions.map(revision => (
+            {versionedRevisions.map(revision => (
               <Option key={revision._id} value={revision._id} title={revision.versionText}>
                 {renderSelectOption(revision)}
               </Option>
             ))}
           </Select>
           <Select value={newRevisionId} onChange={setNewRevisionId} optionLabelProp="title">
-            {mappedRevisions.map(revision => (
+            {versionedRevisions.map(revision => (
               <Option key={revision._id} value={revision._id} title={revision.versionText}>
                 {renderSelectOption(revision)}
               </Option>
