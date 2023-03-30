@@ -5,20 +5,21 @@ import reactDropzoneNs from 'react-dropzone';
 import CustomAlert from '../../custom-alert.js';
 import { useUser } from '../../user-context.js';
 import { Trans, useTranslation } from 'react-i18next';
+import EditIcon from '../../icons/general/edit-icon.js';
 import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
 import ActionInvitation from '../shared/action-invitation.js';
+import PreviewIcon from '../../icons/general/preview-icon.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
 import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
-import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
+import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -55,15 +56,15 @@ function MediaLibrarySearchScreen({
   const [initialMediaLibraryItem, setInitialMediaLibraryItem] = useState(null);
 
   useEffect(() => {
-    if (!initialUrl) {
-      return;
-    }
+    const shouldReFetchInitialItem = initialUrl && !highlightedFile;
 
-    (async () => {
-      const item = await mediaLibraryApiClient.findMediaLibraryItem({ url: initialUrl });
-      setInitialMediaLibraryItem(item);
-    })();
-  }, [initialUrl, mediaLibraryApiClient]);
+    if (shouldReFetchInitialItem) {
+      (async () => {
+        const item = await mediaLibraryApiClient.findMediaLibraryItem({ url: initialUrl });
+        setInitialMediaLibraryItem(item);
+      })();
+    }
+  }, [initialUrl, mediaLibraryApiClient, highlightedFile]);
 
   let currentScreen;
   let canSelectUrl;
@@ -174,8 +175,15 @@ function MediaLibrarySearchScreen({
                       {!!initialUrl && (
                         <SelectedResourceDisplay
                           urlOrFile={initialUrl}
-                          metadata={!!initialMediaLibraryItem && (
-                            <MediaLibraryMetadataDisplay mediaLibraryItem={initialMediaLibraryItem} />
+                          actions={!!initialMediaLibraryItem && (
+                            <Fragment>
+                              <Button icon={<PreviewIcon />} onClick={() => onPreviewFileClick(initialMediaLibraryItem)}>
+                                {t('common:preview')}
+                              </Button>
+                              <Button icon={<EditIcon />} onClick={() => onEditFileClick(initialMediaLibraryItem)}>
+                                {t('common:edit')}
+                              </Button>
+                            </Fragment>
                           )}
                           footer={t('common:useSearchToChangeFile')}
                           />
@@ -221,7 +229,7 @@ function MediaLibrarySearchScreen({
 
 MediaLibrarySearchScreen.propTypes = {
   files: PropTypes.arrayOf(mediaLibraryItemWithRelevanceShape).isRequired,
-  highlightedFile: mediaLibraryItemWithRelevanceShape,
+  highlightedFile: mediaLibraryItemShape,
   initialUrl: PropTypes.string,
   isHidden: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
