@@ -666,9 +666,22 @@ export default function Room({ PageTemplate, initialState }) {
           {viewMode !== VIEW_MODE.owner && (
             <div className="RoomPage-documents RoomPage-documents--roomMemberView">
               {renderRoomOverview()}
-              <div className="RoomPage-sectionHeadline">{t('messageBoardSectionHeadline')}</div>
-              {viewMode === VIEW_MODE.collaboratingMember && renderCreateDocumentButton()}
-              {!visibleDocumentsCount && t('documentsPlaceholder')}
+              {(viewMode === VIEW_MODE.collaboratingMember || (viewMode === VIEW_MODE.nonCollaboratingMember && !!visibleDocumentsCount)) && (
+                <div className="RoomPage-sectionHeadline">{t('documentsSectionHeadline')}</div>
+              )}
+              {viewMode === VIEW_MODE.collaboratingMember && !!visibleDocumentsCount && renderCreateDocumentButton()}
+              {viewMode === VIEW_MODE.collaboratingMember && !visibleDocumentsCount && (
+                <EmptyState
+                  icon={<FileIcon />}
+                  title={t('documentsEmptyStateTitle')}
+                  subtitle={t('documentsEmptyStateSubtitle')}
+                  button={{
+                    text: t('common:createDocument'),
+                    icon: <PlusOutlined />,
+                    onClick: () => handleNewDocumentClick(null)
+                  }}
+                  />
+              )}
               {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
               {viewMode === VIEW_MODE.collaboratingMember && renderDocumentsAsDraggable()}
               {renderMessageBoard()}
