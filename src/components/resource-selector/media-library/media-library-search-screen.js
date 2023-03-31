@@ -6,17 +6,17 @@ import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../user-context.js';
 import EditIcon from '../../icons/general/edit-icon.js';
-import UploadIcon from '../../icons/general/upload-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
-import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
+import UploadButton, { UPLOAD_BUTTON_INTENT } from '../shared/upload-button.js';
+import { ORIENTATION, SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
 
@@ -192,7 +192,7 @@ function MediaLibrarySearchScreen({
                       subtitle={t('common:mediaUploadEmptyStateSubtitle')}
                       button={{
                         isDefaultType: true,
-                        text: t('common:browseFilesButtonLabel'),
+                        text: t('common:browse'),
                         onClick: handleUploadButtonClick
                       }}
                       />
@@ -204,7 +204,7 @@ function MediaLibrarySearchScreen({
         )}
         <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
           {currentScreen === SCREEN.search && (
-            <Button onClick={handleUploadButtonClick} icon={<UploadIcon />}>{t('uploadFile')}</Button>
+            <UploadButton intent={UPLOAD_BUTTON_INTENT.upload} orientation={ORIENTATION.horizontal} onClick={handleUploadButtonClick} />
           )}
           <div className="u-resource-selector-screen-footer-buttons">
             <Button onClick={onCancelClick}>{t('common:cancel')}</Button>

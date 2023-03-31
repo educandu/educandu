@@ -2,6 +2,10 @@
   display: grid;
   .m-dropzone;
 
+  &.MediaLibraryFileDropzone--warning {
+    border-color: @edu-error-color;
+  }
+
   &.is-dropping {
     .m-dropzone-active;
   }
@@ -24,4 +28,12 @@
 .MediaLibraryFileDropzone-divider {
   width: 100%;
   padding: @edu-content-padding;
+}
+
+.MediaLibraryFileDropzone-sizeWarning {
+  font-weight: bold;
+  display: inline-grid;
+  color: @edu-error-color;
+  gap: @edu-control-spacing-wide;
+  grid-template-columns: repeat(2, auto);
 }

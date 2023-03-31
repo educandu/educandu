@@ -1939,10 +1939,6 @@
     "emptyStateTitle": {
       "en": "Search in media library",
       "de": "In Medien-Bibliothek suchen"
-    },
-    "uploadFile": {
-      "en": "Upload file",
-      "de": "Datei hochladen"
     }
   },
   "mediaLibraryUploadScreen": {
@@ -3270,10 +3266,6 @@
       "en": "Create",
       "de": "Erstellen"
     },
-    "upload": {
-      "en": "Upload",
-      "de": "Hochladen"
-    },
     "moveUp": {
       "en": "Move up",
       "de": "Nach oben verschieben"
@@ -3902,10 +3894,6 @@
       "en": "Preview image URL",
       "de": "Vorschau-Bild-URL"
     },
-    "browseFilesButtonLabel": {
-      "en": "Browse ...",
-      "de": "Durchsuchen ..."
-    },
     "mediaUploadEmptyStateTitle": {
       "en": "Upload a file",
       "de": "Eine Datei hochladen"
@@ -3917,6 +3905,30 @@
     "mediaUploadEmptyStateSubtitle": {
       "en": "Drag and drop a file here to upload it or use the button to select a file from your machine.",
       "de": "Ziehe eine Datei hierher, um sie hochzuladen, oder benutze den Button, um eine Datei von deinem Computer auszuwählen."
+    },
+    "browse": {
+      "en": "Browse ...",
+      "de": "Durchsuchen ..."
+    },
+    "upload": {
+      "en": "Upload",
+      "de": "Hochladen"
+    },
+    "uploadLimitInfo": {
+      "en": "(max. {limit})",
+      "de": "(max. {limit})"
+    },
+    "fileIsTooBig": {
+      "en": "The file is too big. The upload limit is {limit}.",
+      "de": "Die Datei ist zu groß. Das Upload-Limit liegt bei {limit}."
+    },
+    "dropFileInvitation": {
+      "en": "Drag a file here",
+      "de": "Ziehe eine Datei hierher"
+    },
+    "dropDifferentFileInvitation": {
+      "en": "Drag a different file here",
+      "de": "Ziehe eine andere Datei hierher"
     },
     "useSearchToChangeFile": {
       "en": "Use the search above to select a different file.",
@@ -3989,10 +4001,6 @@
     "creator": {
       "en": "Creator",
       "de": "Ersteller"
-    },
-    "uploadFiles": {
-      "en": "Upload files",
-      "de": "Dateien hochladen"
     },
     "documentNotAvailable": {
       "en": "[Document no longer available]\n",

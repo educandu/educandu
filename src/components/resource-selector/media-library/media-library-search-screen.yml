@@ -2,6 +2,3 @@ mediaLibrarySearchScreen:
   emptyStateTitle:
     en: Search in media library
     de: In Medien-Bibliothek suchen
-  uploadFile:
-    en: Upload file
-    de: Datei hochladen

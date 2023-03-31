@@ -251,7 +251,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
           onChange={handleCurrentTableSortingChange}
           />
         <Button type="primary" onClick={handleCreateItemClick}>
-          {t('common:upload')}
+          {t('common:create')}
         </Button>
       </div>
       <Table

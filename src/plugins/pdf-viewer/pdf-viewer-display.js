@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import MiniPager from '../../components/mini-pager.js';
+import { ORIENTATION } from '../../domain/constants.js';
+import PdfDocument from '../../components/pdf-document.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from '../../components/pdf-document.js';
 
 function PdfViewerDisplay({ content }) {
   const { sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
@@ -31,7 +32,7 @@ function PdfViewerDisplay({ content }) {
         <PdfDocument
           file={fileObject}
           pageNumber={pageNumber}
-          stretchDirection={PDF_DOCUMENT_STRETCH_DIRECTION.horizontal}
+          stretchDirection={ORIENTATION.horizontal}
           showTextOverlay={showTextOverlay}
           onLoadSuccess={onDocumentLoadSuccess}
           />

@@ -177,7 +177,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
                 subtitle={t('searchAudioFileEmptyStateSubtitle')}
                 button={{
                   isDefaultType: true,
-                  text: t('common:browseFilesButtonLabel'),
+                  text: t('common:browse'),
                   onClick: handleSearchAudioFileButtonClick
                 }}
                 />
@@ -191,7 +191,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
                 subtitle={t('common:mediaUploadEmptyStateSubtitle')}
                 button={{
                   isDefaultType: true,
-                  text: t('common:browseFilesButtonLabel'),
+                  text: t('common:browse'),
                   onClick: handleUploadAudioFileButtonClick
                 }}
                 />
