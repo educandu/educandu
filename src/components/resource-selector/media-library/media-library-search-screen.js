@@ -5,20 +5,21 @@ import reactDropzoneNs from 'react-dropzone';
 import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../user-context.js';
+import UploadButton from '../shared/upload-button.js';
 import EditIcon from '../../icons/general/edit-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
-import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
-import UploadButton, { UPLOAD_BUTTON_INTENT } from '../shared/upload-button.js';
-import { ORIENTATION, SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
+import { SEARCH_RESOURCE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
+import prettyBytes from 'pretty-bytes';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -193,6 +194,7 @@ function MediaLibrarySearchScreen({
                       button={{
                         isDefaultType: true,
                         text: t('common:browse'),
+                        subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) }),
                         onClick: handleUploadButtonClick
                       }}
                       />
@@ -204,7 +206,7 @@ function MediaLibrarySearchScreen({
         )}
         <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
           {currentScreen === SCREEN.search && (
-            <UploadButton intent={UPLOAD_BUTTON_INTENT.upload} orientation={ORIENTATION.horizontal} onClick={handleUploadButtonClick} />
+            <UploadButton onClick={handleUploadButtonClick} />
           )}
           <div className="u-resource-selector-screen-footer-buttons">
             <Button onClick={onCancelClick}>{t('common:cancel')}</Button>

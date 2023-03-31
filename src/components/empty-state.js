@@ -26,6 +26,9 @@ function EmptyState({ icon, title, subtitle, button, compact, status }) {
         onClick={event => button.onClick(event)}
         >
         {button.text}
+        {!!button.subtext && (
+          <div className="EmptyState-buttonSubtext">{button.subtext}</div>
+        )}
       </Button>
     ));
   }
@@ -70,6 +73,7 @@ EmptyState.propTypes = {
   button: PropTypes.shape({
     icon: PropTypes.node,
     text: PropTypes.string.isRequired,
+    subtext: PropTypes.string,
     isDefaultType: PropTypes.bool,
     onClick: PropTypes.func.isRequired
   }),
