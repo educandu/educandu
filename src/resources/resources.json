@@ -698,7 +698,7 @@
     },
     "emptyStateSubtitle": {
       "en": "Private storage is a dedicated space to use in your rooms, for uploading files available exclusively to room members. To request a storage plan, please contact an administrator.",
-      "de": "Privater Speicher ist ein separater Bereich zur Nutzung in deinen Räumen, um Dateien hochzuladen, auf die ausschließlich von den Raummitgliedern zugegriffen werden kann. Um ein Speicherplan zu beantragen, wende dich bitte an einen Administrator."
+      "de": "Privater Speicher ist ein separater Bereich zur Nutzung in deinen Räumen, um Dateien hochzuladen, auf die ausschließlich von den Raummitgliedern zugegriffen werden kann. Um einen Speicherplan zu beantragen, wende dich bitte an einen Administrator."
     },
     "storagePlanName": {
       "en": "Your storage plan",
@@ -863,7 +863,7 @@
       "de": "Geschützte Dokumente können nur von einem Maintainer oder akkreditierten Benutzer bearbeitet werden."
     },
     "archivedInfo": {
-      "en": "Archived documents can not be edited and can not be discovered through search.",
+      "en": "Archived documents cannot be edited and cannot be discovered through search.",
       "de": "Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar."
     },
     "verifiedInfo": {
@@ -1626,7 +1626,7 @@
     },
     "overviewEmptyStateSubtitle": {
       "en": "Go to the room settings tab and write an overview text in order to provide members with the room context and purpose.",
-      "de": "Gehe zu den Raum-Einstestellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern."
+      "de": "Gehe zu den Raum-Einstellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern."
     },
     "documentsEmptyStateTitle": {
       "en": "There are no documents in this room",
@@ -1702,7 +1702,7 @@
     },
     "writeMessage": {
       "en": "Write message",
-      "de": "Nachricht schreibein"
+      "de": "Nachricht schreiben"
     },
     "postMessageButtonText": {
       "en": "Post message",
@@ -2173,7 +2173,7 @@
   },
   "sectionDisplay": {
     "notSupportedSectionEmptyStateTitle": {
-      "en": "This content can not be displayed",
+      "en": "This content cannot be displayed",
       "de": "Dieser Inhalt kann nicht angezeigt werden"
     },
     "notSupportedSectionEmptyStateSubtitle": {
