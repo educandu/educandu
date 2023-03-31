@@ -3,7 +3,7 @@ import iconNs from '@ant-design/icons';
 
 const Icon = iconNs.default || iconNs;
 
-export function EditDocIconComponent() {
+export function WriteIconComponent() {
   return (
     <svg width="1em" height="1em" viewBox="0 0 1000 1000" style={{ enableBackground: 'new 0 0 1000 1000' }} role="img" >
       <path style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 37.7953, strokeMiterlimit: 10, strokeDasharray: 'none', strokeOpacity: 1, strokeLinecap: 'round', strokeLinejoin: 'round' }} d="M163.723 867.68H20.632" />
@@ -14,10 +14,10 @@ export function EditDocIconComponent() {
   );
 }
 
-function EditDocIcon() {
+function WriteIcon() {
   return (
-    <Icon component={EditDocIconComponent} />
+    <Icon component={WriteIconComponent} />
   );
 }
 
-export default EditDocIcon;
+export default WriteIcon;

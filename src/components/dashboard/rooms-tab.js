@@ -2,48 +2,57 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import { Button, Spin } from 'antd';
 import RoomCard from '../room-card.js';
+import EmptyState from '../empty-state.js';
 import { useUser } from '../user-context.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import FilterIcon from '../icons/general/filter-icon.js';
 import RoomCreationModal from '../room-creation-modal.js';
+import React, { Fragment, useEffect, useState } from 'react';
+import RoomJoinedIcon from '../icons/user-activities/room-joined-icon.js';
+import RoomCreatedIcon from '../icons/user-activities/room-created-icon.js';
 
 function RoomsTab({ rooms, invitations, loading }) {
   const user = useUser();
   const { t } = useTranslation('roomsTab');
 
   const [filterText, setFilterText] = useState(null);
-  const [displayedOwnedRooms, setDisplayedOwnedRooms] = useState([]);
-  const [displayedInvitations, setDisplayedInvitations] = useState([]);
-  const [displayedMemberOfRooms, setDisplayedMemberOfRooms] = useState([]);
+  const [ownedRooms, setOwnedRooms] = useState([]);
+  const [memberOfRooms, setMemberOfRooms] = useState([]);
+  const [filteredOwnedRooms, setFilteredOwnedRooms] = useState([]);
+  const [filteredInvitations, setFilteredInvitations] = useState([]);
+  const [filteredMemberOfRooms, setFilteredMemberOfRooms] = useState([]);
   const [isRoomCreationModalOpen, setIsRoomCreationModalOpen] = useState(false);
 
   useEffect(() => {
     const lowerCasedFilter = (filterText || '').toLowerCase();
 
-    const ownedRooms = rooms
+    const newOwnedRooms = rooms
       .filter(room => room.owner._id === user._id)
       .sort(by(room => room.createdOn));
 
-    const filteredOwnedRooms = filterText
-      ? ownedRooms.filter(room => room.name.toLowerCase().includes(lowerCasedFilter))
-      : ownedRooms;
+    const newFilteredOwnedRooms = filterText
+      ? newOwnedRooms.filter(room => room.name.toLowerCase().includes(lowerCasedFilter))
+      : newOwnedRooms;
 
-    const memberOfRooms = rooms
+    const newMemberOfRooms = rooms
       .filter(room => room.owner._id !== user._id)
       .sort(by(room => room.members.find(member => member.userId === user._id).joinedOn));
 
-    const filteredMemberOfRooms = filterText
-      ? memberOfRooms.filter(room => room.name.toLowerCase().includes(lowerCasedFilter))
-      : memberOfRooms;
+    const newFilteredMemberOfRooms = filterText
+      ? newMemberOfRooms.filter(room => room.name.toLowerCase().includes(lowerCasedFilter))
+      : newMemberOfRooms;
 
-    const filteredInvitations = filterText
+    const newFilteredInvitations = filterText
       ? invitations.filter(invitation => invitation.room.name.toLowerCase().includes(lowerCasedFilter))
       : invitations;
 
-    setDisplayedOwnedRooms(filteredOwnedRooms);
-    setDisplayedMemberOfRooms(filteredMemberOfRooms);
-    setDisplayedInvitations(filteredInvitations);
+    setOwnedRooms(newOwnedRooms);
+    setMemberOfRooms(newMemberOfRooms);
+    setFilteredOwnedRooms(newFilteredOwnedRooms);
+    setFilteredMemberOfRooms(newFilteredMemberOfRooms);
+    setFilteredInvitations(newFilteredInvitations);
   }, [user, rooms, invitations, filterText]);
 
   const handleCreateRoomClick = () => {
@@ -59,34 +68,79 @@ function RoomsTab({ rooms, invitations, loading }) {
     setFilterText(value);
   };
 
+  const showOwnedRoomsEmptyState = !ownedRooms.length;
+  const showMemberRoomsEmptyState = !memberOfRooms.length && !invitations.length;
+
   return (
     <div className="RoomsTab">
-      <div className="RoomsTab-info">{t('info')}</div>
+      {!!loading && <Spin className="u-spin" />}
 
-      <Button className="RoomsTab-createRoomButton" type="primary" onClick={handleCreateRoomClick}>
-        {t('common:createRoom')}
-      </Button>
+      {!loading && (
+        <Fragment>
+          {!showOwnedRoomsEmptyState && (
+            <div className="RoomsTab-controls">
+              <div className="RoomsTab-filter">
+                <FilterInput value={filterText} onChange={handleFilterTextChange} />
+              </div>
+              <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateRoomClick}>
+                {t('common:createRoom')}
+              </Button>
+            </div>
+          )}
 
-      <div className="RoomsTab-filter">
-        <FilterInput value={filterText} onChange={handleFilterTextChange} disabled={!!loading || !rooms.length} />
-      </div>
+          <div className="RoomsTab-roomsGroupHeadline">{t('ownedRoomsHeadline')}</div>
+          {!!showOwnedRoomsEmptyState && (
+            <EmptyState
+              icon={<RoomCreatedIcon />}
+              title={t('ownedRoomsEmptyStateTitle')}
+              subtitle={t('ownedRoomsEmptyStateSubtitle')}
+              button={{
+                text: t('common:createRoom'),
+                icon: <PlusOutlined />,
+                onClick: handleCreateRoomClick
+              }}
+              />
+          )}
+          {!showOwnedRoomsEmptyState && (
+            <section className="RoomsTab-roomsGroup">
+              {filteredOwnedRooms.map(room => (<RoomCard key={room._id} room={room} />))}
+              {!filteredOwnedRooms.length && (
+                <div className="RoomsTab-roomsGroupFilterEmptyState">
+                  <EmptyState
+                    icon={<FilterIcon />}
+                    title={t('common:filterResultEmptyStateTitle')}
+                    subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+                    />
+                </div>
+              )}
+            </section>
+          )}
 
-      <div className="RoomsTab-roomsGroupHeadline">{t('ownedRoomsHeadline')}</div>
-      <section className="RoomsTab-roomsGroup">
-        {!!loading && <Spin className="u-spin" />}
-        {!loading && displayedOwnedRooms.map(room => (<RoomCard key={room._id} room={room} />))}
-        {!loading && !filterText && !displayedOwnedRooms.length && <div className="RoomsTab-noRoomsInGroup">{t('noOwnedRooms')}</div>}
-        {!loading && !!filterText && !displayedOwnedRooms.length && <div className="RoomsTab-noRoomsInGroup">{t('noMatchingRooms')}</div>}
-      </section>
-
-      <div className="RoomsTab-roomsGroupHeadline">{t('memberRoomsHeadline')}</div>
-      <section className="RoomsTab-roomsGroup">
-        {!!loading && <Spin className="u-spin" />}
-        {!loading && displayedMemberOfRooms.map(room => <RoomCard key={room._id} room={room} />)}
-        {!loading && displayedInvitations.map(invitation => <RoomCard key={invitation._id} roomInvitation={invitation} />)}
-        {!loading && !filterText && !displayedMemberOfRooms.length && !displayedInvitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMemberRooms')}</div>}
-        {!loading && !!filterText && !displayedMemberOfRooms.length && !displayedInvitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMatchingRooms')}</div>}
-      </section>
+          <div className="RoomsTab-roomsGroupHeadline">{t('memberRoomsHeadline')}</div>
+          {!!showMemberRoomsEmptyState && (
+            <EmptyState
+              icon={<RoomJoinedIcon />}
+              title={t('memberRoomsEmptyStateTitle')}
+              subtitle={t('memberRoomsEmptyStateSubtitle')}
+              />
+          )}
+          {!showMemberRoomsEmptyState && (
+            <section className="RoomsTab-roomsGroup">
+              {filteredMemberOfRooms.map(room => <RoomCard key={room._id} room={room} />)}
+              {filteredInvitations.map(invitation => <RoomCard key={invitation._id} roomInvitation={invitation} />)}
+              {!filteredMemberOfRooms.length && !filteredInvitations.length && (
+                <div className="RoomsTab-roomsGroupFilterEmptyState">
+                  <EmptyState
+                    icon={<FilterIcon />}
+                    title={t('common:filterResultEmptyStateTitle')}
+                    subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+                    />
+                </div>
+              )}
+            </section>
+          )}
+        </Fragment>
+      )}
 
       <RoomCreationModal isOpen={isRoomCreationModalOpen} onClose={handleRoomCreationModalClose} />
     </div>

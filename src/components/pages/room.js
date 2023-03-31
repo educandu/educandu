@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from '../markdown.js';
 import UserCard from '../user-card.js';
+import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -11,14 +12,18 @@ import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
-import { MailOutlined } from '@ant-design/icons';
 import { useLoadingState } from '../../ui/hooks.js';
+import FileIcon from '../icons/general/file-icon.js';
+import RoomIcon from '../icons/general/room-icon.js';
 import { useDateFormat } from '../locale-context.js';
+import WriteIcon from '../icons/general/write-icon.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
+import MessageIcon from '../icons/general/message-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
+import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DragAndDropContainer from '../drag-and-drop-container.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -27,7 +32,6 @@ import DocumentMetadataModal from '../document-metadata-modal.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
@@ -35,6 +39,8 @@ import { Button, Tabs, message, Tooltip, Breadcrumb, Checkbox, Form } from 'antd
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
+import React, { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { MailOutlined, PlusOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { roomShape, invitationShape, documentExtendedMetadataShape, roomMediaContextShape } from '../../ui/default-prop-types.js';
 import {
   confirmDocumentDelete,
@@ -83,6 +89,10 @@ function getSortedDocuments(room, documents) {
     .filter(doc => doc);
 }
 
+function getShowMessageBoardEmptyState(viewMode, room) {
+  return viewMode === VIEW_MODE.owner && !room.messages.length;
+}
+
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const contentFormRef = useRef(null);
@@ -116,10 +126,15 @@ export default function Room({ PageTemplate, initialState }) {
 
   const showDraftDocuments = useMemo(() => viewMode === VIEW_MODE.owner, [viewMode]);
   const visibleDocumentsCount = useMemo(() => documents.filter(doc => showDraftDocuments || !doc.roomContext.draft).length, [showDraftDocuments, documents]);
+  const [showMessageBoardEmptyState, setShowMessageBoardEmptyState] = useState(getShowMessageBoardEmptyState(viewMode, room));
 
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
   }, [room._id, room.slug]);
+
+  useEffect(() => {
+    setShowMessageBoardEmptyState(getShowMessageBoardEmptyState(viewMode, room));
+  }, [viewMode, room]);
 
   const handleCreateInvitationButtonClick = event => {
     setIsRoomInvitationModalOpen(true);
@@ -357,12 +372,17 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const renderRoomOverview = () => {
-    return !!room.overview && <Markdown className="RoomPage-overview">{room.overview}</Markdown>;
+    return <Markdown className="RoomPage-overview">{room.overview}</Markdown>;
   };
 
   const renderCreateDocumentButton = () => {
     return (
-      <Button type="primary" className="RoomPage-tabCreateItemButton" onClick={() => handleNewDocumentClick()} >
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        className="RoomPage-tabCreateItemButton"
+        onClick={() => handleNewDocumentClick(null)}
+        >
         {t('common:createDocument')}
       </Button>
     );
@@ -555,13 +575,20 @@ export default function Room({ PageTemplate, initialState }) {
 
     return (
       <section className="RoomPage-messageBoard">
-        <div className="RoomPage-messageBoardHeadline">{t('messageBoardSectionHeadline')}</div>
-        {viewMode === VIEW_MODE.owner && !room.messages.length && (
-          <div className="RoomPage-messageBoardOwnerInfo">
-            <Markdown>{t('messageBoardOwnerInfoMarkdown')}</Markdown>
-          </div>
+        <div className="RoomPage-sectionHeadline">{t('messageBoardSectionHeadline')}</div>
+        {!!showMessageBoardEmptyState && (
+          <EmptyState
+            icon={<MessageIcon />}
+            title={t('messageBoardEmptyStateTitle')}
+            subtitle={t('messageBoardEmptyStateSubtitle')}
+            button={{
+              text: t('writeMessage'),
+              icon: <WriteIcon />,
+              onClick: () => setShowMessageBoardEmptyState(false)
+            }}
+            />
         )}
-        {viewMode === VIEW_MODE.owner && renderMessagePostingSection()}
+        {viewMode === VIEW_MODE.owner && !showMessageBoardEmptyState && renderMessagePostingSection()}
         {renderMessages()}
       </section>
     );
@@ -601,6 +628,18 @@ export default function Room({ PageTemplate, initialState }) {
     ? t('inviteCollaboratorsButton')
     : t('inviteMembersButton');
 
+  const membersEmptyStateTitle = room.isCollaborative
+    ? t('collaboratorsEmptyStateTitle')
+    : t('membersEmptyStateTitle');
+
+  const roomMembersIcon = room.isCollaborative ? <TeamOutlined /> : <UserOutlined />;
+
+  const showMembersTabEmptyState = !room.members.length;
+
+  const showOverviewEmptyState = !room.overview;
+
+  const showDocumentsEmptyState = !visibleDocumentsCount;
+
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate>
@@ -627,8 +666,22 @@ export default function Room({ PageTemplate, initialState }) {
           {viewMode !== VIEW_MODE.owner && (
             <div className="RoomPage-documents RoomPage-documents--roomMemberView">
               {renderRoomOverview()}
-              {viewMode === VIEW_MODE.collaboratingMember && renderCreateDocumentButton()}
-              {!visibleDocumentsCount && t('documentsPlaceholder')}
+              {(viewMode === VIEW_MODE.collaboratingMember || (viewMode === VIEW_MODE.nonCollaboratingMember && !!visibleDocumentsCount)) && (
+                <div className="RoomPage-sectionHeadline">{t('documentsSectionHeadline')}</div>
+              )}
+              {viewMode === VIEW_MODE.collaboratingMember && !!visibleDocumentsCount && renderCreateDocumentButton()}
+              {viewMode === VIEW_MODE.collaboratingMember && !visibleDocumentsCount && (
+                <EmptyState
+                  icon={<FileIcon />}
+                  title={t('documentsEmptyStateTitle')}
+                  subtitle={t('documentsEmptyStateSubtitle')}
+                  button={{
+                    text: t('common:createDocument'),
+                    icon: <PlusOutlined />,
+                    onClick: () => handleNewDocumentClick(null)
+                  }}
+                  />
+              )}
               {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
               {viewMode === VIEW_MODE.collaboratingMember && renderDocumentsAsDraggable()}
               {renderMessageBoard()}
@@ -643,34 +696,73 @@ export default function Room({ PageTemplate, initialState }) {
               items={[
                 {
                   key: '1',
-                  label: t('roomViewTitle'),
+                  label: <div><RoomIcon />{t('roomViewTitle')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
-                      {renderRoomOverview()}
-                      {renderCreateDocumentButton()}
-                      {!visibleDocumentsCount && t('documentsPlaceholder')}
-                      {renderDocumentsAsDraggable()}
+                      {!!showOverviewEmptyState && (
+                        <EmptyState
+                          icon={<WriteIcon />}
+                          title={t('overviewEmptyStateTitle')}
+                          subtitle={t('overviewEmptyStateSubtitle')}
+                          />
+                      )}
+                      {!showOverviewEmptyState && renderRoomOverview()}
+                      <div className="RoomPage-sectionHeadline">{t('documentsSectionHeadline')}</div>
+                      {!showDocumentsEmptyState && (
+                        <Fragment>
+                          {renderCreateDocumentButton()}
+                          {renderDocumentsAsDraggable()}
+                        </Fragment>
+                      )}
+                      {!!showDocumentsEmptyState && (
+                        <EmptyState
+                          icon={<FileIcon />}
+                          title={t('documentsEmptyStateTitle')}
+                          subtitle={t('documentsEmptyStateSubtitle')}
+                          button={{
+                            text: t('common:createDocument'),
+                            icon: <PlusOutlined />,
+                            onClick: () => handleNewDocumentClick(null)
+                          }}
+                          />
+                      )}
                       {renderMessageBoard()}
                     </div>
                   )
                 },
                 {
                   key: '2',
-                  label: membersTabTitle,
+                  label: <div>{roomMembersIcon}{membersTabTitle}</div>,
                   children: (
                     <div className="Tabs-tabPane">
-                      <Button
-                        type="primary"
-                        icon={<MailOutlined />}
-                        className="RoomPage-tabCreateItemButton"
-                        onClick={handleCreateInvitationButtonClick}
-                        >
-                        {inviteMemberButtonText}
-                      </Button>
-                      <div className="RoomPage-members">
-                        {room.members.map(renderRoomMember)}
-                        {invitations.map(renderRoomInvitation)}
-                      </div>
+                      {!!showMembersTabEmptyState && (
+                        <EmptyState
+                          icon={roomMembersIcon}
+                          title={membersEmptyStateTitle}
+                          subtitle={t('membersEmptyStateSubtitle')}
+                          button={{
+                            text: inviteMemberButtonText,
+                            icon: <MailOutlined />,
+                            onClick: handleCreateInvitationButtonClick
+                          }}
+                          />
+                      )}
+                      {!showMembersTabEmptyState && (
+                        <Fragment>
+                          <Button
+                            type="primary"
+                            icon={<MailOutlined />}
+                            className="RoomPage-tabCreateItemButton"
+                            onClick={handleCreateInvitationButtonClick}
+                            >
+                            {inviteMemberButtonText}
+                          </Button>
+                          <div className="RoomPage-members">
+                            {room.members.map(renderRoomMember)}
+                            {invitations.map(renderRoomInvitation)}
+                          </div>
+                        </Fragment>
+                      )}
                       <RoomInvitationCreationModal
                         isOpen={isRoomInvitationModalOpen}
                         onOk={handleInvitationModalClose}
@@ -682,7 +774,7 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: '3',
-                  label: t('common:settings'),
+                  label: <div><SettingsIcon />{t('common:settings')}</div>,
                   children: (
                     <div className="Tabs-tabPane" >
                       <div className="RoomPage-sectionHeadline">{t('roomContentHeadline')}</div>

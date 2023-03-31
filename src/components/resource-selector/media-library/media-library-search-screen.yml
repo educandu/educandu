@@ -1,4 +1,4 @@
 mediaLibrarySearchScreen:
-  searchInvitationHeader:
-    en: Search in the media library
-    de: Suche in der Medien-Bibliothek
+  emptyStateTitle:
+    en: Search in media library
+    de: In Medien-Bibliothek suchen

@@ -2,9 +2,37 @@ room:
   roomViewTitle:
     en: Room view
     de: Raum-Ansicht
-  documentsPlaceholder:
-    en: The room does not contain any documents
-    de: Der Raum enthält keine Dokumente
+  overviewEmptyStateTitle:
+    en: You have not written an overview text
+    de: Du hast noch keinen Überblickstext geschrieben
+  overviewEmptyStateSubtitle:
+    en: Go to the room settings tab and write an overview text in order to provide members with the room context and purpose.
+    de: Gehe zu den Raum-Einstellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern.
+  documentsEmptyStateTitle:
+    en: There are no documents in this room
+    de: Es gibt keine Dokumente in diesem Raum
+  documentsEmptyStateSubtitle:
+    en: Documents created within this room are exclusively available to room members and not accessible to the rest of the community.
+    de: Die in diesem Raum erstellten Dokumente sind ausschließlich für die Raummitglieder abrufbar und nicht für den Rest der Community zugänglich.
+  messageBoardEmptyStateTitle:
+    en: There are no messages on the board
+    de: Auf dem Board sind keine Nachrichten
+  messageBoardEmptyStateSubtitle:
+    en: |
+      As room owner, you can post messages to the board in order to inform room members about various topics.
+      Members see the message board on the room page. They also receive a notification and, optionally, an email, when a new message is posted.
+    de: |
+      Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über diverse Themen zu informieren.
+      Mitglieder sehen das Message-Board auf der Raum-Seite. Sie bekommen ebenfalls eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.
+  membersEmptyStateTitle:
+    en: You have not invited any members
+    de: Du hast noch keine Mitglieder eingeladen
+  collaboratorsEmptyStateTitle:
+    en: You have not invited any collaborators
+    de: Du hast noch keine Mitarbeiter eingeladen
+  membersEmptyStateSubtitle:
+    en: For other users to have access to your room, send them an invitation.
+    de: Um anderen Nutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung.
   thisWeek:
     en: This week
     de: Diese Woche
@@ -32,16 +60,15 @@ room:
   inviteCollaboratorsButton:
     en: Invite collaborators
     de: Mitarbeiter einladen
+  documentsSectionHeadline:
+    en: Documents
+    de: Dokumente
   messageBoardSectionHeadline:
     en: Message board
     de: Message-Board
-  messageBoardOwnerInfoMarkdown:
-    en: |
-      As the room owner, you can post messages to the board in order to inform room members about various room related topics.\
-      Members see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.
-    de: |
-      Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über raumbezogene Themen zu informieren.\
-      Mitglieder sehen das Message-Board auf der Raum-Seite, und sie bekommen eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.
+  writeMessage:
+      en: Write message
+      de: Nachricht schreiben
   postMessageButtonText:
     en: Post message
     de: Nachricht abschicken

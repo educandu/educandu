@@ -2,7 +2,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { memo } from 'react';
 import { Spin, Tooltip } from 'antd';
+import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
+import { SearchOutlined } from '@ant-design/icons';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import PreviewIcon from '../../icons/general/preview-icon.js';
 import WikimediaIcon from '../../icons/wikimedia/wikimedia-icon.js';
@@ -12,6 +14,7 @@ import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../../act
 function WikimediaFilesViewer({
   files,
   isLoading,
+  searchTerm,
   canLoadMore,
   selectedFileUrl,
   onLoadMore,
@@ -98,27 +101,41 @@ function WikimediaFilesViewer({
   };
 
   const isInitialLoad = !!isLoading && !files.length;
+  const showSearchResultEmptyState = !!searchTerm && !isLoading && !files.length;
 
   return (
     <div ref={rootRef} className="WikimediaFilesViewer">
-      <div className="WikimediaFilesViewer-files">
-        {files.map(file => renderFile(file))}
-        {renderSentry()}
-      </div>
       {!!isInitialLoad && (
         <div className="WikimediaFilesViewer-loadingOverlay">
           <Spin size="large" />
         </div>
       )}
+      {!!showSearchResultEmptyState && (
+        <div className="WikimediaFilesViewer-emptyState">
+          <EmptyState
+            icon={<SearchOutlined />}
+            title={t('common:searchResultEmptyStateTitle', { text: searchTerm })}
+            subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+            />
+        </div>
+      )}
+      {!showSearchResultEmptyState && (
+        <div ref={rootRef} className="WikimediaFilesViewer-content">
+          <div className="WikimediaFilesViewer-files">
+            {files.map(file => renderFile(file))}
+            {renderSentry()}
+          </div>
+        </div>
+      )}
     </div>
-
   );
 }
 
 WikimediaFilesViewer.propTypes = {
-  canLoadMore: PropTypes.bool.isRequired,
   files: PropTypes.arrayOf(wikimediaFileShape).isRequired,
   isLoading: PropTypes.bool,
+  searchTerm: PropTypes.string,
+  canLoadMore: PropTypes.bool.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
   onLoadMore: PropTypes.func.isRequired,
@@ -129,6 +146,7 @@ WikimediaFilesViewer.propTypes = {
 
 WikimediaFilesViewer.defaultProps = {
   isLoading: false,
+  searchTerm: null,
   selectedFileUrl: null
 };
 

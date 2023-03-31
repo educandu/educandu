@@ -7,7 +7,7 @@ blockedLoginError:
     de: Du kannst dich derzeit nicht anmelden, da dein Benutzerkonto gesperrt ist.
   contactAdminWithoutEmail:
     en: Please contact an administrator.
-    de: Bitte kontaktiere einen Administrator.
+    de: Bitte wende dich an einen Administrator.
   contactAdminWithEmail:
     en: Please contact an <0>administrator</0>.
-    de: Bitte kontaktiere einen <0>Administrator</0>.
+    de: Bitte wende dich an einen <0>Administrator</0>.

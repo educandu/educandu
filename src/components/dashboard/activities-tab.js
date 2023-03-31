@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Spin, Timeline } from 'antd';
 import routes from '../../utils/routes.js';
+import EmptyState from '../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../locale-context.js';
+import HistoryIcon from '../icons/general/history-icon.js';
 import { USER_ACTIVITY_TYPE } from '../../domain/constants.js';
 import { userActivitiesShape } from '../../ui/default-prop-types.js';
 import ItemEditedIcon from '../icons/user-activities/item-edited-icon.js';
@@ -184,14 +186,17 @@ function ActivitiesTab({ activities, loading }) {
     );
   };
 
+  const showEmptyState = !activities.length;
+
   return (
     <div>
       <section>
-        <div className="ActivitiesTab-info">{t('info')}</div>
         <div className="ActivitiesTab-timeline">
           {!!loading && <Spin className="u-spin" />}
-          {!loading && renderActivities()}
-          {!loading && !activities.length && <span>{t('noActivities')}</span>}
+          {!loading && !!showEmptyState && (
+            <EmptyState icon={<HistoryIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+          )}
+          {!loading && !showEmptyState && renderActivities()}
         </div>
       </section>
     </div>

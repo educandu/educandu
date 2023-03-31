@@ -4,15 +4,14 @@ import prettyBytes from 'pretty-bytes';
 import { Button, Divider } from 'antd';
 import React, { Fragment } from 'react';
 import reactDropzoneNs from 'react-dropzone';
+import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import { CloudUploadOutlined } from '@ant-design/icons';
 import WarningIcon from '../../icons/general/warning-icon.js';
-import ActionInvitation from '../shared/action-invitation.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { isEditableImageFile } from '../../../utils/storage-utils.js';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
-import UploadButton, { UPLOAD_BUTTON_INTENT } from '../shared/upload-button.js';
-import { ORIENTATION, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
+import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -70,10 +69,17 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, showSizeWa
                 </div>
               </Fragment>
             )}
-            <ActionInvitation
+            <EmptyState
+              compact
               icon={<CloudUploadOutlined />}
-              title={file ? t('common:dropDifferentFileInvitation') : t('common:dropFileInvitation')}
-              subtitle={<UploadButton intent={UPLOAD_BUTTON_INTENT.browse} orientation={ORIENTATION.vertical} onClick={handleUploadButtonClick} />}
+              title={file ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
+              subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+              button={{
+                isDefaultType: true,
+                text: t('common:browse'),
+                subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) }),
+                onClick: handleUploadButtonClick
+              }}
               />
           </div>
         </div>

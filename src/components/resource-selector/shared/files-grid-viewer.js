@@ -2,7 +2,9 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
+import { SearchOutlined } from '@ant-design/icons';
 import EditIcon from '../../icons/general/edit-icon.js';
 import DeleteIcon from '../../icons/general/delete-icon.js';
 import { RESOURCE_TYPE } from '../../../domain/constants.js';
@@ -13,6 +15,7 @@ import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../../act
 
 function FilesGridViewer({
   files,
+  searchTerm,
   selectedFileUrl,
   canDelete,
   canEdit,
@@ -91,18 +94,32 @@ function FilesGridViewer({
     );
   };
 
+  const showSearchResultEmptyState = !!searchTerm && !files.length;
+
   return (
     <div className="FilesGridViewer">
-      {files.map(renderFile)}
+      {!!showSearchResultEmptyState && (
+        <div className="FilesGridViewer-emptyState">
+          <EmptyState
+            icon={<SearchOutlined />}
+            title={t('common:searchResultEmptyStateTitle', { text: searchTerm })}
+            subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+            />
+        </div>
+      )}
+      <div className="FilesGridViewer-content">
+        {files.map(renderFile)}
+      </div>
     </div>
   );
 }
 
 FilesGridViewer.propTypes = {
-  canDelete: PropTypes.bool,
-  canEdit: PropTypes.bool,
-  selectedFileUrl: PropTypes.string,
   files: PropTypes.arrayOf(commonFileShape).isRequired,
+  searchTerm: PropTypes.string,
+  selectedFileUrl: PropTypes.string,
+  canEdit: PropTypes.bool,
+  canDelete: PropTypes.bool,
   onDeleteFileClick: PropTypes.func,
   onEditFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
@@ -111,9 +128,10 @@ FilesGridViewer.propTypes = {
 };
 
 FilesGridViewer.defaultProps = {
-  canDelete: false,
-  canEdit: false,
+  searchTerm: null,
   selectedFileUrl: null,
+  canEdit: false,
+  canDelete: false,
   onDeleteFileClick: () => {},
   onEditFileClick: () => {},
   onFileClick: () => {},

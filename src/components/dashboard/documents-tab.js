@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
+import EmptyState from '../empty-state.js';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
+import FileIcon from '../icons/general/file-icon.js';
+import FilterIcon from '../icons/general/filter-icon.js';
 import { Button, Checkbox, Pagination, Spin } from 'antd';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -84,19 +88,38 @@ function DocumentsTab({ documents, loading }) {
     setCurrentPage(page);
   };
 
+  const showNoDataEmptyState = !documents.length;
+  const showNoMatchingDataEmptyState = !!filterText && !displayedDocuments.length;
+
   return (
     <div className="DocumentsTab">
-      <div className="DocumentsTab-info">{t('info')}</div>
-
-      <Button className="DocumentsTab-button" type="primary" onClick={handleCreateDocumentClick}>
-        {t('common:createDocument')}
-      </Button>
+      {!showNoDataEmptyState && (
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          className="DocumentsTab-button"
+          onClick={handleCreateDocumentClick}
+          >
+          {t('common:createDocument')}
+        </Button>
+      )}
 
       <section>
         {!!loading && <Spin className="u-spin" />}
-        {!loading && !documents.length && t('noDocuments')}
+        {!loading && !!showNoDataEmptyState && (
+          <EmptyState
+            icon={<FileIcon />}
+            title={t('emptyStateTitle')}
+            subtitle={t('emptyStateSubtitle')}
+            button={{
+              text: t('common:createDocument'),
+              icon: <PlusOutlined />,
+              onClick: handleCreateDocumentClick
+            }}
+            />
+        )}
 
-        {!loading && !!documents.length && (
+        {!loading && !showNoDataEmptyState && (
           <div className="DocumentsTab-documentsPanel">
             <div className="DocumentsTab-filters">
               <FilterInput
@@ -107,9 +130,20 @@ function DocumentsTab({ documents, loading }) {
               <Checkbox checked={ownDocumentsOnly} onChange={handleOwnDocumentsOnlyChange}>{t('ownDocumentOnly')}</Checkbox>
             </div>
             <div>
-              <span className="DocumentsTab-counter">{t('documentsCount', { count: displayedDocuments.length })}</span>
+              {!!displayedDocuments.length && (
+                <span className="DocumentsTab-counter">{t('documentsCount', { count: displayedDocuments.length })}</span>
+              )}
               <div className="DocumentsTab-documents">
                 {pageDocuments.map(doc => (<DocumentCard key={doc._id} doc={doc} />))}
+                {!!showNoMatchingDataEmptyState && (
+                  <div className="DocumentsTab-filterEmptyState">
+                    <EmptyState
+                      icon={<FilterIcon />}
+                      title={t('common:filterResultEmptyStateTitle')}
+                      subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+                      />
+                  </div>
+                )}
               </div>
             </div>
             <Pagination

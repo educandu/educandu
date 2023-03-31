@@ -21,6 +21,7 @@ import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import EmptyState, { EMPTY_STATE_STATUS } from '../../components/empty-state.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
 import { createCopyrightForSourceMetadata, getAccessibleUrl } from '../../utils/source-utils.js';
@@ -44,6 +45,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
   const [mediaDuration] = useMediaDurations([getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })]);
   const sourceDuration = mediaDuration.duration;
+  const canRenderMediaPlayer = !!sourceUrl;
 
   const playbackDuration = (playbackRange[1] - playbackRange[0]) * sourceDuration;
   const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
@@ -195,16 +197,25 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
         <ItemPanel header={t('common:segments')}>
           <div className="MediaSlideshowEditor-playerPreview">
             <div className="MediaSlideshowEditor-playerPreviewLabel">{t('common:preview')}</div>
-            <MediaPlayer
-              volume={initialVolume}
-              parts={playerParts}
-              screenWidth={50}
-              playbackRange={playbackRange}
-              screenMode={MEDIA_SCREEN_MODE.audio}
-              customScreenOverlay={renderPlayingChapterImage()}
-              onPlayingPartIndexChange={handlePlayingPartIndexChange}
-              sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-              />
+            {!canRenderMediaPlayer && (
+              <EmptyState
+                title={t('common:cannotPlayMediaEmptyStateTitle')}
+                subtitle={t('common:cannotPlayMediaEmptyStateSubtitle')}
+                status={EMPTY_STATE_STATUS.error}
+                />
+            )}
+            {!!canRenderMediaPlayer && (
+              <MediaPlayer
+                volume={initialVolume}
+                parts={playerParts}
+                screenWidth={50}
+                playbackRange={playbackRange}
+                screenMode={MEDIA_SCREEN_MODE.audio}
+                customScreenOverlay={renderPlayingChapterImage()}
+                onPlayingPartIndexChange={handlePlayingPartIndexChange}
+                sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+                />
+            )}
           </div>
 
           <Timeline
