@@ -7,6 +7,7 @@ import { useUser } from '../user-context.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
+import FilterIcon from '../icons/general/filter-icon.js';
 import RoomCreationModal from '../room-creation-modal.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import RoomJoinedIcon from '../icons/user-activities/room-joined-icon.js';
@@ -104,7 +105,13 @@ function RoomsTab({ rooms, invitations, loading }) {
             <section className="RoomsTab-roomsGroup">
               {filteredOwnedRooms.map(room => (<RoomCard key={room._id} room={room} />))}
               {!filteredOwnedRooms.length && (
-                <div className="RoomsTab-noMatch">{t('noMatchingRooms')}</div>
+                <div className="RoomsTab-roomsGroupFilterEmptyState">
+                  <EmptyState
+                    icon={<FilterIcon />}
+                    title={t('common:filterResultEmptyStateTitle')}
+                    subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+                    />
+                </div>
               )}
             </section>
           )}
@@ -122,7 +129,13 @@ function RoomsTab({ rooms, invitations, loading }) {
               {filteredMemberOfRooms.map(room => <RoomCard key={room._id} room={room} />)}
               {filteredInvitations.map(invitation => <RoomCard key={invitation._id} roomInvitation={invitation} />)}
               {!filteredMemberOfRooms.length && !filteredInvitations.length && (
-                <div className="RoomsTab-noMatch">{t('noMatchingRooms')}</div>
+                <div className="RoomsTab-roomsGroupFilterEmptyState">
+                  <EmptyState
+                    icon={<FilterIcon />}
+                    title={t('common:filterResultEmptyStateTitle')}
+                    subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+                    />
+                </div>
               )}
             </section>
           )}

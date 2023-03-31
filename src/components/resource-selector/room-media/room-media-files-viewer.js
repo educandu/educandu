@@ -114,8 +114,8 @@ function RoomMediaFilesViewer({
               <div className="RoomMediaFilesViewer-filesViewerContent RoomMediaFilesViewer-filesViewerContent--empty">
                 <EmptyState
                   icon={filterText ? <FilterIcon /> : <CloudUploadOutlined />}
-                  title={filterText ? t('noMatchingDataEmptyStateTitle') : t('noDataEmptyStateTitle')}
-                  subtitle={filterText ? t('common:searchResultEmptyStateSubtitle') : t('noDataEmptyStateSubtitle')}
+                  title={filterText ? t('common:filterResultEmptyStateTitle') : t('emptyStateTitle')}
+                  subtitle={filterText ? t('common:searchOrFilterResultEmptyStateSubtitle') : t('emptyStateSubtitle')}
                   />
               </div>
             )}

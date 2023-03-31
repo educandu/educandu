@@ -463,9 +463,12 @@ common:
       No results found for "{text}"
     de: |
       Keine Ergebnisse für "{text}" gefunden
-  searchResultEmptyStateSubtitle:
+  searchOrFilterResultEmptyStateSubtitle:
     en: Check that spelling is correct and try again or change your input.
     de: Überprüfe deine Eingabe auf Rechtschreibfehler oder versuche es mit einem anderen Text.
+  filterResultEmptyStateTitle:
+    en: No results matching your filter
+    de: Keine Ergebnisse passen zu deinem Filtertext
   more:
     en: more ...
     de: mehr ...

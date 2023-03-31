@@ -611,10 +611,6 @@
     "noMemberRooms": {
       "en": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.",
       "de": "Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden."
-    },
-    "noMatchingRooms": {
-      "en": "No matching rooms.",
-      "de": "Keine passenden Räume."
     }
   },
   "settingsTab": {
@@ -1221,8 +1217,8 @@
   },
   "multitrackMediaPlayer": {
     "emptyStateSubtitle": {
-      "en": "Make sure that a URL is provided for each track",
-      "de": "Stelle sicher, dass für jede Spur eine URL angegeben wurde"
+      "en": "Make sure that a URL is provided for each track.",
+      "de": "Stelle sicher, dass für jede Spur eine URL angegeben wurde."
     }
   },
   "timecodeFineTunningInput": {
@@ -2006,17 +2002,13 @@
       "en": "Upload files",
       "de": "Dateien hochladen"
     },
-    "noDataEmptyStateTitle": {
+    "emptyStateTitle": {
       "en": "There are no files in this room",
       "de": "In diesem Raum gibt es keine Dateien"
     },
-    "noDataEmptyStateSubtitle": {
+    "emptyStateSubtitle": {
       "en": "Drag and drop files here to upload them or use the upload button to select files from your machine.",
       "de": "Ziehe Dateien hierher, um sie hochzuladen, oder benutze den Button, um Dateien von deinem Computer auszuwählen."
-    },
-    "noMatchingDataEmptyStateTitle": {
-      "en": "No results matching your filter",
-      "de": "Keine Ergebnisse passen zu deinem Filtertext"
     }
   },
   "roomMediaUploadScreen": {
@@ -2189,8 +2181,8 @@
       "de": "Dieser Inhalt kann nicht angezeigt werden"
     },
     "notSupportedSectionEmptyStateSubtitle": {
-      "en": "This type of content is either unknown or no longer supported",
-      "de": "Dieser Inhalt ist entweder unbekannt oder wird nicht mehr unterstützt"
+      "en": "This type of content is either unknown or no longer supported.",
+      "de": "Dieser Inhalt ist entweder unbekannt oder wird nicht mehr unterstützt."
     }
   },
   "sectionsDisplay": {
@@ -2475,8 +2467,8 @@
       "de": "Audio-Datei suchen"
     },
     "searchAudioFileEmptyStateSubtitle": {
-      "en": "Find an audio file in one of the libraries",
-      "de": "Audio-Datei in einer der Bibliotheken suchen"
+      "en": "Find an audio file in one of the libraries.",
+      "de": "Audio-Datei in einer der Bibliotheken suchen."
     },
     "uploadAudioFileEmptyStateTitle": {
       "en": "Upload audio file",
@@ -3810,9 +3802,13 @@
       "en": "No results found for \"{text}\"\n",
       "de": "Keine Ergebnisse für \"{text}\" gefunden\n"
     },
-    "searchResultEmptyStateSubtitle": {
+    "searchOrFilterResultEmptyStateSubtitle": {
       "en": "Check that spelling is correct and try again or change your input.",
       "de": "Überprüfe deine Eingabe auf Rechtschreibfehler oder versuche es mit einem anderen Text."
+    },
+    "filterResultEmptyStateTitle": {
+      "en": "No results matching your filter",
+      "de": "Keine Ergebnisse passen zu deinem Filtertext"
     },
     "more": {
       "en": "more ...",
@@ -4019,8 +4015,8 @@
       "de": "Wiedergabe nicht möglich"
     },
     "cannotPlayMediaEmptyStateSubtitle": {
-      "en": "The media source URL is missing",
-      "de": "Die URL der Medienquelle fehlt"
+      "en": "The media source URL is missing.",
+      "de": "Die URL der Medienquelle fehlt."
     }
   },
   "pageNames": {

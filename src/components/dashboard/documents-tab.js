@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import FileIcon from '../icons/general/file-icon.js';
+import FilterIcon from '../icons/general/filter-icon.js';
 import { Button, Checkbox, Pagination, Spin } from 'antd';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -87,11 +88,12 @@ function DocumentsTab({ documents, loading }) {
     setCurrentPage(page);
   };
 
-  const showEmptyState = !documents.length;
+  const showNoDataEmptyState = !documents.length;
+  const showNoMatchingDataEmptyState = !!filterText && !displayedDocuments.length;
 
   return (
     <div className="DocumentsTab">
-      {!showEmptyState && (
+      {!showNoDataEmptyState && (
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -104,7 +106,7 @@ function DocumentsTab({ documents, loading }) {
 
       <section>
         {!!loading && <Spin className="u-spin" />}
-        {!loading && !!showEmptyState && (
+        {!loading && !!showNoDataEmptyState && (
           <EmptyState
             icon={<FileIcon />}
             title={t('emptyStateTitle')}
@@ -117,7 +119,7 @@ function DocumentsTab({ documents, loading }) {
             />
         )}
 
-        {!loading && !showEmptyState && (
+        {!loading && !showNoDataEmptyState && (
           <div className="DocumentsTab-documentsPanel">
             <div className="DocumentsTab-filters">
               <FilterInput
@@ -128,9 +130,20 @@ function DocumentsTab({ documents, loading }) {
               <Checkbox checked={ownDocumentsOnly} onChange={handleOwnDocumentsOnlyChange}>{t('ownDocumentOnly')}</Checkbox>
             </div>
             <div>
-              <span className="DocumentsTab-counter">{t('documentsCount', { count: displayedDocuments.length })}</span>
+              {!!displayedDocuments.length && (
+                <span className="DocumentsTab-counter">{t('documentsCount', { count: displayedDocuments.length })}</span>
+              )}
               <div className="DocumentsTab-documents">
                 {pageDocuments.map(doc => (<DocumentCard key={doc._id} doc={doc} />))}
+                {!!showNoMatchingDataEmptyState && (
+                  <div className="DocumentsTab-filterEmptyState">
+                    <EmptyState
+                      icon={<FilterIcon />}
+                      title={t('common:filterResultEmptyStateTitle')}
+                      subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+                      />
+                  </div>
+                )}
               </div>
             </div>
             <Pagination

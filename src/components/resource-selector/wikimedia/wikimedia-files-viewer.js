@@ -115,7 +115,7 @@ function WikimediaFilesViewer({
           <EmptyState
             icon={<SearchOutlined />}
             title={t('common:searchResultEmptyStateTitle', { text: searchTerm })}
-            subtitle={t('common:searchResultEmptyStateSubtitle')}
+            subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
             />
         </div>
       )}
