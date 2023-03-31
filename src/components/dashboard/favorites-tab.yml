@@ -3,7 +3,7 @@ favoritesTab:
     en: You don't have any favorites
     de: Du hast noch keine Favoriten
   emptyStateSubtitle:
-    en: Add any document, room, or user to your favorites by clicking the star icon on each of them. Open the search bar under the magnifying glass symbol at the top, to find documents that you most like.
+    en: Add any document, room, or user to your favorites by clicking the star icon on each of them. Open the search bar under the magnifying glass symbol at the top to find documents that you like.
     de: Füge ein Dokument, einen Raum, oder einen Benutzer zu deinen Favoriten hinzu, indem du auf das Sternsymbol klickst. Öffne das Suchfeld unter dem Lupensymbol oben, um Dokumente zu finden, die dir gefallen.
   favoriteUsers:
     en: Your favorite users
