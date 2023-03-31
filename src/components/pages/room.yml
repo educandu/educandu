@@ -3,39 +3,39 @@ room:
     en: Room view
     de: Raum-Ansicht
   overviewEmptyStateTitle:
-    en: Overview is missing for this room
-    de: Overview is missing for this room
+    en: You have not written an overview text
+    de: Du hast noch keinen Überblickstext geschrieben
   overviewEmptyStateSubtitle:
-    en: An overview provides members with a context of the room and its purpose. You can write an overview on the room settings tab.
-    de: An overview provides members with a context of the room and its purpose. You can write an overview on the room settings tab.
+    en: Go to the room settings tab and write an overview text in order to provide members with the room context and purpose.
+    de: Gehe zu den Raum-Einstestellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern.
   documentsEmptyStateTitle:
-    en: This room contains no documents
-    de: Dieser Raum enthält keine Dokumente
+    en: You have not created any documents
+    de: Du hast noch keine Dokumente erstellt
   documentsEmptyStateSubtitle:
-    en: Documents created within a room are exclusively available to room members and not accessible to the rest of the community.
-    de: Documents created within a room are exclusively available to room members and not accessible to the rest of the community.
+    en: Documents created within this room are exclusively available to room members and not accessible to the rest of the community.
+    de: Die in diesem Raum erstellten Dokumente sind ausschließlich für die Raummitglieder abrufbar und nicht für den Rest der Community zugänglich.
   documentsPlaceholder:
-    en: The room does not contain any documents
-    de: Der Raum enthält keine Dokumente
+    en: You have not created any documents
+    de: Du hast noch keine Dokumente erstellt
   messageBoardEmptyStateTitle:
     en: There are no messages on the board
-    de: There are no messages on the board
+    de: Auf dem Board sind keine Nachrichten
   messageBoardEmptyStateSubtitle:
     en: |
-      As the room owner, you can post messages to the board in order to inform room members about various room related topics.
-      Members see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.
+      As room owner, you can post messages to the board in order to inform room members about various topics.
+      Members see the message board on the room page. They also receive a notification and, optionally, an email, when a new message is posted.
     de: |
-      Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über raumbezogene Themen zu informieren.
-      Mitglieder sehen das Message-Board auf der Raum-Seite, und sie bekommen eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.
+      Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über diverse Themen zu informieren.
+      Mitglieder sehen das Message-Board auf der Raum-Seite. Sie bekommen ebenfalls eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.
   membersEmptyStateTitle:
-    en: This room has no members
-    de: Dieser Raum hat keine Mitglieder
+    en: You have not invited any members
+    de: Du hast noch keine Mitglieder eingeladen
   collaboratorsEmptyStateTitle:
-    en: This room has no collaborators
-    de: Dieser Raum hat keine Mitarbeiter
+    en: You have not invited any collaborators
+    de: Du hast noch keine Mitarbeiter eingeladen
   membersEmptyStateSubtitle:
-    en: For other users to have access to your room, they need to be invited.
-    de: For other users to have access to your room, they need to be invited.
+    en: For other users to have access to your room, send them an invitation.
+    de: Um anderen Nutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung.
   thisWeek:
     en: This week
     de: Diese Woche

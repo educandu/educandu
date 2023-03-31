@@ -3,14 +3,14 @@ roomsTab:
     en: You haven't created any rooms
     de: Du hast noch keine Räume erstellt
   ownedRoomsEmptyStateSubtitle:
-    en: Rooms are private spaces to which only invited members have access. Documents in rooms are private as well.
-    de: Rooms are private spaces to which only invited members have access. Documents in rooms are private as well.
+    en: Rooms are private spaces to which only invited members have access. Documents created within a room can also only be accessed by room members.
+    de: Räume sind private Bereiche, zu denen nur eingeladene Mitglieder Zugang haben. Auf Dokumente, die in einem Raum erstellt wurden, kann ebenfalls nur von den Raum-Mitgliedern zugegriffen werden.
   memberRoomsEmptyStateTitle:
-    en: You haven't received any room invitations
-    de: Du hast noch keine Raum-Einladungen bekommen
+    en: You haven't been invited to any room
+    de: Du wurdest noch in keinen Raum eingeladen
   memberRoomsEmptyStateSubtitle:
-    en: To become member of a room you need to be invited by the room owner.
-    de: To become member of a room you need to be invited by the room owner.
+    en: You can become a member of someone else's room if you are invited by the room owner. Invitations will show up here and can be accepted here or through the link in the invitation email.
+    de: Um einem anderem Raum beizutreten, musst du vom Eigentümer eingeladen werden. Einladungen werden hier angezeigt und können hier oder mit dem Link in der Einladungs-E-Mail bestätigt werden.
   ownedRoomsHeadline:
     en: Rooms that you created
     de: Räume, die du erstellt hast

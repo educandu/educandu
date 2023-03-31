@@ -3,8 +3,8 @@ documentsTab:
     en: You don't have any documents
     de: Du hast noch keine Dokumente
   emptyStateSubtitle:
-    en: Public documents that you have created or contributed to will show up here, so that you can continue to have easy access to them.
-    de: Öffentlichen Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt so, dass du Something Something
+    en: Public documents that you have created or contributed to will show up here, so that you can access them easily. Private documents can only be reached through their respective rooms.
+    de: Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen.
   ownDocumentOnly:
     en: Only documents created by me
     de: Nur Dokumente, die ich erstellt habe

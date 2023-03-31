@@ -1,10 +1,10 @@
 documentCommentsPanel:
   emptyStateTitle:
     en: This document has no comments
-    de: Dieses Dokument hat keine Kommentare
+    de: Zu diesem Dokument gibt es keine Kommentare
   emptyStateSubtitle:
-    en: Through comments, users can collaborate towards improving the quality of the document content or can debate certain content aspects.
-    de: Through comments, users can collaborate towards improving the quality of the document content or can debate certain content aspects.
+    en: Through the use of comments, users can collaborate towards improving the quality of the document content or can debate certain content aspects.
+    de: Mit Hilfe von Kommentaren können Nutzer in Zusammenarbeit die Qualität des Dokumentinhalts verbessern oder spezifische Inhaltsaspekte diskutieren.
   emptyStateButton:
     en: Write comment
     de: Kommentar schreiben

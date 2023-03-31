@@ -48,8 +48,8 @@ audioWaveform:
     en: Search for audio file
     de: Audio-Datei suchen
   searchAudioFileEmptyStateSubtitle:
-    en: Find an audio file in one of the libraries
-    de: Audio-Datei in Bibliotheken suchen
+    en: Find an audio file in one of the libraries.
+    de: Audio-Datei in einer der Bibliotheken suchen.
   uploadAudioFileEmptyStateTitle:
     en: Upload audio file
     de: Audio-Datei hochladen

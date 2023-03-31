@@ -1,10 +1,16 @@
 pdfDocument:
-  errorRenderingDocument:
-    en: The document cannot be displayed
-    de: Das Dokument kann nicht angezeigt werden
-  errorRenderingPage:
-    en: The page cannot be displayed
-    de: Die Seite kann nicht angezeigt werden
+  pdfRenderingEmptyStateTitle:
+    en: The PDF document cannot be displayed
+    de: Das PDF-Dokument kann nicht angezeigt werden
+  pdfPageRenderingEmptyStateTitle:
+    en: The PDF page cannot be displayed
+    de: Die PDF-Seite kann nicht angezeigt werden
+  pdfRenderingEmptyStateSubtitle:
+    en: There was an error displaying this document. The provided URL might not link to a valid PDF document.
+    de: Beim Anzeigen dieses Dokuments ist ein Fehler aufgetreten. Möglicherweise führt die angegebene URL nicht zu einem gültigen PDF-Dokument.
+  pdfPageRenderingEmptyStateSubtitle:
+    en: There was an error displaying this PDF page. The PDF file might be corrupt.
+    de: Beim Anzeigen dieser PDF-Seite ist ein Fehler aufgetreten. Möglicherweise ist die PDF-Datei fehlerhaft.
   noDocument:
     en: No document specified
     de: Kein Dokument angegeben

@@ -39,8 +39,8 @@ image:
     en: Please use the selection rectangle to specify the displayed area
     de: Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen
   loadingErrorEmptyStateTitle:
-    en: The image could not be loaded
-    de: Das Bild konnte nicht geladen werden
+    en: This image could not be loaded
+    de: Dieses Bild konnte nicht geladen werden
   loadingErrorEmptyStateSubtitle:
-    en: Check that all URLs provided are correct
-    de: Check that all URLs provided are correct
+    en: There was an error loading this image. Some of the provided URLs might not be reachable.
+    de: Beim Laden dieses Bildes ist ein Fehler aufgetreten. Möglicherweise sind einige URLs nicht erreichbar.

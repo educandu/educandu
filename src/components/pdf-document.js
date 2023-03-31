@@ -60,9 +60,9 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
     releaseViewerStyle();
     return (
       <EmptyState
-        title={t('common:error')}
+        title={t('pdfRenderingEmptyStateTitle')}
         status={EMPTY_STATE_STATUS.error}
-        subtitle={t('errorRenderingDocument')}
+        subtitle={t('pdfRenderingEmptyStateSubtitle')}
         />
     );
   };
@@ -71,9 +71,9 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
     releaseViewerStyle();
     return (
       <EmptyState
-        title={t('common:error')}
+        title={t('pdfPageRenderingEmptyStateTitle')}
         status={EMPTY_STATE_STATUS.warning}
-        subtitle={t('errorRenderingPage')}
+        subtitle={t('pdfPageRenderingEmptyStateSubtitle')}
         />
     );
   };

@@ -9,11 +9,11 @@ roomMediaFilesViewer:
     en: Upload files
     de: Dateien hochladen
   noDataEmptyStateTitle:
-    en: There are no files uploaded to this room
-    de: There are no files uploaded to this room
+    en: There are no files in this room
+    de: In diesem Raum gibt es keine Dateien
   noDataEmptyStateSubtitle:
-    en: Drag and drop a files here to upload them or use the upload button to browse your file system
-    de: Drag and drop a files here to upload them or use the upload button to browse your file system
+    en: Drag and drop files here to upload them or use the upload button to select files from your machine.
+    de: Ziehe Dateien hierher, um sie hochzuladen, oder benutze den Button, um Dateien von deinem Computer auszuwählen.
   noMatchingDataEmptyStateTitle:
     en: No results matching your filter
-    de: No results matching your filter
+    de: Keine Ergebnisse passen zu deinem Filtertext

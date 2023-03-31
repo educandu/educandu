@@ -1,10 +1,10 @@
 notificationsTab:
   emptyStateTitle:
     en: You don't have any notifications
-    de: Es gibt keine Benachrichtigungen für dich
+    de: Du hast keine Benachrichtigungen
   emptyStateSubtitle:
-    en: You receive notifications about contibutions to your favorite documents, by your favorite users or to documents in rooms that you are a member of.
-    de: Du bekommst Benachrichtigungen über Beiträge zu deinen Lieblingsdokumenten, von deine Lieblingsnutzern, oder zu Dokumenten in Räumen, in denen du Mitglied bist.
+    en: You receive notifications about contibutions to your favorite documents or rooms, or about public contributions by your favorite users.
+    de: Du bekommst Benachrichtigungen über Beiträge zu deinen favorisierten Dokumenten oder Räumen, oder über öffentliche Beiträge deiner favorisierten Nutzer.
   documentRevisionCreatedNotification:
     en: Document has been edited
     de: Dokument wurde bearbeitet

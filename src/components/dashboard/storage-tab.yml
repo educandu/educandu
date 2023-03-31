@@ -1,10 +1,10 @@
 storageTab:
   emptyStateTitle:
     en: You don't have private storage
-    de: Du hast keinen privater Speicher
+    de: Du hast keinen privaten Speicher
   emptyStateSubtitle:
-    en: With a private storage plan, you receive a dedicated storage space which you can use to upload private resources for your rooms. To receive a storge plan, please contact an administrator.
-    de: With a private storage plan, you receive a dedicated storage space which you can use to upload private resources for your rooms. To receive a storge plan, please contact an administrator.
+    en: Private storage is a dedicated space to use in your rooms, for uploading files available exclusively to room members. To request a storage plan, please contact an administrator.
+    de: Privater Speicher ist ein separater Bereich zur Nutzung in deinen Räumen, um Dateien hochzuladen, auf die ausschließlich von den Raummitgliedern zugegriffen werden kann. Um ein Speicherplan zu beantragen, wende dich bitte an einen Administrator.
   storagePlanName:
     en: Your storage plan
     de: Dein Speicherplan

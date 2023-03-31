@@ -462,10 +462,10 @@ common:
     en: |
       No results found for "{text}"
     de: |
-      Keine Ergebnisse gefunden für "{text}"
+      Keine Ergebnisse für "{text}" gefunden
   searchResultEmptyStateSubtitle:
-    en: We couldn't find any media matching your text. Check that spelling is correct and try again, or type something else.
-    de: We couldn't find any media matching your text. Check that spelling is correct and try again, or type something else.
+    en: Check that spelling is correct and try again or change your input.
+    de: Überprüfe deine Eingabe auf Rechtschreibfehler oder versuche es mit einem anderen Text.
   more:
     en: more ...
     de: mehr ...
@@ -550,17 +550,14 @@ common:
     en: Upload a different file
     de: Eine andere Datei hochladen
   mediaUploadEmptyStateSubtitle:
-    en: Drag and drop a file here to upload it or use the button to browse your file system
-    de: Drag and drop a file here to upload it or use the button to browse your file system
-  dropFileInvitation:
-    en: Drag a file here
-    de: Ziehe eine Datei hierher
+    en: Drag and drop a file here to upload it or use the button to select a file from your machine.
+    de: Ziehe eine Datei hierher, um sie hochzuladen, oder benutze den Button, um eine Datei von deinem Computer auszuwählen.
   useSearchToChangeFile:
     en: Use the search above to select a different file.
     de: Benutze die Suche oben, um eine andere Datei auszuwählen.
   mediaLibraryEmptyStateSubtitle:
-    en: Enter your search term in the field above and choose what kind of media you're looking for, whether it's images, videos, etc.
-    de: Enter your search term in the field above and choose what kind of media you're looking for, whether it's images, videos, etc.
+    en: Enter your search term in the field above and choose what kind of media you're looking for.
+    de: Gib deinen Suchbegriff in das Feld oben ein und wähle aus, was für eine Art von Medien du suchst.
   licenses:
     en: Licenses
     de: Lizenzen
@@ -631,5 +628,5 @@ common:
     en: Cannot play media
     de: Wiedergabe nicht möglich
   cannotPlayMediaEmptyStateSubtitle:
-    en: Media can not be played because the source is not provided.
-    ede: Media can not be played because the source is not provided.
+    en: The media source URL is missing.
+    de: Die URL der Medienquelle fehlt.

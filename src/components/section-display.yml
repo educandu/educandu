@@ -1,7 +1,7 @@
 sectionDisplay:
     notSupportedSectionEmptyStateTitle:
-      en: This content is not supported
-      de: Dieser Inhalt wird nicht unterstützt
+      en: This content can not be displayed
+      de: Dieser Inhalt kann nicht angezeigt werden
     notSupportedSectionEmptyStateSubtitle:
-      en: This plugin can not be displayed because it is of an unknown or an unsupported type
-      de: This plugin can not be displayed because it is of an unknown or an unsupported type
+      en: This type of content is either unknown or no longer supported.
+      de: Dieser Inhalt ist entweder unbekannt oder wird nicht mehr unterstützt.
