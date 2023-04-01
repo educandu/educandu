@@ -1,0 +1,19 @@
+roomSettings:
+  contentHeadline:
+    en: Room content
+    de: Raum-Inhalt
+  metadataHeadline:
+    en: Room metadata
+    de: Raum-Metadaten
+  overview:
+    en: Overview
+    de: Überblick
+  deleteButton:
+    en: Delete room
+    de: Raum löschen
+  deleteTitle:
+    en: Delete this room
+    de: Diesen Raum löschen
+  deleteDescription:
+    en: All room data and resources will be deleted.
+    de: Alle Raum-Daten und -Ressourcen werden gelöscht.

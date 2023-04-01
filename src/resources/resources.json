@@ -1628,53 +1628,9 @@
       "en": "Go to the room settings tab and write an overview text in order to provide members with the room context and purpose.",
       "de": "Gehe zu den Raum-Einstellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern."
     },
-    "membersEmptyStateTitle": {
-      "en": "You have not invited any members",
-      "de": "Du hast noch keine Mitglieder eingeladen"
-    },
-    "collaboratorsEmptyStateTitle": {
-      "en": "You have not invited any collaborators",
-      "de": "Du hast noch keine Mitarbeiter eingeladen"
-    },
-    "membersEmptyStateSubtitle": {
-      "en": "For other users to have access to your room, send them an invitation.",
-      "de": "Um anderen Nutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung."
-    },
-    "thisWeek": {
-      "en": "This week",
-      "de": "Diese Woche"
-    },
-    "deleteRoomButton": {
-      "en": "Delete room",
-      "de": "Raum löschen"
-    },
-    "roomContentHeadline": {
-      "en": "Room content",
-      "de": "Raum-Inhalt"
-    },
-    "roomMetadataHeadline": {
-      "en": "Room metadata",
-      "de": "Raum-Metadaten"
-    },
-    "deleteRoomTitle": {
-      "en": "Delete this room",
-      "de": "Diesen Raum löschen"
-    },
-    "deleteRoomDescription": {
-      "en": "All room data and resources will be deleted.",
-      "de": "Alle Raum-Daten und -Ressourcen werden gelöscht."
-    },
     "cancelRoomMembership": {
       "en": "Cancel room membership",
       "de": "Raum-Mitgliedschaft beenden"
-    },
-    "inviteMembersButton": {
-      "en": "Invite members",
-      "de": "Mitglieder einladen"
-    },
-    "inviteCollaboratorsButton": {
-      "en": "Invite collaborators",
-      "de": "Mitarbeiter einladen"
     },
     "overview": {
       "en": "Overview",
@@ -2163,6 +2119,54 @@
     "emptyStateSubtitle": {
       "en": "Documents created within this room are exclusively available to room members and not accessible to the rest of the community.",
       "de": "Die in diesem Raum erstellten Dokumente sind ausschließlich für die Raummitglieder abrufbar und nicht für den Rest der Community zugänglich."
+    }
+  },
+  "roomMembers": {
+    "membersEmptyStateTitle": {
+      "en": "You have not invited any members",
+      "de": "Du hast noch keine Mitglieder eingeladen"
+    },
+    "collaboratorsEmptyStateTitle": {
+      "en": "You have not invited any collaborators",
+      "de": "Du hast noch keine Mitarbeiter eingeladen"
+    },
+    "membersEmptyStateSubtitle": {
+      "en": "For other users to have access to your room, send them an invitation.",
+      "de": "Um anderen Nutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung."
+    },
+    "inviteMembersButton": {
+      "en": "Invite members",
+      "de": "Mitglieder einladen"
+    },
+    "inviteCollaboratorsButton": {
+      "en": "Invite collaborators",
+      "de": "Mitarbeiter einladen"
+    }
+  },
+  "roomSettings": {
+    "contentHeadline": {
+      "en": "Room content",
+      "de": "Raum-Inhalt"
+    },
+    "metadataHeadline": {
+      "en": "Room metadata",
+      "de": "Raum-Metadaten"
+    },
+    "overview": {
+      "en": "Overview",
+      "de": "Überblick"
+    },
+    "deleteButton": {
+      "en": "Delete room",
+      "de": "Raum löschen"
+    },
+    "deleteTitle": {
+      "en": "Delete this room",
+      "de": "Diesen Raum löschen"
+    },
+    "deleteDescription": {
+      "en": "All room data and resources will be deleted.",
+      "de": "Alle Raum-Daten und -Ressourcen werden gelöscht."
     }
   },
   "searchBar": {
