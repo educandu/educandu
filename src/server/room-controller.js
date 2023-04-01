@@ -366,7 +366,7 @@ export default class RoomController {
     }
 
     if (room.slug !== routeWildcardValue) {
-      return res.redirect(301, routes.getRoomUrl(room._id, room.slug));
+      return res.redirect(301, routes.getRoomUrl({ id: room._id, slug: room.slug }));
     }
 
     const invitations = isRoomOwner({ room, userId: user._id })

@@ -3,11 +3,11 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { Button, message, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
+import React, { useRef, useState } from 'react';
 import MarkdownInput from '../markdown-input.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import React, { useEffect, useRef, useState } from 'react';
 import { roomShape } from '../../ui/default-prop-types.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -26,10 +26,6 @@ export default function RoomSettings({ room, onChange }) {
 
   const [isRoomContentUpdateButtonDisabled, setIsRoomContentUpdateButtonDisabled] = useState(true);
   const [isRoomMetadataUpdateButtonDisabled, setIsRoomMetadataUpdateButtonDisabled] = useState(true);
-
-  useEffect(() => {
-    history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
-  }, [room._id, room.slug]);
 
   const handleRoomDelete = async () => {
     try {

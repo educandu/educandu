@@ -45,7 +45,7 @@ function RoomCreationModal({ isOpen, onClose }) {
       setLoading(false);
       onClose();
 
-      window.location = routes.getRoomUrl(newRoom._id, newRoom.slug);
+      window.location = routes.getRoomUrl({ id: newRoom._id, slug: newRoom.slug });
     } catch (error) {
       handleApiError({ error, logger, t });
       setLoading(false);

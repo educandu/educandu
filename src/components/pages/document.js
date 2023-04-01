@@ -693,7 +693,7 @@ function Document({ initialState, PageTemplate }) {
             {!!room && (
               <Breadcrumb className="Breadcrumbs">
                 <Breadcrumb.Item href={routes.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
-                <Breadcrumb.Item href={routes.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
+                <Breadcrumb.Item href={routes.getRoomUrl({ id: room._id, slug: room.slug })}>{room.name}</Breadcrumb.Item>
                 <Breadcrumb.Item>{doc.title}</Breadcrumb.Item>
               </Breadcrumb>
             )}

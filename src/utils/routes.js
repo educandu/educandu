@@ -105,8 +105,10 @@ function getSearchUrl(query) {
   return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
 }
 
-function getRoomUrl(id, slug) {
-  return urlUtils.concatParts(roomsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
+function getRoomUrl({ id, slug, tab } = {}) {
+  const queryString = urlUtils.composeQueryString({ tab });
+  const path = urlUtils.concatParts(roomsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
+  return queryString ? `${path}?${queryString}` : path;
 }
 
 function getDocIdIfDocUrl(url) {

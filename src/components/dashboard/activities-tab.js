@@ -102,7 +102,7 @@ function ActivitiesTab({ activities, loading }) {
       timestamp: activity.timestamp,
       description: t('roomCreatedActivity'),
       title: activity.data.name,
-      href: routes.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -114,7 +114,7 @@ function ActivitiesTab({ activities, loading }) {
       timestamp: activity.timestamp,
       description: t('roomUpdatedActivity'),
       title: activity.data.name,
-      href: routes.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -126,7 +126,7 @@ function ActivitiesTab({ activities, loading }) {
       timestamp: activity.timestamp,
       description: t('roomMarkedFavoriteActivity'),
       title: activity.data.name,
-      href: routes.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };
@@ -138,7 +138,7 @@ function ActivitiesTab({ activities, loading }) {
       timestamp: activity.timestamp,
       description: t('roomJoinedActivity'),
       title: activity.data.name,
-      href: routes.getRoomUrl(activity.data._id),
+      href: routes.getRoomUrl({ id: activity.data._id }),
       isDeprecated: activity.isDeprecated
     });
   };

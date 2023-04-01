@@ -8,6 +8,7 @@ import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import { useTranslation } from 'react-i18next';
 import RoomMembers from '../room/room-members.js';
+import { useRequest } from '../request-context.js';
 import MessageBoard from '../room/message-board.js';
 import RoomSettings from '../room/room-settings.js';
 import RoomIcon from '../icons/general/room-icon.js';
@@ -15,13 +16,13 @@ import RoomDocuments from '../room/room-documents.js';
 import WriteIcon from '../icons/general/write-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
+import React, { Fragment, useMemo, useState } from 'react';
 import { confirmLeaveRoom } from '../confirmation-dialogs.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { TeamOutlined, UserOutlined } from '@ant-design/icons';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { roomShape, roomInvitationShape, documentExtendedMetadataShape, roomMediaContextShape } from '../../ui/default-prop-types.js';
@@ -42,8 +43,11 @@ const TAB_KEYS = {
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
+  const request = useRequest();
   const { t } = useTranslation('room');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+
+  const initialTab = request.query.tab || TAB_KEYS.view;
 
   const [room, setRoom] = useState(initialState.room);
   const [membersCount, setMembersCount] = useState(initialState.room.members.length);
@@ -59,9 +63,9 @@ export default function Room({ PageTemplate, initialState }) {
     return VIEW_MODE.nonCollaboratingMember;
   }, [room, user]);
 
-  useEffect(() => {
-    history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
-  }, [room._id, room.slug]);
+  const handleTabChange = tab => {
+    history.replaceState(null, '', routes.getRoomUrl({ id: room._id, slug: room.slug, tab }));
+  };
 
   const handleLeaveRoom = async () => {
     try {
@@ -77,6 +81,10 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleRoomSettingsChange = updatedRoom => {
+    if (room.slug !== updatedRoom.slug) {
+      history.replaceState(null, '', routes.getRoomUrl({ id: room._id, slug: room.slug, tab: TAB_KEYS.settings }));
+    }
+
     setRoom(updatedRoom);
   };
 
@@ -189,7 +197,8 @@ export default function Room({ PageTemplate, initialState }) {
               type="line"
               size="middle"
               className="Tabs"
-              defaultActiveKey="1"
+              defaultActiveKey={initialTab}
+              onChange={handleTabChange}
               items={[
                 {
                   key: TAB_KEYS.view,
