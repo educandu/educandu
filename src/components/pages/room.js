@@ -1,5 +1,4 @@
 import by from 'thenby';
-import Info from '../info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from '../markdown.js';
@@ -9,19 +8,15 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
-import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
-import { useLoadingState } from '../../ui/hooks.js';
 import FileIcon from '../icons/general/file-icon.js';
 import RoomIcon from '../icons/general/room-icon.js';
-import { useDateFormat } from '../locale-context.js';
 import WriteIcon from '../icons/general/write-icon.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
-import MessageIcon from '../icons/general/message-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -30,12 +25,12 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
+import { Button, Tabs, message, Tooltip, Breadcrumb, Form } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { FAVORITE_TYPE, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import { Button, Tabs, message, Tooltip, Breadcrumb, Checkbox, Form } from 'antd';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
@@ -47,9 +42,9 @@ import {
   confirmRoomDelete,
   confirmRoomMemberDelete,
   confirmRoomInvitationDelete,
-  confirmLeaveRoom,
-  confirmRoomMessageDelete
+  confirmLeaveRoom
 } from '../confirmation-dialogs.js';
+import MessageBoard from '../room/message-board.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -89,25 +84,17 @@ function getSortedDocuments(room, documents) {
     .filter(doc => doc);
 }
 
-function getShowMessageBoardEmptyState(viewMode, room) {
-  return viewMode === VIEW_MODE.owner && !room.messages.length;
-}
-
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const contentFormRef = useRef(null);
   const metadataFormRef = useRef(null);
   const { t } = useTranslation('room');
-  const { formatDate } = useDateFormat();
   const droppableIdRef = useRef(useId());
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [room, setRoom] = useState(initialState.room);
-  const [newMessageText, setNewMessageText] = useState('');
-  const [isPostingNewMessage, setIsPostingNewMessage] = useLoadingState(false);
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
-  const [newMessageEmailNotification, setNewMessageEmailNotification] = useState(false);
   const [documents, setDocuments] = useState(getSortedDocuments(room, initialState.documents));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomContentUpdateButtonDisabled, setIsRoomContentUpdateButtonDisabled] = useState(true);
@@ -126,15 +113,10 @@ export default function Room({ PageTemplate, initialState }) {
 
   const showDraftDocuments = useMemo(() => viewMode === VIEW_MODE.owner, [viewMode]);
   const visibleDocumentsCount = useMemo(() => documents.filter(doc => showDraftDocuments || !doc.roomContext.draft).length, [showDraftDocuments, documents]);
-  const [showMessageBoardEmptyState, setShowMessageBoardEmptyState] = useState(getShowMessageBoardEmptyState(viewMode, room));
 
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
   }, [room._id, room.slug]);
-
-  useEffect(() => {
-    setShowMessageBoardEmptyState(getShowMessageBoardEmptyState(viewMode, room));
-  }, [viewMode, room]);
 
   const handleCreateInvitationButtonClick = event => {
     setIsRoomInvitationModalOpen(true);
@@ -341,36 +323,6 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleNewMessageTextChange = event => {
-    const { value } = event.target;
-    setNewMessageText(value);
-  };
-
-  const handlePostMessageClick = async () => {
-    setIsPostingNewMessage(true);
-    const response = await roomApiClient.addRoomMessage({
-      roomId: room._id,
-      text: newMessageText.trim(),
-      emailNotification: newMessageEmailNotification
-    });
-    await setIsPostingNewMessage(false);
-    setRoom(response.room);
-    setNewMessageText('');
-    setNewMessageEmailNotification(false);
-  };
-
-  const handleNewMessageEmailNotificationChange = event => {
-    const { checked } = event.target;
-    setNewMessageEmailNotification(checked);
-  };
-
-  const handleDeleteMessageClick = msg => {
-    confirmRoomMessageDelete(t, formatDate(msg.createdOn), async () => {
-      const response = await roomApiClient.deleteRoomMessage({ roomId: room._id, messageKey: msg.key });
-      setRoom(response.room);
-    });
-  };
-
   const renderRoomOverview = () => {
     return <Markdown className="RoomPage-overview">{room.overview}</Markdown>;
   };
@@ -505,95 +457,6 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const renderMessages = () => {
-    const sortedMessages = room.messages.sort(by(msg => msg.createdOn, 'desc'));
-
-    return (
-      <div className="RoomPage-messageBoardMessages">
-        {sortedMessages.map(msg => (
-          <div key={msg.key} className="RoomPage-messageBoardMessage">
-            <div className="RoomPage-messageBoardMessageHeadline">
-              <div>{formatDate(msg.createdOn)}</div>
-              <div className="RoomPage-messageBoardMessageHeadlineIcons">
-                {!!msg.emailNotification && (
-                  <div className="RoomPage-messageBoardMessageIcon">
-                    <Tooltip title={t('messageEmailNotificationIconTooltip')}>
-                      <MailOutlined />
-                    </Tooltip>
-                  </div>
-                )}
-                {viewMode === VIEW_MODE.owner && (
-                  <DeleteButton onClick={() => handleDeleteMessageClick(msg)} />
-                )}
-              </div>
-            </div>
-            <div className="RoomPage-messageBoardMessageText">
-              <Markdown>{msg.text}</Markdown>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderMessagePostingSection = () => {
-    return (
-      <div className="RoomPage-messageBoardPostingSection">
-        <MarkdownInput
-          preview
-          value={newMessageText}
-          disabled={isPostingNewMessage}
-          onChange={handleNewMessageTextChange}
-          />
-        <div className="RoomPage-messageBoardPostingSectionControls">
-          <Checkbox
-            checked={newMessageEmailNotification}
-            disabled={isPostingNewMessage}
-            onChange={handleNewMessageEmailNotificationChange}
-            >
-            <Info tooltip={t('postMessageCheckboxInfo')} iconAfterContent>
-              {t('postMessageCheckboxText')}
-            </Info>
-          </Checkbox>
-          <Button
-            type="primary"
-            loading={isPostingNewMessage}
-            disabled={!newMessageText.trim().length}
-            onClick={handlePostMessageClick}
-            >
-            {t('postMessageButtonText')}
-          </Button>
-        </div>
-      </div>
-    );
-  };
-
-  const renderMessageBoard = () => {
-    if (viewMode !== VIEW_MODE.owner && !room.messages.length) {
-      return null;
-    }
-
-    return (
-      <section className="RoomPage-messageBoard">
-        <div className="RoomPage-sectionHeadline">{t('messageBoardSectionHeadline')}</div>
-        {!!showMessageBoardEmptyState && (
-          <EmptyState
-            icon={<MessageIcon />}
-            title={t('messageBoardEmptyStateTitle')}
-            subtitle={t('messageBoardEmptyStateSubtitle')}
-            button={{
-              text: t('writeMessage'),
-              icon: <WriteIcon />,
-              onClick: () => setShowMessageBoardEmptyState(false)
-            }}
-            />
-        )}
-        {viewMode === VIEW_MODE.owner && !showMessageBoardEmptyState && renderMessagePostingSection()}
-        {renderMessages()}
-      </section>
-    );
-  };
-
   const renderRoomMember = member => {
     return (
       <div key={member.userId}>
@@ -684,7 +547,7 @@ export default function Room({ PageTemplate, initialState }) {
               )}
               {viewMode === VIEW_MODE.nonCollaboratingMember && renderDocumentsAsReadOnly()}
               {viewMode === VIEW_MODE.collaboratingMember && renderDocumentsAsDraggable()}
-              {renderMessageBoard()}
+              <MessageBoard roomId={room._id} initialMessages={room.messages} canManageMessages={viewMode === VIEW_MODE.owner} />
             </div>
           )}
           {viewMode === VIEW_MODE.owner && (
@@ -726,7 +589,7 @@ export default function Room({ PageTemplate, initialState }) {
                           }}
                           />
                       )}
-                      {renderMessageBoard()}
+                      <MessageBoard roomId={room._id} initialMessages={room.messages} canManageMessages={viewMode === VIEW_MODE.owner} />
                     </div>
                   )
                 },

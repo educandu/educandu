@@ -461,6 +461,13 @@ export const invitationShape = PropTypes.shape({
   email: PropTypes.string.isRequired
 });
 
+export const roomMessageShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  emailNotification: PropTypes.bool.isRequired
+});
+
 export const userActivitiesShape = PropTypes.shape({
   type: PropTypes.oneOf(Object.values(USER_ACTIVITY_TYPE)).isRequired,
   timestamp: PropTypes.string.isRequired,

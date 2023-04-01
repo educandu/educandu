@@ -1636,14 +1636,6 @@
       "en": "Documents created within this room are exclusively available to room members and not accessible to the rest of the community.",
       "de": "Die in diesem Raum erstellten Dokumente sind ausschließlich für die Raummitglieder abrufbar und nicht für den Rest der Community zugänglich."
     },
-    "messageBoardEmptyStateTitle": {
-      "en": "There are no messages on the board",
-      "de": "Auf dem Board sind keine Nachrichten"
-    },
-    "messageBoardEmptyStateSubtitle": {
-      "en": "As room owner, you can post messages to the board in order to inform room members about various topics.\nMembers see the message board on the room page. They also receive a notification and, optionally, an email, when a new message is posted.\n",
-      "de": "Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über diverse Themen zu informieren.\nMitglieder sehen das Message-Board auf der Raum-Seite. Sie bekommen ebenfalls eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.\n"
-    },
     "membersEmptyStateTitle": {
       "en": "You have not invited any members",
       "de": "Du hast noch keine Mitglieder eingeladen"
@@ -1695,30 +1687,6 @@
     "documentsSectionHeadline": {
       "en": "Documents",
       "de": "Dokumente"
-    },
-    "messageBoardSectionHeadline": {
-      "en": "Message board",
-      "de": "Message-Board"
-    },
-    "writeMessage": {
-      "en": "Write message",
-      "de": "Nachricht schreiben"
-    },
-    "postMessageButtonText": {
-      "en": "Post message",
-      "de": "Nachricht abschicken"
-    },
-    "postMessageCheckboxText": {
-      "en": "Send email to members",
-      "de": "E-Mail an Mitglieder schicken"
-    },
-    "postMessageCheckboxInfo": {
-      "en": "An email will be immediately sent to all room members, notifying them that there is new information on the room message board.",
-      "de": "Eine E-Mail wird unmittelbar an alle Raummitglieder geschickt, um diese darüber zu benachrichtigen, dass es neue Informationen auf dem Raum-Message-Board gibt."
-    },
-    "messageEmailNotificationIconTooltip": {
-      "en": "An email was sent to all room members when this message was posted.",
-      "de": "Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde."
     },
     "overview": {
       "en": "Overview",
@@ -2159,6 +2127,40 @@
     "isCollaborativeInfo": {
       "en": "In collaborative rooms all room members can add and modify documents, however only the owner can delete them.",
       "de": "In kollaborativen Räumen können alle Raummitglieder Dokumente erstellen und bearbeiten, jedoch nur Besitzer können diese löschen."
+    }
+  },
+  "messageBoard": {
+    "emptyStateTitle": {
+      "en": "There are no messages on the board",
+      "de": "Auf dem Board sind keine Nachrichten"
+    },
+    "emptyStateSubtitle": {
+      "en": "As room owner, you can post messages to the board in order to inform room members about various topics.\nMembers see the message board on the room page. They also receive a notification and, optionally, an email, when a new message is posted.\n",
+      "de": "Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über diverse Themen zu informieren.\nMitglieder sehen das Message-Board auf der Raum-Seite. Sie bekommen ebenfalls eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.\n"
+    },
+    "headline": {
+      "en": "Message board",
+      "de": "Message-Board"
+    },
+    "writeMessage": {
+      "en": "Write message",
+      "de": "Nachricht schreiben"
+    },
+    "postMessageButtonText": {
+      "en": "Post message",
+      "de": "Nachricht abschicken"
+    },
+    "postMessageCheckboxText": {
+      "en": "Send email to members",
+      "de": "E-Mail an Mitglieder schicken"
+    },
+    "postMessageCheckboxInfo": {
+      "en": "An email will be immediately sent to all room members, notifying them that there is new information on the room message board.",
+      "de": "Eine E-Mail wird unmittelbar an alle Raummitglieder geschickt, um diese darüber zu benachrichtigen, dass es neue Informationen auf dem Raum-Message-Board gibt."
+    },
+    "emailNotificationIconTooltip": {
+      "en": "An email was sent to all room members when this message was posted.",
+      "de": "Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde."
     }
   },
   "searchBar": {
