@@ -8,12 +8,6 @@ room:
   overviewEmptyStateSubtitle:
     en: Go to the room settings tab and write an overview text in order to provide members with the room context and purpose.
     de: Gehe zu den Raum-Einstellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern.
-  documentsEmptyStateTitle:
-    en: There are no documents in this room
-    de: Es gibt keine Dokumente in diesem Raum
-  documentsEmptyStateSubtitle:
-    en: Documents created within this room are exclusively available to room members and not accessible to the rest of the community.
-    de: Die in diesem Raum erstellten Dokumente sind ausschließlich für die Raummitglieder abrufbar und nicht für den Rest der Community zugänglich.
   membersEmptyStateTitle:
     en: You have not invited any members
     de: Du hast noch keine Mitglieder eingeladen
@@ -50,9 +44,6 @@ room:
   inviteCollaboratorsButton:
     en: Invite collaborators
     de: Mitarbeiter einladen
-  documentsSectionHeadline:
-    en: Documents
-    de: Dokumente
   overview:
     en: Overview
     de: Überblick

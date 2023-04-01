@@ -86,13 +86,13 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
   return alerts;
 }
 
-function getDocumentMetadataModalState({ t, doc, room, isCloning, isOpen = false }) {
+function getDocumentMetadataModalState({ t, doc, room, user, isCloning, isOpen = false }) {
   return {
     isOpen,
     mode: isCloning ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.update,
     documentToClone: isCloning ? doc : null,
     allowMultiple: false,
-    initialDocumentRoomMetadata: room ? { ...room } : null,
+    allowDraft: !!room && room.owner?._id === user?._id,
     initialDocumentMetadata: isCloning
       ? {
         ...doc,
@@ -304,11 +304,11 @@ function Document({ initialState, PageTemplate }) {
   }, [user, doc._id, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, isCloning: false, isOpen: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: false, isOpen: true }));
   };
 
   const handleDocumentCloneClick = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, isCloning: true, isOpen: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: true, isOpen: true }));
   };
 
   const handleDocumentMetadataModalSave = updatedDocuments => {
