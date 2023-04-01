@@ -456,7 +456,7 @@ export const roomInvitationBasicProps = {
 
 export const roomInvitationBasicShape = PropTypes.shape(roomInvitationBasicProps);
 
-export const invitationShape = PropTypes.shape({
+export const roomInvitationShape = PropTypes.shape({
   ...roomInvitationBasicProps,
   email: PropTypes.string.isRequired
 });

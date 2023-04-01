@@ -1,7 +1,5 @@
-import by from 'thenby';
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
-import UserCard from '../user-card.js';
 import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -9,6 +7,7 @@ import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
+import RoomMembers from '../room/room-members.js';
 import MessageBoard from '../room/message-board.js';
 import RoomIcon from '../icons/general/room-icon.js';
 import RoomDocuments from '../room/room-documents.js';
@@ -19,17 +18,16 @@ import { handleApiError } from '../../ui/error-helper.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { Button, Tabs, message, Breadcrumb, Form } from 'antd';
+import { TeamOutlined, UserOutlined } from '@ant-design/icons';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
-import { MailOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+import { confirmRoomDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
-import { roomShape, invitationShape, documentExtendedMetadataShape, roomMediaContextShape } from '../../ui/default-prop-types.js';
-import { confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
+import { roomShape, roomInvitationShape, documentExtendedMetadataShape, roomMediaContextShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -49,8 +47,9 @@ export default function Room({ PageTemplate, initialState }) {
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const [room, setRoom] = useState(initialState.room);
-  const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
-  const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
+  const [membersCount, setMembersCount] = useState(initialState.room.members.length);
+  const [invitationsCount, setInvitationsCount] = useState(initialState.invitations.length);
+
   const [isRoomContentUpdateButtonDisabled, setIsRoomContentUpdateButtonDisabled] = useState(true);
   const [isRoomMetadataUpdateButtonDisabled, setIsRoomMetadataUpdateButtonDisabled] = useState(true);
 
@@ -67,11 +66,6 @@ export default function Room({ PageTemplate, initialState }) {
   useEffect(() => {
     history.replaceState(null, '', routes.getRoomUrl(room._id, room.slug));
   }, [room._id, room.slug]);
-
-  const handleCreateInvitationButtonClick = event => {
-    setIsRoomInvitationModalOpen(true);
-    event.stopPropagation();
-  };
 
   const handleRoomDelete = async () => {
     try {
@@ -97,17 +91,6 @@ export default function Room({ PageTemplate, initialState }) {
 
   const handleLeaveRoomClick = () => {
     confirmLeaveRoom(t, room.name, handleLeaveRoom);
-  };
-
-  const handleInvitationModalClose = newInvitations => {
-    setIsRoomInvitationModalOpen(false);
-    if (newInvitations) {
-      setInvitations(currentInvitations => {
-        const invitationsByEmail = new Map(currentInvitations.map(x => [x.email, x]));
-        newInvitations.forEach(newInvitation => invitationsByEmail.set(newInvitation.email, newInvitation));
-        return [...invitationsByEmail.values()].sort(by(x => x.sentOn));
-      });
-    }
   };
 
   const handleUpdateRoomContentClick = () => {
@@ -154,65 +137,23 @@ export default function Room({ PageTemplate, initialState }) {
     setIsRoomMetadataUpdateButtonDisabled(false);
   };
 
-  const handleDeleteRoomMemberClick = member => {
-    confirmRoomMemberDelete(t, member.displayName, async () => {
-      const response = await roomApiClient.deleteRoomMember({ roomId: room._id, memberUserId: member.userId });
-      setRoom(response.room);
-    });
-  };
-
-  const handleRemoveRoomInvitationClick = invitation => {
-    confirmRoomInvitationDelete(t, invitation.email, async () => {
-      const response = await roomApiClient.deleteRoomInvitation({ invitationId: invitation._id });
-      setInvitations(response.invitations.sort(by(x => x.sentOn)));
-    });
+  const handleRoomMembersChange = info => {
+    setMembersCount(info.membersCount);
+    setInvitationsCount(info.invitationsCount);
   };
 
   const renderRoomOverview = () => {
     return <Markdown className="RoomPage-overview">{room.overview}</Markdown>;
   };
 
-  const renderRoomMember = member => {
-    return (
-      <div key={member.userId}>
-        <UserCard
-          roomMember={member}
-          onDeleteRoomMember={() => handleDeleteRoomMemberClick(member)}
-          />
-      </div>
-    );
-  };
-
-  const renderRoomInvitation = invitation => {
-    return (
-      <div className="RoomPage-member" key={invitation._id}>
-        <UserCard
-          roomInvitation={invitation}
-          onDeleteRoomInvitation={() => handleRemoveRoomInvitationClick(invitation)}
-          />
-      </div>
-    );
-  };
-
-  const membersTabCount = invitations.length
-    ? `${room.members.length}/${room.members.length + invitations.length}`
-    : room.members.length;
+  const membersTabIcon = room.isCollaborative ? <TeamOutlined /> : <UserOutlined />;
+  const membersTabCount = invitationsCount
+    ? `${membersCount}/${membersCount + invitationsCount}`
+    : membersCount;
 
   const membersTabTitle = room.isCollaborative
     ? `${t('common:collaborators')} (${membersTabCount})`
     : `${t('common:members')} (${membersTabCount}) `;
-
-  const inviteMemberButtonText = room.isCollaborative
-    ? t('inviteCollaboratorsButton')
-    : t('inviteMembersButton');
-
-  const membersEmptyStateTitle = room.isCollaborative
-    ? t('collaboratorsEmptyStateTitle')
-    : t('membersEmptyStateTitle');
-
-  const roomMembersIcon = room.isCollaborative ? <TeamOutlined /> : <UserOutlined />;
-
-  const showMembersTabEmptyState = !room.members.length;
 
   const showOverviewEmptyState = !room.overview;
 
@@ -287,42 +228,15 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: '2',
-                  label: <div>{roomMembersIcon}{membersTabTitle}</div>,
+                  label: <div>{membersTabIcon}{membersTabTitle}</div>,
                   children: (
                     <div className="Tabs-tabPane">
-                      {!!showMembersTabEmptyState && (
-                        <EmptyState
-                          icon={roomMembersIcon}
-                          title={membersEmptyStateTitle}
-                          subtitle={t('membersEmptyStateSubtitle')}
-                          button={{
-                            text: inviteMemberButtonText,
-                            icon: <MailOutlined />,
-                            onClick: handleCreateInvitationButtonClick
-                          }}
-                          />
-                      )}
-                      {!showMembersTabEmptyState && (
-                        <Fragment>
-                          <Button
-                            type="primary"
-                            icon={<MailOutlined />}
-                            className="RoomPage-tabCreateItemButton"
-                            onClick={handleCreateInvitationButtonClick}
-                            >
-                            {inviteMemberButtonText}
-                          </Button>
-                          <div className="RoomPage-members">
-                            {room.members.map(renderRoomMember)}
-                            {invitations.map(renderRoomInvitation)}
-                          </div>
-                        </Fragment>
-                      )}
-                      <RoomInvitationCreationModal
-                        isOpen={isRoomInvitationModalOpen}
-                        onOk={handleInvitationModalClose}
-                        onCancel={handleInvitationModalClose}
+                      <RoomMembers
                         roomId={room._id}
+                        roomIsCollaborative={room.isCollaborative}
+                        initialRoomMembers={initialState.room.members}
+                        initialRoomInvitations={initialState.invitations}
+                        onChange={handleRoomMembersChange}
                         />
                     </div>
                   )
@@ -400,7 +314,7 @@ Room.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
-    invitations: PropTypes.arrayOf(invitationShape).isRequired,
+    invitations: PropTypes.arrayOf(roomInvitationShape).isRequired,
     documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
     roomMediaContext: roomMediaContextShape
   }).isRequired
