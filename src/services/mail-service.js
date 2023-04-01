@@ -252,7 +252,7 @@ class MailService {
 
     const appName = this.serverConfig.appName;
     const origin = this.serverConfig.appRootUrl;
-    const roomLink = new URL(routes.getRoomUrl(room._id), origin).href;
+    const roomLink = new URL(routes.getRoomUrl({ id: room._id }), origin).href;
 
     const subject = this.translators
       .map(t => t('mailService:roomMessageEmail.subject', { appName }))

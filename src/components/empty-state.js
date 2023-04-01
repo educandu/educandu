@@ -19,17 +19,18 @@ function EmptyState({ icon, title, subtitle, button, compact, status }) {
 
   if (button) {
     actions.push((
-      <Button
-        key="button"
-        type={button.isDefaultType ? 'default' : 'primary'}
-        icon={button.icon || null}
-        onClick={event => button.onClick(event)}
-        >
-        {button.text}
+      <div key="button">
+        <Button
+          type={button.isDefaultType ? 'default' : 'primary'}
+          icon={button.icon || null}
+          onClick={event => button.onClick(event)}
+          >
+          {button.text}
+        </Button>
         {!!button.subtext && (
           <div className="EmptyState-buttonSubtext">{button.subtext}</div>
         )}
-      </Button>
+      </div>
     ));
   }
 

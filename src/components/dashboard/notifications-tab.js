@@ -53,7 +53,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     if (notificationGroup.eventType === EVENT_TYPE.roomMessageCreated) {
       icon = <MessageIcon />;
       title = roomNotAvailable ? t('common:roomNotAvailable') : notificationGroup.eventParams.room.name;
-      href = roomNotAvailable ? null : routes.getRoomUrl(notificationGroup.eventParams.room._id);
+      href = roomNotAvailable ? null : routes.getRoomUrl({ id: notificationGroup.eventParams.room._id });
       description = t('roomMessageCreatedNotification');
     }
 

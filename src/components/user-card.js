@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
 import { InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
-import { favoriteUserShape, invitationShape, roomMemberShape } from '../ui/default-prop-types.js';
+import { favoriteUserShape, roomInvitationShape, roomMemberShape } from '../ui/default-prop-types.js';
 
 function UserCard({
   favoriteUser,
@@ -140,7 +140,7 @@ UserCard.propTypes = {
     data: favoriteUserShape.isRequired
   }),
   roomMember: roomMemberShape,
-  roomInvitation: invitationShape,
+  roomInvitation: roomInvitationShape,
   onToggleFavorite: PropTypes.func,
   onDeleteRoomMember: PropTypes.func,
   onDeleteRoomInvitation: PropTypes.func

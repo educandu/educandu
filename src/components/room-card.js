@@ -26,13 +26,13 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
 
   const handleCardClick = () => {
     if (userAccessibleRoom) {
-      window.location = routes.getRoomUrl(roomId);
+      window.location = routes.getRoomUrl({ id: roomId });
     }
   };
 
   const handleAcceptInvitationClick = async () => {
     await roomApiClient.confirmInvitation({ token: roomInvitation.token });
-    window.location = routes.getRoomUrl(roomId);
+    window.location = routes.getRoomUrl({ id: roomId });
   };
 
   const renderTitle = () => {

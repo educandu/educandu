@@ -456,9 +456,16 @@ export const roomInvitationBasicProps = {
 
 export const roomInvitationBasicShape = PropTypes.shape(roomInvitationBasicProps);
 
-export const invitationShape = PropTypes.shape({
+export const roomInvitationShape = PropTypes.shape({
   ...roomInvitationBasicProps,
   email: PropTypes.string.isRequired
+});
+
+export const roomMessageShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  emailNotification: PropTypes.bool.isRequired
 });
 
 export const userActivitiesShape = PropTypes.shape({

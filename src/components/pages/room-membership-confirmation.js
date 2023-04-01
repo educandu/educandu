@@ -33,7 +33,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   }, [token, invalidInvitationReason, confirmed, t, roomApiClient]);
 
   const redirectToRoom = () => {
-    window.location = routes.getRoomUrl(roomId, roomSlug);
+    window.location = routes.getRoomUrl({ id: roomId, slug: roomSlug });
   };
 
   const renderSpinner = () => (

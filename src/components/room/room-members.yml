@@ -1,0 +1,16 @@
+roomMembers:
+  membersEmptyStateTitle:
+    en: You have not invited any members
+    de: Du hast noch keine Mitglieder eingeladen
+  collaboratorsEmptyStateTitle:
+    en: You have not invited any collaborators
+    de: Du hast noch keine Mitarbeiter eingeladen
+  membersEmptyStateSubtitle:
+    en: For other users to have access to your room, send them an invitation.
+    de: Um anderen Nutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung.
+  inviteMembersButton:
+    en: Invite members
+    de: Mitglieder einladen
+  inviteCollaboratorsButton:
+    en: Invite collaborators
+    de: Mitarbeiter einladen

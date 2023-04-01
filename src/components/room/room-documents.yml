@@ -1,0 +1,10 @@
+roomDocuments:
+  headline:
+    en: Documents
+    de: Dokumente
+  emptyStateTitle:
+    en: There are no documents in this room
+    de: Es gibt keine Dokumente in diesem Raum
+  emptyStateSubtitle:
+    en: Documents created within this room are exclusively available to room members and not accessible to the rest of the community.
+    de: Die in diesem Raum erstellten Dokumente sind ausschließlich für die Raummitglieder abrufbar und nicht für den Rest der Community zugänglich.
