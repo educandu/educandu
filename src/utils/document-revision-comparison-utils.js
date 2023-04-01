@@ -2,6 +2,7 @@ import mdiffNs from 'mdiff';
 import unidiffNs from 'unidiff';
 import cloneDeep from './clone-deep.js';
 import Logger from '../common/logger.js';
+import { prettyPrintValue } from './string-utils.js';
 import { parseDiff, tokenize, markEdits } from 'react-diff-view';
 
 const mdiff = mdiffNs.default || mdiffNs;
@@ -103,7 +104,7 @@ function getMetadataTextRepresentation(documentRevision) {
     clonedRevision.publicContext.accreditedEditors = clonedRevision.publicContext.accreditedEditors.map(editor => editor._id);
   }
 
-  return JSON.stringify(clonedRevision, null, 2);
+  return prettyPrintValue(clonedRevision);
 }
 
 function getSectionTextRepresentation(section, plugin) {
@@ -113,7 +114,7 @@ function getSectionTextRepresentation(section, plugin) {
 
   return typeof plugin.info.getTextRepresentation === 'function'
     ? plugin.info.getTextRepresentation(section.content) || ''
-    : JSON.stringify(section.content, null, 2);
+    : prettyPrintValue(section.content);
 }
 
 function createHunksFromChangedText(oldText, newText) {
