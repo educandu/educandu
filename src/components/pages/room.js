@@ -141,8 +141,6 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const getMembersTabTitle = () => {
-    const icon = room.isCollaborative ? <TeamOutlined /> : <UserOutlined />;
-
     const count = invitationsCount
       ? `${membersCount}/${membersCount + invitationsCount}`
       : membersCount;
@@ -151,7 +149,12 @@ export default function Room({ PageTemplate, initialState }) {
       ? `${t('common:collaborators')} (${count})`
       : `${t('common:members')} (${count})`;
 
-    return `${icon}${text}`;
+    return (
+      <Fragment>
+        {room.isCollaborative ? <TeamOutlined /> : <UserOutlined />}
+        {text}
+      </Fragment>
+    );
   };
 
   return (

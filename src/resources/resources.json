@@ -1631,10 +1631,6 @@
     "cancelRoomMembership": {
       "en": "Cancel room membership",
       "de": "Raum-Mitgliedschaft beenden"
-    },
-    "overview": {
-      "en": "Overview",
-      "de": "Überblick"
     }
   },
   "search": {

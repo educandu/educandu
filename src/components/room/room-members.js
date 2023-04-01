@@ -117,7 +117,7 @@ export default function RoomMembers({
             >
             {inviteMemberButtonText}
           </Button>
-          <div>
+          <div className="RoomMembers-members">
             {members.map(renderMember)}
             {invitations.map(renderInvitation)}
           </div>
