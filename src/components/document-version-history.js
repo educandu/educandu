@@ -12,7 +12,6 @@ import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import { EyeOutlined, PaperClipOutlined, SwapOutlined, UndoOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
-const TimelineItem = Timeline.Item;
 
 function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, canRestore, onViewClick, onRestoreClick }) {
   const { formatDate } = useDateFormat();
@@ -152,12 +151,10 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
     );
   };
 
-  const renderTimelineItem = documentRevision => {
-    return (
-      <TimelineItem
-        key={documentRevision._id}
-        dot={renderTimelineItemDot(documentRevision)}
-        >
+  const getActivityItem = documentRevision => {
+    return {
+      dot: renderTimelineItemDot(documentRevision),
+      children: (
         <div className="DocumentVersionHistory-item">
           <Collapse
             ghost
@@ -172,15 +169,13 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
             </Panel>
           </Collapse>
         </div>
-      </TimelineItem>
-    );
+      )
+    };
   };
 
   return (
     <div className="DocumentVersionHistory">
-      <Timeline mode="left">
-        {versionedDocumentRevisions.map(renderTimelineItem)}
-      </Timeline>
+      <Timeline mode="left" items={versionedDocumentRevisions.map(getActivityItem)} />
     </div>
   );
 }
