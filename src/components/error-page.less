@@ -1,105 +1,45 @@
 .ErrorPage {
-  margin: 0;
-  padding: 0;
   display: flex;
-  min-height: 100vh;
-  position: relative;
+  align-items: center;
   flex-direction: column;
-  min-width: @edu-min-page-width;
-  max-width: 100vw;
-}
-
-.ErrorPage-headerArea {
-  top: 0;
-  flex: none;
-  width: 100%;
-  z-index: @edu-z-index-sticky-content-layer;
-  position: sticky;
-  background-color: @edu-white;
-  margin-bottom: @edu-page-content-padding;
-}
-
-.ErrorPage-header {
-  display: flex;
-  align-items: center;
-}
-
-.ErrorPage-headerContent {
-  .m-page-content;
-  display: block;
-
-  &.ErrorPage-headerContent--left {
-    flex: 1 0 0%;
-    display: flex;
-    align-items: flex-end;
-  }
-
-  &.ErrorPage-headerContent--center {
-    flex: none;
-    text-align: center;
-  }
-
-  &.ErrorPage-headerContent--right {
-    flex: 1 0 0%;
-    text-align: right;
-  }
-}
-
-.ErrorPage-contentArea {
-  flex: 1 0 0%;
-  display: flex;
-  align-items: center;
-}
-
-.ErrorPage-contentContainer {
-  margin: 0 auto;
-  width: 100%;
-  min-width: @edu-min-page-width;
-  max-width: @edu-content-width-narrow;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Dancing Script';
 }
 
 .ErrorPage-content {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding-bottom: 20vh;
+  padding: @edu-page-content-padding;
+  max-width: @edu-content-width-narrow;
 }
 
-.ErrorPage-status {
-  font-family: 'Dancing Script';
-  font-size: 72px;
-  text-align: center;
-  color: @edu-primary-color-light;
-  margin: 32px 0;
-}
-
-.ErrorPage-message {
-  text-align: center;
-}
-
-.ErrorPage-back {
-  text-align: center;
-}
-
-.ErrorPage-stack {
-  margin-top: 180px;
-  font-family: monospace;
-  text-align: left;
-}
-
-.ErrorPage-footer {
-  .m-page-content;
-  flex: none;
-  display: flex;
-  z-index: @edu-z-index-cover-layer;
-  align-items: center;
+.ErrorPage-buttons {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: column;
   justify-content: center;
 }
 
-.ErrorPage-footerLink {
-  display: inline-block;
+.ErrorPage-button {
+  display: flex !important;
+  align-items: center !important;
 
-  &:not(:last-child)::after {
-    content: "\00A0\00A0|\00A0\00A0";
+  a {
+    color: @edu-text-color;
   }
+
+  .anticon {
+    display: flex !important;
+  }
+
+  &.ErrorPage-button--primary {
+    a {
+      color: white !important;
+    }
+  }
+}
+
+.ErrorPage-errorDetails {
+  margin-top: 100px;
+  font-family: monospace;
+  text-align: left;
 }
