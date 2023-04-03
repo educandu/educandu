@@ -234,10 +234,10 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
           <MarkdownInput
             preview
             value={currentComment}
+            disableResourceSelector
             readOnly={showAsLoading}
             placeholder={t('newCommentPlaceholder')}
             maxLength={maxDocumentCommentTextLength}
-            useStorageSelector={false}
             onChange={handleCurrentCommentChange}
             />
           <Button

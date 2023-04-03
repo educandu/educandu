@@ -147,6 +147,7 @@ function Tests({ PageTemplate, initialState }) {
   const [miValue, setMiValue] = useState('');
   const [miInline, setMiInline] = useState(false);
   const [miEventLog, setMiEventLog] = useState('');
+  const [miDisabled, setMiDisabled] = useState(false);
   const [miDebounced, setMiDebounced] = useState(false);
   const [miSanitizeCdnUrls, setMiSanitizeCdnUrls] = useState(false);
   const handleMiEvent = (eventName, ...args) => {
@@ -418,6 +419,7 @@ function Tests({ PageTemplate, initialState }) {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
                       <Checkbox checked={miInline} onChange={event => setMiInline(event.target.checked)}>Inline</Checkbox>
+                      <Checkbox checked={miDisabled} onChange={event => setMiDisabled(event.target.checked)}>Disabled</Checkbox>
                       <Checkbox checked={miDebounced} onChange={event => setMiDebounced(event.target.checked)}>Debounced</Checkbox>
                       <Checkbox checked={miSanitizeCdnUrls} onChange={event => setMiSanitizeCdnUrls(event.target.checked)}>Sanitize CDN URLs</Checkbox>
                     </div>
@@ -428,6 +430,7 @@ function Tests({ PageTemplate, initialState }) {
                     <MarkdownInput
                       value={miValue}
                       inline={miInline}
+                      disabled={miDisabled}
                       debounced={miDebounced}
                       sanitizeCdnUrls={miSanitizeCdnUrls}
                       onBlur={() => handleMiEvent('onBlur')}

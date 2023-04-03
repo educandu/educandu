@@ -1,19 +1,18 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
+import React, { useRef } from 'react';
 import { Input, Tooltip } from 'antd';
 import MarkdownHelp from './markdown-help.js';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
-import { LinkOutlined } from '@ant-design/icons';
 import DebouncedInput from './debounced-input.js';
 import { useService } from './container-context.js';
 import InputAndPreview from './input-and-preview.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
+import MarkdownResourceSelector from './markdown-resource-selector.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
-import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 
 function MarkdownInput({
   minRows,
@@ -28,7 +27,7 @@ function MarkdownInput({
   preview,
   embeddable,
   maxLength,
-  useStorageSelector,
+  disableResourceSelector,
   ...rest
 }) {
   const inputContainerRef = useRef(null);
@@ -36,7 +35,6 @@ function MarkdownInput({
   const { t } = useTranslation('markdownInput');
   const clientConfig = useService(ClientConfig);
   const gfm = useService(GithubFlavoredMarkdown);
-  const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
 
   const insertText = ({ text, replaceAll = false, focus = false }) => {
     const input = inputContainerRef.current.querySelector(inline ? 'input[type=text]' : 'textarea');
@@ -55,19 +53,8 @@ function MarkdownInput({
 
   const renderCount = () => !!maxLength && <div className="u-input-count">{value.length} / {maxLength}</div>;
 
-  const handleOpenResourceSelectorClick = () => {
-    if (!disabled) {
-      setIsResourceSelectorDialogOpen(true);
-    }
-  };
-
-  const handleResourceSelectorDialogSelect = url => {
-    setIsResourceSelectorDialogOpen(false);
+  const handleUrlSelect = url => {
     setTimeout(() => insertText({ text: `![](${url})`, focus: true }), 500);
-  };
-
-  const handleResourceSelectorDialogClose = () => {
-    setIsResourceSelectorDialogOpen(false);
   };
 
   const handleBlur = event => {
@@ -98,26 +85,6 @@ function MarkdownInput({
     );
   };
 
-  const renderResourceSelector = () => {
-    return (
-      <div
-        onClick={handleOpenResourceSelectorClick}
-        className={classNames({
-          'MarkdownInput-resourceSelector': true,
-          'MarkdownInput-resourceSelector--small': embeddable,
-          'is-disabled': disabled
-        })}
-        >
-        <LinkOutlined />
-        <ResourceSelectorDialog
-          isOpen={isResourceSelectorDialogOpen}
-          onSelect={handleResourceSelectorDialogSelect}
-          onClose={handleResourceSelectorDialogClose}
-          />
-      </div>
-    );
-  };
-
   const renderBlockInput = () => (
     <div className="MarkdownInput-textareaContainer" ref={inputContainerRef}>
       <NeverScrollingTextArea
@@ -139,11 +106,10 @@ function MarkdownInput({
           { 'MarkdownInput-blockHelpContainer--embeddable': embeddable }
         )}
         >
-        {!!useStorageSelector && !disabled && (
-          <Tooltip title={t('resourceSelectorTooltip')}>{renderResourceSelector()}</Tooltip>
+        {!disableResourceSelector && (
+          <MarkdownResourceSelector small={embeddable} disabled={disabled} onUrlSelect={handleUrlSelect} />
         )}
-        {!!useStorageSelector && !!disabled && renderResourceSelector()}
-        <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
+        <MarkdownHelp small={embeddable} disabled={disabled} />
       </div>
     </div>
   );
@@ -185,7 +151,7 @@ MarkdownInput.propTypes = {
   renderAnchors: PropTypes.bool,
   sanitizeCdnUrls: PropTypes.bool,
   value: PropTypes.string,
-  useStorageSelector: PropTypes.bool
+  disableResourceSelector: PropTypes.bool
 };
 
 MarkdownInput.defaultProps = {
@@ -201,7 +167,7 @@ MarkdownInput.defaultProps = {
   renderAnchors: false,
   sanitizeCdnUrls: true,
   value: '',
-  useStorageSelector: true
+  disableResourceSelector: false
 };
 
 export default MarkdownInput;
