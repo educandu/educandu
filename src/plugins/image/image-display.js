@@ -151,9 +151,21 @@ function ImageDisplay({ content }) {
       {effectType === EFFECT_TYPE.hover && renderHoverEffect()}
       {effectType === EFFECT_TYPE.reveal && renderRevealEffect()}
       {effectType === EFFECT_TYPE.clip && renderClipEffect()}
-      {!!showMainImageCopyright && <CopyrightNotice value={copyrightNotice} />}
-      {!!showHoverEffectImageCopyright && <CopyrightNotice value={hoverEffect.copyrightNotice} />}
-      {!!showRevealEffectImageCopyright && <CopyrightNotice value={revealEffect.copyrightNotice} />}
+      {!!showMainImageCopyright && (
+        <div className={`u-horizontally-centered u-width-${width}`}>
+          <CopyrightNotice value={copyrightNotice} />
+        </div>
+      )}
+      {!!showHoverEffectImageCopyright && (
+        <div className={`u-horizontally-centered u-width-${width}`}>
+          <CopyrightNotice value={hoverEffect.copyrightNotice} />
+        </div>
+      )}
+      {!!showRevealEffectImageCopyright && (
+        <div className={`u-horizontally-centered u-width-${width}`}>
+          <CopyrightNotice value={revealEffect.copyrightNotice} />
+        </div>
+      )}
     </div>
   );
 }
