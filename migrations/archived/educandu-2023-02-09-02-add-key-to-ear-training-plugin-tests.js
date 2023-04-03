@@ -1,6 +1,6 @@
-import uniqueId from '../src/utils/unique-id.js';
+import uniqueId from '../../src/utils/unique-id.js';
 
-export default class Educandu_2023_02_09_03_add_key_to_quick_tester_plugin_tests {
+export default class Educandu_2023_02_09_02_add_key_to_ear_training_plugin_tests {
   constructor(db) {
     this.db = db;
   }
@@ -16,7 +16,7 @@ export default class Educandu_2023_02_09_03_add_key_to_quick_tester_plugin_tests
       {
         arrayFilters: [
           {
-            'sectionElement.type': 'quick-tester',
+            'sectionElement.type': 'ear-training',
             'sectionElement.content': { $ne: null }
           }
         ],
@@ -38,7 +38,7 @@ export default class Educandu_2023_02_09_03_add_key_to_quick_tester_plugin_tests
       {
         arrayFilters: [
           {
-            'sectionElement.type': 'quick-tester',
+            'sectionElement.type': 'ear-training',
             'sectionElement.content': { $ne: null }
           }
         ],

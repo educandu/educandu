@@ -1,10 +1,10 @@
 import { createSandbox } from 'sinon';
-import uniqueId from '../src/utils/unique-id.js';
+import uniqueId from '../../src/utils/unique-id.js';
 import { beforeEach, afterEach, describe, expect, it } from 'vitest';
 
-import MigrationScript from './educandu-2023-02-10-02-change-data-model-for-multitrack-media-plugin.js';
+import MigrationScript from './educandu-2023-02-10-03-change-data-model-for-media-analysis-plugin.js';
 
-describe('educandu-2023-02-10-02-change-data-model-for-multitrack-media-plugin', () => {
+describe('educandu-2023-02-10-03-change-data-model-for-media-analysis-plugin', () => {
   let sut;
   const sandbox = createSandbox();
 
@@ -57,6 +57,11 @@ describe('educandu-2023-02-10-02-change-data-model-for-multitrack-media-plugin',
               secondaryTracks: [0.5, 0.6]
             }
           ],
+          chapters: [
+            {
+              title: 'Single chapter'
+            }
+          ],
           width: 100,
           initialVolume: 1
         }
@@ -96,6 +101,11 @@ describe('educandu-2023-02-10-02-change-data-model-for-multitrack-media-plugin',
             {
               name: 'Half',
               tracks: [0.4, 0.5, 0.6]
+            }
+          ],
+          chapters: [
+            {
+              title: 'Single chapter'
             }
           ],
           aspectRatio: '16:9',
