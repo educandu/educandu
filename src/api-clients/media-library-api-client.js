@@ -26,12 +26,12 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
-  createMediaLibraryItem({ file, description, languages, licenses, tags, onProgress = () => {} }) {
+  createMediaLibraryItem({ file, shortDescription, languages, licenses, tags, onProgress = () => {} }) {
     const formData = new FormData();
     languages.forEach(language => formData.append('languages[]', language));
     licenses.forEach(license => formData.append('licenses[]', license));
     tags.forEach(tag => formData.append('tags[]', tag));
-    formData.append('description', description);
+    formData.append('shortDescription', shortDescription);
     formData.append('file', file, file.name);
 
     const request = this.httpClient
@@ -48,11 +48,11 @@ class MediaLibraryApiClient {
     return request.then(res => res.data);
   }
 
-  updateMediaLibraryItem({ mediaLibraryItemId, description, languages, licenses, tags }) {
+  updateMediaLibraryItem({ mediaLibraryItemId, shortDescription, languages, licenses, tags }) {
     return this.httpClient
       .patch(
         `/api/v1/media-library/items/${encodeURIComponent(mediaLibraryItemId)}`,
-        { description, languages, licenses, tags },
+        { shortDescription, languages, licenses, tags },
         { responseType: 'json' }
       )
       .then(res => res.data);

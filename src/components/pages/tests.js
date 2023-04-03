@@ -64,7 +64,7 @@ function Tests({ PageTemplate, initialState }) {
   // MediaLibrary
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [mediaLibraryUrl, setMediaLibraryUrl] = useState('');
-  const [mediaLibraryDescription, setMediaLibraryDescription] = useState('');
+  const [mediaLibraryShortDescription, setMediaLibraryShortDescription] = useState('');
   const [mediaLibraryLanguages, setMediaLibraryLanguages] = useState([]);
   const [mediaLibraryLicenses, setMediaLibraryLicenses] = useState([]);
   const [mediaLibraryTags, setMediaLibraryTags] = useState([]);
@@ -78,7 +78,7 @@ function Tests({ PageTemplate, initialState }) {
   const handleMediaLibraryUploadClick = async () => {
     const newItem = await mediaLibraryApiClient.createMediaLibraryItem({
       file: mediaLibraryFileList[0].originFileObj,
-      description: mediaLibraryDescription,
+      shortDescription: mediaLibraryShortDescription,
       languages: mediaLibraryLanguages,
       licenses: mediaLibraryLicenses,
       tags: mediaLibraryTags
@@ -272,7 +272,7 @@ function Tests({ PageTemplate, initialState }) {
                       <h3>Upload</h3>
                     </div>
                     <div>Description:</div>
-                    <TextArea rows={3} value={mediaLibraryDescription} onChange={event => setMediaLibraryDescription(event.target.value)} />
+                    <TextArea rows={3} value={mediaLibraryShortDescription} onChange={event => setMediaLibraryShortDescription(event.target.value)} />
                     <div>Languages:</div>
                     <LanguageSelect multi value={mediaLibraryLanguages} onChange={setMediaLibraryLanguages} />
                     <div>Licenses:</div>

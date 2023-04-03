@@ -152,7 +152,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
       <ResourceInfoCell
         url={row.url}
         title={row.name}
-        description={row.description}
+        shortDescription={row.shortDescription}
         subtext={
           <div className="RedactionDocumentsTab-titleSubtext">
             <div>

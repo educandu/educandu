@@ -97,13 +97,13 @@ function MediaLibaryItemModal({
     }
   };
 
-  const handleCreateItemFinish = async ({ description, languages, licenses, tags, optimizeImage }) => {
+  const handleCreateItemFinish = async ({ shortDescription, languages, licenses, tags, optimizeImage }) => {
     try {
       setIsSaving(true);
       const processedFile = await processFileBeforeUpload({ file: fileInfo.file, optimizeImage });
       const createdItem = await mediaLibraryApiClient.createMediaLibraryItem({
         file: processedFile,
-        description,
+        shortDescription,
         languages,
         licenses,
         tags
@@ -118,12 +118,12 @@ function MediaLibaryItemModal({
     }
   };
 
-  const handleUpdateItemFinish = async ({ description, languages, licenses, tags }) => {
+  const handleUpdateItemFinish = async ({ shortDescription, languages, licenses, tags }) => {
     try {
       setIsSaving(true);
       const updatedItem = await mediaLibraryApiClient.updateMediaLibraryItem({
         mediaLibraryItemId: mediaLibraryItem._id,
-        description,
+        shortDescription,
         languages,
         licenses,
         tags

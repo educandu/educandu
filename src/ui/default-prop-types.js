@@ -279,7 +279,7 @@ const mediaLibraryItemProps = {
   contentType: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
   updatedBy: otherUserShape.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   languages: PropTypes.arrayOf(PropTypes.string).isRequired,
   licenses: PropTypes.arrayOf(PropTypes.string).isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired

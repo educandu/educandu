@@ -81,7 +81,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
     }
   };
 
-  const uploadFileToMediaLibrary = async ({ description, languages, licenses, tags }) => {
+  const uploadFileToMediaLibrary = async ({ shortDescription, languages, licenses, tags }) => {
     const filename = 'waveform.png';
 
     let cdnUrl = null;
@@ -92,7 +92,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
 
       const uploadedFile = await mediaLibraryApiClient.createMediaLibraryItem({
         file,
-        description,
+        shortDescription,
         languages,
         licenses,
         tags

@@ -55,7 +55,7 @@ function MediaLibraryUploadScreen({
     }
   };
 
-  const handleMetadataFormFinish = async ({ description, languages, licenses, tags, optimizeImage }) => {
+  const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, tags, optimizeImage }) => {
     const currentFile = fileInfo?.file || null;
     if (!currentFile) {
       return;
@@ -66,7 +66,7 @@ function MediaLibraryUploadScreen({
       const processedFile = await processFileBeforeUpload({ file: currentFile, optimizeImage });
       const result = await mediaLibraryApiClient.createMediaLibraryItem({
         file: processedFile,
-        description,
+        shortDescription,
         languages,
         licenses,
         tags

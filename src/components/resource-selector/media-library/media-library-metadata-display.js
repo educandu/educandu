@@ -22,8 +22,8 @@ function MediaLibraryMetadataDisplay({ mediaLibraryItem }) {
   return (
     <div className="MediaLibraryMetadataDisplay">
       <div>
-        <b>{t('common:description')}</b>
-        <div>{mediaLibraryItem.description || renderMissingData()}</div>
+        <b>{t('common:shortDescription')}</b>
+        <div>{mediaLibraryItem.shortDescription || renderMissingData()}</div>
       </div>
       <div>
         <b>{t('common:languages')}</b>
@@ -45,7 +45,7 @@ MediaLibraryMetadataDisplay.propTypes = {
   mediaLibraryItem: PropTypes.shape({
     url: PropTypes.string.isRequired,
     size: PropTypes.number.isRequired,
-    description: PropTypes.string.isRequired,
+    shortDescription: PropTypes.string.isRequired,
     languages: PropTypes.arrayOf(PropTypes.string).isRequired,
     licenses: PropTypes.arrayOf(PropTypes.string).isRequired,
     tags: PropTypes.arrayOf(PropTypes.string).isRequired

@@ -66,7 +66,7 @@ class MediaLibraryService {
       updatedBy: user._id,
       updatedOn: now,
       url: storageUrl,
-      description: metadata.description,
+      shortDescription: metadata.shortDescription,
       languages: metadata.languages,
       licenses: metadata.licenses,
       tags: metadata.tags
@@ -87,7 +87,7 @@ class MediaLibraryService {
     const newMediaLibraryItemMetadata = {
       updatedBy: user._id,
       updatedOn: now,
-      description: data.description,
+      shortDescription: data.shortDescription,
       languages: data.languages,
       licenses: data.licenses,
       tags: data.tags
