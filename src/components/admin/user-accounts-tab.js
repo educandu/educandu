@@ -40,6 +40,10 @@ const BATCH_ACTION_TYPE = {
   assignStoragePlan: 'assign-storage-plan'
 };
 
+const roleWeights = new Map(Object.values(ROLE).map((role, index) => [role, index]));
+
+const getRoleWeight = role => roleWeights.get(role) ?? Number.MAX_VALUE;
+
 const getRoleOptions = t => {
   return Object.values(ROLE).map(role => ({
     label: (
@@ -430,7 +434,8 @@ function UserAccountsTab() {
 
   const renderRole = (_, item) => {
     return (
-      <Segmented
+      <Select
+        style={{ width: '100%' }}
         value={item.role}
         options={getRoleOptions(t)}
         disabled={item._id === executingUser._id}
@@ -553,6 +558,8 @@ function UserAccountsTab() {
       title: () => t('role'),
       dataIndex: 'role',
       key: 'role',
+      width: 140,
+      sorter: by(x => getRoleWeight(x.role)),
       render: renderRole
     },
     {
