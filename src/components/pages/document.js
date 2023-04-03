@@ -250,8 +250,8 @@ function Document({ initialState, PageTemplate }) {
       setTimeout(() => tryBringSectionIntoView(lastViewInfo.sectionKeyToScrollTo), 500);
     }
 
-    if (view === VIEW.comments && !!commentsSectionRef.current) {
-      commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (view === VIEW.comments) {
+      setTimeout(() => commentsSectionRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
     }
   }, [view, lastViewInfo, commentsSectionRef]);
 
