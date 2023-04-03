@@ -13,7 +13,7 @@ export const minUserPasswordLength = 8;
 
 export const maxRoomShortDescriptionLength = 130;
 
-export const maxMediaLibraryItemShortDescriptionLength = 160;
+export const maxMediaLibraryItemShortDescriptionLength = 1000;
 
 export const slugValidationPattern = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
 
