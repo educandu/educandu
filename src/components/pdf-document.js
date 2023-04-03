@@ -1,16 +1,13 @@
 import PropTypes from 'prop-types';
-import { Empty, Result, Spin } from 'antd';
+import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { pdfjs, Document, Page } from 'react-pdf';
+import { ORIENTATION } from '../domain/constants.js';
 import DimensionsProvider from './dimensions-provider.js';
 import React, { useEffect, useRef, useState } from 'react';
+import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/api/v1/pdfjs-dist/build/pdf.worker.min.js';
-
-export const PDF_DOCUMENT_STRETCH_DIRECTION = {
-  horizontal: 'horizontal',
-  vertical: 'vertical'
-};
 
 function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLoadSuccess }) {
   const viewerRef = useRef();
@@ -52,18 +49,16 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
 
   const renderNoDataComponent = () => {
     releaseViewerStyle();
-    return (
-      <Empty description={t('noDocument')} />
-    );
+    return null;
   };
 
   const renderDocumentErrorComponent = () => {
     releaseViewerStyle();
     return (
-      <Result
-        status="warning"
-        title={t('common:error')}
-        subTitle={t('errorRenderingDocument')}
+      <EmptyState
+        title={t('pdfRenderingEmptyStateTitle')}
+        status={EMPTY_STATE_STATUS.error}
+        subtitle={t('pdfRenderingEmptyStateSubtitle')}
         />
     );
   };
@@ -71,10 +66,10 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
   const renderPageErrorComponent = () => {
     releaseViewerStyle();
     return (
-      <Result
-        status="warning"
-        title={t('common:error')}
-        subTitle={t('errorRenderingPage')}
+      <EmptyState
+        title={t('pdfPageRenderingEmptyStateTitle')}
+        status={EMPTY_STATE_STATUS.warning}
+        subtitle={t('pdfPageRenderingEmptyStateSubtitle')}
         />
     );
   };
@@ -98,8 +93,8 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
             <Page
               key={actualPageNumber}
               pageNumber={actualPageNumber}
-              height={stretchDirection === PDF_DOCUMENT_STRETCH_DIRECTION.vertical ? containerHeight : null}
-              width={stretchDirection === PDF_DOCUMENT_STRETCH_DIRECTION.horizontal ? containerWidth : null}
+              height={stretchDirection === ORIENTATION.vertical ? containerHeight : null}
+              width={stretchDirection === ORIENTATION.horizontal ? containerWidth : null}
               error={renderPageErrorComponent}
               renderTextLayer={showTextOverlay}
               onRenderSuccess={handlePageRenderSuccess}
@@ -119,7 +114,7 @@ PdfDocument.propTypes = {
   onLoadSuccess: PropTypes.func,
   pageNumber: PropTypes.number,
   showTextOverlay: PropTypes.bool,
-  stretchDirection: PropTypes.oneOf(Object.values(PDF_DOCUMENT_STRETCH_DIRECTION))
+  stretchDirection: PropTypes.oneOf(Object.values(ORIENTATION))
 };
 
 PdfDocument.defaultProps = {
@@ -127,7 +122,7 @@ PdfDocument.defaultProps = {
   onLoadSuccess: () => {},
   pageNumber: 1,
   showTextOverlay: false,
-  stretchDirection: PDF_DOCUMENT_STRETCH_DIRECTION.horizontal
+  stretchDirection: ORIENTATION.horizontal
 };
 
 export default PdfDocument;

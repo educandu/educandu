@@ -10,7 +10,7 @@ import { handleApiError } from '../../../ui/error-helper.js';
 import LanguageSelect from '../../localization/language-select.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { maxMediaLibraryItemDescriptionLength } from '../../../domain/validation-constants.js';
+import { maxMediaLibraryItemShortDescriptionLength } from '../../../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 const TextArea = Input.TextArea;
@@ -23,7 +23,7 @@ function MediaLibraryMetadataForm({ form, file, useOptimizeImage, disableOptimiz
 
   const initialFormValues = useMemo(() => {
     return {
-      description: '',
+      shortDescription: '',
       languages: [],
       licenses: [],
       tags: [],
@@ -41,8 +41,13 @@ function MediaLibraryMetadataForm({ form, file, useOptimizeImage, disableOptimiz
 
   return (
     <Form form={form} layout="vertical" initialValues={initialFormValues} onFinish={onFinish}>
-      <FormItem name="description" label={t('common:description')}>
-        <TextArea rows={3} maxLength={maxMediaLibraryItemDescriptionLength} />
+      <FormItem
+        name="shortDescription"
+        label={
+          <Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>
+        }
+        >
+        <TextArea rows={3} maxLength={maxMediaLibraryItemShortDescriptionLength} />
       </FormItem>
       <FormItem name="languages" label={t('common:languages')}>
         <LanguageSelect multi />
@@ -69,7 +74,7 @@ function MediaLibraryMetadataForm({ form, file, useOptimizeImage, disableOptimiz
 MediaLibraryMetadataForm.propTypes = {
   form: PropTypes.object.isRequired,
   file: PropTypes.shape({
-    description: PropTypes.string,
+    shortDescription: PropTypes.string,
     languages: PropTypes.arrayOf(PropTypes.string),
     licenses: PropTypes.arrayOf(PropTypes.string),
     tags: PropTypes.arrayOf(PropTypes.string)

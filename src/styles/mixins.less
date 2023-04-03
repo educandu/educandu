@@ -274,6 +274,10 @@
   }
 
   width: ((@edu-content-width-wide - ((@countPerRow - 1) * 25px) - 2 * @edu-page-content-padding) / @countPerRow);
+
+  @media @edu-media-phone {
+    max-width: calc(100vw - 2 * @edu-page-content-padding);
+  }
 }
 
 .m-card-wrapper {
@@ -287,17 +291,6 @@
     align-items: center;
     flex-direction: column;
     .m-fake-flex-gap(15px);
-  }
-}
-
-.m-card-wrapper-wide {
-  display: grid;
-  gap: 25px;
-  grid-template-columns: 1fr 1fr;
-
-  @media @edu-media-phone {
-    gap: 15px;
-    grid-template-columns: auto;
   }
 }
 

@@ -134,7 +134,7 @@ export function getSectionElementDataAttributes(section) {
   };
 }
 
-export function getDocumentRevisionHistoryVersionInfo(documentRevisions, documentRevisionId) {
+export function getDocumentRevisionVersionInfo(documentRevisions, documentRevisionId) {
   const sortedDocumentRevisions = [...documentRevisions].sort(by(r => r.createdOn, 'desc'));
   const documentRevisionIndex = sortedDocumentRevisions.findIndex(r => r._id === documentRevisionId);
 
@@ -142,4 +142,20 @@ export function getDocumentRevisionHistoryVersionInfo(documentRevisions, documen
     version: documentRevisions.length - documentRevisionIndex,
     isLatestVersion: documentRevisionIndex === 0
   };
+}
+
+export function getVersionedDocumentRevisions(documentRevisions, t) {
+  return [...documentRevisions].sort(by(x => x.order, 'desc')).map((revision, index) => {
+    const isLatestVersion = index === 0;
+    const version = documentRevisions.length - index;
+    const latestVersionText = isLatestVersion ? ` (${t('common:latest')})` : '';
+    const versionText = `${t('common:version')} ${version}${latestVersionText}`;
+
+    return {
+      ...revision,
+      version,
+      versionText,
+      isLatestVersion
+    };
+  });
 }

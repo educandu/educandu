@@ -87,3 +87,59 @@ export function splitAroundWords(word) {
   }
   return tokens;
 }
+
+function tryRenderInlineValue(value) {
+  if (['undefined', 'function', 'symbol'].includes(typeof value)) {
+    return [true, `(${typeof value})`];
+  }
+  if (value === null) {
+    return [true, '(null)'];
+  }
+  if (value instanceof Date) {
+    return [true, `${value.toISOString()}`];
+  }
+  if (Array.isArray(value) && !value.length) {
+    return [true, '(empty)'];
+  }
+  if (typeof value === 'string' && !value.length) {
+    return [true, '(empty)'];
+  }
+  if (typeof value === 'object') {
+    return [false, null];
+  }
+  return [true, `${value}`];
+}
+
+function renderBlockValue(value) {
+  const lines = [];
+  if (Array.isArray(value)) {
+    value.forEach(val => {
+      const [isInlineValue, renderedInlineValue] = tryRenderInlineValue(val);
+      if (isInlineValue) {
+        lines.push(`- ${renderedInlineValue}`);
+      } else {
+        renderBlockValue(val).forEach((line, index) => {
+          lines.push(`${index === 0 ? '- ' : '  '}${line}`);
+        });
+      }
+    });
+  } else {
+    Object.entries(value).forEach(([key, val]) => {
+      const [isInlineValue, renderedInlineValue] = tryRenderInlineValue(val);
+      if (isInlineValue) {
+        lines.push(`${key}: ${renderedInlineValue}`);
+      } else {
+        lines.push(`${key}:`);
+        renderBlockValue(val).forEach(line => {
+          lines.push(`  ${line}`);
+        });
+      }
+    });
+  }
+  return lines;
+}
+
+export function prettyPrintValue(value) {
+  const [isInlineValue, renderedInlineValue] = tryRenderInlineValue(value);
+  return isInlineValue ? renderedInlineValue : renderBlockValue(value).join('\n');
+}

@@ -53,9 +53,6 @@ common:
   create:
     en: Create
     de: Erstellen
-  upload:
-    en: Upload
-    de: Hochladen
   moveUp:
     en: Move up
     de: Nach oben verschieben
@@ -93,6 +90,9 @@ common:
   version:
     en: Version
     de: Version
+  latest:
+    en: latest
+    de: letzte
   document:
     en: Document
     de: Dokument
@@ -235,7 +235,7 @@ common:
     de: Kurze Beschreibung
   shortDescriptionInfo:
     en: This information will be shown as preview text.
-    de: This information will be shown as preview text.
+    de: Diese Information wird als Vorschautext angezeigt.
   url:
     en: URL
     de: URL
@@ -455,19 +455,17 @@ common:
   searchOngoing:
     en: Searching ...
     de: Suche ...
-  searchResultInfo:
+  searchResultEmptyStateTitle:
     en: |
-      {
-      resultCount, select,
-      0 {No results found for: {searchTerm}}
-      other {Found {resultCount, plural, =1 {# result} other {# results}} for: {searchTerm}}
-      }
+      No results found for "{text}"
     de: |
-      {
-      resultCount, select,
-      0 {Keine Ergebnisse gefunden für: {searchTerm}}
-      other {{resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden für: {searchTerm}}
-      }
+      Keine Ergebnisse für "{text}" gefunden
+  searchOrFilterResultEmptyStateSubtitle:
+    en: Check that spelling is correct and try again or change your input.
+    de: Überprüfe deine Eingabe auf Rechtschreibfehler oder versuche es mit einem anderen Text.
+  filterResultEmptyStateTitle:
+    en: No results matching your filter
+    de: Keine Ergebnisse passen zu deinem Filtertext
   more:
     en: more ...
     de: mehr ...
@@ -542,9 +540,27 @@ common:
   posterImageUrl:
     en: Preview image URL
     de: Vorschau-Bild-URL
-  browseFilesButtonLabel:
+  mediaUploadEmptyStateTitle:
+    en: Upload a file
+    de: Eine Datei hochladen
+  mediaUploadAlternativeTitle:
+    en: Upload a different file
+    de: Eine andere Datei hochladen
+  mediaUploadEmptyStateSubtitle:
+    en: Drag and drop a file here to upload it or use the button to select a file from your machine.
+    de: Ziehe eine Datei hierher, um sie hochzuladen, oder benutze den Button, um eine Datei von deinem Computer auszuwählen.
+  browse:
     en: Browse ...
     de: Durchsuchen ...
+  upload:
+    en: Upload
+    de: Hochladen
+  uploadLimitInfo:
+    en: (max. {limit})
+    de: (max. {limit})
+  fileIsTooBig:
+    en: The file is too big. The upload limit is {limit}.
+    de: Die Datei ist zu groß. Das Upload-Limit liegt bei {limit}.
   dropFileInvitation:
     en: Drag a file here
     de: Ziehe eine Datei hierher
@@ -554,9 +570,9 @@ common:
   useSearchToChangeFile:
     en: Use the search above to select a different file.
     de: Benutze die Suche oben, um eine andere Datei auszuwählen.
-  searchInvitationDescription:
-    en: Enter your search term above
-    de: Gib deinen Suchbegriff oben ein
+  mediaLibraryEmptyStateSubtitle:
+    en: Enter your search term in the field above and choose what kind of media you're looking for.
+    de: Gib deinen Suchbegriff in das Feld oben ein und wähle aus, was für eine Art von Medien du suchst.
   licenses:
     en: Licenses
     de: Lizenzen
@@ -605,9 +621,6 @@ common:
   creator:
     en: Creator
     de: Ersteller
-  uploadFiles:
-    en: Upload files
-    de: Dateien hochladen
   documentNotAvailable:
     en: |
       [Document no longer available]
@@ -623,3 +636,9 @@ common:
       [This user account was closed]
     de: |
       [Dieses Benutzerkonto wurde geschlossen]
+  cannotPlayMediaEmptyStateTitle:
+    en: Cannot play media
+    de: Wiedergabe nicht möglich
+  cannotPlayMediaEmptyStateSubtitle:
+    en: The media source URL is missing.
+    de: Die URL der Medienquelle fehlt.

@@ -63,7 +63,7 @@ documentMetadataModal:
     en: Protected documents can only be edited by a maintainer or accredited user.
     de: Geschützte Dokumente können nur von einem Maintainer oder akkreditierten Benutzer bearbeitet werden.
   archivedInfo:
-    en: Archived documents can not be edited and can not be discovered through search.
+    en: Archived documents cannot be edited and cannot be discovered through search.
     de: Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar.
   verifiedInfo:
     en: You can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.

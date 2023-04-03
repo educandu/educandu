@@ -174,8 +174,8 @@ function FilesListViewer({
 }
 
 FilesListViewer.propTypes = {
-  canDelete: PropTypes.bool,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
+  canDelete: PropTypes.bool,
   onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onFileDoubleClick: PropTypes.func,

@@ -219,7 +219,7 @@
       "de": "Benutzer"
     },
     "role_accredited-author": {
-      "en": "accredited author",
+      "en": "accred. author",
       "de": "Akkred. Autor"
     },
     "role_maintainer": {
@@ -310,11 +310,11 @@
     },
     "contactAdminWithoutEmail": {
       "en": "Please contact an administrator.",
-      "de": "Bitte kontaktiere einen Administrator."
+      "de": "Bitte wende dich an einen Administrator."
     },
     "contactAdminWithEmail": {
       "en": "Please contact an <0>administrator</0>.",
-      "de": "Bitte kontaktiere einen <0>Administrator</0>."
+      "de": "Bitte wende dich an einen <0>Administrator</0>."
     }
   },
   "confirmationDialogs": {
@@ -456,13 +456,13 @@
     }
   },
   "activitiesTab": {
-    "info": {
-      "en": "Here you can find your latest activities.",
-      "de": "Hier findest du deine letzten Aktivitäten."
+    "emptyStateTitle": {
+      "en": "You don't have any activities",
+      "de": "Du hast noch keine Aktivitäten"
     },
-    "noActivities": {
-      "en": "No activities have been recorded so far.",
-      "de": "Bisher wurden keine Aktivitäten aufgezeichnet."
+    "emptyStateSubtitle": {
+      "en": "After you start using the platform you can come back here to see a timeline of your most recent activities, like editing documents, creating or joining rooms, adding favorites, etc.",
+      "de": "Sobald du auf der Platform aktiv wirst, siehst du hier eine Historie deiner letzten Aktivitäten, z.B. wenn du ein Dokument oder einen Raum erstellt hast, wenn du einem Raum beigetreten bist, oder wenn du etwas zu deinen Favoriten hinzugefügt hast."
     },
     "documentCreatedActivity": {
       "en": "New document created",
@@ -498,13 +498,13 @@
     }
   },
   "documentsTab": {
-    "info": {
-      "en": "Here you can find the public documents you have created or contributed to.",
-      "de": "Hier findest du die öffentlichen Dokumente, die du erstellt oder bearbeitet hast."
+    "emptyStateTitle": {
+      "en": "You don't have any documents",
+      "de": "Du hast noch keine Dokumente"
     },
-    "noDocuments": {
-      "en": "You have not contributed to any public documents yet.",
-      "de": "Du hast noch keine öffentlichen Dokumente bearbeitet."
+    "emptyStateSubtitle": {
+      "en": "Public documents that you have created or contributed to will show up here, so that you can access them easily. Private documents can only be reached through their respective rooms.",
+      "de": "Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen."
     },
     "ownDocumentOnly": {
       "en": "Only documents created by me",
@@ -516,35 +516,35 @@
     }
   },
   "favoritesTab": {
-    "info": {
-      "en": "Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.",
-      "de": "Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen."
+    "emptyStateTitle": {
+      "en": "You don't have any favorites",
+      "de": "Du hast noch keine Favoriten"
     },
-    "noFavorites": {
-      "en": "You have not marked any favorites so far.",
-      "de": "Du hast noch keine Favoriten markiert."
+    "emptyStateSubtitle": {
+      "en": "Add any document, room, or user to your favorites by clicking the star icon on each of them. Open the search bar under the magnifying glass symbol at the top to find documents that you like.",
+      "de": "Füge ein Dokument, einen Raum, oder einen Benutzer zu deinen Favoriten hinzu, indem du auf das Sternsymbol klickst. Öffne das Suchfeld unter dem Lupensymbol oben, um Dokumente zu finden, die dir gefallen."
     },
     "favoriteUsers": {
       "en": "Your favorite users",
-      "de": "Deine Lieblingsnutzer"
+      "de": "Deine favorisierten Nutzer"
     },
     "favoriteRooms": {
       "en": "Your favorite rooms",
-      "de": "Deine Lieblingsräume"
+      "de": "Deine favorisierten Räume"
     },
     "favoriteDocuments": {
       "en": "Your favorite documents",
-      "de": "Deine Lieblingsdokumente"
+      "de": "Deine favorisierten Dokumente"
     }
   },
   "notificationsTab": {
-    "info": {
-      "en": "Here you can find notifications about contibutions to your favorite documents, by your favorite users or to documents in rooms that you are a member of.",
-      "de": "Hier findest du Benachrichtigungen über Beiträge zu deinen Lieblingsdokumenten, von deine Lieblingsnutzern, oder zu Dokumenten in Räumen, in denen du Mitglied bist."
+    "emptyStateTitle": {
+      "en": "You don't have any notifications",
+      "de": "Du hast keine Benachrichtigungen"
     },
-    "noNotifications": {
-      "en": "There are no new notifications for you.",
-      "de": "Es gibt keine neuen Benachrichtigungen für dich."
+    "emptyStateSubtitle": {
+      "en": "You receive notifications about contibutions to your favorite documents or rooms, or about public contributions by your favorite users.",
+      "de": "Du bekommst Benachrichtigungen über Beiträge zu deinen favorisierten Dokumenten oder Räumen, oder über öffentliche Beiträge deiner favorisierten Nutzer."
     },
     "documentRevisionCreatedNotification": {
       "en": "Document has been edited",
@@ -584,9 +584,21 @@
     }
   },
   "roomsTab": {
-    "info": {
-      "en": "Here you find all the rooms you have created and the rooms that were invited to.",
-      "de": "Hier findest du alle Räume, die du erstellt hast und in die du eingeladen wurdest."
+    "ownedRoomsEmptyStateTitle": {
+      "en": "You haven't created any rooms",
+      "de": "Du hast noch keine Räume erstellt"
+    },
+    "ownedRoomsEmptyStateSubtitle": {
+      "en": "Rooms are private spaces to which only invited members have access. Documents created within a room can also only be accessed by room members.",
+      "de": "Räume sind private Bereiche, zu denen nur eingeladene Mitglieder Zugang haben. Auf Dokumente, die in einem Raum erstellt wurden, kann ebenfalls nur von den Raum-Mitgliedern zugegriffen werden."
+    },
+    "memberRoomsEmptyStateTitle": {
+      "en": "You haven't been invited to any room",
+      "de": "Du wurdest noch in keinen Raum eingeladen"
+    },
+    "memberRoomsEmptyStateSubtitle": {
+      "en": "You can become a member of someone else's room if you are invited by the room owner. Invitations will show up here and can be accepted here or through the link in the invitation email.",
+      "de": "Um einem anderem Raum beizutreten, musst du vom Eigentümer eingeladen werden. Einladungen werden hier angezeigt und können hier oder mit dem Link in der Einladungs-E-Mail bestätigt werden."
     },
     "ownedRoomsHeadline": {
       "en": "Rooms that you created",
@@ -596,17 +608,9 @@
       "en": "Rooms that you were invited to",
       "de": "Räume, in die du eingeladen wurdest"
     },
-    "noOwnedRooms": {
-      "en": "You have not created any rooms yet.",
-      "de": "Du hast noch keine Räume erstellt."
-    },
     "noMemberRooms": {
       "en": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.",
       "de": "Du bist zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, musst du vom Raum-Eigentümer eingeladen werden."
-    },
-    "noMatchingRooms": {
-      "en": "No matching rooms",
-      "de": "Keine passenden Räume"
     }
   },
   "settingsTab": {
@@ -688,9 +692,13 @@
     }
   },
   "storageTab": {
-    "info": {
-      "en": "Here you can find details about your storage plan and current space status.",
-      "de": "Hier findest du Details über deinen Speicherplan und deine aktuelle Speichernutzung."
+    "emptyStateTitle": {
+      "en": "You don't have private storage",
+      "de": "Du hast keinen privaten Speicher"
+    },
+    "emptyStateSubtitle": {
+      "en": "Private storage is a dedicated space to use in your rooms, for uploading files available exclusively to room members. To request a storage plan, please contact an administrator.",
+      "de": "Privater Speicher ist ein separater Bereich zur Nutzung in deinen Räumen, um Dateien hochzuladen, auf die ausschließlich von den Raummitgliedern zugegriffen werden kann. Um einen Speicherplan zu beantragen, wende dich bitte an einen Administrator."
     },
     "storagePlanName": {
       "en": "Your storage plan",
@@ -728,6 +736,18 @@
     }
   },
   "documentCommentsPanel": {
+    "emptyStateTitle": {
+      "en": "This document has no comments",
+      "de": "Zu diesem Dokument gibt es keine Kommentare"
+    },
+    "emptyStateSubtitle": {
+      "en": "Through the use of comments, users can collaborate towards improving the quality of the document content or can debate certain content aspects.",
+      "de": "Mit Hilfe von Kommentaren können Nutzer in Zusammenarbeit die Qualität des Dokumentinhalts verbessern oder spezifische Inhaltsaspekte diskutieren."
+    },
+    "emptyStateButton": {
+      "en": "Write comment",
+      "de": "Kommentar schreiben"
+    },
     "newCommentPlaceholder": {
       "en": "Enter your comment here",
       "de": "Gib hier deinen Kommentar ein"
@@ -843,7 +863,7 @@
       "de": "Geschützte Dokumente können nur von einem Maintainer oder akkreditierten Benutzer bearbeitet werden."
     },
     "archivedInfo": {
-      "en": "Archived documents can not be edited and can not be discovered through search.",
+      "en": "Archived documents cannot be edited and cannot be discovered through search.",
       "de": "Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar."
     },
     "verifiedInfo": {
@@ -902,14 +922,6 @@
     }
   },
   "documentVersionHistory": {
-    "version": {
-      "en": "Version",
-      "de": "Version"
-    },
-    "latest": {
-      "en": "latest",
-      "de": "letzte"
-    },
     "permalinkButtonTooltip": {
       "en": "Copy version permalink",
       "de": "Version-Permalink kopieren"
@@ -926,6 +938,10 @@
       "en": "Restore version",
       "de": "Version wiederherstellen"
     },
+    "compareToLatestTooltip": {
+      "en": "Compare to latest version",
+      "de": "Mit letzter Version vergleichen"
+    },
     "viewButtonTooltip": {
       "en": "View version",
       "de": "Version ansehen"
@@ -935,6 +951,36 @@
     "emailIsInUse": {
       "en": "The email address is already registered",
       "de": "Die E-Mail-Adresse ist bereits vergeben"
+    }
+  },
+  "errorPage": {
+    "homeButton": {
+      "en": "Home",
+      "de": "Home"
+    },
+    "notFoundEmptyStateTitle": {
+      "en": "Page not found",
+      "de": "Seite nicht gefunden"
+    },
+    "notFoundEmptyStateSubtitle": {
+      "en": "Looks like the page you're looking for doesn't exist. Check that your URL is correct and try again, otherwise go back.",
+      "de": "Die Seite, die du suchst, scheint nicht zu existieren. Überprüfe die URL und probiere es noch einmal oder gehe andernfalls zurück."
+    },
+    "unauthorizedEmptyStateTitle": {
+      "en": "Page access not allowed",
+      "de": "Seitenzugriff nicht erlaubt"
+    },
+    "unauthorizedEmptyStateSubtitle": {
+      "en": "Looks like you're not authorized to access this page. Check that your URL is correct and try again, otherwise go back.",
+      "de": "Du scheinst für die Seite, die du aufgerufen hast, nicht die erforderlichen Berechtigungen zu besitzen. Überprüfe die URL und probiere es noch einmal oder gehe andernfalls zurück."
+    },
+    "internalErrorEmptyStateTitle": {
+      "en": "Internal server error",
+      "de": "Interner Server-Fehler"
+    },
+    "internalErrorEmptyStateSubtitle": {
+      "en": "Looks like there was an error providing this page. Check that your URL is correct and try again, otherwise go back.",
+      "de": "Auf der Seite, die du aufgerufen hast, ist ein Fehler aufgetreten. Überprüfe die URL und probiere es noch einmal oder gehe andernfalls zurück."
     }
   },
   "externalAccountProviderDialog": {
@@ -973,7 +1019,7 @@
       "de": "**Educandu** ist die Platform für digitales Lernen und Unerrichten.\nUnd jeder kann mitmachen und kann sein Wissen als Open Educational Resource (OER) unter einer Creative Commons Lizenz zur Verfügung stellen.\nEinfach, intuitiv und kostenlos, mit speziell für das Unterrichten entwickelten Features:\n"
     },
     "mediaFeature": {
-      "en": "Video and audio with interactive options",
+      "en": "Video and audio with interactive features",
       "de": "Video und Audio mit interaktiven Möglichkeiten"
     },
     "earTrainingFeature": {
@@ -1200,9 +1246,9 @@
     }
   },
   "multitrackMediaPlayer": {
-    "missingSourcesMessage": {
-      "en": "Cannot play because of missing media sources",
-      "de": "Wiedergabe aufgrund fehlender Medienquellen nicht möglich"
+    "emptyStateSubtitle": {
+      "en": "Make sure that a URL is provided for each track.",
+      "de": "Stelle sicher, dass für jede Spur eine URL angegeben wurde."
     }
   },
   "timecodeFineTunningInput": {
@@ -1241,12 +1287,6 @@
     "modalTitle": {
       "en": "Manage volume presets",
       "de": "Lautstärke-Voreinstellungen bearbeiten"
-    }
-  },
-  "notSupportedSection": {
-    "messageTitle": {
-      "en": "This content is not supported",
-      "de": "Dieser Inhalt wird nicht unterstützt"
     }
   },
   "admin": {
@@ -1349,6 +1389,32 @@
     "mainText": {
       "en": "Please download a modern browser of your choice, some examples below",
       "de": "Bitte lade einen modernen Browser deiner Wahl herunter, einige Beispiele unten"
+    }
+  },
+  "comparison": {
+    "tooltipTextDisplay": {
+      "en": "Text comparison",
+      "de": "Textvergleich"
+    },
+    "tooltipPreviewDisplay": {
+      "en": "Preview comparison",
+      "de": "Vorschauvergleich"
+    },
+    "sectionMovementInfo": {
+      "en": "The section formerly located here has been moved <0>{placement, select, movedUp {upwards} other {downwards}}</0>",
+      "de": "Der Abschnitt, der sich hier befand, wurde <0>{placement, select, movedUp {nach oben} other {nach unten}}</0> verschoben"
+    },
+    "sectionMovementInfoBack": {
+      "en": "This section was formerly located <0>at a different place</0> in the document",
+      "de": "Dieser Abschnitt befand sich ursprünglich <0>an einer anderen Stelle</0> im Dokument"
+    },
+    "metadata": {
+      "en": "Metadata",
+      "de": "Metadaten"
+    },
+    "nonExistentSection": {
+      "en": "This section does not exist in this version",
+      "de": "Dieser Abschnitt existiert nicht in dieser Version"
     }
   },
   "completePasswordReset": {
@@ -1584,73 +1650,17 @@
       "en": "Room view",
       "de": "Raum-Ansicht"
     },
-    "documentsPlaceholder": {
-      "en": "The room does not contain any documents",
-      "de": "Der Raum enthält keine Dokumente"
+    "overviewEmptyStateTitle": {
+      "en": "You have not written an overview text",
+      "de": "Du hast noch keinen Überblickstext geschrieben"
     },
-    "thisWeek": {
-      "en": "This week",
-      "de": "Diese Woche"
-    },
-    "deleteRoomButton": {
-      "en": "Delete room",
-      "de": "Raum löschen"
-    },
-    "roomContentHeadline": {
-      "en": "Room content",
-      "de": "Raum-Inhalt"
-    },
-    "roomMetadataHeadline": {
-      "en": "Room metadata",
-      "de": "Raum-Metadaten"
-    },
-    "deleteRoomTitle": {
-      "en": "Delete this room",
-      "de": "Diesen Raum löschen"
-    },
-    "deleteRoomDescription": {
-      "en": "All room data and resources will be deleted.",
-      "de": "Alle Raum-Daten und -Ressourcen werden gelöscht."
+    "overviewEmptyStateSubtitle": {
+      "en": "Go to the room settings tab and write an overview text in order to provide members with the room context and purpose.",
+      "de": "Gehe zu den Raum-Einstellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern."
     },
     "cancelRoomMembership": {
       "en": "Cancel room membership",
       "de": "Raum-Mitgliedschaft beenden"
-    },
-    "inviteMembersButton": {
-      "en": "Invite members",
-      "de": "Mitglieder einladen"
-    },
-    "inviteCollaboratorsButton": {
-      "en": "Invite collaborators",
-      "de": "Mitarbeiter einladen"
-    },
-    "messageBoardSectionHeadline": {
-      "en": "Message board",
-      "de": "Message-Board"
-    },
-    "messageBoardOwnerInfoMarkdown": {
-      "en": "As the room owner, you can post messages to the board in order to inform room members about various room related topics.\\\nMembers see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.\n",
-      "de": "Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über raumbezogene Themen zu informieren.\\\nMitglieder sehen das Message-Board auf der Raum-Seite, und sie bekommen eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.\n"
-    },
-    "postMessageButtonText": {
-      "en": "Post message",
-      "de": "Nachricht abschicken"
-    },
-    "postMessageCheckboxText": {
-      "en": "Send email to members",
-      "de": "E-Mail an Mitglieder schicken"
-    },
-    "postMessageCheckboxInfo": {
-      "en": "An email will be immediately sent to all room members, notifying them that there is new information on the room message board.",
-      "de": "Eine E-Mail wird unmittelbar an alle Raummitglieder geschickt, um diese darüber zu benachrichtigen, dass es neue Informationen auf dem Raum-Message-Board gibt."
-    },
-    "messageEmailNotificationIconTooltip": {
-      "en": "An email was sent to all room members when this message was posted.",
-      "de": "Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde."
-    },
-    "overview": {
-      "en": "Overview",
-      "de": "Überblick"
     }
   },
   "search": {
@@ -1696,13 +1706,21 @@
     }
   },
   "pdfDocument": {
-    "errorRenderingDocument": {
-      "en": "The document cannot be displayed",
-      "de": "Das Dokument kann nicht angezeigt werden"
+    "pdfRenderingEmptyStateTitle": {
+      "en": "The PDF document cannot be displayed",
+      "de": "Das PDF-Dokument kann nicht angezeigt werden"
     },
-    "errorRenderingPage": {
-      "en": "The page cannot be displayed",
-      "de": "Die Seite kann nicht angezeigt werden"
+    "pdfPageRenderingEmptyStateTitle": {
+      "en": "The PDF page cannot be displayed",
+      "de": "Die PDF-Seite kann nicht angezeigt werden"
+    },
+    "pdfRenderingEmptyStateSubtitle": {
+      "en": "There was an error displaying this document. The provided URL might not link to a valid PDF document.",
+      "de": "Beim Anzeigen dieses Dokuments ist ein Fehler aufgetreten. Möglicherweise führt die angegebene URL nicht zu einem gültigen PDF-Dokument."
+    },
+    "pdfPageRenderingEmptyStateSubtitle": {
+      "en": "There was an error displaying this PDF page. The PDF file might be corrupt.",
+      "de": "Beim Anzeigen dieser PDF-Seite ist ein Fehler aufgetreten. Möglicherweise ist die PDF-Datei fehlerhaft."
     },
     "noDocument": {
       "en": "No document specified",
@@ -1856,13 +1874,9 @@
     }
   },
   "mediaLibrarySearchScreen": {
-    "searchInvitationHeader": {
-      "en": "Search in the media library",
-      "de": "Suche in der Medien-Bibliothek"
-    },
-    "uploadFile": {
-      "en": "Upload file",
-      "de": "Datei hochladen"
+    "emptyStateTitle": {
+      "en": "Search in media library",
+      "de": "In Medien-Bibliothek suchen"
     }
   },
   "mediaLibraryUploadScreen": {
@@ -1917,6 +1931,14 @@
     "uploadFiles": {
       "en": "Upload files",
       "de": "Dateien hochladen"
+    },
+    "emptyStateTitle": {
+      "en": "There are no files in this room",
+      "de": "In diesem Raum gibt es keine Dateien"
+    },
+    "emptyStateSubtitle": {
+      "en": "Drag and drop files here to upload them or use the upload button to select files from your machine.",
+      "de": "Ziehe Dateien hierher, um sie hochzuladen, oder benutze den Button, um Dateien von deinem Computer auszuwählen."
     }
   },
   "roomMediaUploadScreen": {
@@ -1996,9 +2018,9 @@
     }
   },
   "wikimediaSearchScreen": {
-    "searchInvitationHeader": {
-      "en": "Search in the Wikimedia database",
-      "de": "Suche in der Wikimedia-Datenbank"
+    "emptyStateTitle": {
+      "en": "Search in Wikimedia Commons",
+      "de": "In Wikimedia Commons suchen"
     }
   },
   "roomCard": {
@@ -2077,10 +2099,130 @@
       "de": "In kollaborativen Räumen können alle Raummitglieder Dokumente erstellen und bearbeiten, jedoch nur Besitzer können diese löschen."
     }
   },
+  "messageBoard": {
+    "emptyStateTitle": {
+      "en": "There are no messages on the board",
+      "de": "Auf dem Board sind keine Nachrichten"
+    },
+    "emptyStateSubtitle": {
+      "en": "As room owner, you can post messages to the board in order to inform room members about various topics.\nMembers see the message board on the room page. They also receive a notification and, optionally, an email, when a new message is posted.\n",
+      "de": "Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über diverse Themen zu informieren.\nMitglieder sehen das Message-Board auf der Raum-Seite. Sie bekommen ebenfalls eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.\n"
+    },
+    "headline": {
+      "en": "Message board",
+      "de": "Message-Board"
+    },
+    "writeMessage": {
+      "en": "Write message",
+      "de": "Nachricht schreiben"
+    },
+    "postMessageButtonText": {
+      "en": "Post message",
+      "de": "Nachricht abschicken"
+    },
+    "postMessageCheckboxText": {
+      "en": "Send email to members",
+      "de": "E-Mail an Mitglieder schicken"
+    },
+    "postMessageCheckboxInfo": {
+      "en": "An email will be immediately sent to all room members, notifying them that there is new information on the room message board.",
+      "de": "Eine E-Mail wird unmittelbar an alle Raummitglieder geschickt, um diese darüber zu benachrichtigen, dass es neue Informationen auf dem Raum-Message-Board gibt."
+    },
+    "emailNotificationIconTooltip": {
+      "en": "An email was sent to all room members when this message was posted.",
+      "de": "Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde."
+    }
+  },
+  "roomDocuments": {
+    "headline": {
+      "en": "Documents",
+      "de": "Dokumente"
+    },
+    "emptyStateTitle": {
+      "en": "There are no documents in this room",
+      "de": "Es gibt keine Dokumente in diesem Raum"
+    },
+    "emptyStateSubtitle": {
+      "en": "Documents created within this room are exclusively available to room members and not accessible to the rest of the community.",
+      "de": "Die in diesem Raum erstellten Dokumente sind ausschließlich für die Raummitglieder abrufbar und nicht für den Rest der Community zugänglich."
+    }
+  },
+  "roomMembers": {
+    "membersEmptyStateTitle": {
+      "en": "You have not invited any members",
+      "de": "Du hast noch keine Mitglieder eingeladen"
+    },
+    "collaboratorsEmptyStateTitle": {
+      "en": "You have not invited any collaborators",
+      "de": "Du hast noch keine Mitarbeiter eingeladen"
+    },
+    "membersEmptyStateSubtitle": {
+      "en": "For other users to have access to your room, send them an invitation.",
+      "de": "Um anderen Nutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung."
+    },
+    "inviteMembersButton": {
+      "en": "Invite members",
+      "de": "Mitglieder einladen"
+    },
+    "inviteCollaboratorsButton": {
+      "en": "Invite collaborators",
+      "de": "Mitarbeiter einladen"
+    }
+  },
+  "roomSettings": {
+    "contentHeadline": {
+      "en": "Room content",
+      "de": "Raum-Inhalt"
+    },
+    "metadataHeadline": {
+      "en": "Room metadata",
+      "de": "Raum-Metadaten"
+    },
+    "overview": {
+      "en": "Overview",
+      "de": "Überblick"
+    },
+    "deleteButton": {
+      "en": "Delete room",
+      "de": "Raum löschen"
+    },
+    "deleteTitle": {
+      "en": "Delete this room",
+      "de": "Diesen Raum löschen"
+    },
+    "deleteDescription": {
+      "en": "All room data and resources will be deleted.",
+      "de": "Alle Raum-Daten und -Ressourcen werden gelöscht."
+    }
+  },
   "searchBar": {
     "searchPlaceholder": {
       "en": "Search terms",
       "de": "Suchbegriffe"
+    }
+  },
+  "sectionDisplay": {
+    "notSupportedSectionEmptyStateTitle": {
+      "en": "This content cannot be displayed",
+      "de": "Dieser Inhalt kann nicht angezeigt werden"
+    },
+    "notSupportedSectionEmptyStateSubtitle": {
+      "en": "This type of content is either unknown or no longer supported.",
+      "de": "Dieser Inhalt ist entweder unbekannt oder wird nicht mehr unterstützt."
+    }
+  },
+  "sectionsDisplay": {
+    "emptyStateTitle": {
+      "en": "This document is empty",
+      "de": "Dieses Dokument is leer"
+    },
+    "emptyStateSubtitle": {
+      "en": "You can add various types of content, from text, image, video, audio, to sections with interactive features.",
+      "de": "Du kannst verschiedene Arten von Inhalt hinzufügen, von Texten, Bildern, Videos, Audios, bis hin zu Abschnitten mit interaktiven Möglichkeiten."
+    },
+    "emptyStateButton": {
+      "en": "Add section",
+      "de": "Abschnitt hinzufügen"
     }
   },
   "sortingSelector": {
@@ -2346,13 +2488,17 @@
       "en": "Generate waveform image",
       "de": "Wellenform-Bild erstellen"
     },
-    "dialogSearchFileInvitationHeader": {
-      "en": "Search for audio file in all libraries",
-      "de": "Audio-Datei in allen Bibliotheken suchen"
+    "searchAudioFileEmptyStateTitle": {
+      "en": "Search for audio file",
+      "de": "Audio-Datei suchen"
     },
-    "dialogDropFileInvitationHeader": {
-      "en": "Drag an audio file here",
-      "de": "Ziehe eine Audio-Datei hierher"
+    "searchAudioFileEmptyStateSubtitle": {
+      "en": "Find an audio file in one of the libraries.",
+      "de": "Audio-Datei in einer der Bibliotheken suchen."
+    },
+    "uploadAudioFileEmptyStateTitle": {
+      "en": "Upload audio file",
+      "de": "Audio-Datei hochladen"
     },
     "dialogRegenerateButton": {
       "en": "Use different audio file",
@@ -2566,9 +2712,13 @@
       "en": "Please use the selection rectangle to specify the displayed area",
       "de": "Bitte benutze das Markierungsrechteck, um einen Bildbereich auszuwählen"
     },
-    "imageLoadingErrorMessage": {
-      "en": "The image could not be loaded",
-      "de": "Das Bild konnte nicht geladen werden"
+    "loadingErrorEmptyStateTitle": {
+      "en": "This image could not be loaded",
+      "de": "Dieses Bild konnte nicht geladen werden"
+    },
+    "loadingErrorEmptyStateSubtitle": {
+      "en": "There was an error loading this image. Some of the provided URLs might not be reachable.",
+      "de": "Beim Laden dieses Bildes ist ein Fehler aufgetreten. Möglicherweise sind einige URLs nicht erreichbar."
     }
   },
   "interactiveMedia": {
@@ -2923,6 +3073,10 @@
     "levelRange": {
       "en": "Level range",
       "de": "Ebenen-Umfang"
+    },
+    "previewWarning": {
+      "en": "The table of contents cannot be created in preview mode",
+      "de": "Das Inhaltsverzeichnis kann im Vorschaumodus nicht erstellt werden"
     }
   },
   "table": {
@@ -3146,10 +3300,6 @@
       "en": "Create",
       "de": "Erstellen"
     },
-    "upload": {
-      "en": "Upload",
-      "de": "Hochladen"
-    },
     "moveUp": {
       "en": "Move up",
       "de": "Nach oben verschieben"
@@ -3193,6 +3343,10 @@
     "version": {
       "en": "Version",
       "de": "Version"
+    },
+    "latest": {
+      "en": "latest",
+      "de": "letzte"
     },
     "document": {
       "en": "Document",
@@ -3372,7 +3526,7 @@
     },
     "shortDescriptionInfo": {
       "en": "This information will be shown as preview text.",
-      "de": "This information will be shown as preview text."
+      "de": "Diese Information wird als Vorschautext angezeigt."
     },
     "url": {
       "en": "URL",
@@ -3666,9 +3820,17 @@
       "en": "Searching ...",
       "de": "Suche ..."
     },
-    "searchResultInfo": {
-      "en": "{\nresultCount, select,\n0 {No results found for: {searchTerm}}\nother {Found {resultCount, plural, =1 {# result} other {# results}} for: {searchTerm}}\n}\n",
-      "de": "{\nresultCount, select,\n0 {Keine Ergebnisse gefunden für: {searchTerm}}\nother {{resultCount, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden für: {searchTerm}}\n}\n"
+    "searchResultEmptyStateTitle": {
+      "en": "No results found for \"{text}\"\n",
+      "de": "Keine Ergebnisse für \"{text}\" gefunden\n"
+    },
+    "searchOrFilterResultEmptyStateSubtitle": {
+      "en": "Check that spelling is correct and try again or change your input.",
+      "de": "Überprüfe deine Eingabe auf Rechtschreibfehler oder versuche es mit einem anderen Text."
+    },
+    "filterResultEmptyStateTitle": {
+      "en": "No results matching your filter",
+      "de": "Keine Ergebnisse passen zu deinem Filtertext"
     },
     "more": {
       "en": "more ...",
@@ -3766,9 +3928,33 @@
       "en": "Preview image URL",
       "de": "Vorschau-Bild-URL"
     },
-    "browseFilesButtonLabel": {
+    "mediaUploadEmptyStateTitle": {
+      "en": "Upload a file",
+      "de": "Eine Datei hochladen"
+    },
+    "mediaUploadAlternativeTitle": {
+      "en": "Upload a different file",
+      "de": "Eine andere Datei hochladen"
+    },
+    "mediaUploadEmptyStateSubtitle": {
+      "en": "Drag and drop a file here to upload it or use the button to select a file from your machine.",
+      "de": "Ziehe eine Datei hierher, um sie hochzuladen, oder benutze den Button, um eine Datei von deinem Computer auszuwählen."
+    },
+    "browse": {
       "en": "Browse ...",
       "de": "Durchsuchen ..."
+    },
+    "upload": {
+      "en": "Upload",
+      "de": "Hochladen"
+    },
+    "uploadLimitInfo": {
+      "en": "(max. {limit})",
+      "de": "(max. {limit})"
+    },
+    "fileIsTooBig": {
+      "en": "The file is too big. The upload limit is {limit}.",
+      "de": "Die Datei ist zu groß. Das Upload-Limit liegt bei {limit}."
     },
     "dropFileInvitation": {
       "en": "Drag a file here",
@@ -3782,9 +3968,9 @@
       "en": "Use the search above to select a different file.",
       "de": "Benutze die Suche oben, um eine andere Datei auszuwählen."
     },
-    "searchInvitationDescription": {
-      "en": "Enter your search term above",
-      "de": "Gib deinen Suchbegriff oben ein"
+    "mediaLibraryEmptyStateSubtitle": {
+      "en": "Enter your search term in the field above and choose what kind of media you're looking for.",
+      "de": "Gib deinen Suchbegriff in das Feld oben ein und wähle aus, was für eine Art von Medien du suchst."
     },
     "licenses": {
       "en": "Licenses",
@@ -3850,10 +4036,6 @@
       "en": "Creator",
       "de": "Ersteller"
     },
-    "uploadFiles": {
-      "en": "Upload files",
-      "de": "Dateien hochladen"
-    },
     "documentNotAvailable": {
       "en": "[Document no longer available]\n",
       "de": "[Dokument nicht mehr verfügbar]\n"
@@ -3865,9 +4047,21 @@
     "accountClosed": {
       "en": "[This user account was closed]\n",
       "de": "[Dieses Benutzerkonto wurde geschlossen]\n"
+    },
+    "cannotPlayMediaEmptyStateTitle": {
+      "en": "Cannot play media",
+      "de": "Wiedergabe nicht möglich"
+    },
+    "cannotPlayMediaEmptyStateSubtitle": {
+      "en": "The media source URL is missing.",
+      "de": "Die URL der Medienquelle fehlt."
     }
   },
   "pageNames": {
+    "comparison": {
+      "en": "Version comparison",
+      "de": "Versionsvergleich"
+    },
     "dashboard": {
       "en": "Dashboard",
       "de": "Dashboard"

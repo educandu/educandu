@@ -17,6 +17,7 @@ const apiPrefix = '/api/';
 const docsPrefix = '/docs/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
+const comparisonPrefix = '/comparison/';
 const userProfilePrefix = '/user-profile/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
 const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
@@ -38,6 +39,11 @@ function getDocUrl({ id, slug, view, templateDocumentId }) {
 
 function getDocumentRevisionUrl(revisionId) {
   return urlUtils.concatParts(revisionPrefix, revisionId);
+}
+
+function getDocumentRevisionComparisonUrl({ documentId, oldId, newId }) {
+  const queryString = urlUtils.composeQueryString({ oldId, newId });
+  return `${urlUtils.concatParts(comparisonPrefix, documentId)}?${queryString}`;
 }
 
 function getRedactionUrl({ tab } = {}) {
@@ -99,8 +105,10 @@ function getSearchUrl(query) {
   return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
 }
 
-function getRoomUrl(id, slug) {
-  return urlUtils.concatParts(roomsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
+function getRoomUrl({ id, slug, tab } = {}) {
+  const queryString = urlUtils.composeQueryString({ tab });
+  const path = urlUtils.concatParts(roomsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
+  return queryString ? `${path}?${queryString}` : path;
 }
 
 function getDocIdIfDocUrl(url) {
@@ -134,6 +142,7 @@ export default {
   getRedactionUrl,
   getDocUrl,
   getDocumentRevisionUrl,
+  getDocumentRevisionComparisonUrl,
   getRoomUrl,
   getAdminUrl,
   getRoomMembershipConfirmationUrl,

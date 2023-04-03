@@ -145,7 +145,6 @@ function MarkdownInput({
         {!!useStorageSelector && !!disabled && renderResourceSelector()}
         <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
       </div>
-      {renderCount()}
     </div>
   );
 

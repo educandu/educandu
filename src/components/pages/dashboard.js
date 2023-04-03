@@ -1,14 +1,13 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
-import { Badge, Tabs, Tooltip } from 'antd';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import RoomsTab from '../dashboard/rooms-tab.js';
-import ProfileHeader from '../profile-header.js';
 import { BellOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
+import { Avatar, Badge, Tabs, Tooltip } from 'antd';
 import RoomIcon from '../icons/general/room-icon.js';
 import StarIcon from '../icons/general/star-icon.js';
 import StorageTab from '../dashboard/storage-tab.js';
@@ -26,8 +25,8 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import { FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
+import { AVATAR_SIZE_BIG, FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useNotificationsCount, useSetNotificationsCount } from '../notification-context.js';
 
 const TAB_KEYS = {
@@ -272,16 +271,19 @@ function Dashboard({ PageTemplate }) {
   ];
 
   return (
-    <PageTemplate>
-      <div>
-        <ProfileHeader
-          email={user.email}
-          avatarUrl={gravatarUrl}
-          displayName={user.displayName}
-          organization={user.organization}
-          />
+    <PageTemplate contentHeader={<div className="Dashboard-contentHeader" />}>
+      <div className="Dashboard">
+        <section className="Dashboard-profile">
+          <div className="Dashboard-profileAvatar">
+            <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE_BIG} src={gravatarUrl} alt={user.displayName} />
+          </div>
+          <div className="Dashboard-profileInfo">
+            <div className="u-page-title">{user.displayName}</div>
+            <div>{user.organization}</div>
+          </div>
+        </section>
         <Tabs
-          className="Tabs Tabs--withIcons"
+          className="Tabs"
           type="line"
           size="middle"
           defaultActiveKey={initialTab}

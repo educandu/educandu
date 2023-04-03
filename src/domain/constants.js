@@ -131,6 +131,11 @@ export const STORAGE_LOCATION_TYPE = {
   mediaLibrary: 'media-library'
 };
 
+export const ORIENTATION = {
+  vertical: 'vertical',
+  horizontal: 'horizontal'
+};
+
 export const VERTICAL_ALIGNMENT = {
   top: 'top',
   middle: 'middle',
@@ -195,6 +200,7 @@ export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
 export const CDN_URL_PREFIX = 'cdn://';
 
 export const AVATAR_SIZE = 110;
+export const AVATAR_SIZE_BIG = 140;
 
 export const MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS = 20;
 
@@ -208,7 +214,7 @@ export const IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES = 500 * 1
 export const IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES = 1.5 * 1000 * 1000;
 
 export const STORAGE_DIRECTORY_MARKER_NAME = '__DIRMARKER__';
-export const LIMIT_PER_STORAGE_UPLOAD_IN_BYTES = 250 * 1000 * 1000;
+export const STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES = 250 * 1000 * 1000;
 
 export const PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES = 15;
 export const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_MINUTES = 15;
@@ -250,6 +256,7 @@ export const DEFAULT_COLOR_SWATCHES = [
 export const HTTP_STATUS = {
   badRequest: 400,
   unauthorized: 401,
+  forbidden: 403,
   notFound: 404,
   tooManyRequests: 429,
   internalServerError: 500

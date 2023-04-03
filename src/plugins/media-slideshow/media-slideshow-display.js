@@ -5,9 +5,9 @@ import { preloadImage } from '../../utils/image-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
@@ -20,6 +20,7 @@ function MediaSlideshowDisplay({ content }) {
 
   const sourceUrl = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
   const playerParts = useMemo(() => chapters.map(chapter => ({ startPosition: chapter.startPosition })), [chapters]);
+  const canRenderMediaPlayer = !!sourceUrl;
 
   useEffect(() => {
     (async () => {
@@ -71,19 +72,23 @@ function MediaSlideshowDisplay({ content }) {
   return (
     <div className="MediaSlideshowDisplay">
       <div className={`MediaSlideshowDisplay-content u-width-${width || 100}`}>
-        <MediaPlayer
-          aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
-          canDownload={canDownload}
-          customScreenOverlay={renderPlayingChapter()}
-          initialVolume={initialVolume}
-          mediaPlayerRef={mediaPlayerRef}
-          parts={playerParts}
-          playbackRange={playbackRange}
-          screenMode={MEDIA_SCREEN_MODE.audio}
-          sourceUrl={sourceUrl}
-          onPlayingPartIndexChange={handlePlayingPartIndexChange}
-          />
-        <CopyrightNotice value={copyrightNotice} />
+        {!!canRenderMediaPlayer && (
+          <Fragment>
+            <MediaPlayer
+              aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
+              canDownload={canDownload}
+              customScreenOverlay={renderPlayingChapter()}
+              initialVolume={initialVolume}
+              mediaPlayerRef={mediaPlayerRef}
+              parts={playerParts}
+              playbackRange={playbackRange}
+              screenMode={MEDIA_SCREEN_MODE.audio}
+              sourceUrl={sourceUrl}
+              onPlayingPartIndexChange={handlePlayingPartIndexChange}
+              />
+            <CopyrightNotice value={copyrightNotice} />
+          </Fragment>
+        )}
         {chapters[playingChapterIndex].type === CHAPTER_TYPE.image && (
           <CopyrightNotice value={chapters[playingChapterIndex].image.copyrightNotice} />
         )}

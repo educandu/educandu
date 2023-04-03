@@ -1,18 +1,20 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import { Select, Spin } from 'antd';
+import EmptyState from '../empty-state.js';
 import Logger from '../../common/logger.js';
-import { Button, Select, Spin } from 'antd';
 import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
-import UploadIcon from '../icons/general/upload-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import RoomApiClient from '../../api-clients/room-api-client.js';
+import PrivateIcon from '../icons/general/private-icon.js';
 import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
+import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { getRoomMediaRoomPath } from '../../utils/storage-utils.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import { roomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import UploadButton from '../resource-selector/shared/upload-button.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import RoomMediaUploadModal from '../resource-selector/room-media/room-media-upload-modal.js';
 import RoomMediaFilesViewer from '../resource-selector/room-media/room-media-files-viewer.js';
@@ -24,9 +26,10 @@ const createUploadModalProps = ({ isOpen = false, files = [] }) => ({ isOpen, fi
 const createPreviewModalProps = ({ isOpen = false, file = null }) => ({ isOpen, file });
 
 function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
+  const { t } = useTranslation('storageTab');
+
   const filesViewerApiRef = useRef(null);
   const [files, setFiles] = useState([]);
-  const { t } = useTranslation('storageTab');
   const [roomOptions, setRoomOptions] = useState([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState(null);
@@ -143,53 +146,57 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
     </div>
   );
 
+  const showEmptyState = !roomMediaOverview?.storagePlan && !roomMediaOverview?.usedBytes;
+
   return (
     <div className="StorageTab">
       <RoomMediaContextProvider context={roomMediaContext}>
-        <div className="StorageTab-tabInfo">{t('info')}</div>
+        {!loading && !!showEmptyState && (
+          <EmptyState icon={<PrivateIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+        )}
+
         <section className="StorageTab-content">
           {!!loading && <Spin className="u-spin" />}
-          <div className="StorageTab-planName">
-            {!loading && !roomMediaOverview?.storagePlan && t('noStoragePlan')}
-            {!loading && !!roomMediaOverview?.storagePlan && (
-              <div>{t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b></div>
-            )}
-          </div>
-          {!loading && !!(roomMediaOverview?.storagePlan || roomMediaOverview?.usedBytes) && (
+          {!loading && !showEmptyState && (
             <Fragment>
-              <div className="StorageTab-usedStorage">
-                <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan?.maxBytes} showLabel />
+              <div className="StorageTab-planName">
+                {!roomMediaOverview?.storagePlan && t('noStoragePlan')}
+                {!!roomMediaOverview?.storagePlan && (
+                  <div>{t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b></div>
+                )}
               </div>
-              {!!selectedRoomId && (
-                <Fragment>
-                  <div className="StorageTab-fileViewer">
-                    <RoomMediaFilesViewer
-                      canDelete
-                      files={files}
-                      customFilter={renderRoomSelect()}
-                      isLoading={isUpdating}
-                      apiRef={filesViewerApiRef}
-                      highlightedFile={highlightedFile}
-                      filesViewerDisplay={filesViewerDisplay}
-                      onFileClick={handleFileClick}
-                      onFilesDropped={handleFilesDropped}
-                      onDeleteFileClick={handleDeleteFileClick}
-                      onFileDoubleClick={handleFileDoubleClick}
-                      onPreviewFileClick={handlePreviewFileClick}
-                      onFilesViewerDisplayChange={setFilesViewerDisplay}
-                      />
-                  </div>
-                  <div>
-                    <Button
-                      icon={<UploadIcon />}
-                      disabled={loading || isUpdating || !roomMediaOverview?.storagePlan}
-                      onClick={handleUploadButtonClick}
-                      >
-                      {t('common:uploadFiles')}
-                    </Button>
-                  </div>
-                </Fragment>
-              )}
+              <Fragment>
+                <div className="StorageTab-usedStorage">
+                  <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan?.maxBytes} showLabel />
+                </div>
+                {!!selectedRoomId && (
+                  <Fragment>
+                    <div className="StorageTab-fileViewer">
+                      <RoomMediaFilesViewer
+                        canDelete
+                        files={files}
+                        customFilter={renderRoomSelect()}
+                        isLoading={isUpdating}
+                        apiRef={filesViewerApiRef}
+                        highlightedFile={highlightedFile}
+                        filesViewerDisplay={filesViewerDisplay}
+                        onFileClick={handleFileClick}
+                        onFilesDropped={handleFilesDropped}
+                        onDeleteFileClick={handleDeleteFileClick}
+                        onFileDoubleClick={handleFileDoubleClick}
+                        onPreviewFileClick={handlePreviewFileClick}
+                        onFilesViewerDisplayChange={setFilesViewerDisplay}
+                        />
+                    </div>
+                    <div>
+                      <UploadButton
+                        disabled={loading || isUpdating || !roomMediaOverview?.storagePlan}
+                        onClick={handleUploadButtonClick}
+                        />
+                    </div>
+                  </Fragment>
+                )}
+              </Fragment>
             </Fragment>
           )}
         </section>

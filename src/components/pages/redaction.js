@@ -68,11 +68,11 @@ function Redaction({ initialState, PageTemplate }) {
   return (
     <PageTemplate>
       <div className="RedactionPage">
-        <h1>{t('pageNames:redaction')}</h1>
+        <h1 className="u-page-title">{t('pageNames:redaction')}</h1>
         <Tabs
           type="line"
           size="middle"
-          className="Tabs Tabs--withIcons"
+          className="Tabs"
           items={tabItems}
           activeKey={currentTab}
           destroyInactiveTabPane

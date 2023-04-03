@@ -2,58 +2,12 @@ room:
   roomViewTitle:
     en: Room view
     de: Raum-Ansicht
-  documentsPlaceholder:
-    en: The room does not contain any documents
-    de: Der Raum enthält keine Dokumente
-  thisWeek:
-    en: This week
-    de: Diese Woche
-  deleteRoomButton:
-    en: Delete room
-    de: Raum löschen
-  roomContentHeadline:
-    en: Room content
-    de: Raum-Inhalt
-  roomMetadataHeadline:
-    en: Room metadata
-    de: Raum-Metadaten
-  deleteRoomTitle:
-    en: Delete this room
-    de: Diesen Raum löschen
-  deleteRoomDescription:
-    en: All room data and resources will be deleted.
-    de: Alle Raum-Daten und -Ressourcen werden gelöscht.
+  overviewEmptyStateTitle:
+    en: You have not written an overview text
+    de: Du hast noch keinen Überblickstext geschrieben
+  overviewEmptyStateSubtitle:
+    en: Go to the room settings tab and write an overview text in order to provide members with the room context and purpose.
+    de: Gehe zu den Raum-Einstellungen und schreibe einen Überblickstext, um Mitgliedern den Kontext und Zweck dieses Raumes zu erläutern.
   cancelRoomMembership:
     en: Cancel room membership
     de: Raum-Mitgliedschaft beenden
-  inviteMembersButton:
-    en: Invite members
-    de: Mitglieder einladen
-  inviteCollaboratorsButton:
-    en: Invite collaborators
-    de: Mitarbeiter einladen
-  messageBoardSectionHeadline:
-    en: Message board
-    de: Message-Board
-  messageBoardOwnerInfoMarkdown:
-    en: |
-      As the room owner, you can post messages to the board in order to inform room members about various room related topics.\
-      Members see the message board on the room page and they receive a notification and, optionally, an email, when a new message is posted.
-    de: |
-      Als Raum-Eigentümer kannst du Nachrichten auf das Board stellen, um die Raum-Mitglieder über raumbezogene Themen zu informieren.\
-      Mitglieder sehen das Message-Board auf der Raum-Seite, und sie bekommen eine Benachrichtigung und - optional - eine E-Mail, sobald eine neue Nachricht gepostet wurde.
-  postMessageButtonText:
-    en: Post message
-    de: Nachricht abschicken
-  postMessageCheckboxText:
-    en: Send email to members
-    de: E-Mail an Mitglieder schicken
-  postMessageCheckboxInfo:
-    en: An email will be immediately sent to all room members, notifying them that there is new information on the room message board.
-    de: Eine E-Mail wird unmittelbar an alle Raummitglieder geschickt, um diese darüber zu benachrichtigen, dass es neue Informationen auf dem Raum-Message-Board gibt.
-  messageEmailNotificationIconTooltip:
-    en: An email was sent to all room members when this message was posted.
-    de: Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde.
-  overview:
-    en: Overview
-    de: Überblick

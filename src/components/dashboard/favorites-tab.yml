@@ -1,16 +1,16 @@
 favoritesTab:
-  info:
-    en: Here you can find all your personal favorites. By clicking on the star icon you can remove favorite items.
-    de: Hier findest du deine persönlichen Favoriten. Durch Klick auf das Sternsymbol kannst du Favoriten entfernen.
-  noFavorites:
-    en: You have not marked any favorites so far.
-    de: Du hast noch keine Favoriten markiert.
+  emptyStateTitle:
+    en: You don't have any favorites
+    de: Du hast noch keine Favoriten
+  emptyStateSubtitle:
+    en: Add any document, room, or user to your favorites by clicking the star icon on each of them. Open the search bar under the magnifying glass symbol at the top to find documents that you like.
+    de: Füge ein Dokument, einen Raum, oder einen Benutzer zu deinen Favoriten hinzu, indem du auf das Sternsymbol klickst. Öffne das Suchfeld unter dem Lupensymbol oben, um Dokumente zu finden, die dir gefallen.
   favoriteUsers:
     en: Your favorite users
-    de: Deine Lieblingsnutzer
+    de: Deine favorisierten Nutzer
   favoriteRooms:
     en: Your favorite rooms
-    de: Deine Lieblingsräume
+    de: Deine favorisierten Räume
   favoriteDocuments:
     en: Your favorite documents
-    de: Deine Lieblingsdokumente
+    de: Deine favorisierten Dokumente

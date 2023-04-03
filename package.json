@@ -63,6 +63,7 @@
     "markdown-it": "^13.0.1",
     "markdown-it-anchor": "^8.6.7",
     "md5": "^2.3.0",
+    "mdiff": "^1.4.2",
     "memoizee": "^0.4.15",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
@@ -88,6 +89,7 @@
     "react-compare-slider": "^2.2.0",
     "react-cool-dimensions": "^3.0.1",
     "react-countdown": "^2.3.5",
+    "react-diff-view": "^3.0.3",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-i18next": "^12.2.0",
@@ -101,14 +103,15 @@
     "stream-to-array": "^2.3.0",
     "thenby": "^1.3.4",
     "toad-scheduler": "^2.2.0",
-    "umzug": "^3.2.1"
+    "umzug": "^3.2.1",
+    "unidiff": "^1.0.2"
   },
   "devDependencies": {
     "@educandu/dev-tools": "^8.0.2",
     "@educandu/eslint-config": "^2.2.1",
     "@educandu/node-jsx-loader": "^3.0.4",
     "@educandu/rooms-auth-lambda": "^5.0.1",
-    "@vitest/coverage-c8": "^0.29.8",
+    "@vitest/coverage-c8": "^0.25.8",
     "del": "^7.0.0",
     "eslint": "^8.36.0",
     "eslint-plugin-import": "^2.27.5",

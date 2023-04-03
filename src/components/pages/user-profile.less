@@ -1,20 +1,49 @@
-.UserProfilePage {}
-
-.UserProfilePage-header {
-  margin-bottom: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+.UserProfilePage {
+  margin-top: 75px;
 }
 
-.UserProfilePage-headerProfile {
-  flex: 1 1 auto;
+.UserProfilePage-contentHeader {
+  position: absolute;
+  left: 0;
+  height: 180px;
+  width: 100%;
+  background:
+    url('./images/homepage-hero-right.svg') right top no-repeat,
+    url('./images/homepage-hero-left.svg') left top no-repeat;
+  background-color: @edu-primary-color-light;
+  z-index: @edu-z-index-background-layer
+}
+
+.UserProfilePage-profile {
+  display: grid;
+  grid-auto-flow: row;
+  justify-items: center;
+}
+
+.UserProfilePage-profileAvatar {
+  padding: 10px;
+  border-radius: 50%;
+  background-color: @edu-white;
+}
+
+.UserProfilePage-profileTitle {
+  position: relative;
+}
+
+.UserProfilePage-profileStar {
+  position: absolute;
+  top: 3px;
+  right: -30px;
+}
+
+.UserProfilePage-profileOrganization {
+  color: @edu-text-color-secondary;
+  margin-top: 15px;
 }
 
 .UserProfilePage-profileOverview {
-  margin: 0 auto 60px auto;
   max-width: 700px;
-  padding: 20px 30px;
+  margin-top: 15px;
 }
 
 .UserProfilePage-accountClosed {
@@ -25,15 +54,18 @@
   .m-data-unavailable;
 }
 
+.UserProfilePage-section {
+  margin-top: 50px;
+}
+
 .UserProfilePage-sectionHeadline {
   .m-section-headline;
-  margin-top: 20px;
   margin-bottom: 15px;
 }
 
 .UserProfilePage-sectionCards {
   .m-section-content;
-  .m-card-wrapper-wide;
+  .m-card-wrapper;
 }
 
 .UserProfilePage-sectionMoreButton {

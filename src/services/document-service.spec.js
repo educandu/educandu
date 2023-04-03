@@ -1154,7 +1154,7 @@ describe('document-service', () => {
 
     describe('when the query does not match any tag', () => {
       it('should return an empty array', async () => {
-        const results = await sut.getSearchableDocumentsMetadataByTags('I can not find anything in this db');
+        const results = await sut.getSearchableDocumentsMetadataByTags('I cannot find anything in this db');
         expect(results).toHaveLength(0);
       });
     });

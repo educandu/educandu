@@ -8,6 +8,7 @@ import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { ReactCompareSlider, styleFitContainer } from 'react-compare-slider';
+import EmptyState, { EMPTY_STATE_STATUS } from '../../components/empty-state.js';
 
 function ImageDisplay({ content }) {
   const mainImageRef = useRef();
@@ -24,7 +25,7 @@ function ImageDisplay({ content }) {
 
   useEffect(() => {
     const mainImage = mainImageRef.current;
-    if (!mainImage) {
+    if (!mainImage || !sourceUrl) {
       return;
     }
 
@@ -35,7 +36,7 @@ function ImageDisplay({ content }) {
       mainImage.onload = () => setIsMainImageLoaded(true);
       mainImage.onerror = () => setHasMainImageFailed(true);
     }
-  }, [mainImageRef]);
+  }, [mainImageRef, sourceUrl]);
 
   useEffect(() => {
     if (effectType !== EFFECT_TYPE.hover || !isMainImageLoaded) {
@@ -129,9 +130,11 @@ function ImageDisplay({ content }) {
 
   if (hasMainImageFailed) {
     return (
-      <div className="ImageDisplay">
-        <div className="ImageDisplay-errorMessage">{t('imageLoadingErrorMessage')}</div>
-      </div>
+      <EmptyState
+        status={EMPTY_STATE_STATUS.error}
+        title={t('loadingErrorEmptyStateTitle')}
+        subtitle={t('loadingErrorEmptyStateSubtitle')}
+        />
     );
   }
 
@@ -148,9 +151,21 @@ function ImageDisplay({ content }) {
       {effectType === EFFECT_TYPE.hover && renderHoverEffect()}
       {effectType === EFFECT_TYPE.reveal && renderRevealEffect()}
       {effectType === EFFECT_TYPE.clip && renderClipEffect()}
-      {!!showMainImageCopyright && <CopyrightNotice value={copyrightNotice} />}
-      {!!showHoverEffectImageCopyright && <CopyrightNotice value={hoverEffect.copyrightNotice} />}
-      {!!showRevealEffectImageCopyright && <CopyrightNotice value={revealEffect.copyrightNotice} />}
+      {!!showMainImageCopyright && (
+        <div className={`u-horizontally-centered u-width-${width}`}>
+          <CopyrightNotice value={copyrightNotice} />
+        </div>
+      )}
+      {!!showHoverEffectImageCopyright && (
+        <div className={`u-horizontally-centered u-width-${width}`}>
+          <CopyrightNotice value={hoverEffect.copyrightNotice} />
+        </div>
+      )}
+      {!!showRevealEffectImageCopyright && (
+        <div className={`u-horizontally-centered u-width-${width}`}>
+          <CopyrightNotice value={revealEffect.copyrightNotice} />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,4 @@
 mediaLibrarySearchScreen:
-  searchInvitationHeader:
-    en: Search in the media library
-    de: Suche in der Medien-Bibliothek
-  uploadFile:
-    en: Upload file
-    de: Datei hochladen
+  emptyStateTitle:
+    en: Search in media library
+    de: In Medien-Bibliothek suchen

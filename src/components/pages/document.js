@@ -16,9 +16,9 @@ import EditIcon from '../icons/general/edit-icon.js';
 import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
+import { useBeforeunload } from 'react-beforeunload';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
-import EditDocIcon from '../icons/general/edit-doc-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
@@ -56,7 +56,7 @@ import {
 import {
   canEditDocument,
   findCurrentlyWorkedOnSectionKey,
-  getDocumentRevisionHistoryVersionInfo,
+  getDocumentRevisionVersionInfo,
   getEditDocRestrictionTooltip,
   getFavoriteActionTooltip,
   tryBringSectionIntoView
@@ -86,13 +86,13 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
   return alerts;
 }
 
-function getDocumentMetadataModalState({ t, doc, room, isCloning, isOpen = false }) {
+function getDocumentMetadataModalState({ t, doc, room, user, isCloning, isOpen = false }) {
   return {
     isOpen,
     mode: isCloning ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.update,
     documentToClone: isCloning ? doc : null,
     allowMultiple: false,
-    initialDocumentRoomMetadata: room ? { ...room } : null,
+    allowDraft: !!room && room.owner?._id === user?._id,
     initialDocumentMetadata: isCloning
       ? {
         ...doc,
@@ -181,6 +181,12 @@ function Document({ initialState, PageTemplate }) {
 
   const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
 
+  useBeforeunload(event => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
+
   const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
     setPreSetView(null);
@@ -244,8 +250,8 @@ function Document({ initialState, PageTemplate }) {
       setTimeout(() => tryBringSectionIntoView(lastViewInfo.sectionKeyToScrollTo), 500);
     }
 
-    if (view === VIEW.comments && !!commentsSectionRef.current) {
-      commentsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (view === VIEW.comments) {
+      setTimeout(() => commentsSectionRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
     }
   }, [view, lastViewInfo, commentsSectionRef]);
 
@@ -298,11 +304,11 @@ function Document({ initialState, PageTemplate }) {
   }, [user, doc._id, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, isCloning: false, isOpen: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: false, isOpen: true }));
   };
 
   const handleDocumentCloneClick = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, isCloning: true, isOpen: true }));
+    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: true, isOpen: true }));
   };
 
   const handleDocumentMetadataModalSave = updatedDocuments => {
@@ -538,7 +544,7 @@ function Document({ initialState, PageTemplate }) {
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
     const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
-    const versionInfo = getDocumentRevisionHistoryVersionInfo(historyDocumentRevisions, documentRevisionToView._id);
+    const versionInfo = getDocumentRevisionVersionInfo(historyDocumentRevisions, documentRevisionToView._id);
 
     setHistorySelectedDocumentRevision(documentRevisionToView);
     setFocusHeaderHistoryInfo(versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version }));
@@ -693,7 +699,7 @@ function Document({ initialState, PageTemplate }) {
                     href: routes.getDashboardUrl({ tab: 'rooms' })
                   }, {
                     title: room.name,
-                    href: routes.getRoomUrl(room._id, room.slug)
+                    href: routes.getRoomUrl({ id: room._id, slug: room.slug })
                   }, {
                     title: doc.title
                   }
@@ -795,7 +801,7 @@ function Document({ initialState, PageTemplate }) {
                 onClick={handleDocumentCommentsOpen}
                 />
               <FloatButton
-                icon={<EditDocIcon />}
+                icon={<EditIcon />}
                 disabled={!userCanEdit || !userCanEditDocument}
                 tooltip={!userCanEdit || !userCanEditDocument ? editDocRestrictionTooltip : t('editDocument')}
                 onClick={handleEditOpen}

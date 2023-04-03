@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
+import EmptyState from '../empty-state.js';
 import { Button, Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { BellOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { EVENT_TYPE } from '../../domain/constants.js';
 import CommentIcon from '../icons/general/comment-icon.js';
 import MessageIcon from '../icons/general/message-icon.js';
-import EditDocIcon from '../icons/general/edit-doc-icon.js';
+import WriteIconIcon from '../icons/general/write-icon.js';
 import { notificationGroupShape } from '../../ui/default-prop-types.js';
 
 function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGroup, onRemoveNotifications }) {
@@ -25,7 +27,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     const documentNotAvailable = !notificationGroup.eventParams.document;
 
     if (notificationGroup.eventType === EVENT_TYPE.documentRevisionCreated) {
-      icon = <EditDocIcon />;
+      icon = <WriteIconIcon />;
       title = documentNotAvailable ? t('common:documentNotAvailable') : notificationGroup.eventParams.document.title;
       href = documentNotAvailable ? null : routes.getDocUrl({ id: notificationGroup.eventParams.document._id });
 
@@ -51,7 +53,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     if (notificationGroup.eventType === EVENT_TYPE.roomMessageCreated) {
       icon = <MessageIcon />;
       title = roomNotAvailable ? t('common:roomNotAvailable') : notificationGroup.eventParams.room.name;
-      href = roomNotAvailable ? null : routes.getRoomUrl(notificationGroup.eventParams.room._id);
+      href = roomNotAvailable ? null : routes.getRoomUrl({ id: notificationGroup.eventParams.room._id });
       description = t('roomMessageCreatedNotification');
     }
 
@@ -89,22 +91,27 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
     );
   };
 
+  const showEmptyState = !notificationGroups.length;
+
   return (
     <div>
       <section>
-        <div className="NotificationsTab-info">{t('info')}</div>
-        <Button
-          icon={<CloseIcon />}
-          disabled={!notificationGroups.length}
-          className="NotificationsTab-removeAllNotificationsButton"
-          onClick={onRemoveNotifications}
-          >
-          {t('removeAll')}
-        </Button>
+        {!loading && !showEmptyState && (
+          <Button
+            icon={<CloseIcon />}
+            disabled={!notificationGroups.length}
+            className="NotificationsTab-removeAllNotificationsButton"
+            onClick={onRemoveNotifications}
+            >
+            {t('removeAll')}
+          </Button>
+        )}
         <div>
           {!!loading && <Spin className="u-spin" />}
-          {!loading && renderNotificationGroups()}
-          {!loading && !notificationGroups.length && <span>{t('noNotifications')}</span>}
+          {!loading && !!showEmptyState && (
+            <EmptyState icon={<BellOutlined />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+          )}
+          {!loading && !showEmptyState && renderNotificationGroups()}
         </div>
       </section>
     </div>

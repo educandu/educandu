@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function ResourceInfoCell({ title, url, description, subtext, onTitleClick }) {
+function ResourceInfoCell({ title, url, shortDescription, subtext, onTitleClick }) {
   const handleTitleClick = event => {
     if (onTitleClick) {
       event.preventDefault();
@@ -19,7 +19,7 @@ function ResourceInfoCell({ title, url, description, subtext, onTitleClick }) {
           <a className="ResourceInfoCell-title" onClick={handleTitleClick}>
             {title}
           </a>
-          {!!description && <div className="ResourceInfoCell-description">{description}</div>}
+          {!!shortDescription && <div className="ResourceInfoCell-description">{shortDescription}</div>}
           <div className="ResourceInfoCell-subtext">{subtext}</div>
         </div>
       </div>
@@ -30,7 +30,7 @@ function ResourceInfoCell({ title, url, description, subtext, onTitleClick }) {
 ResourceInfoCell.propTypes = {
   title: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  shortDescription: PropTypes.string.isRequired,
   subtext: PropTypes.node.isRequired,
   onTitleClick: PropTypes.func
 };

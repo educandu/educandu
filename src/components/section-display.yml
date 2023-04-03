@@ -1,0 +1,7 @@
+sectionDisplay:
+    notSupportedSectionEmptyStateTitle:
+      en: This content cannot be displayed
+      de: Dieser Inhalt kann nicht angezeigt werden
+    notSupportedSectionEmptyStateSubtitle:
+      en: This type of content is either unknown or no longer supported.
+      de: Dieser Inhalt ist entweder unbekannt oder wird nicht mehr unterstützt.

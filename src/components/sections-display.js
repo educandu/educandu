@@ -1,12 +1,18 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import EmptyState from './empty-state.js';
+import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import SectionDisplay from './section-display.js';
+import FileIcon from './icons/general/file-icon.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import DragAndDropContainer from './drag-and-drop-container.js';
 import React, { Fragment, memo, useId, useRef, useState } from 'react';
+
+const SECTION_PREVIEW_CONTEXT = { isPreview: true };
+const SECTION_NON_PREVIEW_CONTEXT = { isPreview: false };
 
 function SectionsDisplay({
   sections,
@@ -28,6 +34,7 @@ function SectionsDisplay({
   onSectionHardDelete
 }) {
   const droppableIdRef = useRef(useId());
+  const { t } = useTranslation('sectionsDisplay');
   const [currentNewSectionIndex, setCurrentNewSectionIndex] = useState(-1);
 
   const handleSectionMove = (fromIndex, toIndex) => {
@@ -55,15 +62,17 @@ function SectionsDisplay({
   };
 
   const renderSection = ({ section, index, dragHandleProps = {}, isDragged = false, isOtherDragged = false }) => {
+    const isEditing = editedSectionKeys.includes(section.key);
     return (
       <SectionDisplay
         key={section.key}
+        context={canEdit && !isEditing ? SECTION_PREVIEW_CONTEXT : SECTION_NON_PREVIEW_CONTEXT}
         section={section}
         canEdit={!!dragHandleProps && canEdit}
         canHardDelete={canHardDelete}
         dragHandleProps={dragHandleProps}
         isDragged={isDragged}
-        isEditing={editedSectionKeys.includes(section.key)}
+        isEditing={isEditing}
         isOtherSectionDragged={isOtherDragged}
         isPending={pendingSectionKeys.includes(section.key)}
         onPendingSectionApply={() => onPendingSectionApply(index)}
@@ -111,10 +120,28 @@ function SectionsDisplay({
     }
   }));
 
+  const showEmptyState = !!canEdit && !sections.length && !pendingSectionKeys.length;
+
   return (
     <Fragment>
-      { renderSectionDivider({ insertIndex: 0, isDragged: false }) }
-      <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropItems} onItemMove={handleSectionMove} />
+      {!!showEmptyState && (
+        <EmptyState
+          icon={<FileIcon />}
+          title={t('emptyStateTitle')}
+          subtitle={t('emptyStateSubtitle')}
+          button={{
+            icon: <PlusOutlined />,
+            text: t('emptyStateButton'),
+            onClick: () => handleNewSectionClick(0)
+          }}
+          />
+      )}
+      {!showEmptyState && (
+        <Fragment>
+          { renderSectionDivider({ insertIndex: 0, isDragged: false }) }
+          <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropItems} onItemMove={handleSectionMove} />
+        </Fragment>
+      )}
 
       <PluginSelectorDialog
         isOpen={currentNewSectionIndex > -1}

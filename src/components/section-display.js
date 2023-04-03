@@ -16,16 +16,16 @@ import DeleteIcon from './icons/general/delete-icon.js';
 import MoveUpIcon from './icons/general/move-up-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
-import { sectionShape } from '../ui/default-prop-types.js';
 import MoveDownIcon from './icons/general/move-down-icon.js';
-import NotSupportedSection from './not-supported-section.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import { memoAndTransformProps } from '../ui/react-helper.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { getSectionElementDataAttributes } from '../utils/document-utils.js';
+import { sectionContextShape, sectionShape } from '../ui/default-prop-types.js';
 
 const createComponents = registeredPlugin => ({
   editorComponent: registeredPlugin?.editorComponent || null,
@@ -34,6 +34,7 @@ const createComponents = registeredPlugin => ({
 
 function SectionDisplay({
   section,
+  context,
   canEdit,
   canHardDelete,
   dragHandleProps,
@@ -53,9 +54,9 @@ function SectionDisplay({
   onSectionCopyToClipboard,
   onSectionHardDelete
 }) {
-  const { t } = useTranslation();
   const settings = useSettings();
   const { uiLanguage } = useLocale();
+  const { t } = useTranslation('sectionDisplay');
   const pluginRegistry = useService(PluginRegistry);
 
   const registeredPlugin = pluginRegistry.getRegisteredPlugin(section.type);
@@ -179,13 +180,23 @@ function SectionDisplay({
     }
   ].filter(action => action.isVisible);
 
+  const renderNotSupportedSection = () => {
+    return (
+      <EmptyState
+        title={t('notSupportedSectionEmptyStateTitle')}
+        subtitle={t('notSupportedSectionEmptyStateSubtitle')}
+        status={EMPTY_STATE_STATUS.error}
+        />
+    );
+  };
+
   const renderDisplayComponent = () => {
     if (!section.content) {
       return <DeletedSection section={section} />;
     }
 
     if (!registeredPlugin) {
-      return <NotSupportedSection />;
+      return renderNotSupportedSection();
     }
 
     const DisplayComponent = components.displayComponent;
@@ -193,7 +204,7 @@ function SectionDisplay({
       return <LoadingSection />;
     }
 
-    return <DisplayComponent content={section.content} />;
+    return <DisplayComponent context={context} content={section.content} />;
   };
 
   const handleContentChange = content => {
@@ -206,7 +217,7 @@ function SectionDisplay({
     }
 
     if (!registeredPlugin) {
-      return <NotSupportedSection />;
+      return renderNotSupportedSection();
     }
 
     const EditorComponent = components.editorComponent;
@@ -216,6 +227,7 @@ function SectionDisplay({
 
     return (
       <EditorComponent
+        context={context}
         content={section.content}
         onContentChanged={handleContentChange}
         />
@@ -350,6 +362,8 @@ function SectionDisplay({
 }
 
 SectionDisplay.propTypes = {
+  section: sectionShape.isRequired,
+  context: sectionContextShape.isRequired,
   canEdit: PropTypes.bool.isRequired,
   canHardDelete: PropTypes.bool.isRequired,
   dragHandleProps: PropTypes.object.isRequired,
@@ -367,8 +381,7 @@ SectionDisplay.propTypes = {
   onSectionEditLeave: PropTypes.func.isRequired,
   onSectionHardDelete: PropTypes.func.isRequired,
   onSectionMoveDown: PropTypes.func.isRequired,
-  onSectionMoveUp: PropTypes.func.isRequired,
-  section: sectionShape.isRequired
+  onSectionMoveUp: PropTypes.func.isRequired
 };
 
 export default memoAndTransformProps(SectionDisplay, ({

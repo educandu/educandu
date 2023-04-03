@@ -1,13 +1,19 @@
+import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
-export default function TableOfContentsDisplay({ content }) {
+export default function TableOfContentsDisplay({ context, content }) {
+  const { t } = useTranslation('tableOfContents');
   const [nodes, setNodes] = useState([]);
 
   const { minLevel, maxLevel, text } = content;
 
   useEffect(() => {
+    if (context.isPreview) {
+      return;
+    }
+
     const nodeList = [...window.document.querySelectorAll('[data-header="true"]')]
       .map(element => ({
         id: element.id,
@@ -17,7 +23,7 @@ export default function TableOfContentsDisplay({ content }) {
       .filter(node => typeof node.level === 'number' && node.level >= minLevel && node.level <= maxLevel);
 
     setNodes(nodeList);
-  }, [minLevel, maxLevel]);
+  }, [minLevel, maxLevel, context]);
 
   return (
     <div className="TableOfContentsDisplay">
@@ -25,7 +31,10 @@ export default function TableOfContentsDisplay({ content }) {
         {!!text && (
           <Markdown className="TableOfContentsDisplay-text">{text}</Markdown>
         )}
-        {!!nodes.length && (
+        {!!context.isPreview && (
+          <div className="TableOfContentsDisplay-previewWarning">{t('previewWarning')}</div>
+        )}
+        {!context.isPreview && !!nodes.length && (
           <ul role="list" className="TableOfContentsDisplay-nodeList">
             {nodes.map(node => (
               <li

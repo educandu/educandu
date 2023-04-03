@@ -113,11 +113,13 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     });
   };
 
-  const handleEditFileClick = () => {
+  const handleEditFileClick = file => {
+    setHighlightedFile(file);
     pushScreen(SCREEN.edit);
   };
 
-  const handlePreviewFileClick = () => {
+  const handlePreviewFileClick = file => {
+    setHighlightedFile(file);
     pushScreen(SCREEN.preview);
   };
 
@@ -125,9 +127,9 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     popScreen();
   };
 
-  const handleSaveEditedMetadataClick = async ({ description, languages, licenses, tags }) => {
+  const handleSaveEditedMetadataClick = async ({ shortDescription, languages, licenses, tags }) => {
     const editedFile = await mediaLibraryApiClient.updateMediaLibraryItem({
-      mediaLibraryItemId: highlightedFile._id, description, languages, licenses, tags
+      mediaLibraryItemId: highlightedFile._id, shortDescription, languages, licenses, tags
     });
     const oldFile = files.find(file => file._id === editedFile._id);
     const newFile = { ...oldFile, ...editedFile };

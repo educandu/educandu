@@ -44,12 +44,15 @@ audioWaveform:
   dialogTitle:
     en: Generate waveform image
     de: Wellenform-Bild erstellen
-  dialogSearchFileInvitationHeader:
-    en: Search for audio file in all libraries
-    de: Audio-Datei in allen Bibliotheken suchen
-  dialogDropFileInvitationHeader:
-    en: Drag an audio file here
-    de: Ziehe eine Audio-Datei hierher
+  searchAudioFileEmptyStateTitle:
+    en: Search for audio file
+    de: Audio-Datei suchen
+  searchAudioFileEmptyStateSubtitle:
+    en: Find an audio file in one of the libraries.
+    de: Audio-Datei in einer der Bibliotheken suchen.
+  uploadAudioFileEmptyStateTitle:
+    en: Upload audio file
+    de: Audio-Datei hochladen
   dialogRegenerateButton:
     en: Use different audio file
     de: Andere Audio-Datei verwenden

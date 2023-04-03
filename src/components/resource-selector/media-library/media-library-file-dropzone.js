@@ -1,18 +1,21 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import prettyBytes from 'pretty-bytes';
 import { Button, Divider } from 'antd';
 import React, { Fragment } from 'react';
 import reactDropzoneNs from 'react-dropzone';
+import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import { CloudUploadOutlined } from '@ant-design/icons';
-import ActionInvitation from '../shared/action-invitation.js';
+import WarningIcon from '../../icons/general/warning-icon.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { isEditableImageFile } from '../../../utils/storage-utils.js';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
+import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop, onEditImageClick }) {
+function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, showSizeWarning, onFileDrop, onEditImageClick }) {
   const { t } = useTranslation('mediaLibraryFileDropzone');
 
   const canEditImage = file && isEditableImageFile(file);
@@ -25,6 +28,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop
 
   const getPreviewAreaClasses = isDragActive => classNames(
     'MediaLibraryFileDropzone',
+    { 'MediaLibraryFileDropzone--warning': showSizeWarning },
     { 'is-dropping': canAcceptFile && isDragActive },
     { 'is-drop-rejected': !canAcceptFile && isDragActive }
   );
@@ -41,7 +45,15 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop
                   urlOrFile={file}
                   footer={(
                     <Fragment>
-                      <div>{t('fileWillBeAddedToMediaLibrary')}</div>
+                      {!showSizeWarning && (
+                        <div>{t('fileWillBeAddedToMediaLibrary')}</div>
+                      )}
+                      {!!showSizeWarning && (
+                        <div className="MediaLibraryFileDropzone-sizeWarning">
+                          <WarningIcon />
+                          {t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) })}
+                        </div>
+                      )}
                       {!!canEditImage && (
                         <div className="MediaLibraryFileDropzone-contentButton">
                           <Button onClick={onEditImageClick}>
@@ -57,14 +69,17 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, onFileDrop
                 </div>
               </Fragment>
             )}
-            <ActionInvitation
+            <EmptyState
+              compact
               icon={<CloudUploadOutlined />}
-              title={file ? t('common:dropDifferentFileInvitation') : t('common:dropFileInvitation')}
-              subtitle={(
-                <Button onClick={handleUploadButtonClick}>
-                  {t('common:browseFilesButtonLabel')}
-                </Button>
-              )}
+              title={file ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
+              subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+              button={{
+                isDefaultType: true,
+                text: t('common:browse'),
+                subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) }),
+                onClick: handleUploadButtonClick
+              }}
               />
           </div>
         </div>
@@ -79,13 +94,15 @@ MediaLibraryFileDropzone.propTypes = {
   }).isRequired,
   file: browserFileType,
   canAcceptFile: PropTypes.bool,
+  showSizeWarning: PropTypes.bool,
   onFileDrop: PropTypes.func.isRequired,
   onEditImageClick: PropTypes.func.isRequired
 };
 
 MediaLibraryFileDropzone.defaultProps = {
   file: null,
-  canAcceptFile: true
+  canAcceptFile: true,
+  showSizeWarning: false
 };
 
 export default MediaLibraryFileDropzone;

@@ -11,6 +11,7 @@ import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
 import MediaLibraryFileDropzone from './media-library-file-dropzone.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
+import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { isEditableImageFile, processFileBeforeUpload } from '../../../utils/storage-utils.js';
 
@@ -23,7 +24,7 @@ const SCREEN = {
   previewCreatedItem: 'preview-created-item'
 };
 
-const createFileInfo = file => file ? { file, isEdited: false } : null;
+const createFileInfo = file => file ? { file, isEdited: false, isTooBig: file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } : null;
 
 function MediaLibraryUploadScreen({
   initialFile,
@@ -54,7 +55,7 @@ function MediaLibraryUploadScreen({
     }
   };
 
-  const handleMetadataFormFinish = async ({ description, languages, licenses, tags, optimizeImage }) => {
+  const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, tags, optimizeImage }) => {
     const currentFile = fileInfo?.file || null;
     if (!currentFile) {
       return;
@@ -65,7 +66,7 @@ function MediaLibraryUploadScreen({
       const processedFile = await processFileBeforeUpload({ file: currentFile, optimizeImage });
       const result = await mediaLibraryApiClient.createMediaLibraryItem({
         file: processedFile,
-        description,
+        shortDescription,
         languages,
         licenses,
         tags
@@ -96,7 +97,7 @@ function MediaLibraryUploadScreen({
   };
 
   const handleEditorApplyClick = newFile => {
-    setFileInfo({ file: newFile, isEdited: true });
+    setFileInfo({ ...createFileInfo(newFile), isEdited: true });
     setCurrentScreen(SCREEN.enterData);
   };
 
@@ -132,6 +133,7 @@ function MediaLibraryUploadScreen({
             dropzoneRef={dropzoneRef}
             file={fileInfo?.file || null}
             canAcceptFile={!isCurrentlyUploading}
+            showSizeWarning={!!fileInfo?.isTooBig}
             onFileDrop={handleFileDrop}
             onEditImageClick={handleEditImageClick}
             />
@@ -142,7 +144,7 @@ function MediaLibraryUploadScreen({
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleCreateItemClick} disabled={!fileInfo} loading={isCurrentlyUploading}>{t('common:upload')}</Button>
+          <Button type="primary" onClick={handleCreateItemClick} disabled={!fileInfo || !!fileInfo.isTooBig} loading={isCurrentlyUploading}>{t('common:upload')}</Button>
         </div>
       </div>
     </div>

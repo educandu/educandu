@@ -3,13 +3,15 @@ import classNames from 'classnames';
 import React, { useRef } from 'react';
 import { Radio, Spin, Tooltip } from 'antd';
 import reactDropzoneNs from 'react-dropzone';
+import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
 import FilterInput from '../../filter-input.js';
+import FilterIcon from '../../icons/general/filter-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import FilesListViewer from '../shared/files-list-viewer.js';
 import { cdnObjectShape } from '../../../ui/default-prop-types.js';
 import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
-import { TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined, TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -69,6 +71,8 @@ function RoomMediaFilesViewer({
     ? FilesGridViewer
     : FilesListViewer;
 
+  const showEmptyState = !files.length;
+
   return (
     <div className="RoomMediaFilesViewer">
       <div className="RoomMediaFilesViewer-buttonsLine">
@@ -99,20 +103,34 @@ function RoomMediaFilesViewer({
         {({ getRootProps, getInputProps, isDragActive }) => (
           <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
             <input {...getInputProps()} hidden />
-            <div className={getFilesViewerContentClasses()}>
-              <FilesViewer
-                files={files}
-                canDelete={canDelete}
-                selectedFileUrl={highlightedFile?.portableUrl || null}
-                onFileClick={onFileClick}
-                onFileDoubleClick={onFileDoubleClick}
-                onDeleteFileClick={onDeleteFileClick}
-                onPreviewFileClick={onPreviewFileClick}
-                />
-            </div>
             {!!isLoading && (
-              <div className={classNames('RoomMediaFilesViewer-filesViewerOverlay')}>
-                <Spin size="large" />
+              <div className="RoomMediaFilesViewer-filesViewerContent">
+                <div className="RoomMediaFilesViewer-filesViewerOverlay">
+                  <Spin size="large" />
+                </div>
+              </div>
+            )}
+            {!isLoading && !!showEmptyState && (
+              <div className="RoomMediaFilesViewer-filesViewerContent RoomMediaFilesViewer-filesViewerContent--empty">
+                <EmptyState
+                  icon={filterText ? <FilterIcon /> : <CloudUploadOutlined />}
+                  title={filterText ? t('common:filterResultEmptyStateTitle') : t('emptyStateTitle')}
+                  subtitle={filterText ? t('common:searchOrFilterResultEmptyStateSubtitle') : t('emptyStateSubtitle')}
+                  />
+              </div>
+            )}
+            {!isLoading && !showEmptyState && (
+              <div className={getFilesViewerContentClasses()}>
+                <FilesViewer
+                  files={files}
+                  searchTerm={filterText}
+                  selectedFileUrl={highlightedFile?.portableUrl || null}
+                  canDelete={canDelete}
+                  onFileClick={onFileClick}
+                  onFileDoubleClick={onFileDoubleClick}
+                  onDeleteFileClick={onDeleteFileClick}
+                  onPreviewFileClick={onPreviewFileClick}
+                  />
               </div>
             )}
           </div>

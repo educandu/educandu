@@ -2,23 +2,24 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Spin } from 'antd';
 import reactDropzoneNs from 'react-dropzone';
-import CustomAlert from '../../custom-alert.js';
+import EmptyState from '../../empty-state.js';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../../user-context.js';
-import { Trans, useTranslation } from 'react-i18next';
-import UploadIcon from '../../icons/general/upload-icon.js';
+import UploadButton from '../shared/upload-button.js';
+import EditIcon from '../../icons/general/edit-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
-import ActionInvitation from '../shared/action-invitation.js';
+import PreviewIcon from '../../icons/general/preview-icon.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
-import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
-import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
-import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
+import { SEARCH_RESOURCE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
+import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
+import prettyBytes from 'pretty-bytes';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -55,15 +56,15 @@ function MediaLibrarySearchScreen({
   const [initialMediaLibraryItem, setInitialMediaLibraryItem] = useState(null);
 
   useEffect(() => {
-    if (!initialUrl) {
-      return;
-    }
+    const shouldReFetchInitialItem = initialUrl && !highlightedFile;
 
-    (async () => {
-      const item = await mediaLibraryApiClient.findMediaLibraryItem({ url: initialUrl });
-      setInitialMediaLibraryItem(item);
-    })();
-  }, [initialUrl, mediaLibraryApiClient]);
+    if (shouldReFetchInitialItem) {
+      (async () => {
+        const item = await mediaLibraryApiClient.findMediaLibraryItem({ url: initialUrl });
+        setInitialMediaLibraryItem(item);
+      })();
+    }
+  }, [initialUrl, mediaLibraryApiClient, highlightedFile]);
 
   let currentScreen;
   let canSelectUrl;
@@ -98,20 +99,6 @@ function MediaLibrarySearchScreen({
     dropzoneRef.current.open();
   };
 
-  const renderSearchInfo = () => {
-    if (isLoading) {
-      return <CustomAlert message={t('common:searchOngoing')} />;
-    }
-
-    if (searchParams.searchTerm) {
-      const messageParams = { resultCount: files.length, searchTerm: searchParams.searchTerm };
-      const message = <Trans t={t} i18nKey="common:searchResultInfo" values={messageParams} />;
-      return <CustomAlert message={message} />;
-    }
-
-    return null;
-  };
-
   const getFilesViewerClasses = isDragActive => classNames(
     'MediaLibrarySearchScreen-filesViewer',
     { 'is-dropping': isDragActive && !isLoading },
@@ -123,6 +110,8 @@ function MediaLibrarySearchScreen({
     { 'is-dropping': isDragActive && !isLoading },
     { 'is-drop-rejected': isDragActive && isLoading }
   );
+
+  const showEmptyState = !initialUrl;
 
   return (
     <div className={classNames('MediaLibrarySearchScreen', { 'is-hidden': isHidden })}>
@@ -140,6 +129,7 @@ function MediaLibrarySearchScreen({
                   <div className="MediaLibrarySearchScreen-filesViewerContent">
                     <FilesGridViewer
                       files={files}
+                      searchTerm={searchParams.searchTerm}
                       selectedFileUrl={highlightedFile?.portableUrl}
                       canEdit
                       canDelete={hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)}
@@ -158,10 +148,8 @@ function MediaLibrarySearchScreen({
                 </div>
               )}
             </ReactDropzone>
-
           </div>
         )}
-        {currentScreen === SCREEN.search && renderSearchInfo()}
 
         {currentScreen !== SCREEN.search && (
           <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFileDrop(fs[0])}>
@@ -171,33 +159,44 @@ function MediaLibrarySearchScreen({
                   option1={
                     <Fragment>
                       <input {...getInputProps()} hidden />
-                      {!!initialUrl && (
-                        <SelectedResourceDisplay
-                          urlOrFile={initialUrl}
-                          metadata={!!initialMediaLibraryItem && (
-                            <MediaLibraryMetadataDisplay mediaLibraryItem={initialMediaLibraryItem} />
-                          )}
-                          footer={t('common:useSearchToChangeFile')}
+                      {!!showEmptyState && (
+                        <EmptyState
+                          compact
+                          icon={<SearchOutlined />}
+                          title={t('emptyStateTitle')}
+                          subtitle={t('common:mediaLibraryEmptyStateSubtitle')}
                           />
                       )}
-                      {!initialUrl && (
-                        <ActionInvitation
-                          icon={<SearchOutlined />}
-                          title={t('searchInvitationHeader')}
-                          subtitle={t('common:searchInvitationDescription')}
+                      {!showEmptyState && (
+                        <SelectedResourceDisplay
+                          urlOrFile={initialUrl}
+                          actions={!!initialMediaLibraryItem && (
+                            <Fragment>
+                              <Button icon={<PreviewIcon />} onClick={() => onPreviewFileClick(initialMediaLibraryItem)}>
+                                {t('common:preview')}
+                              </Button>
+                              <Button icon={<EditIcon />} onClick={() => onEditFileClick(initialMediaLibraryItem)}>
+                                {t('common:edit')}
+                              </Button>
+                            </Fragment>
+                          )}
+                          footer={t('common:useSearchToChangeFile')}
                           />
                       )}
                     </Fragment>
                   }
                   option2={
-                    <ActionInvitation
+                    <EmptyState
+                      compact
                       icon={<CloudUploadOutlined />}
-                      title={initialUrl ? t('common:dropDifferentFileInvitation') : t('common:dropFileInvitation')}
-                      subtitle={(
-                        <Button onClick={handleUploadButtonClick}>
-                          {t('common:browseFilesButtonLabel')}
-                        </Button>
-                      )}
+                      title={initialUrl ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
+                      subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+                      button={{
+                        isDefaultType: true,
+                        text: t('common:browse'),
+                        subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) }),
+                        onClick: handleUploadButtonClick
+                      }}
                       />
                   }
                   />
@@ -207,7 +206,7 @@ function MediaLibrarySearchScreen({
         )}
         <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
           {currentScreen === SCREEN.search && (
-            <Button onClick={handleUploadButtonClick} icon={<UploadIcon />}>{t('uploadFile')}</Button>
+            <UploadButton onClick={handleUploadButtonClick} />
           )}
           <div className="u-resource-selector-screen-footer-buttons">
             <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
@@ -221,7 +220,7 @@ function MediaLibrarySearchScreen({
 
 MediaLibrarySearchScreen.propTypes = {
   files: PropTypes.arrayOf(mediaLibraryItemWithRelevanceShape).isRequired,
-  highlightedFile: mediaLibraryItemWithRelevanceShape,
+  highlightedFile: mediaLibraryItemShape,
   initialUrl: PropTypes.string,
   isHidden: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,

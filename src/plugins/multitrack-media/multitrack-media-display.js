@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
@@ -20,19 +20,25 @@ function MultitrackMediaDisplay({ content }) {
 
   const combinedCopyrightNotice = tracks.map(track => track.copyrightNotice).filter(text => !!text).join('\n\n');
 
+  const canRenderMediaPlayer = tracks.every(track => track.sourceUrl);
+
   return (
     <div className="MultitrackMediaDisplay">
       <div className={`MultitrackMediaDisplay-content u-width-${width || 100}`}>
-        <MultitrackMediaPlayer
-          aspectRatio={aspectRatio}
-          initialVolume={initialVolume}
-          posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-          showTrackMixer
-          showVideo={showVideo}
-          sources={sources}
-          volumePresets={volumePresets}
-          />
-        <CopyrightNotice value={combinedCopyrightNotice} />
+        {!!canRenderMediaPlayer && (
+          <Fragment>
+            <MultitrackMediaPlayer
+              aspectRatio={aspectRatio}
+              initialVolume={initialVolume}
+              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+              showTrackMixer
+              showVideo={showVideo}
+              sources={sources}
+              volumePresets={volumePresets}
+              />
+            <CopyrightNotice value={combinedCopyrightNotice} />
+          </Fragment>
+        )}
       </div>
     </div>
   );

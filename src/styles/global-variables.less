@@ -4,16 +4,17 @@
 
 // Font sizes
 @edu-font-size-base: 15.5px;
+@edu-font-size-page-title: 34px;
 @edu-font-size-xl: @edu-font-size-base + 4px;
 @edu-font-size-lg: @edu-font-size-base + 2px;
 @edu-font-size-sm: @edu-font-size-base - 2px;
 @edu-font-size-xs: @edu-font-size-base - 4px;
-@edu-heading-1-size: ceil(@edu-font-size-base * 1.60);
-@edu-heading-2-size: ceil(@edu-font-size-base * 1.50);
-@edu-heading-3-size: ceil(@edu-font-size-base * 1.40);
-@edu-heading-4-size: ceil(@edu-font-size-base * 1.30);
-@edu-heading-5-size: ceil(@edu-font-size-base * 1.20);
-@edu-heading-6-size: ceil(@edu-font-size-base * 1.10);
+@edu-heading-1-size: round(@edu-font-size-base * 1.60);
+@edu-heading-2-size: round(@edu-font-size-base * 1.45);
+@edu-heading-3-size: round(@edu-font-size-base * 1.30);
+@edu-heading-4-size: round(@edu-font-size-base * 1.20);
+@edu-heading-5-size: round(@edu-font-size-base * 1.10);
+@edu-heading-6-size: round(@edu-font-size-base * 1.00);
 @edu-heading-font-weight: 500;
 
 // Layering
@@ -36,6 +37,7 @@
 @edu-control-height-lg: 40px;
 @edu-control-height-sm: 24px;
 @edu-line-height-base: 1.57em;
+@edu-line-height-narrow: 1.33em;
 
 // Colors
 @edu-white: #FFFFFF;
@@ -46,6 +48,7 @@
 @edu-secondary-color-dark: #EAA58D;
 @edu-text-color: #626262;
 @edu-text-color-secondary: #9A9A9A;
+@edu-text-color-page-title: @edu-black;
 @edu-disabled-color: #E6E6E6;
 @edu-disabled-background-color: transparent;
 @edu-background-color-base: #F0F0F0;

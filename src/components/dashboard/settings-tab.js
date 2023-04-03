@@ -53,14 +53,6 @@ function SettingsTab() {
     return Object.values(EMAIL_NOTIFICATION_FREQUENCY).map(value => ({ value, label: t(`emailNotificationFrequency_${value}`) }));
   }, [t]);
 
-  const renderInfo = () => (
-    <Trans
-      t={t}
-      i18nKey="info"
-      components={[<a key="user-page-link" href={routes.getUserProfileUrl(user._id)} rel="noopener noreferrer" />]}
-      />
-  );
-
   const renderAvatarDescription = () => (
     <div>
       <Trans
@@ -165,7 +157,6 @@ function SettingsTab() {
 
   return (
     <div className="AccountSettingsTab">
-      <div className="AccountSettingsTab-tabInfo">{renderInfo()}</div>
       <div className="AccountSettingsTab-headline">{t('userProfileHeadline')}</div>
       <section className="AccountSettingsTab-section">
         <div className="AccountSettingsTab-avatar">
