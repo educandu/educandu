@@ -1,0 +1,22 @@
+errorPage:
+  homeButton:
+    en: Home
+    de: Home
+  notFoundEmptyStateTitle:
+    en: Page not found
+    de: Seite nicht gefunden
+  notFoundEmptyStateSubtitle:
+    en: Looks like the page you're looking for doesn't exist. Check that your URL is correct and try again, otherwise go back.
+    de: Looks like the page you're looking for doesn't exist. Check that your URL is correct and try again, otherwise go back.
+  unauthorizedEmptyStateTitle:
+    en: Page access not allowed
+    de: Page access not allowed
+  unauthorizedEmptyStateSubtitle:
+    en: Looks like you're not authorized to access this page. Check that your URL is correct and try again, otherwise go back.
+    de: Looks like you're not authorized to access this page. Check that your URL is correct and try again, otherwise go back.
+  internalErrorEmptyStateTitle:
+    en: Internal server error
+    de: Internal server error
+  internalErrorEmptyStateSubtitle:
+    en: Looks like there was an error providing this page. Check that your URL is correct and try again, otherwise go back.
+    de: Looks like there was an error providing this page. Check that your URL is correct and try again, otherwise go back.

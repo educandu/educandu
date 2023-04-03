@@ -256,6 +256,7 @@ export const DEFAULT_COLOR_SWATCHES = [
 export const HTTP_STATUS = {
   badRequest: 400,
   unauthorized: 401,
+  forbidden: 403,
   notFound: 404,
   tooManyRequests: 429,
   internalServerError: 500
