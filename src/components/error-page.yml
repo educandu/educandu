@@ -7,16 +7,16 @@ errorPage:
     de: Seite nicht gefunden
   notFoundEmptyStateSubtitle:
     en: Looks like the page you're looking for doesn't exist. Check that your URL is correct and try again, otherwise go back.
-    de: Looks like the page you're looking for doesn't exist. Check that your URL is correct and try again, otherwise go back.
+    de: Die Seite, die du suchst, scheint nicht zu existieren. Überprüfe die URL und probiere es noch einmal oder gehe andernfalls zurück.
   unauthorizedEmptyStateTitle:
     en: Page access not allowed
-    de: Page access not allowed
+    de: Seitenzugriff nicht erlaubt
   unauthorizedEmptyStateSubtitle:
     en: Looks like you're not authorized to access this page. Check that your URL is correct and try again, otherwise go back.
-    de: Looks like you're not authorized to access this page. Check that your URL is correct and try again, otherwise go back.
+    de: Du scheinst für die Seite, die du aufgerufen hast, nicht die erforderlichen Berechtigungen zu besitzen. Überprüfe die URL und probiere es noch einmal oder gehe andernfalls zurück.
   internalErrorEmptyStateTitle:
     en: Internal server error
-    de: Internal server error
+    de: Interner Server-Fehler
   internalErrorEmptyStateSubtitle:
     en: Looks like there was an error providing this page. Check that your URL is correct and try again, otherwise go back.
-    de: Looks like there was an error providing this page. Check that your URL is correct and try again, otherwise go back.
+    de: Auf der Seite, die du aufgerufen hast, ist ein Fehler aufgetreten. Überprüfe die URL und probiere es noch einmal oder gehe andernfalls zurück.
