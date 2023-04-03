@@ -107,13 +107,9 @@ function MarkdownInput({
         )}
         >
         {!disableResourceSelector && (
-          <MarkdownResourceSelector
-            size={embeddable ? 'small' : 'normal'}
-            disabled={disabled}
-            onUrlSelect={handleUrlSelect}
-            />
+          <MarkdownResourceSelector small={embeddable} disabled={disabled} onUrlSelect={handleUrlSelect} />
         )}
-        <MarkdownHelp size={embeddable ? 'small' : 'normal'} disabled={disabled} />
+        <MarkdownHelp small={embeddable} disabled={disabled} />
       </div>
     </div>
   );

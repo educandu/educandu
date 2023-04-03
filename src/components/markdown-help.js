@@ -7,7 +7,7 @@ import MarkdownIcon from './icons/markdown/markdown-icon.js';
 import React, { Fragment, useCallback, useState } from 'react';
 import { isLetter, splitAroundWords, ZERO_WIDTH_SPACE } from '../utils/string-utils.js';
 
-function MarkdownHelp({ inline, size, disabled }) {
+function MarkdownHelp({ inline, small, disabled }) {
   const { t } = useTranslation('markdownHelp');
   const [isBlockHelpModalOpen, setIsBlockHelpModalOpen] = useState(false);
   const toggleModal = useCallback(() => setIsBlockHelpModalOpen(val => !val), [setIsBlockHelpModalOpen]);
@@ -35,7 +35,7 @@ function MarkdownHelp({ inline, size, disabled }) {
 
   const blockHelp = (
     <div
-      className={classNames('MarkdownHelp', 'MarkdownHelp--block', { 'MarkdownHelp--small': size === 'small', 'is-disabled': disabled })}
+      className={classNames('MarkdownHelp', 'MarkdownHelp--block', { 'MarkdownHelp--small': small, 'is-disabled': disabled })}
       onClick={toggleModal}
       >
       <MarkdownIcon />
@@ -144,13 +144,13 @@ function MarkdownHelp({ inline, size, disabled }) {
 MarkdownHelp.propTypes = {
   disabled: PropTypes.bool,
   inline: PropTypes.bool,
-  size: PropTypes.oneOf(['normal', 'small'])
+  small: PropTypes.bool
 };
 
 MarkdownHelp.defaultProps = {
   disabled: false,
   inline: false,
-  size: 'normal'
+  small: false
 };
 
 export default MarkdownHelp;

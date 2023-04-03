@@ -6,7 +6,7 @@ import { LinkOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 
-function MarkdownResourceSelector({ size, disabled, onUrlSelect }) {
+function MarkdownResourceSelector({ small, disabled, onUrlSelect }) {
   const { t } = useTranslation('markdownResourceSelector');
   const [isResourceSelectorDialogOpen, setIsResourceSelectorDialogOpen] = useState(false);
 
@@ -30,7 +30,7 @@ function MarkdownResourceSelector({ size, disabled, onUrlSelect }) {
       onClick={handleOpenResourceSelectorClick}
       className={classNames({
         'MarkdownResourceSelector': true,
-        'MarkdownResourceSelector--small': size === 'small',
+        'MarkdownResourceSelector--small': small,
         'is-disabled': disabled
       })}
       >
@@ -55,14 +55,14 @@ function MarkdownResourceSelector({ size, disabled, onUrlSelect }) {
 }
 
 MarkdownResourceSelector.propTypes = {
+  small: PropTypes.bool,
   disabled: PropTypes.bool,
-  size: PropTypes.oneOf(['normal', 'small']),
   onUrlSelect: PropTypes.func
 };
 
 MarkdownResourceSelector.defaultProps = {
+  small: false,
   disabled: false,
-  size: 'normal',
   onUrlSelect: () => {}
 };
 
