@@ -1,5 +1,5 @@
 import gulp from 'gulp';
-import mkdirp from 'mkdirp';
+import { mkdirp } from 'mkdirp';
 import { deleteAsync } from 'del';
 import selfsigned from 'selfsigned';
 import Graceful from 'node-graceful';
