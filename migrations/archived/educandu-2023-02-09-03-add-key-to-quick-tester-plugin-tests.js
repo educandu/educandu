@@ -1,6 +1,6 @@
-import uniqueId from '../src/utils/unique-id.js';
+import uniqueId from '../../src/utils/unique-id.js';
 
-export default class Educandu_2023_02_09_01_add_key_to_catalog_plugin_items {
+export default class Educandu_2023_02_09_03_add_key_to_quick_tester_plugin_tests {
   constructor(db) {
     this.db = db;
   }
@@ -10,13 +10,13 @@ export default class Educandu_2023_02_09_01_add_key_to_catalog_plugin_items {
       {},
       {
         $set: {
-          'sections.$[sectionElement].content.items.$[].key': uniqueId.create()
+          'sections.$[sectionElement].content.tests.$[].key': uniqueId.create()
         }
       },
       {
         arrayFilters: [
           {
-            'sectionElement.type': 'catalog',
+            'sectionElement.type': 'quick-tester',
             'sectionElement.content': { $ne: null }
           }
         ],
@@ -32,13 +32,13 @@ export default class Educandu_2023_02_09_01_add_key_to_catalog_plugin_items {
       {},
       {
         $unset: {
-          'sections.$[sectionElement].content.items.$[].key': null
+          'sections.$[sectionElement].content.tests.$[].key': null
         }
       },
       {
         arrayFilters: [
           {
-            'sectionElement.type': 'catalog',
+            'sectionElement.type': 'quick-tester',
             'sectionElement.content': { $ne: null }
           }
         ],

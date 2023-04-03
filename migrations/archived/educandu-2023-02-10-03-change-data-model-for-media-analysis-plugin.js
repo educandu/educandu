@@ -1,4 +1,4 @@
-import uniqueId from '../src/utils/unique-id.js';
+import uniqueId from '../../src/utils/unique-id.js';
 
 export default class Educandu_2023_02_10_03_change_data_model_for_media_analysis_plugin {
   constructor(db) {
