@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
+import Spinner from '../spinner.js';
 import Markdown from '../markdown.js';
-import { Avatar, Button, Spin } from 'antd';
+import { Avatar, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import DocumentCard from '../document-card.js';
 import FavoriteStar from '../favorite-star.js';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { publicUserShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { AVATAR_SIZE_BIG, FAVORITE_TYPE } from '../../domain/constants.js';
@@ -19,7 +21,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
 
   const { user } = initialState;
   const [documents, setDocuments] = useState([]);
-  const [fetchingDocuments, setFetchingDocuments] = useState(true);
+  const [fetchingDocuments, setFetchingDocuments] = useDebouncedFetchingState(true);
   const [visibleDocumentsCount, setVisibleDocumentsCount] = useState(DOCUMENTS_BATCH_SIZE);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
       setFetchingDocuments(false);
       setDocuments(documentApiClientResponse.documents);
     })();
-  }, [user, documentApiClient]);
+  }, [user, setFetchingDocuments, documentApiClient]);
 
   const handleMoreDocumentsClick = () => {
     setVisibleDocumentsCount(visibleDocumentsCount + DOCUMENTS_BATCH_SIZE);
@@ -70,7 +72,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
           <div className="UserProfilePage-accountClosed">{t('common:accountClosed')}</div>
         )}
 
-        {!!fetchingDocuments && <Spin className="u-spin" />}
+        {!!fetchingDocuments && <Spinner />}
 
         {!fetchingDocuments && !!documents.length && (
           <section className="UserProfilePage-section">

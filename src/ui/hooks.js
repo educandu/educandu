@@ -170,3 +170,22 @@ export function useLoadingState() {
     setIsLoadingAfterMinimumPeriod
   ];
 }
+
+export function useDebouncedFetchingState(initialValue, timeLimit = 250) {
+  const [isFetching, setIsFetching] = useState(initialValue);
+
+  const debouncedSetIsFetching = useDebouncedCallback(setIsFetching, timeLimit);
+
+  const conditionallyDebouncedSetIsFetching = useCallback(newIsLoading => {
+    if (newIsLoading === true) {
+      setIsFetching(true);
+    } else {
+      debouncedSetIsFetching(false);
+    }
+  }, [debouncedSetIsFetching]);
+
+  return [
+    isFetching,
+    conditionallyDebouncedSetIsFetching
+  ];
+}

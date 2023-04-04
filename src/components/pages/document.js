@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
 import CreditsFooter from '../credits-footer.js';
-import { useIsMounted } from '../../ui/hooks.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
@@ -30,6 +29,7 @@ import { RoomMediaContextProvider } from '../room-media-context.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
@@ -167,7 +167,7 @@ function Document({ initialState, PageTemplate }) {
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
-  const [areDocumentCommentsInitiallyLoaded, setAreDocumentCommentsInitiallyLoaded] = useState(false);
+  const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -258,12 +258,12 @@ function Document({ initialState, PageTemplate }) {
   const fetchDocumentComments = useCallback(async () => {
     try {
       const response = await documentCommentApiClient.getAllDocumentComments({ documentId: doc._id });
-      setAreDocumentCommentsInitiallyLoaded(true);
+      setFetchingInitialComments(false);
       setDocumentComments(response.documentComments);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
-  }, [doc, documentCommentApiClient, t]);
+  }, [setFetchingInitialComments, doc, documentCommentApiClient, t]);
 
   useEffect(() => {
     setAlerts(createPageAlerts({
@@ -395,7 +395,7 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleDocumentCommentsOpen = async () => {
-    setAreDocumentCommentsInitiallyLoaded(false);
+    setFetchingInitialComments(true);
     switchView(VIEW.comments);
     await fetchDocumentComments();
   };
@@ -735,7 +735,7 @@ function Document({ initialState, PageTemplate }) {
                 <div className="DocumentPage-commentsSectionHeader">{t('comments')}</div>
                 <DocumentCommentsPanel
                   documentComments={documentComments}
-                  isLoading={!areDocumentCommentsInitiallyLoaded}
+                  isLoading={fetchingInitialComments}
                   onDocumentCommentPostClick={handleDocumentCommentPostClick}
                   onDocumentCommentDeleteClick={handleDocumentCommentDeleteClick}
                   onTopicChangeClick={handleDocumentCommentsTopicChangeClick}

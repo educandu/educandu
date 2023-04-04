@@ -1,6 +1,7 @@
 import React from 'react';
+import { Timeline } from 'antd';
 import PropTypes from 'prop-types';
-import { Spin, Timeline } from 'antd';
+import Spinner from '../spinner.js';
 import routes from '../../utils/routes.js';
 import EmptyState from '../empty-state.js';
 import { useTranslation } from 'react-i18next';
@@ -186,17 +187,17 @@ function ActivitiesTab({ activities, loading }) {
 
   return (
     <div>
-      <section>
+      {!!loading && <Spinner />}
+
+      {!loading && !!showEmptyState && (
+        <EmptyState icon={<HistoryIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+      )}
+
+      {!loading && !showEmptyState && (
         <div className="ActivitiesTab-timeline">
-          {!!loading && <Spin className="u-spin" />}
-          {!loading && !!showEmptyState && (
-            <EmptyState icon={<HistoryIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
-          )}
-          {!loading && !showEmptyState && (
-            <Timeline mode="left" items={timelineItems} />
-          )}
+          <Timeline mode="left" items={timelineItems} />
         </div>
-      </section>
+      )}
     </div>
   );
 }
