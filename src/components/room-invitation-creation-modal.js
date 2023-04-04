@@ -2,6 +2,7 @@ import Info from './info.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
 import { Form, Input, Modal } from 'antd';
+import { useIsMounted } from '../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { handleApiError } from '../ui/error-helper.js';
@@ -19,11 +20,12 @@ const extractEmails = value => value.match(/[^\s;,]+/g) || [];
 
 function RoomInvitationCreationModal({ isOpen, onOk, onCancel, roomId }) {
   const [form] = Form.useForm();
+  const isMounted = useIsMounted();
   const { t } = useTranslation('roomInvitationCreationModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       form.resetFields();
     }
   }, [form, isOpen]);
@@ -76,7 +78,7 @@ function RoomInvitationCreationModal({ isOpen, onOk, onCancel, roomId }) {
     form.submit();
   };
 
-  return (
+  return !!isMounted.current && (
     <Modal
       title={t('sendRoomInvitations')}
       onCancel={handleModalCancel}
