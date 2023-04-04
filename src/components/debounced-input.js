@@ -1,18 +1,23 @@
 import { Input } from 'antd';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
 import { useDebouncedCallback } from '../ui/hooks.js';
+import React, { useEffect, useRef, useState } from 'react';
 
 function DebouncedInput({ apiRef, timeLimit, elementType: Component, value, onChange, onBlur, onSearch, onPressEnter, ...props }) {
+  const actualValueRef = useRef(null);
   const [actualValue, setActualValue] = useState(value);
   const debouncedOnChange = useDebouncedCallback(onChange, timeLimit);
+
+  actualValueRef.current = actualValue;
 
   apiRef.current = {
     flush: () => debouncedOnChange.flush()
   };
 
   useEffect(() => {
-    setActualValue(value);
+    if (value !== actualValueRef.current) {
+      setActualValue(value);
+    }
   }, [value]);
 
   const handleChange = event => {
