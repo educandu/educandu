@@ -234,7 +234,8 @@ class ClientDataMappingService {
         name: room.name,
         shortDescription: room.shortDescription,
         isCollaborative: room.isCollaborative,
-        ownedBy: {
+        ownedBy: room.ownedBy,
+        owner: {
           _id: ownerUser._id,
           displayName: ownerUser.displayName
         }
@@ -248,7 +249,7 @@ class ClientDataMappingService {
     const viewingUserIsRoomOwner = viewingUser?._id === room.ownedBy;
 
     const ownerUser = await this.userStore.getUserById(room.ownedBy);
-    mappedRoom.ownedBy = this._mapOtherUser({ user: ownerUser, grantedPermissions });
+    mappedRoom.owner = this._mapOtherUser({ user: ownerUser, grantedPermissions });
 
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 

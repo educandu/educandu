@@ -12,12 +12,6 @@ describe('room-utils', () => {
         expectedResult: true
       },
       {
-        description: 'when user (with client mapped data model) is room owner',
-        room: { ownedBy: { _id: 'my-user' }, members: [] },
-        userId: 'my-user',
-        expectedResult: true
-      },
-      {
         description: 'when user is room member but not owner',
         room: { ownedBy: 'other-user', members: [{ userId: 'my-user' }] },
         userId: 'my-user',
@@ -49,12 +43,6 @@ describe('room-utils', () => {
         expectedResult: true
       },
       {
-        description: 'when user (with client mapped data model) is room owner',
-        room: { ownedBy: { _id: 'my-user' }, members: [] },
-        userId: 'my-user',
-        expectedResult: true
-      },
-      {
         description: 'when user is room member',
         room: { ownedBy: 'my-user', members: [] },
         userId: 'my-user',
@@ -82,12 +70,6 @@ describe('room-utils', () => {
       {
         description: 'when user is room owner and room is not collaborative',
         room: { isCollaborative: false, ownedBy: 'my-user', members: [] },
-        userId: 'my-user',
-        expectedResult: true
-      },
-      {
-        description: 'when user (with client mapped data model) is room owner and room is not collaborative',
-        room: { isCollaborative: false, ownedBy: { _id: 'my-user' }, members: [] },
         userId: 'my-user',
         expectedResult: true
       },

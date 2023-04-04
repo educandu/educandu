@@ -392,7 +392,8 @@ describe('client-data-mapping-service', () => {
           ...room,
           createdOn: room.createdOn.toISOString(),
           updatedOn: room.updatedOn.toISOString(),
-          ownedBy: {
+          ownedBy: room.ownedBy,
+          owner: {
             displayName: owner.displayName,
             email: owner.email,
             _id: owner._id
@@ -445,7 +446,8 @@ describe('client-data-mapping-service', () => {
           ...room,
           createdOn: room.createdOn.toISOString(),
           updatedOn: room.updatedOn.toISOString(),
-          ownedBy: {
+          ownedBy: room.ownedBy,
+          owner: {
             displayName: owner.displayName,
             email: owner.email,
             _id: owner._id
@@ -490,7 +492,8 @@ describe('client-data-mapping-service', () => {
           ...room,
           createdOn: room.createdOn.toISOString(),
           updatedOn: room.updatedOn.toISOString(),
-          ownedBy: {
+          ownedBy: room.ownedBy,
+          owner: {
             displayName: owner.displayName,
             _id: owner._id
           },
@@ -566,7 +569,8 @@ describe('client-data-mapping-service', () => {
           name: room.name,
           isCollaborative: room.isCollaborative,
           shortDescription: '',
-          ownedBy: {
+          ownedBy: room.ownedBy,
+          owner: {
             _id: user1._id,
             displayName: user1.displayName
           }
