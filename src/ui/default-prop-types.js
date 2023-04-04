@@ -429,6 +429,7 @@ export const roomMetadataProps = {
   _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
+  ownedBy: PropTypes.string,
   createdOn: PropTypes.string,
   isCollaborative: PropTypes.bool.isRequired,
   shortDescription: PropTypes.string
@@ -444,7 +445,7 @@ export const roomMetadataShape = PropTypes.shape(roomMetadataProps);
 
 export const roomShape = PropTypes.shape({
   ...roomMetadataProps,
-  ownedBy: roomOwnerShape.isRequired,
+  owner: roomOwnerShape.isRequired,
   members: PropTypes.arrayOf(roomMemberShape)
 });
 
@@ -501,7 +502,8 @@ export const favoriteRoomShape = PropTypes.shape({
   ...roomMetadataProps,
   _id: PropTypes.string,
   updatedOn: PropTypes.string,
-  ownedBy: PropTypes.shape({
+  owner: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     email: PropTypes.string,
     displayName: PropTypes.string.isRequired
   }),
