@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import Spinner from '../spinner.js';
 import routes from '../../utils/routes.js';
 import EmptyState from '../empty-state.js';
 import FilterInput from '../filter-input.js';
@@ -7,9 +8,9 @@ import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
+import { Button, Checkbox, Pagination } from 'antd';
 import FileIcon from '../icons/general/file-icon.js';
 import FilterIcon from '../icons/general/filter-icon.js';
-import { Button, Checkbox, Pagination, Spin } from 'antd';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { contributedDocumentMetadataShape } from '../../ui/default-prop-types.js';
@@ -93,7 +94,7 @@ function DocumentsTab({ documents, loading }) {
 
   return (
     <div className="DocumentsTab">
-      {!showNoDataEmptyState && (
+      {!loading && !showNoDataEmptyState && (
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -105,7 +106,8 @@ function DocumentsTab({ documents, loading }) {
       )}
 
       <section>
-        {!!loading && <Spin className="u-spin" />}
+        {!!loading && <Spinner />}
+
         {!loading && !!showNoDataEmptyState && (
           <EmptyState
             icon={<FileIcon />}

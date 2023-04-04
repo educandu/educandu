@@ -1,6 +1,7 @@
 import by from 'thenby';
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { Button, Spin } from 'antd';
+import Spinner from '../spinner.js';
 import RoomCard from '../room-card.js';
 import EmptyState from '../empty-state.js';
 import { useUser } from '../user-context.js';
@@ -73,7 +74,7 @@ function RoomsTab({ rooms, invitations, loading }) {
 
   return (
     <div className="RoomsTab">
-      {!!loading && <Spin className="u-spin" />}
+      {!!loading && <Spinner />}
 
       {!loading && (
         <Fragment>

@@ -18,6 +18,7 @@ import DocumentsTab from '../dashboard/documents-tab.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import PrivateIcon from '../icons/general/private-icon.js';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -59,16 +60,16 @@ function Dashboard({ PageTemplate }) {
   const [invitations, setInvitations] = useState([]);
   const [favoriteUsers, setFavoriteUsers] = useState([]);
   const [favoriteRooms, setFavoriteRooms] = useState([]);
-  const [fetchingRooms, setFetchingRooms] = useState(true);
   const [selectedTab, setSelectedTab] = useState(initialTab);
   const [favoriteDocuments, setFavoriteDocuments] = useState([]);
   const [roomMediaOverview, setRoomMediaOverview] = useState(null);
   const [notificationGroups, setNotificationGroups] = useState([]);
-  const [fetchingFavorites, setFetchingFavorites] = useState(true);
-  const [fetchingDocuments, setFetchingDocuments] = useState(true);
-  const [fetchingActivities, setFetchingActivities] = useState(true);
-  const [fetchingRoomMediaOverview, setFetchingRoomMediaOverview] = useState(true);
-  const [fetchingNotificationGroups, setFetchingNotificationGroups] = useState(true);
+  const [fetchingRooms, setFetchingRooms] = useDebouncedFetchingState(true);
+  const [fetchingDocuments, setFetchingDocuments] = useDebouncedFetchingState(true);
+  const [fetchingFavorites, setFetchingFavorites] = useDebouncedFetchingState(true);
+  const [fetchingActivities, setFetchingActivities] = useDebouncedFetchingState(true);
+  const [fetchingRoomMediaOverview, setFetchingRoomMediaOverview] = useDebouncedFetchingState(true);
+  const [fetchingNotificationGroups, setFetchingNotificationGroups] = useDebouncedFetchingState(true);
 
   const fetchActivities = useCallback(async () => {
     try {
@@ -78,7 +79,7 @@ function Dashboard({ PageTemplate }) {
     } finally {
       setFetchingActivities(false);
     }
-  }, [userApiClient]);
+  }, [setFetchingActivities, userApiClient]);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -88,7 +89,7 @@ function Dashboard({ PageTemplate }) {
     } finally {
       setFetchingNotificationGroups(false);
     }
-  }, [notificationsApiClient]);
+  }, [setFetchingNotificationGroups, notificationsApiClient]);
 
   const fetchFavorites = useCallback(async () => {
     try {
@@ -101,7 +102,7 @@ function Dashboard({ PageTemplate }) {
     } finally {
       setFetchingFavorites(false);
     }
-  }, [userApiClient]);
+  }, [setFetchingFavorites, userApiClient]);
 
   const fetchDocuments = useCallback(async () => {
     try {
@@ -111,7 +112,7 @@ function Dashboard({ PageTemplate }) {
     } finally {
       setFetchingDocuments(false);
     }
-  }, [user, documentApiClient]);
+  }, [user._id, setFetchingDocuments, documentApiClient]);
 
   const fetchRooms = useCallback(async () => {
     try {
@@ -123,7 +124,7 @@ function Dashboard({ PageTemplate }) {
     } finally {
       setFetchingRooms(false);
     }
-  }, [roomApiClient, userApiClient]);
+  }, [setFetchingRooms, roomApiClient, userApiClient]);
 
   const fetchRoomMediaOverview = useCallback(async () => {
     try {
@@ -133,7 +134,7 @@ function Dashboard({ PageTemplate }) {
     } finally {
       setFetchingRoomMediaOverview(false);
     }
-  }, [roomApiClient]);
+  }, [setFetchingRoomMediaOverview, roomApiClient]);
 
   useEffect(() => {
     (async () => {

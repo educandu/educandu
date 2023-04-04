@@ -1,5 +1,5 @@
-import { Spin } from 'antd';
 import PropTypes from 'prop-types';
+import Spinner from '../spinner.js';
 import RoomCard from '../room-card.js';
 import UserCard from '../user-card.js';
 import EmptyState from '../empty-state.js';
@@ -80,7 +80,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
 
   return (
     <div className="FavoritesTab">
-      {!!loading && <Spin className="u-spin" /> }
+      {!!loading && <Spinner />}
       {!loading && !!showEmptyState && (
         <EmptyState icon={<StarIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
       )}

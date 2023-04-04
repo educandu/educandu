@@ -1,11 +1,13 @@
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { Button, Spin } from 'antd';
+import Spinner from '../spinner.js';
 import Countdown from '../countdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
+import React, { Fragment, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { handleApiError } from '../../ui/error-helper.js';
-import React, { Fragment, useEffect, useState } from 'react';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { INVALID_ROOM_INVITATION_REASON } from '../../domain/constants.js';
@@ -14,31 +16,28 @@ const logger = new Logger(import.meta.url);
 
 function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   const { t } = useTranslation('roomMembershipConfirmation');
-  const [confirmed, setConfirmed] = useState(false);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+
+  const [fetchingConfirmation, setFetchingConfirmation] = useDebouncedFetchingState(true);
 
   const { token, roomId, roomName, roomSlug, invalidInvitationReason } = initialState;
 
   useEffect(() => {
     (async () => {
-      if (!invalidInvitationReason && !confirmed) {
+      if (!invalidInvitationReason && !!fetchingConfirmation) {
         try {
           await roomApiClient.confirmInvitation({ token });
-          setConfirmed(true);
+          setFetchingConfirmation(false);
         } catch (error) {
           handleApiError({ error, logger, t });
         }
       }
     })();
-  }, [token, invalidInvitationReason, confirmed, t, roomApiClient]);
+  }, [token, invalidInvitationReason, fetchingConfirmation, setFetchingConfirmation, t, roomApiClient]);
 
   const redirectToRoom = () => {
     window.location = routes.getRoomUrl({ id: roomId, slug: roomSlug });
   };
-
-  const renderSpinner = () => (
-    <Spin className="u-spin" tip={t('spinnerMessage')} />
-  );
 
   const renderSuccessMessage = () => {
     return (
@@ -68,8 +67,8 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
           <SiteLogo readonly />
         </div>
         <div className="RoomMembershipConfirmationPage-message">
-          {!invalidInvitationReason && !confirmed && renderSpinner()}
-          {!invalidInvitationReason && !!confirmed && renderSuccessMessage()}
+          {!invalidInvitationReason && !!fetchingConfirmation && <Spinner tip={t('spinnerMessage')} />}
+          {!invalidInvitationReason && !fetchingConfirmation && renderSuccessMessage()}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.token && renderInvalidMessage(t('invalidToken'))}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.room && renderInvalidMessage(t('invalidRoom'))}
           {invalidInvitationReason === INVALID_ROOM_INVITATION_REASON.differenUser && renderInvalidMessage(t('differentUser'))}

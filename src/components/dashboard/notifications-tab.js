@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Spinner from '../spinner.js';
+import { Button, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
 import EmptyState from '../empty-state.js';
-import { Button, Spin, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { BellOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
@@ -95,8 +96,14 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
 
   return (
     <div>
-      <section>
-        {!loading && !showEmptyState && (
+      {!!loading && <Spinner />}
+
+      {!loading && !!showEmptyState && (
+        <EmptyState icon={<BellOutlined />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+      )}
+
+      {!loading && !showEmptyState && (
+        <div>
           <Button
             icon={<CloseIcon />}
             disabled={!notificationGroups.length}
@@ -105,15 +112,9 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
             >
             {t('removeAll')}
           </Button>
-        )}
-        <div>
-          {!!loading && <Spin className="u-spin" />}
-          {!loading && !!showEmptyState && (
-            <EmptyState icon={<BellOutlined />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
-          )}
-          {!loading && !showEmptyState && renderNotificationGroups()}
+          {renderNotificationGroups()}
         </div>
-      </section>
+      )}
     </div>
   );
 }

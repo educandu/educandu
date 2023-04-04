@@ -1,11 +1,12 @@
+import Spinner from './spinner.js';
 import PropTypes from 'prop-types';
 import Markdown from './markdown.js';
+import { Button, Collapse } from 'antd';
 import routes from '../utils/routes.js';
 import Restricted from './restricted.js';
 import EmptyState from './empty-state.js';
 import { useUser } from './user-context.js';
 import DeleteButton from './delete-button.js';
-import { Button, Collapse, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import EditIcon from './icons/general/edit-icon.js';
@@ -304,16 +305,10 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
   const shouldShowNewTopicPanel = expandedTopic === NEW_TOPIC_PANEL_KEY;
   const userCanWriteComments = hasUserPermission(user, permissions.CREATE_CONTENT);
 
-  if (isLoading) {
-    return (
-      <div className="DocumentCommentsPanel">
-        <Spin className="u-spin" />
-      </div>
-    );
-  }
-
   return (
     <div className="DocumentCommentsPanel">
+      {!!isLoading && <Spinner /> }
+
       {!isLoading && !!showEmptyState && (
         <EmptyState
           icon={<CommentIcon />}
@@ -328,6 +323,7 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
             : null}
           />
       )}
+
       {!isLoading && !showEmptyState && (
         <Fragment>
           <Collapse accordion onChange={handleCollapseChange} className="DocumentCommentsPanel" activeKey={expandedTopic}>

@@ -1,6 +1,7 @@
 import by from 'thenby';
+import { Select } from 'antd';
 import PropTypes from 'prop-types';
-import { Select, Spin } from 'antd';
+import Spinner from '../spinner.js';
 import EmptyState from '../empty-state.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
@@ -156,7 +157,8 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
         )}
 
         <section className="StorageTab-content">
-          {!!loading && <Spin className="u-spin" />}
+          {!!loading && <Spinner />}
+
           {!loading && !showEmptyState && (
             <Fragment>
               <div className="StorageTab-planName">
