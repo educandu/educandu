@@ -1,4 +1,4 @@
-export default class Educandu_2023_04_04_01_rename_accreditedEditors_to_allowedEditors_in_documents {
+export default class Educandu_2023_04_04_02_rename_accreditedEditors_to_allowedEditors_in_documents {
   constructor(db) {
     this.db = db;
   }
