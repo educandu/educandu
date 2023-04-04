@@ -1,4 +1,4 @@
-export default class Educandu_2023_04_03_02_rename_owner_to_ownedBy_in_rooms_collection {
+export default class Educandu_2023_04_04_01_rename_owner_to_ownedBy_in_rooms_collection {
   constructor(db) {
     this.db = db;
   }
