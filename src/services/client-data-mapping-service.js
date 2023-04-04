@@ -525,7 +525,7 @@ class ClientDataMappingService {
           result[key] = value
             ? {
               ...value,
-              accreditedEditors: value.accreditedEditors.map(c => this._mapOtherUser({ user: userMap.get(c), grantedPermissions }))
+              allowedEditors: value.allowedEditors.map(c => this._mapOtherUser({ user: userMap.get(c), grantedPermissions }))
             }
             : value;
           break;

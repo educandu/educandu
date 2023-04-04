@@ -217,7 +217,7 @@ export const contributedDocumentMetadataShape = PropTypes.shape({
 });
 
 export const documentPublicContextShape = PropTypes.shape({
-  accreditedEditors: PropTypes.arrayOf(otherUserShape),
+  allowedEditors: PropTypes.arrayOf(otherUserShape),
   protected: PropTypes.bool,
   archived: PropTypes.bool,
   verified: PropTypes.bool,

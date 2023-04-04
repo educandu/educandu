@@ -57,7 +57,7 @@ function createTableRows(docs) {
     updatedOn: doc.updatedOn,
     createdBy: doc.createdBy,
     user: doc.user,
-    accreditedEditors: doc.publicContext.accreditedEditors,
+    allowedEditors: doc.publicContext.allowedEditors,
     protected: doc.publicContext.protected,
     archived: doc.publicContext.archived,
     verified: doc.publicContext.verified,
@@ -256,8 +256,8 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
             <KeyOutlined className="u-large-badge" />
           </Tooltip>
         )}
-        {!!row.accreditedEditors.length && (
-          <Tooltip title={t('accreditedEditorsBadge')}>
+        {!!row.allowedEditors.length && (
+          <Tooltip title={t('allowedEditorsBadge')}>
             <TeamOutlined className="u-large-badge" />
           </Tooltip>
         )}

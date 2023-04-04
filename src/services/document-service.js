@@ -626,7 +626,7 @@ class DocumentService {
     const publicContext = data.roomId
       ? null
       : {
-        accreditedEditors: data.publicContext?.accreditedEditors || [],
+        allowedEditors: data.publicContext?.allowedEditors || [],
         protected: data.publicContext?.protected || false,
         archived: data.publicContext?.archived || false,
         verified: data.publicContext?.verified || false,

@@ -101,7 +101,7 @@ function getMetadataTextRepresentation(documentRevision) {
   delete clonedRevision.sections;
   clonedRevision.createdBy = clonedRevision.createdBy._id;
   if (clonedRevision.publicContext) {
-    clonedRevision.publicContext.accreditedEditors = clonedRevision.publicContext.accreditedEditors.map(editor => editor._id);
+    clonedRevision.publicContext.allowedEditors = clonedRevision.publicContext.allowedEditors.map(editor => editor._id);
   }
 
   return prettyPrintValue(clonedRevision);

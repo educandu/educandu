@@ -16,9 +16,9 @@ const DOCUMENT_EDIT_RESTRICTION_REASON = {
   anonymous: 'anonymous'
 };
 
-function userIsAccreditedEditor({ user, doc }) {
+function userIsAllowedEditor({ user, doc }) {
   // Check against potentially client-data-mapped user as well as pure string IDs (DB model):
-  return (doc.publicContext.accreditedEditors || [])
+  return (doc.publicContext.allowedEditors || [])
     .map(item => typeof item === 'object' ? item._id : item)
     .includes(user._id);
 }
@@ -49,7 +49,7 @@ function getEditDocumentRestrictionReason({ user, doc, room }) {
   if (
     doc.publicContext.protected
     && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
-    && !userIsAccreditedEditor({ user, doc })
+    && !userIsAllowedEditor({ user, doc })
   ) {
     return DOCUMENT_EDIT_RESTRICTION_REASON.protected;
   }

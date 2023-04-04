@@ -70,26 +70,26 @@ describe('revision-utils', () => {
 
     describe('when the document is a public document', () => {
       beforeEach(() => {
-        const publicContext = { accreditedEditors: [], protected: false, archived: false, verified: false, review: '' };
+        const publicContext = { allowedEditors: [], protected: false, archived: false, verified: false, review: '' };
         newRevision = documentService._buildDocumentRevision({ documentId, createdBy: user._id, publicContext });
         room = null;
       });
 
-      it('should throw if the document contains accredited editors and the user is not allowed to assign them', () => {
-        newRevision.publicContext.accreditedEditors = [uniqueId.create(), uniqueId.create()];
+      it('should throw if the document contains allowed editors and the user is not allowed to assign them', () => {
+        newRevision.publicContext.allowedEditors = [uniqueId.create(), uniqueId.create()];
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user }))
-          .toThrow('User is not allowed to assign accredited editors');
+          .toThrow('User is not allowed to assign allowed editors');
       });
 
-      it('should throw if the document contains the user as the only accredited editor but the user is not allowed to assign themselves', () => {
-        newRevision.publicContext.accreditedEditors = [user._id];
+      it('should throw if the document contains the user as the only allowed editor but the user is not allowed to assign themselves', () => {
+        newRevision.publicContext.allowedEditors = [user._id];
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user }))
-          .toThrow('User is not allowed to assign themselves as accredited editor');
+          .toThrow('User is not allowed to assign themselves as allowed editor');
       });
 
-      it('should not throw if the document contains the user as the only accredited editor and the user is in the accredited author role', () => {
+      it('should not throw if the document contains the user as the only allowed editor and the user is in the accredited author role', () => {
         user.role = ROLE.accreditedAuthor;
-        newRevision.publicContext.accreditedEditors = [user._id];
+        newRevision.publicContext.allowedEditors = [user._id];
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user })).not.toThrow();
       });
 
@@ -197,7 +197,7 @@ describe('revision-utils', () => {
 
     describe('when the document is a public document', () => {
       beforeEach(() => {
-        const publicContext = { accreditedEditors: [], protected: false, archived: false, verified: false, review: '' };
+        const publicContext = { allowedEditors: [], protected: false, archived: false, verified: false, review: '' };
         previousRevision = documentService._buildDocumentRevision({ documentId, createdBy: user._id, publicContext });
         newRevision = { ...cloneDeep(previousRevision), _id: uniqueId.create() };
         room = null;
@@ -216,24 +216,24 @@ describe('revision-utils', () => {
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
       });
 
-      it('should not throw if the document is protected and the user is not in the maintainer role but an accredited editor', () => {
+      it('should not throw if the document is protected and the user is not in the maintainer role but an allowed editor', () => {
         previousRevision.publicContext.protected = true;
-        previousRevision.publicContext.accreditedEditors = [uniqueId.create(), user._id, uniqueId.create()];
+        previousRevision.publicContext.allowedEditors = [uniqueId.create(), user._id, uniqueId.create()];
         newRevision = { ...cloneDeep(previousRevision), _id: uniqueId.create() };
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
       });
 
-      it('should throw if the document contains accredited editors and the user is not allowed to assign them', () => {
-        previousRevision.publicContext.accreditedEditors = [uniqueId.create(), uniqueId.create()];
-        newRevision.publicContext.accreditedEditors = [...previousRevision.publicContext.accreditedEditors, uniqueId.create()];
+      it('should throw if the document contains allowed editors and the user is not allowed to assign them', () => {
+        previousRevision.publicContext.allowedEditors = [uniqueId.create(), uniqueId.create()];
+        newRevision.publicContext.allowedEditors = [...previousRevision.publicContext.allowedEditors, uniqueId.create()];
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user }))
-          .toThrow('User is not allowed to update accredited editors');
+          .toThrow('User is not allowed to update allowed editors');
       });
 
-      it('should not throw if the document contains accredited editors and the user is in the maintainer role', () => {
+      it('should not throw if the document contains allowed editors and the user is in the maintainer role', () => {
         user.role = ROLE.maintainer;
-        previousRevision.publicContext.accreditedEditors = [uniqueId.create(), uniqueId.create()];
-        newRevision.publicContext.accreditedEditors = [...previousRevision.publicContext.accreditedEditors, uniqueId.create()];
+        previousRevision.publicContext.allowedEditors = [uniqueId.create(), uniqueId.create()];
+        newRevision.publicContext.allowedEditors = [...previousRevision.publicContext.allowedEditors, uniqueId.create()];
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user })).not.toThrow();
       });
 
