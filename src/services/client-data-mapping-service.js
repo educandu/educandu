@@ -222,7 +222,7 @@ class ClientDataMappingService {
 
   async mapUserOwnRoomInvitations(invitation) {
     const room = await this.roomStore.getRoomById(invitation.roomId);
-    const owner = await this.userStore.getUserById(room.owner);
+    const ownerUser = await this.userStore.getUserById(room.ownedBy);
 
     return {
       _id: invitation._id,
@@ -234,9 +234,10 @@ class ClientDataMappingService {
         name: room.name,
         shortDescription: room.shortDescription,
         isCollaborative: room.isCollaborative,
+        ownedBy: room.ownedBy,
         owner: {
-          _id: owner._id,
-          displayName: owner.displayName
+          _id: ownerUser._id,
+          displayName: ownerUser.displayName
         }
       }
     };
@@ -245,10 +246,10 @@ class ClientDataMappingService {
   async mapRoom({ room, viewingUser }) {
     const mappedRoom = cloneDeep(room);
     const grantedPermissions = getUserPermissions(viewingUser);
-    const viewingUserIsRoomOwner = viewingUser?._id === room.owner;
+    const viewingUserIsRoomOwner = viewingUser?._id === room.ownedBy;
 
-    const owner = await this.userStore.getUserById(room.owner);
-    mappedRoom.owner = this._mapOtherUser({ user: owner, grantedPermissions });
+    const ownerUser = await this.userStore.getUserById(room.ownedBy);
+    mappedRoom.owner = this._mapOtherUser({ user: ownerUser, grantedPermissions });
 
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 

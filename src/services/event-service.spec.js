@@ -52,7 +52,7 @@ describe('event-service', () => {
     sandbox.stub(notificationUtils, 'determineNotificationReasonsForRoomMessageCreatedEvent');
 
     myUser = await createTestUser(container, { email: 'i@myself.com', displayName: 'Me' });
-    myRoom = await createTestRoom(container, { owner: myUser._id, createdBy: myUser._id });
+    myRoom = await createTestRoom(container, { ownedBy: myUser._id, createdBy: myUser._id });
     otherUser = await createTestUser(container, { email: 'goofy@ducktown.com', displayName: 'Goofy' });
   });
 

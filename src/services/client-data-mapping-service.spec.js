@@ -322,7 +322,7 @@ describe('client-data-mapping-service', () => {
 
     beforeEach(() => {
       owner = {
-        _id: 'owner',
+        _id: 'ownerId',
         email: 'owner@owner',
         displayName: 'Owner user',
         storage: { plan: 'basic', usedBytes: 20, reminders: [] }
@@ -343,7 +343,7 @@ describe('client-data-mapping-service', () => {
       room = {
         _id: 'roomId',
         name: 'my room',
-        owner: 'owner',
+        ownedBy: 'ownerId',
         createdOn: new Date(),
         updatedOn: new Date(),
         members: [
@@ -379,8 +379,8 @@ describe('client-data-mapping-service', () => {
         result = await sut.mapRoom({ room, viewingUser: { _id: owner._id, role: ROLE.admin } });
       });
 
-      it('should call getUserById with "owner"', () => {
-        assert.calledWith(userStore.getUserById, 'owner');
+      it('should call getUserById with the owner id', () => {
+        assert.calledWith(userStore.getUserById, 'ownerId');
       });
 
       it('should call getUsersById with "[member1, member2]"', () => {
@@ -392,6 +392,7 @@ describe('client-data-mapping-service', () => {
           ...room,
           createdOn: room.createdOn.toISOString(),
           updatedOn: room.updatedOn.toISOString(),
+          ownedBy: room.ownedBy,
           owner: {
             displayName: owner.displayName,
             email: owner.email,
@@ -432,8 +433,8 @@ describe('client-data-mapping-service', () => {
         result = await sut.mapRoom({ room, viewingUser: { _id: owner._id, role: ROLE.admin } });
       });
 
-      it('should call getUserById with "owner"', () => {
-        assert.calledWith(userStore.getUserById, 'owner');
+      it('should call getUserById with the owner id', () => {
+        assert.calledWith(userStore.getUserById, 'ownerId');
       });
 
       it('should call getUsersById with "[member1, member2]"', () => {
@@ -445,6 +446,7 @@ describe('client-data-mapping-service', () => {
           ...room,
           createdOn: room.createdOn.toISOString(),
           updatedOn: room.updatedOn.toISOString(),
+          ownedBy: room.ownedBy,
           owner: {
             displayName: owner.displayName,
             email: owner.email,
@@ -477,8 +479,8 @@ describe('client-data-mapping-service', () => {
         result = await sut.mapRoom({ room });
       });
 
-      it('should call getUserById with "owner"', () => {
-        assert.calledWith(userStore.getUserById, 'owner');
+      it('should call getUserById with the owner id', () => {
+        assert.calledWith(userStore.getUserById, 'ownerId');
       });
 
       it('should call getUsersById with "[member1, member2]"', () => {
@@ -490,6 +492,7 @@ describe('client-data-mapping-service', () => {
           ...room,
           createdOn: room.createdOn.toISOString(),
           updatedOn: room.updatedOn.toISOString(),
+          ownedBy: room.ownedBy,
           owner: {
             displayName: owner.displayName,
             _id: owner._id
@@ -549,7 +552,7 @@ describe('client-data-mapping-service', () => {
     let invitation;
 
     beforeEach(async () => {
-      room = await createTestRoom(container, { owner: user1._id });
+      room = await createTestRoom(container, { ownedBy: user1._id });
       invitation = { _id: uniqueId.create(), roomId: room._id, sentOn: new Date(), expiresOn: new Date() };
 
       result = await sut.mapUserOwnRoomInvitations(invitation);
@@ -566,6 +569,7 @@ describe('client-data-mapping-service', () => {
           name: room.name,
           isCollaborative: room.isCollaborative,
           shortDescription: '',
+          ownedBy: room.ownedBy,
           owner: {
             _id: user1._id,
             displayName: user1.displayName

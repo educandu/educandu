@@ -103,10 +103,10 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  deleteAllRoomsForUser({ ownerId }) {
+  deleteAllRoomsOwnedByUser({ userId }) {
     return this.httpClient
       .delete(
-        `/api/v1/rooms?ownerId=${encodeURIComponent(ownerId)}`,
+        `/api/v1/rooms?userId=${encodeURIComponent(userId)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

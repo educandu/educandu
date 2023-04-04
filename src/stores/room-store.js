@@ -33,12 +33,12 @@ class RoomStore {
     return this.collection.updateMany({}, { $pull: { members: { userId } } }, { session });
   }
 
-  getRoomByIdAndOwnerId({ roomId, ownerId }, { session } = {}) {
-    return this.collection.findOne({ _id: roomId, owner: ownerId }, { session });
+  getRoomByIdAndOwnerUserId({ roomId, ownerUserId }, { session } = {}) {
+    return this.collection.findOne({ _id: roomId, ownedBy: ownerUserId }, { session });
   }
 
-  getRoomsByOwnerId(ownerId, { session } = {}) {
-    return this.collection.find({ owner: ownerId }, { session }).toArray();
+  getRoomsByOwnerUserId(ownerUserId, { session } = {}) {
+    return this.collection.find({ ownedBy: ownerUserId }, { session }).toArray();
   }
 
   getRoomByIdJoinedByUser({ roomId, userId }, { session } = {}) {
@@ -48,7 +48,7 @@ class RoomStore {
   getRoomsByOwnerOrCollaboratorUser({ userId }, { session } = {}) {
     return this.collection.find({
       $or: [
-        { owner: userId },
+        { ownedBy: userId },
         {
           $and: [
             { isCollaborative: true },
@@ -61,7 +61,7 @@ class RoomStore {
   }
 
   getRoomsOwnedOrJoinedByUser(userId, { session } = {}) {
-    return this.collection.find({ $or: [{ owner: userId }, { 'members.userId': userId }] }, { session }).toArray();
+    return this.collection.find({ $or: [{ ownedBy: userId }, { 'members.userId': userId }] }, { session }).toArray();
   }
 
   getLatestRoomsCreatedByUser(userId, { session, limit } = {}) {

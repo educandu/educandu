@@ -433,7 +433,7 @@ describe('user-service', () => {
           contributors: favoriteDocument.contributors,
           publicContext: favoriteDocument.publicContext
         };
-        favoriteRoom = await createTestRoom(container, { name: 'Favorite room', owner: user._id, createdBy: user._id });
+        favoriteRoom = await createTestRoom(container, { name: 'Favorite room', ownedBy: user._id, createdBy: user._id });
         favoriteUser = await createTestUser(container, { displayName: 'Favorite user', email: 'favorite-user@test.com' });
 
         const favorites = [
@@ -572,7 +572,7 @@ describe('user-service', () => {
         });
 
         createdRoom = await createTestRoom(container, {
-          owner: user._id,
+          ownedBy: user._id,
           createdBy: user._id,
           name: 'Created room',
           createdOn: new Date('2022-03-09T10:03:00.000Z'),
@@ -589,7 +589,7 @@ describe('user-service', () => {
         });
 
         joinedRoom = await createTestRoom(container, {
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           createdBy: otherUser._id,
           name: 'Created room [other]',
           createdOn: new Date('2022-03-09T10:06:00.000Z'),
@@ -597,7 +597,7 @@ describe('user-service', () => {
           members: [{ userId: user._id, joinedOn: new Date('2022-03-09T10:07:00.000Z') }]
         });
 
-        favoriteRoom = await createTestRoom(container, { name: 'Created popular room [other]', owner: otherUser._id, createdBy: otherUser._id });
+        favoriteRoom = await createTestRoom(container, { name: 'Created popular room [other]', ownedBy: otherUser._id, createdBy: otherUser._id });
         favoriteDocument = await createTestDocument(container, otherUser, { title: 'Created popular document [other]' });
         favoriteUser = await createTestUser(container, { displayName: 'Popular user', email: 'popular-user@test.com' });
         await db.users.updateOne({ _id: user._id }, {
@@ -799,14 +799,14 @@ describe('user-service', () => {
 
       beforeEach(async () => {
         await createTestRoom(container, {
-          owner: user._id,
+          ownedBy: user._id,
           createdBy: user._id,
           name: 'Created room 1',
           createdOn: new Date('2022-03-09T10:00:00.000Z'),
           updatedOn: new Date('2022-03-09T10:00:00.000Z')
         });
         latestCreatedRoom = await createTestRoom(container, {
-          owner: user._id,
+          ownedBy: user._id,
           createdBy: user._id,
           name: 'Created room 2',
           createdOn: new Date('2022-03-09T10:01:00.000Z'),
@@ -836,7 +836,7 @@ describe('user-service', () => {
 
       beforeEach(async () => {
         updatedRoom = await createTestRoom(container, {
-          owner: user._id,
+          ownedBy: user._id,
           createdBy: user._id,
           name: 'Created room 1',
           createdOn: new Date('2022-03-09T10:00:00.000Z'),
@@ -882,7 +882,7 @@ describe('user-service', () => {
 
       beforeEach(async () => {
         await createTestRoom(container, {
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           createdBy: otherUser._id,
           name: 'Joined room 1',
           createdOn: new Date('2022-03-09T10:02:00.000Z'),
@@ -890,7 +890,7 @@ describe('user-service', () => {
           members: [{ userId: user._id, joinedOn: new Date('2022-03-09T10:03:00.000Z') }]
         });
         latestJoinedRoom = await createTestRoom(container, {
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           createdBy: otherUser._id,
           name: 'Joined room 2',
           createdOn: new Date('2022-03-09T10:01:00.000Z'),
@@ -920,7 +920,7 @@ describe('user-service', () => {
       let latestFavorite;
 
       beforeEach(async () => {
-        const favorite1 = await createTestRoom(container, { name: 'Favorite 1', owner: otherUser._id, createdBy: otherUser._id });
+        const favorite1 = await createTestRoom(container, { name: 'Favorite 1', ownedBy: otherUser._id, createdBy: otherUser._id });
         const favorite2 = await createTestDocument(container, otherUser, { title: 'Favorite 2' });
         latestFavorite = await createTestDocument(container, otherUser, { title: 'Favorite 3' });
         await db.users.updateOne({ _id: user._id }, {

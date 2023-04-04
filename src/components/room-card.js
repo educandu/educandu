@@ -117,7 +117,7 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
       roomInvitation.room?.isCollaborative,
       (
         <div className="RoomCard-infoTooltip">
-          {!!roomInvitation.room?.isCollaborative && <div>{t('collaborativeRoom')}.</div>}
+          {!!roomInvitation.room?.isCollaborative && <div>{t('collaborativeRoom')}</div>}
           <div>{t('createdByUser', { user: roomInvitation.room?.owner?.displayName })}</div>
         </div>
       )

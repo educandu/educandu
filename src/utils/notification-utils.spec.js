@@ -11,7 +11,7 @@ describe('notification-utils', () => {
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentRevisionCreated, params: { userId: 'event-user-id' } },
         documentRevision: { _id: 'revision-id', documentId: 'document-id', roomId: 'room-id', roomContext: { draft: false } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: false } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
         notifiedUser: { _id: 'owner-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
         expectedReasons: [NOTIFICATION_REASON.roomMembership]
       },
@@ -20,7 +20,7 @@ describe('notification-utils', () => {
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentRevisionCreated, params: { userId: 'event-user-id' } },
         documentRevision: { _id: 'revision-id', documentId: 'document-id', roomId: 'room-id', roomContext: { draft: false } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: false } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
         notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
         expectedReasons: [NOTIFICATION_REASON.roomMembership]
       },
@@ -74,7 +74,7 @@ describe('notification-utils', () => {
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentRevisionCreated, params: { userId: 'event-user-id' } },
         documentRevision: { _id: 'revision-id', documentId: 'document-id', roomId: 'room-id', roomContext: { draft: true } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: true } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
         notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [{ type: FAVORITE_TYPE.document, id: 'document-id' }, { type: FAVORITE_TYPE.user, id: 'event-user-id' }] },
         expectedReasons: []
       },
@@ -108,7 +108,7 @@ describe('notification-utils', () => {
         description: 'when the notified user is an invited member of the room',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentCommentCreated, params: { userId: 'event-user-id' } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: false } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
         notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
         expectedReasons: [NOTIFICATION_REASON.roomMembership]
       },
@@ -157,7 +157,7 @@ describe('notification-utils', () => {
         description: 'when the notified user is a room member or has marked the document or event user as favorite but the document is in draft mode',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentCommentCreated, params: { userId: 'event-user-id' } },
         document: { _id: 'document-id', roomId: 'room-id', roomContext: { draft: true } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }] },
         notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [{ type: FAVORITE_TYPE.document, id: 'document-id' }, { type: FAVORITE_TYPE.user, id: 'event-user-id' }] },
         expectedReasons: []
       },
@@ -189,14 +189,14 @@ describe('notification-utils', () => {
       {
         description: 'when the notified user is the owner of the room (meaning the same user as the event user)',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'owner-user-id', roomMessageKey: 'key' } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
         notifiedUser: { _id: 'owner-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
         expectedReasons: []
       },
       {
         description: 'when the notified user is an invited member of the room',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'event-user-id', roomMessageKey: 'key' } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
         notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
         expectedReasons: [NOTIFICATION_REASON.roomMembership]
       },
@@ -210,14 +210,14 @@ describe('notification-utils', () => {
       {
         description: 'when the notified user is an invited member of the room but the room message has been deleted in the meantime',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'event-user-id', roomMessageKey: 'key' } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [] },
         notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
         expectedReasons: []
       },
       {
         description: 'when the notified user is an invited member of the room and has marked the room as favorite',
         event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.roomMessageCreated, params: { userId: 'event-user-id', roomMessageKey: 'key' } },
-        room: { _id: 'room-id', owner: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], messages: [{ key: 'key' }] },
         notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [{ type: FAVORITE_TYPE.room, id: 'room-id' }] },
         expectedReasons: [NOTIFICATION_REASON.roomMembership, NOTIFICATION_REASON.roomFavorite]
       }

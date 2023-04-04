@@ -36,21 +36,21 @@ describe('room-store', () => {
       const rooms = [
         {
           name: 'Room 1',
-          owner: myUser._id
+          ownedBy: myUser._id
         },
         {
           name: 'Room 2',
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           members: [{ userId: myUser._id, joinedOn: new Date() }]
         },
         {
           name: 'Room 3',
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           members: []
         },
         {
           name: 'Room 4',
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           members: [{ userId: onlyJoiningUser._id, joinedOn: new Date() }]
         }
       ];
@@ -90,24 +90,24 @@ describe('room-store', () => {
     });
   });
 
-  describe('getRoomByIdAndOwnerId', () => {
+  describe('getRoomByIdAndOwnerUserId', () => {
     let myRoom = null;
     let otherRoom = null;
 
     beforeEach(async () => {
       [myRoom, otherRoom] = await Promise.all([
-        createTestRoom(container, { name: 'my room', owner: myUser._id }),
-        createTestRoom(container, { name: 'not my room', owner: otherUser._id })
+        createTestRoom(container, { name: 'my room', ownedBy: myUser._id }),
+        createTestRoom(container, { name: 'not my room', ownedBy: otherUser._id })
       ]);
     });
 
     it('should find rooms owned by the specified user ID', async () => {
-      const room = await sut.getRoomByIdAndOwnerId({ roomId: myRoom._id, ownerId: myUser._id });
+      const room = await sut.getRoomByIdAndOwnerUserId({ roomId: myRoom._id, ownerUserId: myUser._id });
       expect(room.name).toBe('my room');
     });
 
     it('should not find rooms owned by other users', async () => {
-      const room = await sut.getRoomByIdAndOwnerId({ roomId: otherRoom._id, ownerId: myUser._id });
+      const room = await sut.getRoomByIdAndOwnerUserId({ roomId: otherRoom._id, ownerUserId: myUser._id });
       expect(room).toBeNull();
     });
   });
@@ -126,7 +126,7 @@ describe('room-store', () => {
           {
             _id: roomId1,
             name: 'owned room',
-            owner: myUser._id,
+            ownedBy: myUser._id,
             members: [
               {
                 userId: otherUser._id,
@@ -144,7 +144,7 @@ describe('room-store', () => {
           {
             _id: roomId2,
             name: 'member of room',
-            owner: otherUser._id,
+            ownedBy: otherUser._id,
             members: [
               {
                 userId: myUser._id,

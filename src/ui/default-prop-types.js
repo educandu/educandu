@@ -429,6 +429,7 @@ export const roomMetadataProps = {
   _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
+  ownedBy: PropTypes.string,
   createdOn: PropTypes.string,
   isCollaborative: PropTypes.bool.isRequired,
   shortDescription: PropTypes.string
@@ -502,6 +503,7 @@ export const favoriteRoomShape = PropTypes.shape({
   _id: PropTypes.string,
   updatedOn: PropTypes.string,
   owner: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     email: PropTypes.string,
     displayName: PropTypes.string.isRequired
   }),

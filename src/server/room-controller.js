@@ -31,7 +31,6 @@ import {
   getRoomsQuerySchema,
   patchRoomParamsSchema,
   deleteRoomParamsSchema,
-  deleteRoomsQuerySchema,
   postRoomMessageBodySchema,
   getRoomWithSlugParamsSchema,
   patchRoomMetadataBodySchema,
@@ -40,6 +39,7 @@ import {
   postRoomInvitationsBodySchema,
   deleteRoomMessageParamsSchema,
   deleteRoomInvitationParamsSchema,
+  deleteRoomsOwnedByUserQuerySchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
   getRoomMembershipConfirmationParamsSchema,
@@ -217,16 +217,16 @@ export default class RoomController {
     return res.status(201).send({ room: mappedRoom });
   }
 
-  async handleDeleteRoomsForUser(req, res) {
-    const { ownerId } = req.query;
+  async handleDeleteRoomsOwnedByUser(req, res) {
+    const { userId } = req.query;
 
-    const roomOwner = await this.userService.getUserById(ownerId);
+    const roomOwner = await this.userService.getUserById(userId);
 
     if (!roomOwner) {
-      throw new NotFound(`Unknown room owner with ID '${ownerId}'`);
+      throw new NotFound(`Unknown room owner with ID '${userId}'`);
     }
 
-    const rooms = await this.roomService.getRoomsOwnedByUser(ownerId);
+    const rooms = await this.roomService.getRoomsOwnedByUser(userId);
 
     for (const room of rooms) {
       await this._deleteRoomAndNotify({ room, roomOwner });
@@ -265,7 +265,7 @@ export default class RoomController {
       throw new NotFound();
     }
 
-    if (room.owner !== user._id && memberUserId !== user._id) {
+    if (room.ownedBy !== user._id && memberUserId !== user._id) {
       throw new Forbidden(NOT_ROOM_OWNER_OR_MEMBER_ERROR_MESSAGE);
     }
 
@@ -302,8 +302,8 @@ export default class RoomController {
     const { user } = req;
     const { roomId, emails } = req.body;
 
-    const { room, owner, invitations } = await this.roomService.createOrUpdateInvitations({ roomId, emails, user });
-    await this.mailService.sendRoomInvitationEmails({ invitations, roomName: room.name, ownerName: owner.displayName });
+    const { room, ownerUser, invitations } = await this.roomService.createOrUpdateInvitations({ roomId, ownerUserId: user._id, emails });
+    await this.mailService.sendRoomInvitationEmails({ invitations, roomName: room.name, ownerName: ownerUser.displayName });
 
     return res.status(201).send(invitations);
   }
@@ -459,8 +459,8 @@ export default class RoomController {
 
     router.delete(
       '/api/v1/rooms',
-      [needsPermission(permissions.DELETE_ANY_PRIVATE_CONTENT), validateQuery(deleteRoomsQuerySchema)],
-      (req, res) => this.handleDeleteRoomsForUser(req, res)
+      [needsPermission(permissions.DELETE_ANY_PRIVATE_CONTENT), validateQuery(deleteRoomsOwnedByUserQuerySchema)],
+      (req, res) => this.handleDeleteRoomsOwnedByUser(req, res)
     );
 
     router.delete(

@@ -79,7 +79,7 @@ describe('document-service', () => {
       sandbox.stub(eventStore, 'recordDocumentRevisionCreatedEvent').resolves();
 
       createdRevision = null;
-      room = await createTestRoom(container, { owner: user._id });
+      room = await createTestRoom(container, { ownedBy: user._id });
 
       data = {
         title: 'Title',
@@ -443,7 +443,7 @@ describe('document-service', () => {
       sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
       sandbox.stub(lockStore, 'releaseLock');
 
-      room = await createTestRoom(container, { owner: user._id });
+      room = await createTestRoom(container, { ownedBy: user._id });
       documentToDelete = await createTestDocument(container, user, { roomId: room._id });
       await createTestDocumentComment(container, user, { documentId: documentToDelete._id });
 
@@ -1138,7 +1138,7 @@ describe('document-service', () => {
         }
       });
 
-      const room = await createTestRoom(container, { owner: adminUser._id });
+      const room = await createTestRoom(container, { ownedBy: adminUser._id });
       await createTestDocument(container, adminUser, {
         title: 'Doc 5',
         shortDescription: 'Description 5',
@@ -1365,7 +1365,7 @@ describe('document-service', () => {
 
     describe('when the user contributed on private documents or public documents that are now archived', () => {
       beforeEach(async () => {
-        const room = await createTestRoom(container, { owner: user._id });
+        const room = await createTestRoom(container, { ownedBy: user._id });
         await createTestDocument(container, user, { title: 'Created doc 1', roomId: room._id });
 
         sandbox.clock.tick(1000);

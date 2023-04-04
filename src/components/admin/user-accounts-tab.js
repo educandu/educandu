@@ -352,7 +352,7 @@ function UserAccountsTab() {
       }));
 
       try {
-        await roomApiClient.deleteAllRoomsForUser({ ownerId: userId });
+        await roomApiClient.deleteAllRoomsOwnedByUser({ userId });
         const updatedStorage = await userApiClient.deleteAllUserStorageReminders({ userId });
         setUsers(oldUsers => oldUsers.map(user => user._id === userId ? { ...user, storage: updatedStorage } : user));
         message.success({ content: t('common:changesSavedSuccessfully') });

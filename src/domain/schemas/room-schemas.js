@@ -77,8 +77,8 @@ export const patchRoomDocumentsBodySchema = joi.object({
   documentIds: joi.array().items(idOrKeySchema).required()
 });
 
-export const deleteRoomsQuerySchema = joi.object({
-  ownerId: idOrKeySchema.required()
+export const deleteRoomsOwnedByUserQuerySchema = joi.object({
+  userId: idOrKeySchema.required()
 });
 
 export const deleteRoomParamsSchema = joi.object({
@@ -152,7 +152,7 @@ export const roomDBSchema = joi.object({
   ...roomMessagesDBProps,
   ...roomDocumentsDBProps,
   _id: idOrKeySchema.required(),
-  owner: idOrKeySchema.required(),
+  ownedBy: idOrKeySchema.required(),
   createdBy: idOrKeySchema.required(),
   createdOn: joi.date().required()
 });

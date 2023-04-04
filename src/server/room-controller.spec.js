@@ -181,7 +181,7 @@ describe('room-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         roomId = uniqueId.create();
-        const room = { _id: roomId, isCollaborative: true, owner: user._id, members: [] };
+        const room = { _id: roomId, isCollaborative: true, ownedBy: user._id, members: [] };
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -209,7 +209,7 @@ describe('room-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         roomId = uniqueId.create();
-        const room = { _id: roomId, isCollaborative: true, owner: 'some-other-user', members: [{ userId: user._id }] };
+        const room = { _id: roomId, isCollaborative: true, ownedBy: 'some-other-user', members: [{ userId: user._id }] };
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -237,7 +237,7 @@ describe('room-controller', () => {
 
       beforeEach(() => new Promise((resolve, reject) => {
         roomId = uniqueId.create();
-        const room = { _id: roomId, isCollaborative: false, owner: 'some-other-user', members: [{ userId: user._id }] };
+        const room = { _id: roomId, isCollaborative: false, ownedBy: 'some-other-user', members: [{ userId: user._id }] };
         mappedRoom = cloneDeep(room);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -314,7 +314,7 @@ describe('room-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room = {
           _id: uniqueId.create(),
-          owner: user._id,
+          ownedBy: user._id,
           name: 'name',
           slug: 'slug',
           isCollaborative: false,
@@ -379,7 +379,7 @@ describe('room-controller', () => {
       beforeEach(() => {
         const room = {
           _id: uniqueId.create(),
-          owner: uniqueId.create(),
+          ownedBy: uniqueId.create(),
           name: 'name',
           slug: 'slug',
           isCollaborative: false
@@ -408,7 +408,7 @@ describe('room-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         room = {
           _id: uniqueId.create(),
-          owner: uniqueId.create(),
+          ownedBy: uniqueId.create(),
           name: 'name',
           slug: 'slug',
           isCollaborative: true,
@@ -472,7 +472,7 @@ describe('room-controller', () => {
       beforeEach(() => {
         const room = {
           _id: uniqueId.create(),
-          owner: uniqueId.create(),
+          ownedBy: uniqueId.create(),
           name: 'name',
           slug: 'slug',
           isCollaborative: false,
@@ -494,7 +494,7 @@ describe('room-controller', () => {
       beforeEach(() => {
         const room = {
           _id: uniqueId.create(),
-          owner: uniqueId.create(),
+          ownedBy: uniqueId.create(),
           name: 'name',
           slug: 'slug',
           isCollaborative: true,
@@ -523,7 +523,7 @@ describe('room-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         roomService.createOrUpdateInvitations.resolves({
           room,
-          owner: user,
+          ownerUser: user,
           invitations: [invitation1, invitation2]
         });
         mailService.sendRoomInvitationEmails.resolves();
@@ -552,8 +552,8 @@ describe('room-controller', () => {
       it('should have called roomService.createOrUpdateInvitations', () => {
         assert.calledWith(roomService.createOrUpdateInvitations, {
           roomId: '843zvnzn2vw',
-          emails: ['invited-1@user.com', 'invited-2@user.com'],
-          user
+          ownerUserId: user._id,
+          emails: ['invited-1@user.com', 'invited-2@user.com']
         });
       });
 
@@ -594,7 +594,7 @@ describe('room-controller', () => {
     beforeEach(() => new Promise((resolve, reject) => {
       roomService.createOrUpdateInvitations.resolves({
         room,
-        owner: user,
+        ownerUser: user,
         invitations: [invitation]
       });
       mailService.sendRoomInvitationEmails.resolves();
@@ -622,7 +622,7 @@ describe('room-controller', () => {
         _id: uniqueId.create(),
         name: 'Mein schöner Raum',
         slug: 'room-slug',
-        owner: 'owner',
+        ownedBy: 'owner',
         members: [],
         isCollaborative: false,
         documents: [uniqueId.create(), uniqueId.create()]
@@ -789,7 +789,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           name: 'Mein schöner Raum',
           slug: 'room-slug',
-          owner: user._id,
+          ownedBy: user._id,
           members: []
         };
 
@@ -873,7 +873,7 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
-        roomService.getRoomById.resolves({ _id: roomId, owner: 'Goofy', members: [{ userId: 'Donald' }, { userId: user._id }] });
+        roomService.getRoomById.resolves({ _id: roomId, ownedBy: 'Goofy', members: [{ userId: 'Donald' }, { userId: user._id }] });
         sut.handleAuthorizeResourcesAccess(req, res).catch(reject);
       }));
 
@@ -887,7 +887,7 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handleDeleteRoomsForUser', () => {
+  describe('handleDeleteRoomsOwnedByUser', () => {
     describe('when user has rooms', () => {
       const userJacky = [{ _id: uniqueId.create(), email: 'jacky@test.com' }];
       const userClare = [{ _id: uniqueId.create(), email: 'clare@test.com' }];
@@ -896,7 +896,7 @@ describe('room-controller', () => {
       const roomB = { _id: uniqueId.create(), name: 'Room B', members: [{ userId: userClare._id }, { userId: userDrake._id }] };
 
       beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, query: { ownerId: user._id } };
+        req = { user, query: { userId: user._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
@@ -905,7 +905,7 @@ describe('room-controller', () => {
         roomService.deleteRoom.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
 
-        sut.handleDeleteRoomsForUser(req, res).catch(reject);
+        sut.handleDeleteRoomsOwnedByUser(req, res).catch(reject);
       }));
 
       it('should call roomService.deleteRoom for each room', () => {
@@ -931,7 +931,7 @@ describe('room-controller', () => {
 
     describe('when user has no rooms', () => {
       beforeEach(() => new Promise((resolve, reject) => {
-        req = { user, query: { ownerId: user._id } };
+        req = { user, query: { userId: user._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
@@ -940,7 +940,7 @@ describe('room-controller', () => {
         roomService.deleteRoom.resolves();
         mailService.sendRoomDeletionNotificationEmails.resolves();
 
-        sut.handleDeleteRoomsForUser(req, res).catch(reject);
+        sut.handleDeleteRoomsOwnedByUser(req, res).catch(reject);
       }));
 
       it('should not call roomService.deleteRoom', () => {
@@ -963,7 +963,7 @@ describe('room-controller', () => {
         const room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: user._id,
+          ownedBy: user._id,
           members: []
         };
 
@@ -983,7 +983,7 @@ describe('room-controller', () => {
         const room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: uniqueId.create(),
+          ownedBy: uniqueId.create(),
           members: []
         };
 
@@ -1005,7 +1005,7 @@ describe('room-controller', () => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: user._id,
+          ownedBy: user._id,
           members: [{ userId: uniqueId.create() }, { userId: uniqueId.create() }]
         };
 
@@ -1046,7 +1046,7 @@ describe('room-controller', () => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: user._id,
+          ownedBy: user._id,
           members: [{ userId: memberUser._id }]
         };
 
@@ -1067,7 +1067,7 @@ describe('room-controller', () => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: user._id,
+          ownedBy: user._id,
           members: [{ userId: uniqueId.create() }]
         };
 
@@ -1088,7 +1088,7 @@ describe('room-controller', () => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: uniqueId.create(),
+          ownedBy: uniqueId.create(),
           members: [{ userId: memberUser._id }]
         };
 
@@ -1111,7 +1111,7 @@ describe('room-controller', () => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: user._id,
+          ownedBy: user._id,
           members: [{ userId: memberUser._id }, { userId: uniqueId.create() }]
         };
         const updatedRoom = { ...room, members: [room.members[1]] };
@@ -1154,7 +1154,7 @@ describe('room-controller', () => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: uniqueId.create(),
+          ownedBy: uniqueId.create(),
           members: [{ userId: memberUser._id }, { userId: uniqueId.create() }]
         };
         const updatedRoom = { ...room, members: [room.members[1]] };
@@ -1208,7 +1208,7 @@ describe('room-controller', () => {
         const room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: uniqueId.create()
+          ownedBy: uniqueId.create()
         };
         const invitation = {
           _id: invitationId,
@@ -1235,7 +1235,7 @@ describe('room-controller', () => {
         const room = {
           name: 'my room',
           _id: uniqueId.create(),
-          owner: user._id
+          ownedBy: user._id
         };
         const invitation = {
           _id: invitationId,
@@ -1286,7 +1286,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           name: 'Raum',
           slug: 'room-slug',
-          owner: 'other-user',
+          ownedBy: 'other-user',
           isCollaborative: false,
           members: [],
           messages: [],
@@ -1317,7 +1317,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           name: 'Raum',
           slug: 'room-slug',
-          owner: user._id,
+          ownedBy: user._id,
           isCollaborative: false,
           members: [],
           messages: [],
@@ -1372,7 +1372,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           name: 'Raum',
           slug: 'room-slug',
-          owner: user._id,
+          ownedBy: user._id,
           isCollaborative: false,
           members: [],
           messages: [],
@@ -1428,7 +1428,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           name: 'Raum',
           slug: 'room-slug',
-          owner: 'other-user',
+          ownedBy: 'other-user',
           isCollaborative: false,
           members: [],
           messages: [
@@ -1462,7 +1462,7 @@ describe('room-controller', () => {
           _id: uniqueId.create(),
           name: 'Raum',
           slug: 'room-slug',
-          owner: user._id,
+          ownedBy: user._id,
           isCollaborative: false,
           members: [],
           messages: [
