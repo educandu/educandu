@@ -79,7 +79,7 @@ function MarkdownInput({
     return (
       <div className="MarkdownInput-inlineInputContainer" ref={inputContainerRef}>
         {!debounced && <Input {...inputProps} />}
-        {!!debounced && <DebouncedInput apiRef={debouncedInputApiRef} {...inputProps} elementType={Input} />}
+        {!!debounced && <DebouncedInput apiRef={debouncedInputApiRef} {...inputProps} />}
         {renderCount()}
       </div>
     );

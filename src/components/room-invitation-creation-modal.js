@@ -1,7 +1,7 @@
 import Info from './info.js';
 import PropTypes from 'prop-types';
+import { Form, Modal } from 'antd';
 import Logger from '../common/logger.js';
-import { Form, Input, Modal } from 'antd';
 import { useIsMounted } from '../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
@@ -9,9 +9,9 @@ import { handleApiError } from '../ui/error-helper.js';
 import inputValidators from '../utils/input-validators.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import NeverScrollingTextArea from './never-scrolling-text-area.js';
 
 const FormItem = Form.Item;
-const { TextArea } = Input;
 
 const logger = new Logger(import.meta.url);
 
@@ -100,7 +100,7 @@ function RoomInvitationCreationModal({ isOpen, onOk, onCancel, roomId }) {
           rules={emailsValidationRules}
           normalize={normalizeEmails}
           >
-          <TextArea onChange={handleOnEmailsChange} autoSize={{ minRows: 3, maxRows: 12 }} />
+          <NeverScrollingTextArea onChange={handleOnEmailsChange} minRows={3} />
         </FormItem>
       </Form>
     </Modal>

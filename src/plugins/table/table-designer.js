@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import React, { useMemo, useState } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import DebouncedInput from '../../components/debounced-input.js';
 import { changeCellText, createTableDesignerCells, DESIGNER_CELL_TYPE, isCellAffected, CELL_TYPE, executeDesignerAction } from './table-utils.js';
 
 const HEADER_SIZE = '20px';
@@ -144,8 +143,8 @@ function TableDesigner({ content, onContentChange }) {
         className={classes}
         style={getDesignerCellStyle(designerCell)}
         >
-        <DebouncedInput
-          elementType={MarkdownInput}
+        <MarkdownInput
+          debounced
           verticalAlignment={designerCell.verticalAlignment}
           horizontalAlignment={designerCell.horizontalAlignment}
           value={designerCell.text}

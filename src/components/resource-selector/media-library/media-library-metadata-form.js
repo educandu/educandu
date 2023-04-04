@@ -1,19 +1,19 @@
 import Info from '../../info.js';
 import PropTypes from 'prop-types';
+import { Checkbox, Form } from 'antd';
 import React, { useMemo } from 'react';
 import TagSelect from '../../tag-select.js';
-import { Checkbox, Form, Input } from 'antd';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import LicenseSelect from '../../license-select.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import LanguageSelect from '../../localization/language-select.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
+import NeverScrollingTextArea from '../../never-scrolling-text-area.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { maxMediaLibraryItemShortDescriptionLength } from '../../../domain/validation-constants.js';
 
 const FormItem = Form.Item;
-const TextArea = Input.TextArea;
 
 const logger = new Logger(import.meta.url);
 
@@ -47,7 +47,7 @@ function MediaLibraryMetadataForm({ form, file, useOptimizeImage, disableOptimiz
           <Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>
         }
         >
-        <TextArea rows={3} maxLength={maxMediaLibraryItemShortDescriptionLength} />
+        <NeverScrollingTextArea rows={3} maxLength={maxMediaLibraryItemShortDescriptionLength} />
       </FormItem>
       <FormItem name="languages" label={t('common:languages')}>
         <LanguageSelect multi />
