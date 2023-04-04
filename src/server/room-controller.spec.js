@@ -523,7 +523,7 @@ describe('room-controller', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         roomService.createOrUpdateInvitations.resolves({
           room,
-          owner: user,
+          ownerUser: user,
           invitations: [invitation1, invitation2]
         });
         mailService.sendRoomInvitationEmails.resolves();
@@ -552,8 +552,8 @@ describe('room-controller', () => {
       it('should have called roomService.createOrUpdateInvitations', () => {
         assert.calledWith(roomService.createOrUpdateInvitations, {
           roomId: '843zvnzn2vw',
-          emails: ['invited-1@user.com', 'invited-2@user.com'],
-          user
+          ownerUserId: user._id,
+          emails: ['invited-1@user.com', 'invited-2@user.com']
         });
       });
 
@@ -594,7 +594,7 @@ describe('room-controller', () => {
     beforeEach(() => new Promise((resolve, reject) => {
       roomService.createOrUpdateInvitations.resolves({
         room,
-        owner: user,
+        ownerUser: user,
         invitations: [invitation]
       });
       mailService.sendRoomInvitationEmails.resolves();

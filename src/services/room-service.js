@@ -75,7 +75,7 @@ export default class RoomService {
   }
 
   getRoomsOwnedByUser(userId) {
-    return this.roomStore.getRoomsByOwnerId(userId);
+    return this.roomStore.getRoomsByOwnerUserId(userId);
   }
 
   getRoomsOwnedOrJoinedByUser(userId) {
@@ -202,7 +202,7 @@ export default class RoomService {
       ? await this.storagePlanStore.getStoragePlanById(user.storage.planId)
       : null;
 
-    const rooms = await this.roomStore.getRoomsByOwnerId(user._id);
+    const rooms = await this.roomStore.getRoomsByOwnerUserId(user._id);
     const objectsPerRoom = await Promise.all(rooms.map(async room => {
       const objects = await this.cdn.listObjects({ directoryPath: getRoomMediaRoomPath(room._id) });
       return { room, objects, usedBytes: objects.reduce((accu, obj) => accu + obj.size, 0) };
@@ -321,13 +321,13 @@ export default class RoomService {
     return this.roomInvitationStore.getRoomInvitationMetadataByRoomId(roomId);
   }
 
-  async createOrUpdateInvitations({ roomId, emails, user }) {
+  async createOrUpdateInvitations({ roomId, ownerUserId, emails }) {
     const now = new Date();
     const lowerCasedEmails = [...new Set(emails.map(email => email.toLowerCase()))];
 
-    const room = await this.roomStore.getRoomByIdAndOwnerId({ roomId, ownerId: user._id });
+    const room = await this.roomStore.getRoomByIdAndOwnerUserId({ roomId, ownerUserId });
     if (!room) {
-      throw new NotFound(`A room with ID '${roomId}' owned by '${user._id}' could not be found`);
+      throw new NotFound(`A room with ID '${roomId}' owned by '${ownerUserId}' could not be found`);
     }
 
     const ownerUser = await this.userStore.getUserById(room.ownedBy);
@@ -355,7 +355,7 @@ export default class RoomService {
       return invitation;
     }));
 
-    return { room, owner: ownerUser, invitations };
+    return { room, ownerUser, invitations };
   }
 
   async verifyInvitationToken({ token, user }) {

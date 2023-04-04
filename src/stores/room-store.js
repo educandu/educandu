@@ -33,12 +33,12 @@ class RoomStore {
     return this.collection.updateMany({}, { $pull: { members: { userId } } }, { session });
   }
 
-  getRoomByIdAndOwnerId({ roomId, ownerId }, { session } = {}) {
-    return this.collection.findOne({ _id: roomId, ownedBy: ownerId }, { session });
+  getRoomByIdAndOwnerUserId({ roomId, ownerUserId }, { session } = {}) {
+    return this.collection.findOne({ _id: roomId, ownedBy: ownerUserId }, { session });
   }
 
-  getRoomsByOwnerId(ownerId, { session } = {}) {
-    return this.collection.find({ ownedBy: ownerId }, { session }).toArray();
+  getRoomsByOwnerUserId(ownerUserId, { session } = {}) {
+    return this.collection.find({ ownedBy: ownerUserId }, { session }).toArray();
   }
 
   getRoomByIdJoinedByUser({ roomId, userId }, { session } = {}) {

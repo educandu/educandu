@@ -302,8 +302,8 @@ export default class RoomController {
     const { user } = req;
     const { roomId, emails } = req.body;
 
-    const { room, owner, invitations } = await this.roomService.createOrUpdateInvitations({ roomId, emails, user });
-    await this.mailService.sendRoomInvitationEmails({ invitations, roomName: room.name, ownerName: owner.displayName });
+    const { room, ownerUser, invitations } = await this.roomService.createOrUpdateInvitations({ roomId, ownerUserId: user._id, emails });
+    await this.mailService.sendRoomInvitationEmails({ invitations, roomName: room.name, ownerName: ownerUser.displayName });
 
     return res.status(201).send(invitations);
   }

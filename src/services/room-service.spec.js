@@ -196,18 +196,18 @@ describe('room-service', () => {
     });
 
     it('should create a new invitation for a room if it does not exist', async () => {
-      const { invitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], user: myUser });
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], ownerUserId: myUser._id });
       expect(invitations[0].token).toBeDefined();
     });
 
     it('should throw a bad request if the owner invites themselves', async () => {
-      await expect(() => sut.createOrUpdateInvitations({ roomId: room._id, emails: [myUser.email], user: myUser })).rejects.toThrow(BadRequest);
+      await expect(() => sut.createOrUpdateInvitations({ roomId: room._id, emails: [myUser.email], ownerUserId: myUser._id })).rejects.toThrow(BadRequest);
     });
 
     it('should update an invitation if it already exists', async () => {
-      const { invitations: originalInvitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], user: myUser });
+      const { invitations: originalInvitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], ownerUserId: myUser._id });
       sandbox.clock.tick(1000);
-      const { invitations: updatedInvitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], user: myUser });
+      const { invitations: updatedInvitations } = await sut.createOrUpdateInvitations({ roomId: room._id, emails: ['invited-user@test.com'], ownerUserId: myUser._id });
       expect(updatedInvitations[0]._id).toBe(originalInvitations[0]._id);
       expect(updatedInvitations[0].token).toBe(originalInvitations[0].token);
       expect(updatedInvitations[0].sentOn).not.toBe(originalInvitations[0].sentOn);
@@ -216,13 +216,13 @@ describe('room-service', () => {
 
     it('should throw a NotFound error when the room does not exist', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitations({ roomId: 'abcabcabcabcabc', emails: ['invited-user@test.com'], user: myUser });
+        await sut.createOrUpdateInvitations({ roomId: 'abcabcabcabcabc', emails: ['invited-user@test.com'], ownerUserId: myUser._id });
       }).rejects.toThrow(NotFound);
     });
 
     it('should throw a NotFound error when the room exists, but belongs to a different user', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitations({ roomId: 'abcabcabcabcabc', emails: ['invited-user@test.com'], user: { _id: 'xyzxyzxyzxyzxyz' } });
+        await sut.createOrUpdateInvitations({ roomId: 'abcabcabcabcabc', emails: ['invited-user@test.com'], ownerUserId: 'xyzxyzxyzxyzxyz' });
       }).rejects.toThrow(NotFound);
     });
   });
@@ -238,7 +238,7 @@ describe('room-service', () => {
         isCollaborative: false,
         user: myUser
       });
-      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], ownerUserId: myUser._id });
       invitation = invitations[0];
     });
 
@@ -286,7 +286,7 @@ describe('room-service', () => {
         isCollaborative: false,
         user: myUser
       });
-      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], ownerUserId: myUser._id });
       invitation = invitations[0];
     });
 
@@ -339,7 +339,7 @@ describe('room-service', () => {
         let existingMemberJoinedOn;
 
         beforeEach(async () => {
-          const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+          const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], ownerUserId: myUser._id });
           invitation = invitations[0];
 
           const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
@@ -377,7 +377,7 @@ describe('room-service', () => {
         isCollaborative: false,
         user: myUser
       });
-      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], user: myUser });
+      const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], ownerUserId: myUser._id });
       invitation = invitations[0];
     });
 

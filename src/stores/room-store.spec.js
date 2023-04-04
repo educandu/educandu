@@ -90,7 +90,7 @@ describe('room-store', () => {
     });
   });
 
-  describe('getRoomByIdAndOwnerId', () => {
+  describe('getRoomByIdAndOwnerUserId', () => {
     let myRoom = null;
     let otherRoom = null;
 
@@ -102,12 +102,12 @@ describe('room-store', () => {
     });
 
     it('should find rooms owned by the specified user ID', async () => {
-      const room = await sut.getRoomByIdAndOwnerId({ roomId: myRoom._id, ownerId: myUser._id });
+      const room = await sut.getRoomByIdAndOwnerUserId({ roomId: myRoom._id, ownerUserId: myUser._id });
       expect(room.name).toBe('my room');
     });
 
     it('should not find rooms owned by other users', async () => {
-      const room = await sut.getRoomByIdAndOwnerId({ roomId: otherRoom._id, ownerId: myUser._id });
+      const room = await sut.getRoomByIdAndOwnerUserId({ roomId: otherRoom._id, ownerUserId: myUser._id });
       expect(room).toBeNull();
     });
   });
