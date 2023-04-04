@@ -16,7 +16,7 @@ const fillUserIdSetForDocOrRevision = (docOrRev, set) => {
     });
   }
   if (docOrRev.publicContext) {
-    docOrRev.publicContext.accreditedEditors.forEach(accreditedEditor => set.add(accreditedEditor));
+    docOrRev.publicContext.allowedEditors.forEach(allowedEditor => set.add(allowedEditor));
   }
   return set;
 };

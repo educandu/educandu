@@ -23,19 +23,19 @@ export function checkRevisionOnDocumentCreation({ newRevision, room, user }) {
   }
 
   if (!room) {
-    const { accreditedEditors } = publicContext;
+    const { allowedEditors } = publicContext;
     const userCanManagePublicContext = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
     const userCanProtectOwnDocWhenCreating = hasUserPermission(user, permissions.PROTECT_OWN_PUBLIC_CONTENT);
 
-    if (accreditedEditors.length) {
-      const userIsOnlyAccreditedEditor = accreditedEditors.length === 1 && accreditedEditors[0] === user._id;
+    if (allowedEditors.length) {
+      const userIsOnlyAllowedEditor = allowedEditors.length === 1 && allowedEditors[0] === user._id;
 
-      if (!userIsOnlyAccreditedEditor && !userCanManagePublicContext) {
-        throw new Error('User is not allowed to assign accredited editors');
+      if (!userIsOnlyAllowedEditor && !userCanManagePublicContext) {
+        throw new Error('User is not allowed to assign allowed editors');
       }
 
-      if (userIsOnlyAccreditedEditor && !userCanManagePublicContext && !userCanProtectOwnDocWhenCreating) {
-        throw new Error('User is not allowed to assign themselves as accredited editor');
+      if (userIsOnlyAllowedEditor && !userCanManagePublicContext && !userCanProtectOwnDocWhenCreating) {
+        throw new Error('User is not allowed to assign themselves as allowed editor');
       }
     }
 
@@ -84,17 +84,17 @@ export function checkRevisionOnDocumentUpdate({ previousRevision, newRevision, r
 
   if (!room) {
     const userCanManagePublicContext = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
-    const userIsAccreditedEditorForThisDocument = previousPublicContext.accreditedEditors.includes(user._id);
+    const userIsAllowedEditorForThisDocument = previousPublicContext.allowedEditors.includes(user._id);
 
-    if (previousPublicContext.protected && !userCanManagePublicContext && !userIsAccreditedEditorForThisDocument) {
+    if (previousPublicContext.protected && !userCanManagePublicContext && !userIsAllowedEditorForThisDocument) {
       throw new Error('User is not allowed to update a protected document');
     }
 
-    const { accreditedEditors: previousAccreditedEditors } = previousPublicContext;
-    const { accreditedEditors: newAccreditedEditors } = newPublicContext;
+    const { allowedEditors: previousAllowedEditors } = previousPublicContext;
+    const { allowedEditors: newAllowedEditors } = newPublicContext;
 
-    if (!deepEqual(previousAccreditedEditors, newAccreditedEditors) && !userCanManagePublicContext) {
-      throw new Error('User is not allowed to update accredited editors');
+    if (!deepEqual(previousAllowedEditors, newAllowedEditors) && !userCanManagePublicContext) {
+      throw new Error('User is not allowed to update allowed editors');
     }
 
     if (previousPublicContext.protected !== newPublicContext.protected && !userCanManagePublicContext) {

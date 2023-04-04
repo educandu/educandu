@@ -11,6 +11,6 @@ redactionDocumentsTab:
   protectedDocumentBadge:
     en: This document is protected
     de: Dieses Dokument ist geschützt
-  accreditedEditorsBadge:
-    en: This document has accredited editors
-    de: Dieses Dokument hat akkreditierte Bearbeiter
+  allowedEditorsBadge:
+    en: This document has allowed editors
+    de: Dieses Dokument hat zugelassene Bearbeiter

@@ -70,7 +70,7 @@ describe('document-utils', () => {
 
     describe('if the document is public', () => {
       beforeEach(() => {
-        doc.publicContext = { archived: false, protected: false, accreditedEditors: [] };
+        doc.publicContext = { archived: false, protected: false, allowedEditors: [] };
       });
 
       it('should return false when the public document does not allow editing', () => {

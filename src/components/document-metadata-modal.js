@@ -43,7 +43,7 @@ const logger = new Logger(import.meta.url);
 
 const getDefaultPublicContext = () => (
   {
-    accreditedEditors: [],
+    allowedEditors: [],
     protected: false,
     archived: false,
     verified: false,
@@ -230,25 +230,25 @@ function DocumentMetadataModal({
     setUseTemplateDocument(value);
   };
 
-  const handleAccreditedEditorsChange = value => {
-    setPublicContext(prevState => ({ ...prevState, accreditedEditors: value }));
+  const handleAllowedEditorsChange = value => {
+    setPublicContext(prevState => ({ ...prevState, allowedEditors: value }));
   };
 
   const handleProtectedChange = event => {
     setPublicContext(prevState => {
       const newProtected = event.target.checked;
 
-      let newAccreditedEditors = prevState.accreditedEditors;
+      let newAllowedEditors = prevState.allowedEditors;
       if (!publicContextPermissions.canManagePublicContext
         && publicContextPermissions.canProtectOwnDocWhenCreating
         && mode !== DOCUMENT_METADATA_MODAL_MODE.update
       ) {
-        newAccreditedEditors = newProtected
-          ? ensureIsIncluded(newAccreditedEditors, user)
-          : ensureIsExcluded(newAccreditedEditors, user);
+        newAllowedEditors = newProtected
+          ? ensureIsIncluded(newAllowedEditors, user)
+          : ensureIsExcluded(newAllowedEditors, user);
       }
 
-      return { ...prevState, protected: newProtected, accreditedEditors: newAccreditedEditors };
+      return { ...prevState, protected: newProtected, allowedEditors: newAllowedEditors };
     });
   };
 
@@ -290,7 +290,7 @@ function DocumentMetadataModal({
 
       const mappedPublicContext = {
         ...publicContext,
-        accreditedEditors: publicContext.accreditedEditors.map(e => e._id)
+        allowedEditors: publicContext.allowedEditors.map(e => e._id)
       };
 
       const mappedDocument = {
@@ -437,8 +437,8 @@ function DocumentMetadataModal({
           <Collapse>
             <CollapsePanel header={t('publicContextHeader')}>
               {!!publicContextPermissions.canManagePublicContext && (
-                <FormItem label={<Info tooltip={t('accreditedEditorsInfo')} iconAfterContent>{t('accreditedEditors')}</Info>}>
-                  <UserSelect value={publicContext.accreditedEditors} onChange={handleAccreditedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
+                <FormItem label={<Info tooltip={t('allowedEditorsInfo')} iconAfterContent>{t('allowedEditors')}</Info>}>
+                  <UserSelect value={publicContext.allowedEditors} onChange={handleAllowedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
                 </FormItem>
               )}
               {(!!publicContextPermissions.canManagePublicContext || !!publicContextPermissions.canProtectOwnDocWhenCreating) && (
