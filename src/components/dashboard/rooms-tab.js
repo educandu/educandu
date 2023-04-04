@@ -29,7 +29,7 @@ function RoomsTab({ rooms, invitations, loading }) {
     const lowerCasedFilter = (filterText || '').toLowerCase();
 
     const newOwnedRooms = rooms
-      .filter(room => room.owner._id === user._id)
+      .filter(room => room.ownedBy._id === user._id)
       .sort(by(room => room.createdOn));
 
     const newFilteredOwnedRooms = filterText
@@ -37,7 +37,7 @@ function RoomsTab({ rooms, invitations, loading }) {
       : newOwnedRooms;
 
     const newMemberOfRooms = rooms
-      .filter(room => room.owner._id !== user._id)
+      .filter(room => room.ownedBy._id !== user._id)
       .sort(by(room => room.members.find(member => member.userId === user._id).joinedOn));
 
     const newFilteredMemberOfRooms = filterText

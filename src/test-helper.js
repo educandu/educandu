@@ -161,7 +161,7 @@ export async function createTestRoom(container, roomValues = {}) {
     name: roomValues.name || 'my-room',
     shortDescription: roomValues.shortDescription || '',
     isCollaborative: roomValues.isCollaborative || false,
-    owner: roomValues.owner || uniqueId.create(),
+    ownedBy: roomValues.ownedBy || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),
     createdOn: roomValues.createdOn || new Date(),
     updatedOn: roomValues.updatedOn || new Date(),

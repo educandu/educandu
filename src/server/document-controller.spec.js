@@ -223,7 +223,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = null;
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [];
         roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
 
@@ -251,7 +251,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = null;
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [];
         roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
 
@@ -279,7 +279,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = null;
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.members = [];
 
         templateSections = [{}];
@@ -317,7 +317,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = null;
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [{ userId: user._id }];
 
         templateSections = [{}];
@@ -356,7 +356,7 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
         doc.roomContext = { draft: false };
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.members = [];
 
         templateSections = [{}];
@@ -391,7 +391,7 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
         doc.roomContext = { draft: false };
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [];
 
         mappedRoom = { ...room };
@@ -422,7 +422,7 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
         doc.roomContext = { draft: true };
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [{ userId: user._id }];
 
         mappedRoom = { ...room };
@@ -454,7 +454,7 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
         doc.roomContext = { draft: true };
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.members = [];
 
         templateSections = [{}];
@@ -501,7 +501,7 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
         doc.roomContext = { draft: false };
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.members = [];
 
         templateSections = [{}];
@@ -548,7 +548,7 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
         doc.roomContext = { draft: false };
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [{ userId: user._id }];
 
         templateSections = [{}];
@@ -701,7 +701,7 @@ describe('document-controller', () => {
       let mappedDoc;
 
       beforeEach(() => new Promise((resolve, reject) => {
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.isCollaborative = false;
         room.members = [{ userId: uniqueId.create() }];
 
@@ -736,7 +736,7 @@ describe('document-controller', () => {
       let mappedDoc;
 
       beforeEach(() => new Promise((resolve, reject) => {
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.isCollaborative = false;
         room.members = [{ userId: uniqueId.create() }];
 
@@ -771,7 +771,7 @@ describe('document-controller', () => {
       let mappedDoc;
 
       beforeEach(() => new Promise((resolve, reject) => {
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.isCollaborative = true;
         room.members = [{ userId: user._id }];
 
@@ -840,7 +840,7 @@ describe('document-controller', () => {
 
         doc.roomId = room._id;
 
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.members = [{ userId: uniqueId.create() }];
 
         roomService.getRoomById.withArgs(room._id).resolves(room);

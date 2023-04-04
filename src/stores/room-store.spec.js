@@ -36,21 +36,21 @@ describe('room-store', () => {
       const rooms = [
         {
           name: 'Room 1',
-          owner: myUser._id
+          ownedBy: myUser._id
         },
         {
           name: 'Room 2',
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           members: [{ userId: myUser._id, joinedOn: new Date() }]
         },
         {
           name: 'Room 3',
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           members: []
         },
         {
           name: 'Room 4',
-          owner: otherUser._id,
+          ownedBy: otherUser._id,
           members: [{ userId: onlyJoiningUser._id, joinedOn: new Date() }]
         }
       ];
@@ -96,8 +96,8 @@ describe('room-store', () => {
 
     beforeEach(async () => {
       [myRoom, otherRoom] = await Promise.all([
-        createTestRoom(container, { name: 'my room', owner: myUser._id }),
-        createTestRoom(container, { name: 'not my room', owner: otherUser._id })
+        createTestRoom(container, { name: 'my room', ownedBy: myUser._id }),
+        createTestRoom(container, { name: 'not my room', ownedBy: otherUser._id })
       ]);
     });
 
@@ -126,7 +126,7 @@ describe('room-store', () => {
           {
             _id: roomId1,
             name: 'owned room',
-            owner: myUser._id,
+            ownedBy: myUser._id,
             members: [
               {
                 userId: otherUser._id,
@@ -144,7 +144,7 @@ describe('room-store', () => {
           {
             _id: roomId2,
             name: 'member of room',
-            owner: otherUser._id,
+            ownedBy: otherUser._id,
             members: [
               {
                 userId: myUser._id,

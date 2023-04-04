@@ -2,8 +2,8 @@ export default {
   name: 'rooms',
   indexes: [
     {
-      name: '_idx_owner_',
-      key: { owner: 1 }
+      name: '_idx_ownedBy_',
+      key: { ownedBy: 1 }
     },
     {
       name: '_idx_created_by_',

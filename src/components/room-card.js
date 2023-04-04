@@ -91,7 +91,7 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
       (
         <div className="RoomCard-infoTooltip">
           {!!userAccessibleRoom.isCollaborative && <div>{t('collaborativeRoom')}</div>}
-          <div>{t('createdByUser', { user: userAccessibleRoom.owner?.displayName })}</div>
+          <div>{t('createdByUser', { user: userAccessibleRoom.ownedBy?.displayName })}</div>
           <div>{!userAccessibleRoom.isCollaborative && t('hasCountMembers', { count: membersCount })}</div>
           <div>{!!userAccessibleRoom.isCollaborative && t('hasCountCollaborators', { count: membersCount })}</div>
         </div>
@@ -118,7 +118,7 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
       (
         <div className="RoomCard-infoTooltip">
           {!!roomInvitation.room?.isCollaborative && <div>{t('collaborativeRoom')}.</div>}
-          <div>{t('createdByUser', { user: roomInvitation.room?.owner?.displayName })}</div>
+          <div>{t('createdByUser', { user: roomInvitation.room?.ownedBy?.displayName })}</div>
         </div>
       )
     ));

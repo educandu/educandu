@@ -94,11 +94,11 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const renderSubtitleLink = () => {
-    const ownerProfileUrl = routes.getUserProfileUrl(room.owner._id);
+    const ownerProfileUrl = routes.getUserProfileUrl(room.ownedBy._id);
 
     return (
       <div>
-        {t('common:by')} <a className="RoomPage-subtitleLink" href={ownerProfileUrl}>{room.owner.displayName}</a>
+        {t('common:by')} <a className="RoomPage-subtitleLink" href={ownerProfileUrl}>{room.ownedBy.displayName}</a>
       </div>
     );
   };

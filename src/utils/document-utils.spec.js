@@ -32,7 +32,7 @@ describe('document-utils', () => {
 
     describe('if the document is in a room', () => {
       beforeEach(() => {
-        room = { _id: uniqueId.create(), owner: uniqueId.create(), members: [], isCollaborative: false };
+        room = { _id: uniqueId.create(), ownedBy: uniqueId.create(), members: [], isCollaborative: false };
         doc.roomContext = { draft: false };
         doc.roomId = room._id;
       });
@@ -56,7 +56,7 @@ describe('document-utils', () => {
 
       it('should return true when the user is owner of the room and the document is a draft', () => {
         doc.roomContext.draft = true;
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.isCollaborative = true;
         expect(canEditDocument({ user, doc, room })).toBe(true);
       });

@@ -89,7 +89,7 @@ describe('document-controller', () => {
         req = { user, params: { 0: '', id: revision._id } };
 
         revision.roomId = room._id;
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [];
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -106,7 +106,7 @@ describe('document-controller', () => {
         req = { user, params: { 0: '', id: revision._id } };
 
         revision.roomId = room._id;
-        room.owner = user._id;
+        room.ownedBy = user._id;
         room.members = [];
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -126,7 +126,7 @@ describe('document-controller', () => {
         req = { user, params: { 0: '', id: revision._id } };
 
         revision.roomId = room._id;
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [{ userId: user._id }];
 
         roomService.getRoomById.withArgs(room._id).resolves(room);

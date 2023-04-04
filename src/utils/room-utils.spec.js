@@ -7,19 +7,19 @@ describe('room-utils', () => {
     const testCases = [
       {
         description: 'when user is room owner',
-        room: { owner: 'my-user', members: [] },
+        room: { ownedBy: 'my-user', members: [] },
         userId: 'my-user',
         expectedResult: true
       },
       {
         description: 'when user (with client mapped data model) is room owner',
-        room: { owner: { _id: 'my-user' }, members: [] },
+        room: { ownedBy: { _id: 'my-user' }, members: [] },
         userId: 'my-user',
         expectedResult: true
       },
       {
         description: 'when user is room member but not owner',
-        room: { owner: 'other-user', members: [{ userId: 'my-user' }] },
+        room: { ownedBy: 'other-user', members: [{ userId: 'my-user' }] },
         userId: 'my-user',
         expectedResult: false
       }
@@ -38,25 +38,25 @@ describe('room-utils', () => {
     const testCases = [
       {
         description: 'when user is not room owner or member',
-        room: { owner: 'other-user', members: [] },
+        room: { ownedBy: 'other-user', members: [] },
         userId: 'my-user',
         expectedResult: false
       },
       {
         description: 'when user is room owner',
-        room: { owner: 'my-user', members: [] },
+        room: { ownedBy: 'my-user', members: [] },
         userId: 'my-user',
         expectedResult: true
       },
       {
         description: 'when user (with client mapped data model) is room owner',
-        room: { owner: { _id: 'my-user' }, members: [] },
+        room: { ownedBy: { _id: 'my-user' }, members: [] },
         userId: 'my-user',
         expectedResult: true
       },
       {
         description: 'when user is room member',
-        room: { owner: 'my-user', members: [] },
+        room: { ownedBy: 'my-user', members: [] },
         userId: 'my-user',
         expectedResult: true
       }
@@ -75,31 +75,31 @@ describe('room-utils', () => {
     const testCases = [
       {
         description: 'when user is not room owner and room is not collaborative',
-        room: { isCollaborative: false, owner: 'other-user', members: [] },
+        room: { isCollaborative: false, ownedBy: 'other-user', members: [] },
         userId: 'my-user',
         expectedResult: false
       },
       {
         description: 'when user is room owner and room is not collaborative',
-        room: { isCollaborative: false, owner: 'my-user', members: [] },
+        room: { isCollaborative: false, ownedBy: 'my-user', members: [] },
         userId: 'my-user',
         expectedResult: true
       },
       {
         description: 'when user (with client mapped data model) is room owner and room is not collaborative',
-        room: { isCollaborative: false, owner: { _id: 'my-user' }, members: [] },
+        room: { isCollaborative: false, ownedBy: { _id: 'my-user' }, members: [] },
         userId: 'my-user',
         expectedResult: true
       },
       {
         description: 'when user is not room collaborator',
-        room: { isCollaborative: true, owner: 'other-user', members: [{ userId: 'yet-another-user' }] },
+        room: { isCollaborative: true, ownedBy: 'other-user', members: [{ userId: 'yet-another-user' }] },
         userId: 'my-user',
         expectedResult: false
       },
       {
         description: 'when user is room collaborator',
-        room: { isCollaborative: true, owner: 'other-user', members: [{ userId: 'my-user' }] },
+        room: { isCollaborative: true, ownedBy: 'other-user', members: [{ userId: 'my-user' }] },
         userId: 'my-user',
         expectedResult: true
       }

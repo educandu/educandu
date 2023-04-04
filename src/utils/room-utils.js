@@ -1,6 +1,6 @@
 const getRoomOwnerId = room => {
-  const isClientDataMappedOwner = typeof room.owner === 'object';
-  return isClientDataMappedOwner ? room.owner._id : room.owner;
+  const isClientDataMappedOwner = typeof room.ownedBy === 'object';
+  return isClientDataMappedOwner ? room.ownedBy._id : room.ownedBy;
 };
 
 export const isRoomOwner = ({ room, userId }) => {

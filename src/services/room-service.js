@@ -98,7 +98,7 @@ export default class RoomService {
       slug: slug?.trim() || '',
       isCollaborative,
       shortDescription: shortDescription?.trim() || '',
-      owner: user._id,
+      ownedBy: user._id,
       createdBy: user._id,
       createdOn: new Date(),
       updatedOn: new Date(),
@@ -227,7 +227,7 @@ export default class RoomService {
       throw new Forbidden(`User is not authorized to access media for room '${roomId}'`);
     }
 
-    const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.owner);
+    const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.ownedBy);
     const overview = await this.getRoomMediaOverview({ user: roomOwner });
 
     return {
@@ -245,9 +245,9 @@ export default class RoomService {
         throw new Forbidden(`User is not authorized to create media for room '${roomId}'`);
       }
 
-      lock = await this.lockStore.takeUserLock(room.owner);
+      lock = await this.lockStore.takeUserLock(room.ownedBy);
 
-      const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.owner);
+      const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.ownedBy);
       if (!roomOwner.storage.planId) {
         throw new BadRequest('Cannot upload to room-media storage without a storage plan');
       }
@@ -330,8 +330,8 @@ export default class RoomService {
       throw new NotFound(`A room with ID '${roomId}' owned by '${user._id}' could not be found`);
     }
 
-    const owner = await this.userStore.getUserById(room.owner);
-    const lowerCasedOwnerEmail = owner.email.toLowerCase();
+    const ownerUser = await this.userStore.getUserById(room.ownedBy);
+    const lowerCasedOwnerEmail = ownerUser.email.toLowerCase();
     if (lowerCasedEmails.some(email => email === lowerCasedOwnerEmail)) {
       throw new BadRequest('Invited user is the same as room owner');
     }
@@ -355,7 +355,7 @@ export default class RoomService {
       return invitation;
     }));
 
-    return { room, owner, invitations };
+    return { room, owner: ownerUser, invitations };
   }
 
   async verifyInvitationToken({ token, user }) {
@@ -449,7 +449,7 @@ export default class RoomService {
 
     await this.transactionRunner.run(async session => {
       await this.roomStore.updateRoomMessages(room._id, messages, { session });
-      await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.owner, roomId: room._id, roomMessageKey: newMessage.key }, { session });
+      await this.eventStore.recordRoomMessageCreatedEvent({ userId: room.ownedBy, roomId: room._id, roomMessageKey: newMessage.key }, { session });
     });
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);

@@ -47,12 +47,12 @@ describe('revision-utils', () => {
 
     describe('when the document is a room document', () => {
       beforeEach(() => {
-        room = { _id: uniqueId.create(), owner: user._id, members: [], documents: [documentId], isCollaborative: true };
+        room = { _id: uniqueId.create(), ownedBy: user._id, members: [], documents: [documentId], isCollaborative: true };
         newRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false } });
       });
 
       it('should throw if the document is a draft and the user is not the room owner, just a collaborator', () => {
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [user._id];
         newRevision.roomContext.draft = true;
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user }))
@@ -60,7 +60,7 @@ describe('revision-utils', () => {
       });
 
       it('should throw if the user is not a collaborator', () => {
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [user._id];
         room.isCollaborative = false;
         expect(() => checkRevisionOnDocumentCreation({ newRevision, room, user }))
@@ -173,13 +173,13 @@ describe('revision-utils', () => {
 
     describe('when the document is a room document', () => {
       beforeEach(() => {
-        room = { _id: uniqueId.create(), owner: user._id, members: [], documents: [documentId], isCollaborative: true };
+        room = { _id: uniqueId.create(), ownedBy: user._id, members: [], documents: [documentId], isCollaborative: true };
         previousRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false } });
         newRevision = { ...cloneDeep(previousRevision), _id: uniqueId.create() };
       });
 
       it('should throw if the document is a draft and the user is not the room owner, just a collaborator', () => {
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [user._id];
         previousRevision.roomContext.draft = true;
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user }))
@@ -187,7 +187,7 @@ describe('revision-utils', () => {
       });
 
       it('should throw if the user is not a collaborator', () => {
-        room.owner = uniqueId.create();
+        room.ownedBy = uniqueId.create();
         room.members = [user._id];
         room.isCollaborative = false;
         expect(() => checkRevisionOnDocumentUpdate({ previousRevision, newRevision, room, user }))

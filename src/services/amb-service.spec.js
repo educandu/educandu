@@ -96,7 +96,7 @@ describe('amb-service', () => {
           publicContext: { archived: false }
         });
         await updateTestDocument({ container, documentId: document2._id, user: contributorUser, data: { ...document2 } });
-        const room = createTestRoom(container, { owner: creatorUser._id });
+        const room = createTestRoom(container, { ownedBy: creatorUser._id });
         await createTestDocument(container, creatorUser, {
           title: 'Private closed-doors concert',
           shortDescription: 'Room document',

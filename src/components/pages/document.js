@@ -92,7 +92,7 @@ function getDocumentMetadataModalState({ t, doc, room, user, isCloning, isOpen =
     mode: isCloning ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.update,
     documentToClone: isCloning ? doc : null,
     allowMultiple: false,
-    allowDraft: !!room && room.owner?._id === user?._id,
+    allowDraft: !!room && room.ownedBy?._id === user?._id,
     initialDocumentMetadata: isCloning
       ? {
         ...doc,

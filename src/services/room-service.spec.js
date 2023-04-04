@@ -96,7 +96,7 @@ describe('room-service', () => {
         _id: expect.stringMatching(/\w+/),
         name: 'my room',
         slug: 'my-room',
-        owner: myUser._id,
+        ownedBy: myUser._id,
         isCollaborative: false,
         shortDescription: '',
         createdOn: now,
@@ -410,7 +410,7 @@ describe('room-service', () => {
         createdBy: myUser._id,
         createdOn: new Date(),
         updatedOn: new Date(),
-        owner: myUser._id,
+        ownedBy: myUser._id,
         overview: '',
         members: [],
         messages: [],
@@ -473,7 +473,7 @@ describe('room-service', () => {
     let result;
 
     beforeEach(async () => {
-      room = await createTestRoom(container, { name: 'room', owner: myUser._id, createdBy: myUser._id });
+      room = await createTestRoom(container, { name: 'room', ownedBy: myUser._id, createdBy: myUser._id });
       result = await sut.createRoomMessage({ room, text: 'message', emailNotification: true });
     });
 
@@ -498,7 +498,7 @@ describe('room-service', () => {
         _id: expect.stringMatching(/\w+/),
         name: 'room',
         slug: '',
-        owner: myUser._id,
+        ownedBy: myUser._id,
         isCollaborative: false,
         shortDescription: '',
         createdOn: now,
@@ -528,7 +528,7 @@ describe('room-service', () => {
         container,
         {
           name: 'room',
-          owner: myUser._id,
+          ownedBy: myUser._id,
           createdBy: myUser._id,
           messages: [
             {
@@ -554,7 +554,7 @@ describe('room-service', () => {
         _id: expect.stringMatching(/\w+/),
         name: 'room',
         slug: '',
-        owner: myUser._id,
+        ownedBy: myUser._id,
         isCollaborative: false,
         shortDescription: '',
         createdOn: now,
