@@ -111,7 +111,7 @@ function Dashboard({ PageTemplate }) {
     } finally {
       setFetchingDocuments(false);
     }
-  }, [user, documentApiClient]);
+  }, [user._id, documentApiClient]);
 
   const fetchRooms = useCallback(async () => {
     try {
