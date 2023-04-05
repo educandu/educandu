@@ -1,5 +1,6 @@
 export const PAGE_NAME = {
   room: 'room',
+  error: 'error',
   index: 'index',
   login: 'login',
   admin: 'admin',
