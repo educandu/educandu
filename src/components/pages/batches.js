@@ -3,6 +3,7 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { Table, List, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useIsMounted } from '../../ui/hooks.js';
 import { useDateFormat } from '../locale-context.js';
 import { BATCH_TYPE } from '../../domain/constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -42,11 +43,13 @@ const localizeStatus = (status, t) => {
 };
 
 function Batches({ initialState, PageTemplate }) {
+  const isMounted = useIsMounted();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('batches');
+  const batchApiClient = useSessionAwareApiClient(BatchApiClient);
+
   const [batch, setBatch] = useState(initialState.batch);
   const [taskTableItems, setTaskTableItems] = useState([]);
-  const batchApiClient = useSessionAwareApiClient(BatchApiClient);
   const [overallBatchStatus, setOverallBatchStatus] = useState(null);
   const [hideSuccessfullyCompletedTasks, setHideSuccessfullyCompletedTasks] = useState(true);
 
@@ -286,12 +289,14 @@ function Batches({ initialState, PageTemplate }) {
             </Fragment>
           ))}
         </div>
-        <div className="BatchesPage-batchInfo">
-          <div>{t('common:status')}: {renderBatchStatus()}</div>
-          <div>{t('common:creationDate')}: {renderDate(batch.createdOn)}</div>
-          <div>{t('completedOn')}: {renderDate(batch.completedOn)}</div>
-          <div>{t('common:user')}: {batch.createdBy.displayName}</div>
-        </div>
+        {!!isMounted.current && (
+          <div className="BatchesPage-batchInfo">
+            <div>{t('common:status')}: {renderBatchStatus()}</div>
+            <div>{t('common:creationDate')}: {renderDate(batch.createdOn)}</div>
+            <div>{t('completedOn')}: {renderDate(batch.completedOn)}</div>
+            <div>{t('common:user')}: {batch.createdBy.displayName}</div>
+          </div>
+        )}
         {!!batch.errors.length && (
           <List
             className="BatchesPage-batchErrorsList"
