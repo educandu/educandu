@@ -156,6 +156,7 @@ function FilesListViewer({
               style={{ width: '100%' }}
               bordered={false}
               pagination={false}
+              showSorterTooltip={false}
               size="middle"
               columns={columns}
               dataSource={rows}

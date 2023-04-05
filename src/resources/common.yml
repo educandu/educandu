@@ -53,12 +53,6 @@ common:
   create:
     en: Create
     de: Erstellen
-  moveUp:
-    en: Move up
-    de: Nach oben verschieben
-  moveDown:
-    en: Move down
-    de: Nach unten verschieben
   openHelp:
     en: Open help
     de: Hilfe öffnen

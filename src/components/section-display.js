@@ -156,7 +156,7 @@ function SectionDisplay({
     },
     {
       type: 'moveUp',
-      tooltip: renderActionTooltip('moveUp'),
+      tooltip: null,
       icon: <MoveUpIcon key="moveUp" />,
       handleAction: () => onSectionMoveUp(),
       isVisible: true,
@@ -164,7 +164,7 @@ function SectionDisplay({
     },
     {
       type: 'moveDown',
-      tooltip: renderActionTooltip('moveDown'),
+      tooltip: null,
       icon: <MoveDownIcon key="moveDown" />,
       handleAction: () => onSectionMoveDown(),
       isVisible: true,

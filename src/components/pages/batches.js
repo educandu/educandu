@@ -322,6 +322,7 @@ function Batches({ initialState, PageTemplate }) {
           dataSource={taskTableItems}
           columns={taskTableColumns}
           pagination={false}
+          showSorterTooltip={false}
           expandable={{
             expandedRowRender: renderAttemptsSubTable,
             rowExpandable: task => task.attempts?.length
