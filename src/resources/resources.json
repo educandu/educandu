@@ -224,7 +224,7 @@
     },
     "role_maintainer": {
       "en": "maintainer",
-      "de": "Maintainer"
+      "de": "Redakteur"
     },
     "role_admin": {
       "en": "admin",
@@ -774,7 +774,7 @@
     },
     "commentDeleted": {
       "en": "The content of this comment was deleted by maintainers.",
-      "de": "Der Inhalt dieses Kommentars wurde von einem Maintainer gelöscht."
+      "de": "Der Inhalt dieses Kommentars wurde von einem Redakteur gelöscht."
     }
   },
   "documentMetadataModal": {
@@ -860,7 +860,7 @@
     },
     "protectedInfo": {
       "en": "Protected documents can only be edited by a maintainer or allowed editor.",
-      "de": "Geschützte Dokumente können nur von einem Maintainer oder zugelassenem Bearbeiter bearbeitet werden."
+      "de": "Geschützte Dokumente können nur von einem Redakteur oder zugelassenem Bearbeiter bearbeitet werden."
     },
     "archivedInfo": {
       "en": "Archived documents cannot be edited and cannot be discovered through search.",
@@ -3756,7 +3756,7 @@
     },
     "verifiedDocumentBadge": {
       "en": "This document was verified by a maintainer",
-      "de": "Dieses Dokument wurde von einem Maintainer überprüft"
+      "de": "Dieses Dokument wurde von einem Redakteur überprüft"
     },
     "duration": {
       "en": "Duration",
