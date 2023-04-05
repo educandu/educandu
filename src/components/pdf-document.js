@@ -11,10 +11,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/api/v1/pdfjs-dist/build/pdf.worker.min.j
 
 function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLoadSuccess }) {
   const viewerRef = useRef();
+  const isMounted = useRef(false);
   const { t } = useTranslation('pdfDocument');
   const [viewerStyle, setViewerStyle] = useState({});
   const [actualPageNumber, setActualPageNumber] = useState(pageNumber);
-  const isMounted = useRef(false);
 
   const releaseViewerStyle = () => setTimeout(() => {
     if (isMounted.current) {
