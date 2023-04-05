@@ -94,7 +94,7 @@ userAccountsTab:
     en: |
       # User
 
-      Users can create and edit public documents, as long as they are not protected or archived as well as upload public files.
+      Users can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.
 
       # Accredited Author
 
@@ -102,8 +102,8 @@ userAccountsTab:
 
       # Maintainer
 
-      Maintainers have extended content management permissions, such as reviewing, approving, protecting or archiving public documents.
-      They can also hard-delete content such as document sections and files from the media library.
+      Maintainers have extended content management permissions over public content and can curate documents and the media library resources.
+      These permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media library resources.
 
       # Admin
 
@@ -111,12 +111,12 @@ userAccountsTab:
 
       ***
 
-      *Roles in {appName} are accumulative, meaning that each consecutive role in this list has all the permissions of the
-      preceeding role and adds more permissions on top.*
+      *Roles in {appName} are cumulative, meaning that each consecutive role in this list has all the permissions of the previous role and adds more permissions on top.*
     de: |
       # Benutzer
 
-      Benutzer können öffentliche Dokumente erstellen und bearbeiten, solange diese nicht geschützt oder archiviert sind, sowie öffentliche Dateien hochladen.
+      Benutzer können zu den Inhalten der Plattform beitragen (mit Ausnahme von geschützten oder archivierten Dokumenten), aber sie können lediglich ihre eigenen privaten Inhalte löschen.
+      Users can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.
 
       # Akkreditierter Autor
 
@@ -124,8 +124,8 @@ userAccountsTab:
 
       # Redakteur
 
-      Redakteure haben erweiterte Berechtigungen im Inhaltsmanagement, wie z.B. Reviewing, Überprüfen, Schützen oder Archivieren von öffentlichen Dokumenten.
-      Sie können darüberhinaus Inhalte wie Dokumentabschnitte und Dateien aus der Medienbibliothek unwiderruflich löschen.
+      Redakteure haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Medienbibliothek pflegen.
+      Diese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Medienbibliothek.
 
       # Admin
 
