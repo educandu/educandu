@@ -2983,8 +2983,8 @@
       "de": "PDF-Anzeige"
     },
     "initialPageNumber": {
-      "en": "Initially displayed page",
-      "de": "Zuerst angezeigte Seite"
+      "en": "Start page",
+      "de": "Startseite"
     },
     "showTextOverlay": {
       "en": "Text overlay",

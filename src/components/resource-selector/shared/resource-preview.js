@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import MiniPager from '../../mini-pager.js';
 import PdfDocument from '../../pdf-document.js';
-import React, { useEffect, useState } from 'react';
 import { useService } from '../../container-context.js';
 import MediaPlayer from '../../media-player/media-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import { getResourceType } from '../../../utils/resource-utils.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import FileUnknownFilledIcon from '../../icons/files/file-unknown-filled-icon.js';
@@ -48,10 +48,10 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
     onResourceLoad({ resourceType, width: event.target.naturalWidth, height: event.target.naturalHeight });
   };
 
-  const handlePdfLoad = loadedPdf => {
+  const handlePdfLoad = useCallback(loadedPdf => {
     setPdf(loadedPdf);
     onResourceLoad({ resourceType, numPages: loadedPdf.numPages });
-  };
+  }, [onResourceLoad, resourceType]);
 
   const handleMediaLoad = durationInMilliseconds => {
     onResourceLoad({ resourceType, durationInMilliseconds });
@@ -83,13 +83,11 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
         stretchDirection={ORIENTATION.horizontal}
         onLoadSuccess={handlePdfLoad}
         />
-      {pdf?.numPages > 1 && (
       <MiniPager
         currentPage={pdfPageNumber}
         totalPages={pdf?.numPages || 0}
         onNavigate={setPdfPageNumber}
         />
-      )}
     </div>
   );
 

@@ -42,13 +42,11 @@ function PdfViewerDisplay({ content }) {
           <Markdown inline>{caption}</Markdown>
         </div>
       )}
-      {pdf?.numPages > 1 && (
-        <MiniPager
-          currentPage={pageNumber}
-          totalPages={pdf?.numPages || 0}
-          onNavigate={setPageNumber}
-          />
-      )}
+      <MiniPager
+        currentPage={pageNumber}
+        totalPages={pdf?.numPages || 0}
+        onNavigate={setPageNumber}
+        />
     </div>
   );
 }
