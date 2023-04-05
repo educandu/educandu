@@ -250,13 +250,17 @@
       "en": "Add reminder",
       "de": "Erinnerung hinzufügen"
     },
-    "removeAllReminders": {
+    "removeReminders": {
       "en": "Remove reminders",
       "de": "Erinnerungen entfernen"
     },
-    "deleteAllOwnedRooms": {
+    "deleteRooms": {
       "en": "Delete rooms",
       "de": "Räume löschen"
+    },
+    "deleteRoomsTooltip": {
+      "en": "Deletes all rooms owned by the user. Room resources are deleted as well.",
+      "de": "Löscht alle Räume, die dieser Benutzer besitzt. Alle Raum-Ressourcen werden ebenso gelöscht."
     },
     "storageSpace": {
       "en": "Storage space",

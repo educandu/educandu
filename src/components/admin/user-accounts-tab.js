@@ -13,6 +13,7 @@ import CloseIcon from '../icons/general/close-icon.js';
 import StoragePlanSelect from './storage-plan-select.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
+import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -20,7 +21,7 @@ import { confirmAllOwnedRoomsDelete } from '../confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import StoragePlanApiClient from '../../api-clients/storage-plan-api-client.js';
 import UserAccountLockedStateEditor from './user-account-locked-state-editor.js';
-import { Table, Tabs, Select, Radio, message, Tag, Modal, Segmented } from 'antd';
+import { Table, Tabs, Select, Radio, message, Tag, Modal, Segmented, Dropdown, Tooltip, Button } from 'antd';
 
 const logger = new Logger(import.meta.url);
 
@@ -501,20 +502,44 @@ function UserAccountsTab() {
 
   const renderAccountsWithStorageTableActions = (_, item) => {
     const userId = item.key;
+    const menuItems = [
+      {
+        key: 'addReminder',
+        label: (
+          <div onClick={() => handleAddReminderClick(userId)}>
+            {t('addReminder')}
+          </div>
+        )
+      }
+    ];
+
+    if (item.storage.reminders.length) {
+      menuItems.push({
+        key: 'removeReminders',
+        label: (
+          <div onClick={() => handleRemoveRemindersClick(userId)}>
+            {t('removeReminders')}
+          </div>
+        )
+      });
+    }
+
+    menuItems.push({
+      key: 'deleteRooms',
+      label: (
+        <Tooltip title={t('deleteRoomsTooltip')}>
+          <div className="UserAccountsTab-deleteAction" onClick={() => handleDeleteAllOwnedRoomsClick(userId)}>
+            {t('deleteRooms')}
+          </div>
+        </Tooltip>
+      )
+    });
 
     return (
       <div className="UserAccountsTab-actions">
-        <a className="UserAccountsTab-actionButton" onClick={() => handleAddReminderClick(userId)}>
-          {t('addReminder')}
-        </a>
-        {!!item.storage.reminders.length && (
-        <a className="UserAccountsTab-actionButton" onClick={() => handleRemoveRemindersClick(userId)}>
-          {t('removeAllReminders')}
-        </a>
-        )}
-        <a className="UserAccountsTab-actionButton" onClick={() => handleDeleteAllOwnedRoomsClick(userId)}>
-          {t('deleteAllOwnedRooms')}
-        </a>
+        <Dropdown menu={{ items: menuItems }} placement="bottomRight" trigger={['click']}>
+          <Button icon={<SettingsIcon />} type="link" />
+        </Dropdown>
       </div>
     );
   };
@@ -688,7 +713,7 @@ function UserAccountsTab() {
       dataIndex: 'reminders',
       key: 'reminders',
       render: renderReminders,
-      sorter: by(x => x.reminders.length),
+      sorter: by(x => x.storage.reminders.length),
       responsive: ['lg']
     },
     {
