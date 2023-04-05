@@ -9,7 +9,7 @@ import { documentRevisionShape } from '../ui/default-prop-types.js';
 import { Button, Collapse, message, Timeline, Tooltip } from 'antd';
 import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
-import { EyeOutlined, PaperClipOutlined, SwapOutlined, UndoOutlined } from '@ant-design/icons';
+import { EyeOutlined, LinkOutlined, SwapOutlined, UndoOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
@@ -95,7 +95,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
       <div className="DocumentVersionHistory-itemActions">
         <Tooltip title={t('permalinkButtonTooltip')}>
           <Button
-            icon={<PaperClipOutlined />}
+            icon={<LinkOutlined />}
             className="HistoryControlPanel-button"
             onClick={() => handlePermalinkButtonClick(documentRevision)}
             />

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { message, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Logger from '../../../common/logger.js';
+import { LinkOutlined } from '@ant-design/icons';
 import ResourcePreview from './resource-preview.js';
 import BreakIntoWords from '../../break-into-words.js';
 import { useService } from '../../container-context.js';
@@ -10,7 +11,6 @@ import { handleError } from '../../../ui/error-helper.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../../utils/source-utils.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
-import CopyToClipboardIcon from '../../icons/general/copy-to-clipboard-icon.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -49,7 +49,7 @@ function SelectedResourceDisplay({ urlOrFile, actions, footer }) {
           <div className="SelectedResourceDisplay-subtitleWrapper">
             {!!isUrl && (
               <Tooltip title={t('common:copyUrlToClipboard')}>
-                <CopyToClipboardIcon onClick={handleCopyToClipboardClick} />
+                <LinkOutlined onClick={handleCopyToClipboardClick} />
               </Tooltip>
             )}
             <div className="SelectedResourceDisplay-subtitle"><BreakIntoWords>{subtitle}</BreakIntoWords></div>

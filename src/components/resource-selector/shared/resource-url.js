@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { message, Tooltip } from 'antd';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { LinkOutlined } from '@ant-design/icons';
 import LiteralUrlLink from '../../literal-url-link.js';
 import { useService } from '../../container-context.js';
 import { handleError } from '../../../ui/error-helper.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../../utils/source-utils.js';
-import CopyToClipboardIcon from '../../icons/general/copy-to-clipboard-icon.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -32,7 +32,7 @@ function ResourceUrl({ url }) {
     <div className="ResourceUrl">
       <Tooltip title={t('common:copyUrlToClipboard')}>
         <a onClick={handleCopyUrlToClipboardClick}>
-          <div className="ResourceUrl-icon"><CopyToClipboardIcon /></div>
+          <div className="ResourceUrl-icon"><LinkOutlined /></div>
         </a>
       </Tooltip>
       <LiteralUrlLink href={accessibleUrl} targetBlank />
