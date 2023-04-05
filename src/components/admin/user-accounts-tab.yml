@@ -24,16 +24,16 @@ userAccountsTab:
     en: Active accounts
     de: Aktive Konten
   role_user:
-    en: user
+    en: User
     de: Benutzer
   role_accredited-author:
-    en: accred. author
+    en: Accred. author
     de: Akkred. Autor
   role_maintainer:
-    en: maintainer
+    en: Maintainer
     de: Redakteur
   role_admin:
-    en: admin
+    en: Admin
     de: Admin
   unconfirmedAccounts:
     en: Unconfirmed accounts
@@ -90,3 +90,48 @@ userAccountsTab:
     de: |
       Wähle den Speicherplan aus, den du zuweisen möchtest. Keine Auswahl bedeuted
       Löschung {selectedItemCount, plural, =1 {eines im Benutzerkonto vorhandenen Speicherplans} other {von in den Benutzerkonten vorhandenen Speicherplänen}}.
+  roleInfoMarkdown:
+    en: |
+      # User
+
+      Users can create and edit public documents, as long as they are not protected or archived as well as upload public files.
+
+      # Accredited Author
+
+      Accredited authors can create protected public documents with exclusive editing permissions.
+
+      # Maintainer
+
+      Maintainers have extended content management permissions, such as reviewing, approving, protecting or archiving public documents.
+      They can also hard-delete content such as document sections and files from the media library.
+
+      # Admin
+
+      Admins can configure global settings, manage user accounts including storage plans, as well as execute technical maintenance tasks.
+
+      ***
+
+      *Roles in {appName} are accumulative, meaning that each consecutive role in this list has all the permissions of the
+      preceeding role and adds more permissions on top.*
+    de: |
+      # Benutzer
+
+      Benutzer können öffentliche Dokumente erstellen und bearbeiten, solange diese nicht geschützt oder archiviert sind, sowie öffentliche Dateien hochladen.
+
+      # Akkreditierter Autor
+
+      Akkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.
+
+      # Redakteur
+
+      Redakteure haben erweiterte Berechtigungen im Inhaltsmanagement, wie z.B. Reviewing, Überprüfen, Schützen oder Archivieren von öffentlichen Dokumenten.
+      Sie können darüberhinaus Inhalte wie Dokumentabschnitte und Dateien aus der Medienbibliothek unwiderruflich löschen.
+
+      # Admin
+
+      Admins können globale Einstellungen konfigurieren, Benutzerkonten inklusive Speicherpläne verwalten, sowie technische Instandhaltungstasks ausführen.
+
+      ***
+
+      *Rollen in {appName} sind kumulativ, d.h. dass jede aufeinander folgende Rolle in dieser Liste jeweils sowohl alle Berechtigungen der
+      vorhergehenden Rolle als auch darüber hinausgehende eigene Berechtigungen beinhaltet.*

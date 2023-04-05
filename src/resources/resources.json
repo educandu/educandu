@@ -215,19 +215,19 @@
       "de": "Aktive Konten"
     },
     "role_user": {
-      "en": "user",
+      "en": "User",
       "de": "Benutzer"
     },
     "role_accredited-author": {
-      "en": "accred. author",
+      "en": "Accred. author",
       "de": "Akkred. Autor"
     },
     "role_maintainer": {
-      "en": "maintainer",
+      "en": "Maintainer",
       "de": "Redakteur"
     },
     "role_admin": {
-      "en": "admin",
+      "en": "Admin",
       "de": "Admin"
     },
     "unconfirmedAccounts": {
@@ -297,6 +297,10 @@
     "batchProcessingModalStoragePlanSelectHeader": {
       "en": "Select the storage plan you want to assign. No selection means deletion of storage plans previously\nassigned to the user {selectedItemCount, plural, =1 {account} other {accounts}}.\n",
       "de": "Wähle den Speicherplan aus, den du zuweisen möchtest. Keine Auswahl bedeuted\nLöschung {selectedItemCount, plural, =1 {eines im Benutzerkonto vorhandenen Speicherplans} other {von in den Benutzerkonten vorhandenen Speicherplänen}}.\n"
+    },
+    "roleInfoMarkdown": {
+      "en": "# User\n\nUsers can create and edit public documents, as long as they are not protected or archived as well as upload public files.\n\n# Accredited Author\n\nAccredited authors can create protected public documents with exclusive editing permissions.\n\n# Maintainer\n\nMaintainers have extended content management permissions, such as reviewing, approving, protecting or archiving public documents.\nThey can also hard-delete content such as document sections and files from the media library.\n\n# Admin\n\nAdmins can configure global settings, manage user accounts including storage plans, as well as execute technical maintenance tasks.\n\n***\n\n*Roles in {appName} are accumulative, meaning that each consecutive role in this list has all the permissions of the\npreceeding role and adds more permissions on top.*\n",
+      "de": "# Benutzer\n\nBenutzer können öffentliche Dokumente erstellen und bearbeiten, solange diese nicht geschützt oder archiviert sind, sowie öffentliche Dateien hochladen.\n\n# Akkreditierter Autor\n\nAkkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.\n\n# Redakteur\n\nRedakteure haben erweiterte Berechtigungen im Inhaltsmanagement, wie z.B. Reviewing, Überprüfen, Schützen oder Archivieren von öffentlichen Dokumenten.\nSie können darüberhinaus Inhalte wie Dokumentabschnitte und Dateien aus der Medienbibliothek unwiderruflich löschen.\n\n# Admin\n\nAdmins können globale Einstellungen konfigurieren, Benutzerkonten inklusive Speicherpläne verwalten, sowie technische Instandhaltungstasks ausführen.\n\n***\n\n*Rollen in {appName} sind kumulativ, d.h. dass jede aufeinander folgende Rolle in dieser Liste jeweils sowohl alle Berechtigungen der\nvorhergehenden Rolle als auch darüber hinausgehende eigene Berechtigungen beinhaltet.*\n"
     }
   },
   "blockedLoginError": {
