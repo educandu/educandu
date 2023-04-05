@@ -1,22 +1,27 @@
+import React from 'react';
+import { EOL } from 'node:os';
 import htmlescape from 'htmlescape';
 import Root from '../components/root.js';
 import { Container } from '../common/di.js';
+import ReactDOMServer from 'react-dom/server';
 import cloneDeep from '../utils/clone-deep.js';
 import requestUtils from '../utils/request-utils.js';
 import PageResolver from '../domain/page-resolver.js';
-import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import ThemeManager from '../resources/theme-manager.js';
+import { resetServerContext } from 'react-beautiful-dnd';
 import LicenseManager from '../resources/license-manager.js';
 import ResourceManager from '../resources/resource-manager.js';
+import pageRendererUtils from '../utils/page-renderer-utils.js';
+import PageTemplate from '../components/templates/page-template.js';
+import { createCache, extractStyle, StyleProvider } from '@ant-design/cssinjs';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
-class PageRenderer extends PageRendererBase {
+class PageRenderer {
   static dependencies = [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, ThemeManager, LicenseManager, PageResolver];
 
   constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, themeManager, licenseManager, pageResolver) {
-    super();
     this.container = container;
     this.serverConfig = serverConfig;
     this.clientConfig = clientConfig;
@@ -25,6 +30,36 @@ class PageRenderer extends PageRendererBase {
     this.themeManager = themeManager;
     this.licenseManager = licenseManager;
     this.pageResolver = pageResolver;
+  }
+
+  renderHtml({ uiLanguage, title, styles, scripts, ContentRoot, contentProps, additionalHeadHtml }) {
+    resetServerContext();
+    const cache = createCache();
+
+    const content = ReactDOMServer
+      .renderToString(<StyleProvider cache={cache}><ContentRoot {...contentProps} /></StyleProvider>);
+
+    const themeText = extractStyle(cache);
+    const themeStylesData = pageRendererUtils.parseThemeText(themeText);
+
+    const pageProps = { uiLanguage, title, content, styles, themeStylesData, scripts, additionalHeadHtml };
+    const page = ReactDOMServer.renderToStaticMarkup(<PageTemplate {...pageProps} />);
+
+    return `<!DOCTYPE html>${EOL}${page}${EOL}`;
+  }
+
+  getHeaders({ xFrameOptions } = {}) {
+    const headers = {
+      'Cache-Control': 'max-age=0, no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': 'Wed, 11 Jan 1984 05:00:00 GMT'
+    };
+
+    if (xFrameOptions) {
+      headers['X-Frame-Options'] = xFrameOptions;
+    }
+
+    return headers;
   }
 
   sendPage(req, res, pageName, initialState = {}) {
