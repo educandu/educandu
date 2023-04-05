@@ -1,4 +1,6 @@
 import by from 'thenby';
+import Info from '../info.js';
+import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
@@ -8,10 +10,12 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import EditIcon from '../icons/general/edit-icon.js';
+import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import StoragePlanSelect from './storage-plan-select.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -126,6 +130,7 @@ function UserAccountsTab() {
   const executingUser = useUser();
   const { formatDate } = useDateFormat();
   const [users, setUsers] = useState([]);
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('userAccountsTab');
   const [isSaving, setIsSaving] = useState(false);
   const [filterText, setFilterText] = useState('');
@@ -548,6 +553,19 @@ function UserAccountsTab() {
     return <span>{formatDate(accountClosedOn)}</span>;
   };
 
+  const renderRoleHeader = () => {
+    const tootip = (
+      <Markdown className="UserAccountsTab-roleInfoMarkdown">
+        {t('roleInfoMarkdown', { appName: clientConfig.appName })}
+      </Markdown>
+    );
+    return (
+      <Info tooltip={tootip} iconAfterContent>
+        <span className="u-label">{t('role')}</span>
+      </Info>
+    );
+  };
+
   const activeAccountsTableColumns = [
     {
       title: () => t('common:displayName'),
@@ -580,7 +598,7 @@ function UserAccountsTab() {
       responsive: ['md']
     },
     {
-      title: () => t('role'),
+      title: renderRoleHeader,
       dataIndex: 'role',
       key: 'role',
       width: 140,
@@ -887,7 +905,7 @@ function UserAccountsTab() {
               <div className="UserAccountsTab-batchProcessingModalSelectHeader">
                 {t('batchProcessingModalRoleSelectHeader', { selectedItemCount: selectedAccountKeys.length })}
               </div>
-              <div className="UserAccountsTab-batchProcessingModalSelect">
+              <div className="UserAccountsTab-batchProcessingModalSelect UserAccountsTab-batchProcessingModalSelect--roles">
                 <Segmented
                   options={getRoleOptions(t)}
                   value={currentBatchRole}

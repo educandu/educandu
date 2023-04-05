@@ -61,7 +61,7 @@ documentMetadataModal:
     de: Zugelassene Bearbeiter sind Benutzer, die dieses Dokument bearbeiten dürfen, selbst wenn es geschützt ist.
   protectedInfo:
     en: Protected documents can only be edited by a maintainer or allowed editor.
-    de: Geschützte Dokumente können nur von einem Maintainer oder zugelassenem Bearbeiter bearbeitet werden.
+    de: Geschützte Dokumente können nur von einem Redakteur oder zugelassenem Bearbeiter bearbeitet werden.
   archivedInfo:
     en: Archived documents cannot be edited and cannot be discovered through search.
     de: Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar.
