@@ -260,7 +260,7 @@
     },
     "deleteRoomsTooltip": {
       "en": "Deletes all rooms owned by the user. Room resources are deleted as well.",
-      "de": "Löscht alle Räume die von diesem User besitzt sind. Alle Raum-Resourcen werden auch gelöscht."
+      "de": "Löscht alle Räume, die dieser Benutzer besitzt. Alle Raum-Ressourcen werden ebenso gelöscht."
     },
     "storageSpace": {
       "en": "Storage space",
