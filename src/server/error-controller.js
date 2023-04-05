@@ -1,18 +1,19 @@
 import createError from 'http-errors';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
+import PageRenderer from './page-renderer.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import requestUtils from '../utils/request-utils.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import ErrorPageRenderer from './error-page-renderer.js';
 import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
 class ErrorController {
-  static dependencies = [ServerConfig, ErrorPageRenderer];
+  static dependencies = [ServerConfig, PageRenderer];
 
-  constructor(serverConfig, errorPageRenderer) {
-    this.errorPageRenderer = errorPageRenderer;
+  constructor(serverConfig, pageRenderer) {
+    this.pageRenderer = pageRenderer;
     this.serverConfig = serverConfig;
   }
 
@@ -98,8 +99,10 @@ class ErrorController {
     res.status(err.status).type('json').send(this.errorToPlainObj(err));
   }
 
-  sendErrorPage(req, res, err) {
-    this.errorPageRenderer.sendPage(req, res, err);
+  sendErrorPage(req, res, error) {
+    const initialState = { error: this.errorToPlainObj(error) };
+
+    this.pageRenderer.sendPage(req, res, PAGE_NAME.error, initialState);
   }
 
   errorToPlainObj(err) {
