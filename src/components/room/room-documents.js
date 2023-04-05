@@ -201,13 +201,13 @@ export default function RoomDocuments({
     const actionButtons = [
       {
         key: 'moveUp',
-        title: t('common:moveUp'),
+        title: null,
         icon: <MoveUpIcon />,
         disabled: doc._id === firstVisibleDocument?._id
       },
       {
         key: 'moveDown',
-        title: t('common:moveDown'),
+        title: null,
         icon: <MoveDownIcon />,
         disabled: doc._id === lastVisibleDocument?._id
       },

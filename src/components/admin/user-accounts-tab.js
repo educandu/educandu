@@ -737,6 +737,7 @@ function UserAccountsTab() {
     return (
       <div className="Tabs-tabPane">
         <Table
+          showSorterTooltip={false}
           rowSelection={rowSelection}
           dataSource={dataSource}
           columns={columns}

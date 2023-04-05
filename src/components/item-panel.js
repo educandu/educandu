@@ -50,7 +50,7 @@ function ItemPanel({
   if (onMoveUp) {
     actionButtons.push({
       key: 'moveUp',
-      title: t('common:moveUp'),
+      title: null,
       icon: <MoveUpIcon />,
       disabled: index === 0
     });
@@ -58,7 +58,7 @@ function ItemPanel({
   if (onMoveDown) {
     actionButtons.push({
       key: 'moveDown',
-      title: t('common:moveDown'),
+      title: null,
       icon: <MoveDownIcon />,
       disabled: index === itemsCount - 1
     });
