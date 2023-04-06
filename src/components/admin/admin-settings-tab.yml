@@ -8,6 +8,9 @@ adminSettingsTab:
   consentHeader:
     en: Consent text
     de: Zustimmungstext
+  consentInfo:
+    en: This is the text of the consent dialog shown to users. They have to agree to the terms written here in order to use the website.
+    de: Dies ist der Text für den Zustimmungsdialog, der den Benutzern gezeigt wird. Diese müssen den Bedingungen dort zustimmen, um die Website benutzen zu können.
   homepageTagsHeader:
     en: Homepage recommended tags
     de: Empfohlene Tags auf der Homepage
@@ -23,6 +26,9 @@ adminSettingsTab:
   homepagePresentationHeader:
     en: Homepage presentation
     de: Homepage-Präsentation
+  homepagePresentationInfo:
+    en: This video is displayed on the homepage, in the project presentation section. If a 'Learn more' document is selected, a button is displayed at the end of the presentation section, which leads users to this document.
+    de: Dieses Video wird auf der Homepage im Präsentationsabschnitt angezeigt. Wenn ein 'Mehr erfahren'-Dokument ausgewählt wurde, wird ein Button am Ende des Präsentationsabschnitts angezeigt, der die Benutzer zu diesem Dokument führt.
   homepageTrustLogosHeader:
     en: Homepage trust logos
     de: Homepage-Vertrauens-Logos
@@ -32,18 +38,40 @@ adminSettingsTab:
   helpPageHeader:
     en: Help page
     de: Hilfe-Seite
+  helpPageInfo:
+    en: The selected document is included in the website navigation menu under the given name.
+    de: Das ausgewählte Dokument wird im Website-Navigationsmenu unter dem angegebenen Namen erscheinen.
   termsPageHeader:
-    en: Terms of usage page
-    de: Nutzungsbedingungen-Seite
+    en: Terms and conditions page for account creation
+    de: Nutzungsbedingungen-Seite für die Kontoerstellung
+  termsPageInfo:
+    en: The selected document is used for the 'terms and conditions' link in the account registration form.
+    de: Das ausgewählte Dokument wird als 'Nutzungsbedingungen'-Link im Kontoerstellungsformular benutzt.
   footerLinksHeader:
     en: Footer links
     de: Footer-Links
+  footerLinksInfo:
+    en: The selected documents are shown under the given name on all pages in the footer section.
+    de: Die ausgewählten Dokumente werden unter dem angegebenen Namen auf allen Seiten im Footer-Abschnitt angezeigt.
   templateDocumentHeader:
     en: Template for new documents
     de: Vorlage für neue Dokumente
+  templateDocumentInfo:
+    en: The selected document is used to serve as a template for creating new documents, when the user opts for using the template instead of starting with empty content.
+    de: Das gewählte Dokument dient als Vorlage beim Erstellen neuer Dokumente für den Fall, dass der Benutzer sich dafür entscheidet, die Vorlage zu nutzen, anstatt mit einem Dokument ohne Inhalt zu starten.
   licenseHeader:
-    en: License
-    de: Lizenz
+    en: Document license
+    de: Dokument-Lizenz
+  licenseInfo:
+    en: The provided URL is used as a license link under the given name at the end of each document page.
+    de: Die angegebene URL wird als Lizenz-Link unter dem angegebenen Namen am Ende jeder Dokumentseite angezeigt.
   pluginsHelpTextsHeader:
     en: Help texts for plugins
     de: Hilfetexte für Plugins
+  pluginsHelpTextsInfo:
+    en: |
+      If a text is provided for a plugin type, a help icon is shown in the toolbar of the respective section when the document is in edit mode.
+      The help text is shown in a dialog which opens when clicking the help icon.
+    de: |
+      Wenn ein Text für einen Plugin-Typ angegeben wurde, wird ein Hilfe-Icon in der Toolbar des zugehörigen Abschnitts angezeigt, wenn das Dokument im Bearbeitungsmodus ist.
+      Der Hilfetext wird in einem Dialogfenster angezeigt, welches sich durch Klick auf das Hilfe-Icon öffnet.

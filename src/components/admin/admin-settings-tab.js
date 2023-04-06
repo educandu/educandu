@@ -152,6 +152,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('consentHeader')} key="consent">
+            <div className="AdminSettingsTab-collapseInfo">{t('consentInfo')}</div>
             <MarkdownSettingInSupportedLanguages
               settingValue={settings.consentText}
               onChange={handleConsentTextChange}
@@ -178,6 +179,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepagePresentationHeader')} key="homepagePresentation">
+            <div className="AdminSettingsTab-collapseInfo">{t('homepagePresentationInfo')}</div>
             <HomepagePresentationSettings
               settings={settings.homepagePresentation}
               onChange={handleHomepagePresentationChange}
@@ -195,6 +197,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('templateDocumentHeader')} key="templateDocument">
+            <div className="AdminSettingsTab-collapseInfo">{t('templateDocumentInfo')}</div>
             <div className="AdminSettingsTab-templateDocument" >
               <DocumentSelector
                 documentId={settings.templateDocument?.documentId}
@@ -205,6 +208,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('helpPageHeader')} key="helpPage">
+            <div className="AdminSettingsTab-collapseInfo">{t('helpPageInfo')}</div>
             <SpecialPageSettings
               settings={settings.helpPage}
               onChange={handleHelpPageChange}
@@ -213,6 +217,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('termsPageHeader')} key="termsPage">
+            <div className="AdminSettingsTab-collapseInfo">{t('termsPageInfo')}</div>
             <SpecialPageSettings
               settings={settings.termsPage}
               onChange={handleTermsPageChange}
@@ -221,6 +226,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('footerLinksHeader')} key="footerLinks">
+            <div className="AdminSettingsTab-collapseInfo">{t('footerLinksInfo')}</div>
             <FooterLinksSettings
               footerLinks={settings.footerLinks}
               onChange={handleFooterLinksChange}
@@ -229,6 +235,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('pluginsHelpTextsHeader')} key="plugisHelpTexts">
+            <div className="AdminSettingsTab-collapseInfo">{t('pluginsHelpTextsInfo')}</div>
             <Tabs
               type="line"
               size="small"
@@ -249,6 +256,7 @@ function AdminSettingsTab({ onDirtyStateChange }) {
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('licenseHeader')} key="license">
+            <div className="AdminSettingsTab-collapseInfo">{t('licenseInfo')}</div>
             <LicenseSettings license={settings.license} onChange={handleLicenseChange} />
           </Collapse.Panel>
         </Collapse>
