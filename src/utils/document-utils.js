@@ -61,13 +61,13 @@ export function getEditDocRestrictionTooltip({ t, user, doc, room }) {
   const restrictionReason = getEditDocumentRestrictionReason({ user, doc, room });
   switch (restrictionReason) {
     case DOCUMENT_EDIT_RESTRICTION_REASON.anonymous:
-      return t('doc:editRestrictionTooltip_anonymous');
+      return t('editRestrictionTooltip_anonymous');
     case DOCUMENT_EDIT_RESTRICTION_REASON.protected:
-      return t('doc:editRestrictionTooltip_protected');
+      return t('editRestrictionTooltip_protected');
     case DOCUMENT_EDIT_RESTRICTION_REASON.archived:
-      return t('doc:editRestrictionTooltip_archive');
+      return t('editRestrictionTooltip_archive');
     case DOCUMENT_EDIT_RESTRICTION_REASON.room:
-      return t('doc:editRestrictionTooltip_room');
+      return t('editRestrictionTooltip_room');
     default:
       return null;
   }
