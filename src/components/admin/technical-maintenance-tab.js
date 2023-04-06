@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import { BATCH_TYPE } from '../../domain/constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import WarningIcon from '../icons/general/warning-icon.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import BatchApiClient from '../../api-clients/batch-api-client.js';
 
@@ -43,14 +44,19 @@ function TechnicalMaintenanceTab() {
 
   return (
     <div className="TechnicalMaintenanceTab">
-      <div className="TechnicalMaintenanceTab-tabInfo">{t('tabInfo')}</div>
       <Spin size="large" spinning={isLoading} delay={500}>
         {Object.values(BATCH_TYPE).map(batchType => (
           <section key={batchType} className="TechnicalMaintenanceTab-section">
             <div className="TechnicalMaintenanceTab-sectionHeader">{t(`batchSectionHeader_${batchType}`)}</div>
+            <div className="TechnicalMaintenanceTab-sectionInfo">
+              <span className="TechnicalMaintenanceTab-sectionInfoIcon">
+                <WarningIcon />
+              </span>
+              {t(`batchSectionInfo_${batchType}`)}
+            </div>
             <div className="TechnicalMaintenanceTab-sectionDescription">{t(`batchSectionDescription_${batchType}`)}</div>
             <div className="TechnicalMaintenanceTab-button">
-              <Button onClick={() => handleStartBatchClick(batchType)} type="primary" danger>
+              <Button onClick={() => handleStartBatchClick(batchType)} type="primary">
                 {t('start')}
               </Button>
               {!!latestBatches[batchType] && (

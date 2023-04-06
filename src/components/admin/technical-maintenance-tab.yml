@@ -1,25 +1,47 @@
 technicalMaintenanceTab:
-  tabInfo:
-    en: You can trigger different tasks from here, in order to execute technical maintenance over the database and the internal storage.
-    de: Hier kannst du die Ausführung von Tasks zur Instandhaltung der Datenbank und des internen Speichers starten.
   batchSectionHeader_document-regeneration:
     en: Documents regeneration
     de: Dokumente neu erstellen
+  batchSectionInfo_document-regeneration:
+    en: This tasks updates database data. As a result, some data might be corrected.
+    de: Dieser Task aktualisiert die Datenbank. Bei der Ausführung werden möglicherweise bestimmte Datensätze korrigiert.
   batchSectionDescription_document-regeneration:
-    en: Re-create all documents based on their document versions. This tasks updates database data, possibly resulting in data corrections.
-    de: Dieser Task erstellt alle Dokumente in der Datenbank neu, basierend auf den vorhandenen Dokument-Versionen. Eventuell inkorrekte Dokument-Daten werden dabei berichtigt.
+    en: |
+      Re-creates all document records in the database from their document revision records.
+      This could repair corrupted documents that might have been incorrectly generated from their revisions.
+    de: |
+      Erstellt alle Dokument-Datenbankeinträge auf Basis der vorhandenen Dokument-Revisionen neu.
+      Dadurch können eventuell korrupte Dokumente, die möglicherweise fehlerhaft generiert wurden, repariert werden.
   batchSectionHeader_document-validation:
     en: Documents validation
     de: Dokumente validieren
+  batchSectionInfo_document-validation:
+    en: This tasks does not change any database data. The result is a report.
+    de: Dieser Task ändert keine Daten in der Datenbank. Bei der Ausführung wird ein Bericht erstellt.
   batchSectionDescription_document-validation:
-    en: Verify that all document versions and documents in the database contain valid data. This task does not change any database data.
-    de: Führt eine Validierung der Datenstruktur aller Dokumente und Dokument-Versionen in der Datenbank durch. Dieser Task ändert keine Daten.
+    en: |
+      Runs a check over all document revision and document records in the database
+      to verify that the data is structurally correct and matches the expected application data models.
+    de: |
+      Führt eine Überprüfung aller Datenbankeinträge von Dokument-Revisionen und Dokumenten durch,
+      um zu verifizieren, dass die Daten strukturell korrekt sind und dem erwarteten Datenmodell der Anwendung entsprechen.
   batchSectionHeader_cdn-resources-consolidation:
-    en: Consolidation of resources within the internal storage
-    de: Ressourcen auf dem internen Speicher konsolidieren
+    en: Document resources inventory regeneration
+    de: Inventar der Dokument-Ressourcen neu erstellen
+  batchSectionInfo_cdn-resources-consolidation:
+    en: This tasks updates database data. As a result, some data might be corrected.
+    de: Dieser Task aktualisiert die Datenbank. Bei der Ausführung werden möglicherweise bestimmte Datensätze korrigiert.
   batchSectionDescription_cdn-resources-consolidation:
-    en: Update the list of internal storage resources linked in documents and document versions. This task updates database data, possibly resulting in data corrections.
-    de: Dieser Task aktualisiert die Liste der in den Dokumenten und Dokument-Versionen verknüpften internen Speicher-Ressourcen. Eventuell inkorrekte Daten werden dabei berichtigt.
+    en: |
+      Each document and document revision record contains a list of CDN resource links,
+      as an inventory of all CDN resources referenced within the content of that document or document revision.
+      By running this task, all documents and document revisions are examined again and their CDN resources list is recreated, thus insuring a correct and consistent list.
+      Note that this task does not verify that the collected links actually point to an existing CDN resource.
+    de: |
+      Jeder Datenbankeintrag von Dokumenten und Dokument-Revisionen enthält eine Liste mit Links auf CDN-Ressources
+      als Inventar aller CDN-Ressourcen, die im Inhalt dieses Dokuments oder dieser Dokument-Revision referenziert sind.
+      Bei der Ausführung wird jedes Dokument und jede Dokument-Revision analysiert und dabei jeweils die Konsistenz der Liste von CDN-Ressourcen sichergestellt.
+      Bitte beachte, dass dieser Task nicht verifiziert, dass die gesammelten Links tatsächlich auf eine existierende CDN-Ressource zeigen.
   lastExecution:
     en: Last execution
     de: Letzte Ausführung

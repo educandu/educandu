@@ -1,16 +1,23 @@
 .TechnicalMaintenanceTab {}
 
-.TechnicalMaintenanceTab-tabInfo {
-  .m-info-card;
-}
-
-.TechnicalMaintenanceTab-section {
-  margin: 50px 0;
+.TechnicalMaintenanceTab-section:not(:last-child) {
+  margin-bottom: 75px;
 }
 
 .TechnicalMaintenanceTab-sectionHeader {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-weight: bold;
+}
+
+.TechnicalMaintenanceTab-sectionInfo {
+  margin-bottom: 25px;
+  font-size: @edu-font-size-sm;
+}
+
+.TechnicalMaintenanceTab-sectionInfoIcon {
+  padding-right: 8px;
+  color: @edu-warning-color;
+  font-size: @edu-font-size-base;
 }
 
 .TechnicalMaintenanceTab-sectionDescription {
