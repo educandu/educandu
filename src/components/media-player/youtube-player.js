@@ -52,7 +52,7 @@ function YoutubePlayer({
       return posterImageUrl;
     }
     if (youtubeThumbnailUrl) {
-      return youtubeThumbnailUrl.isHighResThumbnailUrlVerfied
+      return youtubeThumbnailUrl.isHighResThumbnailUrlVerified
         ? youtubeThumbnailUrl.highResThumbnailUrl
         : youtubeThumbnailUrl.lowResThumbnailUrl;
     }

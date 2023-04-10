@@ -5,6 +5,7 @@ import { getDisposalInfo, DISPOSAL_PRIORITY } from '../../common/di.js';
 
 const logger = new Logger(import.meta.url);
 
+const MAX_FAILED_ATTEMPTS = 3;
 const FAILED_ENTRIES_LIFETIME_IN_MS = 5000;
 
 class MediaDurationCache {
@@ -12,6 +13,7 @@ class MediaDurationCache {
     this._isDisposed = false;
     this._entries = new Map();
     this._subscribers = new Set();
+    this._errorCountPerSourceUrl = new Map();
   }
 
   getEntry(sourceUrl) {
@@ -19,8 +21,10 @@ class MediaDurationCache {
     let entry = this._entries.get(sourceUrl);
     if (!entry) {
       entry = this._createUnresolvedEntry(sourceUrl);
-      this._entries.set(sourceUrl, entry);
-      this._determineDuration(sourceUrl);
+      if (isBrowser()) {
+        this._entries.set(sourceUrl, entry);
+        this._determineDuration(sourceUrl);
+      }
     }
 
     return entry;
@@ -38,12 +42,16 @@ class MediaDurationCache {
 
   subscribe(callback) {
     this._throwIfDisposed();
-    this._subscribers.add(callback);
+    if (isBrowser()) {
+      this._subscribers.add(callback);
+    }
   }
 
   unsubscribe(callback) {
     this._throwIfDisposed();
-    this._subscribers.delete(callback);
+    if (isBrowser()) {
+      this._subscribers.delete(callback);
+    }
   }
 
   _createUnresolvedEntry(sourceUrl) {
@@ -75,14 +83,22 @@ class MediaDurationCache {
     } catch (error) {
       logger.error(error);
       this._handleDurationDetermined(sourceUrl, null, error);
-      this._registerForDeletion(sourceUrl);
+      const newErrorCount = (this._errorCountPerSourceUrl.get(sourceUrl) || 0) + 1;
+      if (newErrorCount < MAX_FAILED_ATTEMPTS) {
+        this._errorCountPerSourceUrl.set(sourceUrl, newErrorCount);
+        this._registerForDeletion(sourceUrl);
+      } else {
+        this._errorCountPerSourceUrl.set(sourceUrl, MAX_FAILED_ATTEMPTS);
+      }
     }
   }
 
   _handleDurationDetermined(sourceUrl, duration, error) {
-    const newEntry = this._createResolvedEntry(sourceUrl, duration, error);
-    this._entries.set(sourceUrl, newEntry);
-    this._notifySubscribers();
+    if (!this._isDisposed) {
+      const newEntry = this._createResolvedEntry(sourceUrl, duration, error);
+      this._entries.set(sourceUrl, newEntry);
+      this._notifySubscribers();
+    }
   }
 
   _notifySubscribers() {
