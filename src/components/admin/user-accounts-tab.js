@@ -132,6 +132,7 @@ function UserAccountsTab() {
   const [users, setUsers] = useState([]);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('userAccountsTab');
+  const [modal, contextHolder] = Modal.useModal();
   const [isSaving, setIsSaving] = useState(false);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -553,14 +554,22 @@ function UserAccountsTab() {
     return <span>{formatDate(accountClosedOn)}</span>;
   };
 
+  const handleRoleInfoIconClick = event => {
+    event.stopPropagation();
+    modal.info({
+      width: '70vw',
+      title: t('roleInfoTitle', { appName: clientConfig.appName }),
+      content: (
+        <Markdown className="UserAccountsTab-roleInfoMarkdown">
+          {t('roleInfoContentMarkdown', { appName: clientConfig.appName })}
+        </Markdown>
+      )
+    });
+  };
+
   const renderRoleHeader = () => {
-    const tootip = (
-      <Markdown className="UserAccountsTab-roleInfoMarkdown">
-        {t('roleInfoMarkdown', { appName: clientConfig.appName })}
-      </Markdown>
-    );
     return (
-      <Info tooltip={tootip} iconAfterContent>
+      <Info tooltip={t('roleInfoTooltip')} iconAfterContent onIconClick={handleRoleInfoIconClick}>
         <span className="u-label">{t('role')}</span>
       </Info>
     );
@@ -825,6 +834,7 @@ function UserAccountsTab() {
 
   return (
     <div className="UserAccountsTab">
+      {contextHolder}
       {!!selectedAccountKeys.length && (
         <div className="UserAccountsTab-selectedItems">
           {selectedAccountKeys.map(key => (
