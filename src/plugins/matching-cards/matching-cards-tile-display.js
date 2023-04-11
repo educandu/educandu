@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
 import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
+import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
@@ -13,29 +13,39 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
   const mediaPlayerRef = useRef();
   const isMounted = useIsMounted();
   const timeoutToPlayMedia = useRef();
+  const hasPlayedAtLeastOnce = useRef(false);
   const clientConfig = useService(ClientConfig);
+  const [isMediaReady, setIsMediaReady] = useState(false);
 
   const accessibleUrl = getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
   const { resourceType } = sourceUrl ? analyzeMediaUrl(sourceUrl) : { resourceType: RESOURCE_TYPE.none };
+
+  const handleMediaReady = () => {
+    setIsMediaReady(true);
+  };
 
   useEffect(() => {
     clearTimeout(timeoutToPlayMedia.current);
     timeoutToPlayMedia.current = null;
 
-    if (mediaPlayerRef.current) {
+    if (isMediaReady && isMounted.current) {
       if (!playMedia) {
         mediaPlayerRef.current.pause();
         return;
       }
 
-      mediaPlayerRef.current.seekToTimecode(0);
+      if (hasPlayedAtLeastOnce.current) {
+        mediaPlayerRef.current.seekToTimecode(0);
+      }
+
       timeoutToPlayMedia.current = setTimeout(() => {
         if (isMounted.current && playMedia) {
           mediaPlayerRef.current.play();
+          hasPlayedAtLeastOnce.current = true;
         }
       }, 500);
     }
-  }, [mediaPlayerRef, playMedia, isMounted]);
+  }, [mediaPlayerRef, hasPlayedAtLeastOnce, isMediaReady, playMedia, isMounted]);
 
   const renderMediaPlayer = screenMode => {
     return (
@@ -46,6 +56,7 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
         playbackRange={playbackRange}
         renderProgressBar={() => null}
         mediaPlayerRef={mediaPlayerRef}
+        onReady={handleMediaReady}
         />
     );
   };
