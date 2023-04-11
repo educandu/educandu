@@ -45,6 +45,7 @@ function MediaPlayer({
   allowPartClick,
   aspectRatio,
   canDownload,
+  clickToPlay,
   customScreenOverlay,
   customUnderScreenContent,
   downloadFileName,
@@ -220,6 +221,7 @@ function MediaPlayer({
         <Player
           aspectRatio={aspectRatio}
           audioOnly={noScreen}
+          clickToPlay={clickToPlay}
           playbackRange={playbackRange}
           playbackRate={appliedPlaybackRate}
           playerRef={playerRef}
@@ -284,6 +286,7 @@ MediaPlayer.propTypes = {
   allowPartClick: PropTypes.bool,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   canDownload: PropTypes.bool,
+  clickToPlay: PropTypes.bool,
   customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
   downloadFileName: PropTypes.string,
@@ -322,6 +325,7 @@ MediaPlayer.defaultProps = {
   allowPartClick: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   canDownload: false,
+  clickToPlay: true,
   customScreenOverlay: null,
   customUnderScreenContent: null,
   downloadFileName: null,
