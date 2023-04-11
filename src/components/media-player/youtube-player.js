@@ -19,6 +19,7 @@ const YOUTUBE_STATE = {
 function YoutubePlayer({
   aspectRatio,
   audioOnly,
+  clickToPlay,
   playbackRange,
   playbackRate,
   playerRef,
@@ -134,7 +135,7 @@ function YoutubePlayer({
     const options = {
       controls: [],
       ratio: aspectRatio,
-      clickToPlay: true,
+      clickToPlay,
       loadSprite: false,
       blankVideo: '',
       fullscreen: { enabled: false, fallback: false },
@@ -162,7 +163,7 @@ function YoutubePlayer({
 
     const playerInstance = new Plyr(plyrRef.current, options);
     setPlayer(playerInstance);
-  }, [plyrRef, aspectRatio, sourceDurationInMs, startTimeInS, endTimeInS]);
+  }, [plyrRef, aspectRatio, sourceDurationInMs, startTimeInS, endTimeInS, clickToPlay]);
 
   useEffect(() => {
     if (player) {
@@ -296,7 +297,7 @@ function YoutubePlayer({
   return (
     <div className="YoutubePlayer" onClick={isPlaying ? triggerPause : triggerPlay}>
       <video ref={plyrRef} />
-      {!audioOnly && !isPlaying && (
+      {!audioOnly && !isPlaying && !!clickToPlay && (
         <div className="YoutubePlayer-playOverlay" onClick={triggerPlay}>
           {!!posterOrThumbnailImageUrl && !wasPlayTriggeredOnce && (
             <div className="YoutubePlayer-posterImage" style={{ backgroundImage: `url(${posterOrThumbnailImageUrl})` }} />
@@ -315,6 +316,7 @@ function YoutubePlayer({
 YoutubePlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
+  clickToPlay: PropTypes.bool,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
@@ -334,6 +336,7 @@ YoutubePlayer.propTypes = {
 YoutubePlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
+  clickToPlay: true,
   playbackRange: [0, 1],
   playbackRate: 1,
   playerRef: {

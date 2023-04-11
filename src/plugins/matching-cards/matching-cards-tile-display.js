@@ -40,6 +40,7 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
   const renderMediaPlayer = screenMode => {
     return (
       <MediaPlayer
+        clickToPlay={false}
         screenMode={screenMode}
         sourceUrl={accessibleUrl}
         renderControls={() => null}

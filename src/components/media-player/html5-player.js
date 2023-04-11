@@ -13,6 +13,7 @@ import { MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../
 function Htlm5Player({
   aspectRatio,
   audioOnly,
+  clickToPlay,
   playbackRange,
   playbackRate,
   playerRef,
@@ -137,13 +138,13 @@ function Htlm5Player({
     const playerInstance = new Plyr(plyrRef.current, {
       controls: [],
       ratio: aspectRatio,
-      clickToPlay: true,
+      clickToPlay,
       loadSprite: false,
       blankVideo: '',
       fullscreen: { enabled: false, fallback: false }
     });
     setPlayer(playerInstance);
-  }, [plyrRef, aspectRatio]);
+  }, [plyrRef, aspectRatio, clickToPlay]);
 
   useEffect(() => {
     if (player) {
@@ -255,7 +256,7 @@ function Htlm5Player({
   return (
     <div className="Html5Player" onClick={isPlaying ? triggerPause : triggerPlay}>
       <video ref={plyrRef} />
-      {!audioOnly && !isPlaying && (
+      {!audioOnly && !isPlaying && !!clickToPlay && (
         <div className="Html5Player-playOverlay" onClick={triggerPlay}>
           {!wasPlayTriggeredOnce && (
             <div className="Html5Player-posterImage" style={{ backgroundImage: `url(${posterImageUrl})` }} />
@@ -272,6 +273,7 @@ function Htlm5Player({
 Htlm5Player.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
+  clickToPlay: PropTypes.bool,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
@@ -292,6 +294,7 @@ Htlm5Player.propTypes = {
 Htlm5Player.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
+  clickToPlay: true,
   playbackRange: [0, 1],
   playbackRate: 1,
   playerRef: {
