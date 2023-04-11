@@ -571,7 +571,7 @@ function UserAccountsTab() {
     return (
       <span className="UserAccountsTab-roleInfoHeader">
         <span>{t('role')}</span>
-        <Tooltip title={t('roleInfoTooltip')}>
+        <Tooltip title={t('common:openHelp')}>
           <QuestionCircleOutlined className="UserAccountsTab-roleInfoIcon" onClick={handleRoleInfoIconClick} />
         </Tooltip>
       </span>

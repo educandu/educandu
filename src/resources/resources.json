@@ -342,10 +342,6 @@
       "en": "Select the storage plan you want to assign. No selection means deletion of storage plans previously\nassigned to the user {selectedItemCount, plural, =1 {account} other {accounts}}.\n",
       "de": "Wähle den Speicherplan aus, den du zuweisen möchtest. Keine Auswahl bedeuted\nLöschung {selectedItemCount, plural, =1 {eines im Benutzerkonto vorhandenen Speicherplans} other {von in den Benutzerkonten vorhandenen Speicherplänen}}.\n"
     },
-    "roleInfoTooltip": {
-      "en": "Click here in order to learn more about roles",
-      "de": "Klicke hier, um mehr über Rollen zu erfahren"
-    },
     "roleInfoTitle": {
       "en": "Roles in {appName}",
       "de": "Rollen in {appName}"
