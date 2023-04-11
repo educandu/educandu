@@ -1,5 +1,4 @@
 import by from 'thenby';
-import Info from '../info.js';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -15,6 +14,7 @@ import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import StoragePlanSelect from './storage-plan-select.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
@@ -132,6 +132,7 @@ function UserAccountsTab() {
   const [users, setUsers] = useState([]);
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('userAccountsTab');
+  const [modal, contextHolder] = Modal.useModal();
   const [isSaving, setIsSaving] = useState(false);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -553,16 +554,27 @@ function UserAccountsTab() {
     return <span>{formatDate(accountClosedOn)}</span>;
   };
 
+  const handleRoleInfoIconClick = event => {
+    event.stopPropagation();
+    modal.info({
+      width: '70vw',
+      title: t('roleInfoTitle', { appName: clientConfig.appName }),
+      content: (
+        <Markdown className="UserAccountsTab-roleInfoMarkdown">
+          {t('roleInfoContentMarkdown', { appName: clientConfig.appName })}
+        </Markdown>
+      )
+    });
+  };
+
   const renderRoleHeader = () => {
-    const tootip = (
-      <Markdown className="UserAccountsTab-roleInfoMarkdown">
-        {t('roleInfoMarkdown', { appName: clientConfig.appName })}
-      </Markdown>
-    );
     return (
-      <Info tooltip={tootip} iconAfterContent>
-        <span className="u-label">{t('role')}</span>
-      </Info>
+      <span className="UserAccountsTab-roleInfoHeader">
+        <span>{t('role')}</span>
+        <Tooltip title={t('common:openHelp')}>
+          <QuestionCircleOutlined className="UserAccountsTab-roleInfoIcon" onClick={handleRoleInfoIconClick} />
+        </Tooltip>
+      </span>
     );
   };
 
@@ -825,6 +837,7 @@ function UserAccountsTab() {
 
   return (
     <div className="UserAccountsTab">
+      {contextHolder}
       {!!selectedAccountKeys.length && (
         <div className="UserAccountsTab-selectedItems">
           {selectedAccountKeys.map(key => (
