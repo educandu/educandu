@@ -22,8 +22,10 @@ class YoutubeThumbnailUrlCache {
         const lowResUrl = `https://i.ytimg.com/vi/${encodeURIComponent(youtubeVideoId)}/hqdefault.jpg`;
         const highResUrl = `https://i.ytimg.com/vi/${encodeURIComponent(youtubeVideoId)}/maxresdefault.jpg`;
         entry = this._createUnverifiedYoutubeEntry(sourceUrl, youtubeVideoId, lowResUrl, highResUrl);
-        this._entries.set(sourceUrl, entry);
-        this._tryVerifyHighResThumbnailUrl(entry);
+        if (isBrowser()) {
+          this._entries.set(sourceUrl, entry);
+          this._tryVerifyHighResThumbnailUrl(entry);
+        }
       } else {
         entry = null;
       }
@@ -34,12 +36,16 @@ class YoutubeThumbnailUrlCache {
 
   subscribe(callback) {
     this._throwIfDisposed();
-    this._subscribers.add(callback);
+    if (isBrowser()) {
+      this._subscribers.add(callback);
+    }
   }
 
   unsubscribe(callback) {
     this._throwIfDisposed();
-    this._subscribers.delete(callback);
+    if (isBrowser()) {
+      this._subscribers.delete(callback);
+    }
   }
 
   _createUnverifiedYoutubeEntry(sourceUrl, videoId, lowResThumbnailUrl, highResThumbnailUrl) {
@@ -48,7 +54,7 @@ class YoutubeThumbnailUrlCache {
       videoId,
       lowResThumbnailUrl,
       highResThumbnailUrl,
-      isHighResThumbnailUrlVerfied: false
+      isHighResThumbnailUrlVerified: false
     };
   }
 
@@ -60,7 +66,7 @@ class YoutubeThumbnailUrlCache {
     try {
       const success = await verifyMediaThumbnailUrl(entry.highResThumbnailUrl, MIN_WIDTH_HIGH_RESOLUTION_THUMBNAIL);
       if (success) {
-        this._handleVerificationSuccess(entry, success);
+        this._handleVerificationSuccess(entry);
       }
     } catch (error) {
       logger.error(error);
@@ -69,7 +75,7 @@ class YoutubeThumbnailUrlCache {
 
   _handleVerificationSuccess(entry) {
     if (!this._isDisposed) {
-      const newEntry = { ...entry, isHighResThumbnailUrlVerfied: true };
+      const newEntry = { ...entry, isHighResThumbnailUrlVerified: true };
       this._entries.set(newEntry.sourceUrl, newEntry);
       this._notifySubscribers();
     }
