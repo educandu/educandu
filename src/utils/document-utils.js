@@ -82,7 +82,36 @@ export function getFavoriteActionTooltip({ t, user, doc }) {
 }
 
 export function canEditDocument({ user, doc, room }) {
-  return getEditDocumentRestrictionReason({ user, doc, room }) === DOCUMENT_EDIT_RESTRICTION_REASON.none;
+  const restrictionReason = getEditDocumentRestrictionReason({ user, doc, room });
+  return restrictionReason === DOCUMENT_EDIT_RESTRICTION_REASON.none;
+}
+
+export function canRestoreDocumentRevisions({ user, doc, room }) {
+  if (!doc || (doc.roomId && !room)) {
+    throw new Error('Inconsistent arguments');
+  }
+
+  if (!user) {
+    return false;
+  }
+
+  if (room) {
+    if (doc.roomContext.draft && !isRoomOwner({ room, userId: user?._id })) {
+      return false;
+    }
+
+    return isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id });
+  }
+
+  if (
+    doc.publicContext
+    && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
+    && !userIsAllowedEditor({ user, doc })
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 export function findCurrentlyWorkedOnSectionKey() {

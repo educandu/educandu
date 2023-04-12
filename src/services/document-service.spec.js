@@ -1,3 +1,4 @@
+import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import { assert, createSandbox } from 'sinon';
@@ -20,6 +21,8 @@ import {
   createTestUser,
   createTestDocumentComment
 } from '../test-helper.js';
+
+const { NotFound, Forbidden } = httpErrors;
 
 const createDefaultSection = () => ({
   key: uniqueId.create(),
@@ -491,6 +494,196 @@ describe('document-service', () => {
 
   describe('restoreDocumentRevision', () => {
 
+    describe('when the document does not exists', () => {
+      it('should throw NotFound', async () => {
+        await expect(() => sut.restoreDocumentRevision({
+          documentId: null,
+          revisionId: null,
+          user: adminUser
+        })).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe(`when the document is public and the user has ${ROLE.user} role`, () => {
+      let document;
+
+      beforeEach(async () => {
+        document = await createTestDocument(container, user, {
+          title: 'Title',
+          slug: 'my-doc',
+          language: 'en',
+          sections: [],
+          roomId: null,
+          roomContext: null,
+          publicContext: null
+        });
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.restoreDocumentRevision({
+          documentId: document._id,
+          revisionId: document.revision,
+          user
+        })).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document is private and the user is just a room member', () => {
+      let room;
+      let document;
+
+      beforeEach(async () => {
+        room = await createTestRoom(
+          container,
+          {
+            ownedBy: adminUser._id,
+            members: [{ userId: user._id, joinedOn: new Date() }]
+          }
+        );
+        document = await createTestDocument(container, adminUser, {
+          title: 'Title',
+          slug: 'my-doc',
+          language: 'en',
+          sections: [],
+          roomId: room._id,
+          roomContext: null,
+          publicContext: null
+        });
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.restoreDocumentRevision({
+          documentId: document._id,
+          revisionId: document.revision,
+          user
+        })).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document is private and the user is the room owner', () => {
+      let result;
+      let initialDocumentRevisions;
+
+      beforeEach(async () => {
+        const room = await createTestRoom(container, { ownedBy: user._id });
+
+        const section1 = {
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
+          type: 'markdown',
+          content: {
+            text: 'Unmodified text',
+            width: 100
+          }
+        };
+
+        const section2 = {
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
+          type: 'markdown',
+          content: {
+            text: 'Initial text',
+            width: 100
+          }
+        };
+
+        initialDocumentRevisions = await createTestRevisions(container, user, [
+          {
+            title: 'Revision 1',
+            slug: 'rev-1',
+            roomId: room._id,
+            sections: [cloneDeep(section1)]
+          },
+          {
+            title: 'Revision 2',
+            slug: 'rev-2',
+            roomId: room._id,
+            sections: [cloneDeep(section1), cloneDeep(section2)]
+          },
+          {
+            title: 'Revision 3',
+            slug: 'rev-3',
+            roomId: room._id,
+            sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text', width: 100 } }]
+          }
+        ]);
+
+        sandbox.stub(eventStore, 'recordDocumentRevisionCreatedEvent').resolves();
+
+        result = await sut.restoreDocumentRevision({
+          documentId: initialDocumentRevisions[1].documentId,
+          revisionId: initialDocumentRevisions[1]._id,
+          user
+        });
+      });
+
+      it('should create another revision', () => {
+        expect(result).toHaveLength(4);
+      });
+    });
+
+    describe('when the document is private and the user is the room owner', () => {
+      let result;
+      let initialDocumentRevisions;
+
+      beforeEach(async () => {
+        const room = await createTestRoom(container, { ownedBy: user._id });
+
+        const section1 = {
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
+          type: 'markdown',
+          content: {
+            text: 'Unmodified text',
+            width: 100
+          }
+        };
+
+        const section2 = {
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
+          type: 'markdown',
+          content: {
+            text: 'Initial text',
+            width: 100
+          }
+        };
+
+        initialDocumentRevisions = await createTestRevisions(container, user, [
+          {
+            title: 'Revision 1',
+            slug: 'rev-1',
+            roomId: room._id,
+            sections: [cloneDeep(section1)]
+          },
+          {
+            title: 'Revision 2',
+            slug: 'rev-2',
+            roomId: room._id,
+            sections: [cloneDeep(section1), cloneDeep(section2)]
+          },
+          {
+            title: 'Revision 3',
+            slug: 'rev-3',
+            roomId: room._id,
+            sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text', width: 100 } }]
+          }
+        ]);
+
+        sandbox.stub(eventStore, 'recordDocumentRevisionCreatedEvent').resolves();
+
+        result = await sut.restoreDocumentRevision({
+          documentId: initialDocumentRevisions[1].documentId,
+          revisionId: initialDocumentRevisions[1]._id,
+          user
+        });
+      });
+
+      it('should create another revision', () => {
+        expect(result).toHaveLength(4);
+      });
+    });
+
     describe('when a document has 3 initial revisions', () => {
       let initialDocumentRevisions;
 
@@ -519,19 +712,19 @@ describe('document-service', () => {
           {
             title: 'Revision 1',
             slug: 'rev-1',
-            roomId: 'room-1',
+            roomId: null,
             sections: [cloneDeep(section1)]
           },
           {
             title: 'Revision 2',
             slug: 'rev-2',
-            roomId: 'room-1',
+            roomId: null,
             sections: [cloneDeep(section1), cloneDeep(section2)]
           },
           {
             title: 'Revision 3',
             slug: 'rev-3',
-            roomId: 'room-1',
+            roomId: null,
             sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text', width: 100 } }]
           }
         ]);
