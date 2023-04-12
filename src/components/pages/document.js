@@ -167,7 +167,9 @@ function Document({ initialState, PageTemplate }) {
   const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
+  const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
+  const [initialDocumentRevisionsFetched, setInitialDocumentRevisionsFetched] = useState(false);
   const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
@@ -266,6 +268,18 @@ function Document({ initialState, PageTemplate }) {
     }
   }, [setFetchingInitialComments, doc, documentCommentApiClient, t]);
 
+  const fetchDocumentRevisions = useCallback(async () => {
+    try {
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
+      const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
+
+      setHistoryDocumentRevisions(documentRevisions);
+      setHistorySelectedDocumentRevision(latestDocumentRevision);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  }, [doc._id, t, documentApiClient]);
+
   useEffect(() => {
     setAlerts(createPageAlerts({
       t,
@@ -277,32 +291,34 @@ function Document({ initialState, PageTemplate }) {
   }, [doc, historySelectedDocumentRevision, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
-    if (preSetView === VIEW.history) {
+    if (preSetView === VIEW.history && !initialDocumentRevisionsFetched) {
       (async () => {
-        try {
-          const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
-          const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
-
-          setHistoryDocumentRevisions(documentRevisions);
-          setHistorySelectedDocumentRevision(latestDocumentRevision);
-          setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
-        } catch (error) {
-          handleApiError({ error, t, logger });
-        }
+        await fetchDocumentRevisions();
+        setInitialDocumentRevisionsFetched(true);
       })();
     }
 
-    if (preSetView === VIEW.comments) {
+    if (preSetView === VIEW.comments && !initialDocumentCommentsFetched) {
       (async () => {
         await fetchDocumentComments();
+        setInitialDocumentCommentsFetched(true);
       })();
     }
-  }, [preSetView, doc._id, view, t, documentApiClient, fetchDocumentComments]);
+  }, [preSetView, doc._id, view, fetchDocumentRevisions, fetchDocumentComments, initialDocumentRevisionsFetched, initialDocumentCommentsFetched]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
     history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: viewQueryValue }));
   }, [user, doc._id, doc.slug, view]);
+
+  useEffect(() => {
+    if (!historySelectedDocumentRevision) {
+      setFocusHeaderHistoryInfo(null);
+    } else {
+      const versionInfo = getDocumentRevisionVersionInfo(historyDocumentRevisions, historySelectedDocumentRevision._id);
+      setFocusHeaderHistoryInfo(versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version }));
+    }
+  }, [historyDocumentRevisions, historySelectedDocumentRevision, t]);
 
   const handleEditMetadataOpen = () => {
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: false, isOpen: true }));
@@ -415,7 +431,6 @@ function Document({ initialState, PageTemplate }) {
 
       setHistoryDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
-      setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
       setIsHistoryPanelMinimized(false);
       switchView(VIEW.history);
     } catch (error) {
@@ -426,7 +441,6 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryClose = () => {
     setHistoryDocumentRevisions([]);
     setHistorySelectedDocumentRevision(null);
-    setFocusHeaderHistoryInfo(null);
     switchView(VIEW.display);
     return true;
   };
@@ -545,10 +559,7 @@ function Document({ initialState, PageTemplate }) {
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
     const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
-    const versionInfo = getDocumentRevisionVersionInfo(historyDocumentRevisions, documentRevisionToView._id);
-
     setHistorySelectedDocumentRevision(documentRevisionToView);
-    setFocusHeaderHistoryInfo(versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version }));
   };
 
   const handleRestoreDocumentRevisionClick = ({ documentRevisionId, documentId }) => {
@@ -567,7 +578,6 @@ function Document({ initialState, PageTemplate }) {
           setCurrentSections(updatedDoc.sections);
           setHistoryDocumentRevisions(documentRevisions);
           setHistorySelectedDocumentRevision(latestDocumentRevision);
-          setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
         } catch (error) {
           handleApiError({ error, logger, t });
           throw error;
@@ -594,8 +604,7 @@ function Document({ initialState, PageTemplate }) {
     const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 
     setHistoryDocumentRevisions(documentRevisions);
-    setHistorySelectedDocumentRevision(latestDocumentRevision);
-    setFocusHeaderHistoryInfo(t('latestHistoryVersion'));
+    setHistorySelectedDocumentRevision(oldValue => documentRevisions.find(r => r._id === oldValue._id) || latestDocumentRevision);
   }, [doc, documentApiClient, t]);
 
   const handleSectionHardDelete = useCallback(index => {
