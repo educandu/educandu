@@ -160,7 +160,6 @@ function Document({ initialState, PageTemplate }) {
   const [documentComments, setDocumentComments] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
-  const [focusHeaderHistoryInfo, setFocusHeaderHistoryInfo] = useState(null);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
   const [isHistoryPanelMinimized, setIsHistoryPanelMinimized] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
@@ -183,6 +182,15 @@ function Document({ initialState, PageTemplate }) {
   }));
 
   const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
+
+  const focusHeaderHistoryInfo = useMemo(() => {
+    if (!historySelectedDocumentRevision) {
+      return null;
+    }
+
+    const versionInfo = getDocumentRevisionVersionInfo(historyDocumentRevisions, historySelectedDocumentRevision._id);
+    return versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version });
+  }, [historyDocumentRevisions, historySelectedDocumentRevision, t]);
 
   useBeforeunload(event => {
     if (isDirty) {
@@ -310,15 +318,6 @@ function Document({ initialState, PageTemplate }) {
     const viewQueryValue = view === VIEW.display ? null : view;
     history.replaceState(null, '', routes.getDocUrl({ id: doc._id, slug: doc.slug, view: viewQueryValue }));
   }, [user, doc._id, doc.slug, view]);
-
-  useEffect(() => {
-    if (!historySelectedDocumentRevision) {
-      setFocusHeaderHistoryInfo(null);
-    } else {
-      const versionInfo = getDocumentRevisionVersionInfo(historyDocumentRevisions, historySelectedDocumentRevision._id);
-      setFocusHeaderHistoryInfo(versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version }));
-    }
-  }, [historyDocumentRevisions, historySelectedDocumentRevision, t]);
 
   const handleEditMetadataOpen = () => {
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: false, isOpen: true }));
