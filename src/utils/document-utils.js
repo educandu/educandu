@@ -106,7 +106,6 @@ export function canRestoreDocumentRevisions({ user, doc, room }) {
   if (
     doc.publicContext
     && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
-    && !userIsAllowedEditor({ user, doc })
   ) {
     return false;
   }

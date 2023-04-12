@@ -198,10 +198,10 @@ describe('document-utils', () => {
         expect(canRestoreDocumentRevisions({ user, doc, room: null })).toBe(true);
       });
 
-      it('should return true when the public document is protected but the user is an allowed editor', () => {
+      it('should return false when the public document is protected even if the user is an allowed editor', () => {
         doc.publicContext.protected = true;
         doc.publicContext.allowedEditors = [{ _id: user._id }];
-        expect(canRestoreDocumentRevisions({ user, doc, room: null })).toBe(true);
+        expect(canRestoreDocumentRevisions({ user, doc, room: null })).toBe(false);
       });
 
       it(`should return true when the public document is archived but the user is a ${ROLE.maintainer}`, () => {
@@ -216,10 +216,10 @@ describe('document-utils', () => {
         expect(canRestoreDocumentRevisions({ user, doc, room: null })).toBe(true);
       });
 
-      it('should return true when the public document is archived but the user is an allowed editor', () => {
+      it('should return false when the public document is archived even if the user is an allowed editor', () => {
         doc.publicContext.archived = true;
         doc.publicContext.allowedEditors = [{ _id: user._id }];
-        expect(canRestoreDocumentRevisions({ user, doc, room: null })).toBe(true);
+        expect(canRestoreDocumentRevisions({ user, doc, room: null })).toBe(false);
       });
     });
   });
