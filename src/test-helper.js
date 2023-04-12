@@ -240,6 +240,7 @@ export async function createTestRevisions(container, user, revisions) {
         type: s.type ?? 'markdown',
         content: s.content ?? {}
       })),
+      roomId: revision.roomId,
       publicContext: revision.roomId
         ? null
         : {

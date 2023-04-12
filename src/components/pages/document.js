@@ -55,6 +55,7 @@ import {
 } from '../confirmation-dialogs.js';
 import {
   canEditDocument,
+  canRestoreDocumentRevisions,
   findCurrentlyWorkedOnSectionKey,
   getDocumentRevisionVersionInfo,
   getEditDocRestrictionTooltip,
@@ -147,7 +148,7 @@ function Document({ initialState, PageTemplate }) {
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
   const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
-  const userCanRestoreDocumentRevisions = userCanEditDocument && hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+  const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
 
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });

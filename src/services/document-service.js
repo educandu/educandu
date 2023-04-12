@@ -20,6 +20,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { canRestoreDocumentRevisions } from '../utils/document-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { DOCUMENT_VERIFIED_RELEVANCE_POINTS } from '../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
@@ -445,8 +446,19 @@ class DocumentService {
   async restoreDocumentRevision({ documentId, revisionId, user }) {
     let lock;
 
-    if (!hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
-      throw new Forbidden('User is not allowed to restore document revisions');
+    const document = await this.documentStore.getDocumentById(documentId);
+    const documentRoom = document?.roomId ? await this.roomStore.getRoomById(document.roomId) : null;
+
+    if (!document) {
+      throw new NotFound(`Could not find document ${documentId}`);
+    }
+
+    if (document.roomId && !documentRoom) {
+      throw new NotFound(`Could not find room ${document.roomId} to which document ${documentId} belongs`);
+    }
+
+    if (!canRestoreDocumentRevisions({ user, doc: document, room: documentRoom })) {
+      throw new Forbidden('User is not allowed to restore document revisions for this document');
     }
 
     try {
