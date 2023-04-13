@@ -761,12 +761,6 @@
       "de": "Mit deinem Konto ist kein Speicherplan verbunden."
     }
   },
-  "deletedSection": {
-    "messageTitle": {
-      "en": "This content has been deleted",
-      "de": "Dieser Inhalt wurde gelöscht"
-    }
-  },
   "displayNameFormItem": {
     "enterDisplayName": {
       "en": "Please enter a display name",
@@ -2263,6 +2257,10 @@
     "notSupportedSectionEmptyStateSubtitle": {
       "en": "This type of content is either unknown or no longer supported.",
       "de": "Dieser Inhalt ist entweder unbekannt oder wird nicht mehr unterstützt."
+    },
+    "deletedSectionEmptyStateTitle": {
+      "en": "This content has been deleted",
+      "de": "Dieser Inhalt wurde gelöscht"
     }
   },
   "sectionsDisplay": {

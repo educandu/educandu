@@ -5,7 +5,6 @@ import { Button, Modal, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { isMacOs } from '../ui/browser-helper.js';
-import DeletedSection from './deleted-section.js';
 import LoadingSection from './loading-section.js';
 import { useStableCallback } from '../ui/hooks.js';
 import HelpIcon from './icons/general/help-icon.js';
@@ -21,11 +20,11 @@ import React, { Fragment, useEffect, useState } from 'react';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import { memoAndTransformProps } from '../ui/react-helper.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { getSectionElementDataAttributes } from '../utils/document-utils.js';
 import { sectionContextShape, sectionShape } from '../ui/default-prop-types.js';
+import { CheckOutlined, CloseCircleFilled, CloseOutlined } from '@ant-design/icons';
 
 const createComponents = registeredPlugin => ({
   editorComponent: registeredPlugin?.editorComponent || null,
@@ -192,7 +191,14 @@ function SectionDisplay({
 
   const renderDisplayComponent = () => {
     if (!section.content) {
-      return <DeletedSection section={section} />;
+      return (
+        <EmptyState
+          icon={<CloseCircleFilled />}
+          title={t('deletedSectionEmptyStateTitle')}
+          subtitle={section.deletedBecause}
+          status={EMPTY_STATE_STATUS.error}
+          />
+      );
     }
 
     if (!registeredPlugin) {
