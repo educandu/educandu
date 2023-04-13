@@ -194,10 +194,6 @@ When tunneling is enabled, the following environment variables are required to b
 
 
 
-## License
-
-Educandu is released under the MIT License. See the bundled LICENSE file for details.
-
 ---
 
 ## OER learning platform for music
