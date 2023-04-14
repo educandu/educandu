@@ -70,10 +70,10 @@ function EmptyState({ icon, title, subtitle, button, compact, status }) {
 EmptyState.propTypes = {
   icon: PropTypes.node,
   title: PropTypes.string,
-  subtitle: PropTypes.string,
+  subtitle: PropTypes.node,
   button: PropTypes.shape({
     icon: PropTypes.node,
-    text: PropTypes.string.isRequired,
+    text: PropTypes.node.isRequired,
     subtext: PropTypes.string,
     isDefaultType: PropTypes.bool,
     onClick: PropTypes.func.isRequired
