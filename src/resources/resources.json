@@ -551,12 +551,16 @@
   },
   "documentsTab": {
     "emptyStateTitle": {
-      "en": "You don't have any documents",
-      "de": "Du hast noch keine Dokumente"
+      "en": "You don't have any public documents",
+      "de": "Du hast noch keine öffentlichen Dokumente"
     },
-    "emptyStateSubtitle": {
-      "en": "Public documents that you have created or contributed to will show up here, so that you can access them easily. Private documents can only be reached through their respective rooms.",
-      "de": "Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen."
+    "emptyStateSubtitleMarkdown": {
+      "en": "Public documents that you have created or contributed to will show up here, so that you can access them easily. Private documents can only be reached through their respective rooms.\n\n**Note**: Public documents can not be deleted!\n",
+      "de": "Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen.\n\n**Hinweis**: Öffentliche Dokumente können nicht gelöscht werden!\n"
+    },
+    "createPublicDocumentMarkdown": {
+      "en": "Create **public** document\n",
+      "de": "**Öffentliches** Dokument erstellen\n"
     },
     "ownDocumentOnly": {
       "en": "Only documents created by me",
@@ -1497,8 +1501,8 @@
       "de": "Favoriten"
     },
     "documentsTabTitle": {
-      "en": "Documents",
-      "de": "Dokumente"
+      "en": "Public documents",
+      "de": "Öffentliche Dokumente"
     },
     "roomsTabTitle": {
       "en": "Rooms",

@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import Spinner from '../spinner.js';
+import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import EmptyState from '../empty-state.js';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Pagination } from 'antd';
 import FileIcon from '../icons/general/file-icon.js';
@@ -97,11 +97,10 @@ function DocumentsTab({ documents, loading }) {
       {!loading && !showNoDataEmptyState && (
         <Button
           type="primary"
-          icon={<PlusOutlined />}
           className="DocumentsTab-button"
           onClick={handleCreateDocumentClick}
           >
-          {t('common:createDocument')}
+          <Markdown>{t('createPublicDocumentMarkdown')}</Markdown>
         </Button>
       )}
 
@@ -112,10 +111,13 @@ function DocumentsTab({ documents, loading }) {
           <EmptyState
             icon={<FileIcon />}
             title={t('emptyStateTitle')}
-            subtitle={t('emptyStateSubtitle')}
+            subtitle={
+              <Markdown>{t('emptyStateSubtitleMarkdown')}</Markdown>
+            }
             button={{
-              text: t('common:createDocument'),
-              icon: <PlusOutlined />,
+              text: (
+                <Markdown>{t('createPublicDocumentMarkdown')}</Markdown>
+              ),
               onClick: handleCreateDocumentClick
             }}
             />
