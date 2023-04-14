@@ -193,7 +193,6 @@ When tunneling is enabled, the following environment variables are required to b
 * `TUNNEL_WEBSITE_SAML_AUTH_DECRYPTION` certificate pems for SAML en-/decryption in JSON format (`{ "pvk": <private_key>, "cert": <cert> }`)
 
 
-
 ---
 
 ## OER learning platform for music
