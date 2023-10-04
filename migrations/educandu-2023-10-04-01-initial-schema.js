@@ -1,4 +1,4 @@
-export default class Educandu_2023_04_03_01_initial_schema {
+export default class Educandu_2023_10_04_01_initial_schema {
   constructor(db) {
     this.db = db;
   }
@@ -166,8 +166,8 @@ export default class Educandu_2023_04_03_01_initial_schema {
     ]);
     await createCollectionWithIndexes('rooms', [
       {
-        name: '_idx_owner_',
-        key: { owner: 1 }
+        name: '_idx_ownedBy_',
+        key: { ownedBy: 1 }
       },
       {
         name: '_idx_created_by_',
