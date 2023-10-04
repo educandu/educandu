@@ -1,7 +1,6 @@
 import os from 'node:os';
 import multer from 'multer';
 import express from 'express';
-import Cdn from '../stores/cdn.js';
 import permissions from '../domain/permissions.js';
 import MediaLibraryService from '../services/media-library-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -20,10 +19,9 @@ const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 class MediaLibraryController {
-  static dependencies = [Cdn, MediaLibraryService, ClientDataMappingService];
+  static dependencies = [MediaLibraryService, ClientDataMappingService];
 
-  constructor(cdn, mediaLibraryService, clientDataMappingService) {
-    this.cdn = cdn;
+  constructor(mediaLibraryService, clientDataMappingService) {
     this.mediaLibraryService = mediaLibraryService;
     this.clientDataMappingService = clientDataMappingService;
   }
