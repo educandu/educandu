@@ -19,6 +19,7 @@ import storagePlansSpec from './collection-specs/storage-plans.js';
 import notificationsSpec from './collection-specs/notifications.js';
 import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
+import roomMediaItemsSpec from './collection-specs/room-media-items.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
 import documentCommentsSpec from './collection-specs/document-comments.js';
 import externalAccountsSpec from './collection-specs/external-accounts.js';
@@ -45,6 +46,7 @@ const collectionSpecs = [
   storagePlansSpec,
   notificationsSpec,
   documentOrdersSpec,
+  roomMediaItemsSpec,
   roomInvitationsSpec,
   documentCommentsSpec,
   externalAccountsSpec,
