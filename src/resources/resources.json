@@ -3277,6 +3277,32 @@
       "de": "Horizontale Ausrichtung"
     }
   },
+  "textInput": {
+    "name": {
+      "en": "Text input",
+      "de": "Texteingabe"
+    },
+    "mode": {
+      "en": "Mode",
+      "de": "Modus"
+    },
+    "mode_singleLine": {
+      "en": "Single line",
+      "de": "Einzeilig"
+    },
+    "mode_multiLine": {
+      "en": "Multiple lines",
+      "de": "Mehrzeilig"
+    },
+    "maxLength": {
+      "en": "Maximum length",
+      "de": "Maximale Länge"
+    },
+    "maxLengthInfo": {
+      "en": "Maximum number of characters the user can input (zero means unrestricted)",
+      "de": "Maximale Zeichenanzahl, die Benutzer eingeben können (null bedeuted unbeschränkt)"
+    }
+  },
   "video": {
     "name": {
       "en": "Video",
@@ -3559,6 +3585,10 @@
     "text": {
       "en": "Text",
       "de": "Text"
+    },
+    "label": {
+      "en": "Label",
+      "de": "Bezeichnung"
     },
     "update": {
       "en": "Update",
