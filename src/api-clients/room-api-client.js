@@ -142,10 +142,10 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  deleteRoomMedia({ roomId, name }) {
+  deleteRoomMedia({ roomId, roomMediaItemId }) {
     return this.httpClient
       .delete(
-        `/api/v1/room-media/${encodeURIComponent(roomId)}/${encodeURIComponent(name)}`,
+        `/api/v1/room-media/${encodeURIComponent(roomId)}/${encodeURIComponent(roomMediaItemId)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

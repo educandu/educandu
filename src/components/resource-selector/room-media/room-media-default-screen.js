@@ -6,7 +6,7 @@ import UsedStorage from '../../used-storage.js';
 import UploadButton from '../shared/upload-button.js';
 import RoomMediaFilesViewer from './room-media-files-viewer.js';
 import { useRoomMediaContext } from '../../room-media-context.js';
-import { cdnObjectShape } from '../../../ui/default-prop-types.js';
+import { roomMediaItemShape } from '../../../ui/default-prop-types.js';
 
 function RoomMediaDefaultScreen({
   files,
@@ -85,9 +85,9 @@ function RoomMediaDefaultScreen({
 }
 
 RoomMediaDefaultScreen.propTypes = {
-  files: PropTypes.arrayOf(cdnObjectShape).isRequired,
+  files: PropTypes.arrayOf(roomMediaItemShape).isRequired,
   filesViewerDisplay: PropTypes.string.isRequired,
-  highlightedFile: cdnObjectShape,
+  highlightedFile: roomMediaItemShape,
   isLoading: PropTypes.bool.isRequired,
   filterText: PropTypes.string,
   onCancelClick: PropTypes.func.isRequired,

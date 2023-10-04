@@ -70,28 +70,36 @@ export default class RoomController {
   async handleGetRoomMediaOverview(req, res) {
     const { user } = req;
     const roomMediaOverview = await this.roomService.getRoomMediaOverview({ user });
-    return res.send(roomMediaOverview);
+    const mappedRoomMediaOverview = await this.clientDataMappingService.mapRoomMediaOverview(roomMediaOverview, user);
+
+    return res.send(mappedRoomMediaOverview);
   }
 
   async handleGetAllRoomMedia(req, res) {
     const { user } = req;
     const { roomId } = req.params;
     const roomMedia = await this.roomService.getAllRoomMedia({ user, roomId });
-    return res.send(roomMedia);
+    const mappedRoomMedia = await this.clientDataMappingService.mapRoomMedia(roomMedia, user);
+
+    return res.send(mappedRoomMedia);
   }
 
   async handlePostRoomMedia(req, res) {
     const { user, file } = req;
     const { roomId } = req.params;
     const roomMedia = await this.roomService.createRoomMedia({ user, roomId, file });
-    return res.status(201).send(roomMedia);
+    const mappedRoomMedia = await this.clientDataMappingService.mapRoomMedia(roomMedia, user);
+
+    return res.status(201).send(mappedRoomMedia);
   }
 
   async handleDeleteRoomMedia(req, res) {
     const { user } = req;
-    const { roomId, name } = req.params;
-    const roomMedia = await this.roomService.deleteRoomMedia({ user, roomId, name });
-    return res.send(roomMedia);
+    const { roomId, roomMediaItemId } = req.params;
+    const roomMedia = await this.roomService.deleteRoomMedia({ user, roomId, roomMediaItemId });
+    const mappedRoomMedia = await this.clientDataMappingService.mapRoomMedia(roomMedia, user);
+
+    return res.send(mappedRoomMedia);
   }
 
   async handleGetRoomMembershipConfirmationPage(req, res) {
@@ -499,7 +507,7 @@ export default class RoomController {
     );
 
     router.delete(
-      '/api/v1/room-media/:roomId/:name',
+      '/api/v1/room-media/:roomId/:roomMediaItemId',
       needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
       validateParams(deleteRoomMediaParamsSchema),
       (req, res) => this.handleDeleteRoomMedia(req, res)

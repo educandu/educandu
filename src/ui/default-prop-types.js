@@ -253,32 +253,31 @@ export const documentRevisionShape = PropTypes.shape({
   publicContext: documentPublicContextShape
 });
 
-const commonFileProps = {
+const commonMediaFileProps = {
+  _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   portableUrl: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
-  updatedOn: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired
 };
 
-export const commonFileShape = PropTypes.shape({
-  ...commonFileProps
+export const commonMediaFileShape = PropTypes.shape({
+  ...commonMediaFileProps
 });
 
-export const cdnObjectShape = PropTypes.shape({
-  ...commonFileProps,
-  path: PropTypes.string.isRequired,
-  parentPath: PropTypes.string.isRequired
+export const roomMediaItemShape = PropTypes.shape({
+  ...commonMediaFileProps
 });
 
 const mediaLibraryItemProps = {
-  ...commonFileProps,
+  ...commonMediaFileProps,
   _id: PropTypes.string.isRequired,
   resourceType: PropTypes.oneOf(Object.values(RESOURCE_TYPE)).isRequired,
   contentType: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
   updatedBy: otherUserShape.isRequired,
+  updatedOn: PropTypes.string.isRequired,
   shortDescription: PropTypes.string.isRequired,
   languages: PropTypes.arrayOf(PropTypes.string).isRequired,
   licenses: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -308,7 +307,7 @@ export const wikimediaFileShape = PropTypes.shape({
 const roomStorageShape = PropTypes.shape({
   roomId: PropTypes.string.isRequired,
   roomName: PropTypes.string.isRequired,
-  objects: PropTypes.arrayOf(cdnObjectShape).isRequired
+  roomMediaItems: PropTypes.arrayOf(roomMediaItemShape).isRequired
 });
 
 export const roomMediaOverviewShape = PropTypes.shape({

@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import DeleteIcon from '../../icons/general/delete-icon.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
 import DimensionsProvider from '../../dimensions-provider.js';
-import { cdnObjectShape } from '../../../ui/default-prop-types.js';
 import { useDateFormat, useLocale } from '../../locale-context.js';
+import { commonMediaFileShape } from '../../../ui/default-prop-types.js';
 import { getResourceIcon, getResourceType } from '../../../utils/resource-utils.js';
 
 const HEADER_ROW_HEIGHT_IN_PX = 47;
@@ -175,7 +175,7 @@ function FilesListViewer({
 }
 
 FilesListViewer.propTypes = {
-  files: PropTypes.arrayOf(cdnObjectShape).isRequired,
+  files: PropTypes.arrayOf(commonMediaFileShape).isRequired,
   canDelete: PropTypes.bool,
   onDeleteFileClick: PropTypes.func,
   onFileClick: PropTypes.func,

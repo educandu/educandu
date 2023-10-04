@@ -27,6 +27,11 @@ class RoomMediaItemStore {
     const result = await this.collection.deleteOne({ _id: roomMediaItemId }, { session });
     return result.value;
   }
+
+  async deleteRoomMediaItemsByRoomId(roomId, { session } = {}) {
+    const result = await this.collection.deleteMany({ roomId }, { session });
+    return result.value;
+  }
 }
 
 export default RoomMediaItemStore;
