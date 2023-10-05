@@ -1,0 +1,22 @@
+selectField:
+  name:
+    en: Select field
+    de: Auswahlfeld
+  mode:
+    en: Mode
+    de: Modus
+  mode_singleSelection:
+    en: Single selection
+    de: Einfachauswahl
+  mode_multiSelection:
+    en: Multiple selection
+    de: Mehrfachauswahl
+  maxColumns:
+    en: Columns
+    de: Spalten
+  itemNumber:
+    en: Item {number}
+    de: Eintrag {number}
+  addItem:
+    en: Add item
+    de: Eintrag hinzufügen
