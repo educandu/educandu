@@ -33,7 +33,8 @@ const plugins = [
   'interactive-media',
   'multitrack-media',
   'media-analysis',
-  'custom-plugin/server-time'
+  'custom-plugin/server-time',
+  'text-field'
 ];
 
 const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)

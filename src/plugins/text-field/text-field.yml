@@ -1,0 +1,19 @@
+textField:
+  name:
+    en: Text field
+    de: Textfeld
+  mode:
+    en: Mode
+    de: Modus
+  mode_singleLine:
+    en: Single line
+    de: Einzeilig
+  mode_multiLine:
+    en: Multiple lines
+    de: Mehrzeilig
+  maxLength:
+    en: Maximum length
+    de: Maximale Länge
+  maxLengthInfo:
+    en: Maximum number of characters that can be typed into the text field (zero means unrestricted)
+    de: Maximale Zeichenanzahl, die in das Textfeld eingegeben werden kann (null bedeuted unbeschränkt)
