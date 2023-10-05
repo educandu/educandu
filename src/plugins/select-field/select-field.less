@@ -1,0 +1,31 @@
+.SelectFieldDisplay {}
+
+.SelectFieldDisplay-grid {
+  display: grid;
+  align-items: start;
+  grid-auto-flow: row;
+  gap: @edu-content-padding;
+  grid-template-columns: 1fr;
+
+  @media @edu-media-not-phone {
+    &.SelectFieldDisplay-grid--1 {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &.SelectFieldDisplay-grid--2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &.SelectFieldDisplay-grid--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &.SelectFieldDisplay-grid--4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    &.SelectFieldDisplay-grid--5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+}

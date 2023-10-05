@@ -14,6 +14,7 @@ import DiagramNetInfo from './diagram-net/diagram-net-info.js';
 import QuickTesterInfo from './quick-tester/quick-tester-info.js';
 import AbcNotationInfo from './abc-notation/abc-notation-info.js';
 import EarTrainingInfo from './ear-training/ear-training-info.js';
+import SelectFieldInfo from './select-field/select-field-info.js';
 import AudioWaveformInfo from './audio-waveform/audio-waveform-info.js';
 import MediaAnalysisInfo from './media-analysis/media-analysis-info.js';
 import MatchingCardsInfo from './matching-cards/matching-cards-info.js';
@@ -42,6 +43,7 @@ const builtInPluginInfos = [
   QuickTesterInfo,
   AbcNotationInfo,
   EarTrainingInfo,
+  SelectFieldInfo,
   AudioWaveformInfo,
   MediaAnalysisInfo,
   MatchingCardsInfo,

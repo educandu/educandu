@@ -218,6 +218,9 @@ common:
   text:
     en: Text
     de: Text
+  label:
+    en: Label
+    de: Bezeichnung
   update:
     en: Update
     de: Aktualisieren
