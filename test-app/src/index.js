@@ -34,6 +34,7 @@ const plugins = [
   'multitrack-media',
   'media-analysis',
   'custom-plugin/server-time',
+  'text-field',
   'select-field'
 ];
 

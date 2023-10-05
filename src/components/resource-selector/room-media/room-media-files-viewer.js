@@ -9,8 +9,8 @@ import FilterInput from '../../filter-input.js';
 import FilterIcon from '../../icons/general/filter-icon.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import FilesListViewer from '../shared/files-list-viewer.js';
-import { cdnObjectShape } from '../../../ui/default-prop-types.js';
 import { FILES_VIEWER_DISPLAY } from '../../../domain/constants.js';
+import { roomMediaItemShape } from '../../../ui/default-prop-types.js';
 import { CloudUploadOutlined, TableOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 const RadioGroup = Radio.Group;
@@ -141,13 +141,13 @@ function RoomMediaFilesViewer({
 }
 
 RoomMediaFilesViewer.propTypes = {
-  files: PropTypes.arrayOf(cdnObjectShape).isRequired,
+  files: PropTypes.arrayOf(roomMediaItemShape).isRequired,
   apiRef: PropTypes.shape({ current: PropTypes.object }),
   isLoading: PropTypes.bool.isRequired,
   canDelete: PropTypes.bool.isRequired,
   filterText: PropTypes.string,
   customFilter: PropTypes.node,
-  highlightedFile: cdnObjectShape,
+  highlightedFile: roomMediaItemShape,
   filesViewerDisplay: PropTypes.string.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onFilesDropped: PropTypes.func.isRequired,

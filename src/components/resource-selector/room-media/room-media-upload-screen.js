@@ -100,11 +100,11 @@ function RoomMediaUploadScreen({
       let updatedItem;
       try {
         ensureCanUpload(file);
-        const { storagePlan, usedBytes, roomStorage, createdObjectPath } = await roomApiClient.postRoomMedia({ roomId, file });
+        const { storagePlan, usedBytes, roomStorage, createdRoomMediaItemId } = await roomApiClient.postRoomMedia({ roomId, file });
         updatedItem = {
           ...currentItem,
           status: ITEM_STATUS.succeeded,
-          uploadedFile: roomStorage.objects.find(obj => obj.path === createdObjectPath) || null
+          uploadedFile: roomStorage.roomMediaItems.find(item => item._id === createdRoomMediaItemId) || null
         };
         setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
       } catch (error) {

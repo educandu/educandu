@@ -54,7 +54,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     try {
       setIsLoading(true);
       const { storagePlan, usedBytes, roomStorage } = await roomApiClient.getAllRoomMedia({ roomId });
-      setFiles(roomStorage.objects);
+      setFiles(roomStorage.roomMediaItems);
       setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan?.maxBytes || 0, usedBytes }));
     } catch (err) {
       message.error(err.message);
@@ -82,8 +82,8 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
 
   const handleDeleteFileClick = file => {
     confirmMediaFileHardDelete(t, file.name, async () => {
-      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.deleteRoomMedia({ roomId, name: file.name });
-      setFiles(roomStorage.objects);
+      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.deleteRoomMedia({ roomId, roomMediaItemId: file._id });
+      setFiles(roomStorage.roomMediaItems);
       setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
     });
   };

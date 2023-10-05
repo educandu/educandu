@@ -9,7 +9,7 @@ import EditIcon from '../../icons/general/edit-icon.js';
 import DeleteIcon from '../../icons/general/delete-icon.js';
 import { RESOURCE_TYPE } from '../../../domain/constants.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
-import { commonFileShape } from '../../../ui/default-prop-types.js';
+import { commonMediaFileShape } from '../../../ui/default-prop-types.js';
 import { getResourceIcon, getResourceType } from '../../../utils/resource-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../../action-button.js';
 
@@ -115,7 +115,7 @@ function FilesGridViewer({
 }
 
 FilesGridViewer.propTypes = {
-  files: PropTypes.arrayOf(commonFileShape).isRequired,
+  files: PropTypes.arrayOf(commonMediaFileShape).isRequired,
   searchTerm: PropTypes.string,
   selectedFileUrl: PropTypes.string,
   canEdit: PropTypes.bool,

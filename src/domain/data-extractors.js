@@ -37,3 +37,12 @@ export const extractUserIdsFromMediaLibraryItems = mediaLibraryItems => {
   return [...idsSet];
 };
 
+const fillUserIdSetForRoomMediaItems = (roomMediaItem, set) => {
+  set.add(roomMediaItem.createdBy);
+  return set;
+};
+
+export const extractUserIdsFromRoomMediaItems = roomMediaItems => {
+  const idsSet = roomMediaItems.reduce((set, item) => fillUserIdSetForRoomMediaItems(item, set), new Set());
+  return [...idsSet];
+};

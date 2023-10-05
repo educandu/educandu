@@ -9,6 +9,8 @@ import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import { assert, createSandbox, match } from 'sinon';
 import DocumentStore from '../stores/document-store.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
+import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
@@ -23,12 +25,14 @@ import {
   createTestDocument
 } from '../test-helper.js';
 
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, NotFound, Forbidden } = httpErrors;
 
 describe('room-service', () => {
   let documentRevisionStore;
   let documentCommentStore;
   let roomInvitationStore;
+  let roomMediaItemStore;
+  let storagePlanStore;
   let documentStore;
   let roomStore;
   let userStore;
@@ -51,6 +55,8 @@ describe('room-service', () => {
     roomStore = container.get(RoomStore);
     userStore = container.get(UserStore);
     documentStore = container.get(DocumentStore);
+    storagePlanStore = container.get(StoragePlanStore);
+    roomMediaItemStore = container.get(RoomMediaItemStore);
     roomInvitationStore = container.get(RoomInvitationStore);
     documentCommentStore = container.get(DocumentCommentStore);
     documentRevisionStore = container.get(DocumentRevisionStore);
@@ -119,13 +125,19 @@ describe('room-service', () => {
     let room;
     let userLock;
     let roomDocuments;
-    let roomMediaOverviewAfterDeletion;
+    let remainingRooms;
+    let remainingRoomsMediaItems;
 
     beforeEach(async () => {
       room = { _id: uniqueId.create() };
       userLock = { id: uniqueId.create() };
       roomDocuments = [{ _id: uniqueId.create() }, { _id: uniqueId.create() }];
-      roomMediaOverviewAfterDeletion = { usedBytes: 100 };
+
+      remainingRooms = [{ _id: uniqueId.create() }, { _id: uniqueId.create() }];
+      remainingRoomsMediaItems = [
+        [{ size: 10 }, { size: 10 }],
+        [{ size: 30 }]
+      ];
 
       lockStore.takeUserLock.resolves(userLock);
       lockStore.releaseLock.resolves();
@@ -136,9 +148,14 @@ describe('room-service', () => {
       sandbox.stub(documentStore, 'deleteDocumentsByRoomId').resolves();
       sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId').resolves();
       sandbox.stub(roomStore, 'deleteRoomById').resolves();
+      sandbox.stub(roomMediaItemStore, 'deleteRoomMediaItemsByRoomId').resolves();
       sandbox.stub(cdn, 'deleteDirectory').resolves();
-      sandbox.stub(sut, 'getRoomMediaOverview').resolves(roomMediaOverviewAfterDeletion);
       sandbox.stub(userStore, 'updateUserUsedBytes').resolves(cloneDeep(myUser));
+
+      sandbox.stub(roomStore, 'getRoomsByOwnerUserId').resolves(remainingRooms);
+      sandbox.stub(roomMediaItemStore, 'getAllRoomMediaItemsByRoomId');
+      roomMediaItemStore.getAllRoomMediaItemsByRoomId.withArgs(remainingRooms[0]._id).resolves(remainingRoomsMediaItems[0]);
+      roomMediaItemStore.getAllRoomMediaItemsByRoomId.withArgs(remainingRooms[1]._id).resolves(remainingRoomsMediaItems[1]);
 
       await sut.deleteRoom({ room, roomOwner: myUser });
     });
@@ -171,12 +188,20 @@ describe('room-service', () => {
       assert.calledWith(roomStore.deleteRoomById, room._id, { session: match.object });
     });
 
+    it('should call roomMediaItemStore.deleteRoomMediaItemsByRoomId', () => {
+      assert.calledWith(roomMediaItemStore.deleteRoomMediaItemsByRoomId, room._id, { session: match.object });
+    });
+
     it('should call cdn.deleteDirectory for the room being deleted', () => {
       assert.calledWith(cdn.deleteDirectory, { directoryPath: `room-media/${room._id}` });
     });
 
     it('should call userStore.updateUserUsedBytes', () => {
-      assert.calledWith(userStore.updateUserUsedBytes, { userId: myUser._id, usedBytes: roomMediaOverviewAfterDeletion.usedBytes });
+      const usedBytes
+        = remainingRoomsMediaItems[0][0].size
+        + remainingRoomsMediaItems[0][1].size
+        + remainingRoomsMediaItems[1][0].size;
+      assert.calledWith(userStore.updateUserUsedBytes, { userId: myUser._id, usedBytes });
     });
 
     it('should release the lock', () => {
@@ -575,4 +600,313 @@ describe('room-service', () => {
     });
   });
 
+  describe('getRoomMediaOverview', () => {
+    let rooms;
+    let result;
+    let storagePlan;
+    let room1MediaItems;
+    let room2MediaItems;
+
+    beforeEach(async () => {
+      rooms = [
+        { _id: uniqueId.create(), name: 'Room 1', ownedBy: myUser._id },
+        { _id: uniqueId.create(), name: 'Room 2', ownedBy: myUser._id }
+      ];
+
+      const storagePlanId = uniqueId.create();
+      storagePlan = {
+        _id: storagePlanId,
+        maxBytes: 500
+      };
+      myUser.storage = {
+        planId: storagePlanId,
+        usedBytes: 90
+      };
+
+      room1MediaItems = [
+        {
+          _id: uniqueId.create(),
+          size: 10,
+          url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+        },
+        {
+          _id: uniqueId.create(),
+          size: 20,
+          url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png'
+        }
+      ];
+      room2MediaItems = [
+        {
+          _id: uniqueId.create(),
+          size: 30,
+          url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+        }
+      ];
+
+      sandbox.stub(roomStore, 'getRoomsByOwnerUserId').resolves(rooms);
+      sandbox.stub(storagePlanStore, 'getStoragePlanById').resolves(storagePlan);
+
+      sandbox.stub(roomMediaItemStore, 'getAllRoomMediaItemsByRoomId');
+      roomMediaItemStore.getAllRoomMediaItemsByRoomId.withArgs(rooms[0]._id).resolves(room1MediaItems);
+      roomMediaItemStore.getAllRoomMediaItemsByRoomId.withArgs(rooms[1]._id).resolves(room2MediaItems);
+
+      result = await sut.getRoomMediaOverview({ user: myUser });
+    });
+
+    it('should return the room media overview', () => {
+      const usedBytes = room1MediaItems[0].size + room1MediaItems[1].size + room2MediaItems[0].size;
+      expect(result).toEqual({
+        storagePlan,
+        usedBytes,
+        roomStorageList: [
+          {
+            roomId: rooms[0]._id,
+            roomMediaItems: room1MediaItems,
+            roomName: rooms[0].name
+          },
+          {
+            roomId: rooms[1]._id,
+            roomMediaItems: room2MediaItems,
+            roomName: rooms[1].name
+          }
+        ]
+      });
+    });
+  });
+
+  describe('createRoomMedia', () => {
+    let room;
+    let file;
+    let result;
+    let userLock;
+    let storagePlan;
+    let roomMediaItems;
+
+    describe('when the user is not the room owner', () => {
+      beforeEach(() => {
+        room = { _id: uniqueId.create(), ownedBy: uniqueId.create() };
+        sandbox.stub(roomStore, 'getRoomById').resolves(room);
+      });
+
+      it('should throw forbidden', async () => {
+        await expect(() => sut.createRoomMedia({ user: myUser, roomId: room._id, file: {} })).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the room owner does not have a storage plan', () => {
+      beforeEach(() => {
+        room = { _id: uniqueId.create(), ownedBy: myUser._id };
+        userLock = { id: uniqueId.create() };
+        myUser.storage.planId = null;
+
+        lockStore.takeUserLock.resolves(userLock);
+        lockStore.releaseLock.resolves();
+
+        sandbox.stub(roomStore, 'getRoomById').resolves(room);
+      });
+
+      it('should throw bad request', async () => {
+        await expect(() => sut.createRoomMedia({ user: myUser, roomId: room._id, file: {} })).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when the room owner does not have enough storage left', () => {
+      beforeEach(() => {
+        file = { size: 15 };
+        room = { _id: uniqueId.create(), ownedBy: myUser._id };
+        userLock = { id: uniqueId.create() };
+
+        const storagePlanId = uniqueId.create();
+        storagePlan = {
+          _id: storagePlanId,
+          maxBytes: 100
+        };
+        myUser.storage = {
+          planId: storagePlanId,
+          usedBytes: 90
+        };
+
+        lockStore.takeUserLock.resolves(userLock);
+        lockStore.releaseLock.resolves();
+
+        sandbox.stub(roomStore, 'getRoomById').resolves(room);
+        sandbox.stub(storagePlanStore, 'getStoragePlanById').resolves(storagePlan);
+      });
+
+      it('should throw bad request', async () => {
+        await expect(() => sut.createRoomMedia({ user: myUser, roomId: room._id, file })).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when the room owner has enough storage space', () => {
+      beforeEach(async () => {
+        file = {
+          size: 15,
+          path: 'file/path'
+        };
+        room = { _id: uniqueId.create(), ownedBy: myUser._id };
+        userLock = { id: uniqueId.create() };
+
+        const storagePlanId = uniqueId.create();
+        storagePlan = {
+          _id: storagePlanId,
+          maxBytes: 500
+        };
+        myUser.storage = {
+          planId: storagePlanId,
+          usedBytes: 90
+        };
+
+        lockStore.takeUserLock.resolves(userLock);
+        lockStore.releaseLock.resolves();
+
+        sandbox.stub(roomStore, 'getRoomById').resolves(room);
+        sandbox.stub(storagePlanStore, 'getStoragePlanById').resolves(storagePlan);
+
+        roomMediaItems = [
+          {
+            _id: uniqueId.create(),
+            size: 10,
+            url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+          },
+          {
+            _id: uniqueId.create(),
+            size: 20,
+            url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png'
+          }
+        ];
+
+        sandbox.stub(cdn, 'uploadObject').resolves();
+        sandbox.stub(roomMediaItemStore, 'insertRoomMediaItem').resolves();
+
+        sandbox.stub(roomStore, 'getRoomsByOwnerUserId').resolves([room]);
+        sandbox.stub(roomMediaItemStore, 'getAllRoomMediaItemsByRoomId').resolves(roomMediaItems);
+        sandbox.stub(userStore, 'updateUserUsedBytes').resolves(cloneDeep(myUser));
+
+        result = await sut.createRoomMedia({ user: myUser, roomId: room._id, file });
+      });
+
+      it('should take the lock on the user record', () => {
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
+      it('should call roomStore.getRoomById', () => {
+        assert.calledWith(roomStore.getRoomById, room._id);
+      });
+
+      it('should call cdn.uploadObject', () => {
+        assert.called(cdn.uploadObject);
+      });
+
+      it('should call userStore.updateUserUsedBytes', () => {
+        const usedBytes = roomMediaItems[0].size + roomMediaItems[1].size;
+        assert.calledWith(userStore.updateUserUsedBytes, { userId: myUser._id, usedBytes });
+      });
+
+      it('should return the room media overview', () => {
+        const usedBytes = roomMediaItems[0].size + roomMediaItems[1].size;
+        expect(result).toEqual({
+          createdRoomMediaItemId: expect.any(String),
+          storagePlan,
+          usedBytes,
+          roomStorage: {
+            roomId: room._id,
+            roomMediaItems
+          }
+        });
+      });
+
+      it('should release the lock', () => {
+        assert.called(lockStore.releaseLock);
+      });
+    });
+  });
+
+  describe('deleteRoomMedia', () => {
+    let room;
+    let userLock;
+    let roomMediaItems;
+
+    describe('when the user is not the room owner', () => {
+      beforeEach(() => {
+        room = { _id: uniqueId.create(), ownedBy: uniqueId.create() };
+        userLock = { id: uniqueId.create() };
+        roomMediaItems = [
+          {
+            _id: uniqueId.create(),
+            size: 10,
+            url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+          }
+        ];
+
+        lockStore.takeUserLock.resolves(userLock);
+        lockStore.releaseLock.resolves();
+
+        sandbox.stub(roomStore, 'getRoomById').resolves(room);
+      });
+
+      it('should throw forbidden', async () => {
+        await expect(() => sut.deleteRoomMedia({ user: myUser, roomId: room._id, roomMediaItemId: roomMediaItems[0]._id })).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the user is the room owner', () => {
+      beforeEach(async () => {
+        room = { _id: uniqueId.create(), ownedBy: myUser._id };
+        userLock = { id: uniqueId.create() };
+        roomMediaItems = [
+          {
+            _id: uniqueId.create(),
+            size: 10,
+            url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+          },
+          {
+            _id: uniqueId.create(),
+            size: 20,
+            url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png'
+          }
+        ];
+
+        lockStore.takeUserLock.resolves(userLock);
+        lockStore.releaseLock.resolves();
+
+        sandbox.stub(roomStore, 'getRoomById').resolves(room);
+        sandbox.stub(roomMediaItemStore, 'getRoomMediaItemById').resolves(roomMediaItems[0]);
+        sandbox.stub(cdn, 'deleteObject').resolves();
+        sandbox.stub(roomMediaItemStore, 'deleteRoomMediaItem').resolves();
+        sandbox.stub(userStore, 'updateUserUsedBytes').resolves(cloneDeep(myUser));
+
+        sandbox.stub(roomStore, 'getRoomsByOwnerUserId').resolves([room]);
+        sandbox.stub(roomMediaItemStore, 'getAllRoomMediaItemsByRoomId');
+        roomMediaItemStore.getAllRoomMediaItemsByRoomId.withArgs(room._id).resolves([roomMediaItems[1]]);
+
+        await sut.deleteRoomMedia({ user: myUser, roomId: room._id, roomMediaItemId: roomMediaItems[0]._id });
+      });
+
+      it('should take the lock on the user record', () => {
+        assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
+      it('should call roomStore.getRoomById', () => {
+        assert.calledWith(roomStore.getRoomById, room._id);
+      });
+
+      it('should call roomMediaItemStore.getRoomMediaItemById', () => {
+        assert.calledWith(roomMediaItemStore.getRoomMediaItemById, roomMediaItems[0]._id);
+      });
+
+      it('should call cdn.deleteObject for the file being deleted', () => {
+        assert.calledWith(cdn.deleteObject, 'room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png');
+      });
+
+      it('should call userStore.updateUserUsedBytes', () => {
+        const usedBytes = roomMediaItems[1].size;
+        assert.calledWith(userStore.updateUserUsedBytes, { userId: myUser._id, usedBytes });
+      });
+
+      it('should release the lock', () => {
+        assert.called(lockStore.releaseLock);
+      });
+    });
+  });
 });

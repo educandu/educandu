@@ -9,6 +9,7 @@ import RegisteredPlugin from './registered-plugin.js';
 import MarkdownInfo from './markdown/markdown-info.js';
 import SeparatorInfo from './separator/separator-info.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
+import TextFieldInfo from './text-field/text-field-info.js';
 import AnnotationInfo from './annotation/annotation-info.js';
 import DiagramNetInfo from './diagram-net/diagram-net-info.js';
 import QuickTesterInfo from './quick-tester/quick-tester-info.js';
@@ -37,6 +38,7 @@ const builtInPluginInfos = [
   CatalogInfo,
   MarkdownInfo,
   PdfViewerInfo,
+  TextFieldInfo,
   SeparatorInfo,
   AnnotationInfo,
   DiagramNetInfo,

@@ -13,7 +13,7 @@ export const postRoomMediaParamsSchema = joi.object({
 
 export const deleteRoomMediaParamsSchema = joi.object({
   roomId: idOrKeySchema.required(),
-  name: joi.string().required()
+  roomMediaItemId: idOrKeySchema.required()
 });
 
 export const getRoomMembershipConfirmationParamsSchema = joi.object({
