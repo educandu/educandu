@@ -10,7 +10,11 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import { getAccessibleUrl, getPortableUrl } from '../utils/source-utils.js';
 import { BATCH_TYPE, EVENT_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import permissions, { getUserPermissions, hasUserPermission } from '../domain/permissions.js';
-import { extractUserIdsFromDocsOrRevisions, extractUserIdsFromMediaLibraryItems } from '../domain/data-extractors.js';
+import {
+  extractUserIdsFromDocsOrRevisions,
+  extractUserIdsFromMediaLibraryItems,
+  extractUserIdsFromRoomMediaItems
+} from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
   static dependencies = [ServerConfig, UserStore, StoragePlanStore, RoomStore, DocumentStore, PluginRegistry];
@@ -153,6 +157,34 @@ class ClientDataMappingService {
         ? this._mapMediaLibraryItem(mediaLibraryItem, userMap, grantedPermissions)
         : mediaLibraryItem;
     });
+  }
+
+  async mapRoomMedia(roomMedia, user) {
+    const grantedPermissions = getUserPermissions(user);
+    const mappedRoomMedia = cloneDeep(roomMedia);
+
+    const { roomMediaItems } = mappedRoomMedia.roomStorage;
+    const userMap = await this._getUserMapForRoomMediaItems(roomMediaItems.filter(x => !!x));
+
+    const mappedRoomMediaItems = roomMediaItems.map(roomMediaItem => this._mapRoomMediaItem(roomMediaItem, userMap, grantedPermissions));
+    mappedRoomMedia.roomStorage.roomMediaItems = mappedRoomMediaItems;
+
+    return mappedRoomMedia;
+  }
+
+  async mapRoomMediaOverview(roomMediaOverview, user) {
+    const grantedPermissions = getUserPermissions(user);
+    const mappedRoomMediaOverview = cloneDeep(roomMediaOverview);
+
+    const allRoomMediaItems = mappedRoomMediaOverview.roomStorageList.map(storage => storage.roomMediaItems).flat();
+    const userMap = await this._getUserMapForRoomMediaItems(allRoomMediaItems.filter(x => !!x));
+
+    mappedRoomMediaOverview.roomStorageList.forEach(storage => {
+      const mappedRoomMediaItems = storage.roomMediaItems.map(roomMediaItem => this._mapRoomMediaItem(roomMediaItem, userMap, grantedPermissions));
+      storage.roomMediaItems = mappedRoomMediaItems;
+    });
+
+    return mappedRoomMediaOverview;
   }
 
   _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById) {
@@ -490,6 +522,35 @@ class ClientDataMappingService {
     return result;
   }
 
+  _mapRoomMediaItem(roomMediaItem, userMap, grantedPermissions) {
+    if (!roomMediaItem) {
+      return roomMediaItem;
+    }
+
+    const result = {};
+
+    for (const [key, value] of Object.entries(roomMediaItem)) {
+      switch (key) {
+        case 'url':
+          result.url = getAccessibleUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
+          result.portableUrl = getPortableUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
+          result.name = urlUtils.getFileName(value);
+          break;
+        case 'createdOn':
+          result[key] = value ? value.toISOString() : value;
+          break;
+        case 'createdBy':
+          result[key] = value ? this._mapOtherUser({ user: userMap.get(value), grantedPermissions }) : value;
+          break;
+        default:
+          result[key] = value;
+          break;
+      }
+    }
+
+    return result;
+  }
+
   _mapDocumentSection(section, userMap, grantedPermissions) {
     return {
       ...section,
@@ -573,6 +634,16 @@ class ClientDataMappingService {
 
   async _getUserMapForMediaLibraryItems(mediaLibraryItems) {
     const userIds = extractUserIdsFromMediaLibraryItems(mediaLibraryItems);
+    const users = await this.userStore.getUsersByIds(userIds);
+    if (users.length !== userIds.length) {
+      throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
+    }
+
+    return new Map(users.map(u => [u._id, u]));
+  }
+
+  async _getUserMapForRoomMediaItems(roomMediaItems) {
+    const userIds = extractUserIdsFromRoomMediaItems(roomMediaItems);
     const users = await this.userStore.getUsersByIds(userIds);
     if (users.length !== userIds.length) {
       throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);

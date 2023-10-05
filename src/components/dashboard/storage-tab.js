@@ -72,7 +72,7 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
   }, [roomMediaOverview]);
 
   useEffect(() => {
-    const newFiles = roomMediaOverview?.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId)?.objects || [];
+    const newFiles = roomMediaOverview?.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId)?.roomMediaItems || [];
     setFiles(newFiles);
     setHighlightedFile(oldFile => newFiles.find(file => file.url === oldFile?.url) || null);
   }, [selectedRoomId, roomMediaOverview]);
@@ -89,7 +89,7 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
     confirmMediaFileHardDelete(t, file.name, async () => {
       try {
         setIsUpdating(true);
-        await roomApiClient.deleteRoomMedia({ roomId: selectedRoomId, name: file.name });
+        await roomApiClient.deleteRoomMedia({ roomId: selectedRoomId, roomMediaItemId: file._id });
         const overview = await roomApiClient.getRoomMediaOverview();
         onRoomMediaOverviewChange(overview);
       } catch (error) {

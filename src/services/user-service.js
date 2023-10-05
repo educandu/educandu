@@ -22,7 +22,7 @@ import {
   EMAIL_NOTIFICATION_FREQUENCY
 } from '../domain/constants.js';
 
-const { BadRequest, NotFound, Unauthorized } = httpErrors;
+const { NotFound, Unauthorized } = httpErrors;
 
 const DEFAULT_ROLE = ROLE.user;
 const DEFAULT_EMAIL_NOTIFICATION_FREQUENCY = EMAIL_NOTIFICATION_FREQUENCY.weekly;
@@ -185,23 +185,6 @@ class UserService {
     }
 
     return newStorage;
-  }
-
-  async updateUserUsedStorage(userId, usedBytes) {
-    logger.info(`Updating usedBytes for user with id ${userId}: ${usedBytes}`);
-
-    const user = await this.userStore.getUserById(userId);
-    if (!user) {
-      throw new NotFound(`User with ID '${userId}' could not be found`);
-    }
-
-    if (!user.storage.planId) {
-      throw new BadRequest(`User with ID '${userId}' does not have storage plan allocated`);
-    }
-
-    user.storage = { ...user.storage, usedBytes };
-    await this.userStore.saveUser(user);
-    return user;
   }
 
   async addUserStorageReminder(userId, executingUser) {

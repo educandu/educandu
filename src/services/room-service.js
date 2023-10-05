@@ -1,3 +1,4 @@
+import mime from 'mime';
 import moment from 'moment';
 import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
@@ -10,16 +11,24 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import EventStore from '../stores/event-store.js';
+import { getCdnPath } from '../utils/source-utils.js';
 import DocumentStore from '../stores/document-store.js';
+import { getResourceType } from '../utils/resource-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import { createUniqueStorageFileName, getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
-import { INVALID_ROOM_INVITATION_REASON, PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS } from '../domain/constants.js';
+import {
+  CDN_URL_PREFIX,
+  DEFAULT_CONTENT_TYPE,
+  INVALID_ROOM_INVITATION_REASON,
+  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
+} from '../domain/constants.js';
 
 const { BadRequest, Forbidden, NotFound } = httpErrors;
 
@@ -30,6 +39,7 @@ export default class RoomService {
     Cdn,
     RoomStore,
     RoomInvitationStore,
+    RoomMediaItemStore,
     DocumentRevisionStore,
     DocumentCommentStore,
     DocumentStore,
@@ -44,6 +54,7 @@ export default class RoomService {
     cdn,
     roomStore,
     roomInvitationStore,
+    roomMediaItemStore,
     documentRevisionStore,
     documentCommentStore,
     documentStore,
@@ -61,6 +72,7 @@ export default class RoomService {
     this.documentStore = documentStore;
     this.storagePlanStore = storagePlanStore;
     this.transactionRunner = transactionRunner;
+    this.roomMediaItemStore = roomMediaItemStore;
     this.roomInvitationStore = roomInvitationStore;
     this.documentCommentStore = documentCommentStore;
     this.documentRevisionStore = documentRevisionStore;
@@ -184,6 +196,7 @@ export default class RoomService {
         await this.documentStore.deleteDocumentsByRoomId(room._id, { session });
         await this.roomInvitationStore.deleteRoomInvitationsByRoomId(room._id, { session });
         await this.roomStore.deleteRoomById(room._id, { session });
+        await this.roomMediaItemStore.deleteRoomMediaItemsByRoomId(room._id, { session });
       });
 
       await this.cdn.deleteDirectory({ directoryPath: getRoomMediaRoomPath(room._id) });
@@ -203,20 +216,20 @@ export default class RoomService {
       : null;
 
     const rooms = await this.roomStore.getRoomsByOwnerUserId(user._id);
-    const objectsPerRoom = await Promise.all(rooms.map(async room => {
-      const objects = await this.cdn.listObjects({ directoryPath: getRoomMediaRoomPath(room._id) });
-      return { room, objects, usedBytes: objects.reduce((accu, obj) => accu + obj.size, 0) };
+    const mediaItemsPerRoom = await Promise.all(rooms.map(async room => {
+      const roomMediaItems = await this.roomMediaItemStore.getAllRoomMediaItemsByRoomId(room._id);
+      return { room, roomMediaItems, usedBytes: roomMediaItems.reduce((accu, item) => accu + item.size, 0) };
     }));
 
-    const usedBytesInAllRooms = objectsPerRoom.reduce((accu, { usedBytes }) => accu + usedBytes, 0);
+    const usedBytesInAllRooms = mediaItemsPerRoom.reduce((accu, { usedBytes }) => accu + usedBytes, 0);
 
     return {
       storagePlan: storagePlan || null,
       usedBytes: usedBytesInAllRooms,
-      roomStorageList: objectsPerRoom.map(({ room, objects }) => ({
+      roomStorageList: mediaItemsPerRoom.map(({ room, roomMediaItems }) => ({
         roomId: room._id,
         roomName: room.name,
-        objects
+        roomMediaItems
       }))
     };
   }
@@ -235,6 +248,30 @@ export default class RoomService {
       usedBytes: overview.usedBytes,
       roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId)
     };
+  }
+
+  createRoomMediaItem({ user, roomId, file, cdnObjectPath }) {
+    const now = new Date();
+    const roomMediaItemId = uniqueId.create();
+
+    const storageUrl = `${CDN_URL_PREFIX}${cdnObjectPath}`;
+
+    const resourceType = getResourceType(storageUrl);
+    const contentType = mime.getType(storageUrl) || DEFAULT_CONTENT_TYPE;
+    const size = file.size;
+
+    const newRoomMediaItem = {
+      _id: roomMediaItemId,
+      roomId,
+      resourceType,
+      contentType,
+      size,
+      createdBy: user._id,
+      createdOn: now,
+      url: storageUrl
+    };
+
+    return newRoomMediaItem;
   }
 
   async createRoomMedia({ user, roomId, file }) {
@@ -261,7 +298,15 @@ export default class RoomService {
       const parentPath = getRoomMediaRoomPath(roomId);
       const uniqueFileName = createUniqueStorageFileName(file.originalname);
       const cdnObjectPath = urlUtils.concatParts(parentPath, uniqueFileName);
-      await this.cdn.uploadObject(cdnObjectPath, file.path);
+      const roomMediaItem = this.createRoomMediaItem({ user, roomId, file, cdnObjectPath });
+
+      try {
+        await this.cdn.uploadObject(cdnObjectPath, file.path);
+        await this.roomMediaItemStore.insertRoomMediaItem(roomMediaItem);
+      } catch (error) {
+        await this.cdn.deleteObject(cdnObjectPath);
+        throw error;
+      }
 
       const overview = await this.getRoomMediaOverview({ user: roomOwner });
       const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes: overview.usedBytes });
@@ -272,14 +317,14 @@ export default class RoomService {
         storagePlan: overview.storagePlan,
         usedBytes: overview.usedBytes,
         roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId),
-        createdObjectPath: cdnObjectPath
+        createdRoomMediaItemId: roomMediaItem._id
       };
     } finally {
       await this.lockStore.releaseLock(lock);
     }
   }
 
-  async deleteRoomMedia({ user, roomId, name }) {
+  async deleteRoomMedia({ user, roomId, roomMediaItemId }) {
     let lock;
     try {
       lock = await this.lockStore.takeUserLock(user._id);
@@ -289,14 +334,13 @@ export default class RoomService {
         throw new Forbidden(`User is not authorized to delete media for room '${roomId}'`);
       }
 
-      const objects = await this.cdn.listObjects({ directoryPath: getRoomMediaRoomPath(roomId) });
-
-      const itemToDelete = objects.find(obj => obj.name === name);
-      if (!itemToDelete) {
-        throw new NotFound(`Object '${name}' could not be found`);
+      const roomMediaItemToDelete = await this.roomMediaItemStore.getRoomMediaItemById(roomMediaItemId);
+      if (!roomMediaItemToDelete) {
+        throw new NotFound(`Room media item '${roomMediaItemId}' could not be found`);
       }
 
-      await this.cdn.deleteObject(itemToDelete.path);
+      await this.cdn.deleteObject(getCdnPath({ url: roomMediaItemToDelete.url }));
+      await this.roomMediaItemStore.deleteRoomMediaItem(roomMediaItemId);
 
       const overview = await this.getRoomMediaOverview({ user });
       const updatedUser = await this.userStore.updateUserUsedBytes({ userId: user._id, usedBytes: overview.usedBytes });

@@ -4,7 +4,7 @@ import { Button, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useIsMounted } from '../../../ui/hooks.js';
 import ResourceDetails from '../shared/resource-details.js';
-import { cdnObjectShape } from '../../../ui/default-prop-types.js';
+import { roomMediaItemShape } from '../../../ui/default-prop-types.js';
 
 function RoomMediaPreviewModal({ isOpen, file, onClose }) {
   const { t } = useTranslation();
@@ -33,7 +33,7 @@ function RoomMediaPreviewModal({ isOpen, file, onClose }) {
 }
 
 RoomMediaPreviewModal.propTypes = {
-  file: cdnObjectShape,
+  file: roomMediaItemShape,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func.isRequired
 };

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Spin } from 'antd';
+import prettyBytes from 'pretty-bytes';
 import reactDropzoneNs from 'react-dropzone';
 import EmptyState from '../../empty-state.js';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +20,6 @@ import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { SEARCH_RESOURCE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
-import prettyBytes from 'pretty-bytes';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 

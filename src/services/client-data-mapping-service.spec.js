@@ -3,6 +3,7 @@ import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import UserStore from '../stores/user-store.js';
 import permissions from '../domain/permissions.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -12,6 +13,7 @@ import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTest
 describe('client-data-mapping-service', () => {
   const sandbox = createSandbox();
 
+  let serverConfig;
   let markdownInfo;
   let userStore;
   let container;
@@ -23,6 +25,7 @@ describe('client-data-mapping-service', () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
     markdownInfo = container.get(MarkdownInfo);
+    serverConfig = container.get(ServerConfig);
     sut = container.get(ClientDataMappingService);
   });
 
@@ -678,6 +681,250 @@ describe('client-data-mapping-service', () => {
       });
       it('returns an array that does not include that section', () => {
         expect(result).toHaveLength(0);
+      });
+    });
+  });
+
+  describe('mapMediaLibraryItems', () => {
+    let result;
+    let items;
+
+    beforeEach(async () => {
+      items = [
+        {
+          _id: uniqueId.create(),
+          roomId: uniqueId.create(),
+          createdOn: new Date(),
+          createdBy: user1._id,
+          updatedOn: new Date(),
+          updatedBy: user2._id,
+          url: 'cdn://media-library/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
+        },
+        {
+          _id: uniqueId.create(),
+          roomId: uniqueId.create(),
+          createdOn: new Date(),
+          createdBy: user2._id,
+          updatedOn: new Date(),
+          updatedBy: user1._id,
+          url: 'cdn://media-library/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+        }
+      ];
+      sandbox.stub(serverConfig, 'cdnRootUrl').value('http://cdn-root');
+
+      result = await sut.mapMediaLibraryItems(items, user1);
+    });
+
+    it('should map media library items data', () => {
+      expect(result).toEqual([
+        {
+          ...items[0],
+          createdOn: items[0].createdOn.toISOString(),
+          createdBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
+          updatedOn: items[0].updatedOn.toISOString(),
+          updatedBy: {
+            _id: user2._id,
+            displayName: user2.displayName
+          },
+          url: 'http://cdn-root/media-library/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
+          portableUrl: 'cdn://media-library/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
+          name: 'calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
+        },
+        {
+          ...items[1],
+          createdOn: items[1].createdOn.toISOString(),
+          createdBy: {
+            _id: user2._id,
+            displayName: user2.displayName
+          },
+          updatedOn: items[1].updatedOn.toISOString(),
+          updatedBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
+          url: 'http://cdn-root/media-library/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
+          portableUrl: 'cdn://media-library/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
+          name: 'flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+        }
+      ]);
+    });
+  });
+
+  describe('mapRoomMedia', () => {
+    let result;
+    let roomMedia;
+
+    beforeEach(async () => {
+      roomMedia = {
+        storagePlan: 'plan1',
+        usedBytes: '100',
+        roomStorage: {
+          roomId: 'room1',
+          roomName: 'Room 1',
+          roomMediaItems: [
+            {
+              _id: uniqueId.create(),
+              roomId: uniqueId.create(),
+              createdOn: new Date(),
+              createdBy: user1._id,
+              url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
+            },
+            {
+              _id: uniqueId.create(),
+              roomId: uniqueId.create(),
+              createdOn: new Date(),
+              createdBy: user2._id,
+              url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+            }
+          ]
+        }
+      };
+
+      sandbox.stub(serverConfig, 'cdnRootUrl').value('http://cdn-root');
+
+      result = await sut.mapRoomMedia(roomMedia, user1);
+    });
+
+    it('should map room media item data', () => {
+      expect(result).toEqual({
+        storagePlan: 'plan1',
+        usedBytes: '100',
+        roomStorage: {
+          roomId: 'room1',
+          roomName: 'Room 1',
+          roomMediaItems: [
+            {
+              ...roomMedia.roomStorage.roomMediaItems[0],
+              createdOn: roomMedia.roomStorage.roomMediaItems[0].createdOn.toISOString(),
+              createdBy: {
+                _id: user1._id,
+                displayName: user1.displayName
+              },
+              url: 'http://cdn-root/room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
+              portableUrl: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
+              name: 'calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
+            },
+            {
+              ...roomMedia.roomStorage.roomMediaItems[1],
+              createdOn: roomMedia.roomStorage.roomMediaItems[1].createdOn.toISOString(),
+              createdBy: {
+                _id: user2._id,
+                displayName: user2.displayName
+              },
+              url: 'http://cdn-root/room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
+              portableUrl: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
+              name: 'flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+            }
+          ]
+        }
+      });
+    });
+  });
+
+  describe('mapRoomMediaOverview', () => {
+    let result;
+    let roomMediaOverview;
+
+    beforeEach(async () => {
+      roomMediaOverview = {
+        storagePlan: 'plan1',
+        usedBytes: '100',
+        roomStorageList: [
+          {
+            roomId: 'room1',
+            roomName: 'Room 1',
+            roomMediaItems: [
+              {
+                _id: uniqueId.create(),
+                roomId: uniqueId.create(),
+                createdOn: new Date(),
+                createdBy: user1._id,
+                url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
+              },
+              {
+                _id: uniqueId.create(),
+                roomId: uniqueId.create(),
+                createdOn: new Date(),
+                createdBy: user2._id,
+                url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+              }
+            ]
+          },
+          {
+            roomId: 'room2',
+            roomName: 'Room 2',
+            roomMediaItems: [
+              {
+                _id: uniqueId.create(),
+                roomId: uniqueId.create(),
+                createdOn: new Date(),
+                createdBy: user1._id,
+                url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png'
+              }
+            ]
+          }
+        ]
+      };
+
+      sandbox.stub(serverConfig, 'cdnRootUrl').value('http://cdn-root');
+
+      result = await sut.mapRoomMediaOverview(roomMediaOverview, user1);
+    });
+
+    it('should map room media item data', () => {
+      expect(result).toEqual({
+        storagePlan: 'plan1',
+        usedBytes: '100',
+        roomStorageList: [
+          {
+            roomId: 'room1',
+            roomName: 'Room 1',
+            roomMediaItems: [
+              {
+                ...roomMediaOverview.roomStorageList[0].roomMediaItems[0],
+                createdOn: roomMediaOverview.roomStorageList[0].roomMediaItems[0].createdOn.toISOString(),
+                createdBy: {
+                  _id: user1._id,
+                  displayName: user1.displayName
+                },
+                url: 'http://cdn-root/room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
+                portableUrl: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
+                name: 'calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
+              },
+              {
+                ...roomMediaOverview.roomStorageList[0].roomMediaItems[1],
+                createdOn: roomMediaOverview.roomStorageList[0].roomMediaItems[1].createdOn.toISOString(),
+                createdBy: {
+                  _id: user2._id,
+                  displayName: user2.displayName
+                },
+                url: 'http://cdn-root/room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
+                portableUrl: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
+                name: 'flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
+              }
+            ]
+          },
+          {
+            roomId: 'room2',
+            roomName: 'Room 2',
+            roomMediaItems: [
+              {
+                ...roomMediaOverview.roomStorageList[1].roomMediaItems[0],
+                createdOn: roomMediaOverview.roomStorageList[1].roomMediaItems[0].createdOn.toISOString(),
+                createdBy: {
+                  _id: user1._id,
+                  displayName: user1.displayName
+                },
+                url: 'http://cdn-root/room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png',
+                portableUrl: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png',
+                name: 'boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png'
+              }
+            ]
+          }
+        ]
       });
     });
   });
