@@ -12,8 +12,8 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
-export default function TextInputEditor({ content, onContentChanged }) {
-  const { t } = useTranslation('textInput');
+export default function TextFieldEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('textField');
   const { mode, label, maxLength, width } = content;
 
   const updateContent = newContentValues => {
@@ -72,6 +72,6 @@ export default function TextInputEditor({ content, onContentChanged }) {
   );
 }
 
-TextInputEditor.propTypes = {
+TextFieldEditor.propTypes = {
   ...sectionEditorProps
 };

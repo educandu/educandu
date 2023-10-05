@@ -1,7 +1,7 @@
-textInput:
+textField:
   name:
-    en: Text input
-    de: Texteingabe
+    en: Text field
+    de: Textfeld
   mode:
     en: Mode
     de: Modus

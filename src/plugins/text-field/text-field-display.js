@@ -7,7 +7,7 @@ import NeverScrollingTextArea from '../../components/never-scrolling-text-area.j
 
 const FormItem = Form.Item;
 
-export default function TextInputDisplay({ content }) {
+export default function TextFieldDisplay({ content }) {
   const [currentValue, setCurrentValue] = useState('');
   const { mode, label, maxLength, width } = content;
 
@@ -32,6 +32,6 @@ export default function TextInputDisplay({ content }) {
   );
 }
 
-TextInputDisplay.propTypes = {
+TextFieldDisplay.propTypes = {
   ...sectionDisplayProps
 };

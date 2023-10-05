@@ -1,26 +1,26 @@
 import joi from 'joi';
 import React from 'react';
-import TextInputIcon from './text-input-icon.js';
+import TextFieldIcon from './text-field-icon.js';
 import { TEXT_INPUT_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 
 class MarkdownInfo {
-  static typeName = 'text-input';
+  static typeName = 'text-field';
 
   getDisplayName(t) {
-    return t('textInput:name');
+    return t('textField:name');
   }
 
   getIcon() {
-    return <TextInputIcon />;
+    return <TextFieldIcon />;
   }
 
   async resolveDisplayComponent() {
-    return (await import('./text-input-display.js')).default;
+    return (await import('./text-field-display.js')).default;
   }
 
   async resolveEditorComponent() {
-    return (await import('./text-input-editor.js')).default;
+    return (await import('./text-field-editor.js')).default;
   }
 
   getDefaultContent() {
