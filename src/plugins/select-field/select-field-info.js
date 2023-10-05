@@ -3,7 +3,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import SelectFieldIcon from './select-field-icon.js';
 import { createDefaultContent, validateContent } from './select-field-utils.js';
 
-class MarkdownInfo {
+class SelectFieldInfo {
   static typeName = 'select-field';
 
   getDisplayName(t) {
@@ -43,4 +43,4 @@ class MarkdownInfo {
   }
 }
 
-export default MarkdownInfo;
+export default SelectFieldInfo;
