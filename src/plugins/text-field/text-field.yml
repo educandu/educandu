@@ -15,5 +15,5 @@ textField:
     en: Maximum length
     de: Maximale Länge
   maxLengthInfo:
-    en: Maximum number of characters the user can input (zero means unrestricted)
-    de: Maximale Zeichenanzahl, die Benutzer eingeben können (null bedeuted unbeschränkt)
+    en: Maximum number of characters that can be typed into the text input (zero means unrestricted)
+    de: Maximale Zeichenanzahl, die in das Textfeld eingegeben werden kann (null bedeuted unbeschränkt)
