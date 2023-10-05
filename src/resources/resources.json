@@ -3299,7 +3299,7 @@
       "de": "Maximale Länge"
     },
     "maxLengthInfo": {
-      "en": "Maximum number of characters that can be typed into the text input (zero means unrestricted)",
+      "en": "Maximum number of characters that can be typed into the text field (zero means unrestricted)",
       "de": "Maximale Zeichenanzahl, die in das Textfeld eingegeben werden kann (null bedeuted unbeschränkt)"
     }
   },
