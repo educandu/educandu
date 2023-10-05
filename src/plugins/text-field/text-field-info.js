@@ -4,7 +4,7 @@ import TextFieldIcon from './text-field-icon.js';
 import { TEXT_FIELD_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 
-class MarkdownInfo {
+class TextFieldInfo {
   static typeName = 'text-field';
 
   getDisplayName(t) {
@@ -56,4 +56,4 @@ class MarkdownInfo {
   }
 }
 
-export default MarkdownInfo;
+export default TextFieldInfo;
