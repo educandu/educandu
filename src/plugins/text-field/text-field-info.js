@@ -1,7 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import TextFieldIcon from './text-field-icon.js';
-import { TEXT_INPUT_MODE } from './constants.js';
+import { TEXT_FIELD_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 
 class MarkdownInfo {
@@ -25,7 +25,7 @@ class MarkdownInfo {
 
   getDefaultContent() {
     return {
-      mode: TEXT_INPUT_MODE.singleLine,
+      mode: TEXT_FIELD_MODE.singleLine,
       label: '',
       maxLength: 0,
       width: 100
@@ -34,7 +34,7 @@ class MarkdownInfo {
 
   validateContent(content) {
     const schema = joi.object({
-      mode: joi.string().valid(...Object.values(TEXT_INPUT_MODE)).required(),
+      mode: joi.string().valid(...Object.values(TEXT_FIELD_MODE)).required(),
       label: joi.string().allow('').required(),
       maxLength: joi.number().integer().min(0).max(Number.MAX_SAFE_INTEGER).required(),
       width: joi.number().integer().min(0).max(100).required()

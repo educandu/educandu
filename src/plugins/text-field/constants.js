@@ -1,4 +1,4 @@
-export const TEXT_INPUT_MODE = {
+export const TEXT_FIELD_MODE = {
   singleLine: 'singleLine',
   multiLine: 'multiLine'
 };

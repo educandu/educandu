@@ -1,6 +1,6 @@
 import { Form, Input } from 'antd';
 import React, { useState } from 'react';
-import { TEXT_INPUT_MODE } from './constants.js';
+import { TEXT_FIELD_MODE } from './constants.js';
 import Markdown from '../../components/markdown.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
@@ -15,7 +15,7 @@ export default function TextFieldDisplay({ content }) {
     setCurrentValue(event.target.value);
   };
 
-  const InputComponent = mode === TEXT_INPUT_MODE.singleLine ? Input : NeverScrollingTextArea;
+  const InputComponent = mode === TEXT_FIELD_MODE.singleLine ? Input : NeverScrollingTextArea;
 
   return (
     <div className={`u-horizontally-centered u-width-${width}`}>

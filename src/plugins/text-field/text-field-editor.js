@@ -2,7 +2,7 @@ import React from 'react';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import { Form, InputNumber, Radio } from 'antd';
-import { TEXT_INPUT_MODE } from './constants.js';
+import { TEXT_FIELD_MODE } from './constants.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -41,8 +41,8 @@ export default function TextFieldEditor({ content, onContentChanged }) {
       <Form labelAlign="left">
         <FormItem label={t('mode')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={mode} onChange={handleModeChange}>
-            <RadioButton value={TEXT_INPUT_MODE.singleLine}>{t('mode_singleLine')}</RadioButton>
-            <RadioButton value={TEXT_INPUT_MODE.multiLine}>{t('mode_multiLine')}</RadioButton>
+            <RadioButton value={TEXT_FIELD_MODE.singleLine}>{t('mode_singleLine')}</RadioButton>
+            <RadioButton value={TEXT_FIELD_MODE.multiLine}>{t('mode_multiLine')}</RadioButton>
           </RadioGroup>
         </FormItem>
         <FormItem label={t('common:label')} {...FORM_ITEM_LAYOUT}>
