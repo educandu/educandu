@@ -15,7 +15,17 @@ export default function TextFieldDisplay({ content }) {
     setCurrentValue(event.target.value);
   };
 
-  const InputComponent = mode === TEXT_FIELD_MODE.singleLine ? Input : NeverScrollingTextArea;
+  let InputComponent;
+  switch (mode) {
+    case TEXT_FIELD_MODE.singleLine:
+      InputComponent = Input;
+      break;
+    case TEXT_FIELD_MODE.multiLine:
+      InputComponent = NeverScrollingTextArea;
+      break;
+    default:
+      throw new Error(`Invalid text field mode: '${mode}'`);
+  }
 
   return (
     <div className={`u-horizontally-centered u-width-${width}`}>
