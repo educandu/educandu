@@ -161,6 +161,7 @@ function Document({ initialState, PageTemplate }) {
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
+  const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
   const [isHistoryPanelMinimized, setIsHistoryPanelMinimized] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
@@ -223,10 +224,28 @@ function Document({ initialState, PageTemplate }) {
     };
 
     const actionsPanelTopOffset = isVerifiedDocument ? 50 : 0;
+    const actualItemsPosition = {
+      ...fixedItemsPosition,
+      top: fixedItemsPosition.top + actionsPanelTopOffset
+    };
 
     setVerifiedBadgePositionInPx(fixedItemsPosition);
-    setActionsPanelPositionInPx({ ...fixedItemsPosition, top: fixedItemsPosition.top + actionsPanelTopOffset });
+    setActionsPanelPositionInPx(actualItemsPosition);
   }, [view, isVerifiedDocument, pageRef]);
+
+  const ensureInputsPanelPosition = useCallback(() => {
+    if (view !== VIEW.display || !actionsPanelPositionInPx) {
+      return;
+    }
+
+    const position = {
+      top: actionsPanelPositionInPx.top + 220,
+      right: actionsPanelPositionInPx.right,
+      left: actionsPanelPositionInPx.left
+    };
+
+    setInputsPanelPositionInPx(position);
+  }, [view, actionsPanelPositionInPx]);
 
   const ensureHistoryPanelPosition = useCallback(() => {
     if (view !== VIEW.history) {
@@ -248,6 +267,13 @@ function Document({ initialState, PageTemplate }) {
 
     return () => window.removeEventListener('resize', ensureActionsPanelPosition);
   }, [ensureActionsPanelPosition]);
+
+  useEffect(() => {
+    ensureInputsPanelPosition();
+    window.addEventListener('resize', ensureInputsPanelPosition);
+
+    return () => window.removeEventListener('resize', ensureInputsPanelPosition);
+  }, [ensureInputsPanelPosition]);
 
   useEffect(() => {
     ensureHistoryPanelPosition();
@@ -816,6 +842,15 @@ function Document({ initialState, PageTemplate }) {
                 onClick={handleEditOpen}
                 />
             </FloatButton.Group>
+            {!!room && (
+              <FloatButton.Group shape="square" style={{ ...inputsPanelPositionInPx }}>
+                <FloatButton
+                  disabled={!user}
+                  tooltip={favoriteActionTooltip}
+                  icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
+                  />
+              </FloatButton.Group>
+            )}
           </div>
         </Fragment>
       )}
