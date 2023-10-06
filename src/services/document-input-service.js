@@ -57,15 +57,17 @@ class DocumentInputService {
       throw new Forbidden(`User is not authorized to create document inputs for room '${room._id}'`);
     }
 
+    const createdOn = new Date();
+
     const newDocumentInput = {
       _id: documentInputId,
       documentId,
       documentRevisionId,
       sections,
       createdBy: user._id,
-      createdOn: new Date(),
+      createdOn,
       updatedBy: user._id,
-      updatedOn: new Date()
+      updatedOn: createdOn
     };
 
     await this.documentInputStore.saveDocumentInput(newDocumentInput);
