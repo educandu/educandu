@@ -357,6 +357,16 @@ class ClientDataMappingService {
     return comments.map(comment => this._mapDocumentComment(comment, userMap));
   }
 
+  async mapDocumentInput(documentInput) {
+    const userMap = await this._getUserMapForDocumentInputs([documentInput]);
+    return this._mapDocumentInput(documentInput, userMap);
+  }
+
+  async mapDocumentInputs(documentInputs) {
+    const userMap = await this._getUserMapForDocumentInputs(documentInputs);
+    return documentInputs.map(input => this._mapDocumentInput(input, userMap));
+  }
+
   async _mapFavorite({ favorite, user }) {
     const mappedFavorite = {
       ...favorite,
@@ -601,6 +611,20 @@ class ClientDataMappingService {
     return result;
   }
 
+  _mapDocumentInput(documentInput, userMap) {
+    const mappedDocumentInput = cloneDeep(documentInput);
+    const createdBy = this._mapOtherUser({ user: userMap.get(documentInput.createdBy) });
+    const updatedBy = this._mapOtherUser({ user: userMap.get(documentInput.updatedBy) });
+
+    return {
+      ...mappedDocumentInput,
+      createdBy,
+      updatedBy,
+      createdOn: mappedDocumentInput.createdOn.toISOString(),
+      updatedOn: mappedDocumentInput.updatedOn && mappedDocumentInput.updatedOn.toISOString()
+    };
+  }
+
   _isDeletedSection(section) {
     return section.deletedOn
       || section.deletedBy
@@ -645,6 +669,20 @@ class ClientDataMappingService {
   async _getUserMapForRoomMediaItems(roomMediaItems) {
     const userIds = extractUserIdsFromRoomMediaItems(roomMediaItems);
     const users = await this.userStore.getUsersByIds(userIds);
+    if (users.length !== userIds.length) {
+      throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
+    }
+
+    return new Map(users.map(u => [u._id, u]));
+  }
+
+  async _getUserMapForDocumentInputs(documentInputs) {
+    const createdByUserIds = documentInputs.map(input => input.createdBy).filter(input => input);
+    const updatedByUserIds = documentInputs.map(input => input.updatedBy).filter(input => input);
+
+    const userIds = [...new Set([...createdByUserIds, ...updatedByUserIds])];
+    const users = await this.userStore.getUsersByIds(userIds);
+
     if (users.length !== userIds.length) {
       throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
     }

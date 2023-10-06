@@ -928,4 +928,69 @@ describe('client-data-mapping-service', () => {
       });
     });
   });
+
+  describe('mapDocumentInputs', () => {
+    let result;
+    let documentInputs;
+
+    beforeEach(async () => {
+      documentInputs = [
+        {
+          _id: uniqueId.create(),
+          documentId: uniqueId.create(),
+          documentRevisionId: uniqueId.create(),
+          createdOn: new Date(),
+          createdBy: user1._id,
+          updatedOn: new Date(),
+          updatedBy: user1._id,
+          sections: {}
+        },
+        {
+          _id: uniqueId.create(),
+          documentId: uniqueId.create(),
+          documentRevisionId: uniqueId.create(),
+          createdOn: new Date(),
+          createdBy: user2._id,
+          updatedOn: new Date(),
+          updatedBy: user2._id,
+          sections: {}
+        }
+      ];
+
+      result = await sut.mapDocumentInputs(documentInputs);
+    });
+
+    it('should map documentInputs', () => {
+      expect(result).toEqual([
+        {
+          ...documentInputs[0],
+          createdOn: documentInputs[0].createdOn.toISOString(),
+          createdBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
+          updatedOn: documentInputs[0].updatedOn.toISOString(),
+          updatedBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
+          sections: {}
+        },
+        {
+          ...documentInputs[1],
+          createdOn: documentInputs[1].createdOn.toISOString(),
+          createdBy: {
+            _id: user2._id,
+            displayName: user2.displayName
+          },
+          updatedOn: documentInputs[1].updatedOn.toISOString(),
+          updatedBy: {
+            _id: user2._id,
+            displayName: user2.displayName
+          },
+          sections: {}
+        }
+      ]);
+    });
+  });
 });

@@ -6,6 +6,7 @@ import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import { SAVE_USER_RESULT } from './domain/constants.js';
 import DocumentService from './services/document-service.js';
+import DocumentInputService from './services/document-input-service.js';
 import DocumentCommentService from './services/document-comment-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
@@ -184,6 +185,17 @@ export function createTestDocumentComment(container, user, data) {
       text: 'Test comment text',
       ...data
     },
+    user
+  });
+}
+
+export function createTestDocumentInput(container, user, data) {
+  const documentInputService = container.get(DocumentInputService);
+
+  return documentInputService.createDocumentInput({
+    documentId: data.documentId,
+    documentRevisionId: data.documentRevisionId,
+    sections: data.sections,
     user
   });
 }

@@ -20,8 +20,29 @@ export const documentInputDbSchema = joi.object({
   createdBy: idOrKeySchema.required(),
   updatedOn: joi.date().required(),
   updatedBy: idOrKeySchema.required(),
-  sections: joi.array().items(joi.object().pattern(
+  sections: joi.object().pattern(
     idOrKeySchema,
     sectionSchema
-  ))
+  )
+});
+
+export const documentInputIdParamsOrQuerySchema = joi.object({
+  documentInputId: idOrKeySchema.required()
+});
+
+export const getDocumentInputsCreatedByUserParams = joi.object({
+  userId: idOrKeySchema.required()
+});
+
+export const createDocumentInputDataBodySchema = joi.object({
+  documentId: idOrKeySchema.required(),
+  documentRevisionId: idOrKeySchema.required(),
+  sections: joi.object().pattern(
+    idOrKeySchema,
+    sectionSchema
+  )
+});
+
+export const hardDeleteDocumentInputBodySchema = joi.object({
+  documentInputId: idOrKeySchema.required()
 });
