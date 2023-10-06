@@ -20,6 +20,7 @@ import ComparisonController from './comparison-controller.js';
 import StoragePlanController from './storage-plan-controller.js';
 import NotificationController from './notification-controller.js';
 import MediaLibraryController from './media-library-controller.js';
+import DocumentInputController from './document-input-controller.js';
 import DocumentCommentController from './document-comment-controller.js';
 
 const setupControllers = [
@@ -44,6 +45,7 @@ const pageAndApiControllers = [
   PdfJsApiController,
   AdminController,
   AmbController,
+  DocumentInputController,
   DocumentCommentController,
   RedactionController,
   NotificationController
