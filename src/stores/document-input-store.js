@@ -6,7 +6,7 @@ class DocumentInputStore {
   static dependencies = [Database];
 
   constructor(db) {
-    this.collection = db.documents;
+    this.collection = db.documentInputs;
   }
 
   getDocumentInputById(documentInputId, { session } = {}) {
