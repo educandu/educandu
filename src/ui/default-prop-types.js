@@ -253,6 +253,28 @@ export const documentRevisionShape = PropTypes.shape({
   publicContext: documentPublicContextShape
 });
 
+const sectionInputShape = PropTypes.shape({
+  data: PropTypes.object.isRequired,
+  comments: PropTypes.arrayOf(PropTypes.shape({
+    createdOn: PropTypes.string.isRequired,
+    createdBy: PropTypes.string.isRequired,
+    deletedOn: PropTypes.string,
+    deletedBy: PropTypes.string,
+    text: PropTypes.string.isRequired
+  }))
+});
+
+export const documentInputShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  documentId: PropTypes.string.isRequired,
+  documentRevisionId: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: otherUserShape.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: otherUserShape.isRequired,
+  sections: PropTypes.objectOf(sectionInputShape)
+});
+
 const commonMediaFileProps = {
   _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,

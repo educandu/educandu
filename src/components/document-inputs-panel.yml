@@ -1,0 +1,7 @@
+documentInputsPanel:
+  inputNumber:
+    en: Input {number}
+    de: Eingabe {number}
+  documentVersion:
+    en: Document version
+    de: Dokumentversion

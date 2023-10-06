@@ -827,6 +827,16 @@
       "de": "Der Inhalt dieses Kommentars wurde von einem Redakteur gelöscht."
     }
   },
+  "documentInputsPanel": {
+    "inputNumber": {
+      "en": "Input {number}",
+      "de": "Eingabe {number}"
+    },
+    "documentVersion": {
+      "en": "Document version",
+      "de": "Dokumentversion"
+    }
+  },
   "documentMetadataModal": {
     "newDocument": {
       "en": "New document",

@@ -20,6 +20,7 @@ import InputsIcon from '../icons/general/inputs-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
+import DocumentInputsPanel from '../document-inputs-panel.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -34,6 +35,7 @@ import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
 import DocumentCommentApiClient from '../../api-clients/document-comment-api-client.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -143,6 +145,7 @@ function Document({ initialState, PageTemplate }) {
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
   const documentCommentApiClient = useSessionAwareApiClient(DocumentCommentApiClient);
 
   const { room } = initialState;
@@ -153,6 +156,7 @@ function Document({ initialState, PageTemplate }) {
   const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
 
   const documentContainsInputPlugins = true;
+  const userIsRoomOwner = !!room && room.ownedBy === user?._id;
   const userCanManageInputs = !!room && documentContainsInputPlugins;
 
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
@@ -162,15 +166,18 @@ function Document({ initialState, PageTemplate }) {
   const [isSaving, setIsSaving] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
+  const [documentInputs, setDocumentInputs] = useState([]);
   const [documentComments, setDocumentComments] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [isSidePanelMinimized, setIsSidePanelMinimized] = useState(false);
   const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
+  const [documentInputRevisions, setDocumentInputRevisions] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
   const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
+  const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
@@ -319,6 +326,21 @@ function Document({ initialState, PageTemplate }) {
     }
   }, [doc._id, t, documentApiClient]);
 
+  const fetchDocumentInputs = useCallback(async () => {
+    try {
+      const response = userIsRoomOwner
+        ? await documentInputApiClient.getDocumentInputsByDocumentId(doc._id)
+        : await documentInputApiClient.getDocumentInputsCreatedByUser(user._id);
+
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
+
+      setDocumentInputs(response.documentInputs);
+      setDocumentInputRevisions(documentRevisions);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  }, [doc._id, t, user, userIsRoomOwner, documentInputApiClient, documentApiClient]);
+
   useEffect(() => {
     setAlerts(createPageAlerts({
       t,
@@ -343,7 +365,14 @@ function Document({ initialState, PageTemplate }) {
         setInitialDocumentCommentsFetched(true);
       })();
     }
-  }, [preSetView, doc._id, view, fetchDocumentRevisions, fetchDocumentComments, initialDocumentRevisionsFetched, initialDocumentCommentsFetched]);
+
+    if (preSetView === VIEW.inputs && !initialDocumentInputsFetched) {
+      (async () => {
+        await fetchDocumentInputs();
+        setInitialDocumentInputsFetched(true);
+      })();
+    }
+  }, [preSetView, doc._id, view, fetchDocumentRevisions, fetchDocumentComments, fetchDocumentInputs, initialDocumentRevisionsFetched, initialDocumentCommentsFetched, initialDocumentInputsFetched]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -475,11 +504,14 @@ function Document({ initialState, PageTemplate }) {
     return true;
   };
 
-  const handleInputsOpen = () => {
+  const handleInputsOpen = async () => {
+    await fetchDocumentInputs();
     switchView(VIEW.inputs);
   };
 
   const handleInputsClose = () => {
+    setDocumentInputs([]);
+    setDocumentInputRevisions([]);
     switchView(VIEW.display);
     return true;
   };
@@ -722,11 +754,7 @@ function Document({ initialState, PageTemplate }) {
   );
 
   const renderInputsFocusHeader = () => (
-    <FocusHeader title={t('inputs')} onClose={handleInputsClose}>
-      <div className="DocumentPage-focusHeaderInputsInfo">
-        <EyeOutlined />
-      </div>
-    </FocusHeader>
+    <FocusHeader title={t('inputs')} onClose={handleInputsClose} />
   );
 
   const renderFocusHeader = () => {
@@ -825,12 +853,10 @@ function Document({ initialState, PageTemplate }) {
                   />
               )}
               {view === VIEW.inputs && (
-                <DocumentVersionHistory
-                  canRestore={userCanRestoreDocumentRevisions}
-                  documentRevisions={historyDocumentRevisions}
-                  selectedDocumentRevision={historySelectedDocumentRevision}
-                  onViewClick={handleViewDocumentRevisionClick}
-                  onRestoreClick={handleRestoreDocumentRevisionClick}
+                <DocumentInputsPanel
+                  showUsers={!!userIsRoomOwner}
+                  documentInputs={documentInputs}
+                  documentRevisions={documentInputRevisions}
                   />
               )}
             </div>

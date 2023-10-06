@@ -64,14 +64,14 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
 
     if (isSelectedDocumentRevision) {
       return (
-        <div className="DocumentVersionHistory-itemDot DocumentVersionHistory-itemDot--icon">
+        <div className="HistoryPanel-itemDot HistoryPanel-itemDot--icon">
           <EyeOutlined />
         </div>
       );
     }
 
     return (
-      <div className="DocumentVersionHistory-itemDot DocumentVersionHistory-itemDot--circle" />
+      <div className="HistoryPanel-itemDot HistoryPanel-itemDot--circle" />
     );
   };
 
@@ -79,11 +79,11 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
     const isOpenPanel = idsOfExpandedDocumentRevisions.includes(documentRevision._id);
 
     return (
-      <span className="DocumentVersionHistory-itemHeader">
-        <div className={classNames('DocumentVersionHistory-itemHeaderText', { 'is-open-panel': isOpenPanel })}>
+      <span className="HistoryPanel-itemHeader">
+        <div className={classNames('HistoryPanel-itemHeaderText', { 'is-open-panel': isOpenPanel })}>
           {documentRevision.versionText}
         </div>
-        <div className="DocumentVersionHistory-itemHeaderSubtext">
+        <div className="HistoryPanel-itemHeaderSubtext">
           {formatDate(documentRevision.createdOn)}
         </div>
       </span>
@@ -92,11 +92,10 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
 
   const renderTimelineItemActions = documentRevision => {
     return (
-      <div className="DocumentVersionHistory-itemActions">
+      <div className="HistoryPanel-itemActions">
         <Tooltip title={t('permalinkButtonTooltip')}>
           <Button
             icon={<LinkOutlined />}
-            className="HistoryControlPanel-button"
             onClick={() => handlePermalinkButtonClick(documentRevision)}
             />
         </Tooltip>
@@ -104,7 +103,6 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
           <Tooltip title={t('restoreButtonToltip')}>
             <Button
               icon={<UndoOutlined />}
-              className="HistoryControlPanel-button"
               disabled={documentRevision.isLatestVersion}
               onClick={() => handleRestoreButtonClick(documentRevision)}
               />
@@ -114,7 +112,6 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
           <Tooltip title={t('compareToLatestTooltip')}>
             <Button
               icon={<SwapOutlined />}
-              className="HistoryControlPanel-button"
               disabled={documentRevision.isLatestVersion}
               onClick={() => handleCompareToLatestButtonClick(documentRevision)}
               />
@@ -123,7 +120,6 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
         <Tooltip title={t('viewButtonTooltip')}>
           <Button
             icon={<EyeOutlined />}
-            className="HistoryControlPanel-button"
             onClick={() => onViewClick(documentRevision._id)}
             />
         </Tooltip>
@@ -136,15 +132,15 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
 
     return (
       <div>
-        <div className="DocumentVersionHistory-itemContentRow">
+        <div className="HistoryPanel-itemContentRow">
           <div>{t('common:user')}:</div>
-          <a className="DocumentVersionHistory-itemContentRowValue" href={userProfileUrl}>
+          <a className="HistoryPanel-itemContentRowValue" href={userProfileUrl}>
             {documentRevision.createdBy.displayName}
           </a>
         </div>
-        <div className="DocumentVersionHistory-itemContentRow">
+        <div className="HistoryPanel-itemContentRow">
           <div>{t('common:id')}:</div>
-          <div className="DocumentVersionHistory-itemContentRowValue">{documentRevision._id}</div>
+          <div className="HistoryPanel-itemContentRowValue">{documentRevision._id}</div>
         </div>
         {renderTimelineItemActions(documentRevision)}
       </div>
@@ -155,7 +151,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
     return {
       dot: renderTimelineItemDot(documentRevision),
       children: (
-        <div className="DocumentVersionHistory-item">
+        <div className="HistoryPanel-item">
           <Collapse
             ghost
             expandIconPosition="end"
@@ -174,7 +170,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
   };
 
   return (
-    <div className="DocumentVersionHistory">
+    <div className="HistoryPanel">
       <Timeline mode="left" items={versionedDocumentRevisions.map(getActivityItem)} />
     </div>
   );
