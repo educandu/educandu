@@ -88,6 +88,20 @@
   }
 }
 
+@keyframes blink-animation {
+  to {
+    background-color: @edu-primary-color-light;
+  }
+}
+
+.DocumentPage-inputsPanelButton {
+  animation: blink-animation 0.5s steps(5, start) 3;
+
+  & .ant-float-btn-body {
+    animation: blink-animation 0.5s steps(5, start) 3;
+  }
+}
+
 .DocumentPage-focusHeaderButton {
   .m-icon-button;
 }
@@ -113,6 +127,13 @@
 }
 
 .DocumentPage-focusHeaderVersionHistoryInfo {
+  display: grid;
+  gap: 10px;
+  grid-auto-flow: column;
+  margin-left: auto;
+}
+
+.DocumentPage-focusHeaderInputsInfo {
   display: grid;
   gap: 10px;
   grid-auto-flow: column;

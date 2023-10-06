@@ -1581,6 +1581,14 @@
     "latestHistoryVersion": {
       "en": "Latest version",
       "de": "Letzte version"
+    },
+    "inputs": {
+      "en": "Inputs",
+      "de": "Eingaben"
+    },
+    "inputsActionTooltip": {
+      "en": "Inputs management",
+      "de": "Verwaltung von Eingaben"
     }
   },
   "error": {

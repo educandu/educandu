@@ -16,6 +16,7 @@ import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useBeforeunload } from 'react-beforeunload';
+import InputsIcon from '../icons/general/inputs-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
@@ -68,6 +69,7 @@ const logger = new Logger(import.meta.url);
 const VIEW = {
   display: 'display',
   edit: DOC_VIEW_QUERY_PARAM.edit,
+  inputs: DOC_VIEW_QUERY_PARAM.inputs,
   history: DOC_VIEW_QUERY_PARAM.history,
   comments: DOC_VIEW_QUERY_PARAM.comments
 };
@@ -149,6 +151,9 @@ function Document({ initialState, PageTemplate }) {
   const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
   const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
+
+  const documentContainsInputPlugins = true;
+  const userCanManageInputs = !!room && documentContainsInputPlugins;
 
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
@@ -470,6 +475,15 @@ function Document({ initialState, PageTemplate }) {
     return true;
   };
 
+  const handleInputsOpen = () => {
+    switchView(VIEW.inputs);
+  };
+
+  const handleInputsClose = () => {
+    switchView(VIEW.display);
+    return true;
+  };
+
   const handleSectionContentChange = useCallback((index, newContent) => {
     const modifiedSection = {
       ...currentSections[index],
@@ -707,6 +721,14 @@ function Document({ initialState, PageTemplate }) {
     </FocusHeader>
   );
 
+  const renderInputsFocusHeader = () => (
+    <FocusHeader title={t('inputs')} onClose={handleInputsClose}>
+      <div className="DocumentPage-focusHeaderInputsInfo">
+        <EyeOutlined />
+      </div>
+    </FocusHeader>
+  );
+
   const renderFocusHeader = () => {
     switch (view) {
       case VIEW.edit:
@@ -715,6 +737,8 @@ function Document({ initialState, PageTemplate }) {
         return renderCommentsFocusHeader();
       case VIEW.history:
         return renderHistoryFocusHeader();
+      case VIEW.inputs:
+        return renderInputsFocusHeader();
       default:
         return null;
     }
@@ -842,12 +866,13 @@ function Document({ initialState, PageTemplate }) {
                 onClick={handleEditOpen}
                 />
             </FloatButton.Group>
-            {!!room && (
+            {!!userCanManageInputs && (
               <FloatButton.Group shape="square" style={{ ...inputsPanelPositionInPx }}>
                 <FloatButton
-                  disabled={!user}
-                  tooltip={favoriteActionTooltip}
-                  icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
+                  className="DocumentPage-inputsPanelButton"
+                  icon={<InputsIcon />}
+                  tooltip={t('inputsActionTooltip')}
+                  onClick={handleInputsOpen}
                   />
               </FloatButton.Group>
             )}
