@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Checkbox, Form, Radio } from 'antd';
 import { SELECT_FIELD_MODE } from './constants.js';
 import Markdown from '../../components/markdown.js';
@@ -7,9 +7,9 @@ import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const FormItem = Form.Item;
 
-export default function SelectFieldDisplay({ content }) {
-  const [selectedValues, setSelectedValues] = useState([]);
+export default function SelectFieldDisplay({ content, input, onInputChanged }) {
   const { mode, label, maxColumns, width, items } = content;
+  const selectedValues = input?.selectedValues || [];
 
   let InputComponent;
   let handleSelectionChange;
@@ -17,15 +17,19 @@ export default function SelectFieldDisplay({ content }) {
     case SELECT_FIELD_MODE.singleSelection:
       InputComponent = Radio;
       handleSelectionChange = event => {
-        setSelectedValues(event.target.checked ? [event.target.value] : []);
+        const newSelectedValues = event.target.checked
+          ? [event.target.value]
+          : [];
+        onInputChanged({ selectedValues: newSelectedValues });
       };
       break;
     case SELECT_FIELD_MODE.multiSelection:
       InputComponent = Checkbox;
       handleSelectionChange = event => {
-        setSelectedValues(oldValues => event.target.checked
-          ? ensureIsIncluded(oldValues, event.target.value)
-          : ensureIsExcluded(oldValues, event.target.value));
+        const newSelectedValues = event.target.checked
+          ? ensureIsIncluded(selectedValues, event.target.value)
+          : ensureIsExcluded(selectedValues, event.target.value);
+        onInputChanged({ selectedValues: newSelectedValues });
       };
       break;
     default:

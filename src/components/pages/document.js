@@ -24,6 +24,7 @@ import DocumentInputsPanel from '../document-inputs-panel.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
+import { ensureKeyIsExcluded } from '../../utils/object-utils.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentVersionHistory from '../document-version-history.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
@@ -74,6 +75,16 @@ const VIEW = {
   inputs: DOC_VIEW_QUERY_PARAM.inputs,
   history: DOC_VIEW_QUERY_PARAM.history,
   comments: DOC_VIEW_QUERY_PARAM.comments
+};
+
+const createEmptyInputsForSections = (sections, pluginRegistry) => {
+  return sections.reduce((inputs, section) => {
+    const plugin = pluginRegistry.getRegisteredPlugin(section.type);
+    if (plugin?.info.allowsInput && !section.deletedOn) {
+      inputs[section.key] = null;
+    }
+    return inputs;
+  }, {});
 };
 
 function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
@@ -150,6 +161,10 @@ function Document({ initialState, PageTemplate }) {
 
   const { room } = initialState;
 
+  const getInitialSections = () => initialState.templateSections?.length
+    ? initialState.templateSections
+    : initialState.doc.sections;
+
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
   const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
@@ -173,6 +188,8 @@ function Document({ initialState, PageTemplate }) {
   const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
   const [documentInputRevisions, setDocumentInputRevisions] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
+  // eslint-disable-next-line no-unused-vars
+  const [hasPendingInputChanges, setHasPendingInputChanges] = useState(false);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
   const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
@@ -183,9 +200,10 @@ function Document({ initialState, PageTemplate }) {
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
   const [initialDocumentRevisionsFetched, setInitialDocumentRevisionsFetched] = useState(false);
   const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
+  const [currentSections, setCurrentSections] = useState(() => cloneDeep(getInitialSections()));
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
-  const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
+  const [pendingInputValues, setPendingInputValues] = useState(() => createEmptyInputsForSections(getInitialSections(), pluginRegistry));
 
   const [alerts, setAlerts] = useState(createPageAlerts({
     t,
@@ -211,10 +229,13 @@ function Document({ initialState, PageTemplate }) {
     }
   });
 
-  const switchView = newView => {
+  const switchView = (newView, displayedDocumentRevision = null) => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
     setPreSetView(null);
     setView(newView);
+
+    setPendingInputValues(createEmptyInputsForSections(displayedDocumentRevision?.sections ?? currentSections, pluginRegistry));
+    setHasPendingInputChanges(false);
   };
 
   const ensureActionsPanelPosition = useCallback(() => {
@@ -321,10 +342,12 @@ function Document({ initialState, PageTemplate }) {
 
       setHistoryDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
+      setHasPendingInputChanges(false);
+      setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections, pluginRegistry));
     } catch (error) {
       handleApiError({ error, t, logger });
     }
-  }, [doc._id, t, documentApiClient]);
+  }, [doc._id, t, documentApiClient, pluginRegistry]);
 
   const fetchDocumentInputs = useCallback(async () => {
     try {
@@ -441,10 +464,13 @@ function Document({ initialState, PageTemplate }) {
         newPendingTemplateSectionKeys.push(currentSection.key);
         return currentSection;
       });
+      const newCurrentSections = cloneDeep(mergedSections);
 
       setIsDirty(false);
       setDoc(updatedDoc);
-      setCurrentSections(cloneDeep(mergedSections));
+      setCurrentSections(newCurrentSections);
+      setHasPendingInputChanges(false);
+      setPendingInputValues(createEmptyInputsForSections(newCurrentSections, pluginRegistry));
       setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
       message.success(t('common:changesSavedSuccessfully'));
     } catch (error) {
@@ -491,7 +517,7 @@ function Document({ initialState, PageTemplate }) {
       setHistoryDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
       setIsSidePanelMinimized(false);
-      switchView(VIEW.history);
+      switchView(VIEW.history, latestDocumentRevision);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -515,6 +541,11 @@ function Document({ initialState, PageTemplate }) {
     switchView(VIEW.display);
     return true;
   };
+
+  const handleSectionInputChange = useCallback((sectionKey, newInputs) => {
+    setPendingInputValues(oldInputs => ({ ...oldInputs, [sectionKey]: newInputs }));
+    setHasPendingInputChanges(true);
+  }, []);
 
   const handleSectionContentChange = useCallback((index, newContent) => {
     const modifiedSection = {
@@ -543,6 +574,9 @@ function Document({ initialState, PageTemplate }) {
     const newSections = insertItemAt(currentSections, newSection, index);
     setCurrentSections(newSections);
     setEditedSectionKeys(keys => ensureIsIncluded(keys, newSection.key));
+    if (plugin.info.allowsInput) {
+      setPendingInputValues(oldInputs => ({ ...oldInputs, [newSection.key]: null }));
+    }
     setIsDirty(true);
   }, [currentSections, pluginRegistry, t]);
 
@@ -553,9 +587,13 @@ function Document({ initialState, PageTemplate }) {
 
     const expandedSections = insertItemAt(currentSections, duplicatedSection, index + 1);
     setCurrentSections(expandedSections);
+    const plugin = pluginRegistry.getRegisteredPlugin(duplicatedSection.type);
+    if (plugin.info.allowsInput) {
+      setPendingInputValues(oldInputs => ({ ...oldInputs, [duplicatedSection.key]: null }));
+    }
     setIsDirty(true);
     setEditedSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
-  }, [currentSections]);
+  }, [currentSections, pluginRegistry]);
 
   const handleSectionCopyToClipboard = useCallback(async index => {
     const originalSection = currentSections[index];
@@ -578,9 +616,17 @@ function Document({ initialState, PageTemplate }) {
       const targetRoomId = room?._id || null;
       const clipboardText = await window.navigator.clipboard.readText();
       const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
+      const plugin = pluginRegistry.getRegisteredPlugin(newSection.type);
+      if (!plugin) {
+        throw new Error(`Plugin '${newSection.type}' is not a registered plugin`);
+      }
+
       const redactedSection = redactSectionContent({ section: newSection, pluginRegistry, targetRoomId });
       const newSections = insertItemAt(currentSections, redactedSection, index);
       setCurrentSections(newSections);
+      if (plugin.info.allowsInput) {
+        setPendingInputValues(oldInputs => ({ ...oldInputs, [redactedSection.key]: null }));
+      }
       setIsDirty(true);
       return true;
     } catch (error) {
@@ -597,6 +643,7 @@ function Document({ initialState, PageTemplate }) {
         const reducedSections = removeItemAt(currentSections, index);
         setEditedSectionKeys(keys => ensureIsExcluded(keys, section.key));
         setCurrentSections(reducedSections);
+        setPendingInputValues(oldInputs => ensureKeyIsExcluded(oldInputs, section.key));
         setIsDirty(true);
       }
     );
@@ -605,6 +652,7 @@ function Document({ initialState, PageTemplate }) {
   const handleSectionEditEnter = useCallback(index => {
     const section = currentSections[index];
     setEditedSectionKeys(keys => ensureIsIncluded(keys, section.key));
+    setPendingInputValues(oldInputs => oldInputs[section.key] ? { ...oldInputs, [section.key]: null } : oldInputs);
   }, [currentSections]);
 
   const handleSectionEditLeave = useCallback(index => {
@@ -621,6 +669,7 @@ function Document({ initialState, PageTemplate }) {
   const handlePendingSectionDiscard = useCallback(index => {
     const discardedSection = currentSections[index];
     setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
+    setPendingInputValues(oldInputs => ensureKeyIsExcluded(oldInputs, discardedSection.key));
     setIsDirty(true);
   }, [currentSections]);
 
@@ -631,6 +680,8 @@ function Document({ initialState, PageTemplate }) {
   const handleViewDocumentRevisionClick = documentRevisionId => {
     const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
     setHistorySelectedDocumentRevision(documentRevisionToView);
+    setHasPendingInputChanges(false);
+    setPendingInputValues(createEmptyInputsForSections(documentRevisionToView.sections, pluginRegistry));
   };
 
   const handleRestoreDocumentRevisionClick = ({ documentRevisionId, documentId }) => {
@@ -649,6 +700,8 @@ function Document({ initialState, PageTemplate }) {
           setCurrentSections(updatedDoc.sections);
           setHistoryDocumentRevisions(documentRevisions);
           setHistorySelectedDocumentRevision(latestDocumentRevision);
+          setHasPendingInputChanges(false);
+          setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections, pluginRegistry));
         } catch (error) {
           handleApiError({ error, logger, t });
           throw error;
@@ -657,7 +710,7 @@ function Document({ initialState, PageTemplate }) {
     );
   };
 
-  const hardDeleteSection = useCallback(async ({ section, reason, deleteAllRevisions }) => {
+  const hardDeleteSection = useCallback(async ({ revisionId, section, reason, deleteAllRevisions }) => {
     const documentId = doc._id;
     const sectionKey = section.key;
     const sectionRevision = section.revision;
@@ -667,23 +720,29 @@ function Document({ initialState, PageTemplate }) {
 
       setDoc(updatedDoc);
       setCurrentSections(updatedDoc.sections);
+
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentId);
+      const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
+      const newSelectedDocumentRevision = documentRevisions.find(r => r._id === revisionId) || latestDocumentRevision;
+
+      setHistoryDocumentRevisions(documentRevisions);
+      setHistorySelectedDocumentRevision(newSelectedDocumentRevision);
+
+      const currentlyVisibleSections = view === VIEW.history ? newSelectedDocumentRevision.sections : updatedDoc.sections;
+      setPendingInputValues(createEmptyInputsForSections(currentlyVisibleSections, pluginRegistry));
+      setHasPendingInputChanges(false);
     } catch (error) {
       handleApiError({ error, logger, t });
     }
-
-    const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentId);
-    const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
-
-    setHistoryDocumentRevisions(documentRevisions);
-    setHistorySelectedDocumentRevision(oldValue => documentRevisions.find(r => r._id === oldValue._id) || latestDocumentRevision);
-  }, [doc, documentApiClient, t]);
+  }, [view, doc, documentApiClient, pluginRegistry, t]);
 
   const handleSectionHardDelete = useCallback(index => {
     confirmSectionHardDelete(
       t,
       async ({ reason, deleteAllRevisions }) => {
+        const revisionId = historySelectedDocumentRevision._id;
         const section = historySelectedDocumentRevision.sections[index];
-        await hardDeleteSection({ section, reason, deleteAllRevisions });
+        await hardDeleteSection({ revisionId, section, reason, deleteAllRevisions });
       }
     );
   }, [hardDeleteSection, historySelectedDocumentRevision, t]);
@@ -796,6 +855,7 @@ function Document({ initialState, PageTemplate }) {
 
             <div>
               <SectionsDisplay
+                inputs={pendingInputValues}
                 sections={view === VIEW.history ? historySelectedDocumentRevision?.sections || [] : currentSections}
                 pendingSectionKeys={pendingTemplateSectionKeys}
                 editedSectionKeys={editedSectionKeys}
@@ -804,6 +864,7 @@ function Document({ initialState, PageTemplate }) {
                 onPendingSectionApply={handlePendingSectionApply}
                 onPendingSectionDiscard={handlePendingSectionDiscard}
                 onSectionContentChange={handleSectionContentChange}
+                onSectionInputChange={handleSectionInputChange}
                 onSectionCopyToClipboard={handleSectionCopyToClipboard}
                 onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
                 onSectionMove={handleSectionMove}
