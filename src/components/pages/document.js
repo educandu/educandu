@@ -164,12 +164,12 @@ function Document({ initialState, PageTemplate }) {
   const [lastViewInfo, setLastViewInfo] = useState(null);
   const [documentComments, setDocumentComments] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
+  const [isSidePanelMinimized, setIsSidePanelMinimized] = useState(false);
+  const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
   const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
-  const [isHistoryPanelMinimized, setIsHistoryPanelMinimized] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
-  const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
@@ -252,18 +252,18 @@ function Document({ initialState, PageTemplate }) {
     setInputsPanelPositionInPx(position);
   }, [view, actionsPanelPositionInPx]);
 
-  const ensureHistoryPanelPosition = useCallback(() => {
-    if (view !== VIEW.history) {
+  const ensureSidePanelPosition = useCallback(() => {
+    if (view !== VIEW.history && view !== VIEW.inputs) {
       return;
     }
 
     const headerBoundingRect = headerRef.current.getBoundingClientRect();
 
-    const historyVerticalPadding = 10;
-    const top = headerBoundingRect.height + historyVerticalPadding;
-    const height = window.innerHeight - top - historyVerticalPadding;
+    const verticalPadding = 10;
+    const top = headerBoundingRect.height + verticalPadding;
+    const height = window.innerHeight - top - verticalPadding;
 
-    setHistoryPanelPositionInPx({ top, height });
+    setSidePanelPositionInPx({ top, height });
   }, [view, headerRef]);
 
   useEffect(() => {
@@ -281,11 +281,11 @@ function Document({ initialState, PageTemplate }) {
   }, [ensureInputsPanelPosition]);
 
   useEffect(() => {
-    ensureHistoryPanelPosition();
-    window.addEventListener('resize', ensureHistoryPanelPosition);
+    ensureSidePanelPosition();
+    window.addEventListener('resize', ensureSidePanelPosition);
 
-    return () => window.removeEventListener('resize', ensureHistoryPanelPosition);
-  }, [ensureHistoryPanelPosition]);
+    return () => window.removeEventListener('resize', ensureSidePanelPosition);
+  }, [ensureSidePanelPosition]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
@@ -461,7 +461,7 @@ function Document({ initialState, PageTemplate }) {
 
       setHistoryDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
-      setIsHistoryPanelMinimized(false);
+      setIsSidePanelMinimized(false);
       switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -592,8 +592,8 @@ function Document({ initialState, PageTemplate }) {
     setIsDirty(true);
   }, [currentSections]);
 
-  const handleHistoryPanelToggleClick = () => {
-    setIsHistoryPanelMinimized(!isHistoryPanelMinimized);
+  const handleSidePanelToggleClick = () => {
+    setIsSidePanelMinimized(!isSidePanelMinimized);
   };
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
@@ -747,7 +747,7 @@ function Document({ initialState, PageTemplate }) {
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} headerRef={headerRef} contentRef={pageRef}>
-        <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history && !isHistoryPanelMinimized })}>
+        <div className={classNames('DocumentPage', { 'DocumentPage--sidePanelView': (view === VIEW.history || view === VIEW.inputs) && !isSidePanelMinimized })}>
           <div className="DocumentPage-document">
             {!!room && (
               <Breadcrumb
@@ -805,23 +805,34 @@ function Document({ initialState, PageTemplate }) {
         </div>
       </PageTemplate>
 
-      {view === VIEW.history && (
+      {(view === VIEW.history || view === VIEW.inputs) && (
         <div
-          style={{ ...historyPanelPositionInPx }}
-          className={classNames('DocumentPage-historyPanel', { 'is-minimized': isHistoryPanelMinimized })}
+          style={{ ...sidePanelPositionInPx }}
+          className={classNames('DocumentPage-sidePanel', { 'is-minimized': isSidePanelMinimized })}
           >
-          <div className="DocumentPage-historyPanelContentWrapper">
-            <div className="DocumentPage-historyPanelContentToggle" onClick={handleHistoryPanelToggleClick}>
-              {isHistoryPanelMinimized ? <ArrowLeftOutlined /> : <ArrowRightOutlined />}
+          <div className="DocumentPage-sidePanelContentWrapper">
+            <div className="DocumentPage-sidePanelContentToggle" onClick={handleSidePanelToggleClick}>
+              {isSidePanelMinimized ? <ArrowLeftOutlined /> : <ArrowRightOutlined />}
             </div>
-            <div className="DocumentPage-historyPanelContent">
-              <DocumentVersionHistory
-                canRestore={userCanRestoreDocumentRevisions}
-                documentRevisions={historyDocumentRevisions}
-                selectedDocumentRevision={historySelectedDocumentRevision}
-                onViewClick={handleViewDocumentRevisionClick}
-                onRestoreClick={handleRestoreDocumentRevisionClick}
-                />
+            <div className="DocumentPage-sidePanelContent">
+              {view === VIEW.history && (
+                <DocumentVersionHistory
+                  canRestore={userCanRestoreDocumentRevisions}
+                  documentRevisions={historyDocumentRevisions}
+                  selectedDocumentRevision={historySelectedDocumentRevision}
+                  onViewClick={handleViewDocumentRevisionClick}
+                  onRestoreClick={handleRestoreDocumentRevisionClick}
+                  />
+              )}
+              {view === VIEW.inputs && (
+                <DocumentVersionHistory
+                  canRestore={userCanRestoreDocumentRevisions}
+                  documentRevisions={historyDocumentRevisions}
+                  selectedDocumentRevision={historySelectedDocumentRevision}
+                  onViewClick={handleViewDocumentRevisionClick}
+                  onRestoreClick={handleRestoreDocumentRevisionClick}
+                  />
+              )}
             </div>
           </div>
         </div>

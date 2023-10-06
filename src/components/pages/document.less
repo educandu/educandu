@@ -1,31 +1,31 @@
-@document-page-history-panel-width: 350px;
-@document-page-history-panel-toggle-width: 25px;
+@document-page-side-panel-width: 350px;
+@document-page-side-panel-toggle-width: 25px;
 
 .DocumentPage {
   display: grid;
 
-  &.DocumentPage--historyView {
-    grid-template-columns: 1fr @document-page-history-panel-width;
+  &.DocumentPage--sidePanelView {
+    grid-template-columns: 1fr @document-page-side-panel-width;
   }
 }
 
-.DocumentPage-historyPanel {
+.DocumentPage-sidePanel {
   position: fixed;
   right: 0;
-  width: @document-page-history-panel-width;
+  width: @document-page-side-panel-width;
 
   &.is-minimized {
-    width: @document-page-history-panel-toggle-width;
+    width: @document-page-side-panel-toggle-width;
   }
 }
 
-.DocumentPage-historyPanelContentWrapper {
+.DocumentPage-sidePanelContentWrapper {
   display: grid;
   height: inherit;
   grid-template-columns: auto 1fr;
 }
 
-.DocumentPage-historyPanelContent {
+.DocumentPage-sidePanelContent {
   .m-box-shadow;
   overflow: auto;
   background-color: @edu-white;
@@ -33,11 +33,11 @@
 
 }
 
-.DocumentPage-historyPanelContentToggle {
+.DocumentPage-sidePanelContentToggle {
   cursor: pointer;
   margin-top: 10px;
   height: 30px;
-  width: @document-page-history-panel-toggle-width;
+  width: @document-page-side-panel-toggle-width;
   display: flex;
   justify-content: center;
   background-color: @edu-white;
