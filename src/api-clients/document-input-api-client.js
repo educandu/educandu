@@ -16,6 +16,15 @@ class DocumentInputApiClient {
       .then(res => res.data);
   }
 
+  getDocumentInputsByDocumentId(documentId) {
+    return this.httpClient
+      .get(
+        `/api/v1/doc-inputs/documents/${encodeURIComponent(documentId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getDocumentInputsCreatedByUser(userId) {
     return this.httpClient
       .get(

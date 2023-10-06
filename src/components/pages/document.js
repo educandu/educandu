@@ -16,9 +16,11 @@ import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useBeforeunload } from 'react-beforeunload';
+import InputsIcon from '../icons/general/inputs-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
+import DocumentInputsPanel from '../document-inputs-panel.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -33,6 +35,7 @@ import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
 import DocumentCommentApiClient from '../../api-clients/document-comment-api-client.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -68,6 +71,7 @@ const logger = new Logger(import.meta.url);
 const VIEW = {
   display: 'display',
   edit: DOC_VIEW_QUERY_PARAM.edit,
+  inputs: DOC_VIEW_QUERY_PARAM.inputs,
   history: DOC_VIEW_QUERY_PARAM.history,
   comments: DOC_VIEW_QUERY_PARAM.comments
 };
@@ -141,6 +145,7 @@ function Document({ initialState, PageTemplate }) {
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
   const documentCommentApiClient = useSessionAwareApiClient(DocumentCommentApiClient);
 
   const { room } = initialState;
@@ -150,6 +155,10 @@ function Document({ initialState, PageTemplate }) {
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
   const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
 
+  const documentContainsInputPlugins = true;
+  const userIsRoomOwner = !!room && room.ownedBy === user?._id;
+  const userCanManageInputs = !!room && documentContainsInputPlugins;
+
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
 
@@ -157,14 +166,18 @@ function Document({ initialState, PageTemplate }) {
   const [isSaving, setIsSaving] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [lastViewInfo, setLastViewInfo] = useState(null);
+  const [documentInputs, setDocumentInputs] = useState([]);
   const [documentComments, setDocumentComments] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
+  const [isSidePanelMinimized, setIsSidePanelMinimized] = useState(false);
+  const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
+  const [documentInputRevisions, setDocumentInputRevisions] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
-  const [isHistoryPanelMinimized, setIsHistoryPanelMinimized] = useState(false);
+  const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
-  const [historyPanelPositionInPx, setHistoryPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
+  const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
@@ -223,23 +236,41 @@ function Document({ initialState, PageTemplate }) {
     };
 
     const actionsPanelTopOffset = isVerifiedDocument ? 50 : 0;
+    const actualItemsPosition = {
+      ...fixedItemsPosition,
+      top: fixedItemsPosition.top + actionsPanelTopOffset
+    };
 
     setVerifiedBadgePositionInPx(fixedItemsPosition);
-    setActionsPanelPositionInPx({ ...fixedItemsPosition, top: fixedItemsPosition.top + actionsPanelTopOffset });
+    setActionsPanelPositionInPx(actualItemsPosition);
   }, [view, isVerifiedDocument, pageRef]);
 
-  const ensureHistoryPanelPosition = useCallback(() => {
-    if (view !== VIEW.history) {
+  const ensureInputsPanelPosition = useCallback(() => {
+    if (view !== VIEW.display || !actionsPanelPositionInPx) {
+      return;
+    }
+
+    const position = {
+      top: actionsPanelPositionInPx.top + 220,
+      right: actionsPanelPositionInPx.right,
+      left: actionsPanelPositionInPx.left
+    };
+
+    setInputsPanelPositionInPx(position);
+  }, [view, actionsPanelPositionInPx]);
+
+  const ensureSidePanelPosition = useCallback(() => {
+    if (view !== VIEW.history && view !== VIEW.inputs) {
       return;
     }
 
     const headerBoundingRect = headerRef.current.getBoundingClientRect();
 
-    const historyVerticalPadding = 10;
-    const top = headerBoundingRect.height + historyVerticalPadding;
-    const height = window.innerHeight - top - historyVerticalPadding;
+    const verticalPadding = 10;
+    const top = headerBoundingRect.height + verticalPadding;
+    const height = window.innerHeight - top - verticalPadding;
 
-    setHistoryPanelPositionInPx({ top, height });
+    setSidePanelPositionInPx({ top, height });
   }, [view, headerRef]);
 
   useEffect(() => {
@@ -250,11 +281,18 @@ function Document({ initialState, PageTemplate }) {
   }, [ensureActionsPanelPosition]);
 
   useEffect(() => {
-    ensureHistoryPanelPosition();
-    window.addEventListener('resize', ensureHistoryPanelPosition);
+    ensureInputsPanelPosition();
+    window.addEventListener('resize', ensureInputsPanelPosition);
 
-    return () => window.removeEventListener('resize', ensureHistoryPanelPosition);
-  }, [ensureHistoryPanelPosition]);
+    return () => window.removeEventListener('resize', ensureInputsPanelPosition);
+  }, [ensureInputsPanelPosition]);
+
+  useEffect(() => {
+    ensureSidePanelPosition();
+    window.addEventListener('resize', ensureSidePanelPosition);
+
+    return () => window.removeEventListener('resize', ensureSidePanelPosition);
+  }, [ensureSidePanelPosition]);
 
   useEffect(() => {
     if (view !== VIEW.comments && lastViewInfo?.view !== VIEW.comments && lastViewInfo?.sectionKeyToScrollTo) {
@@ -288,6 +326,21 @@ function Document({ initialState, PageTemplate }) {
     }
   }, [doc._id, t, documentApiClient]);
 
+  const fetchDocumentInputs = useCallback(async () => {
+    try {
+      const response = userIsRoomOwner
+        ? await documentInputApiClient.getDocumentInputsByDocumentId(doc._id)
+        : await documentInputApiClient.getDocumentInputsCreatedByUser(user._id);
+
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
+
+      setDocumentInputs(response.documentInputs);
+      setDocumentInputRevisions(documentRevisions);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  }, [doc._id, t, user, userIsRoomOwner, documentInputApiClient, documentApiClient]);
+
   useEffect(() => {
     setAlerts(createPageAlerts({
       t,
@@ -312,7 +365,14 @@ function Document({ initialState, PageTemplate }) {
         setInitialDocumentCommentsFetched(true);
       })();
     }
-  }, [preSetView, doc._id, view, fetchDocumentRevisions, fetchDocumentComments, initialDocumentRevisionsFetched, initialDocumentCommentsFetched]);
+
+    if (preSetView === VIEW.inputs && !initialDocumentInputsFetched) {
+      (async () => {
+        await fetchDocumentInputs();
+        setInitialDocumentInputsFetched(true);
+      })();
+    }
+  }, [preSetView, doc._id, view, fetchDocumentRevisions, fetchDocumentComments, fetchDocumentInputs, initialDocumentRevisionsFetched, initialDocumentCommentsFetched, initialDocumentInputsFetched]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -430,7 +490,7 @@ function Document({ initialState, PageTemplate }) {
 
       setHistoryDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
-      setIsHistoryPanelMinimized(false);
+      setIsSidePanelMinimized(false);
       switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -440,6 +500,18 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryClose = () => {
     setHistoryDocumentRevisions([]);
     setHistorySelectedDocumentRevision(null);
+    switchView(VIEW.display);
+    return true;
+  };
+
+  const handleInputsOpen = async () => {
+    await fetchDocumentInputs();
+    switchView(VIEW.inputs);
+  };
+
+  const handleInputsClose = () => {
+    setDocumentInputs([]);
+    setDocumentInputRevisions([]);
     switchView(VIEW.display);
     return true;
   };
@@ -552,8 +624,8 @@ function Document({ initialState, PageTemplate }) {
     setIsDirty(true);
   }, [currentSections]);
 
-  const handleHistoryPanelToggleClick = () => {
-    setIsHistoryPanelMinimized(!isHistoryPanelMinimized);
+  const handleSidePanelToggleClick = () => {
+    setIsSidePanelMinimized(!isSidePanelMinimized);
   };
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
@@ -681,6 +753,10 @@ function Document({ initialState, PageTemplate }) {
     </FocusHeader>
   );
 
+  const renderInputsFocusHeader = () => (
+    <FocusHeader title={t('inputs')} onClose={handleInputsClose} />
+  );
+
   const renderFocusHeader = () => {
     switch (view) {
       case VIEW.edit:
@@ -689,6 +765,8 @@ function Document({ initialState, PageTemplate }) {
         return renderCommentsFocusHeader();
       case VIEW.history:
         return renderHistoryFocusHeader();
+      case VIEW.inputs:
+        return renderInputsFocusHeader();
       default:
         return null;
     }
@@ -697,7 +775,7 @@ function Document({ initialState, PageTemplate }) {
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} headerRef={headerRef} contentRef={pageRef}>
-        <div className={classNames('DocumentPage', { 'DocumentPage--historyView': view === VIEW.history && !isHistoryPanelMinimized })}>
+        <div className={classNames('DocumentPage', { 'DocumentPage--sidePanelView': (view === VIEW.history || view === VIEW.inputs) && !isSidePanelMinimized })}>
           <div className="DocumentPage-document">
             {!!room && (
               <Breadcrumb
@@ -755,23 +833,32 @@ function Document({ initialState, PageTemplate }) {
         </div>
       </PageTemplate>
 
-      {view === VIEW.history && (
+      {(view === VIEW.history || view === VIEW.inputs) && (
         <div
-          style={{ ...historyPanelPositionInPx }}
-          className={classNames('DocumentPage-historyPanel', { 'is-minimized': isHistoryPanelMinimized })}
+          style={{ ...sidePanelPositionInPx }}
+          className={classNames('DocumentPage-sidePanel', { 'is-minimized': isSidePanelMinimized })}
           >
-          <div className="DocumentPage-historyPanelContentWrapper">
-            <div className="DocumentPage-historyPanelContentToggle" onClick={handleHistoryPanelToggleClick}>
-              {isHistoryPanelMinimized ? <ArrowLeftOutlined /> : <ArrowRightOutlined />}
+          <div className="DocumentPage-sidePanelContentWrapper">
+            <div className="DocumentPage-sidePanelContentToggle" onClick={handleSidePanelToggleClick}>
+              {isSidePanelMinimized ? <ArrowLeftOutlined /> : <ArrowRightOutlined />}
             </div>
-            <div className="DocumentPage-historyPanelContent">
-              <DocumentVersionHistory
-                canRestore={userCanRestoreDocumentRevisions}
-                documentRevisions={historyDocumentRevisions}
-                selectedDocumentRevision={historySelectedDocumentRevision}
-                onViewClick={handleViewDocumentRevisionClick}
-                onRestoreClick={handleRestoreDocumentRevisionClick}
-                />
+            <div className="DocumentPage-sidePanelContent">
+              {view === VIEW.history && (
+                <DocumentVersionHistory
+                  canRestore={userCanRestoreDocumentRevisions}
+                  documentRevisions={historyDocumentRevisions}
+                  selectedDocumentRevision={historySelectedDocumentRevision}
+                  onViewClick={handleViewDocumentRevisionClick}
+                  onRestoreClick={handleRestoreDocumentRevisionClick}
+                  />
+              )}
+              {view === VIEW.inputs && (
+                <DocumentInputsPanel
+                  showUsers={!!userIsRoomOwner}
+                  documentInputs={documentInputs}
+                  documentRevisions={documentInputRevisions}
+                  />
+              )}
             </div>
           </div>
         </div>
@@ -816,6 +903,16 @@ function Document({ initialState, PageTemplate }) {
                 onClick={handleEditOpen}
                 />
             </FloatButton.Group>
+            {!!userCanManageInputs && (
+              <FloatButton.Group shape="square" style={{ ...inputsPanelPositionInPx }}>
+                <FloatButton
+                  className="DocumentPage-inputsPanelButton"
+                  icon={<InputsIcon />}
+                  tooltip={t('inputsActionTooltip')}
+                  onClick={handleInputsOpen}
+                  />
+              </FloatButton.Group>
+            )}
           </div>
         </Fragment>
       )}

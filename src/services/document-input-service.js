@@ -36,8 +36,12 @@ class DocumentInputService {
     return documentInput;
   }
 
-  handleGetDocumentInputsCreatedByUser(userId) {
+  getDocumentInputsCreatedByUser(userId) {
     return this.documentInputStore.getDocumentInputsCreatedByUser(userId);
+  }
+
+  getDocumentInputsByDocumentId(documentId) {
+    return this.documentInputStore.getDocumentInputsByDocumentId(documentId);
   }
 
   async createDocumentInput({ documentId, documentRevisionId, sections, user }) {

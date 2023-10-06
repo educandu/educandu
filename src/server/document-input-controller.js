@@ -9,7 +9,8 @@ import {
   documentInputIdParamsOrQuerySchema,
   getDocumentInputsCreatedByUserParams,
   createDocumentInputDataBodySchema,
-  hardDeleteDocumentInputBodySchema
+  hardDeleteDocumentInputBodySchema,
+  getDocumentInputsByDocumentIdParams
 } from '../domain/schemas/document-input-schemas.js';
 
 const jsonParser = express.json();
@@ -37,10 +38,19 @@ class DocumentInputController {
   async handleGetDocumentInputsCreatedByUser(req, res) {
     const { userId } = req.params;
 
-    const createdDocumentInputs = await this.documentInputService.handleGetDocumentInputsCreatedByUser(userId);
+    const createdDocumentInputs = await this.documentInputService.getDocumentInputsCreatedByUser(userId);
     const mappedCreatedDocumentInputs = await this.clientDataMappingService.mapDocumentInputs(createdDocumentInputs);
 
     return res.send({ documentInputs: mappedCreatedDocumentInputs });
+  }
+
+  async handleGetDocumentInputsByDocumentId(req, res) {
+    const { documentId } = req.params;
+
+    const documentInputs = await this.documentInputService.getDocumentInputsByDocumentId(documentId);
+    const mappeddocumentInputs = await this.clientDataMappingService.mapDocumentInputs(documentInputs);
+
+    return res.send({ documentInputs: mappeddocumentInputs });
   }
 
   async handlePostDocumentInput(req, res) {
@@ -72,6 +82,13 @@ class DocumentInputController {
       needsPermission(permissions.CREATE_CONTENT),
       validateParams(getDocumentInputsCreatedByUserParams),
       (req, res) => this.handleGetDocumentInputsCreatedByUser(req, res)
+    );
+
+    router.get(
+      '/api/v1/doc-inputs/documents/:documentId',
+      needsPermission(permissions.CREATE_CONTENT),
+      validateParams(getDocumentInputsByDocumentIdParams),
+      (req, res) => this.handleGetDocumentInputsByDocumentId(req, res)
     );
 
     router.post(

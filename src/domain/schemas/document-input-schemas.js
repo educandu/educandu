@@ -34,6 +34,10 @@ export const getDocumentInputsCreatedByUserParams = joi.object({
   userId: idOrKeySchema.required()
 });
 
+export const getDocumentInputsByDocumentIdParams = joi.object({
+  documentId: idOrKeySchema.required()
+});
+
 export const createDocumentInputDataBodySchema = joi.object({
   documentId: idOrKeySchema.required(),
   documentRevisionId: idOrKeySchema.required(),
