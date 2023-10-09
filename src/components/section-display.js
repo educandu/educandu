@@ -94,7 +94,8 @@ function SectionDisplay({
     'is-editable': canEdit,
     'is-hard-deletable': isHardDeleteEnabled,
     'is-dragged': isDragged,
-    'is-other-section-dragged': isOtherSectionDragged
+    'is-other-section-dragged': isOtherSectionDragged,
+    'is-submittable-input': !!registeredPlugin?.info.allowsInput
   });
 
   const composeShortcutText = parts => parts.map(part => t(`common:${part}`)).join(' + ');
