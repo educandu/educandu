@@ -7,6 +7,8 @@ import cloneDeep from '../../utils/clone-deep.js';
 class TextFieldInfo {
   static typeName = 'text-field';
 
+  allowsInput = true;
+
   getDisplayName(t) {
     return t('textField:name');
   }

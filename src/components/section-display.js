@@ -32,6 +32,7 @@ const createComponents = registeredPlugin => ({
 });
 
 function SectionDisplay({
+  input,
   section,
   context,
   canEdit,
@@ -49,6 +50,7 @@ function SectionDisplay({
   onSectionEditLeave,
   onSectionMoveUp,
   onSectionMoveDown,
+  onSectionInputChange,
   onSectionContentChange,
   onSectionCopyToClipboard,
   onSectionHardDelete
@@ -210,7 +212,14 @@ function SectionDisplay({
       return <LoadingSection />;
     }
 
-    return <DisplayComponent context={context} content={section.content} />;
+    return (
+      <DisplayComponent
+        input={input}
+        context={context}
+        content={section.content}
+        onInputChanged={onSectionInputChange}
+        />
+    );
   };
 
   const handleContentChange = content => {
@@ -368,6 +377,7 @@ function SectionDisplay({
 }
 
 SectionDisplay.propTypes = {
+  input: PropTypes.any,
   section: sectionShape.isRequired,
   context: sectionContextShape.isRequired,
   canEdit: PropTypes.bool.isRequired,
@@ -380,6 +390,7 @@ SectionDisplay.propTypes = {
   onPendingSectionApply: PropTypes.func.isRequired,
   onPendingSectionDiscard: PropTypes.func.isRequired,
   onSectionContentChange: PropTypes.func.isRequired,
+  onSectionInputChange: PropTypes.func.isRequired,
   onSectionCopyToClipboard: PropTypes.func.isRequired,
   onSectionDelete: PropTypes.func.isRequired,
   onSectionDuplicate: PropTypes.func.isRequired,
@@ -388,6 +399,10 @@ SectionDisplay.propTypes = {
   onSectionHardDelete: PropTypes.func.isRequired,
   onSectionMoveDown: PropTypes.func.isRequired,
   onSectionMoveUp: PropTypes.func.isRequired
+};
+
+SectionDisplay.defaultProps = {
+  input: null
 };
 
 export default memoAndTransformProps(SectionDisplay, ({
@@ -400,6 +415,7 @@ export default memoAndTransformProps(SectionDisplay, ({
   onSectionMoveUp,
   onSectionMoveDown,
   onSectionContentChange,
+  onSectionInputChange,
   onSectionCopyToClipboard,
   onSectionHardDelete,
   ...rest
@@ -413,6 +429,7 @@ export default memoAndTransformProps(SectionDisplay, ({
   onSectionMoveUp: useStableCallback(onSectionMoveUp),
   onSectionMoveDown: useStableCallback(onSectionMoveDown),
   onSectionContentChange: useStableCallback(onSectionContentChange),
+  onSectionInputChange: useStableCallback(onSectionInputChange),
   onSectionCopyToClipboard: useStableCallback(onSectionCopyToClipboard),
   onSectionHardDelete: useStableCallback(onSectionHardDelete),
   ...rest

@@ -1,5 +1,5 @@
+import React from 'react';
 import { Form, Input } from 'antd';
-import React, { useState } from 'react';
 import { TEXT_FIELD_MODE } from './constants.js';
 import Markdown from '../../components/markdown.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -7,12 +7,12 @@ import NeverScrollingTextArea from '../../components/never-scrolling-text-area.j
 
 const FormItem = Form.Item;
 
-export default function TextFieldDisplay({ content }) {
-  const [currentValue, setCurrentValue] = useState('');
+export default function TextFieldDisplay({ content, input, onInputChanged }) {
   const { mode, label, maxLength, width } = content;
+  const value = input?.value || '';
 
   const handleCurrentValueChange = event => {
-    setCurrentValue(event.target.value);
+    onInputChanged({ value: event.target.value });
   };
 
   let InputComponent;
@@ -32,7 +32,7 @@ export default function TextFieldDisplay({ content }) {
       <Form layout="vertical">
         <FormItem label={label ? <Markdown inline>{label}</Markdown> : null}>
           <InputComponent
-            value={currentValue}
+            value={value}
             maxLength={maxLength || null}
             onChange={handleCurrentValueChange}
             />

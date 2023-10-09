@@ -16,6 +16,7 @@ const SECTION_NON_PREVIEW_CONTEXT = { isPreview: false };
 
 function SectionsDisplay({
   sections,
+  inputs,
   pendingSectionKeys,
   canEdit,
   canHardDelete,
@@ -29,6 +30,7 @@ function SectionsDisplay({
   onSectionEditEnter,
   onSectionEditLeave,
   onSectionContentChange,
+  onSectionInputChange,
   onSectionCopyToClipboard,
   onSectionPasteFromClipboard,
   onSectionHardDelete
@@ -68,6 +70,7 @@ function SectionsDisplay({
         key={section.key}
         context={canEdit && !isEditing ? SECTION_PREVIEW_CONTEXT : SECTION_NON_PREVIEW_CONTEXT}
         section={section}
+        input={inputs[section.key] ?? null}
         canEdit={!!dragHandleProps && canEdit}
         canHardDelete={canHardDelete}
         dragHandleProps={dragHandleProps}
@@ -85,6 +88,7 @@ function SectionsDisplay({
         onSectionMoveUp={() => handleSectionMove(index, index - 1)}
         onSectionMoveDown={() => handleSectionMove(index, index + 1)}
         onSectionContentChange={newContent => onSectionContentChange(index, newContent)}
+        onSectionInputChange={newInput => onSectionInputChange(section.key, newInput)}
         onSectionHardDelete={() => onSectionHardDelete(index)}
         />
     );
@@ -160,6 +164,7 @@ SectionsDisplay.propTypes = {
   onPendingSectionApply: PropTypes.func,
   onPendingSectionDiscard: PropTypes.func,
   onSectionContentChange: PropTypes.func,
+  onSectionInputChange: PropTypes.func,
   onSectionCopyToClipboard: PropTypes.func,
   onSectionDelete: PropTypes.func,
   onSectionDuplicate: PropTypes.func,
@@ -170,7 +175,8 @@ SectionsDisplay.propTypes = {
   onSectionMove: PropTypes.func,
   onSectionPasteFromClipboard: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
-  sections: PropTypes.arrayOf(sectionShape).isRequired
+  sections: PropTypes.arrayOf(sectionShape).isRequired,
+  inputs: PropTypes.object
 };
 
 SectionsDisplay.defaultProps = {
@@ -180,6 +186,7 @@ SectionsDisplay.defaultProps = {
   onPendingSectionApply: () => {},
   onPendingSectionDiscard: () => {},
   onSectionContentChange: () => {},
+  onSectionInputChange: () => {},
   onSectionCopyToClipboard: () => {},
   onSectionDelete: () => {},
   onSectionDuplicate: () => {},
@@ -189,7 +196,8 @@ SectionsDisplay.defaultProps = {
   onSectionInsert: () => {},
   onSectionMove: () => {},
   onSectionPasteFromClipboard: () => {},
-  pendingSectionKeys: []
+  pendingSectionKeys: [],
+  inputs: {}
 };
 
 export default memo(SectionsDisplay);

@@ -6,6 +6,8 @@ import { createDefaultContent, validateContent } from './select-field-utils.js';
 class SelectFieldInfo {
   static typeName = 'select-field';
 
+  allowsInput = true;
+
   getDisplayName(t) {
     return t('selectField:name');
   }

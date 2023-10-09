@@ -28,6 +28,11 @@ const DISPLAY_MODE = {
   preview: 'preview'
 };
 
+const TARGET = {
+  old: 'old',
+  new: 'new'
+};
+
 class ComparisonPreloader {
   static dependencies = [PluginRegistry];
 
@@ -44,6 +49,14 @@ class ComparisonPreloader {
   }
 }
 
+const resetInputsForSectionComparison = (inputs, sectionComparisonKey) => {
+  return { ...inputs, [sectionComparisonKey]: { [TARGET.old]: null, [TARGET.new]: null } };
+};
+
+const createEmptyInputsForDocumentComparison = comparison => {
+  return comparison.sections.reduce((inputs, sectionComparison) => resetInputsForSectionComparison(inputs, sectionComparison.key), {});
+};
+
 function Comparison({ initialState, PageTemplate }) {
   const request = useRequest();
   const { revisions } = initialState;
@@ -51,6 +64,7 @@ function Comparison({ initialState, PageTemplate }) {
   const { t } = useTranslation('comparison');
   const pluginRegistry = useService(PluginRegistry);
   const [comparison, setComparison] = useState(null);
+  const [currentInputs, setCurrentInputs] = useState({});
   const [oldRevisionId, setOldRevisionId] = useState(request.query.oldId);
   const [newRevisionId, setNewRevisionId] = useState(request.query.newId);
   const [displayModesByMappedRevisionKey, setDisplayModesByMappedRevisionKey] = useState({});
@@ -69,12 +83,18 @@ function Comparison({ initialState, PageTemplate }) {
     const documentId = revisions[0].documentId;
     const newComparison = createDocumentRevisionComparison(oldRevision, newRevision, pluginRegistry);
     setComparison(newComparison);
+    setCurrentInputs(createEmptyInputsForDocumentComparison(newComparison));
     setDisplayModesByMappedRevisionKey(newComparison.sections.reduce((accu, { key }) => ({ ...accu, [key]: DISPLAY_MODE.text }), {}));
     history.replaceState(null, '', routes.getDocumentRevisionComparisonUrl({ documentId, oldId: oldRevisionId, newId: newRevisionId }));
   }, [pluginRegistry, revisions, oldRevisionId, newRevisionId]);
 
   const handleSectionDisplayModeChange = (sectionComparisonKey, newDisplayMode) => {
+    setCurrentInputs(inputs => resetInputsForSectionComparison(inputs, sectionComparisonKey));
     setDisplayModesByMappedRevisionKey(oldModes => ({ ...oldModes, [sectionComparisonKey]: newDisplayMode }));
+  };
+
+  const handleSectionInputChange = (sectionComparisonKey, target, newValue) => {
+    setCurrentInputs(inputs => ({ ...inputs, [sectionComparisonKey]: { ...inputs[sectionComparisonKey], [target]: newValue } }));
   };
 
   const renderSelectOption = revision => (
@@ -116,12 +136,13 @@ function Comparison({ initialState, PageTemplate }) {
     </section>
   );
 
-  const renderSectionPreview = (section, keyModifier) => {
+  const renderSectionPreview = (section, sectionComparisonKey, target) => {
     return (
       <SectionDisplay
         canEdit={false}
-        key={`${section.key}-${keyModifier}`}
+        key={`${section.key}-${target}`}
         section={section}
+        input={currentInputs[sectionComparisonKey]?.[target] || null}
         isDragged={false}
         isEditing={false}
         isPending={false}
@@ -140,6 +161,7 @@ function Comparison({ initialState, PageTemplate }) {
         onSectionContentChange={NOOP}
         onPendingSectionDiscard={NOOP}
         onSectionCopyToClipboard={NOOP}
+        onSectionInputChange={newValue => handleSectionInputChange(sectionComparisonKey, target, newValue)}
         />
     );
   };
@@ -247,8 +269,8 @@ function Comparison({ initialState, PageTemplate }) {
           {displayMode === DISPLAY_MODE.preview && (
             <Fragment>
               {sectionComparison.changeType === SECTION_CHANGE_TYPE.added && renderSectionMissingInfo()}
-              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.added && renderSectionPreview(sectionComparison.oldSection, 'old')}
-              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.removed && renderSectionPreview(sectionComparison.newSection, 'new')}
+              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.added && renderSectionPreview(sectionComparison.oldSection, sectionComparison.key, TARGET.old)}
+              {sectionComparison.changeType !== SECTION_CHANGE_TYPE.removed && renderSectionPreview(sectionComparison.newSection, sectionComparison.key, TARGET.new)}
               {sectionComparison.changeType === SECTION_CHANGE_TYPE.removed && renderSectionMissingInfo()}
             </Fragment>
           )}

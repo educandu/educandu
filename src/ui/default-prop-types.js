@@ -25,11 +25,14 @@ export const sectionContextShape = PropTypes.shape({
 
 export const sectionDisplayProps = {
   context: sectionContextShape.isRequired,
-  content: PropTypes.any
+  content: PropTypes.any,
+  input: PropTypes.any,
+  onInputChanged: PropTypes.func.isRequired
 };
 
 export const sectionEditorProps = {
-  ...sectionDisplayProps,
+  context: sectionContextShape.isRequired,
+  content: PropTypes.any,
   onContentChanged: PropTypes.func.isRequired
 };
 
