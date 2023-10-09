@@ -835,6 +835,10 @@
     "documentVersion": {
       "en": "Document version",
       "de": "Dokumentversion"
+    },
+    "viewButtonTooltip": {
+      "en": "View input",
+      "de": "Eingabe ansehen"
     }
   },
   "documentMetadataModal": {
@@ -982,18 +986,6 @@
     }
   },
   "documentVersionHistory": {
-    "permalinkButtonTooltip": {
-      "en": "Copy version permalink",
-      "de": "Version-Permalink kopieren"
-    },
-    "permalinkCopied": {
-      "en": "The permalink was copied to the clipboard",
-      "de": "Der Permalink wurde in die Zwischenablage kopiert"
-    },
-    "permalinkCouldNotBeCopied": {
-      "en": "The permalink could not be copied to the clipboard",
-      "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
-    },
     "restoreButtonToltip": {
       "en": "Restore version",
       "de": "Version wiederherstellen"
@@ -1599,6 +1591,14 @@
     "inputsActionTooltip": {
       "en": "Inputs management",
       "de": "Verwaltung von Eingaben"
+    },
+    "clearInput": {
+      "en": "Clear input",
+      "de": "Eingabe löschen"
+    },
+    "submitInput": {
+      "en": "Submit input",
+      "de": "Eingabe senden"
     }
   },
   "error": {
@@ -4181,6 +4181,18 @@
     "cannotPlayMediaEmptyStateSubtitle": {
       "en": "The media source URL is missing.",
       "de": "Die URL der Medienquelle fehlt."
+    },
+    "permalinkButtonTooltip": {
+      "en": "Copy permalink",
+      "de": "Permalink kopieren"
+    },
+    "permalinkCopied": {
+      "en": "The permalink was copied to the clipboard",
+      "de": "Der Permalink wurde in die Zwischenablage kopiert"
+    },
+    "permalinkCouldNotBeCopied": {
+      "en": "The permalink could not be copied to the clipboard",
+      "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
     }
   },
   "pageNames": {

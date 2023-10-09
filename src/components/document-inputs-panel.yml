@@ -5,3 +5,6 @@ documentInputsPanel:
   documentVersion:
     en: Document version
     de: Dokumentversion
+  viewButtonTooltip:
+    en: View input
+    de: Eingabe ansehen

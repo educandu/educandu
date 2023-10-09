@@ -59,3 +59,9 @@ document:
   inputsActionTooltip:
     en: Inputs management
     de: Verwaltung von Eingaben
+  clearInput:
+    en: Clear input
+    de: Eingabe löschen
+  submitInput:
+    en: Submit input
+    de: Eingabe senden

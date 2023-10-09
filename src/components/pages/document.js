@@ -16,6 +16,8 @@ import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useBeforeunload } from 'react-beforeunload';
+import DeleteIcon from '../icons/general/delete-icon.js';
+import UploadIcon from '../icons/general/upload-icon.js';
 import InputsIcon from '../icons/general/inputs-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
@@ -228,16 +230,18 @@ function Document({ initialState, PageTemplate }) {
     }
   });
 
-  const switchView = newView => {
+  const switchView = (newView, sectionsToDisplay) => {
+    const shouldPreserveInputs = [view, newView].includes(VIEW.inputs);
+
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
     setPreSetView(null);
     setView(newView);
+    setCurrentSections(sectionsToDisplay);
 
-    setPendingInputValues(view === VIEW.display
-      ? createEmptyInputsForSections(currentSections, pluginRegistry)
-      : {});
-
-    setHasPendingInputChanges(false);
+    if (!shouldPreserveInputs) {
+      setPendingInputValues(createEmptyInputsForSections(sectionsToDisplay, pluginRegistry));
+      setHasPendingInputChanges(false);
+    }
   };
 
   const ensureActionsPanelPosition = useCallback(() => {
@@ -435,8 +439,7 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleEditOpen = () => {
-    switchView(VIEW.edit);
-    setCurrentSections(cloneDeep(doc.sections));
+    switchView(VIEW.edit, cloneDeep(doc.sections));
   };
 
   const handleEditSave = async () => {
@@ -484,9 +487,8 @@ function Document({ initialState, PageTemplate }) {
 
   const handleEditClose = () => {
     const exitEditMode = () => {
-      setCurrentSections(doc.sections);
       setIsDirty(false);
-      switchView(VIEW.display);
+      switchView(VIEW.display, doc.sections);
       setEditedSectionKeys([]);
       setPendingTemplateSectionKeys([]);
     };
@@ -500,12 +502,12 @@ function Document({ initialState, PageTemplate }) {
 
   const handleDocumentCommentsOpen = async () => {
     setFetchingInitialComments(true);
-    switchView(VIEW.comments);
+    switchView(VIEW.comments, doc.sections);
     await fetchDataForCommentsView();
   };
 
   const handleDocumentCommentsClose = () => {
-    switchView(VIEW.display);
+    switchView(VIEW.display, doc.sections);
     setDocumentComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
@@ -518,9 +520,8 @@ function Document({ initialState, PageTemplate }) {
 
       setCurrentDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
-      setCurrentSections(latestDocumentRevision.sections);
       setIsSidePanelMinimized(false);
-      switchView(VIEW.history);
+      switchView(VIEW.history, latestDocumentRevision.sections);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -529,20 +530,19 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryClose = () => {
     setCurrentDocumentRevisions([]);
     setHistorySelectedDocumentRevision(null);
-    setCurrentSections(doc.sections);
-    switchView(VIEW.display);
+    switchView(VIEW.display, doc.sections);
     return true;
   };
 
   const handleInputsOpen = async () => {
     await fetchDataForInputsView();
-    switchView(VIEW.inputs);
+    switchView(VIEW.inputs, doc.sections);
   };
 
   const handleInputsClose = () => {
     setDocumentInputs([]);
     setCurrentDocumentRevisions([]);
-    switchView(VIEW.display);
+    switchView(VIEW.display, doc.sections);
     return true;
   };
 
@@ -779,6 +779,18 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
+  const handleInputViewClick = () => {
+    throw new Error('NOT IMPLEMENTED');
+  };
+
+  const handleInputSubmit = () => {
+    throw new Error('NOT IMPLEMENTED');
+  };
+
+  const handleInputClear = () => {
+    throw new Error('NOT IMPLEMENTED');
+  };
+
   const renderEditFocusHeader = () => (
     <FocusHeader title={t('editDocument')} onClose={handleEditClose}>
       <div className="DocumentPage-focusHeaderDirtyInfo">
@@ -818,7 +830,25 @@ function Document({ initialState, PageTemplate }) {
   );
 
   const renderInputsFocusHeader = () => (
-    <FocusHeader title={t('inputs')} onClose={handleInputsClose} />
+    <FocusHeader title={t('inputs')} onClose={handleInputsClose}>
+      <Button
+        icon={<DeleteIcon />}
+        onClick={handleInputClear}
+        className="DocumentPage-focusHeaderButton"
+        >
+        {t('clearInput')}
+      </Button>
+      <Button
+        icon={<UploadIcon />}
+        type="primary"
+        loading={false}
+        disabled={!hasPendingInputChanges}
+        className="DocumentPage-focusHeaderButton"
+        onClick={handleInputSubmit}
+        >
+        {t('submitInput')}
+      </Button>
+    </FocusHeader>
   );
 
   const renderFocusHeader = () => {
@@ -923,6 +953,8 @@ function Document({ initialState, PageTemplate }) {
                   showUsers={!!userIsRoomOwner}
                   documentInputs={documentInputs}
                   documentRevisions={currentDocumentRevisions}
+                  hasPendingInputChanges={hasPendingInputChanges}
+                  onViewClick={handleInputViewClick}
                   />
               )}
             </div>
