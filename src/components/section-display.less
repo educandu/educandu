@@ -9,9 +9,19 @@
   border: 1px dotted transparent;
   border-radius: @edu-border-radius-base;
 
+  &.is-submittable-input {
+    border-left: 3px solid @edu-secondary-color-dark;
+    border-radius: 15px;
+
+    &:hover {
+      border-left: 3px solid @edu-secondary-color-dark;
+    }
+  }
+
   &.is-editable {
     padding-top: @section-display-editable-padding-top;
-    border-color: @edu-border-color-dark;
+    border: 1px dotted @edu-border-color-dark;
+    border-radius: @edu-border-radius-base;
 
     &:hover {
       border: 1px solid @edu-border-color-dark;
@@ -28,6 +38,8 @@
 
   &.is-hard-deletable {
     padding-top: @section-display-editable-padding-top;
+    border: 1px dotted transparent;
+    border-radius: @edu-border-radius-base;
 
     &:hover {
       border: 1px solid @edu-border-color-dark;
