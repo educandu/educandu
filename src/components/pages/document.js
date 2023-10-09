@@ -16,6 +16,8 @@ import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useBeforeunload } from 'react-beforeunload';
+import DeleteIcon from '../icons/general/delete-icon.js';
+import UploadIcon from '../icons/general/upload-icon.js';
 import InputsIcon from '../icons/general/inputs-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
@@ -194,6 +196,7 @@ function Document({ initialState, PageTemplate }) {
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
+  const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
@@ -228,16 +231,18 @@ function Document({ initialState, PageTemplate }) {
     }
   });
 
-  const switchView = newView => {
+  const switchView = (newView, sectionsToDisplay) => {
+    const shouldPreserveInputs = [view, newView].includes(VIEW.inputs);
+
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
     setPreSetView(null);
     setView(newView);
+    setCurrentSections(sectionsToDisplay);
 
-    setPendingInputValues(view === VIEW.display
-      ? createEmptyInputsForSections(currentSections, pluginRegistry)
-      : {});
-
-    setHasPendingInputChanges(false);
+    if (!shouldPreserveInputs) {
+      setPendingInputValues(createEmptyInputsForSections(sectionsToDisplay, pluginRegistry));
+      setHasPendingInputChanges(false);
+    }
   };
 
   const ensureActionsPanelPosition = useCallback(() => {
@@ -353,6 +358,7 @@ function Document({ initialState, PageTemplate }) {
 
   const fetchDataForInputsView = useCallback(async () => {
     try {
+      setFetchingDocumentInputs(true);
       const response = userIsRoomOwner
         ? await documentInputApiClient.getDocumentInputsByDocumentId(doc._id)
         : await documentInputApiClient.getDocumentInputsCreatedByUser(user._id);
@@ -363,8 +369,10 @@ function Document({ initialState, PageTemplate }) {
       setCurrentDocumentRevisions(documentRevisions);
     } catch (error) {
       handleApiError({ error, t, logger });
+    } finally {
+      setFetchingDocumentInputs(false);
     }
-  }, [doc._id, t, user, userIsRoomOwner, documentInputApiClient, documentApiClient]);
+  }, [doc._id, t, user, userIsRoomOwner, documentInputApiClient, documentApiClient, setFetchingDocumentInputs]);
 
   useEffect(() => {
     setAlerts(createPageAlerts({
@@ -435,8 +443,7 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleEditOpen = () => {
-    switchView(VIEW.edit);
-    setCurrentSections(cloneDeep(doc.sections));
+    switchView(VIEW.edit, cloneDeep(doc.sections));
   };
 
   const handleEditSave = async () => {
@@ -484,9 +491,8 @@ function Document({ initialState, PageTemplate }) {
 
   const handleEditClose = () => {
     const exitEditMode = () => {
-      setCurrentSections(doc.sections);
       setIsDirty(false);
-      switchView(VIEW.display);
+      switchView(VIEW.display, doc.sections);
       setEditedSectionKeys([]);
       setPendingTemplateSectionKeys([]);
     };
@@ -500,12 +506,12 @@ function Document({ initialState, PageTemplate }) {
 
   const handleDocumentCommentsOpen = async () => {
     setFetchingInitialComments(true);
-    switchView(VIEW.comments);
+    switchView(VIEW.comments, doc.sections);
     await fetchDataForCommentsView();
   };
 
   const handleDocumentCommentsClose = () => {
-    switchView(VIEW.display);
+    switchView(VIEW.display, doc.sections);
     setDocumentComments([]);
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     return true;
@@ -518,9 +524,8 @@ function Document({ initialState, PageTemplate }) {
 
       setCurrentDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
-      setCurrentSections(latestDocumentRevision.sections);
       setIsSidePanelMinimized(false);
-      switchView(VIEW.history);
+      switchView(VIEW.history, latestDocumentRevision.sections);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -529,25 +534,24 @@ function Document({ initialState, PageTemplate }) {
   const handleHistoryClose = () => {
     setCurrentDocumentRevisions([]);
     setHistorySelectedDocumentRevision(null);
-    setCurrentSections(doc.sections);
-    switchView(VIEW.display);
+    switchView(VIEW.display, doc.sections);
     return true;
   };
 
   const handleInputsOpen = async () => {
     await fetchDataForInputsView();
-    switchView(VIEW.inputs);
+    switchView(VIEW.inputs, doc.sections);
   };
 
   const handleInputsClose = () => {
     setDocumentInputs([]);
     setCurrentDocumentRevisions([]);
-    switchView(VIEW.display);
+    switchView(VIEW.display, doc.sections);
     return true;
   };
 
-  const handleSectionInputChange = useCallback((sectionKey, newInputs) => {
-    setPendingInputValues(oldInputs => ({ ...oldInputs, [sectionKey]: newInputs }));
+  const handleSectionInputChange = useCallback((sectionKey, newInputData) => {
+    setPendingInputValues(oldInputs => ({ ...oldInputs, [sectionKey]: { data: newInputData } }));
     setHasPendingInputChanges(true);
   }, []);
 
@@ -779,6 +783,25 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
+  const handleInputViewClick = () => {
+    throw new Error('NOT IMPLEMENTED');
+  };
+
+  const handleInputSubmit = async () => {
+    await documentInputApiClient.createDocumentInput({
+      documentId: doc._id,
+      documentRevisionId: doc.revision,
+      sections: pendingInputValues
+    });
+
+    await fetchDataForInputsView();
+  };
+
+  const handleInputClear = () => {
+    setPendingInputValues(createEmptyInputsForSections(doc.sections, pluginRegistry));
+    setHasPendingInputChanges(false);
+  };
+
   const renderEditFocusHeader = () => (
     <FocusHeader title={t('editDocument')} onClose={handleEditClose}>
       <div className="DocumentPage-focusHeaderDirtyInfo">
@@ -818,7 +841,25 @@ function Document({ initialState, PageTemplate }) {
   );
 
   const renderInputsFocusHeader = () => (
-    <FocusHeader title={t('inputs')} onClose={handleInputsClose} />
+    <FocusHeader title={t('inputs')} onClose={handleInputsClose}>
+      <Button
+        icon={<DeleteIcon />}
+        onClick={handleInputClear}
+        className="DocumentPage-focusHeaderButton"
+        >
+        {t('clearInput')}
+      </Button>
+      <Button
+        icon={<UploadIcon />}
+        type="primary"
+        loading={false}
+        disabled={!hasPendingInputChanges}
+        className="DocumentPage-focusHeaderButton"
+        onClick={handleInputSubmit}
+        >
+        {t('submitInput')}
+      </Button>
+    </FocusHeader>
   );
 
   const renderFocusHeader = () => {
@@ -920,9 +961,12 @@ function Document({ initialState, PageTemplate }) {
               )}
               {view === VIEW.inputs && (
                 <DocumentInputsPanel
+                  loading={fetchingDocumentInputs}
                   showUsers={!!userIsRoomOwner}
                   documentInputs={documentInputs}
                   documentRevisions={currentDocumentRevisions}
+                  hasPendingInputChanges={hasPendingInputChanges}
+                  onViewClick={handleInputViewClick}
                   />
               )}
             </div>
@@ -972,7 +1016,8 @@ function Document({ initialState, PageTemplate }) {
             {!!userCanManageInputs && (
               <FloatButton.Group shape="square" style={{ ...inputsPanelPositionInPx }}>
                 <FloatButton
-                  className="DocumentPage-inputsPanelButton"
+                  className={classNames('DocumentPage-inputsPanelButton', { 'is-animated': hasPendingInputChanges })}
+                  badge={{ dot: hasPendingInputChanges }}
                   icon={<InputsIcon />}
                   tooltip={t('inputsActionTooltip')}
                   onClick={handleInputsOpen}

@@ -95,10 +95,13 @@
 }
 
 .DocumentPage-inputsPanelButton {
-  animation: blink-animation 0.5s steps(5, start) 3;
 
-  & .ant-float-btn-body {
+  &.is-animated {
     animation: blink-animation 0.5s steps(5, start) 3;
+
+    & .ant-float-btn-body {
+      animation: blink-animation 0.5s steps(5, start) 3;
+    }
   }
 }
 

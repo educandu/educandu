@@ -639,3 +639,12 @@ common:
   cannotPlayMediaEmptyStateSubtitle:
     en: The media source URL is missing.
     de: Die URL der Medienquelle fehlt.
+  permalinkButtonTooltip:
+    en: Copy permalink
+    de: Permalink kopieren
+  permalinkCopied:
+    en: The permalink was copied to the clipboard
+    de: Der Permalink wurde in die Zwischenablage kopiert
+  permalinkCouldNotBeCopied:
+    en: The permalink could not be copied to the clipboard
+    de: Der Permalink konnte nicht in die Zwischenablage kopiert werden

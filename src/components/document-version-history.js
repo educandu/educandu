@@ -32,11 +32,11 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
     const permalinkUrl = urlUtils.createFullyQualifiedUrl(routes.getDocumentRevisionUrl(documentRevision._id));
     try {
       await window.navigator.clipboard.writeText(permalinkUrl);
-      message.success(t('permalinkCopied'));
+      message.success(t('common:permalinkCopied'));
     } catch (error) {
       const msg = (
         <span>
-          <span>{t('permalinkCouldNotBeCopied')}:</span>
+          <span>{t('common:permalinkCouldNotBeCopied')}:</span>
           <br />
           <a href={permalinkUrl}>{permalinkUrl}</a>
         </span>
@@ -93,7 +93,7 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
   const renderTimelineItemActions = documentRevision => {
     return (
       <div className="HistoryPanel-itemActions">
-        <Tooltip title={t('permalinkButtonTooltip')}>
+        <Tooltip title={t('common:permalinkButtonTooltip')}>
           <Button
             icon={<LinkOutlined />}
             onClick={() => handlePermalinkButtonClick(documentRevision)}

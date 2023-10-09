@@ -19,6 +19,7 @@ const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
 const comparisonPrefix = '/comparison/';
 const userProfilePrefix = '/user-profile/';
+const documentInputPrefix = '/doc-inputs/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
 const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
@@ -35,6 +36,10 @@ function getDocUrl({ id, slug, view, templateDocumentId }) {
   const url = urlUtils.concatParts(docsPrefix, idAndSlugPart);
   const queryString = urlUtils.composeQueryString({ view, templateDocumentId });
   return queryString ? `${url}?${queryString}` : url;
+}
+
+function getDocumentInputUrl(documentInputId) {
+  return urlUtils.concatParts(documentInputPrefix, documentInputId);
 }
 
 function getDocumentRevisionUrl(revisionId) {
@@ -141,6 +146,7 @@ export default {
   getUserProfileUrl,
   getRedactionUrl,
   getDocUrl,
+  getDocumentInputUrl,
   getDocumentRevisionUrl,
   getDocumentRevisionComparisonUrl,
   getRoomUrl,

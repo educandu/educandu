@@ -5,3 +5,12 @@ documentInputsPanel:
   documentVersion:
     en: Document version
     de: Dokumentversion
+  viewButtonTooltip:
+    en: View input
+    de: Eingabe ansehen
+  emptyStateTitle:
+    en: No inputs have been submitted yet
+    de: Es wurden noch keine Eingaben gesendet
+  emptyStateSubtitle:
+    en: Fill in the document and click the submit button to send your input.
+    de: Fülle das Dokument aus und klicke auf den Absende-Button, um deine Eingabe abzuschicken.
