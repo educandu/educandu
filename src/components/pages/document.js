@@ -972,7 +972,8 @@ function Document({ initialState, PageTemplate }) {
             {!!userCanManageInputs && (
               <FloatButton.Group shape="square" style={{ ...inputsPanelPositionInPx }}>
                 <FloatButton
-                  className="DocumentPage-inputsPanelButton"
+                  className={classNames('DocumentPage-inputsPanelButton', { 'is-animated': hasPendingInputChanges })}
+                  badge={{ dot: hasPendingInputChanges }}
                   icon={<InputsIcon />}
                   tooltip={t('inputsActionTooltip')}
                   onClick={handleInputsOpen}
