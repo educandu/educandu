@@ -214,7 +214,7 @@ function SectionDisplay({
 
     return (
       <DisplayComponent
-        input={input}
+        input={input?.data ?? null}
         context={context}
         content={section.content}
         onInputChanged={onSectionInputChange}
@@ -377,7 +377,9 @@ function SectionDisplay({
 }
 
 SectionDisplay.propTypes = {
-  input: PropTypes.any,
+  input: PropTypes.shape({
+    data: PropTypes.any
+  }),
   section: sectionShape.isRequired,
   context: sectionContextShape.isRequired,
   canEdit: PropTypes.bool.isRequired,

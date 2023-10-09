@@ -196,6 +196,7 @@ function Document({ initialState, PageTemplate }) {
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
+  const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
@@ -357,6 +358,7 @@ function Document({ initialState, PageTemplate }) {
 
   const fetchDataForInputsView = useCallback(async () => {
     try {
+      setFetchingDocumentInputs(true);
       const response = userIsRoomOwner
         ? await documentInputApiClient.getDocumentInputsByDocumentId(doc._id)
         : await documentInputApiClient.getDocumentInputsCreatedByUser(user._id);
@@ -367,8 +369,10 @@ function Document({ initialState, PageTemplate }) {
       setCurrentDocumentRevisions(documentRevisions);
     } catch (error) {
       handleApiError({ error, t, logger });
+    } finally {
+      setFetchingDocumentInputs(false);
     }
-  }, [doc._id, t, user, userIsRoomOwner, documentInputApiClient, documentApiClient]);
+  }, [doc._id, t, user, userIsRoomOwner, documentInputApiClient, documentApiClient, setFetchingDocumentInputs]);
 
   useEffect(() => {
     setAlerts(createPageAlerts({
@@ -546,8 +550,8 @@ function Document({ initialState, PageTemplate }) {
     return true;
   };
 
-  const handleSectionInputChange = useCallback((sectionKey, newInputs) => {
-    setPendingInputValues(oldInputs => ({ ...oldInputs, [sectionKey]: newInputs }));
+  const handleSectionInputChange = useCallback((sectionKey, newInputData) => {
+    setPendingInputValues(oldInputs => ({ ...oldInputs, [sectionKey]: { data: newInputData } }));
     setHasPendingInputChanges(true);
   }, []);
 
@@ -783,12 +787,19 @@ function Document({ initialState, PageTemplate }) {
     throw new Error('NOT IMPLEMENTED');
   };
 
-  const handleInputSubmit = () => {
-    throw new Error('NOT IMPLEMENTED');
+  const handleInputSubmit = async () => {
+    await documentInputApiClient.createDocumentInput({
+      documentId: doc._id,
+      documentRevisionId: doc.revision,
+      sections: pendingInputValues
+    });
+
+    await fetchDataForInputsView();
   };
 
   const handleInputClear = () => {
-    throw new Error('NOT IMPLEMENTED');
+    setPendingInputValues(createEmptyInputsForSections(doc.sections, pluginRegistry));
+    setHasPendingInputChanges(false);
   };
 
   const renderEditFocusHeader = () => (
@@ -950,6 +961,7 @@ function Document({ initialState, PageTemplate }) {
               )}
               {view === VIEW.inputs && (
                 <DocumentInputsPanel
+                  loading={fetchingDocumentInputs}
                   showUsers={!!userIsRoomOwner}
                   documentInputs={documentInputs}
                   documentRevisions={currentDocumentRevisions}

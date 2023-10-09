@@ -1,11 +1,14 @@
 import by from 'thenby';
+import Spinner from './spinner.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import routes from '../utils/routes.js';
+import EmptyState from './empty-state.js';
 import urlUtils from '../utils/url-utils.js';
 import { useTranslation } from 'react-i18next';
 import React, { useMemo, useState } from 'react';
 import { useDateFormat } from './locale-context.js';
+import InputsIcon from './icons/general/inputs-icon.js';
 import { EyeOutlined, LinkOutlined } from '@ant-design/icons';
 import { Button, Collapse, Timeline, Tooltip, message } from 'antd';
 import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
@@ -14,7 +17,7 @@ import { documentInputShape, documentRevisionShape } from '../ui/default-prop-ty
 
 const { Panel } = Collapse;
 
-function DocumentInputsPanel({ hasPendingInputChanges, documentInputs, documentRevisions, showUsers, onViewClick }) {
+function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, documentRevisions, showUsers, onViewClick }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentInputsPanel');
   const sortedDocumentInputs = [...documentInputs].sort(by(x => x.createdOn, 'desc'));
@@ -136,12 +139,17 @@ function DocumentInputsPanel({ hasPendingInputChanges, documentInputs, documentR
 
   return (
     <div className="HistoryPanel">
-      <Timeline mode="left" items={sortedDocumentInputs.map(getActivityItem)} />
+      {!!loading && <Spinner />}
+      {!loading && !documentInputs.length && (
+        <EmptyState icon={<InputsIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+      )}
+      {!loading && !!documentInputs.length && <Timeline mode="left" items={sortedDocumentInputs.map(getActivityItem)} />}
     </div>
   );
 }
 
 DocumentInputsPanel.propTypes = {
+  loading: PropTypes.bool.isRequired,
   hasPendingInputChanges: PropTypes.bool.isRequired,
   documentInputs: PropTypes.arrayOf(documentInputShape).isRequired,
   documentRevisions: PropTypes.arrayOf(documentRevisionShape).isRequired,
