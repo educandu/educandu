@@ -186,11 +186,10 @@ function Document({ initialState, PageTemplate }) {
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [isSidePanelMinimized, setIsSidePanelMinimized] = useState(false);
   const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
-  const [documentInputRevisions, setDocumentInputRevisions] = useState([]);
   const [view, setView] = useState(determineInitialViewState(request).view);
   // eslint-disable-next-line no-unused-vars
   const [hasPendingInputChanges, setHasPendingInputChanges] = useState(false);
-  const [historyDocumentRevisions, setHistoryDocumentRevisions] = useState([]);
+  const [currentDocumentRevisions, setCurrentDocumentRevisions] = useState([]);
   const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
@@ -219,9 +218,9 @@ function Document({ initialState, PageTemplate }) {
       return null;
     }
 
-    const versionInfo = getDocumentRevisionVersionInfo(historyDocumentRevisions, historySelectedDocumentRevision._id);
+    const versionInfo = getDocumentRevisionVersionInfo(currentDocumentRevisions, historySelectedDocumentRevision._id);
     return versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version });
-  }, [historyDocumentRevisions, historySelectedDocumentRevision, t]);
+  }, [currentDocumentRevisions, historySelectedDocumentRevision, t]);
 
   useBeforeunload(event => {
     if (isDirty) {
@@ -229,12 +228,15 @@ function Document({ initialState, PageTemplate }) {
     }
   });
 
-  const switchView = (newView, displayedDocumentRevision = null) => {
+  const switchView = newView => {
     setLastViewInfo({ view, sectionKeyToScrollTo: findCurrentlyWorkedOnSectionKey() });
     setPreSetView(null);
     setView(newView);
 
-    setPendingInputValues(createEmptyInputsForSections(displayedDocumentRevision?.sections ?? currentSections, pluginRegistry));
+    setPendingInputValues(view === VIEW.display
+      ? createEmptyInputsForSections(currentSections, pluginRegistry)
+      : {});
+
     setHasPendingInputChanges(false);
   };
 
@@ -325,7 +327,7 @@ function Document({ initialState, PageTemplate }) {
     }
   }, [view, lastViewInfo, commentsSectionRef]);
 
-  const fetchDocumentComments = useCallback(async () => {
+  const fetchDataForCommentsView = useCallback(async () => {
     try {
       const response = await documentCommentApiClient.getAllDocumentComments({ documentId: doc._id });
       setFetchingInitialComments(false);
@@ -335,12 +337,12 @@ function Document({ initialState, PageTemplate }) {
     }
   }, [setFetchingInitialComments, doc, documentCommentApiClient, t]);
 
-  const fetchDocumentRevisions = useCallback(async () => {
+  const fetchDataForHistoryView = useCallback(async () => {
     try {
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
       const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 
-      setHistoryDocumentRevisions(documentRevisions);
+      setCurrentDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
       setHasPendingInputChanges(false);
       setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections, pluginRegistry));
@@ -349,7 +351,7 @@ function Document({ initialState, PageTemplate }) {
     }
   }, [doc._id, t, documentApiClient, pluginRegistry]);
 
-  const fetchDocumentInputs = useCallback(async () => {
+  const fetchDataForInputsView = useCallback(async () => {
     try {
       const response = userIsRoomOwner
         ? await documentInputApiClient.getDocumentInputsByDocumentId(doc._id)
@@ -358,7 +360,7 @@ function Document({ initialState, PageTemplate }) {
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
 
       setDocumentInputs(response.documentInputs);
-      setDocumentInputRevisions(documentRevisions);
+      setCurrentDocumentRevisions(documentRevisions);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
@@ -377,25 +379,25 @@ function Document({ initialState, PageTemplate }) {
   useEffect(() => {
     if (preSetView === VIEW.history && !initialDocumentRevisionsFetched) {
       (async () => {
-        await fetchDocumentRevisions();
+        await fetchDataForHistoryView();
         setInitialDocumentRevisionsFetched(true);
       })();
     }
 
     if (preSetView === VIEW.comments && !initialDocumentCommentsFetched) {
       (async () => {
-        await fetchDocumentComments();
+        await fetchDataForCommentsView();
         setInitialDocumentCommentsFetched(true);
       })();
     }
 
     if (preSetView === VIEW.inputs && !initialDocumentInputsFetched) {
       (async () => {
-        await fetchDocumentInputs();
+        await fetchDataForInputsView();
         setInitialDocumentInputsFetched(true);
       })();
     }
-  }, [preSetView, doc._id, view, fetchDocumentRevisions, fetchDocumentComments, fetchDocumentInputs, initialDocumentRevisionsFetched, initialDocumentCommentsFetched, initialDocumentInputsFetched]);
+  }, [preSetView, doc._id, fetchDataForHistoryView, fetchDataForCommentsView, fetchDataForInputsView, initialDocumentRevisionsFetched, initialDocumentCommentsFetched, initialDocumentInputsFetched]);
 
   useEffect(() => {
     const viewQueryValue = view === VIEW.display ? null : view;
@@ -499,7 +501,7 @@ function Document({ initialState, PageTemplate }) {
   const handleDocumentCommentsOpen = async () => {
     setFetchingInitialComments(true);
     switchView(VIEW.comments);
-    await fetchDocumentComments();
+    await fetchDataForCommentsView();
   };
 
   const handleDocumentCommentsClose = () => {
@@ -514,30 +516,32 @@ function Document({ initialState, PageTemplate }) {
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
       const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 
-      setHistoryDocumentRevisions(documentRevisions);
+      setCurrentDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
+      setCurrentSections(latestDocumentRevision.sections);
       setIsSidePanelMinimized(false);
-      switchView(VIEW.history, latestDocumentRevision);
+      switchView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
   };
 
   const handleHistoryClose = () => {
-    setHistoryDocumentRevisions([]);
+    setCurrentDocumentRevisions([]);
     setHistorySelectedDocumentRevision(null);
+    setCurrentSections(doc.sections);
     switchView(VIEW.display);
     return true;
   };
 
   const handleInputsOpen = async () => {
-    await fetchDocumentInputs();
+    await fetchDataForInputsView();
     switchView(VIEW.inputs);
   };
 
   const handleInputsClose = () => {
     setDocumentInputs([]);
-    setDocumentInputRevisions([]);
+    setCurrentDocumentRevisions([]);
     switchView(VIEW.display);
     return true;
   };
@@ -678,8 +682,9 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleViewDocumentRevisionClick = documentRevisionId => {
-    const documentRevisionToView = historyDocumentRevisions.find(r => r._id === documentRevisionId);
+    const documentRevisionToView = currentDocumentRevisions.find(r => r._id === documentRevisionId);
     setHistorySelectedDocumentRevision(documentRevisionToView);
+    setCurrentSections(documentRevisionToView.sections);
     setHasPendingInputChanges(false);
     setPendingInputValues(createEmptyInputsForSections(documentRevisionToView.sections, pluginRegistry));
   };
@@ -698,7 +703,7 @@ function Document({ initialState, PageTemplate }) {
 
           setDoc(updatedDoc);
           setCurrentSections(updatedDoc.sections);
-          setHistoryDocumentRevisions(documentRevisions);
+          setCurrentDocumentRevisions(documentRevisions);
           setHistorySelectedDocumentRevision(latestDocumentRevision);
           setHasPendingInputChanges(false);
           setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections, pluginRegistry));
@@ -725,7 +730,7 @@ function Document({ initialState, PageTemplate }) {
       const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
       const newSelectedDocumentRevision = documentRevisions.find(r => r._id === revisionId) || latestDocumentRevision;
 
-      setHistoryDocumentRevisions(documentRevisions);
+      setCurrentDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(newSelectedDocumentRevision);
 
       const currentlyVisibleSections = view === VIEW.history ? newSelectedDocumentRevision.sections : updatedDoc.sections;
@@ -750,7 +755,7 @@ function Document({ initialState, PageTemplate }) {
   const handleDocumentCommentPostClick = async ({ topic, text }) => {
     try {
       await documentCommentApiClient.addDocumentComment({ documentId: doc._id, topic, text });
-      await fetchDocumentComments();
+      await fetchDataForCommentsView();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -759,7 +764,7 @@ function Document({ initialState, PageTemplate }) {
   const handleDocumentCommentsTopicChangeClick = async ({ oldTopic, newTopic }) => {
     try {
       await documentCommentApiClient.updateDocumentCommentsTopic({ documentId: doc._id, oldTopic, newTopic });
-      await fetchDocumentComments();
+      await fetchDataForCommentsView();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -768,7 +773,7 @@ function Document({ initialState, PageTemplate }) {
   const handleDocumentCommentDeleteClick = async documentCommentId => {
     try {
       await documentCommentApiClient.deleteDocumentComment({ documentCommentId });
-      await fetchDocumentComments();
+      await fetchDataForCommentsView();
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -856,7 +861,7 @@ function Document({ initialState, PageTemplate }) {
             <div>
               <SectionsDisplay
                 inputs={pendingInputValues}
-                sections={view === VIEW.history ? historySelectedDocumentRevision?.sections || [] : currentSections}
+                sections={currentSections}
                 pendingSectionKeys={pendingTemplateSectionKeys}
                 editedSectionKeys={editedSectionKeys}
                 canEdit={view === VIEW.edit}
@@ -907,7 +912,7 @@ function Document({ initialState, PageTemplate }) {
               {view === VIEW.history && (
                 <DocumentVersionHistory
                   canRestore={userCanRestoreDocumentRevisions}
-                  documentRevisions={historyDocumentRevisions}
+                  documentRevisions={currentDocumentRevisions}
                   selectedDocumentRevision={historySelectedDocumentRevision}
                   onViewClick={handleViewDocumentRevisionClick}
                   onRestoreClick={handleRestoreDocumentRevisionClick}
@@ -917,7 +922,7 @@ function Document({ initialState, PageTemplate }) {
                 <DocumentInputsPanel
                   showUsers={!!userIsRoomOwner}
                   documentInputs={documentInputs}
-                  documentRevisions={documentInputRevisions}
+                  documentRevisions={currentDocumentRevisions}
                   />
               )}
             </div>
