@@ -36,6 +36,7 @@ function SectionDisplay({
   section,
   context,
   canEdit,
+  canModifyInput,
   canHardDelete,
   dragHandleProps,
   isDragged,
@@ -215,9 +216,10 @@ function SectionDisplay({
 
     return (
       <DisplayComponent
-        input={input?.data ?? null}
         context={context}
         content={section.content}
+        input={input?.data ?? null}
+        canModifyInput={canModifyInput}
         onInputChanged={onSectionInputChange}
         />
     );
@@ -384,6 +386,7 @@ SectionDisplay.propTypes = {
   section: sectionShape.isRequired,
   context: sectionContextShape.isRequired,
   canEdit: PropTypes.bool.isRequired,
+  canModifyInput: PropTypes.bool.isRequired,
   canHardDelete: PropTypes.bool.isRequired,
   dragHandleProps: PropTypes.object.isRequired,
   isDragged: PropTypes.bool.isRequired,

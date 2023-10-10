@@ -1,7 +1,10 @@
 documentInputsPanel:
-  inputNumber:
-    en: Input {number}
-    de: Eingabe {number}
+  pendingInputHeader:
+    en: Unsaved input
+    de: Ungespeicherte Eingabe
+  existingInputHeader:
+    en: Input {number} - {date}
+    de: Eingabe {number} - {date}
   documentVersion:
     en: Document version
     de: Dokumentversion

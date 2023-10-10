@@ -27,6 +27,7 @@ export const sectionDisplayProps = {
   context: sectionContextShape.isRequired,
   content: PropTypes.any,
   input: PropTypes.any,
+  canModifyInput: PropTypes.bool.isRequired,
   onInputChanged: PropTypes.func.isRequired
 };
 

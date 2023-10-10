@@ -188,14 +188,15 @@ function Document({ initialState, PageTemplate }) {
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
   const [isSidePanelMinimized, setIsSidePanelMinimized] = useState(false);
   const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
+  const [selectedDocumentInput, setSelectedDocumentInput] = useState(null);
   const [view, setView] = useState(determineInitialViewState(request).view);
-  // eslint-disable-next-line no-unused-vars
   const [hasPendingInputChanges, setHasPendingInputChanges] = useState(false);
   const [currentDocumentRevisions, setCurrentDocumentRevisions] = useState([]);
   const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
+  const [inputsSelectedDocumentRevision, setInputsSelectedDocumentRevision] = useState(null);
   const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
@@ -540,12 +541,15 @@ function Document({ initialState, PageTemplate }) {
 
   const handleInputsOpen = async () => {
     await fetchDataForInputsView();
+    setIsSidePanelMinimized(false);
     switchView(VIEW.inputs, doc.sections);
   };
 
   const handleInputsClose = () => {
     setDocumentInputs([]);
+    setSelectedDocumentInput(null);
     setCurrentDocumentRevisions([]);
+    setInputsSelectedDocumentRevision(null);
     switchView(VIEW.display, doc.sections);
     return true;
   };
@@ -783,8 +787,14 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
-  const handleInputViewClick = () => {
-    throw new Error('NOT IMPLEMENTED');
+  const handleViewDocumentInputClick = inputId => {
+    const newSelectedInput = documentInputs.find(x => x._id === inputId);
+    setSelectedDocumentInput(newSelectedInput);
+    const revision = currentDocumentRevisions.find(x => x._id === newSelectedInput.documentRevisionId);
+    setInputsSelectedDocumentRevision(revision);
+    setCurrentSections(revision.sections);
+    setPendingInputValues({});
+    setHasPendingInputChanges(false);
   };
 
   const handleInputSubmit = async () => {
@@ -877,6 +887,10 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
+  const revisionToShow = historySelectedDocumentRevision || inputsSelectedDocumentRevision || null;
+  const documentToShow = revisionToShow ? null : doc;
+  const titleToShow = (documentToShow || revisionToShow).title;
+
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} headerRef={headerRef} contentRef={pageRef}>
@@ -893,7 +907,7 @@ function Document({ initialState, PageTemplate }) {
                     title: room.name,
                     href: routes.getRoomUrl({ id: room._id, slug: room.slug })
                   }, {
-                    title: doc.title
+                    title: titleToShow
                   }
                 ]}
                 />
@@ -901,11 +915,12 @@ function Document({ initialState, PageTemplate }) {
 
             <div>
               <SectionsDisplay
-                inputs={pendingInputValues}
+                inputs={selectedDocumentInput?.sections || pendingInputValues}
                 sections={currentSections}
                 pendingSectionKeys={pendingTemplateSectionKeys}
                 editedSectionKeys={editedSectionKeys}
                 canEdit={view === VIEW.edit}
+                canModifyInputs={!selectedDocumentInput}
                 canHardDelete={!!userCanHardDelete && view === VIEW.history}
                 onPendingSectionApply={handlePendingSectionApply}
                 onPendingSectionDiscard={handlePendingSectionDiscard}
@@ -922,7 +937,7 @@ function Document({ initialState, PageTemplate }) {
                 onSectionEditLeave={handleSectionEditLeave}
                 />
             </div>
-            <CreditsFooter doc={historySelectedDocumentRevision ? null : doc} revision={historySelectedDocumentRevision} />
+            <CreditsFooter doc={documentToShow} revision={revisionToShow} />
 
             {view === VIEW.comments && !!isMounted.current && (
               <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
@@ -964,9 +979,10 @@ function Document({ initialState, PageTemplate }) {
                   loading={fetchingDocumentInputs}
                   showUsers={!!userIsRoomOwner}
                   documentInputs={documentInputs}
+                  selectedDocumentInputId={selectedDocumentInput?._id || null}
                   documentRevisions={currentDocumentRevisions}
                   hasPendingInputChanges={hasPendingInputChanges}
-                  onViewClick={handleInputViewClick}
+                  onViewClick={handleViewDocumentInputClick}
                   />
               )}
             </div>
