@@ -167,9 +167,8 @@ function Document({ initialState, PageTemplate }) {
   const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
   const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
 
-  const documentContainsInputPlugins = true;
+  const userCanManageInputs = !!room;
   const userIsRoomOwner = !!room && room.ownedBy === user?._id;
-  const userCanManageInputs = !!room && documentContainsInputPlugins;
 
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
@@ -249,6 +248,11 @@ function Document({ initialState, PageTemplate }) {
       setHasPendingInputChanges(false);
     }
   };
+
+  const revisionToShow = historySelectedDocumentRevision || inputsSelectedDocumentRevision || null;
+  const documentToShow = revisionToShow ? null : doc;
+  const titleToShow = (documentToShow || revisionToShow).title;
+  const inputSubmittingDisabled = (documentToShow || revisionToShow).roomContext?.inputSubmittingDisabled || false;
 
   const ensureActionsPanelPosition = useCallback(() => {
     if (view !== VIEW.display) {
@@ -875,6 +879,7 @@ function Document({ initialState, PageTemplate }) {
           <Button
             icon={<DeleteIcon />}
             onClick={handleInputClear}
+            disabled={!hasPendingInputChanges || inputSubmittingDisabled}
             className="DocumentPage-focusHeaderButton"
             >
             {t('clearInput')}
@@ -883,7 +888,7 @@ function Document({ initialState, PageTemplate }) {
             icon={<UploadIcon />}
             type="primary"
             loading={false}
-            disabled={!hasPendingInputChanges}
+            disabled={!hasPendingInputChanges || inputSubmittingDisabled}
             className="DocumentPage-focusHeaderButton"
             onClick={handleInputSubmit}
             >
@@ -908,10 +913,6 @@ function Document({ initialState, PageTemplate }) {
         return null;
     }
   };
-
-  const revisionToShow = historySelectedDocumentRevision || inputsSelectedDocumentRevision || null;
-  const documentToShow = revisionToShow ? null : doc;
-  const titleToShow = (documentToShow || revisionToShow).title;
 
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
@@ -1004,6 +1005,7 @@ function Document({ initialState, PageTemplate }) {
                   selectedDocumentInputId={selectedDocumentInput?._id || null}
                   documentRevisions={currentDocumentRevisions}
                   hasPendingInputChanges={hasPendingInputChanges}
+                  inputSubmittingDisabled={inputSubmittingDisabled}
                   onViewClick={handleViewDocumentInputClick}
                   />
               )}
