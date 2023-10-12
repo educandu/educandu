@@ -828,9 +828,13 @@
     }
   },
   "documentInputsPanel": {
-    "inputNumber": {
-      "en": "Input {number}",
-      "de": "Eingabe {number}"
+    "pendingInputHeader": {
+      "en": "Unsubmitted input",
+      "de": "Ungesendete Eingabe"
+    },
+    "existingInputHeader": {
+      "en": "Input {number} - {date}",
+      "de": "Eingabe {number} - {date}"
     },
     "documentVersion": {
       "en": "Document version",
@@ -846,7 +850,7 @@
     },
     "emptyStateSubtitle": {
       "en": "Fill in the document and click the submit button to send your input.",
-      "de": "Fülle das Dokument aus und klicke auf den Absende-Button, um deine Eingabe abzuschicken."
+      "de": "Fülle das Dokument aus und klicke auf den Senden-Button, um deine Eingabe abzuschicken."
     }
   },
   "documentMetadataModal": {

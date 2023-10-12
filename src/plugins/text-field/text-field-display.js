@@ -7,7 +7,7 @@ import NeverScrollingTextArea from '../../components/never-scrolling-text-area.j
 
 const FormItem = Form.Item;
 
-export default function TextFieldDisplay({ content, input, onInputChanged }) {
+export default function TextFieldDisplay({ content, input, canModifyInput, onInputChanged }) {
   const { mode, label, maxLength, width } = content;
   const value = input?.value || '';
 
@@ -34,6 +34,7 @@ export default function TextFieldDisplay({ content, input, onInputChanged }) {
           <InputComponent
             value={value}
             maxLength={maxLength || null}
+            readOnly={!canModifyInput}
             onChange={handleCurrentValueChange}
             />
         </FormItem>

@@ -19,6 +19,7 @@ function SectionsDisplay({
   inputs,
   pendingSectionKeys,
   canEdit,
+  canModifyInputs,
   canHardDelete,
   editedSectionKeys,
   onPendingSectionApply,
@@ -72,6 +73,7 @@ function SectionsDisplay({
         section={section}
         input={inputs[section.key] ?? null}
         canEdit={!!dragHandleProps && canEdit}
+        canModifyInput={canModifyInputs}
         canHardDelete={canHardDelete}
         dragHandleProps={dragHandleProps}
         isDragged={isDragged}
@@ -159,6 +161,7 @@ function SectionsDisplay({
 
 SectionsDisplay.propTypes = {
   canEdit: PropTypes.bool,
+  canModifyInputs: PropTypes.bool,
   canHardDelete: PropTypes.bool,
   editedSectionKeys: PropTypes.arrayOf(PropTypes.string),
   onPendingSectionApply: PropTypes.func,
@@ -181,6 +184,7 @@ SectionsDisplay.propTypes = {
 
 SectionsDisplay.defaultProps = {
   canEdit: false,
+  canModifyInputs: false,
   canHardDelete: false,
   editedSectionKeys: [],
   onPendingSectionApply: () => {},

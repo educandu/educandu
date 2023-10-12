@@ -7,7 +7,7 @@ import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const FormItem = Form.Item;
 
-export default function SelectFieldDisplay({ content, input, onInputChanged }) {
+export default function SelectFieldDisplay({ content, input, canModifyInput, onInputChanged }) {
   const { mode, label, maxColumns, width, items } = content;
   const selectedValues = input?.selectedValues || [];
 
@@ -46,7 +46,7 @@ export default function SelectFieldDisplay({ content, input, onInputChanged }) {
                 key={item.key}
                 value={item.key}
                 checked={selectedValues.includes(item.key)}
-                onChange={handleSelectionChange}
+                onChange={canModifyInput ? handleSelectionChange : null}
                 >
                 <Markdown inline>{item.text}</Markdown>
               </InputComponent>

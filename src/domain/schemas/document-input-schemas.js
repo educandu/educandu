@@ -2,7 +2,7 @@ import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 
 const sectionSchema = joi.object({
-  data: joi.object().required(),
+  data: joi.object().allow(null).required(),
   comments: joi.array().items(joi.object({
     createdOn: joi.date().required(),
     createdBy: idOrKeySchema.required(),
