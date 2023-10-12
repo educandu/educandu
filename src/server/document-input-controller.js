@@ -109,7 +109,7 @@ class DocumentInputController {
 
   registerPages(router) {
     router.get(
-      '/doc-inputs/:documentInputId*',
+      '/doc-inputs/:documentInputId',
       (req, res) => this.handleGetDocumentInputPage(req, res)
     );
   }
