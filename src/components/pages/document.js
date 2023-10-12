@@ -79,14 +79,8 @@ const VIEW = {
   comments: DOC_VIEW_QUERY_PARAM.comments
 };
 
-const createEmptyInputsForSections = (sections, pluginRegistry) => {
-  return sections.reduce((inputs, section) => {
-    const plugin = pluginRegistry.getRegisteredPlugin(section.type);
-    if (plugin?.info.allowsInput && !section.deletedOn) {
-      inputs[section.key] = null;
-    }
-    return inputs;
-  }, {});
+const createEmptyInputsForSections = sections => {
+  return Object.fromEntries(sections.map(section => [section.key, { data: null }]));
 };
 
 function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
@@ -205,8 +199,8 @@ function Document({ initialState, PageTemplate }) {
   const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
   const [currentSections, setCurrentSections] = useState(() => cloneDeep(getInitialSections()));
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
+  const [pendingInputValues, setPendingInputValues] = useState(() => createEmptyInputsForSections(getInitialSections()));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
-  const [pendingInputValues, setPendingInputValues] = useState(() => createEmptyInputsForSections(getInitialSections(), pluginRegistry));
 
   const [alerts, setAlerts] = useState(createPageAlerts({
     t,
@@ -241,7 +235,7 @@ function Document({ initialState, PageTemplate }) {
     setCurrentSections(sectionsToDisplay);
 
     if (!shouldPreserveInputs) {
-      setPendingInputValues(createEmptyInputsForSections(sectionsToDisplay, pluginRegistry));
+      setPendingInputValues(createEmptyInputsForSections(sectionsToDisplay));
       setHasPendingInputChanges(false);
     }
   };
@@ -351,11 +345,11 @@ function Document({ initialState, PageTemplate }) {
       setCurrentDocumentRevisions(documentRevisions);
       setHistorySelectedDocumentRevision(latestDocumentRevision);
       setHasPendingInputChanges(false);
-      setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections, pluginRegistry));
+      setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections));
     } catch (error) {
       handleApiError({ error, t, logger });
     }
-  }, [doc._id, t, documentApiClient, pluginRegistry]);
+  }, [doc._id, t, documentApiClient]);
 
   const fetchDataForInputsView = useCallback(async () => {
     try {
@@ -480,7 +474,7 @@ function Document({ initialState, PageTemplate }) {
       setDoc(updatedDoc);
       setCurrentSections(newCurrentSections);
       setHasPendingInputChanges(false);
-      setPendingInputValues(createEmptyInputsForSections(newCurrentSections, pluginRegistry));
+      setPendingInputValues(createEmptyInputsForSections(newCurrentSections));
       setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
       message.success(t('common:changesSavedSuccessfully'));
     } catch (error) {
@@ -694,7 +688,7 @@ function Document({ initialState, PageTemplate }) {
     setHistorySelectedDocumentRevision(documentRevisionToView);
     setCurrentSections(documentRevisionToView.sections);
     setHasPendingInputChanges(false);
-    setPendingInputValues(createEmptyInputsForSections(documentRevisionToView.sections, pluginRegistry));
+    setPendingInputValues(createEmptyInputsForSections(documentRevisionToView.sections));
   };
 
   const handleRestoreDocumentRevisionClick = ({ documentRevisionId, documentId }) => {
@@ -714,7 +708,7 @@ function Document({ initialState, PageTemplate }) {
           setCurrentDocumentRevisions(documentRevisions);
           setHistorySelectedDocumentRevision(latestDocumentRevision);
           setHasPendingInputChanges(false);
-          setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections, pluginRegistry));
+          setPendingInputValues(createEmptyInputsForSections(latestDocumentRevision.sections));
         } catch (error) {
           handleApiError({ error, logger, t });
           throw error;
@@ -742,12 +736,12 @@ function Document({ initialState, PageTemplate }) {
       setHistorySelectedDocumentRevision(newSelectedDocumentRevision);
 
       const currentlyVisibleSections = view === VIEW.history ? newSelectedDocumentRevision.sections : updatedDoc.sections;
-      setPendingInputValues(createEmptyInputsForSections(currentlyVisibleSections, pluginRegistry));
+      setPendingInputValues(createEmptyInputsForSections(currentlyVisibleSections));
       setHasPendingInputChanges(false);
     } catch (error) {
       handleApiError({ error, logger, t });
     }
-  }, [view, doc, documentApiClient, pluginRegistry, t]);
+  }, [view, doc, documentApiClient, t]);
 
   const handleSectionHardDelete = useCallback(index => {
     confirmSectionHardDelete(
@@ -793,7 +787,7 @@ function Document({ initialState, PageTemplate }) {
     const revision = currentDocumentRevisions.find(x => x._id === newSelectedInput.documentRevisionId);
     setInputsSelectedDocumentRevision(revision);
     setCurrentSections(revision.sections);
-    setPendingInputValues({});
+    setPendingInputValues(revision.sections);
     setHasPendingInputChanges(false);
   };
 
@@ -808,7 +802,7 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleInputClear = () => {
-    setPendingInputValues(createEmptyInputsForSections(doc.sections, pluginRegistry));
+    setPendingInputValues(createEmptyInputsForSections(doc.sections));
     setHasPendingInputChanges(false);
   };
 

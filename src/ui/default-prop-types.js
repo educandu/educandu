@@ -258,7 +258,7 @@ export const documentRevisionShape = PropTypes.shape({
 });
 
 const sectionInputShape = PropTypes.shape({
-  data: PropTypes.object.isRequired,
+  data: PropTypes.object,
   comments: PropTypes.arrayOf(PropTypes.shape({
     createdOn: PropTypes.string.isRequired,
     createdBy: PropTypes.string.isRequired,
