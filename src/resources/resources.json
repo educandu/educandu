@@ -1604,6 +1604,10 @@
       "en": "Latest version",
       "de": "Letzte version"
     },
+    "input": {
+      "en": "Input {count}",
+      "de": "Eingabe {count}"
+    },
     "inputs": {
       "en": "Inputs",
       "de": "Eingaben"
