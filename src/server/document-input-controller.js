@@ -1,8 +1,13 @@
 import express from 'express';
+import httpErrors from 'http-errors';
+import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
+import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentInputService from '../services/document-input-service.js';
+import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
@@ -13,16 +18,49 @@ import {
   getDocumentInputsByDocumentIdParams
 } from '../domain/schemas/document-input-schemas.js';
 
+const { Forbidden, NotFound } = httpErrors;
+
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentInputController {
-  static dependencies = [DocumentInputService, RoomService, ClientDataMappingService];
+  static dependencies = [DocumentInputService, DocumentService, RoomService, ClientDataMappingService, PageRenderer];
 
-  constructor(documentInputService, roomService, clientDataMappingService) {
+  constructor(documentInputService, documentService, roomService, clientDataMappingService, pageRenderer) {
     this.roomService = roomService;
+    this.documentService = documentService;
     this.documentInputService = documentInputService;
     this.clientDataMappingService = clientDataMappingService;
+    this.pageRenderer = pageRenderer;
+  }
+
+  async handleGetDocumentInputPage(req, res) {
+    const { user } = req;
+    const { documentInputId } = req.params;
+
+    const documentInput = await this.documentInputService.getDocumentInputById({ documentInputId, user });
+
+    if (!documentInput) {
+      throw new NotFound();
+    }
+
+    const documentRevision = await this.documentService.getDocumentRevisionById(documentInput.documentRevisionId);
+    if (!documentRevision) {
+      throw new NotFound(`Document revision '${documentInput.documentRevisionId}' not found.`);
+    }
+
+    const room = await this.roomService.getRoomById(documentRevision.roomId);
+    if (documentInput.createdBy !== user._id && !isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+      throw new Forbidden(`User is not authorized to view document input '${documentInputId}'`);
+    }
+
+    const mappedDocumentRevision = await this.clientDataMappingService.mapDocOrRevision(documentRevision, user);
+    const mappedDocumentInput = await this.clientDataMappingService.mapDocumentInput(documentInput);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.documentInput, {
+      documentInput: mappedDocumentInput,
+      documentRevision: mappedDocumentRevision
+    });
   }
 
   async handleGetDocumentInput(req, res) {
@@ -67,6 +105,13 @@ class DocumentInputController {
     const { documentInputId } = req.body;
     await this.documentInputService.hardDeleteDocumentInput({ documentInputId, user });
     return res.send({});
+  }
+
+  registerPages(router) {
+    router.get(
+      '/doc-inputs/:documentInputId',
+      (req, res) => this.handleGetDocumentInputPage(req, res)
+    );
   }
 
   registerApi(router) {

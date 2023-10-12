@@ -14,6 +14,7 @@ export const PAGE_NAME = {
   dashboard: 'dashboard',
   comparison: 'comparison',
   userProfile: 'user-profile',
+  documentInput: 'document-input',
   resetPassword: 'reset-password',
   browserNotSupported: 'browser-not-supported',
   connectExternalAccount: 'connect-external-account',
