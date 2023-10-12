@@ -47,6 +47,7 @@ export default function SelectFieldDisplay({ content, input, canModifyInput, onI
                 key={item.key}
                 value={item.key}
                 checked={selectedValues.includes(item.key)}
+                onChange={handleSelectionChange}
                 disabled={!canModifyInput}
                 className={classNames({ 'u-readonly-input': !canModifyInput })}
                 >
