@@ -1,0 +1,50 @@
+.DocumentInputsTab {}
+
+.DocumentInputsTab-input {
+  display: flex;
+  padding: 10px;
+  justify-content: space-between;
+
+  &:hover {
+    border-radius: @edu-border-radius-base;
+    background-color: @edu-background-color-light;
+  }
+}
+
+.DocumentInputsTab-inputMetadata {
+  display: grid;
+  gap: 10px;
+  grid-auto-flow: column;
+  .m-overflow-ellipsis;
+}
+
+.DocumentInputsTab-inputDate {
+  width: 150px;
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
+}
+
+.DocumentInputsTab-actions {
+  margin-left: 10px;
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: column;
+}
+
+.DocumentInputsTab-comments {
+  display: grid;
+  gap: 5px;
+  grid-auto-flow: column;
+  align-items: center;
+}
+
+.DocumentInputsTab-commentsCount {
+  color: @edu-white;
+  padding: 4px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  font-size: @edu-font-size-xs;
+  background-color: @edu-text-color;
+  border-radius: @edu-border-radius-base;
+}

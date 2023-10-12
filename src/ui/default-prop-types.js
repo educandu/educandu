@@ -279,6 +279,7 @@ export const documentInputShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
   documentRevisionId: PropTypes.string.isRequired,
+  documentTitle: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
   updatedOn: PropTypes.string.isRequired,

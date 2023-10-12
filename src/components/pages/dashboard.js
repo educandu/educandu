@@ -15,6 +15,7 @@ import FileIcon from '../icons/general/file-icon.js';
 import SettingsTab from '../dashboard/settings-tab.js';
 import FavoritesTab from '../dashboard/favorites-tab.js';
 import DocumentsTab from '../dashboard/documents-tab.js';
+import InputsIcon from '../icons/general/inputs-icon.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import PrivateIcon from '../icons/general/private-icon.js';
@@ -25,8 +26,10 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentInputsTab from '../dashboard/document-inputs-tab.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
+import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
 import { AVATAR_SIZE_BIG, FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useNotificationsCount, useSetNotificationsCount } from '../notification-context.js';
 
@@ -35,6 +38,7 @@ const TAB_KEYS = {
   favorites: 'favorites',
   documents: 'documents',
   rooms: 'rooms',
+  documentInputs: 'document-inputs',
   notifications: 'notifications',
   storage: 'storage',
   settings: 'settings'
@@ -50,6 +54,7 @@ function Dashboard({ PageTemplate }) {
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
+  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
   const initialTab = request.query.tab || TAB_KEYS.activities;
   const gravatarUrl = urlUtils.getGravatarUrl(user.email);
@@ -60,6 +65,7 @@ function Dashboard({ PageTemplate }) {
   const [invitations, setInvitations] = useState([]);
   const [favoriteUsers, setFavoriteUsers] = useState([]);
   const [favoriteRooms, setFavoriteRooms] = useState([]);
+  const [documentInputs, setDocumentInputs] = useState([]);
   const [selectedTab, setSelectedTab] = useState(initialTab);
   const [favoriteDocuments, setFavoriteDocuments] = useState([]);
   const [roomMediaOverview, setRoomMediaOverview] = useState(null);
@@ -68,6 +74,7 @@ function Dashboard({ PageTemplate }) {
   const [fetchingDocuments, setFetchingDocuments] = useDebouncedFetchingState(true);
   const [fetchingFavorites, setFetchingFavorites] = useDebouncedFetchingState(true);
   const [fetchingActivities, setFetchingActivities] = useDebouncedFetchingState(true);
+  const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
   const [fetchingRoomMediaOverview, setFetchingRoomMediaOverview] = useDebouncedFetchingState(true);
   const [fetchingNotificationGroups, setFetchingNotificationGroups] = useDebouncedFetchingState(true);
 
@@ -136,6 +143,16 @@ function Dashboard({ PageTemplate }) {
     }
   }, [setFetchingRoomMediaOverview, roomApiClient]);
 
+  const fetchDocumentInputs = useCallback(async () => {
+    try {
+      setFetchingDocumentInputs(true);
+      const documentInputApiClientResponse = await documentInputApiClient.getDocumentInputsCreatedByUser(user._id);
+      setDocumentInputs(documentInputApiClientResponse.documentInputs);
+    } finally {
+      setFetchingDocumentInputs(false);
+    }
+  }, [user._id, setFetchingDocumentInputs, documentInputApiClient]);
+
   useEffect(() => {
     (async () => {
       switch (selectedTab) {
@@ -151,6 +168,9 @@ function Dashboard({ PageTemplate }) {
         case TAB_KEYS.rooms:
           await fetchRooms();
           break;
+        case TAB_KEYS.documentInputs:
+          await fetchDocumentInputs();
+          break;
         case TAB_KEYS.notifications:
           await fetchNotifications();
           break;
@@ -161,7 +181,7 @@ function Dashboard({ PageTemplate }) {
           break;
       }
     })();
-  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms, fetchNotifications, fetchRoomMediaOverview]);
+  }, [selectedTab, fetchActivities, fetchFavorites, fetchDocuments, fetchRooms, fetchDocumentInputs, fetchNotifications, fetchRoomMediaOverview]);
 
   const handleTabChange = tab => {
     setSelectedTab(tab);
@@ -183,6 +203,11 @@ function Dashboard({ PageTemplate }) {
 
   const handleRoomMediaOverviewChange = newStorage => {
     setRoomMediaOverview(newStorage);
+  };
+
+  const handleDeleteDocumentInput = async documentInput => {
+    await documentInputApiClient.hardDeleteDocumentInput(documentInput._id);
+    fetchDocumentInputs();
   };
 
   const items = [
@@ -224,6 +249,19 @@ function Dashboard({ PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
+        </div>
+      )
+    },
+    {
+      key: TAB_KEYS.documentInputs,
+      label: <div><InputsIcon />{t('documentInputsTabTitle')}</div>,
+      children: (
+        <div className="Tabs-tabPane">
+          <DocumentInputsTab
+            loading={fetchingDocumentInputs}
+            documentInputs={documentInputs}
+            onDeleteDocumentInput={handleDeleteDocumentInput}
+            />
         </div>
       )
     },

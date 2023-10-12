@@ -14,6 +14,9 @@ confirmationDialogs:
   deleteDocumentConfirmation:
     en: Do you really want to delete document "{title}"?
     de: Möchtest du das Dokument "{title}" wirklich löschen?
+  deleteDocumentInputConfirmation:
+    en: Do you really want to delete document input from {timestamp}?
+    de: Möchtest du die Dokumenteingabe von {timestamp} wirklich löschen?
   deleteAllOwnedRoomsConfirmation:
     en: Do you really want to delete all rooms owned by user "{ownerName}"?
     de: Möchtest du wirklich alle Räume von Benutzer "{ownerName}" löschen?
