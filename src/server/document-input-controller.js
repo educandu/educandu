@@ -15,7 +15,8 @@ import {
   getDocumentInputsCreatedByUserParams,
   createDocumentInputDataBodySchema,
   hardDeleteDocumentInputBodySchema,
-  getDocumentInputsByDocumentIdParams
+  getDocumentInputsByDocumentIdParams,
+  getDocumentInputsByRoomIdParams
 } from '../domain/schemas/document-input-schemas.js';
 
 const { Forbidden, NotFound } = httpErrors;
@@ -55,7 +56,7 @@ class DocumentInputController {
     }
 
     const mappedDocumentRevision = await this.clientDataMappingService.mapDocOrRevision(documentRevision, user);
-    const mappedDocumentInput = await this.clientDataMappingService.mapDocumentInput(documentInput);
+    const mappedDocumentInput = await this.clientDataMappingService.mapDocumentInput({ documentInput, document: documentRevision });
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.documentInput, {
       documentInput: mappedDocumentInput,
@@ -90,6 +91,18 @@ class DocumentInputController {
     const { documentId } = req.params;
 
     const documentInputs = await this.documentInputService.getDocumentInputsByDocumentId(documentId);
+    const documentIds = documentInputs.map(input => input.documentId);
+    const documents = await this.documentService.getDocumentsMetadataByIds(documentIds);
+
+    const mappeddocumentInputs = await this.clientDataMappingService.mapDocumentInputs({ documentInputs, documents });
+
+    return res.send({ documentInputs: mappeddocumentInputs });
+  }
+
+  async handleGetDocumentInputsByRoomId(req, res) {
+    const { roomId } = req.params;
+
+    const documentInputs = await this.documentInputService.getDocumentInputsByRoomId(roomId);
     const documentIds = documentInputs.map(input => input.documentId);
     const documents = await this.documentService.getDocumentsMetadataByIds(documentIds);
 
@@ -144,6 +157,13 @@ class DocumentInputController {
       needsPermission(permissions.CREATE_CONTENT),
       validateParams(getDocumentInputsByDocumentIdParams),
       (req, res) => this.handleGetDocumentInputsByDocumentId(req, res)
+    );
+
+    router.get(
+      '/api/v1/doc-inputs/rooms/:roomId',
+      needsPermission(permissions.CREATE_CONTENT),
+      validateParams(getDocumentInputsByRoomIdParams),
+      (req, res) => this.handleGetDocumentInputsByRoomId(req, res)
     );
 
     router.post(

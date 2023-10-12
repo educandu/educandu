@@ -1773,6 +1773,10 @@
     "cancelRoomMembership": {
       "en": "Cancel room membership",
       "de": "Raum-Mitgliedschaft beenden"
+    },
+    "documentInputs": {
+      "en": "Document inputs",
+      "de": "Dokumenteingabe"
     }
   },
   "search": {
@@ -2243,6 +2247,16 @@
     "emailNotificationIconTooltip": {
       "en": "An email was sent to all room members when this message was posted.",
       "de": "Eine E-Mail wurde an alle Raum-Mitglieder geschickt, als diese Nachricht eingestellt wurde."
+    }
+  },
+  "roomDocumentInputs": {
+    "emptyStateTitle": {
+      "en": "No document inputs have been submitted in this room",
+      "de": "Keine Dokumenteingabe wurden in diesem Raum gesendet"
+    },
+    "emptyStateSubtitle": {
+      "en": "Documents which contain input fields can be filled in an submitted by room members. They can be then managed here.",
+      "de": "Dokumente, die Eingabefelder enthalten, können von den Raummitgliedern ausgefüllt und abgeschickt werden. Diese können dann hier verwaltet werden."
     }
   },
   "roomDocuments": {

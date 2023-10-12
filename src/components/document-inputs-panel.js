@@ -30,7 +30,7 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, 
   const timelineEntries = useMemo(() => {
     const versionedDocumentRevisions = getVersionedDocumentRevisions(documentRevisions, t);
 
-    const entries = documentInputs.sort(by(x => x.createdOn)).map((input, index) => ({
+    const entries = documentInputs.map((input, index) => ({
       _id: input._id,
       key: input._id,
       displayNumber: index + 1,

@@ -1,9 +1,10 @@
-.DocumentInputsTab {}
+.RoomDocumentInputs {}
 
-.DocumentInputsTab-input {
+.RoomDocumentInputs-input {
   display: flex;
   padding: 10px;
   justify-content: space-between;
+  align-items: flex-start;
 
   &:hover {
     border-radius: @edu-border-radius-base;
@@ -11,33 +12,45 @@
   }
 }
 
-.DocumentInputsTab-inputMetadata {
+.RoomDocumentInputs-inputMetadata {
   display: grid;
   gap: 10px;
   grid-auto-flow: column;
-  .m-overflow-ellipsis;
 }
 
-.DocumentInputsTab-inputDate {
+.RoomDocumentInputs-inputDate {
   width: 150px;
   font-size: @edu-font-size-sm;
   color: @edu-text-color-secondary;
 }
 
-.DocumentInputsTab-actions {
+.RoomDocumentInputs-inputLinks {
+  display: grid;
+  grid-auto-flow: row;
+}
+
+.RoomDocumentInputs-inputLink {
+  .m-overflow-ellipsis;
+
+  &.RoomDocumentInputs-inputLink--user {
+    color: @edu-text-color-secondary;
+  }
+}
+
+.RoomDocumentInputs-actions {
   margin-left: 10px;
   display: grid;
   gap: 15px;
   grid-auto-flow: column;
 }
 
-.DocumentInputsTab-comments {
+.RoomDocumentInputs-comments {
   display: grid;
   gap: 5px;
   grid-auto-flow: column;
   align-items: center;
 }
 
-.DocumentInputsTab-commentsCount {
+.RoomDocumentInputs-commentsCount {
   .m-comments-count;
 }

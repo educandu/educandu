@@ -1,3 +1,4 @@
+import by from 'thenby';
 import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
@@ -38,12 +39,21 @@ class DocumentInputService {
     return documentInput;
   }
 
-  getDocumentInputsCreatedByUser(userId) {
-    return this.documentInputStore.getDocumentInputsCreatedByUser(userId);
+  async getDocumentInputsCreatedByUser(userId) {
+    const documentInputs = await this.documentInputStore.getDocumentInputsCreatedByUser(userId);
+    return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
-  getDocumentInputsByDocumentId(documentId) {
-    return this.documentInputStore.getDocumentInputsByDocumentId(documentId);
+  async getDocumentInputsByDocumentId(documentId) {
+    const documentInputs = await this.documentInputStore.getDocumentInputsByDocumentId(documentId);
+    return documentInputs.sort(by(input => input.createdOn, 'desc'));
+  }
+
+  async getDocumentInputsByRoomId(roomId) {
+    const room = await this.roomStore.getRoomById(roomId);
+
+    const documentInputs = await this.documentInputStore.getDocumentInputsByDocumentIds(room.documents);
+    return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
   async createDocumentInput({ documentId, documentRevisionId, sections, user }) {

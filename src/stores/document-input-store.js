@@ -21,6 +21,10 @@ class DocumentInputStore {
     return this.collection.find({ documentId }, { session }).toArray();
   }
 
+  getDocumentInputsByDocumentIds(documentIds, { session } = {}) {
+    return this.collection.find({ documentId: { $in: documentIds } }, { session }).toArray();
+  }
+
   saveDocumentInput(documentInput, { session } = {}) {
     validate(documentInput, documentInputDbSchema);
     return this.collection.replaceOne({ _id: documentInput._id }, documentInput, { session, upsert: true });

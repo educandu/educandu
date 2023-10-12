@@ -25,6 +25,15 @@ class DocumentInputApiClient {
       .then(res => res.data);
   }
 
+  getDocumentInputsByRoomId(roomId) {
+    return this.httpClient
+      .get(
+        `/api/v1/doc-inputs/rooms/${encodeURIComponent(roomId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getDocumentInputsCreatedByUser(userId) {
     return this.httpClient
       .get(

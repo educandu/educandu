@@ -63,7 +63,6 @@ import {
   canEditDocument,
   canRestoreDocumentRevisions,
   findCurrentlyWorkedOnSectionKey,
-  getDocumentInputCount,
   getDocumentRevisionVersionInfo,
   getEditDocRestrictionTooltip,
   getFavoriteActionTooltip,
@@ -227,7 +226,9 @@ function Document({ initialState, PageTemplate }) {
       return null;
     }
 
-    return t('input', { count: getDocumentInputCount(documentInputs, selectedDocumentInput) });
+    const count = documentInputs.findIndex(input => input._id === selectedDocumentInput._id) + 1;
+
+    return t('input', { count });
   }, [selectedDocumentInput, documentInputs, t]);
 
   useBeforeunload(event => {
