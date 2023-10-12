@@ -560,7 +560,7 @@
     },
     "emptyStateSubtitle": {
       "en": "Room documents which contain input fields can be filled in an submitted. The room owner can then review the inputs.",
-      "de": "Room documents which contain input fields can be filled in an submitted. The room owner can then review the inputs."
+      "de": "Raum-Dokumente, die Eingabefelder enthalten, können ausgefüllt und abgeschickt werden. Der Raumeigentümer kann diese Eingaben dann überprüfen."
     }
   },
   "documentsTab": {
