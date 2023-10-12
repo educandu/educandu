@@ -68,7 +68,8 @@ class DocumentInputController {
     const { documentInputId } = req.params;
 
     const documentInput = await this.documentInputService.getDocumentInputById({ documentInputId, user });
-    const mappedDocumentInput = await this.clientDataMappingService.mapDocumentInput(documentInput);
+    const document = await this.documentService.getDocumentById(documentInput.documentId);
+    const mappedDocumentInput = await this.clientDataMappingService.mapDocumentInput({ documentInput, document });
 
     return res.send({ documentInput: mappedDocumentInput });
   }
@@ -76,17 +77,23 @@ class DocumentInputController {
   async handleGetDocumentInputsCreatedByUser(req, res) {
     const { userId } = req.params;
 
-    const createdDocumentInputs = await this.documentInputService.getDocumentInputsCreatedByUser(userId);
-    const mappedCreatedDocumentInputs = await this.clientDataMappingService.mapDocumentInputs(createdDocumentInputs);
+    const documentInputs = await this.documentInputService.getDocumentInputsCreatedByUser(userId);
+    const documentIds = documentInputs.map(input => input.documentId);
+    const documents = await this.documentService.getDocumentsMetadataByIds(documentIds);
 
-    return res.send({ documentInputs: mappedCreatedDocumentInputs });
+    const mappedDocumentInputs = await this.clientDataMappingService.mapDocumentInputs({ documentInputs, documents });
+
+    return res.send({ documentInputs: mappedDocumentInputs });
   }
 
   async handleGetDocumentInputsByDocumentId(req, res) {
     const { documentId } = req.params;
 
     const documentInputs = await this.documentInputService.getDocumentInputsByDocumentId(documentId);
-    const mappeddocumentInputs = await this.clientDataMappingService.mapDocumentInputs(documentInputs);
+    const documentIds = documentInputs.map(input => input.documentId);
+    const documents = await this.documentService.getDocumentsMetadataByIds(documentIds);
+
+    const mappeddocumentInputs = await this.clientDataMappingService.mapDocumentInputs({ documentInputs, documents });
 
     return res.send({ documentInputs: mappeddocumentInputs });
   }
@@ -95,8 +102,11 @@ class DocumentInputController {
     const { user } = req;
     const { documentId, documentRevisionId, sections } = req.body;
 
-    const newDocumentInput = await this.documentInputService.createDocumentInput({ documentId, documentRevisionId, sections, user });
-    const mappedNewDocumentInput = await this.clientDataMappingService.mapDocumentInput(newDocumentInput);
+    const documentInput = await this.documentInputService.createDocumentInput({ documentId, documentRevisionId, sections, user });
+    const document = await this.documentService.getDocumentById(documentInput.documentId);
+
+    const mappedNewDocumentInput = await this.clientDataMappingService.mapDocumentInput({ documentInput, document });
+
     return res.status(201).send(mappedNewDocumentInput);
   }
 

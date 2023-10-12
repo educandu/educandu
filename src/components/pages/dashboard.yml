@@ -11,3 +11,6 @@ dashboard:
   roomsTabTitle:
     en: Rooms
     de: Räume
+  documentInputsTabTitle:
+    en: Document inputs
+    de: Dokumenteingabe

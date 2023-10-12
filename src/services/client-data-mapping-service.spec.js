@@ -931,6 +931,7 @@ describe('client-data-mapping-service', () => {
 
   describe('mapDocumentInputs', () => {
     let result;
+    let documents;
     let documentInputs;
 
     beforeEach(async () => {
@@ -956,14 +957,19 @@ describe('client-data-mapping-service', () => {
           sections: {}
         }
       ];
+      documents = [
+        { _id: documentInputs[0].documentId, title: 'Document A' },
+        { _id: documentInputs[1].documentId, title: 'Document B' }
+      ];
 
-      result = await sut.mapDocumentInputs(documentInputs);
+      result = await sut.mapDocumentInputs({ documentInputs, documents });
     });
 
     it('should map documentInputs', () => {
       expect(result).toEqual([
         {
           ...documentInputs[0],
+          documentTitle: 'Document A',
           createdOn: documentInputs[0].createdOn.toISOString(),
           createdBy: {
             _id: user1._id,
@@ -978,6 +984,7 @@ describe('client-data-mapping-service', () => {
         },
         {
           ...documentInputs[1],
+          documentTitle: 'Document B',
           createdOn: documentInputs[1].createdOn.toISOString(),
           createdBy: {
             _id: user2._id,

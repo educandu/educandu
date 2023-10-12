@@ -357,14 +357,17 @@ class ClientDataMappingService {
     return comments.map(comment => this._mapDocumentComment(comment, userMap));
   }
 
-  async mapDocumentInput(documentInput) {
+  async mapDocumentInput({ documentInput, document }) {
     const userMap = await this._getUserMapForDocumentInputs([documentInput]);
-    return this._mapDocumentInput(documentInput, userMap);
+    return this._mapDocumentInput({ documentInput, document, userMap });
   }
 
-  async mapDocumentInputs(documentInputs) {
+  async mapDocumentInputs({ documentInputs, documents }) {
     const userMap = await this._getUserMapForDocumentInputs(documentInputs);
-    return documentInputs.map(input => this._mapDocumentInput(input, userMap));
+    return documentInputs.map(documentInput => {
+      const document = documents.find(doc => doc._id === documentInput.documentId);
+      return this._mapDocumentInput({ documentInput, document, userMap });
+    });
   }
 
   async _mapFavorite({ favorite, user }) {
@@ -611,13 +614,14 @@ class ClientDataMappingService {
     return result;
   }
 
-  _mapDocumentInput(documentInput, userMap) {
+  _mapDocumentInput({ documentInput, document, userMap }) {
     const mappedDocumentInput = cloneDeep(documentInput);
     const createdBy = this._mapOtherUser({ user: userMap.get(documentInput.createdBy) });
     const updatedBy = this._mapOtherUser({ user: userMap.get(documentInput.updatedBy) });
 
     return {
       ...mappedDocumentInput,
+      documentTitle: document.title,
       createdBy,
       updatedBy,
       createdOn: mappedDocumentInput.createdOn.toISOString(),
