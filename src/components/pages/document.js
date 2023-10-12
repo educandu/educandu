@@ -63,6 +63,7 @@ import {
   canEditDocument,
   canRestoreDocumentRevisions,
   findCurrentlyWorkedOnSectionKey,
+  getDocumentInputCount,
   getDocumentRevisionVersionInfo,
   getEditDocRestrictionTooltip,
   getFavoriteActionTooltip,
@@ -187,6 +188,7 @@ function Document({ initialState, PageTemplate }) {
   const [hasPendingInputChanges, setHasPendingInputChanges] = useState(false);
   const [currentDocumentRevisions, setCurrentDocumentRevisions] = useState([]);
   const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
+  const [isCurrentInputSubmitted, setIsCurrentInputSubmitted] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
   const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
@@ -219,6 +221,14 @@ function Document({ initialState, PageTemplate }) {
     const versionInfo = getDocumentRevisionVersionInfo(currentDocumentRevisions, historySelectedDocumentRevision._id);
     return versionInfo.isLatestVersion ? t('latestHistoryVersion') : t('historyVersion', { version: versionInfo.version });
   }, [currentDocumentRevisions, historySelectedDocumentRevision, t]);
+
+  const focusHeaderInputInfo = useMemo(() => {
+    if (!selectedDocumentInput) {
+      return null;
+    }
+
+    return t('input', { count: getDocumentInputCount(documentInputs, selectedDocumentInput) });
+  }, [selectedDocumentInput, documentInputs, t]);
 
   useBeforeunload(event => {
     if (isDirty) {
@@ -536,6 +546,7 @@ function Document({ initialState, PageTemplate }) {
   const handleInputsOpen = async () => {
     await fetchDataForInputsView();
     setIsSidePanelMinimized(false);
+    setIsCurrentInputSubmitted(false);
     switchView(VIEW.inputs, doc.sections);
   };
 
@@ -543,6 +554,7 @@ function Document({ initialState, PageTemplate }) {
     setDocumentInputs([]);
     setSelectedDocumentInput(null);
     setCurrentDocumentRevisions([]);
+    setIsCurrentInputSubmitted(false);
     setInputsSelectedDocumentRevision(null);
     switchView(VIEW.display, doc.sections);
     return true;
@@ -781,15 +793,15 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
-  const handleViewDocumentInputClick = inputId => {
+  const handleViewDocumentInputClick = useCallback(inputId => {
     const newSelectedInput = documentInputs.find(x => x._id === inputId);
     setSelectedDocumentInput(newSelectedInput);
     const revision = currentDocumentRevisions.find(x => x._id === newSelectedInput.documentRevisionId);
     setInputsSelectedDocumentRevision(revision);
     setCurrentSections(revision.sections);
-    setPendingInputValues(revision.sections);
+    setPendingInputValues(createEmptyInputsForSections(revision.sections));
     setHasPendingInputChanges(false);
-  };
+  }, [documentInputs, currentDocumentRevisions]);
 
   const handleInputSubmit = async () => {
     await documentInputApiClient.createDocumentInput({
@@ -799,7 +811,14 @@ function Document({ initialState, PageTemplate }) {
     });
 
     await fetchDataForInputsView();
+    setIsCurrentInputSubmitted(true);
   };
+
+  useEffect(() => {
+    if (isCurrentInputSubmitted && documentInputs.length) {
+      handleViewDocumentInputClick(documentInputs[documentInputs.length - 1]._id);
+    }
+  }, [isCurrentInputSubmitted, documentInputs, handleViewDocumentInputClick]);
 
   const handleInputClear = () => {
     setPendingInputValues(createEmptyInputsForSections(doc.sections));
@@ -838,7 +857,7 @@ function Document({ initialState, PageTemplate }) {
 
   const renderHistoryFocusHeader = () => (
     <FocusHeader title={t('history')} onClose={handleHistoryClose}>
-      <div className="DocumentPage-focusHeaderVersionHistoryInfo">
+      <div className="DocumentPage-focusHeaderInfo">
         <EyeOutlined />{focusHeaderHistoryInfo}
       </div>
     </FocusHeader>
@@ -846,23 +865,32 @@ function Document({ initialState, PageTemplate }) {
 
   const renderInputsFocusHeader = () => (
     <FocusHeader title={t('inputs')} onClose={handleInputsClose}>
-      <Button
-        icon={<DeleteIcon />}
-        onClick={handleInputClear}
-        className="DocumentPage-focusHeaderButton"
-        >
-        {t('clearInput')}
-      </Button>
-      <Button
-        icon={<UploadIcon />}
-        type="primary"
-        loading={false}
-        disabled={!hasPendingInputChanges}
-        className="DocumentPage-focusHeaderButton"
-        onClick={handleInputSubmit}
-        >
-        {t('submitInput')}
-      </Button>
+      {!!selectedDocumentInput && (
+        <div className="DocumentPage-focusHeaderInfo">
+          <EyeOutlined />{focusHeaderInputInfo}
+        </div>
+      )}
+      {!selectedDocumentInput && (
+        <Fragment>
+          <Button
+            icon={<DeleteIcon />}
+            onClick={handleInputClear}
+            className="DocumentPage-focusHeaderButton"
+            >
+            {t('clearInput')}
+          </Button>
+          <Button
+            icon={<UploadIcon />}
+            type="primary"
+            loading={false}
+            disabled={!hasPendingInputChanges}
+            className="DocumentPage-focusHeaderButton"
+            onClick={handleInputSubmit}
+            >
+            {t('submitInput')}
+          </Button>
+        </Fragment>
+      )}
     </FocusHeader>
   );
 
