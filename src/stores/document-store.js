@@ -50,7 +50,8 @@ const documentExtendedMetadataProjection = {
   'publicContext.archived': 1,
   'publicContext.verified': 1,
   'publicContext.review': 1,
-  'roomContext.draft': 1
+  'roomContext.draft': 1,
+  'roomContext.inputSubmittingDisabled': 1
 };
 
 class DocumentStore {

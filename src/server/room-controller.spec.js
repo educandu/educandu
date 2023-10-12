@@ -646,8 +646,8 @@ describe('room-controller', () => {
         };
 
         documents = [
-          { _id: room.documents[0], roomContext: { draft: false } },
-          { _id: room.documents[1], roomContext: { draft: true } }
+          { _id: room.documents[0], roomContext: { draft: false, inputSubmittingDisabled: false } },
+          { _id: room.documents[1], roomContext: { draft: true, inputSubmittingDisabled: false } }
         ];
         invitations = [{ email: 'test@test.com', sentOn: new Date() }];
 
@@ -715,8 +715,8 @@ describe('room-controller', () => {
         };
 
         documents = [
-          { _id: room.documents[0], roomContext: { draft: false } },
-          { _id: room.documents[1], roomContext: { draft: true } }
+          { _id: room.documents[0], roomContext: { draft: false, inputSubmittingDisabled: false } },
+          { _id: room.documents[1], roomContext: { draft: true, inputSubmittingDisabled: false } }
         ];
         mappedDocuments = cloneDeep(documents);
         mappedInvitations = [];

@@ -646,7 +646,8 @@ class DocumentService {
       };
     const roomContext = data.roomId
       ? {
-        draft: data.roomContext?.draft || false
+        draft: data.roomContext?.draft || false,
+        inputSubmittingDisabled: data.roomContext?.inputSubmittingDisabled || false
       }
       : null;
 

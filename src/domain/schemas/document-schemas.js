@@ -46,7 +46,8 @@ export const publicContextConditionalSchema = joi.alternatives().conditional(
 );
 
 export const roomContextSchema = joi.object({
-  draft: joi.boolean().required()
+  draft: joi.boolean().required(),
+  inputSubmittingDisabled: joi.boolean().required()
 });
 
 export const roomContextConditionalSchema = joi.alternatives().conditional(

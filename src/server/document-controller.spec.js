@@ -355,7 +355,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         room.ownedBy = user._id;
         room.members = [];
 
@@ -390,7 +390,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         room.ownedBy = uniqueId.create();
         room.members = [];
 
@@ -421,7 +421,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        doc.roomContext = { draft: true };
+        doc.roomContext = { draft: true, inputSubmittingDisabled: false };
         room.ownedBy = uniqueId.create();
         room.members = [{ userId: user._id }];
 
@@ -453,7 +453,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        doc.roomContext = { draft: true };
+        doc.roomContext = { draft: true, inputSubmittingDisabled: false };
         room.ownedBy = user._id;
         room.members = [];
 
@@ -500,7 +500,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         room.ownedBy = user._id;
         room.members = [];
 
@@ -547,7 +547,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
         doc.roomId = room._id;
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         room.ownedBy = uniqueId.create();
         room.members = [{ userId: user._id }];
 
@@ -706,7 +706,7 @@ describe('document-controller', () => {
         room.members = [{ userId: uniqueId.create() }];
 
         doc.roomId = room._id;
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         newDoc = { ...doc };
         mappedDoc = { ...doc };
 
@@ -741,7 +741,7 @@ describe('document-controller', () => {
         room.members = [{ userId: uniqueId.create() }];
 
         doc.roomId = room._id;
-        doc.roomContext = { draft: true };
+        doc.roomContext = { draft: true, inputSubmittingDisabled: false };
         newDoc = { ...doc };
         mappedDoc = { ...doc };
 
@@ -776,7 +776,7 @@ describe('document-controller', () => {
         room.members = [{ userId: user._id }];
 
         doc.roomId = room._id;
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         newDoc = { ...doc };
         mappedDoc = { ...doc };
 

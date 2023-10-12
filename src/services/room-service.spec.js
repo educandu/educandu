@@ -443,9 +443,9 @@ describe('room-service', () => {
       };
 
       await roomStore.saveRoom(room);
-      document1 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false } });
-      document2 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false } });
-      document3 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: true } });
+      document1 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false, inputSubmittingDisabled: false } });
+      document2 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false, inputSubmittingDisabled: false } });
+      document3 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: true, inputSubmittingDisabled: false } });
       await roomStore.saveRoom({ ...room, documents: [document1._id, document2._id, document3._id] });
 
       lockStore.takeRoomLock.resolves(lock);

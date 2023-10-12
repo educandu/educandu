@@ -48,7 +48,7 @@ describe('revision-utils', () => {
     describe('when the document is a room document', () => {
       beforeEach(() => {
         room = { _id: uniqueId.create(), ownedBy: user._id, members: [], documents: [documentId], isCollaborative: true };
-        newRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false } });
+        newRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false, inputSubmittingDisabled: false } });
       });
 
       it('should throw if the document is a draft and the user is not the room owner, just a collaborator', () => {
@@ -174,7 +174,7 @@ describe('revision-utils', () => {
     describe('when the document is a room document', () => {
       beforeEach(() => {
         room = { _id: uniqueId.create(), ownedBy: user._id, members: [], documents: [documentId], isCollaborative: true };
-        previousRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false } });
+        previousRevision = documentService._buildDocumentRevision({ documentId, roomId: room._id, createdBy: user._id, roomContext: { draft: false, inputSubmittingDisabled: false } });
         newRevision = { ...cloneDeep(previousRevision), _id: uniqueId.create() };
       });
 

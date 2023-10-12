@@ -33,7 +33,7 @@ describe('document-utils', () => {
     describe('if the document is in a room', () => {
       beforeEach(() => {
         room = { _id: uniqueId.create(), ownedBy: uniqueId.create(), members: [], isCollaborative: false };
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         doc.roomId = room._id;
       });
 
@@ -127,7 +127,7 @@ describe('document-utils', () => {
     describe('if the document is in a room', () => {
       beforeEach(() => {
         room = { _id: uniqueId.create(), ownedBy: uniqueId.create(), members: [], isCollaborative: false };
-        doc.roomContext = { draft: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
         doc.roomId = room._id;
       });
 

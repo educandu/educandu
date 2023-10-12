@@ -104,7 +104,7 @@ describe('amb-service', () => {
           language: 'en',
           roomId: room._id,
           publicContext: null,
-          roomContext: { draft: false }
+          roomContext: { draft: false, inputSubmittingDisabled: false }
         });
       });
 
