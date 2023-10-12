@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Checkbox, Form, Radio } from 'antd';
 import { SELECT_FIELD_MODE } from './constants.js';
 import Markdown from '../../components/markdown.js';
@@ -46,7 +47,9 @@ export default function SelectFieldDisplay({ content, input, canModifyInput, onI
                 key={item.key}
                 value={item.key}
                 checked={selectedValues.includes(item.key)}
-                onChange={canModifyInput ? handleSelectionChange : null}
+                onChange={handleSelectionChange}
+                disabled={!canModifyInput}
+                className={classNames({ 'u-readonly-input': !canModifyInput })}
                 >
                 <Markdown inline>{item.text}</Markdown>
               </InputComponent>

@@ -7,6 +7,10 @@
   gap: @edu-content-padding;
   grid-template-columns: 1fr;
 
+  & > .ant-checkbox-wrapper {
+    margin-inline-start: 0 !important;
+  }
+
   @media @edu-media-not-phone {
     &.SelectFieldDisplay-grid--1 {
       grid-template-columns: repeat(1, 1fr);

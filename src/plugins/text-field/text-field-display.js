@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input } from 'antd';
+import classNames from 'classnames';
 import { TEXT_FIELD_MODE } from './constants.js';
 import Markdown from '../../components/markdown.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -34,8 +35,9 @@ export default function TextFieldDisplay({ content, input, canModifyInput, onInp
           <InputComponent
             value={value}
             maxLength={maxLength || null}
-            readOnly={!canModifyInput}
+            disabled={!canModifyInput}
             onChange={handleCurrentValueChange}
+            className={classNames({ 'u-readonly-input': !canModifyInput })}
             />
         </FormItem>
       </Form>
