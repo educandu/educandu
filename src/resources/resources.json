@@ -914,6 +914,14 @@
       "en": "Verified document",
       "de": "Überprüftes Dokument"
     },
+    "inputSubmittingDisabled": {
+      "en": "Input disabled",
+      "de": "Eingabe deaktiviert"
+    },
+    "inputSubmittingDisabledInfo": {
+      "en": "If input is disabled, users can still enter but not submit data.",
+      "de": "Wenn die Eingabe deaktiviert ist, können Benutzer Daten zwar eingeben, jedoch nicht senden."
+    },
     "generateSequence": {
       "en": "Create sequence of documents",
       "de": "Dokument-Reihe anlegen"

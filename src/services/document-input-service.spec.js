@@ -1,6 +1,7 @@
 import httpErrors from 'http-errors';
 import { createSandbox } from 'sinon';
 import Database from '../stores/database.js';
+import uniqueId from '../utils/unique-id.js';
 import { ROLE } from '../domain/constants.js';
 import DocumentInputService from './document-input-service.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -11,9 +12,10 @@ import {
   pruneTestEnvironment,
   setupTestEnvironment,
   createTestUser,
-  createTestDocumentInput
+  createTestDocumentInput,
+  hardDeletePrivateTestDocument,
+  updateTestDocument
 } from '../test-helper.js';
-import uniqueId from '../utils/unique-id.js';
 
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
@@ -22,15 +24,17 @@ describe('document-input-service', () => {
   const now = new Date();
 
   let container;
-  let otherUser;
-  let user;
+  let roomOwnerUser;
+  let inputtingUser;
+  let nonInputtingUser;
   let sut;
   let db;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    user = await createTestUser(container, { email: 'user@test.com', role: ROLE.user });
-    otherUser = await createTestUser(container, { email: 'other_user@test.com', role: ROLE.user });
+    roomOwnerUser = await createTestUser(container, { email: 'room_owner_user@test.com', role: ROLE.user });
+    inputtingUser = await createTestUser(container, { email: 'inputting_user@test.com', role: ROLE.user });
+    nonInputtingUser = await createTestUser(container, { email: 'non_inputting_user@test.com', role: ROLE.user });
 
     db = container.get(Database);
     sut = container.get(DocumentInputService);
@@ -55,202 +59,114 @@ describe('document-input-service', () => {
     let document;
     let documentInput;
 
+    beforeEach(async () => {
+      room = await createTestRoom(
+        container,
+        {
+          isCollaborative: true,
+          ownedBy: roomOwnerUser._id,
+          members: [
+            { userId: inputtingUser._id, joinedOn: now },
+            { userId: nonInputtingUser._id, joinedOn: now }
+          ]
+        }
+      );
+      document = await createTestDocument(container, roomOwnerUser, {
+        roomId: room._id,
+        roomContext: { draft: false, inputSubmittingDisabled: false },
+        publicContext: null
+      });
+      documentInput = await createTestDocumentInput(container, inputtingUser, {
+        documentId: document._id,
+        documentRevisionId: document.revision,
+        sections: {}
+      });
+    });
+
     describe('when the document input does not exist', () => {
       it('should throw NotFound', async () => {
-        await expect(() => sut.getDocumentInputById({ documentInputId: uniqueId.create(), user })).rejects.toThrow(NotFound);
+        await expect(() => sut.getDocumentInputById({ documentInputId: uniqueId.create(), user: inputtingUser })).rejects.toThrow(NotFound);
       });
     });
 
     describe('when the document no longer exists', () => {
       beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [{ userId: user._id, joinedOn: now }]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
-        documentInput = await createTestDocumentInput(container, user, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        await db.documents.deleteOne({ _id: document._id });
+        await hardDeletePrivateTestDocument({ container, documentId: document._id, user: roomOwnerUser });
       });
 
       it('should throw NotFound', async () => {
-        await expect(() => sut.getDocumentInputById({ documentInputId: documentInput._id, user })).rejects.toThrow(NotFound);
+        await expect(() => sut.getDocumentInputById({ documentInputId: documentInput._id, user: inputtingUser })).rejects.toThrow(NotFound);
       });
     });
 
-    describe('when the user is a room member, the room is no longer collaborative, and the user is not the creator of the documentInput', () => {
-      let otherDocumentInput;
-
+    describe('when room is collaborative and the user is a room member but not the creator of the documentInput', () => {
       beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [
-              { userId: user._id, joinedOn: now },
-              { userId: otherUser._id, joinedOn: now }
-            ]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
+        result = await sut.getDocumentInputById({ documentInputId: documentInput._id, user: nonInputtingUser });
+      });
 
-        documentInput = await createTestDocumentInput(container, user, {
+      it('should return the document input', () => {
+        expect(result).toEqual({
+          _id: documentInput._id,
+          createdBy: inputtingUser._id,
+          createdOn: now,
           documentId: document._id,
           documentRevisionId: document.revision,
-          sections: {}
+          sections: {},
+          updatedBy: inputtingUser._id,
+          updatedOn: now
         });
+      });
+    });
 
-        otherDocumentInput = await createTestDocumentInput(container, otherUser, {
+    describe('when the room is no longer collaborative and the user is a room member and the creator of the documentInput', () => {
+      beforeEach(async () => {
+        await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
+        result = await sut.getDocumentInputById({ documentInputId: documentInput._id, user: inputtingUser });
+      });
+
+      it('should return the document input', () => {
+        expect(result).toEqual({
+          _id: documentInput._id,
+          createdBy: inputtingUser._id,
+          createdOn: now,
           documentId: document._id,
           documentRevisionId: document.revision,
-          sections: {}
+          sections: {},
+          updatedBy: inputtingUser._id,
+          updatedOn: now
         });
+      });
+    });
 
+    describe('when the room is no longer collaborative and the user is a room member but not the creator of the documentInput', () => {
+      beforeEach(async () => {
         await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
       });
 
       it('should throw Forbidden', async () => {
-        await expect(() => sut.getDocumentInputById({ documentInputId: otherDocumentInput._id, user })).rejects.toThrow(Forbidden);
+        await expect(() => sut.getDocumentInputById({ documentInputId: documentInput._id, user: nonInputtingUser })).rejects.toThrow(Forbidden);
       });
     });
 
-    describe('when the user is a room member, the room is no longer collaborative, and the user is the creator of the documentInput', () => {
+    describe('when the room is no longer collaborative and the user is the room owner but not the creator of the documentInput', () => {
       beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [
-              { userId: user._id, joinedOn: now },
-              { userId: otherUser._id, joinedOn: now }
-            ]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
-
-        documentInput = await createTestDocumentInput(container, user, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        result = await sut.getDocumentInputById({ documentInputId: documentInput._id, user });
+        await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
+        result = await sut.getDocumentInputById({ documentInputId: documentInput._id, user: roomOwnerUser });
       });
 
       it('should return the document input', () => {
         expect(result).toEqual({
           _id: documentInput._id,
-          createdBy: user._id,
+          createdBy: inputtingUser._id,
           createdOn: now,
           documentId: document._id,
           documentRevisionId: document.revision,
           sections: {},
-          updatedBy: user._id,
+          updatedBy: inputtingUser._id,
           updatedOn: now
         });
       });
     });
-
-    describe('when the user is the room owner and not the creator of the documentInput', () => {
-      beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          { isCollaborative: true,
-            ownedBy: user._id,
-            members: [{ userId: otherUser._id, joinedOn: now }] }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-
-        });
-        documentInput = await createTestDocumentInput(container, otherUser, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        result = await sut.getDocumentInputById({ documentInputId: documentInput._id, user });
-      });
-
-      it('should return the document input', () => {
-        expect(result).toEqual({
-          _id: documentInput._id,
-          createdBy: otherUser._id,
-          createdOn: now,
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {},
-          updatedBy: otherUser._id,
-          updatedOn: now
-        });
-      });
-    });
-
-    describe('when the user is a room collaborator and not the creator of the documentInput', () => {
-      beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [
-              { userId: user._id, joinedOn: now },
-              { userId: otherUser._id, joinedOn: now }
-            ]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
-        documentInput = await createTestDocumentInput(container, otherUser, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        result = await sut.getDocumentInputById({ documentInputId: documentInput._id, user });
-      });
-
-      it('should return the document input', () => {
-        expect(result).toEqual({
-          _id: documentInput._id,
-          createdBy: otherUser._id,
-          createdOn: now,
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {},
-          updatedBy: otherUser._id,
-          updatedOn: now
-        });
-      });
-    });
-
   });
 
   describe('createDocumentInput', () => {
@@ -258,23 +174,28 @@ describe('document-input-service', () => {
     let result;
     let document;
 
-    describe('when the document does not exist', () => {
-      beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [{ userId: user._id, joinedOn: now }]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
+    beforeEach(async () => {
+      room = await createTestRoom(
+        container,
+        {
+          isCollaborative: true,
+          ownedBy: roomOwnerUser._id,
+          members: [
+            { userId: inputtingUser._id, joinedOn: now },
+            { userId: nonInputtingUser._id, joinedOn: now }
+          ]
+        }
+      );
+      document = await createTestDocument(container, roomOwnerUser, {
+        roomId: room._id,
+        roomContext: { draft: false, inputSubmittingDisabled: false },
+        publicContext: null
+      });
+    });
 
-        await db.documents.deleteOne({ _id: document._id });
+    describe('when the document no longer exists', () => {
+      beforeEach(async () => {
+        await hardDeletePrivateTestDocument({ container, documentId: document._id, user: roomOwnerUser });
       });
 
       it('should throw NotFound', async () => {
@@ -282,14 +203,15 @@ describe('document-input-service', () => {
           documentId: document._id,
           documentRevisionId: document.revision,
           sections: {},
-          user
+          user: inputtingUser
         })).rejects.toThrow(NotFound);
       });
     });
 
-    describe('when the document is not part of a room', () => {
+    describe('when the document and document revision IDs do not match', () => {
+      let otherDocument;
       beforeEach(async () => {
-        document = await createTestDocument(container, user, {
+        otherDocument = await createTestDocument(container, roomOwnerUser, {
           roomContext: null,
           publicContext: {}
         });
@@ -298,46 +220,78 @@ describe('document-input-service', () => {
       it('should throw BadRequest', async () => {
         await expect(() => sut.createDocumentInput({
           documentId: document._id,
-          documentRevisionId: document.revision,
+          documentRevisionId: otherDocument.revision,
           sections: {},
-          user
+          user: inputtingUser
         })).rejects.toThrow(BadRequest);
       });
     });
 
-    describe('when the user is a room member', () => {
+    describe('when the document revision does not allow submitting input', () => {
+      let updatedDocument;
       beforeEach(async () => {
-        room = await createTestRoom(
+        updatedDocument = await updateTestDocument({
           container,
-          {
-            isCollaborative: false,
-            ownedBy: otherUser._id,
-            members: [{ userId: user._id, joinedOn: now }]
-          }
-        );
-        document = await createTestDocument(container, otherUser, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
+          documentId: document._id,
+          data: {
+            roomContext: {
+              draft: false,
+              inputSubmittingDisabled: true
+            }
+          },
+          user: roomOwnerUser
         });
+      });
 
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.createDocumentInput({
+          documentId: updatedDocument._id,
+          documentRevisionId: updatedDocument.revision,
+          sections: {},
+          user: inputtingUser
+        })).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when the document is not part of a room', () => {
+      let publicDocument;
+      beforeEach(async () => {
+        publicDocument = await createTestDocument(container, inputtingUser, {
+          roomContext: null,
+          publicContext: {}
+        });
+      });
+
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.createDocumentInput({
+          documentId: publicDocument._id,
+          documentRevisionId: publicDocument.revision,
+          sections: {},
+          user: inputtingUser
+        })).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when the room is no longer collaborative and and the user is a room member', () => {
+      beforeEach(async () => {
+        await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
         result = await sut.createDocumentInput({
           documentId: document._id,
           documentRevisionId: document.revision,
           sections: {},
-          user
+          user: inputtingUser
         });
       });
 
       it('should return the created document input', () => {
         expect(result).toEqual({
           _id: expect.any(String),
-          createdBy: user._id,
+          createdBy: inputtingUser._id,
           createdOn: now,
           documentId: document._id,
           documentRevisionId: document.revision,
           sections: {},
-          updatedBy: user._id,
+          updatedBy: inputtingUser._id,
           updatedOn: now
         });
       });
@@ -350,170 +304,82 @@ describe('document-input-service', () => {
     let document;
     let documentInput;
 
+    beforeEach(async () => {
+      room = await createTestRoom(
+        container,
+        {
+          isCollaborative: true,
+          ownedBy: roomOwnerUser._id,
+          members: [
+            { userId: inputtingUser._id, joinedOn: now },
+            { userId: nonInputtingUser._id, joinedOn: now }
+          ]
+        }
+      );
+      document = await createTestDocument(container, roomOwnerUser, {
+        roomId: room._id,
+        roomContext: { draft: false, inputSubmittingDisabled: false },
+        publicContext: null
+      });
+      documentInput = await createTestDocumentInput(container, inputtingUser, {
+        documentId: document._id,
+        documentRevisionId: document.revision,
+        sections: {}
+      });
+    });
+
     describe('when the document input does not exist', () => {
       it('should throw NotFound', async () => {
-        await expect(() => sut.hardDeleteDocumentInput({ documentInputId: uniqueId.create(), user })).rejects.toThrow(NotFound);
+        await expect(() => sut.hardDeleteDocumentInput({ documentInputId: uniqueId.create(), user: inputtingUser })).rejects.toThrow(NotFound);
       });
     });
 
     describe('when the document no longer exists', () => {
       beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [{ userId: user._id, joinedOn: now }]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
-        documentInput = await createTestDocumentInput(container, user, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        await db.documents.deleteOne({ _id: documentInput.documentId });
+        await hardDeletePrivateTestDocument({ container, documentId: document._id, user: roomOwnerUser });
       });
 
       it('should throw NotFound', async () => {
-        await expect(() => sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user })).rejects.toThrow(NotFound);
+        await expect(() => sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user: inputtingUser })).rejects.toThrow(NotFound);
       });
     });
 
-    describe('when the user is a room member, the room is no longer collaborative, and the user is not the creator of the documentInput', () => {
-      let otherDocumentInput;
-
+    describe('when room is collaborative and the user is a room member but not the creator of the documentInput', () => {
       beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [
-              { userId: user._id, joinedOn: now },
-              { userId: otherUser._id, joinedOn: now }
-            ]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
+        await sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user: nonInputtingUser });
+      });
 
-        documentInput = await createTestDocumentInput(container, user, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
+      it('should delete the document input', async () => {
+        result = await db.documentInputs.findOne({ _id: documentInput._id });
+        expect(result).toEqual(null);
+      });
+    });
 
-        otherDocumentInput = await createTestDocumentInput(container, otherUser, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
+    describe('when the room is no longer collaborative and the user is a room member and the creator of the documentInput', () => {
+      beforeEach(async () => {
+        await sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user: inputtingUser });
+      });
 
+      it('should delete the document input', async () => {
+        result = await db.documentInputs.findOne({ _id: documentInput._id });
+        expect(result).toEqual(null);
+      });
+    });
+
+    describe('when the room is no longer collaborative and the user is a room member but not the creator of the documentInput', () => {
+      beforeEach(async () => {
         await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
       });
 
       it('should throw Forbidden', async () => {
-        await expect(() => sut.hardDeleteDocumentInput({ documentInputId: otherDocumentInput._id, user })).rejects.toThrow(Forbidden);
+        await expect(() => sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user: nonInputtingUser })).rejects.toThrow(Forbidden);
       });
     });
 
-    describe('when the user is a room member, the room is no longer collaborative, and the user is the creator of the documentInput', () => {
+    describe('when the room is no longer collaborative and the user is the room owner but not the creator of the documentInput', () => {
       beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [
-              { userId: user._id, joinedOn: now },
-              { userId: otherUser._id, joinedOn: now }
-            ]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
-
-        documentInput = await createTestDocumentInput(container, user, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        await sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user });
-      });
-
-      it('should delete the document input', async () => {
-        result = await db.documentInputs.findOne({ _id: documentInput._id });
-        expect(result).toEqual(null);
-      });
-    });
-
-    describe('when the user is the room owner and not the creator of the documentInput', () => {
-      beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          { isCollaborative: true,
-            ownedBy: user._id,
-            members: [{ userId: otherUser._id, joinedOn: now }] }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-
-        });
-        documentInput = await createTestDocumentInput(container, otherUser, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        await sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user });
-      });
-
-      it('should delete the document input', async () => {
-        result = await db.documentInputs.findOne({ _id: documentInput._id });
-        expect(result).toEqual(null);
-      });
-    });
-
-    describe('when the user is a room collaborator and not the creator of the documentInput', () => {
-      beforeEach(async () => {
-        room = await createTestRoom(
-          container,
-          {
-            isCollaborative: true,
-            ownedBy: uniqueId.create(),
-            members: [
-              { userId: user._id, joinedOn: now },
-              { userId: otherUser._id, joinedOn: now }
-            ]
-          }
-        );
-        document = await createTestDocument(container, user, {
-          roomId: room._id,
-          roomContext: { draft: false },
-          publicContext: null
-        });
-        documentInput = await createTestDocumentInput(container, otherUser, {
-          documentId: document._id,
-          documentRevisionId: document.revision,
-          sections: {}
-        });
-
-        await sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user });
+        await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
+        await sut.hardDeleteDocumentInput({ documentInputId: documentInput._id, user: roomOwnerUser });
       });
 
       it('should delete the document input', async () => {

@@ -51,7 +51,12 @@ const getDefaultPublicContext = () => (
   }
 );
 
-const getDefaultRoomContext = () => ({ draft: false });
+const getDefaultRoomContext = () => (
+  {
+    draft: false,
+    inputSubmittingDisabled: false
+  }
+);
 
 function DocumentMetadataModal({
   isOpen,
@@ -272,6 +277,11 @@ function DocumentMetadataModal({
     setRoomContext(prevState => ({ ...prevState, draft: checked }));
   };
 
+  const handleInputSubmittingDisabledChange = event => {
+    const { checked } = event.target;
+    setRoomContext(prevState => ({ ...prevState, inputSubmittingDisabled: checked }));
+  };
+
   const handleFinish = async () => {
     const invalidFieldsExist = Object.values(validationState).some(field => field.validateStatus === 'error');
     if (invalidFieldsExist) {
@@ -474,12 +484,23 @@ function DocumentMetadataModal({
             </CollapsePanel>
           </Collapse>
         )}
-        {!!showDraftInput && (
-          <FormItem>
-            <Checkbox checked={roomContext.draft} onChange={handleDraftChange}>
-              <Info tooltip={t('draftInfo')} iconAfterContent> <span className="u-label">{t('draft')}</span></Info>
-            </Checkbox>
-          </FormItem>
+        {!!isDocInRoomContext && (
+          <Fragment>
+            {!!showDraftInput && (
+              <FormItem>
+                <Checkbox checked={roomContext.draft} onChange={handleDraftChange}>
+                  <Info tooltip={t('draftInfo')} iconAfterContent> <span className="u-label">{t('draft')}</span></Info>
+                </Checkbox>
+              </FormItem>
+            )}
+            <FormItem>
+              <Checkbox checked={roomContext.inputSubmittingDisabled} onChange={handleInputSubmittingDisabledChange}>
+                <Info tooltip={t('inputSubmittingDisabledInfo')} iconAfterContent>
+                  <span className="u-label">{t('inputSubmittingDisabled')}</span>
+                </Info>
+              </Checkbox>
+            </FormItem>
+          </Fragment>
         )}
       </Form>
     </Modal>

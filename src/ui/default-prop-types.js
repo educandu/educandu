@@ -228,13 +228,19 @@ export const documentPublicContextShape = PropTypes.shape({
   review: PropTypes.string
 });
 
+export const documentRoomContextShape = PropTypes.shape({
+  draft: PropTypes.bool.isRequired,
+  inputSubmittingDisabled: PropTypes.bool.isRequired
+});
+
 export const documentMetadataEditShape = PropTypes.shape({
   title: PropTypes.string.isRequired,
   shortDescription: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  publicContext: documentPublicContextShape
+  publicContext: documentPublicContextShape,
+  roomContext: documentRoomContextShape
 });
 
 export const documentShape = PropTypes.shape({
@@ -254,7 +260,8 @@ export const documentRevisionShape = PropTypes.shape({
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   restoredFrom: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  publicContext: documentPublicContextShape
+  publicContext: documentPublicContextShape,
+  roomContext: documentRoomContextShape
 });
 
 const sectionInputShape = PropTypes.shape({

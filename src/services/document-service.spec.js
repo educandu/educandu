@@ -90,7 +90,8 @@ describe('document-service', () => {
         language: 'en',
         roomId: room._id,
         roomContext: {
-          draft: false
+          draft: false,
+          inputSubmittingDisabled: false
         },
         publicContext: null,
         sections: [
@@ -1340,7 +1341,7 @@ describe('document-service', () => {
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         language: 'en',
         roomId: room._id,
-        roomContext: { draft: false },
+        roomContext: { draft: false, inputSubmittingDisabled: false },
         publicContext: null
       });
     });

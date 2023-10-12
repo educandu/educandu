@@ -223,6 +223,7 @@ export function createTestDocument(container, user, data) {
       roomContext: data.roomId
         ? {
           draft: false,
+          inputSubmittingDisabled: false,
           ...data.roomContext
         }
         : null
@@ -235,6 +236,11 @@ export function createTestDocument(container, user, data) {
 export function updateTestDocument({ container, documentId, user, data }) {
   const documentService = container.get(DocumentService);
   return documentService.updateDocument({ documentId, user, data, silentUpdate: true });
+}
+
+export function hardDeletePrivateTestDocument({ container, documentId, user }) {
+  const documentService = container.get(DocumentService);
+  return documentService.hardDeletePrivateDocument({ documentId, user });
 }
 
 export async function createTestRevisions(container, user, revisions) {
