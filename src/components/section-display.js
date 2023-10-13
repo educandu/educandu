@@ -225,7 +225,7 @@ function SectionDisplay({
           canModifyInput={canModifyInput}
           onInputChanged={onSectionInputChange}
           />
-        {!!documentInputId && (
+        {!!registeredPlugin.info.allowsInput && !!documentInputId && (
           <DocumentInputSectionComments
             documentInputId={documentInputId}
             sectionKey={section.key}

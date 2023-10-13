@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import Markdown from './markdown.js';
 import routes from '../utils/routes.js';
-import React, { useState } from 'react';
 import { Button, Collapse } from 'antd';
 import { useUser } from './user-context.js';
 import DeleteButton from './delete-button.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
+import React, { useEffect, useState } from 'react';
 import { useDateFormat } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { documentInputSectionCommentShape } from '../ui/default-prop-types.js';
@@ -25,6 +25,10 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, initialComm
   const [currentComment, setCurrentComment] = useState('');
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [comments, setComments] = useState(cloneDeep(initialComments));
+
+  useEffect(() => {
+    setComments(initialComments);
+  }, [initialComments]);
 
   const handleCurrentCommentChange = event => {
     const { value } = event.target;
