@@ -5,8 +5,8 @@ const documentInputCommentSchema = joi.object({
   key: idOrKeySchema.required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
-  deletedOn: joi.date(),
-  deletedBy: idOrKeySchema,
+  deletedOn: joi.date().allow(null),
+  deletedBy: idOrKeySchema.allow(null),
   text: joi.string()
 });
 

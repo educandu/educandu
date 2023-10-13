@@ -23,8 +23,9 @@ import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { getSectionElementDataAttributes } from '../utils/document-utils.js';
-import { sectionContextShape, sectionInputShape, sectionShape } from '../ui/default-prop-types.js';
+import DocumentInputSectionComments from './document-input-section-comments.js';
 import { CheckOutlined, CloseCircleFilled, CloseOutlined } from '@ant-design/icons';
+import { sectionContextShape, sectionInputShape, sectionShape } from '../ui/default-prop-types.js';
 
 const createComponents = registeredPlugin => ({
   editorComponent: registeredPlugin?.editorComponent || null,
@@ -32,6 +33,7 @@ const createComponents = registeredPlugin => ({
 });
 
 function SectionDisplay({
+  documentInputId,
   sectionInput,
   section,
   context,
@@ -215,13 +217,22 @@ function SectionDisplay({
     }
 
     return (
-      <DisplayComponent
-        context={context}
-        content={section.content}
-        input={sectionInput?.data ?? null}
-        canModifyInput={canModifyInput}
-        onInputChanged={onSectionInputChange}
-        />
+      <Fragment>
+        <DisplayComponent
+          context={context}
+          content={section.content}
+          input={sectionInput?.data ?? null}
+          canModifyInput={canModifyInput}
+          onInputChanged={onSectionInputChange}
+          />
+        {!!documentInputId && (
+          <DocumentInputSectionComments
+            documentInputId={documentInputId}
+            sectionKey={section.key}
+            comments={sectionInput.comments}
+            />
+        )}
+      </Fragment>
     );
   };
 
@@ -380,6 +391,7 @@ function SectionDisplay({
 }
 
 SectionDisplay.propTypes = {
+  documentInputId: PropTypes.string,
   sectionInput: sectionInputShape,
   section: sectionShape.isRequired,
   context: sectionContextShape.isRequired,
@@ -406,6 +418,7 @@ SectionDisplay.propTypes = {
 };
 
 SectionDisplay.defaultProps = {
+  documentInputId: null,
   sectionInput: null
 };
 

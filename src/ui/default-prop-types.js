@@ -264,15 +264,18 @@ export const documentRevisionShape = PropTypes.shape({
   roomContext: documentRoomContextShape
 });
 
+export const documentInputSectionCommentShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: PropTypes.string.isRequired,
+  deletedOn: PropTypes.string,
+  deletedBy: PropTypes.string,
+  text: PropTypes.string.isRequired
+});
+
 export const sectionInputShape = PropTypes.shape({
   data: PropTypes.object,
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    createdOn: PropTypes.string.isRequired,
-    createdBy: PropTypes.string.isRequired,
-    deletedOn: PropTypes.string,
-    deletedBy: PropTypes.string,
-    text: PropTypes.string.isRequired
-  }))
+  comments: PropTypes.arrayOf(documentInputSectionCommentShape)
 });
 
 export const documentInputShape = PropTypes.shape({

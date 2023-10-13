@@ -146,6 +146,7 @@ class DocumentInputController {
   registerPages(router) {
     router.get(
       '/doc-inputs/:documentInputId',
+      needsPermission(permissions.CREATE_CONTENT),
       (req, res) => this.handleGetDocumentInputPage(req, res)
     );
   }

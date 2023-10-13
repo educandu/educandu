@@ -87,11 +87,11 @@ class DocumentInputService {
       _id: documentInputId,
       documentId,
       documentRevisionId,
-      sections,
       createdBy: user._id,
       createdOn,
       updatedBy: user._id,
-      updatedOn: createdOn
+      updatedOn: createdOn,
+      sections
     };
 
     await this.documentInputStore.saveDocumentInput(newDocumentInput);

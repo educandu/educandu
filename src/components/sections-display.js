@@ -71,6 +71,7 @@ function SectionsDisplay({
         key={section.key}
         context={canEdit && !isEditing ? SECTION_PREVIEW_CONTEXT : SECTION_NON_PREVIEW_CONTEXT}
         section={section}
+        documentInputId={documentInput?._id}
         sectionInput={documentInput?.sections[section.key] ?? null}
         canEdit={!!dragHandleProps && canEdit}
         canModifyInput={canModifyInputs}
