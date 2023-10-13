@@ -267,9 +267,15 @@ export const documentRevisionShape = PropTypes.shape({
 export const documentInputSectionCommentShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
-  createdBy: PropTypes.string.isRequired,
+  createdBy: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired
+  }),
   deletedOn: PropTypes.string,
-  deletedBy: PropTypes.string,
+  deletedBy: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired
+  }),
   text: PropTypes.string.isRequired
 });
 

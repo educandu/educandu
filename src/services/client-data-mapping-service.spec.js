@@ -12,6 +12,7 @@ import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTest
 
 describe('client-data-mapping-service', () => {
   const sandbox = createSandbox();
+  const now = new Date();
 
   let serverConfig;
   let markdownInfo;
@@ -30,6 +31,7 @@ describe('client-data-mapping-service', () => {
   });
 
   beforeEach(async () => {
+    sandbox.useFakeTimers(now);
     user1 = await createTestUser(container, { email: 'user1@test.com', displayName: 'Test user 1' });
     user2 = await createTestUser(container, { email: 'user2@test.com', displayName: 'Test user 2' });
   });
@@ -940,21 +942,43 @@ describe('client-data-mapping-service', () => {
           _id: uniqueId.create(),
           documentId: uniqueId.create(),
           documentRevisionId: uniqueId.create(),
-          createdOn: new Date(),
+          createdOn: now,
           createdBy: user1._id,
-          updatedOn: new Date(),
+          updatedOn: now,
           updatedBy: user1._id,
-          sections: {}
+          sections: {
+            key1: {
+              data: {},
+              comments: [
+                {
+                  createdOn: now,
+                  createdBy: user2._id
+                }
+              ]
+            }
+          }
         },
         {
           _id: uniqueId.create(),
           documentId: uniqueId.create(),
           documentRevisionId: uniqueId.create(),
-          createdOn: new Date(),
-          createdBy: user2._id,
-          updatedOn: new Date(),
-          updatedBy: user2._id,
-          sections: {}
+          createdOn: now,
+          createdBy: user1._id,
+          updatedOn: now,
+          updatedBy: user1._id,
+          sections: {
+            key1: {
+              data: {},
+              comments: [
+                {
+                  createdOn: now,
+                  createdBy: user2._id,
+                  deletedOn: now,
+                  deletedBy: user2._id
+                }
+              ]
+            }
+          }
         }
       ];
       documents = [
@@ -970,32 +994,65 @@ describe('client-data-mapping-service', () => {
         {
           ...documentInputs[0],
           documentTitle: 'Document A',
-          createdOn: documentInputs[0].createdOn.toISOString(),
+          createdOn: now.toISOString(),
           createdBy: {
             _id: user1._id,
             displayName: user1.displayName
           },
-          updatedOn: documentInputs[0].updatedOn.toISOString(),
+          updatedOn: now.toISOString(),
           updatedBy: {
             _id: user1._id,
             displayName: user1.displayName
           },
-          sections: {}
+          sections: {
+            key1: {
+              data: {},
+              comments: [
+                {
+                  createdOn: now.toISOString(),
+                  createdBy: {
+                    _id: user2._id,
+                    displayName: user2.displayName
+                  },
+                  deletedOn: '',
+                  deletedBy: null
+                }
+              ]
+            }
+          }
         },
         {
           ...documentInputs[1],
           documentTitle: 'Document B',
           createdOn: documentInputs[1].createdOn.toISOString(),
           createdBy: {
-            _id: user2._id,
-            displayName: user2.displayName
+            _id: user1._id,
+            displayName: user1.displayName
           },
           updatedOn: documentInputs[1].updatedOn.toISOString(),
           updatedBy: {
-            _id: user2._id,
-            displayName: user2.displayName
+            _id: user1._id,
+            displayName: user1.displayName
           },
-          sections: {}
+          sections: {
+            key1: {
+              data: {},
+              comments: [
+                {
+                  createdOn: now.toISOString(),
+                  createdBy: {
+                    _id: user2._id,
+                    displayName: user2.displayName
+                  },
+                  deletedOn: now.toISOString(),
+                  deletedBy: {
+                    _id: user2._id,
+                    displayName: user2.displayName
+                  }
+                }
+              ]
+            }
+          }
         }
       ]);
     });

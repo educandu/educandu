@@ -229,7 +229,7 @@ function SectionDisplay({
           <DocumentInputSectionComments
             documentInputId={documentInputId}
             sectionKey={section.key}
-            comments={sectionInput.comments}
+            initialComments={sectionInput.comments}
             />
         )}
       </Fragment>

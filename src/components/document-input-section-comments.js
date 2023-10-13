@@ -3,6 +3,7 @@ import Markdown from './markdown.js';
 import routes from '../utils/routes.js';
 import React, { useState } from 'react';
 import { Button, Collapse } from 'antd';
+import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
 import { useDateFormat } from './locale-context.js';
@@ -12,12 +13,14 @@ import DocumentInputApiClient from '../api-clients/document-input-api-client.js'
 
 const CollapsePanel = Collapse.Panel;
 
-function DocumentInputSectionComments({ documentInputId, sectionKey, comments }) {
+function DocumentInputSectionComments({ documentInputId, sectionKey, initialComments }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentInputSectionComments');
+  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
+
   const [currentComment, setCurrentComment] = useState('');
   const [isPostingComment, setIsPostingComment] = useState(false);
-  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
+  const [comments, setComments] = useState(cloneDeep(initialComments));
 
   const handleCurrentCommentChange = event => {
     const { value } = event.target;
@@ -26,13 +29,14 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, comments })
 
   const handlePostCommentClick = async () => {
     setIsPostingComment(true);
-    await documentInputApiClient.createDocumentInputSectionComment({
+    const response = await documentInputApiClient.createDocumentInputSectionComment({
       documentInputId,
       sectionKey,
       text: currentComment.trim()
     });
     setIsPostingComment(false);
     setCurrentComment('');
+    setComments(response.documentInput.sections[sectionKey].comments);
   };
 
   const renderComment = comment => {
@@ -88,7 +92,7 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, comments })
   return (
     <div className="DocumentInputSectionComments">
       <Collapse>
-        <CollapsePanel header={t('smth')}>
+        <CollapsePanel header={t('comments')}>
           {comments.map(renderComment)}
           {renderPostCommentSection()}
         </CollapsePanel>
@@ -100,7 +104,7 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, comments })
 DocumentInputSectionComments.propTypes = {
   documentInputId: PropTypes.string.isRequired,
   sectionKey: PropTypes.string.isRequired,
-  comments: PropTypes.arrayOf(documentInputSectionCommentShape).isRequired
+  initialComments: PropTypes.arrayOf(documentInputSectionCommentShape).isRequired
 };
 
 export default DocumentInputSectionComments;

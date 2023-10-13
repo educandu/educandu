@@ -833,6 +833,12 @@
       "de": "Der Inhalt dieses Kommentars wurde von einem Redakteur gelöscht."
     }
   },
+  "documentInputSectionComments": {
+    "comments": {
+      "en": "Comments",
+      "de": "Kommentare"
+    }
+  },
   "documentInputsPanel": {
     "pendingInputHeader": {
       "en": "Unsubmitted input",
