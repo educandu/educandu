@@ -132,6 +132,36 @@ class DocumentInputService {
     return documentInput;
   }
 
+  async deleteDocumentInputSectionComment({ documentInputId, sectionKey, commentKey, user }) {
+    const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
+
+    if (!documentInput) {
+      throw new NotFound(`Document input '${documentInputId}' not found.`);
+    }
+
+    if (!documentInput.sections[sectionKey]) {
+      throw new BadRequest(`Document input '${documentInputId}' does not have a section with key '${sectionKey}'.`);
+    }
+
+    const document = await this.documentStore.getDocumentById(documentInput.documentId);
+    if (!document) {
+      throw new NotFound(`Document '${documentInput.documentId}' not found.`);
+    }
+
+    const room = await this.roomStore.getRoomById(document.roomId);
+    if (documentInput.createdBy !== user._id && !isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+      throw new Forbidden(`User is not authorized to post comment on document input '${documentInputId}'`);
+    }
+
+    const deletedComment = documentInput.sections[sectionKey].comments.find(comment => comment.key === commentKey);
+    deletedComment.deletedOn = new Date();
+    deletedComment.deletedBy = user._id;
+    deletedComment.text = '';
+
+    await this.documentInputStore.saveDocumentInput(documentInput);
+    return documentInput;
+  }
+
   async hardDeleteDocumentInput({ documentInputId, user }) {
     const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
 

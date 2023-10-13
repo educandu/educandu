@@ -495,3 +495,15 @@ export function confirmDocumentCommentDelete(t, author, timestamp, onOk, onCance
     onCancel
   });
 }
+
+export function confirmDocumentInputSectionCommentDelete(t, timestamp, onOk, onCancel = () => { }) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteDocumentInputSectionCommentConfirmation', { timestamp }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}

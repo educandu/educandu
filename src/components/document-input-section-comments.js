@@ -3,6 +3,8 @@ import Markdown from './markdown.js';
 import routes from '../utils/routes.js';
 import React, { useState } from 'react';
 import { Button, Collapse } from 'antd';
+import { useUser } from './user-context.js';
+import DeleteButton from './delete-button.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
@@ -10,10 +12,12 @@ import { useDateFormat } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { documentInputSectionCommentShape } from '../ui/default-prop-types.js';
 import DocumentInputApiClient from '../api-clients/document-input-api-client.js';
+import { confirmDocumentInputSectionCommentDelete } from './confirmation-dialogs.js';
 
 const CollapsePanel = Collapse.Panel;
 
 function DocumentInputSectionComments({ documentInputId, sectionKey, initialComments }) {
+  const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentInputSectionComments');
   const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
@@ -39,8 +43,21 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, initialComm
     setComments(response.documentInput.sections[sectionKey].comments);
   };
 
+  const handleDeleteOwnCommentClick = comment => {
+    const timestamp = formatDate(comment.createdOn);
+    confirmDocumentInputSectionCommentDelete(t, timestamp, async () => {
+      const response = await documentInputApiClient.deleteDocumentInputSectionComment({
+        documentInputId,
+        sectionKey,
+        commentKey: comment.key
+      });
+      setComments(response.documentInput.sections[sectionKey].comments);
+    });
+  };
+
   const renderComment = comment => {
     const userUrl = routes.getUserProfileUrl(comment.createdBy._id);
+    const isOwnComment = comment.createdBy._id === user?._id;
 
     return (
       <div className="DocumentInputSectionComments-comment" key={comment.key}>
@@ -56,6 +73,11 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, initialComm
         {!!comment.deletedOn && (
           <div className="DocumentInputSectionComments-text DocumentInputSectionComments-text--deleted">
             {t('commentDeleted')}
+          </div>
+        )}
+        { !!isOwnComment && (
+          <div className="DocumentInputSectionComments-commentDeleteButton">
+            <DeleteButton onClick={() => handleDeleteOwnCommentClick(comment)} disabled={comment.deletedOn} />
           </div>
         )}
       </div>

@@ -66,6 +66,15 @@ export const createDocumentInputSectionCommentBodySchema = joi.object({
   text: joi.string().required()
 });
 
+export const deleteDocumentInputSectionCommentParams = joi.object({
+  documentInputId: idOrKeySchema.required(),
+  sectionKey: idOrKeySchema.required()
+});
+
+export const deleteDocumentInputSectionCommentBodySchema = joi.object({
+  commentKey: idOrKeySchema.required()
+});
+
 export const hardDeleteDocumentInputBodySchema = joi.object({
   documentInputId: idOrKeySchema.required()
 });

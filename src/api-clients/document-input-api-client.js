@@ -63,6 +63,18 @@ class DocumentInputApiClient {
       .then(res => res.data);
   }
 
+  deleteDocumentInputSectionComment({ documentInputId, sectionKey, commentKey }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/doc-inputs/${encodeURIComponent(documentInputId)}/sections/${encodeURIComponent(sectionKey)}/comments`,
+        {
+          data: { commentKey },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
   hardDeleteDocumentInput(documentInputId) {
     return this.httpClient
       .delete(
