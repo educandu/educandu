@@ -98,6 +98,30 @@ class DocumentInputService {
     return newDocumentInput;
   }
 
+  async createDocumentInputSectionComment({ documentInputId, sectionKey, text, user }) {
+    const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
+
+    if (!documentInput) {
+      throw new NotFound(`Document input '${documentInputId}' not found.`);
+    }
+
+    if (!documentInput.sections[sectionKey]) {
+      throw new BadRequest(`Document input '${documentInputId}' does not have a section with key '${sectionKey}'.`);
+    }
+
+    documentInput.sections[sectionKey].comments.push({
+      key: uniqueId.create(),
+      createdOn: new Date(),
+      createdBy: user._id,
+      deletedOn: null,
+      deletedBy: null,
+      text: text.trim()
+    });
+
+    await this.documentInputStore.saveDocumentInput(documentInput);
+    return documentInput;
+  }
+
   async hardDeleteDocumentInput({ documentInputId, user }) {
     const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
 

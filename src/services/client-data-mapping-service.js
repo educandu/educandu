@@ -621,7 +621,7 @@ class ClientDataMappingService {
 
     return {
       ...mappedDocumentInput,
-      documentTitle: document.title,
+      documentTitle: document?.title,
       createdBy,
       updatedBy,
       createdOn: mappedDocumentInput.createdOn.toISOString(),
