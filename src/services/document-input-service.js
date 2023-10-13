@@ -109,6 +109,16 @@ class DocumentInputService {
       throw new BadRequest(`Document input '${documentInputId}' does not have a section with key '${sectionKey}'.`);
     }
 
+    const document = await this.documentStore.getDocumentById(documentInput.documentId);
+    if (!document) {
+      throw new NotFound(`Document '${documentInput.documentId}' not found.`);
+    }
+
+    const room = await this.roomStore.getRoomById(document.roomId);
+    if (documentInput.createdBy !== user._id && !isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+      throw new Forbidden(`User is not authorized to post comment on document input '${documentInputId}'`);
+    }
+
     documentInput.sections[sectionKey].comments.push({
       key: uniqueId.create(),
       createdOn: new Date(),

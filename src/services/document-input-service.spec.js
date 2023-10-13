@@ -272,7 +272,7 @@ describe('document-input-service', () => {
       });
     });
 
-    describe('when the room is no longer collaborative and and the user is a room member', () => {
+    describe('when the room is no longer collaborative and the user is a room member', () => {
       beforeEach(async () => {
         await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
         result = await sut.createDocumentInput({
@@ -293,6 +293,186 @@ describe('document-input-service', () => {
           sections: {},
           updatedBy: inputtingUser._id,
           updatedOn: now
+        });
+      });
+    });
+  });
+
+  describe('createDocumentInputSectionComment', () => {
+    let room;
+    let result;
+    let document;
+    let sectionKey;
+    let documentInput;
+
+    beforeEach(async () => {
+      room = await createTestRoom(
+        container,
+        {
+          isCollaborative: true,
+          ownedBy: roomOwnerUser._id,
+          members: [
+            { userId: inputtingUser._id, joinedOn: now },
+            { userId: nonInputtingUser._id, joinedOn: now }
+          ]
+        }
+      );
+      document = await createTestDocument(container, roomOwnerUser, {
+        roomId: room._id,
+        roomContext: { draft: false, inputSubmittingDisabled: false },
+        publicContext: null
+      });
+      sectionKey = 'SAQVpmre63mCHqeCUiEbNR';
+      documentInput = await createTestDocumentInput(container, inputtingUser, {
+        documentId: document._id,
+        documentRevisionId: document.revision,
+        sections: {
+          [sectionKey]: {
+            data: {},
+            files: [],
+            comments: []
+          }
+        }
+      });
+    });
+
+    describe('when the document input no longer exists', () => {
+      beforeEach(async () => {
+        await db.documentInputs.deleteOne({ _id: documentInput._id });
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.createDocumentInputSectionComment({
+          documentInputId: documentInput._id,
+          sectionKey,
+          text: 'First comment',
+          user: inputtingUser
+        })).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the section key does not exist', () => {
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.createDocumentInputSectionComment({
+          documentInputId: documentInput._id,
+          sectionKey: 'sectionKey-x',
+          text: 'First comment',
+          user: inputtingUser
+        })).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when the room is no longer collaborative and the user is another room member', () => {
+      beforeEach(async () => {
+        await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.createDocumentInputSectionComment({
+          documentInputId: documentInput._id,
+          sectionKey,
+          text: 'First comment',
+          user: nonInputtingUser
+        })).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the room owner is posting a comment', () => {
+      beforeEach(async () => {
+        result = await sut.createDocumentInputSectionComment({
+          documentInputId: documentInput._id,
+          sectionKey,
+          text: 'First comment',
+          user: roomOwnerUser
+        });
+      });
+
+      it('should return the updated document input', () => {
+        expect(result).toEqual({
+          ...documentInput,
+          sections: {
+            ...documentInput.sections,
+            [sectionKey]: {
+              ...documentInput.sections[sectionKey],
+              comments: [
+                {
+                  key: expect.any(String),
+                  createdBy: roomOwnerUser._id,
+                  createdOn: now,
+                  deletedBy: null,
+                  deletedOn: null,
+                  text: 'First comment'
+                }
+              ]
+            }
+          }
+        });
+      });
+    });
+
+    describe('when a room collaborator is posting a comment', () => {
+      beforeEach(async () => {
+        result = await sut.createDocumentInputSectionComment({
+          documentInputId: documentInput._id,
+          sectionKey,
+          text: 'First comment',
+          user: nonInputtingUser
+        });
+      });
+
+      it('should return the updated document input', () => {
+        expect(result).toEqual({
+          ...documentInput,
+          sections: {
+            ...documentInput.sections,
+            [sectionKey]: {
+              ...documentInput.sections[sectionKey],
+              comments: [
+                {
+                  key: expect.any(String),
+                  createdBy: nonInputtingUser._id,
+                  createdOn: now,
+                  deletedBy: null,
+                  deletedOn: null,
+                  text: 'First comment'
+                }
+              ]
+            }
+          }
+        });
+      });
+    });
+
+    describe('when the room is no longer collaborative and the inputting user is posting a comment', () => {
+      beforeEach(async () => {
+        await db.rooms.updateOne({ _id: room._id }, { $set: { isCollaborative: false } });
+        result = await sut.createDocumentInputSectionComment({
+          documentInputId: documentInput._id,
+          sectionKey,
+          text: 'First comment',
+          user: inputtingUser
+        });
+      });
+
+      it('should return the updated document input', () => {
+        expect(result).toEqual({
+          ...documentInput,
+          sections: {
+            ...documentInput.sections,
+            [sectionKey]: {
+              ...documentInput.sections[sectionKey],
+              comments: [
+                {
+                  key: expect.any(String),
+                  createdBy: inputtingUser._id,
+                  createdOn: now,
+                  deletedBy: null,
+                  deletedOn: null,
+                  text: 'First comment'
+                }
+              ]
+            }
+          }
         });
       });
     });
