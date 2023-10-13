@@ -863,8 +863,20 @@
       "de": "Es wurden noch keine Eingaben gesendet"
     },
     "emptyStateSubtitle": {
-      "en": "Fill in the document and click the submit button to send your input.",
+      "en": "Fill in the document and click the submit button to submit your input.",
       "de": "Fülle das Dokument aus und klicke auf den Senden-Button, um deine Eingabe abzuschicken."
+    },
+    "emptyStateSubtitleDisabled": {
+      "en": "For this document there are no previously submitted inputs, and submitting new inputs is currently disabled.",
+      "de": "Für dieses Dokument liegen keine bisher gesendete Eingaben vor, und das Senden neuer Einagben ist derzeit deaktiviert."
+    },
+    "inputSubmittingDisabledAlert": {
+      "en": "Submitting inputs is currently disabled for this document.",
+      "de": "Für dieses Dokument ist das Senden von Eingaben derzeit deaktiviert."
+    },
+    "pendingInfoText": {
+      "en": "Click the submit button to submit this input.",
+      "de": "Klicke auf den Senden-Button, um diese Eingabe abzuschicken."
     }
   },
   "documentMetadataModal": {

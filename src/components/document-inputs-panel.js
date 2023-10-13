@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import EmptyState from './empty-state.js';
 import { useUser } from './user-context.js';
+import CustomAlert from './custom-alert.js';
 import urlUtils from '../utils/url-utils.js';
 import { useTranslation } from 'react-i18next';
 import EditIcon from './icons/general/edit-icon.js';
@@ -20,7 +21,7 @@ const { Panel } = Collapse;
 
 const PENDING_ITEM_KEY = 'pending';
 
-function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, selectedDocumentInputId, documentRevisions, showUsers, onViewClick }) {
+function DocumentInputsPanel({ loading, hasPendingInputChanges, inputSubmittingDisabled, documentInputs, selectedDocumentInputId, documentRevisions, showUsers, onViewClick }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentInputsPanel');
@@ -41,7 +42,7 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, 
       isPending: false
     }));
 
-    if (hasPendingInputChanges) {
+    if (hasPendingInputChanges && !inputSubmittingDisabled) {
       entries.unshift({
         _id: null,
         key: PENDING_ITEM_KEY,
@@ -55,7 +56,7 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, 
     }
 
     return entries.sort(by(x => x.isPending, 'desc').thenBy(x => x.createdOn, 'desc'));
-  }, [documentInputs, documentRevisions, hasPendingInputChanges, t, user]);
+  }, [documentInputs, documentRevisions, hasPendingInputChanges, inputSubmittingDisabled, t, user]);
 
   useEffect(() => {
     const possibleKeys = new Set(timelineEntries.map(entry => entry.key));
@@ -127,9 +128,7 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, 
   const renderTimelineItemActions = entry => {
     if (entry.isPending) {
       return (
-        <div className="HistoryPanel-itemActions">
-          <div className="HistoryPanel-itemActions">{t('emptyStateSubtitle')}</div>
-        </div>
+        <div className="HistoryPanel-itemInfo">{t('pendingInfoText')}</div>
       );
     }
 
@@ -195,9 +194,16 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, 
 
   return (
     <div className="HistoryPanel">
+      {!!inputSubmittingDisabled && (
+        <CustomAlert message={t('inputSubmittingDisabledAlert')} type="error" />
+      )}
       {!!loading && <Spinner />}
       {!loading && !timelineEntries.length && (
-        <EmptyState icon={<InputsIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+        <EmptyState
+          icon={<InputsIcon />}
+          title={t('emptyStateTitle')}
+          subtitle={t(inputSubmittingDisabled ? 'emptyStateSubtitleDisabled' : 'emptyStateSubtitle')}
+          />
       )}
       {!loading && !!timelineEntries.length && (
         <Timeline mode="left" items={timelineEntries.map(getActivityItem)} />
@@ -209,6 +215,7 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, documentInputs, 
 DocumentInputsPanel.propTypes = {
   loading: PropTypes.bool.isRequired,
   hasPendingInputChanges: PropTypes.bool.isRequired,
+  inputSubmittingDisabled: PropTypes.bool.isRequired,
   documentInputs: PropTypes.arrayOf(documentInputShape).isRequired,
   selectedDocumentInputId: PropTypes.string,
   documentRevisions: PropTypes.arrayOf(documentRevisionShape).isRequired,
