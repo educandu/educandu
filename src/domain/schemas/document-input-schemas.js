@@ -7,7 +7,7 @@ const documentInputCommentSchema = joi.object({
   createdBy: idOrKeySchema.required(),
   deletedOn: joi.date().allow(null),
   deletedBy: idOrKeySchema.allow(null),
-  text: joi.string()
+  text: joi.string().allow('')
 });
 
 const sectionSchema = joi.object({

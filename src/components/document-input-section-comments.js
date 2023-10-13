@@ -111,10 +111,21 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, initialComm
     );
   };
 
+  const renderCollapseHeader = () => {
+    return (
+      <div className="DocumentInputSectionComments-collapseHeader">
+        {t('comments')}
+        <div className="DocumentInputSectionComments-collapseHeaderComments">
+          <div className="m-comments-count">{comments.length}</div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="DocumentInputSectionComments">
       <Collapse>
-        <CollapsePanel header={t('comments')}>
+        <CollapsePanel header={renderCollapseHeader()}>
           {comments.map(renderComment)}
           {renderPostCommentSection()}
         </CollapsePanel>
