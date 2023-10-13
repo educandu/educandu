@@ -1,18 +1,21 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 
+const documentInputCommentSchema = joi.object({
+  key: idOrKeySchema.required(),
+  createdOn: joi.date().required(),
+  createdBy: idOrKeySchema.required(),
+  deletedOn: joi.date(),
+  deletedBy: idOrKeySchema,
+  text: joi.string()
+});
+
 const sectionSchema = joi.object({
   data: joi.object().allow(null).required(),
   files: joi.array().items(joi.object({
     url: joi.string()
   })).required(),
-  comments: joi.array().items(joi.object({
-    createdOn: joi.date().required(),
-    createdBy: idOrKeySchema.required(),
-    deletedOn: joi.date(),
-    deletedBy: idOrKeySchema,
-    text: joi.string()
-  })).required()
+  comments: joi.array().items(documentInputCommentSchema).required()
 });
 
 export const documentInputDbSchema = joi.object({
@@ -52,6 +55,15 @@ export const createDocumentInputDataBodySchema = joi.object({
     idOrKeySchema,
     sectionSchema
   )
+});
+
+export const createDocumentInputSectionCommentParams = joi.object({
+  documentInputId: idOrKeySchema.required(),
+  sectionKey: idOrKeySchema.required()
+});
+
+export const createDocumentInputSectionCommentBodySchema = joi.object({
+  text: joi.string().required()
 });
 
 export const hardDeleteDocumentInputBodySchema = joi.object({
