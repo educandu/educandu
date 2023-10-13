@@ -11,6 +11,3 @@ room:
   cancelRoomMembership:
     en: Cancel room membership
     de: Raum-Mitgliedschaft beenden
-  documentInputs:
-    en: Document inputs
-    de: Dokumenteingabe

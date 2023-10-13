@@ -254,7 +254,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: TAB_KEYS.documentInputs,
-      label: <div><InputsIcon />{t('documentInputsTabTitle')}</div>,
+      label: <div><InputsIcon />{t('common:documentInputs')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <DocumentInputsTab

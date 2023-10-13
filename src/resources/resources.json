@@ -1543,10 +1543,6 @@
     "roomsTabTitle": {
       "en": "Rooms",
       "de": "Räume"
-    },
-    "documentInputsTabTitle": {
-      "en": "Document inputs",
-      "de": "Dokumenteingabe"
     }
   },
   "document": {
@@ -1773,10 +1769,6 @@
     "cancelRoomMembership": {
       "en": "Cancel room membership",
       "de": "Raum-Mitgliedschaft beenden"
-    },
-    "documentInputs": {
-      "en": "Document inputs",
-      "de": "Dokumenteingabe"
     }
   },
   "search": {
@@ -2251,7 +2243,7 @@
   },
   "roomDocumentInputs": {
     "emptyStateTitle": {
-      "en": "No document inputs have been submitted in this room",
+      "en": "No document input has been submitted in this room",
       "de": "Keine Dokumenteingabe wurden in diesem Raum gesendet"
     },
     "emptyStateSubtitle": {
@@ -4249,6 +4241,10 @@
     "permalinkCouldNotBeCopied": {
       "en": "The permalink could not be copied to the clipboard",
       "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
+    },
+    "documentInputs": {
+      "en": "Document inputs",
+      "de": "Dokumenteingaben"
     }
   },
   "pageNames": {

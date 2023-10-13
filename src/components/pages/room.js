@@ -226,7 +226,7 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: TAB_KEYS.documentInputs,
-                  label: <div><InputsIcon />{t('documentInputs')}</div>,
+                  label: <div><InputsIcon />{t('common:documentInputs')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
                       <RoomDocumentInputs
@@ -259,12 +259,12 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: TAB_KEYS.documentInputs,
-                  label: <div><InputsIcon />{t('documentInputs')}</div>,
+                  label: <div><InputsIcon />{t('common:documentInputs')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
                       <RoomDocumentInputs
                         documentInputs={documentInputs}
-                        onDocumentInputDelete={handleDeleteDocumentInput}
+                        onDelete={handleDeleteDocumentInput}
                         />
                     </div>
                   )
