@@ -23,7 +23,7 @@ import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { getSectionElementDataAttributes } from '../utils/document-utils.js';
-import { sectionContextShape, sectionShape } from '../ui/default-prop-types.js';
+import { sectionContextShape, sectionInputShape, sectionShape } from '../ui/default-prop-types.js';
 import { CheckOutlined, CloseCircleFilled, CloseOutlined } from '@ant-design/icons';
 
 const createComponents = registeredPlugin => ({
@@ -32,7 +32,7 @@ const createComponents = registeredPlugin => ({
 });
 
 function SectionDisplay({
-  input,
+  sectionInput,
   section,
   context,
   canEdit,
@@ -218,7 +218,7 @@ function SectionDisplay({
       <DisplayComponent
         context={context}
         content={section.content}
-        input={input?.data ?? null}
+        input={sectionInput?.data ?? null}
         canModifyInput={canModifyInput}
         onInputChanged={onSectionInputChange}
         />
@@ -380,9 +380,7 @@ function SectionDisplay({
 }
 
 SectionDisplay.propTypes = {
-  input: PropTypes.shape({
-    data: PropTypes.any
-  }),
+  sectionInput: sectionInputShape,
   section: sectionShape.isRequired,
   context: sectionContextShape.isRequired,
   canEdit: PropTypes.bool.isRequired,
@@ -408,7 +406,7 @@ SectionDisplay.propTypes = {
 };
 
 SectionDisplay.defaultProps = {
-  input: null
+  sectionInput: null
 };
 
 export default memoAndTransformProps(SectionDisplay, ({
