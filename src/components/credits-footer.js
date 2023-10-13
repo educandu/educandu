@@ -1,11 +1,10 @@
 import routes from '../utils/routes.js';
-import React, { Fragment } from 'react';
-import { useIsMounted } from '../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
 import LiteralUrlLink from './literal-url-link.js';
 import { useSettings } from './settings-context.js';
 import { useDateFormat } from './locale-context.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function CreditsFooter({ doc, revision }) {
@@ -15,9 +14,14 @@ function CreditsFooter({ doc, revision }) {
 
   const request = useRequest();
   const settings = useSettings();
-  const isMounted = useIsMounted();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('creditsFooter');
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, [setIsMounted]);
 
   const title = doc?.title || revision?.title;
 
@@ -56,7 +60,7 @@ function CreditsFooter({ doc, revision }) {
 
   return (
     <div className="CreditsFooter">
-      {!!isMounted.current && (
+      {!!isMounted && (
         <p>
           {!!settings.license?.name && !!settings.license?.url && (
             <Fragment>
