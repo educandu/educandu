@@ -264,7 +264,7 @@ export const documentRevisionShape = PropTypes.shape({
   roomContext: documentRoomContextShape
 });
 
-const sectionInputShape = PropTypes.shape({
+export const sectionInputShape = PropTypes.shape({
   data: PropTypes.object,
   comments: PropTypes.arrayOf(PropTypes.shape({
     createdOn: PropTypes.string.isRequired,
@@ -284,7 +284,11 @@ export const documentInputShape = PropTypes.shape({
   createdBy: otherUserShape.isRequired,
   updatedOn: PropTypes.string.isRequired,
   updatedBy: otherUserShape.isRequired,
-  sections: PropTypes.objectOf(sectionInputShape)
+  sections: PropTypes.objectOf(sectionInputShape).isRequired
+});
+
+export const pendingDocumentInputShape = PropTypes.shape({
+  sections: PropTypes.objectOf(sectionInputShape).isRequired
 });
 
 const commonMediaFileProps = {

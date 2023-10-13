@@ -49,12 +49,24 @@ class ComparisonPreloader {
   }
 }
 
-const resetInputsForSectionComparison = (inputs, sectionComparisonKey) => {
-  return { ...inputs, [sectionComparisonKey]: { [TARGET.old]: null, [TARGET.new]: null } };
+const resetSectionInInput = (input, sectionComparisonKey) => {
+  return {
+    ...input,
+    sections: {
+      ...input.sections,
+      [sectionComparisonKey]: {
+        ...input.sections[sectionComparisonKey],
+        data: null,
+        files: []
+      }
+    }
+  };
 };
 
-const createEmptyInputsForDocumentComparison = comparison => {
-  return comparison.sections.reduce((inputs, sectionComparison) => resetInputsForSectionComparison(inputs, sectionComparison.key), {});
+const createEmptyDocumentInput = comparison => {
+  return {
+    sections: Object.fromEntries(comparison.sections.map(sectionComparison => [sectionComparison.key, { data: null, files: [], comments: [] }]))
+  };
 };
 
 function Comparison({ initialState, PageTemplate }) {
@@ -64,7 +76,8 @@ function Comparison({ initialState, PageTemplate }) {
   const { t } = useTranslation('comparison');
   const pluginRegistry = useService(PluginRegistry);
   const [comparison, setComparison] = useState(null);
-  const [currentInputs, setCurrentInputs] = useState({});
+  const [pendingOldInput, setPendingOldInput] = useState(null);
+  const [pendingNewInput, setPendingNewInput] = useState(null);
   const [oldRevisionId, setOldRevisionId] = useState(request.query.oldId);
   const [newRevisionId, setNewRevisionId] = useState(request.query.newId);
   const [displayModesByMappedRevisionKey, setDisplayModesByMappedRevisionKey] = useState({});
@@ -83,18 +96,30 @@ function Comparison({ initialState, PageTemplate }) {
     const documentId = revisions[0].documentId;
     const newComparison = createDocumentRevisionComparison(oldRevision, newRevision, pluginRegistry);
     setComparison(newComparison);
-    setCurrentInputs(createEmptyInputsForDocumentComparison(newComparison));
+    setPendingOldInput(createEmptyDocumentInput(newComparison));
+    setPendingNewInput(createEmptyDocumentInput(newComparison));
     setDisplayModesByMappedRevisionKey(newComparison.sections.reduce((accu, { key }) => ({ ...accu, [key]: DISPLAY_MODE.text }), {}));
     history.replaceState(null, '', routes.getDocumentRevisionComparisonUrl({ documentId, oldId: oldRevisionId, newId: newRevisionId }));
   }, [pluginRegistry, revisions, oldRevisionId, newRevisionId]);
 
   const handleSectionDisplayModeChange = (sectionComparisonKey, newDisplayMode) => {
-    setCurrentInputs(inputs => resetInputsForSectionComparison(inputs, sectionComparisonKey));
+    setPendingOldInput(input => resetSectionInInput(input, sectionComparisonKey));
+    setPendingNewInput(input => resetSectionInInput(input, sectionComparisonKey));
     setDisplayModesByMappedRevisionKey(oldModes => ({ ...oldModes, [sectionComparisonKey]: newDisplayMode }));
   };
 
-  const handleSectionInputChange = (sectionComparisonKey, target, newValue) => {
-    setCurrentInputs(inputs => ({ ...inputs, [sectionComparisonKey]: { ...inputs[sectionComparisonKey], [target]: newValue } }));
+  const handleSectionInputChange = (sectionComparisonKey, target, newData) => {
+    const handler = target === TARGET.old ? setPendingOldInput : setPendingNewInput;
+    handler(input => ({
+      ...input,
+      sections: {
+        ...input.sections,
+        [sectionComparisonKey]: {
+          ...input.sections[sectionComparisonKey],
+          data: newData
+        }
+      }
+    }));
   };
 
   const renderSelectOption = revision => (
@@ -137,12 +162,14 @@ function Comparison({ initialState, PageTemplate }) {
   );
 
   const renderSectionPreview = (section, sectionComparisonKey, target) => {
+    const pendingInput = target === TARGET.old ? pendingOldInput : pendingNewInput;
     return (
       <SectionDisplay
+        canModifyInput
         canEdit={false}
         key={`${section.key}-${target}`}
         section={section}
-        input={currentInputs[sectionComparisonKey]?.[target] || null}
+        sectionInput={pendingInput?.sections[sectionComparisonKey] || null}
         isDragged={false}
         isEditing={false}
         isPending={false}
@@ -161,7 +188,7 @@ function Comparison({ initialState, PageTemplate }) {
         onSectionContentChange={NOOP}
         onPendingSectionDiscard={NOOP}
         onSectionCopyToClipboard={NOOP}
-        onSectionInputChange={newValue => handleSectionInputChange(sectionComparisonKey, target, newValue)}
+        onSectionInputChange={newData => handleSectionInputChange(sectionComparisonKey, target, newData)}
         />
     );
   };

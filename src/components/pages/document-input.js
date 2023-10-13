@@ -29,7 +29,7 @@ function DocumentInput({ initialState, PageTemplate }) {
     <PageTemplate >
       <div>
         <SectionsDisplay
-          inputs={documentInput.sections}
+          documentInput={documentInput}
           sections={documentRevision.sections}
           />
         <CreditsFooter revision={documentRevision} />

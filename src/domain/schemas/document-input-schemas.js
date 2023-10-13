@@ -3,13 +3,16 @@ import { idOrKeySchema } from './shared-schemas.js';
 
 const sectionSchema = joi.object({
   data: joi.object().allow(null).required(),
+  files: joi.array().items(joi.object({
+    url: joi.string()
+  })).required(),
   comments: joi.array().items(joi.object({
     createdOn: joi.date().required(),
     createdBy: idOrKeySchema.required(),
     deletedOn: joi.date(),
     deletedBy: idOrKeySchema,
     text: joi.string()
-  }))
+  })).required()
 });
 
 export const documentInputDbSchema = joi.object({

@@ -6,17 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import SectionDisplay from './section-display.js';
 import FileIcon from './icons/general/file-icon.js';
-import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import DragAndDropContainer from './drag-and-drop-container.js';
 import React, { Fragment, memo, useId, useRef, useState } from 'react';
+import { documentInputShape, pendingDocumentInputShape, sectionShape } from '../ui/default-prop-types.js';
 
 const SECTION_PREVIEW_CONTEXT = { isPreview: true };
 const SECTION_NON_PREVIEW_CONTEXT = { isPreview: false };
 
 function SectionsDisplay({
   sections,
-  inputs,
+  documentInput,
   pendingSectionKeys,
   canEdit,
   canModifyInputs,
@@ -71,7 +71,7 @@ function SectionsDisplay({
         key={section.key}
         context={canEdit && !isEditing ? SECTION_PREVIEW_CONTEXT : SECTION_NON_PREVIEW_CONTEXT}
         section={section}
-        input={inputs[section.key] ?? null}
+        sectionInput={documentInput?.sections[section.key] ?? null}
         canEdit={!!dragHandleProps && canEdit}
         canModifyInput={canModifyInputs}
         canHardDelete={canHardDelete}
@@ -179,7 +179,7 @@ SectionsDisplay.propTypes = {
   onSectionPasteFromClipboard: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
   sections: PropTypes.arrayOf(sectionShape).isRequired,
-  inputs: PropTypes.object
+  documentInput: PropTypes.oneOfType([documentInputShape, pendingDocumentInputShape])
 };
 
 SectionsDisplay.defaultProps = {
@@ -201,7 +201,7 @@ SectionsDisplay.defaultProps = {
   onSectionMove: () => {},
   onSectionPasteFromClipboard: () => {},
   pendingSectionKeys: [],
-  inputs: {}
+  documentInput: null
 };
 
 export default memo(SectionsDisplay);
