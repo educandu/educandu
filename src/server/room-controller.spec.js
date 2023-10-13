@@ -15,6 +15,7 @@ describe('room-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
+  let documentInputService;
   let documentService;
   let serverConfig;
   let pageRenderer;
@@ -49,6 +50,9 @@ describe('room-controller', () => {
     documentService = {
       getDocumentsExtendedMetadataByIds: sandbox.stub()
     };
+    documentInputService = {
+      getDocumentInputsByRoomId: sandbox.stub()
+    };
     userService = {
       getUserById: sandbox.stub()
     };
@@ -67,13 +71,14 @@ describe('room-controller', () => {
     clientDataMappingService = {
       mapRoom: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
-      mapRoomInvitations: sandbox.stub()
+      mapRoomInvitations: sandbox.stub(),
+      mapDocumentInputs: sandbox.stub()
     };
 
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    sut = new RoomController(serverConfig, roomService, documentService, userService, mailService, clientDataMappingService, pageRenderer);
+    sut = new RoomController(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -616,6 +621,7 @@ describe('room-controller', () => {
     let request;
     let mappedRoom;
     let mappedDocuments;
+    let mappedDocumentInputs;
 
     beforeEach(() => {
       room = {
@@ -636,6 +642,7 @@ describe('room-controller', () => {
       let documents;
       let invitations;
       let viewingUser;
+      let documentInputs;
       let mappedInvitations;
 
       beforeEach(async () => {
@@ -650,18 +657,22 @@ describe('room-controller', () => {
           { _id: room.documents[1], roomContext: { draft: true, inputSubmittingDisabled: false } }
         ];
         invitations = [{ email: 'test@test.com', sentOn: new Date() }];
+        documentInputs = [{ documentId: documents[0]._id }];
 
         mappedDocuments = cloneDeep(documents);
+
         mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
 
         roomService.getRoomById.resolves(room);
 
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
+        documentInputService.getDocumentInputsByRoomId.resolves(documentInputs);
         roomService.getRoomInvitations.resolves(invitations);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
         clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
+        clientDataMappingService.mapDocumentInputs.returns(mappedDocumentInputs);
 
         await sut.handleGetRoomPage(request, {});
       });
@@ -678,8 +689,16 @@ describe('room-controller', () => {
         assert.calledWith(roomService.getRoomInvitations, room._id);
       });
 
+      it('should call getDocumentInputsByRoomId', () => {
+        assert.calledWith(documentInputService.getDocumentInputsByRoomId, room._id);
+      });
+
       it('should call mapRoomInvitations with the invitations returned by the service', () => {
         assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
+      });
+
+      it('should call mapDocumentInputs with the document inputs returned by the service', () => {
+        assert.calledWith(clientDataMappingService.mapDocumentInputs, { documentInputs, documents });
       });
 
       it('should call getDocumentsExtendedMetadataByIds', () => {
@@ -696,7 +715,13 @@ describe('room-controller', () => {
           request,
           {},
           PAGE_NAME.room,
-          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations, roomMediaContext: null }
+          {
+            room: mappedRoom,
+            documents: mappedDocuments,
+            documentInputs: mappedDocumentInputs,
+            invitations: mappedInvitations,
+            roomMediaContext: null
+          }
         );
       });
     });
@@ -720,6 +745,7 @@ describe('room-controller', () => {
         ];
         mappedDocuments = cloneDeep(documents);
         mappedInvitations = [];
+        mappedDocumentInputs = [];
 
         roomService.getRoomById.resolves(room);
         documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
@@ -727,12 +753,21 @@ describe('room-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
         clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
+        clientDataMappingService.mapDocumentInputs.returns(mappedDocumentInputs);
 
         await sut.handleGetRoomPage(request, {});
       });
 
       it('should call getRoomById with roomId', () => {
         assert.calledWith(roomService.getRoomById, room._id);
+      });
+
+      it('should not call getRoomInvitations', () => {
+        assert.notCalled(roomService.getRoomInvitations);
+      });
+
+      it('should not call getDocumentInputsByRoomId', () => {
+        assert.notCalled(documentInputService.getDocumentInputsByRoomId);
       });
 
       it('should call mapRoom with the room returned by the service', () => {
@@ -757,7 +792,13 @@ describe('room-controller', () => {
           request,
           {},
           PAGE_NAME.room,
-          { room: mappedRoom, documents: mappedDocuments, invitations: mappedInvitations, roomMediaContext: null }
+          {
+            room: mappedRoom,
+            documents: mappedDocuments,
+            documentInputs: mappedDocumentInputs,
+            invitations: mappedInvitations,
+            roomMediaContext: null
+          }
         );
       });
     });

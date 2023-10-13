@@ -1,0 +1,7 @@
+roomDocumentInputs:
+  emptyStateTitle:
+    en: No document input has been submitted in this room
+    de: Keine Dokumenteingabe wurden in diesem Raum gesendet
+  emptyStateSubtitle:
+    en: Documents which contain input fields can be filled in an submitted by room members. They can be then managed here.
+    de: Dokumente, die Eingabefelder enthalten, können von den Raummitgliedern ausgefüllt und abgeschickt werden. Diese können dann hier verwaltet werden.

@@ -648,3 +648,7 @@ common:
   permalinkCouldNotBeCopied:
     en: The permalink could not be copied to the clipboard
     de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
+  documentInputs:
+    en: Document inputs
+    de: Dokumenteingaben
+

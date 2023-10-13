@@ -14,6 +14,7 @@ import RoomSettings from '../room/room-settings.js';
 import RoomIcon from '../icons/general/room-icon.js';
 import RoomDocuments from '../room/room-documents.js';
 import WriteIcon from '../icons/general/write-icon.js';
+import InputsIcon from '../icons/general/inputs-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useMemo, useState } from 'react';
@@ -21,11 +22,13 @@ import { confirmLeaveRoom } from '../confirmation-dialogs.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { TeamOutlined, UserOutlined } from '@ant-design/icons';
 import RoomApiClient from '../../api-clients/room-api-client.js';
+import RoomDocumentInputs from '../room/room-document-inputs.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
-import { roomShape, roomInvitationShape, documentExtendedMetadataShape, roomMediaContextShape } from '../../ui/default-prop-types.js';
+import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
+import { roomShape, roomInvitationShape, documentExtendedMetadataShape, roomMediaContextShape, documentInputShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -37,6 +40,7 @@ const VIEW_MODE = {
 
 const TAB_KEYS = {
   view: 'view',
+  documentInputs: 'documentInputs',
   members: 'members',
   settings: 'settings'
 };
@@ -46,10 +50,12 @@ export default function Room({ PageTemplate, initialState }) {
   const request = useRequest();
   const { t } = useTranslation('room');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
   const initialTab = request.query.tab || TAB_KEYS.view;
 
   const [room, setRoom] = useState(initialState.room);
+  const [documentInputs, setDocumentInputs] = useState(initialState.documentInputs);
   const [membersCount, setMembersCount] = useState(initialState.room.members.length);
   const [invitationsCount, setInvitationsCount] = useState(initialState.invitations.length);
 
@@ -91,6 +97,13 @@ export default function Room({ PageTemplate, initialState }) {
   const handleRoomMembersChange = membersInfo => {
     setMembersCount(membersInfo.membersCount);
     setInvitationsCount(membersInfo.invitationsCount);
+  };
+
+  const handleDeleteDocumentInput = async documentInput => {
+    await documentInputApiClient.hardDeleteDocumentInput(documentInput._id);
+    const response = await documentInputApiClient.getDocumentInputsByRoomId(room._id);
+
+    setDocumentInputs(response.documentInputs);
   };
 
   const renderSubtitleLink = () => {
@@ -192,7 +205,40 @@ export default function Room({ PageTemplate, initialState }) {
             {viewMode !== VIEW_MODE.owner && renderLeaveRoomLink()}
           </div>
 
-          {viewMode !== VIEW_MODE.owner && renderRoomView()}
+          {viewMode === VIEW_MODE.nonCollaboratingMember && renderRoomView()}
+
+          {viewMode === VIEW_MODE.collaboratingMember && (
+            <Tabs
+              type="line"
+              size="middle"
+              className="Tabs"
+              defaultActiveKey={initialTab}
+              onChange={handleTabChange}
+              items={[
+                {
+                  key: TAB_KEYS.view,
+                  label: <div><RoomIcon />{t('roomViewTitle')}</div>,
+                  children: (
+                    <div className="Tabs-tabPane">
+                      {renderRoomView()}
+                    </div>
+                  )
+                },
+                {
+                  key: TAB_KEYS.documentInputs,
+                  label: <div><InputsIcon />{t('common:documentInputs')}</div>,
+                  children: (
+                    <div className="Tabs-tabPane">
+                      <RoomDocumentInputs
+                        documentInputs={documentInputs}
+                        onDelete={handleDeleteDocumentInput}
+                        />
+                    </div>
+                  )
+                }
+              ]}
+              />
+          )}
 
           {viewMode === VIEW_MODE.owner && (
             <Tabs
@@ -208,6 +254,18 @@ export default function Room({ PageTemplate, initialState }) {
                   children: (
                     <div className="Tabs-tabPane">
                       {renderRoomView()}
+                    </div>
+                  )
+                },
+                {
+                  key: TAB_KEYS.documentInputs,
+                  label: <div><InputsIcon />{t('common:documentInputs')}</div>,
+                  children: (
+                    <div className="Tabs-tabPane">
+                      <RoomDocumentInputs
+                        documentInputs={documentInputs}
+                        onDelete={handleDeleteDocumentInput}
+                        />
                     </div>
                   )
                 },
@@ -250,6 +308,7 @@ Room.propTypes = {
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(roomInvitationShape).isRequired,
     documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+    documentInputs: PropTypes.arrayOf(documentInputShape).isRequired,
     roomMediaContext: roomMediaContextShape
   }).isRequired
 };

@@ -187,11 +187,3 @@ export function getVersionedDocumentRevisions(documentRevisions, t) {
     };
   });
 }
-
-export function getDocumentInputCount(documentInputs, currentDocumentInput) {
-  const selectedInputIndex = documentInputs
-    .sort(by(x => x.createdOn))
-    .findIndex(input => input._id === currentDocumentInput._id);
-
-  return selectedInputIndex + 1;
-}

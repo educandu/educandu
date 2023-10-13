@@ -15,7 +15,7 @@ class DocumentInputPreloader {
 
   preload({ initialState }) {
     return ensurePluginComponentAreLoadedForSections({
-      sections: initialState.revision.sections,
+      sections: initialState.documentRevision.sections,
       pluginRegistry: this.pluginRegistry,
       displayOnly: true
     });
