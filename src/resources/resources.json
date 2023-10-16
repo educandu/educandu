@@ -1563,6 +1563,12 @@
       "de": "Räume"
     }
   },
+  "documentInput": {
+    "alertMarkdown": {
+      "en": "You are viewing a document input from [{userName}]({userUrl}), submitted on {date} on document “[{documentTitle}]({documentUrl})”\n",
+      "de": "You are viewing a document input from [{userName}]({userUrl}), submitted on {date} on document “[{documentTitle}]({documentUrl})”\n"
+    }
+  },
   "document": {
     "favoriteRestrictionTooltip": {
       "en": "Log in to add the document to your favorites",
