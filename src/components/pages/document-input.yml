@@ -1,7 +1,7 @@
 documentInput:
   alertMarkdown:
     en: |
-      You are viewing a document input from [{userName}]({userUrl}), submitted on {date} on document “[{documentTitle}]({documentUrl})”
+      You are viewing a document input from [{userName}]({userUrl}), submitted on {date} on document "[{documentTitle}]({documentUrl})"
     de: |
-      You are viewing a document input from [{userName}]({userUrl}), submitted on {date} on document “[{documentTitle}]({documentUrl})”
+      Du siehst eine Dokumenteingabe von [{userName}]({userUrl}), gesendet am {date} zum Dokument "[{documentTitle}]({documentUrl})"
 
