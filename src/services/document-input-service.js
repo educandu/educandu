@@ -41,40 +41,19 @@ class DocumentInputService {
 
   async getDocumentInputsCreatedByUser(userId) {
     const documentInputs = await this.documentInputStore.getDocumentInputsCreatedByUser(userId);
-    return documentInputs
-      .map((documentInput, index) => {
-        return {
-          ...documentInput,
-          inputOrder: index + 1
-        };
-      })
-      .sort(by(input => input.createdOn, 'desc'));
+    return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
   async getDocumentInputsByDocumentId(documentId) {
     const documentInputs = await this.documentInputStore.getDocumentInputsByDocumentId(documentId);
-    return documentInputs
-      .map((documentInput, index) => {
-        return {
-          ...documentInput,
-          inputOrder: index + 1
-        };
-      })
-      .sort(by(input => input.createdOn, 'desc'));
+    return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
   async getDocumentInputsByRoomId(roomId) {
     const room = await this.roomStore.getRoomById(roomId);
 
     const documentInputs = await this.documentInputStore.getDocumentInputsByDocumentIds(room.documents);
-    return documentInputs
-      .map((documentInput, index) => {
-        return {
-          ...documentInput,
-          inputOrder: index + 1
-        };
-      })
-      .sort(by(input => input.createdOn, 'desc'));
+    return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
   async createDocumentInput({ documentId, documentRevisionId, sections, user }) {

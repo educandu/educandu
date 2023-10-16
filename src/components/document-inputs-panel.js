@@ -43,10 +43,10 @@ function DocumentInputsPanel({
   const timelineEntries = useMemo(() => {
     const versionedDocumentRevisions = getVersionedDocumentRevisions(documentRevisions, t);
 
-    const entries = documentInputs.map(input => ({
+    const entries = documentInputs.map((input, index) => ({
       _id: input._id,
       key: input._id,
-      displayNumber: input.inputOrder,
+      displayNumber: documentInputs.length - index,
       createdOn: input.createdOn,
       createdBy: input.createdBy,
       versionedDocumentRevision: versionedDocumentRevisions.find(revision => revision._id === input.documentRevisionId),
