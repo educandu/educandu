@@ -47,8 +47,7 @@ function DocumentInputsTab({ loading, documentInputs, onDeleteDocumentInput }) {
             {documentInputs.map(documentInput => {
               const url = routes.getDocumentInputUrl(documentInput._id);
               const commentsCount = Object.values(documentInput.sections)
-                .map(sectionData => sectionData.comments)
-                .flat().length;
+                .flatMap(sectionData => sectionData.comments).length;
 
               return (
                 <div key={documentInput._id} className="DocumentInputsTab-input">

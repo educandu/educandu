@@ -693,8 +693,8 @@ class ClientDataMappingService {
     const createdByUserIds = documentInputs.map(input => input.createdBy);
     const updatedByUserIds = documentInputs.map(input => input.updatedBy);
 
-    const sectionsData = documentInputs.map(documentInput => Object.values(documentInput.sections)).flat();
-    const commentsData = sectionsData.map(sectionData => sectionData.comments).flat();
+    const sectionsData = documentInputs.flatMap(documentInput => Object.values(documentInput.sections));
+    const commentsData = sectionsData.flatMap(sectionData => sectionData.comments);
     const commentsCreatedByUserIds = commentsData.map(commentData => commentData.createdBy);
     const commentsDeletedByUserIds = commentsData.map(commentData => commentData.deletedBy).filter(x => x);
 

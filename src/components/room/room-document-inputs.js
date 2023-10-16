@@ -29,8 +29,7 @@ export default function RoomDocumentInputs({ documentInputs, onDelete }) {
     const url = routes.getDocumentInputUrl(documentInput._id);
     const userProfileUrl = routes.getUserProfileUrl(documentInput.createdBy._id);
     const commentsCount = Object.values(documentInput.sections)
-      .map(sectionData => sectionData.comments)
-      .flat().length;
+      .flatMap(sectionData => sectionData.comments).length;
 
     return (
       <div key={documentInput._id} className="RoomDocumentInputs-input">
