@@ -208,7 +208,8 @@ export function createTestDocumentInput(container, user, data) {
     documentRevisionId: data.documentRevisionId,
     sections: data.sections,
     files,
-    user
+    user,
+    silentCreation: true
   });
 }
 

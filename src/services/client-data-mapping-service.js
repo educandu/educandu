@@ -7,6 +7,7 @@ import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
+import DocumentInputStore from '../stores/document-input-store.js';
 import { getAccessibleUrl, getPortableUrl } from '../utils/source-utils.js';
 import { BATCH_TYPE, EVENT_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import permissions, { getUserPermissions, hasUserPermission } from '../domain/permissions.js';
@@ -17,14 +18,15 @@ import {
 } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
-  static dependencies = [ServerConfig, UserStore, StoragePlanStore, RoomStore, DocumentStore, PluginRegistry];
+  static dependencies = [ServerConfig, UserStore, StoragePlanStore, RoomStore, DocumentStore, DocumentInputStore, PluginRegistry];
 
-  constructor(serverConfig, userStore, storagePlanStore, roomStore, documentStore, pluginRegistry) {
+  constructor(serverConfig, userStore, storagePlanStore, roomStore, documentStore, documentInputStore, pluginRegistry) {
     this.serverConfig = serverConfig;
     this.userStore = userStore;
+    this.storagePlanStore = storagePlanStore;
     this.roomStore = roomStore;
     this.documentStore = documentStore;
-    this.storagePlanStore = storagePlanStore;
+    this.documentInputStore = documentInputStore;
     this.pluginRegistry = pluginRegistry;
   }
 
@@ -187,7 +189,7 @@ class ClientDataMappingService {
     return mappedRoomMediaOverview;
   }
 
-  _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById) {
+  _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById, allowedDocumentInputsById) {
     switch (eventType) {
       case EVENT_TYPE.documentRevisionCreated:
       case EVENT_TYPE.documentCommentCreated:
@@ -198,6 +200,13 @@ class ClientDataMappingService {
         return {
           room: allowedRoomsById.get(eventParams.roomId) || null
         };
+      case EVENT_TYPE.documentInputCreated:
+      case EVENT_TYPE.documentInputCommentCreated:
+        return {
+          documentInput: allowedDocumentInputsById.get(eventParams.documentInputId) || null,
+          document: allowedDocumentsById.get(eventParams.documentId) || null,
+          room: allowedRoomsById.get(eventParams.roomId) || null
+        };
       default:
         throw new Error(`Unsupported event type '${eventType}'`);
     }
@@ -205,9 +214,11 @@ class ClientDataMappingService {
 
   async mapUserNotificationGroups(notificationGroups, user) {
     const occurringDocumentIds = [...new Set(notificationGroups.map(g => g.eventParams.documentId).filter(x => x))];
+    const occuringDocumentInputIds = [...new Set(notificationGroups.map(g => g.eventParams.documentInputId).filter(x => x))];
 
-    const [occurringDocuments, allowedRooms] = await Promise.all([
+    const [occurringDocuments, occurringDocumentInputs, allowedRooms] = await Promise.all([
       this.documentStore.getDocumentsMetadataByIds(occurringDocumentIds),
+      this.documentInputStore.getDocumentInputsByIds(occuringDocumentInputIds),
       this.roomStore.getRoomsOwnedOrJoinedByUser(user._id)
     ]);
 
@@ -225,10 +236,22 @@ class ClientDataMappingService {
       return map;
     }, new Map());
 
+    const allowedDocumentInputsById = occurringDocumentInputs.reduce((map, item) => {
+      const isOwnSubmittedDocumentInput = item.createdBy === user._id;
+      const document = occurringDocuments.find(doc => doc._id === item.documentId);
+      const room = allowedRooms.find(r => r._id === document?.roomId);
+
+      const isOwnerOrCollaborator = !!room && (room.ownedBy === user._id || room.isCollaborative);
+      if (isOwnSubmittedDocumentInput || isOwnerOrCollaborator) {
+        map.set(item._id, item);
+      }
+      return map;
+    }, new Map());
+
     return notificationGroups.map(group => ({
       notificationIds: group.notificationIds,
       eventType: group.eventType,
-      eventParams: this._mapNotificationEventParams(group.eventType, group.eventParams, allowedDocumentsById, allowedRoomsById),
+      eventParams: this._mapNotificationEventParams(group.eventType, group.eventParams, allowedDocumentsById, allowedRoomsById, allowedDocumentInputsById),
       firstCreatedOn: group.firstCreatedOn.toISOString(),
       lastCreatedOn: group.lastCreatedOn.toISOString()
     }));

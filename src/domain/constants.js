@@ -8,14 +8,17 @@ export const ROLE = {
 export const EVENT_TYPE = {
   documentRevisionCreated: 'document-revision-created',
   documentCommentCreated: 'document-comment-created',
-  roomMessageCreated: 'room-message-created'
+  roomMessageCreated: 'room-message-created',
+  documentInputCreated: 'document-input-created',
+  documentInputCommentCreated: 'document-input-comment-created'
 };
 
 export const NOTIFICATION_REASON = {
   roomMembership: 'room-membership',
   roomFavorite: 'room-favorite',
   documentFavorite: 'document-favorite',
-  userFavorite: 'user-favorite'
+  userFavorite: 'user-favorite',
+  documentInputAuthor: 'document-input-author'
 };
 
 export const BATCH_TYPE = {

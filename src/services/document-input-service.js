@@ -9,6 +9,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
 import UserStore from '../stores/user-store.js';
 import LockStore from '../stores/lock-store.js';
+import EventStore from '../stores/event-store.js';
 import DocumentStore from '../stores/document-store.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
@@ -34,7 +35,8 @@ class DocumentInputService {
     UserStore,
     StoragePlanStore,
     LockStore,
-    Cdn
+    Cdn,
+    EventStore
   ];
 
   constructor(
@@ -47,7 +49,8 @@ class DocumentInputService {
     userStore,
     storagePlanStore,
     lockStore,
-    cdn
+    cdn,
+    eventStore
   ) {
     this.documentInputStore = documentInputStore;
     this.documentStore = documentStore;
@@ -59,6 +62,7 @@ class DocumentInputService {
     this.storagePlanStore = storagePlanStore;
     this.lockStore = lockStore;
     this.cdn = cdn;
+    this.eventStore = eventStore;
   }
 
   async getDocumentInputById({ documentInputId, user }) {
@@ -98,7 +102,7 @@ class DocumentInputService {
     return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
-  async createDocumentInput({ documentId, documentRevisionId, sections, files, user }) {
+  async createDocumentInput({ documentId, documentRevisionId, sections, files, user, silentCreation }) {
     let lock;
     try {
       const documentInputId = uniqueId.create();
@@ -216,6 +220,10 @@ class DocumentInputService {
         Object.assign(roomOwner, updatedUser);
       }
 
+      if (!silentCreation) {
+        await this.eventStore.recordDocumentInputCreatedEvent({ documentInput: newDocumentInput, room, user });
+      }
+
       await this.documentInputStore.saveDocumentInput(newDocumentInput);
 
       return newDocumentInput;
@@ -226,7 +234,7 @@ class DocumentInputService {
     }
   }
 
-  async createDocumentInputSectionComment({ documentInputId, sectionKey, text, user }) {
+  async createDocumentInputSectionComment({ documentInputId, sectionKey, text, user, silentCreation }) {
     const documentInput = await this.documentInputStore.getAllDocumentInputById(documentInputId);
 
     if (!documentInput) {
@@ -247,16 +255,22 @@ class DocumentInputService {
       throw new Forbidden(`User is not authorized to post comment on document input '${documentInputId}'`);
     }
 
-    documentInput.sections[sectionKey].comments.push({
+    const newComment = {
       key: uniqueId.create(),
       createdOn: new Date(),
       createdBy: user._id,
       deletedOn: null,
       deletedBy: null,
       text: text.trim()
-    });
+    };
+    documentInput.sections[sectionKey].comments.push(newComment);
+
+    if (!silentCreation) {
+      await this.eventStore.recordDocumentInputCommentCreatedEvent({ documentInput, commentKey: newComment.key, room, user });
+    }
 
     await this.documentInputStore.saveDocumentInput(documentInput);
+
     return documentInput;
   }
 

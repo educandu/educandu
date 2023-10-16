@@ -236,6 +236,130 @@ describe('notification-utils', () => {
     });
   });
 
+  describe('determineNotificationReasonsForDocumentInputCreatedEvent', () => {
+    const testCases = [
+      {
+        description: 'when the notified user is an invited member of the non-collaborative room',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCreated, params: { userId: 'owner-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { _id: 'document-input-id', documentId: 'document-id', createdBy: 'owner-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], isCollaborative: false },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      },
+      {
+        description: 'when the notified user is the owner of the room',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCreated, params: { userId: 'member-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { createdBy: 'member-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'member-user-id' }], isCollaborative: false },
+        notifiedUser: { _id: 'owner-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: [NOTIFICATION_REASON.roomMembership]
+      },
+      {
+        description: 'when the notified user is an invited collaborator of the room',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCreated, params: { userId: 'owner-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { createdBy: 'owner-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], isCollaborative: true },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: [NOTIFICATION_REASON.roomMembership]
+      },
+      {
+        description: 'when the notified user is an invited collaborator of the room but the document input was deleted in the meantime',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCreated, params: { userId: 'event-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: null,
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], isCollaborative: true },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      }
+    ];
+
+    testCases.forEach(({ description, event, documentInput, document, room, notifiedUser, expectedReasons }) => {
+      describe(description, () => {
+        let result;
+        beforeEach(() => {
+          result = notificationUtils.determineNotificationReasonsForDocumentInputCreatedEvent({ event, documentInput, document, room, notifiedUser });
+        });
+        it(`should return ${JSON.stringify(expectedReasons)}`, () => {
+          expect(result).toStrictEqual(expectedReasons);
+        });
+      });
+    });
+  });
+
+  describe('determineNotificationReasonsForDocumentInputCommentCreatedEvent', () => {
+    const testCases = [
+      {
+        description: 'when the notified user is an invited member of the non-collaborative room',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCommentCreated, params: { userId: 'owner-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { _id: 'document-input-id', documentId: 'document-id', createdBy: 'owner-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], isCollaborative: false },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      },
+      {
+        description: 'when the notified user is the document input creator (in a non-collaborative room)',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCommentCreated, params: { userId: 'owner-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { createdBy: 'member-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'member-user-id' }], isCollaborative: false },
+        notifiedUser: { _id: 'member-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: [NOTIFICATION_REASON.documentInputAuthor]
+      },
+      {
+        description: 'when the notified user is the document input creator (in a collaborative room)',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCommentCreated, params: { userId: 'owner-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { createdBy: 'member-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'member-user-id' }], isCollaborative: true },
+        notifiedUser: { _id: 'member-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: [NOTIFICATION_REASON.documentInputAuthor, NOTIFICATION_REASON.roomMembership]
+      },
+      {
+        description: 'when the notified user is the owner of the room',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCommentCreated, params: { userId: 'member-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { createdBy: 'member-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'member-user-id' }], isCollaborative: false },
+        notifiedUser: { _id: 'owner-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: [NOTIFICATION_REASON.roomMembership]
+      },
+      {
+        description: 'when the notified user is an invited collaborator of the room',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCommentCreated, params: { userId: 'owner-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: { createdBy: 'owner-user-id' },
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], isCollaborative: true },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: [NOTIFICATION_REASON.roomMembership]
+      },
+      {
+        description: 'when the notified user is an invited collaborator of the room but the document input was deleted in the meantime',
+        event: { createdOn: new Date('2023-01-01'), type: EVENT_TYPE.documentInputCommentCreated, params: { userId: 'event-user-id', documentInputId: 'document-input-id' } },
+        document: { _id: 'document-id', roomId: 'room-id' },
+        documentInput: null,
+        room: { _id: 'room-id', ownedBy: 'owner-user-id', members: [{ userId: 'notified-user-id' }], isCollaborative: true },
+        notifiedUser: { _id: 'notified-user-id', createdOn: new Date('2022-12-31'), favorites: [] },
+        expectedReasons: []
+      }
+    ];
+
+    testCases.forEach(({ description, event, documentInput, document, room, notifiedUser, expectedReasons }) => {
+      describe(description, () => {
+        let result;
+        beforeEach(() => {
+          result = notificationUtils.determineNotificationReasonsForDocumentInputCommentCreatedEvent({ event, documentInput, document, room, notifiedUser });
+        });
+        it(`should return ${JSON.stringify(expectedReasons)}`, () => {
+          expect(result).toStrictEqual(expectedReasons);
+        });
+      });
+    });
+  });
+
   describe('groupNotifications', () => {
     let result;
     let notifications;

@@ -22,13 +22,30 @@ const roomMessageCreatedParamsSchema = joi.object({
   roomMessageKey: idOrKeySchema.required()
 });
 
+const documentInputCreatedParamsSchema = joi.object({
+  userId: idOrKeySchema.required(),
+  documentInputId: idOrKeySchema.required(),
+  documentId: idOrKeySchema.required(),
+  roomId: idOrKeySchema.required()
+});
+
+const documentInputCommentCreatedParamsSchema = joi.object({
+  userId: idOrKeySchema.required(),
+  commentKey: idOrKeySchema.required(),
+  documentInputId: idOrKeySchema.required(),
+  documentId: idOrKeySchema.required(),
+  roomId: idOrKeySchema.required()
+});
+
 export const eventTypeSchema = joi.string().valid(...Object.values(EVENT_TYPE));
 
 export const createEventParamsSchema = eventTypeFieldName => joi.alternatives().conditional(eventTypeFieldName, {
   switch: [
     { is: EVENT_TYPE.documentRevisionCreated, then: documentRevisionCreatedParamsSchema },
     { is: EVENT_TYPE.documentCommentCreated, then: documentCommentCreatedParamsSchema },
-    { is: EVENT_TYPE.roomMessageCreated, then: roomMessageCreatedParamsSchema }
+    { is: EVENT_TYPE.roomMessageCreated, then: roomMessageCreatedParamsSchema },
+    { is: EVENT_TYPE.documentInputCreated, then: documentInputCreatedParamsSchema },
+    { is: EVENT_TYPE.documentInputCommentCreated, then: documentInputCommentCreatedParamsSchema }
   ]
 });
 
