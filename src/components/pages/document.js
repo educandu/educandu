@@ -36,6 +36,7 @@ import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import { isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
@@ -169,7 +170,7 @@ function Document({ initialState, PageTemplate }) {
   const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
 
   const userCanManageInputs = !!room;
-  const userIsRoomOwner = !!room && room.ownedBy === user?._id;
+  const userIsRoomOwnerOrInvitedCollaborator = !!room && isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id });
 
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
   const editDocRestrictionTooltip = getEditDocRestrictionTooltip({ t, user, doc: initialState.doc, room });
@@ -371,9 +372,9 @@ function Document({ initialState, PageTemplate }) {
   const fetchDataForInputsView = useCallback(async () => {
     try {
       setFetchingDocumentInputs(true);
-      const response = userIsRoomOwner
+      const response = userIsRoomOwnerOrInvitedCollaborator
         ? await documentInputApiClient.getDocumentInputsByDocumentId(doc._id)
-        : await documentInputApiClient.getDocumentInputsCreatedByUser(user._id);
+        : await documentInputApiClient.getDocumentInputsByDocumentIdAndUserId({ documentId: doc._id, createdByUserId: user._id });
 
       const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc._id);
 
@@ -384,7 +385,7 @@ function Document({ initialState, PageTemplate }) {
     } finally {
       setFetchingDocumentInputs(false);
     }
-  }, [doc._id, t, user, userIsRoomOwner, documentInputApiClient, documentApiClient, setFetchingDocumentInputs]);
+  }, [doc._id, t, user, userIsRoomOwnerOrInvitedCollaborator, documentInputApiClient, documentApiClient, setFetchingDocumentInputs]);
 
   useEffect(() => {
     setAlerts(createPageAlerts({
@@ -1021,7 +1022,7 @@ function Document({ initialState, PageTemplate }) {
               {view === VIEW.inputs && (
                 <DocumentInputsPanel
                   loading={fetchingDocumentInputs}
-                  showUsers={!!userIsRoomOwner}
+                  showUsers={!!userIsRoomOwnerOrInvitedCollaborator}
                   documentInputs={documentInputs}
                   selectedDocumentInputId={selectedDocumentInput?._id || null}
                   documentRevisions={currentDocumentRevisions}

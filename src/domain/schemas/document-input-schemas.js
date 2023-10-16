@@ -44,6 +44,10 @@ export const getDocumentInputsByDocumentIdParams = joi.object({
   documentId: idOrKeySchema.required()
 });
 
+export const getDocumentInputsByDocumentIdQuery = joi.object({
+  createdByUserId: idOrKeySchema
+});
+
 export const getDocumentInputsByRoomIdParams = joi.object({
   roomId: idOrKeySchema.required()
 });
