@@ -28,6 +28,8 @@ export default function RoomDocumentInputs({ documentInputs, onDelete }) {
   const renderDocumentInput = documentInput => {
     const url = routes.getDocumentInputUrl(documentInput._id);
     const userProfileUrl = routes.getUserProfileUrl(documentInput.createdBy._id);
+    const commentsCount = Object.values(documentInput.sections)
+      .flatMap(sectionData => sectionData.comments).length;
 
     return (
       <div key={documentInput._id} className="RoomDocumentInputs-input">
@@ -47,7 +49,7 @@ export default function RoomDocumentInputs({ documentInputs, onDelete }) {
         <div className="RoomDocumentInputs-actions">
           <div className="RoomDocumentInputs-comments">
             <CommentOutlined shape="square" size="large" />
-            <div className="RoomDocumentInputs-commentsCount">{0}</div>
+            <div className="RoomDocumentInputs-commentsCount">{commentsCount}</div>
           </div>
           <Tooltip title={t('common:delete')}>
             <Button

@@ -46,6 +46,8 @@ function DocumentInputsTab({ loading, documentInputs, onDeleteDocumentInput }) {
           <div>
             {documentInputs.map(documentInput => {
               const url = routes.getDocumentInputUrl(documentInput._id);
+              const commentsCount = Object.values(documentInput.sections)
+                .flatMap(sectionData => sectionData.comments).length;
 
               return (
                 <div key={documentInput._id} className="DocumentInputsTab-input">
@@ -58,7 +60,7 @@ function DocumentInputsTab({ loading, documentInputs, onDeleteDocumentInput }) {
                   <div className="DocumentInputsTab-actions">
                     <div className="DocumentInputsTab-comments">
                       <CommentOutlined shape="square" size="large" />
-                      <div className="DocumentInputsTab-commentsCount">{0}</div>
+                      <div className="DocumentInputsTab-commentsCount">{commentsCount}</div>
                     </div>
                     <Tooltip title={t('common:delete')}>
                       <Button

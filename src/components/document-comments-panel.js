@@ -237,7 +237,7 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
             value={currentComment}
             disableResourceSelector
             readOnly={showAsLoading}
-            placeholder={t('newCommentPlaceholder')}
+            placeholder={t('common:newCommentPlaceholder')}
             maxLength={maxDocumentCommentTextLength}
             onChange={handleCurrentCommentChange}
             />
@@ -248,7 +248,7 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
             loading={showAsLoading}
             disabled={isPostingDisabled}
             >
-            {t('postCommentButtonText')}
+            {t('common:postCommentButtonText')}
           </Button>
         </div>
       </Restricted>

@@ -651,4 +651,10 @@ common:
   documentInputs:
     en: Document inputs
     de: Dokumenteingaben
+  newCommentPlaceholder:
+    en: Enter your comment here
+    de: Gib hier deinen Kommentar ein
+  postCommentButtonText:
+    en: Post comment
+    de: Kommentar abschicken
 

@@ -619,9 +619,18 @@ class ClientDataMappingService {
     const createdBy = this._mapOtherUser({ user: userMap.get(documentInput.createdBy) });
     const updatedBy = this._mapOtherUser({ user: userMap.get(documentInput.updatedBy) });
 
+    Object.values(mappedDocumentInput.sections).forEach(section => {
+      section.comments.forEach(comment => {
+        comment.createdOn = comment.createdOn.toISOString();
+        comment.createdBy = this._mapOtherUser({ user: userMap.get(comment.createdBy) });
+        comment.deletedOn = comment.deletedOn ? comment.deletedOn.toISOString() : '';
+        comment.deletedBy = this._mapOtherUser({ user: userMap.get(comment.deletedBy) });
+      });
+    });
+
     return {
       ...mappedDocumentInput,
-      documentTitle: document.title,
+      documentTitle: document?.title,
       createdBy,
       updatedBy,
       createdOn: mappedDocumentInput.createdOn.toISOString(),
@@ -681,10 +690,15 @@ class ClientDataMappingService {
   }
 
   async _getUserMapForDocumentInputs(documentInputs) {
-    const createdByUserIds = documentInputs.map(input => input.createdBy).filter(input => input);
-    const updatedByUserIds = documentInputs.map(input => input.updatedBy).filter(input => input);
+    const createdByUserIds = documentInputs.map(input => input.createdBy);
+    const updatedByUserIds = documentInputs.map(input => input.updatedBy);
 
-    const userIds = [...new Set([...createdByUserIds, ...updatedByUserIds])];
+    const sectionsData = documentInputs.flatMap(documentInput => Object.values(documentInput.sections));
+    const commentsData = sectionsData.flatMap(sectionData => sectionData.comments);
+    const commentsCreatedByUserIds = commentsData.map(commentData => commentData.createdBy);
+    const commentsDeletedByUserIds = commentsData.map(commentData => commentData.deletedBy).filter(x => x);
+
+    const userIds = [...new Set([...createdByUserIds, ...updatedByUserIds, ...commentsCreatedByUserIds, ...commentsDeletedByUserIds])];
     const users = await this.userStore.getUsersByIds(userIds);
 
     if (users.length !== userIds.length) {

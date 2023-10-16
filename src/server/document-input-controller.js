@@ -16,7 +16,11 @@ import {
   createDocumentInputDataBodySchema,
   hardDeleteDocumentInputBodySchema,
   getDocumentInputsByDocumentIdParams,
-  getDocumentInputsByRoomIdParams
+  getDocumentInputsByRoomIdParams,
+  createDocumentInputSectionCommentBodySchema,
+  createDocumentInputSectionCommentParams,
+  deleteDocumentInputSectionCommentParams,
+  deleteDocumentInputSectionCommentBodySchema
 } from '../domain/schemas/document-input-schemas.js';
 
 const { Forbidden, NotFound } = httpErrors;
@@ -120,7 +124,29 @@ class DocumentInputController {
 
     const mappedNewDocumentInput = await this.clientDataMappingService.mapDocumentInput({ documentInput, document });
 
-    return res.status(201).send(mappedNewDocumentInput);
+    return res.status(201).send({ documentInput: mappedNewDocumentInput });
+  }
+
+  async handlePostDocumentInputSectionComment(req, res) {
+    const { user } = req;
+    const { text } = req.body;
+    const { documentInputId, sectionKey } = req.params;
+
+    const documentInput = await this.documentInputService.createDocumentInputSectionComment({ documentInputId, sectionKey, text, user });
+    const mappedDocumentInput = await this.clientDataMappingService.mapDocumentInput({ documentInput });
+
+    return res.status(201).send({ documentInput: mappedDocumentInput });
+  }
+
+  async handleDeleteDocumentInputSectionComment(req, res) {
+    const { user } = req;
+    const { documentInputId, sectionKey } = req.params;
+    const { commentKey } = req.body;
+
+    const documentInput = await this.documentInputService.deleteDocumentInputSectionComment({ documentInputId, sectionKey, commentKey, user });
+    const mappedDocumentInput = await this.clientDataMappingService.mapDocumentInput({ documentInput });
+
+    return res.send({ documentInput: mappedDocumentInput });
   }
 
   async handleHardDeleteDocumentInput(req, res) {
@@ -133,6 +159,7 @@ class DocumentInputController {
   registerPages(router) {
     router.get(
       '/doc-inputs/:documentInputId',
+      needsPermission(permissions.CREATE_CONTENT),
       (req, res) => this.handleGetDocumentInputPage(req, res)
     );
   }
@@ -172,6 +199,24 @@ class DocumentInputController {
       needsPermission(permissions.CREATE_CONTENT),
       validateBody(createDocumentInputDataBodySchema),
       (req, res) => this.handlePostDocumentInput(req, res)
+    );
+
+    router.post(
+      '/api/v1/doc-inputs/:documentInputId/sections/:sectionKey/comments',
+      jsonParserLargePayload,
+      needsPermission(permissions.CREATE_CONTENT),
+      validateParams(createDocumentInputSectionCommentParams),
+      validateBody(createDocumentInputSectionCommentBodySchema),
+      (req, res) => this.handlePostDocumentInputSectionComment(req, res)
+    );
+
+    router.delete(
+      '/api/v1/doc-inputs/:documentInputId/sections/:sectionKey/comments',
+      jsonParserLargePayload,
+      needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
+      validateParams(deleteDocumentInputSectionCommentParams),
+      validateBody(deleteDocumentInputSectionCommentBodySchema),
+      (req, res) => this.handleDeleteDocumentInputSectionComment(req, res)
     );
 
     router.delete(

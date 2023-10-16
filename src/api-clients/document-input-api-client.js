@@ -53,6 +53,28 @@ class DocumentInputApiClient {
       .then(res => res.data);
   }
 
+  createDocumentInputSectionComment({ documentInputId, sectionKey, text }) {
+    return this.httpClient
+      .post(
+        `/api/v1/doc-inputs/${encodeURIComponent(documentInputId)}/sections/${encodeURIComponent(sectionKey)}/comments`,
+        { text },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteDocumentInputSectionComment({ documentInputId, sectionKey, commentKey }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/doc-inputs/${encodeURIComponent(documentInputId)}/sections/${encodeURIComponent(sectionKey)}/comments`,
+        {
+          data: { commentKey },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
   hardDeleteDocumentInput(documentInputId) {
     return this.httpClient
       .delete(

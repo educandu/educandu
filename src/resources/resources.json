@@ -482,6 +482,10 @@
       "en": "Do you really want to delete this comment from \"{author}\" posted on {timestamp}?",
       "de": "Möchtest du den Kommentar von \"{author}\", geschrieben am {timestamp}, wirklich löschen?"
     },
+    "deleteDocumentInputSectionCommentConfirmation": {
+      "en": "Do you really want to delete this comment posted on {timestamp}?",
+      "de": "Möchtest du den Kommentar, geschrieben am {timestamp}, wirklich löschen?"
+    },
     "genericDeleteConfirmation": {
       "en": "Do you really want to delete \"{title}\"?",
       "de": "Möchtest du \"{title}\" wirklich löschen?"
@@ -812,14 +816,6 @@
       "en": "Write comment",
       "de": "Kommentar schreiben"
     },
-    "newCommentPlaceholder": {
-      "en": "Enter your comment here",
-      "de": "Gib hier deinen Kommentar ein"
-    },
-    "postCommentButtonText": {
-      "en": "Post comment",
-      "de": "Kommentar abschicken"
-    },
     "addNewTopicButtonText": {
       "en": "Add new topic",
       "de": "Neues Thema hinzufügen"
@@ -839,6 +835,16 @@
     "commentDeleted": {
       "en": "The content of this comment was deleted by maintainers.",
       "de": "Der Inhalt dieses Kommentars wurde von einem Redakteur gelöscht."
+    }
+  },
+  "documentInputSectionComments": {
+    "comments": {
+      "en": "Comments",
+      "de": "Kommentare"
+    },
+    "commentDeleted": {
+      "en": "The content of this comment was deleted.",
+      "de": "Der Inhalt dieses Kommentars wurde gelöscht."
     }
   },
   "documentInputsPanel": {
@@ -4257,6 +4263,14 @@
     "documentInputs": {
       "en": "Document inputs",
       "de": "Dokumenteingaben"
+    },
+    "newCommentPlaceholder": {
+      "en": "Enter your comment here",
+      "de": "Gib hier deinen Kommentar ein"
+    },
+    "postCommentButtonText": {
+      "en": "Post comment",
+      "de": "Kommentar abschicken"
     }
   },
   "pageNames": {
