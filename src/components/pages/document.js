@@ -819,6 +819,15 @@ function Document({ initialState, PageTemplate }) {
     setHasPendingInputChanges(false);
   }, [documentInputs, currentDocumentRevisions]);
 
+  const handleDeleteDocumentInputClick = async inputId => {
+    try {
+      await documentInputApiClient.hardDeleteDocumentInput(inputId);
+      await fetchDataForInputsView();
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
   const handleInputSubmit = async () => {
     await documentInputApiClient.createDocumentInput({
       ...pendingDocumentInput,
@@ -1019,6 +1028,7 @@ function Document({ initialState, PageTemplate }) {
                   hasPendingInputChanges={hasPendingInputChanges}
                   inputSubmittingDisabled={inputSubmittingDisabled}
                   onViewClick={handleViewDocumentInputClick}
+                  onDeleteClick={handleDeleteDocumentInputClick}
                   />
               )}
             </div>

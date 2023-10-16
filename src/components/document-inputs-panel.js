@@ -11,9 +11,11 @@ import { useTranslation } from 'react-i18next';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import InputsIcon from './icons/general/inputs-icon.js';
+import DeleteIcon from './icons/general/delete-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { EyeOutlined, LinkOutlined } from '@ant-design/icons';
 import { Button, Collapse, Timeline, Tooltip, message } from 'antd';
+import { confirmDocumentInputDelete } from './confirmation-dialogs.js';
 import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
 import { documentInputShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
@@ -21,7 +23,17 @@ const { Panel } = Collapse;
 
 const PENDING_ITEM_KEY = 'pending';
 
-function DocumentInputsPanel({ loading, hasPendingInputChanges, inputSubmittingDisabled, documentInputs, selectedDocumentInputId, documentRevisions, showUsers, onViewClick }) {
+function DocumentInputsPanel({
+  loading,
+  hasPendingInputChanges,
+  inputSubmittingDisabled,
+  documentInputs,
+  selectedDocumentInputId,
+  documentRevisions,
+  showUsers,
+  onViewClick,
+  onDeleteClick
+}) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentInputsPanel');
@@ -31,10 +43,10 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, inputSubmittingD
   const timelineEntries = useMemo(() => {
     const versionedDocumentRevisions = getVersionedDocumentRevisions(documentRevisions, t);
 
-    const entries = documentInputs.map((input, index) => ({
+    const entries = documentInputs.map(input => ({
       _id: input._id,
       key: input._id,
-      displayNumber: index + 1,
+      displayNumber: input.inputOrder,
       createdOn: input.createdOn,
       createdBy: input.createdBy,
       versionedDocumentRevision: versionedDocumentRevisions.find(revision => revision._id === input.documentRevisionId),
@@ -77,6 +89,14 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, inputSubmittingD
       );
       message.error(msg, 10);
     }
+  };
+
+  const handleDocumentInputDeleteClick = documentInput => {
+    confirmDocumentInputDelete(
+      t,
+      formatDate(documentInput.createdOn),
+      () => onDeleteClick(documentInput._id)
+    );
   };
 
   const renderTimelineItemDot = entry => {
@@ -145,6 +165,13 @@ function DocumentInputsPanel({ loading, hasPendingInputChanges, inputSubmittingD
             icon={<EyeOutlined />}
             disabled={hasPendingInputChanges}
             onClick={() => onViewClick(entry._id)}
+            />
+        </Tooltip>
+        <Tooltip title={t('common:delete')}>
+          <Button
+            icon={<DeleteIcon />}
+            className="u-danger-action-button-fullsize"
+            onClick={() => handleDocumentInputDeleteClick(entry)}
             />
         </Tooltip>
       </div>
@@ -220,7 +247,8 @@ DocumentInputsPanel.propTypes = {
   selectedDocumentInputId: PropTypes.string,
   documentRevisions: PropTypes.arrayOf(documentRevisionShape).isRequired,
   showUsers: PropTypes.bool.isRequired,
-  onViewClick: PropTypes.func.isRequired
+  onViewClick: PropTypes.func.isRequired,
+  onDeleteClick: PropTypes.func.isRequired
 };
 
 DocumentInputsPanel.defaultProps = {
