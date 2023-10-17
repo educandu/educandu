@@ -264,6 +264,14 @@ export const documentRevisionShape = PropTypes.shape({
   roomContext: documentRoomContextShape
 });
 
+export const documentInputSectionFileShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  size: PropTypes.number.isRequired,
+  type: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired
+});
+
 export const documentInputSectionCommentShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
@@ -281,20 +289,8 @@ export const documentInputSectionCommentShape = PropTypes.shape({
 
 export const sectionInputShape = PropTypes.shape({
   data: PropTypes.object,
-  files: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    size: PropTypes.number.isRequired,
-    type: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired
-  })).isRequired,
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    createdOn: PropTypes.string.isRequired,
-    createdBy: PropTypes.string.isRequired,
-    deletedOn: PropTypes.string,
-    deletedBy: PropTypes.string,
-    text: PropTypes.string.isRequired
-  })).isRequired
+  files: PropTypes.arrayOf(documentInputSectionFileShape).isRequired,
+  comments: PropTypes.arrayOf(documentInputSectionCommentShape).isRequired
 });
 
 export const persistedDocumentInputShape = PropTypes.shape({

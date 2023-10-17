@@ -19,7 +19,7 @@ import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
 import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { createDocumentInputUploadedFileName } from '../utils/document-input-utils.js';
 import { isRoomOwnerOrInvitedMember, isRoomOwnerOrInvitedCollaborator, isRoomOwner } from '../utils/room-utils.js';
-import { createUniqueStorageFileName, getDocumentInputPath, getPrivateStorageOverview } from '../utils/storage-utils.js';
+import { createUniqueStorageFileName, getDocumentInputMediaPath, getPrivateStorageOverview } from '../utils/storage-utils.js';
 
 const { BadRequest, Forbidden, NotFound } = httpErrors;
 
@@ -126,7 +126,7 @@ class DocumentInputService {
       }
 
       const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.ownedBy);
-      if (!roomOwner.storage.planId) {
+      if (files.length && !roomOwner.storage.planId) {
         throw new BadRequest('Cannot upload to room-media storage without a storage plan');
       }
 
@@ -144,7 +144,7 @@ class DocumentInputService {
           }
 
           const storageFileName = createUniqueStorageFileName(sectionFile.name);
-          const storagePath = urlUtils.concatParts(getDocumentInputPath(room._id, documentInputId), storageFileName);
+          const storagePath = urlUtils.concatParts(getDocumentInputMediaPath(room._id, documentInputId), storageFileName);
           const storageUrl = `${CDN_URL_PREFIX}${storagePath}`;
 
           const resourceType = getResourceType(storageUrl);
@@ -187,32 +187,34 @@ class DocumentInputService {
         sections: finalSections
       };
 
-      lock = await this.lockStore.takeUserLock(room.ownedBy);
+      if (newCdnFiles.length) {
+        lock = await this.lockStore.takeUserLock(room.ownedBy);
 
-      const storagePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
-      const availableBytes = storagePlan.maxBytes - roomOwner.storage.usedBytes;
-      if (availableBytes < totalRequiredSize) {
-        throw new BadRequest(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(totalRequiredSize)}`);
+        const storagePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
+        const availableBytes = storagePlan.maxBytes - roomOwner.storage.usedBytes;
+        if (availableBytes < totalRequiredSize) {
+          throw new BadRequest(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(totalRequiredSize)}`);
+        }
+
+        for (const newCdnFile of newCdnFiles) {
+          await this.cdn.uploadObject(newCdnFile.storagePath, newCdnFile.sourcePath);
+        }
+
+        for (const newDocumentInputMediaItem of newDocumentInputMediaItems) {
+          await this.documentInputMediaItemStore.insertDocumentInputMediaItem(newDocumentInputMediaItem);
+        }
+
+        const overview = await getPrivateStorageOverview({
+          user: roomOwner,
+          roomStore: this.roomStore,
+          storagePlanStore: this.storagePlanStore,
+          roomMediaItemStore: this.roomMediaItemStore,
+          documentInputMediaItemStore: this.documentInputMediaItemStore
+        });
+
+        const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes: overview.usedBytes });
+        Object.assign(roomOwner, updatedUser);
       }
-
-      for (const newCdnFile of newCdnFiles) {
-        await this.cdn.uploadObject(newCdnFile.storagePath, newCdnFile.sourcePath);
-      }
-
-      for (const newDocumentInputMediaItem of newDocumentInputMediaItems) {
-        await this.documentInputMediaItemStore.insertDocumentInputMediaItem(newDocumentInputMediaItem);
-      }
-
-      const overview = await getPrivateStorageOverview({
-        user: roomOwner,
-        roomStore: this.roomStore,
-        storagePlanStore: this.storagePlanStore,
-        roomMediaItemStore: this.roomMediaItemStore,
-        documentInputMediaItemStore: this.documentInputMediaItemStore
-      });
-
-      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes: overview.usedBytes });
-      Object.assign(roomOwner, updatedUser);
 
       await this.documentInputStore.saveDocumentInput(newDocumentInput);
 

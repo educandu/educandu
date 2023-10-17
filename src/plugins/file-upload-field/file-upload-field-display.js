@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { Button, Form, Upload } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { UploadOutlined } from '@ant-design/icons';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { useTranslation } from 'react-i18next';
 
 const FormItem = Form.Item;
 
@@ -36,7 +36,9 @@ export default function FileUploadFieldDisplay({ content, input, canModifyInput,
     return false;
   };
 
-  const uploadButton = <Button icon={<UploadOutlined />}>{t('common:upload')}</Button>;
+  const uploadButton = (
+    <Button icon={<UploadOutlined />} disabled={files.length >= maxCount}>{t('common:upload')}</Button>
+  );
 
   return (
     <div className={`u-horizontally-centered u-width-${width}`}>
@@ -51,7 +53,7 @@ export default function FileUploadFieldDisplay({ content, input, canModifyInput,
             disabled={!canModifyInput}
             beforeUpload={handleBeforeUpload}
             >
-            {fileList.length >= 8 ? null : uploadButton}
+            {uploadButton}
           </Upload>
         </FormItem>
       </Form>
