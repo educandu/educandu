@@ -17,6 +17,11 @@ export default function FileUploadFieldDisplay({ content, input, canModifyInput,
   const { label, maxCount, width } = content;
   const { data, files } = input;
 
+  // Antd Upload component calls `onChange` multiple times in a row
+  // within the same render cycle for each file, so we have to keep
+  // track of the file count while it's not tracked in the state.
+  let nonStateTrackedAddedFiles = 0;
+
   const fileList = useMemo(() => files.map(file => ({
     uid: file.key,
     name: file.name,
@@ -27,8 +32,9 @@ export default function FileUploadFieldDisplay({ content, input, canModifyInput,
   const handleChange = ({ file }) => {
     if (file.status === 'removed') {
       onInputChanged(data, { removeFiles: [file.uid] });
-    } else if (files.length < maxCount) {
+    } else if ((files.length + nonStateTrackedAddedFiles) < maxCount) {
       onInputChanged(data, { addFiles: [[file.uid, file]] });
+      nonStateTrackedAddedFiles += 1;
     }
   };
 
