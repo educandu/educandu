@@ -17,7 +17,9 @@ import { EyeOutlined, LinkOutlined } from '@ant-design/icons';
 import { Button, Collapse, Timeline, Tooltip, message } from 'antd';
 import { confirmDocumentInputDelete } from './confirmation-dialogs.js';
 import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
+import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../domain/constants.js';
 import { documentInputShape, documentRevisionShape } from '../ui/default-prop-types.js';
+import prettyBytes from 'pretty-bytes';
 
 const { Panel } = Collapse;
 
@@ -26,6 +28,7 @@ const PENDING_ITEM_KEY = 'pending';
 function DocumentInputsPanel({
   loading,
   hasPendingInputChanges,
+  pendingFilesSize,
   inputSubmittingDisabled,
   documentInputs,
   selectedDocumentInputId,
@@ -224,6 +227,15 @@ function DocumentInputsPanel({
       {!!inputSubmittingDisabled && (
         <CustomAlert message={t('inputSubmittingDisabledAlert')} type="error" />
       )}
+      {pendingFilesSize > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES && (
+        <CustomAlert
+          message={t('uploadLimitExceededAlert', {
+            actualSize: prettyBytes(pendingFilesSize),
+            maxSize: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES)
+          })}
+          type="error"
+          />
+      )}
       {!!loading && <Spinner />}
       {!loading && !timelineEntries.length && (
         <EmptyState
@@ -242,6 +254,7 @@ function DocumentInputsPanel({
 DocumentInputsPanel.propTypes = {
   loading: PropTypes.bool.isRequired,
   hasPendingInputChanges: PropTypes.bool.isRequired,
+  pendingFilesSize: PropTypes.number.isRequired,
   inputSubmittingDisabled: PropTypes.bool.isRequired,
   documentInputs: PropTypes.arrayOf(documentInputShape).isRequired,
   selectedDocumentInputId: PropTypes.string,

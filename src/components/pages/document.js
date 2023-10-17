@@ -84,7 +84,8 @@ const VIEW = {
 const createPendingDocumentInput = sections => {
   return {
     sections: Object.fromEntries(sections.map(section => [section.key, { data: null, files: [], comments: [] }])),
-    pendingFileMap: {}
+    pendingFileMap: {},
+    pendingFilesSize: 0
   };
 };
 
@@ -586,7 +587,7 @@ function Document({ initialState, PageTemplate }) {
           key: fileKey,
           name: fileObject.name,
           size: fileObject.size,
-          type: fileObject.type,
+          type: fileObject.type || 'application/octet-stream',
           url: URL.createObjectURL(fileObject)
         };
         newFiles.push(file);
@@ -602,7 +603,8 @@ function Document({ initialState, PageTemplate }) {
             files: newFiles
           }
         },
-        pendingFileMap: newFileMap
+        pendingFileMap: newFileMap,
+        pendingFilesSize: Object.values(newFileMap).reduce((accu, file) => accu + file.size, 0)
       };
     });
     setHasPendingInputChanges(true);
@@ -856,21 +858,30 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleInputSubmit = async () => {
-    await documentInputApiClient.createDocumentInput({
-      ...pendingDocumentInput,
-      documentId: doc._id,
-      documentRevisionId: doc.revision,
-      sections: mapObjectValues(pendingDocumentInput.sections, oldSectionInput => ({
-        ...oldSectionInput,
-        files: oldSectionInput.files.map(file => ({
-          ...file,
-          url: '<unset>'
+    let isSubmitted;
+    try {
+      await documentInputApiClient.createDocumentInput({
+        ...pendingDocumentInput,
+        documentId: doc._id,
+        documentRevisionId: doc.revision,
+        sections: mapObjectValues(pendingDocumentInput.sections, oldSectionInput => ({
+          ...oldSectionInput,
+          files: oldSectionInput.files.map(file => ({
+            ...file,
+            url: '<unset>'
+          }))
         }))
-      }))
-    });
+      });
+      isSubmitted = true;
+    } catch (error) {
+      handleApiError({ error, logger, t });
+      isSubmitted = false;
+    }
 
-    await fetchDataForInputsView();
-    setIsCurrentInputSubmitted(true);
+    if (isSubmitted) {
+      await fetchDataForInputsView();
+      setIsCurrentInputSubmitted(true);
+    }
   };
 
   useEffect(() => {
@@ -1060,6 +1071,7 @@ function Document({ initialState, PageTemplate }) {
                   selectedDocumentInputId={selectedDocumentInput?._id || null}
                   documentRevisions={currentDocumentRevisions}
                   hasPendingInputChanges={hasPendingInputChanges}
+                  pendingFilesSize={pendingDocumentInput.pendingFilesSize || 0}
                   inputSubmittingDisabled={inputSubmittingDisabled}
                   onViewClick={handleViewDocumentInputClick}
                   onDeleteClick={handleDeleteDocumentInputClick}
