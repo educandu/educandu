@@ -65,7 +65,8 @@ const resetSectionInInput = (input, sectionComparisonKey) => {
 
 const createEmptyDocumentInput = comparison => {
   return {
-    sections: Object.fromEntries(comparison.sections.map(sectionComparison => [sectionComparison.key, { data: null, files: [], comments: [] }]))
+    sections: Object.fromEntries(comparison.sections.map(sectionComparison => [sectionComparison.key, { data: null, files: [], comments: [] }])),
+    pendingFileMap: {}
   };
 };
 

@@ -21,8 +21,9 @@ import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
-import { createUniqueStorageFileName, getRoomMediaRoomPath } from '../utils/storage-utils.js';
+import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
+import { createUniqueStorageFileName, getPrivateStorageOverview, getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import {
   CDN_URL_PREFIX,
   DEFAULT_CONTENT_TYPE,
@@ -47,7 +48,8 @@ export default class RoomService {
     StoragePlanStore,
     EventStore,
     LockStore,
-    TransactionRunner
+    TransactionRunner,
+    DocumentInputMediaItemStore
   ];
 
   constructor(
@@ -62,7 +64,8 @@ export default class RoomService {
     storagePlanStore,
     eventStore,
     lockStore,
-    transactionRunner
+    transactionRunner,
+    documentInputMediaItemStore
   ) {
     this.cdn = cdn;
     this.roomStore = roomStore;
@@ -76,6 +79,7 @@ export default class RoomService {
     this.roomInvitationStore = roomInvitationStore;
     this.documentCommentStore = documentCommentStore;
     this.documentRevisionStore = documentRevisionStore;
+    this.documentInputMediaItemStore = documentInputMediaItemStore;
   }
 
   getRoomById(roomId) {
@@ -210,28 +214,14 @@ export default class RoomService {
     }
   }
 
-  async getRoomMediaOverview({ user }) {
-    const storagePlan = user.storage.planId
-      ? await this.storagePlanStore.getStoragePlanById(user.storage.planId)
-      : null;
-
-    const rooms = await this.roomStore.getRoomsByOwnerUserId(user._id);
-    const mediaItemsPerRoom = await Promise.all(rooms.map(async room => {
-      const roomMediaItems = await this.roomMediaItemStore.getAllRoomMediaItemsByRoomId(room._id);
-      return { room, roomMediaItems, usedBytes: roomMediaItems.reduce((accu, item) => accu + item.size, 0) };
-    }));
-
-    const usedBytesInAllRooms = mediaItemsPerRoom.reduce((accu, { usedBytes }) => accu + usedBytes, 0);
-
-    return {
-      storagePlan: storagePlan || null,
-      usedBytes: usedBytesInAllRooms,
-      roomStorageList: mediaItemsPerRoom.map(({ room, roomMediaItems }) => ({
-        roomId: room._id,
-        roomName: room.name,
-        roomMediaItems
-      }))
-    };
+  getRoomMediaOverview({ user }) {
+    return getPrivateStorageOverview({
+      user,
+      roomStore: this.roomStore,
+      storagePlanStore: this.storagePlanStore,
+      roomMediaItemStore: this.roomMediaItemStore,
+      documentInputMediaItemStore: this.documentInputMediaItemStore
+    });
   }
 
   async getAllRoomMedia({ user, roomId }) {

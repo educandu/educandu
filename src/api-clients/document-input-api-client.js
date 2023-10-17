@@ -43,12 +43,19 @@ class DocumentInputApiClient {
       .then(res => res.data);
   }
 
-  createDocumentInput({ documentId, documentRevisionId, sections }) {
+  createDocumentInput({ documentId, documentRevisionId, sections, pendingFileMap }) {
+    const formData = new FormData();
+    formData.append('documentInput', JSON.stringify({ documentId, documentRevisionId, sections }));
+    Object.entries(pendingFileMap).forEach(([key, file]) => formData.append('files[]', file, key));
+
     return this.httpClient
       .post(
         '/api/v1/doc-inputs',
-        { documentId, documentRevisionId, sections },
-        { responseType: 'json' }
+        formData,
+        {
+          responseType: 'json',
+          headers: { 'Content-Type': 'multipart/form-data' }
+        }
       )
       .then(res => res.data);
   }

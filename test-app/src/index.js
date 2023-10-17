@@ -35,7 +35,8 @@ const plugins = [
   'media-analysis',
   'custom-plugin/server-time',
   'text-field',
-  'select-field'
+  'select-field',
+  'file-upload-field'
 ];
 
 const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)

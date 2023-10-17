@@ -2785,6 +2785,20 @@
       "de": "Audio"
     }
   },
+  "fileUploadField": {
+    "name": {
+      "en": "File upload field",
+      "de": "Datei-Upload-Feld"
+    },
+    "maxCount": {
+      "en": "Files (max.)",
+      "de": "Dateien (max.)"
+    },
+    "maxCountInfo": {
+      "en": "Maximum number of files that can be uploaded",
+      "de": "Maximale Anzahl an Dateien, die hochgeladen werden können"
+    }
+  },
   "iframe": {
     "name": {
       "en": "Iframe",

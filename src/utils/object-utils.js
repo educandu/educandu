@@ -6,3 +6,7 @@ export function ensureKeyIsExcluded(object, keyToExclude) {
     ? Object.fromEntries(Object.entries(object).filter(([key]) => key !== keyToExclude))
     : object;
 }
+
+export function mapObjectValues(object, mapFunc) {
+  return Object.fromEntries(Object.entries(object).map(([key, val]) => [key, mapFunc(val)]));
+}

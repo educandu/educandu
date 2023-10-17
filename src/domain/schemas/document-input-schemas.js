@@ -13,7 +13,11 @@ const documentInputCommentSchema = joi.object({
 const sectionSchema = joi.object({
   data: joi.object().allow(null).required(),
   files: joi.array().items(joi.object({
-    url: joi.string()
+    key: joi.string().required(),
+    name: joi.string().required(),
+    size: joi.number().integer().min(0).required(),
+    type: joi.string().required(),
+    url: joi.string().required()
   })).required(),
   comments: joi.array().items(documentInputCommentSchema).required()
 });

@@ -91,7 +91,7 @@ function SectionsDisplay({
         onSectionMoveUp={() => handleSectionMove(index, index - 1)}
         onSectionMoveDown={() => handleSectionMove(index, index + 1)}
         onSectionContentChange={newContent => onSectionContentChange(index, newContent)}
-        onSectionInputChange={newInput => onSectionInputChange(section.key, newInput)}
+        onSectionInputChange={(newData, fileOperations) => onSectionInputChange(section.key, newData, fileOperations)}
         onSectionHardDelete={() => onSectionHardDelete(index)}
         />
     );

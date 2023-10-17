@@ -1,22 +1,64 @@
 import by from 'thenby';
+import mime from 'mime';
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
+import prettyBytes from 'pretty-bytes';
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
+import cloneDeep from '../utils/clone-deep.js';
 import RoomStore from '../stores/room-store.js';
+import UserStore from '../stores/user-store.js';
+import LockStore from '../stores/lock-store.js';
 import DocumentStore from '../stores/document-store.js';
+import { getResourceType } from '../utils/resource-utils.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
 import DocumentInputStore from '../stores/document-input-store.js';
+import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { isRoomOwnerOrInvitedMember, isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
+import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
+import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
+import { createDocumentInputUploadedFileName } from '../utils/document-input-utils.js';
+import { isRoomOwnerOrInvitedMember, isRoomOwnerOrInvitedCollaborator, isRoomOwner } from '../utils/room-utils.js';
+import { createUniqueStorageFileName, getDocumentInputPath, getPrivateStorageOverview } from '../utils/storage-utils.js';
 
 const { BadRequest, Forbidden, NotFound } = httpErrors;
 
 class DocumentInputService {
-  static dependencies = [DocumentInputStore, DocumentStore, DocumentRevisionStore, RoomStore];
+  static dependencies = [
+    DocumentInputStore,
+    DocumentStore,
+    DocumentRevisionStore,
+    RoomStore,
+    RoomMediaItemStore,
+    DocumentInputMediaItemStore,
+    UserStore,
+    StoragePlanStore,
+    LockStore,
+    Cdn
+  ];
 
-  constructor(documentInputStore, documentStore, documentRevisionStore, roomStore) {
+  constructor(
+    documentInputStore,
+    documentStore,
+    documentRevisionStore,
+    roomStore,
+    roomMediaItemStore,
+    documentInputMediaItemStore,
+    userStore,
+    storagePlanStore,
+    lockStore,
+    cdn
+  ) {
     this.documentInputStore = documentInputStore;
     this.documentStore = documentStore;
     this.documentRevisionStore = documentRevisionStore;
     this.roomStore = roomStore;
+    this.roomMediaItemStore = roomMediaItemStore;
+    this.documentInputMediaItemStore = documentInputMediaItemStore;
+    this.userStore = userStore;
+    this.storagePlanStore = storagePlanStore;
+    this.lockStore = lockStore;
+    this.cdn = cdn;
   }
 
   async getDocumentInputById({ documentInputId, user }) {
@@ -56,46 +98,130 @@ class DocumentInputService {
     return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
-  async createDocumentInput({ documentId, documentRevisionId, sections, user }) {
-    const documentInputId = uniqueId.create();
-    const documentRevision = await this.documentRevisionStore.getDocumentRevisionById(documentRevisionId);
+  async createDocumentInput({ documentId, documentRevisionId, sections, files, user }) {
+    let lock;
+    try {
+      const documentInputId = uniqueId.create();
+      const documentRevision = await this.documentRevisionStore.getDocumentRevisionById(documentRevisionId);
 
-    if (!documentRevision) {
-      throw new NotFound(`Document '${documentId}' not found.`);
+      if (!documentRevision) {
+        throw new NotFound(`Document '${documentId}' not found.`);
+      }
+
+      if (documentRevision.documentId !== documentId) {
+        throw new BadRequest(`Document revision ${documentRevisionId} is not a revision of document '${documentId}'.`);
+      }
+
+      if (!documentRevision.roomId) {
+        throw new BadRequest('Creating document inputs for public documents is not supported.');
+      }
+
+      if (documentRevision.roomContext.inputSubmittingDisabled) {
+        throw new BadRequest('Creating document inputs for this document revision is not supported.');
+      }
+
+      const room = await this.roomStore.getRoomById(documentRevision.roomId);
+      if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
+        throw new Forbidden(`User is not authorized to create document inputs for room '${room._id}'`);
+      }
+
+      const roomOwner = isRoomOwner({ room, userId: user._id }) ? user : await this.userStore.findActiveUserById(room.ownedBy);
+      if (!roomOwner.storage.planId) {
+        throw new BadRequest('Cannot upload to room-media storage without a storage plan');
+      }
+
+      let totalRequiredSize = 0;
+      const now = new Date();
+      const newCdnFiles = [];
+      const newDocumentInputMediaItems = [];
+      const finalSections = cloneDeep(sections);
+      for (const [sectionKey, section] of Object.entries(finalSections)) {
+        for (const sectionFile of section.files) {
+          const uploadedFileName = createDocumentInputUploadedFileName(sectionKey, sectionFile.key);
+          const uploadedFile = files.find(file => file.originalname === uploadedFileName);
+          if (!uploadedFile) {
+            throw new BadRequest(`File with key ${sectionFile.key} is referenced in section but was not uploaded`);
+          }
+
+          const storageFileName = createUniqueStorageFileName(sectionFile.name);
+          const storagePath = urlUtils.concatParts(getDocumentInputPath(room._id, documentInputId), storageFileName);
+          const storageUrl = `${CDN_URL_PREFIX}${storagePath}`;
+
+          const resourceType = getResourceType(storageUrl);
+          const contentType = mime.getType(storageUrl) || DEFAULT_CONTENT_TYPE;
+          const size = uploadedFile.size;
+
+          totalRequiredSize += size;
+
+          newCdnFiles.push({ sourcePath: uploadedFile.path, storagePath });
+
+          newDocumentInputMediaItems.push({
+            _id: uniqueId.create(),
+            roomId: room._id,
+            documentInputId,
+            resourceType,
+            contentType,
+            size,
+            createdBy: user._id,
+            createdOn: now,
+            url: storageUrl
+          });
+
+          Object.assign(sectionFile, {
+            name: storageFileName,
+            size,
+            type: contentType,
+            url: storageUrl
+          });
+        }
+      }
+
+      const newDocumentInput = {
+        _id: documentInputId,
+        documentId,
+        documentRevisionId,
+        createdBy: user._id,
+        createdOn: now,
+        updatedBy: user._id,
+        updatedOn: now,
+        sections: finalSections
+      };
+
+      lock = await this.lockStore.takeUserLock(room.ownedBy);
+
+      const storagePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.planId);
+      const availableBytes = storagePlan.maxBytes - roomOwner.storage.usedBytes;
+      if (availableBytes < totalRequiredSize) {
+        throw new BadRequest(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(totalRequiredSize)}`);
+      }
+
+      for (const newCdnFile of newCdnFiles) {
+        await this.cdn.uploadObject(newCdnFile.storagePath, newCdnFile.sourcePath);
+      }
+
+      for (const newDocumentInputMediaItem of newDocumentInputMediaItems) {
+        await this.documentInputMediaItemStore.insertDocumentInputMediaItem(newDocumentInputMediaItem);
+      }
+
+      const overview = await getPrivateStorageOverview({
+        user: roomOwner,
+        roomStore: this.roomStore,
+        storagePlanStore: this.storagePlanStore,
+        roomMediaItemStore: this.roomMediaItemStore,
+        documentInputMediaItemStore: this.documentInputMediaItemStore
+      });
+
+      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes: overview.usedBytes });
+      Object.assign(roomOwner, updatedUser);
+
+      await this.documentInputStore.saveDocumentInput(newDocumentInput);
+
+      return newDocumentInput;
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
+      }
     }
-
-    if (documentRevision.documentId !== documentId) {
-      throw new BadRequest(`Document revision ${documentRevisionId} is not a revision of document '${documentId}'.`);
-    }
-
-    if (!documentRevision.roomId) {
-      throw new BadRequest('Creating document inputs for public documents is not supported.');
-    }
-
-    if (documentRevision.roomContext.inputSubmittingDisabled) {
-      throw new BadRequest('Creating document inputs for this document revision is not supported.');
-    }
-
-    const room = await this.roomStore.getRoomById(documentRevision.roomId);
-    if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
-      throw new Forbidden(`User is not authorized to create document inputs for room '${room._id}'`);
-    }
-
-    const createdOn = new Date();
-
-    const newDocumentInput = {
-      _id: documentInputId,
-      documentId,
-      documentRevisionId,
-      createdBy: user._id,
-      createdOn,
-      updatedBy: user._id,
-      updatedOn: createdOn,
-      sections
-    };
-
-    await this.documentInputStore.saveDocumentInput(newDocumentInput);
-    return newDocumentInput;
   }
 
   async createDocumentInputSectionComment({ documentInputId, sectionKey, text, user }) {
