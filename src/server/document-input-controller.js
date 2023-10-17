@@ -11,8 +11,8 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentInputService from '../services/document-input-service.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { validateBody, validateFile, validateParams } from '../domain/validation-middleware.js';
 import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
+import { validateBody, validateFile, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   documentInputIdParamsOrQuerySchema,
   getDocumentInputsCreatedByUserParams,
@@ -23,7 +23,8 @@ import {
   createDocumentInputSectionCommentBodySchema,
   createDocumentInputSectionCommentParams,
   deleteDocumentInputSectionCommentParams,
-  deleteDocumentInputSectionCommentBodySchema
+  deleteDocumentInputSectionCommentBodySchema,
+  getDocumentInputsByDocumentIdQuery
 } from '../domain/schemas/document-input-schemas.js';
 
 const { Forbidden, NotFound } = httpErrors;
@@ -83,10 +84,10 @@ class DocumentInputController {
     return res.send({ documentInput: mappedDocumentInput });
   }
 
-  async handleGetDocumentInputsCreatedByUser(req, res) {
+  async handleGetAllDocumentInputsCreatedByUser(req, res) {
     const { userId } = req.params;
 
-    const documentInputs = await this.documentInputService.getDocumentInputsCreatedByUser(userId);
+    const documentInputs = await this.documentInputService.getAllDocumentInputsCreatedByUser(userId);
     const documentIds = documentInputs.map(input => input.documentId);
     const documents = await this.documentService.getDocumentsMetadataByIds(documentIds);
 
@@ -97,8 +98,14 @@ class DocumentInputController {
 
   async handleGetDocumentInputsByDocumentId(req, res) {
     const { documentId } = req.params;
+    const { createdByUserId } = req.query;
 
-    const documentInputs = await this.documentInputService.getDocumentInputsByDocumentId(documentId);
+    let documentInputs = await this.documentInputService.getDocumentInputsByDocumentId(documentId);
+
+    if (createdByUserId) {
+      documentInputs = documentInputs.filter(input => input.createdBy === createdByUserId);
+    }
+
     const documentIds = documentInputs.map(input => input.documentId);
     const documents = await this.documentService.getDocumentsMetadataByIds(documentIds);
 
@@ -180,13 +187,14 @@ class DocumentInputController {
       '/api/v1/doc-inputs/users/:userId',
       needsPermission(permissions.CREATE_CONTENT),
       validateParams(getDocumentInputsCreatedByUserParams),
-      (req, res) => this.handleGetDocumentInputsCreatedByUser(req, res)
+      (req, res) => this.handleGetAllDocumentInputsCreatedByUser(req, res)
     );
 
     router.get(
       '/api/v1/doc-inputs/documents/:documentId',
       needsPermission(permissions.CREATE_CONTENT),
       validateParams(getDocumentInputsByDocumentIdParams),
+      validateQuery(getDocumentInputsByDocumentIdQuery),
       (req, res) => this.handleGetDocumentInputsByDocumentId(req, res)
     );
 

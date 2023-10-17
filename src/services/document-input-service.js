@@ -81,7 +81,7 @@ class DocumentInputService {
     return documentInput;
   }
 
-  async getDocumentInputsCreatedByUser(userId) {
+  async getAllDocumentInputsCreatedByUser(userId) {
     const documentInputs = await this.documentInputStore.getDocumentInputsCreatedByUser(userId);
     return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
