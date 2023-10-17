@@ -24,7 +24,8 @@ import {
   createDocumentInputSectionCommentParams,
   deleteDocumentInputSectionCommentParams,
   deleteDocumentInputSectionCommentBodySchema,
-  getDocumentInputsByDocumentIdQuery
+  getDocumentInputsByDocumentIdQuery,
+  getAuthorizeResourcesAccessParamsSchema
 } from '../domain/schemas/document-input-schemas.js';
 
 const { Forbidden, NotFound } = httpErrors;
@@ -167,6 +168,25 @@ class DocumentInputController {
     return res.send({});
   }
 
+  async handleAuthorizeResourcesAccess(req, res) {
+    const { user } = req;
+    const { documentInputId } = req.params;
+
+    if (!user) {
+      return res.status(401).end();
+    }
+
+    let notFoundOrForbidden;
+    try {
+      await this.documentInputService.getDocumentInputById({ documentInputId, user });
+      notFoundOrForbidden = false;
+    } catch {
+      notFoundOrForbidden = true;
+    }
+
+    return res.status(notFoundOrForbidden ? 403 : 200).end();
+  }
+
   registerPages(router) {
     router.get(
       '/doc-inputs/:documentInputId',
@@ -245,6 +265,12 @@ class DocumentInputController {
       needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
       validateBody(hardDeleteDocumentInputBodySchema),
       (req, res) => this.handleHardDeleteDocumentInput(req, res)
+    );
+
+    router.get(
+      '/api/v1/doc-inputs/:documentInputId/authorize-resources-access',
+      validateParams(getAuthorizeResourcesAccessParamsSchema),
+      (req, res) => this.handleAuthorizeResourcesAccess(req, res)
     );
   }
 }

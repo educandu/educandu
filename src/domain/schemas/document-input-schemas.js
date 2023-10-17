@@ -86,3 +86,7 @@ export const deleteDocumentInputSectionCommentBodySchema = joi.object({
 export const hardDeleteDocumentInputBodySchema = joi.object({
   documentInputId: idOrKeySchema.required()
 });
+
+export const getAuthorizeResourcesAccessParamsSchema = joi.object({
+  documentInputId: idOrKeySchema.required()
+});
