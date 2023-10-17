@@ -69,8 +69,13 @@ export default function Room({ PageTemplate, initialState }) {
     return VIEW_MODE.nonCollaboratingMember;
   }, [room, user]);
 
-  const handleTabChange = tab => {
+  const handleTabChange = async tab => {
     history.replaceState(null, '', routes.getRoomUrl({ id: room._id, slug: room.slug, tab }));
+
+    if (tab === TAB_KEYS.documentInputs) {
+      const response = await documentInputApiClient.getDocumentInputsByRoomId(room._id);
+      setDocumentInputs(response.documentInputs);
+    }
   };
 
   const handleLeaveRoom = async () => {
