@@ -24,6 +24,16 @@ class DocumentInputMediaItemStore {
     return result.value;
   }
 
+  async deleteDocumentInputMediaItemsByDocumentInputIds(documentInputIds, { session } = {}) {
+    const result = await this.collection.deleteMany({ documentInputId: { $in: documentInputIds } }, { session });
+    return result.value;
+  }
+
+  async deleteDocumentInputMediaItemsByDocumentInputId(documentInputId, { session } = {}) {
+    const result = await this.collection.deleteMany({ documentInputId }, { session });
+    return result.value;
+  }
+
   async deleteDocumentInputMediaItemsByRoomId(roomId, { session } = {}) {
     const result = await this.collection.deleteMany({ roomId }, { session });
     return result.value;

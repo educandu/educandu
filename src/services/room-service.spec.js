@@ -10,11 +10,13 @@ import UserStore from '../stores/user-store.js';
 import { assert, createSandbox, match } from 'sinon';
 import DocumentStore from '../stores/document-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
+import DocumentInputStore from '../stores/document-input-store.js';
 import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { EVENT_TYPE, INVALID_ROOM_INVITATION_REASON } from '../domain/constants.js';
+import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   destroyTestEnvironment,
@@ -28,10 +30,12 @@ import {
 const { BadRequest, NotFound, Forbidden } = httpErrors;
 
 describe('room-service', () => {
+  let documentInputMediaItemStore;
   let documentRevisionStore;
   let documentCommentStore;
   let roomInvitationStore;
   let roomMediaItemStore;
+  let documentInputStore;
   let storagePlanStore;
   let documentStore;
   let roomStore;
@@ -56,10 +60,12 @@ describe('room-service', () => {
     userStore = container.get(UserStore);
     documentStore = container.get(DocumentStore);
     storagePlanStore = container.get(StoragePlanStore);
+    documentInputStore = container.get(DocumentInputStore);
     roomMediaItemStore = container.get(RoomMediaItemStore);
     roomInvitationStore = container.get(RoomInvitationStore);
     documentCommentStore = container.get(DocumentCommentStore);
     documentRevisionStore = container.get(DocumentRevisionStore);
+    documentInputMediaItemStore = container.get(DocumentInputMediaItemStore);
 
     db = container.get(Database);
     sut = container.get(RoomService);
@@ -146,9 +152,11 @@ describe('room-service', () => {
       sandbox.stub(documentCommentStore, 'deleteDocumentCommentsByDocumentIds').resolves();
       sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId').resolves();
       sandbox.stub(documentStore, 'deleteDocumentsByRoomId').resolves();
+      sandbox.stub(documentInputStore, 'deleteDocumentInputsByDocumentIds').resolves();
       sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId').resolves();
       sandbox.stub(roomStore, 'deleteRoomById').resolves();
       sandbox.stub(roomMediaItemStore, 'deleteRoomMediaItemsByRoomId').resolves();
+      sandbox.stub(documentInputMediaItemStore, 'deleteDocumentInputMediaItemsByRoomId').resolves();
       sandbox.stub(cdn, 'deleteDirectory').resolves();
       sandbox.stub(userStore, 'updateUserUsedBytes').resolves(cloneDeep(myUser));
 
@@ -176,6 +184,11 @@ describe('room-service', () => {
       assert.calledWith(documentStore.deleteDocumentsByRoomId, room._id, { session: match.object });
     });
 
+    it('should call documentInputStore.deleteDocumentInputsByDocumentIds', () => {
+      const documentIds = roomDocuments.map(doc => doc._id);
+      assert.calledWith(documentInputStore.deleteDocumentInputsByDocumentIds, documentIds, { session: match.object });
+    });
+
     it('should call documentRevisionStore.deleteDocumentsByRoomId', () => {
       assert.calledWith(documentRevisionStore.deleteDocumentsByRoomId, room._id, { session: match.object });
     });
@@ -192,8 +205,16 @@ describe('room-service', () => {
       assert.calledWith(roomMediaItemStore.deleteRoomMediaItemsByRoomId, room._id, { session: match.object });
     });
 
+    it('should call documentInputMediaItemStore.deleteDocumentInputMediaItemsByRoomId', () => {
+      assert.calledWith(documentInputMediaItemStore.deleteDocumentInputMediaItemsByRoomId, room._id, { session: match.object });
+    });
+
     it('should call cdn.deleteDirectory for the room being deleted', () => {
       assert.calledWith(cdn.deleteDirectory, { directoryPath: `room-media/${room._id}` });
+    });
+
+    it('should call cdn.deleteDirectory for the document inputs of the room being deleted', () => {
+      assert.calledWith(cdn.deleteDirectory, { directoryPath: `document-input-media/${room._id}` });
     });
 
     it('should call userStore.updateUserUsedBytes', () => {
