@@ -10,12 +10,15 @@ import { CloudUploadOutlined } from '@ant-design/icons';
 import EmptyState from '../../components/empty-state.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
+import { getResourceType } from '../../utils/resource-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../domain/constants.js';
+import { RESOURCE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 const FormItem = Form.Item;
+
+const isImageUrl = file => getResourceType(file.name) === RESOURCE_TYPE.image;
 
 export default function FileUploadFieldDisplay({ context, content, input, canModifyInput, onInputChanged }) {
   const dropzoneRef = useRef();
@@ -91,6 +94,7 @@ export default function FileUploadFieldDisplay({ context, content, input, canMod
             maxCount={maxCount}
             fileList={fileList}
             onChange={handleChange}
+            isImageUrl={isImageUrl}
             disabled={!canModifyInput}
             />
         </FormItem>
