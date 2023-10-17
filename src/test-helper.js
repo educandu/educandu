@@ -9,6 +9,7 @@ import DocumentService from './services/document-service.js';
 import DocumentInputService from './services/document-input-service.js';
 import DocumentCommentService from './services/document-comment-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
+import { createDocumentInputUploadedFileName } from './utils/document-input-utils.js';
 
 async function purgeDatabase(db) {
   const collections = await db._db.collections();
@@ -156,16 +157,19 @@ export async function updateTestUser(container, user) {
 export async function createTestRoom(container, roomValues = {}) {
   const db = container.get(Database);
 
+  const now = new Date();
+  const creatorAndOwner = uniqueId.create();
+
   const room = {
     _id: roomValues._id || uniqueId.create(),
     slug: roomValues.slug || '',
     name: roomValues.name || 'my-room',
     shortDescription: roomValues.shortDescription || '',
     isCollaborative: roomValues.isCollaborative || false,
-    ownedBy: roomValues.ownedBy || uniqueId.create(),
-    createdBy: roomValues.createdBy || uniqueId.create(),
-    createdOn: roomValues.createdOn || new Date(),
-    updatedOn: roomValues.updatedOn || new Date(),
+    ownedBy: roomValues.ownedBy || creatorAndOwner,
+    createdBy: roomValues.createdBy || creatorAndOwner,
+    createdOn: roomValues.createdOn || now,
+    updatedOn: roomValues.updatedOn || now,
     overview: roomValues.overview || '',
     members: roomValues.members || [],
     messages: roomValues.messages || [],
@@ -192,10 +196,18 @@ export function createTestDocumentComment(container, user, data) {
 export function createTestDocumentInput(container, user, data) {
   const documentInputService = container.get(DocumentInputService);
 
+  const files = Object.entries(data.sections)
+    .flatMap(([sectionKey, section]) => section.files.map(sectionFile => ({
+      originalname: createDocumentInputUploadedFileName(sectionKey, sectionFile.key),
+      size: 1024,
+      path: '/test.jpg'
+    })));
+
   return documentInputService.createDocumentInput({
     documentId: data.documentId,
     documentRevisionId: data.documentRevisionId,
     sections: data.sections,
+    files,
     user
   });
 }
@@ -285,4 +297,17 @@ export async function createTestRevisions(container, user, revisions) {
   return lastCreatedDocument
     ? documentService.getAllDocumentRevisionsByDocumentId(lastCreatedDocument._id)
     : [];
+}
+
+export function createTestSection(data = {}) {
+  return {
+    revision: uniqueId.create(),
+    key: uniqueId.create(),
+    deletedOn: null,
+    deletedBy: null,
+    deletedBecause: null,
+    type: null,
+    content: null,
+    ...data
+  };
 }

@@ -23,6 +23,7 @@ import MediaSlideshowInfo from './media-slideshow/media-slideshow-info.js';
 import MusicXmlViewerInfo from './music-xml-viewer/music-xml-viewer-info.js';
 import MultitrackMediaInfo from './multitrack-media/multitrack-media-info.js';
 import TableOfContentsInfo from './table-of-contents/table-of-contents-info.js';
+import FileUploadFieldInfo from './file-upload-field/file-upload-field-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
 import MusicAccentuationInfo from './music-accentuation/music-accentuation-info.js';
 import MarkdownWithImageInfo from './markdown-with-image/markdown-with-image-info.js';
@@ -52,6 +53,7 @@ const builtInPluginInfos = [
   MediaSlideshowInfo,
   MusicXmlViewerInfo,
   TableOfContentsInfo,
+  FileUploadFieldInfo,
   MultitrackMediaInfo,
   InteractiveMediaInfo,
   MusicAccentuationInfo,

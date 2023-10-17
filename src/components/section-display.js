@@ -220,8 +220,8 @@ function SectionDisplay({
       <Fragment>
         <DisplayComponent
           context={context}
+          input={sectionInput}
           content={section.content}
-          input={sectionInput?.data ?? null}
           canModifyInput={canModifyInput}
           onInputChanged={onSectionInputChange}
           />

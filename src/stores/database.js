@@ -28,6 +28,7 @@ import documentRevisionsSpec from './collection-specs/document-revisions.js';
 import mediaLibraryItemsSpec from './collection-specs/media-library-items.js';
 import requestLimitRecordsSpec from './collection-specs/request-limit-records.js';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests.js';
+import documentInputMediaItemsSpec from './collection-specs/document-input-media-items.js';
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
@@ -55,7 +56,8 @@ const collectionSpecs = [
   documentRevisionsSpec,
   mediaLibraryItemsSpec,
   requestLimitRecordsSpec,
-  passwordResetRequestsSpec
+  passwordResetRequestsSpec,
+  documentInputMediaItemsSpec
 ];
 
 class Database {

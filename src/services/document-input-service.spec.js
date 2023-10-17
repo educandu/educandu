@@ -1,9 +1,11 @@
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import { createSandbox } from 'sinon';
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import { ROLE } from '../domain/constants.js';
 import DocumentInputService from './document-input-service.js';
+import TextFieldInfo from '../plugins/text-field/text-field-info.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   createTestDocument,
@@ -14,8 +16,10 @@ import {
   createTestUser,
   createTestDocumentInput,
   hardDeletePrivateTestDocument,
-  updateTestDocument
+  updateTestDocument,
+  createTestSection
 } from '../test-helper.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
 
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
@@ -27,21 +31,29 @@ describe('document-input-service', () => {
   let roomOwnerUser;
   let inputtingUser;
   let nonInputtingUser;
+  let storagePlanStore;
+  let cdn;
   let sut;
   let db;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    roomOwnerUser = await createTestUser(container, { email: 'room_owner_user@test.com', role: ROLE.user });
-    inputtingUser = await createTestUser(container, { email: 'inputting_user@test.com', role: ROLE.user });
-    nonInputtingUser = await createTestUser(container, { email: 'non_inputting_user@test.com', role: ROLE.user });
 
+    cdn = container.get(Cdn);
     db = container.get(Database);
     sut = container.get(DocumentInputService);
+    storagePlanStore = container.get(StoragePlanStore);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     sandbox.useFakeTimers(now);
+    sandbox.stub(cdn, 'uploadObject').resolves();
+
+    const storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 10000 };
+    await storagePlanStore.saveStoragePlan(storagePlan);
+    roomOwnerUser = await createTestUser(container, { email: 'room_owner_user@test.com', role: ROLE.user, storage: { planId: storagePlan._id, usedBytes: 0, reminders: [] } });
+    inputtingUser = await createTestUser(container, { email: 'inputting_user@test.com', role: ROLE.user });
+    nonInputtingUser = await createTestUser(container, { email: 'non_inputting_user@test.com', role: ROLE.user });
   });
 
   afterAll(async () => {
@@ -49,8 +61,8 @@ describe('document-input-service', () => {
   });
 
   afterEach(async () => {
-    await pruneTestEnvironment(container);
     sandbox.restore();
+    await pruneTestEnvironment(container);
   });
 
   describe('getDocumentInputById', () => {
@@ -65,6 +77,7 @@ describe('document-input-service', () => {
         {
           isCollaborative: true,
           ownedBy: roomOwnerUser._id,
+          createdBy: roomOwnerUser._id,
           members: [
             { userId: inputtingUser._id, joinedOn: now },
             { userId: nonInputtingUser._id, joinedOn: now }
@@ -180,6 +193,7 @@ describe('document-input-service', () => {
         {
           isCollaborative: true,
           ownedBy: roomOwnerUser._id,
+          createdBy: roomOwnerUser._id,
           members: [
             { userId: inputtingUser._id, joinedOn: now },
             { userId: nonInputtingUser._id, joinedOn: now }
@@ -203,6 +217,7 @@ describe('document-input-service', () => {
           documentId: document._id,
           documentRevisionId: document.revision,
           sections: {},
+          files: [],
           user: inputtingUser
         })).rejects.toThrow(NotFound);
       });
@@ -222,6 +237,7 @@ describe('document-input-service', () => {
           documentId: document._id,
           documentRevisionId: otherDocument.revision,
           sections: {},
+          files: [],
           user: inputtingUser
         })).rejects.toThrow(BadRequest);
       });
@@ -248,6 +264,7 @@ describe('document-input-service', () => {
           documentId: updatedDocument._id,
           documentRevisionId: updatedDocument.revision,
           sections: {},
+          files: [],
           user: inputtingUser
         })).rejects.toThrow(BadRequest);
       });
@@ -267,6 +284,7 @@ describe('document-input-service', () => {
           documentId: publicDocument._id,
           documentRevisionId: publicDocument.revision,
           sections: {},
+          files: [],
           user: inputtingUser
         })).rejects.toThrow(BadRequest);
       });
@@ -279,6 +297,7 @@ describe('document-input-service', () => {
           documentId: document._id,
           documentRevisionId: document.revision,
           sections: {},
+          files: [],
           user: inputtingUser
         });
       });
@@ -306,6 +325,8 @@ describe('document-input-service', () => {
     let documentInput;
 
     beforeEach(async () => {
+      const textFieldInfo = container.get(TextFieldInfo);
+      sectionKey = 'SAQVpmre63mCHqeCUiEbNR';
       room = await createTestRoom(
         container,
         {
@@ -320,9 +341,15 @@ describe('document-input-service', () => {
       document = await createTestDocument(container, roomOwnerUser, {
         roomId: room._id,
         roomContext: { draft: false, inputSubmittingDisabled: false },
-        publicContext: null
+        publicContext: null,
+        sections: [
+          createTestSection({
+            key: sectionKey,
+            type: TextFieldInfo.name,
+            content: textFieldInfo.getDefaultContent()
+          })
+        ]
       });
-      sectionKey = 'SAQVpmre63mCHqeCUiEbNR';
       documentInput = await createTestDocumentInput(container, inputtingUser, {
         documentId: document._id,
         documentRevisionId: document.revision,

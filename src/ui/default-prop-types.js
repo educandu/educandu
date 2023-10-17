@@ -264,6 +264,14 @@ export const documentRevisionShape = PropTypes.shape({
   roomContext: documentRoomContextShape
 });
 
+export const documentInputSectionFileShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  size: PropTypes.number.isRequired,
+  type: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired
+});
+
 export const documentInputSectionCommentShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
@@ -281,10 +289,11 @@ export const documentInputSectionCommentShape = PropTypes.shape({
 
 export const sectionInputShape = PropTypes.shape({
   data: PropTypes.object,
-  comments: PropTypes.arrayOf(documentInputSectionCommentShape)
+  files: PropTypes.arrayOf(documentInputSectionFileShape).isRequired,
+  comments: PropTypes.arrayOf(documentInputSectionCommentShape).isRequired
 });
 
-export const documentInputShape = PropTypes.shape({
+export const persistedDocumentInputShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
   documentRevisionId: PropTypes.string.isRequired,
@@ -297,8 +306,14 @@ export const documentInputShape = PropTypes.shape({
 });
 
 export const pendingDocumentInputShape = PropTypes.shape({
-  sections: PropTypes.objectOf(sectionInputShape).isRequired
+  sections: PropTypes.objectOf(sectionInputShape).isRequired,
+  pendingFileMap: PropTypes.objectOf(PropTypes.instanceOf(File)).isRequired
 });
+
+export const documentInputShape = PropTypes.oneOfType([
+  pendingDocumentInputShape,
+  persistedDocumentInputShape
+]);
 
 const commonMediaFileProps = {
   _id: PropTypes.string.isRequired,

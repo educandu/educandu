@@ -21,6 +21,10 @@ export function getRoomMediaRoomPath(roomId) {
   return `room-media/${roomId}`;
 }
 
+export function getDocumentInputMediaPath(roomId, documentInputId) {
+  return `document-input-media/${roomId}/${documentInputId}`;
+}
+
 const getScaledDownDimensions = img => {
   if (img.naturalWidth <= IMAGE_OPTIMIZATION_THRESHOLD_WIDTH) {
     return { width: img.naturalWidth, height: img.naturalHeight };
@@ -100,4 +104,39 @@ export function createUniqueStorageFileName(fileName, generateId = uniqueId.crea
   const { baseName, extension } = urlUtils.splitAtExtension(fileName);
   const basenameWithId = [slugify(baseName), generateId()].filter(x => x).join('-');
   return `${basenameWithId}${extension.toLowerCase()}`;
+}
+
+export async function getPrivateStorageOverview({ user, roomStore, storagePlanStore, roomMediaItemStore, documentInputMediaItemStore }) {
+  const storagePlan = user.storage.planId
+    ? await storagePlanStore.getStoragePlanById(user.storage.planId)
+    : null;
+
+  const rooms = await roomStore.getRoomsByOwnerUserId(user._id);
+  const mediaItemsPerRoom = await Promise.all(rooms.map(async room => {
+    const roomMediaItems = await roomMediaItemStore.getAllRoomMediaItemsByRoomId(room._id);
+    const documentInputMediaItems = await documentInputMediaItemStore.getAllDocumentInputMediaItemByRoomId(room._id);
+
+    const usedBytesByRoomMediaItems = roomMediaItems.reduce((accu, item) => accu + item.size, 0);
+    const usedBytesByDocumentInputMediaItems = documentInputMediaItems.reduce((accu, item) => accu + item.size, 0);
+    return {
+      room,
+      roomMediaItems,
+      documentInputMediaItems,
+      usedBytesByRoomMediaItems,
+      usedBytesByDocumentInputMediaItems,
+      totalUsedBytes: usedBytesByRoomMediaItems + usedBytesByDocumentInputMediaItems
+    };
+  }));
+
+  const usedBytesInAllRooms = mediaItemsPerRoom.reduce((accu, { totalUsedBytes }) => accu + totalUsedBytes, 0);
+
+  return {
+    storagePlan: storagePlan || null,
+    usedBytes: usedBytesInAllRooms,
+    roomStorageList: mediaItemsPerRoom.map(({ room, roomMediaItems }) => ({
+      roomId: room._id,
+      roomName: room.name,
+      roomMediaItems
+    }))
+  };
 }

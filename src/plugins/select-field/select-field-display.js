@@ -10,7 +10,9 @@ const FormItem = Form.Item;
 
 export default function SelectFieldDisplay({ content, input, canModifyInput, onInputChanged }) {
   const { mode, label, maxColumns, width, items } = content;
-  const selectedValues = input?.selectedValues || [];
+  const { data } = input;
+
+  const selectedValues = data?.selectedValues || [];
 
   let InputComponent;
   let handleSelectionChange;

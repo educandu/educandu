@@ -26,7 +26,6 @@ import DocumentInputsPanel from '../document-inputs-panel.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
-import { ensureKeyIsExcluded } from '../../utils/object-utils.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentVersionHistory from '../document-version-history.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
@@ -39,9 +38,11 @@ import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
 import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { ensureKeyIsExcluded, mapObjectValues } from '../../utils/object-utils.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
 import DocumentCommentApiClient from '../../api-clients/document-comment-api-client.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
+import { createDocumentInputUploadedFileName } from '../../utils/document-input-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
@@ -82,7 +83,8 @@ const VIEW = {
 
 const createPendingDocumentInput = sections => {
   return {
-    sections: Object.fromEntries(sections.map(section => [section.key, { data: null, files: [], comments: [] }]))
+    sections: Object.fromEntries(sections.map(section => [section.key, { data: null, files: [], comments: [] }])),
+    pendingFileMap: {}
   };
 };
 
@@ -568,17 +570,41 @@ function Document({ initialState, PageTemplate }) {
     return true;
   };
 
-  const handleSectionInputChange = useCallback((sectionKey, newInputData) => {
-    setPendingDocumentInput(oldDocumentInput => ({
-      ...oldDocumentInput,
-      sections: {
-        ...oldDocumentInput.sections,
-        [sectionKey]: {
-          ...oldDocumentInput.sections[sectionKey],
-          data: newInputData
+  const handleSectionInputChange = useCallback((sectionKey, newData, fileOperations) => {
+    setPendingDocumentInput(oldDocumentInput => {
+      let newFiles = [...oldDocumentInput.sections[sectionKey].files];
+      const newFileMap = { ...oldDocumentInput.pendingFileMap };
+      for (const fileKey of fileOperations?.removeFiles || []) {
+        const fileToDelete = newFiles.find(x => x.key === fileKey);
+        if (fileToDelete) {
+          newFiles = newFiles.filter(x => x !== fileToDelete);
+          delete newFileMap[createDocumentInputUploadedFileName(sectionKey, fileToDelete.key)];
         }
       }
-    }));
+      for (const [fileKey, fileObject] of fileOperations?.addFiles || []) {
+        const file = {
+          key: fileKey,
+          name: fileObject.name,
+          size: fileObject.size,
+          type: fileObject.type,
+          url: URL.createObjectURL(fileObject)
+        };
+        newFiles.push(file);
+        newFileMap[createDocumentInputUploadedFileName(sectionKey, fileKey)] = fileObject;
+      }
+      return {
+        ...oldDocumentInput,
+        sections: {
+          ...oldDocumentInput.sections,
+          [sectionKey]: {
+            ...oldDocumentInput.sections[sectionKey],
+            data: newData,
+            files: newFiles
+          }
+        },
+        pendingFileMap: newFileMap
+      };
+    });
     setHasPendingInputChanges(true);
   }, []);
 
@@ -833,7 +859,14 @@ function Document({ initialState, PageTemplate }) {
     await documentInputApiClient.createDocumentInput({
       ...pendingDocumentInput,
       documentId: doc._id,
-      documentRevisionId: doc.revision
+      documentRevisionId: doc.revision,
+      sections: mapObjectValues(pendingDocumentInput.sections, oldSectionInput => ({
+        ...oldSectionInput,
+        files: oldSectionInput.files.map(file => ({
+          ...file,
+          url: '<unset>'
+        }))
+      }))
     });
 
     await fetchDataForInputsView();

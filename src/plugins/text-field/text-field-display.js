@@ -10,7 +10,8 @@ const FormItem = Form.Item;
 
 export default function TextFieldDisplay({ content, input, canModifyInput, onInputChanged }) {
   const { mode, label, maxLength, width } = content;
-  const value = input?.value || '';
+  const { data } = input;
+  const value = data?.value || '';
 
   const handleCurrentValueChange = event => {
     onInputChanged({ value: event.target.value });
