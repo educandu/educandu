@@ -654,7 +654,7 @@
     },
     "documentInputCommentCreatedNotification": {
       "en": "New comment on document input",
-      "de": "Neuer Kommentar am Dokumenteingabe"
+      "de": "Neuer Kommentar zur Dokumenteingabe"
     },
     "remove": {
       "en": "Remove",

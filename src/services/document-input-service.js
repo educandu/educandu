@@ -235,7 +235,7 @@ class DocumentInputService {
   }
 
   async createDocumentInputSectionComment({ documentInputId, sectionKey, text, user, silentCreation }) {
-    const documentInput = await this.documentInputStore.getAllDocumentInputById(documentInputId);
+    const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
 
     if (!documentInput) {
       throw new NotFound(`Document input '${documentInputId}' not found.`);
