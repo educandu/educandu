@@ -309,39 +309,28 @@ class DocumentInputService {
   }
 
   async hardDeleteDocumentInput({ documentInputId, user }) {
-    let documentInput;
-    let documentInputLock;
+    const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
 
-    try {
-      documentInputLock = await this.lockStore.takeDocumentInputLock(documentInputId);
-
-      documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
-
-      if (!documentInput) {
-        throw new NotFound(`Document input '${documentInputId}' not found.`);
-      }
-
-      const document = await this.documentStore.getDocumentById(documentInput.documentId);
-      if (!document) {
-        throw new NotFound(`Document '${documentInput.documentId}' not found.`);
-      }
-
-      const room = await this.roomStore.getRoomById(document.roomId);
-      if (documentInput.createdBy !== user._id && !isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
-        throw new Forbidden(`User is not authorized to delete document input '${documentInputId}'`);
-      }
-
-      await this.transactionRunner.run(async session => {
-        await this.documentInputMediaItemStore.deleteDocumentInputMediaItemsByDocumentInputId(documentInputId, { session });
-        await this.documentInputStore.deleteDocumentInputById(documentInputId, { session });
-      });
-
-      await this.cdn.deleteDirectory({ directoryPath: getDocumentInputMediaPath({ roomId: room._id, documentInputId }) });
-    } finally {
-      if (documentInputLock) {
-        await this.lockStore.releaseLock(documentInputLock);
-      }
+    if (!documentInput) {
+      throw new NotFound(`Document input '${documentInputId}' not found.`);
     }
+
+    const document = await this.documentStore.getDocumentById(documentInput.documentId);
+    if (!document) {
+      throw new NotFound(`Document '${documentInput.documentId}' not found.`);
+    }
+
+    const room = await this.roomStore.getRoomById(document.roomId);
+    if (documentInput.createdBy !== user._id && !isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+      throw new Forbidden(`User is not authorized to delete document input '${documentInputId}'`);
+    }
+
+    await this.transactionRunner.run(async session => {
+      await this.documentInputMediaItemStore.deleteDocumentInputMediaItemsByDocumentInputId(documentInputId, { session });
+      await this.documentInputStore.deleteDocumentInputById(documentInputId, { session });
+    });
+
+    await this.cdn.deleteDirectory({ directoryPath: getDocumentInputMediaPath({ roomId: room._id, documentInputId }) });
   }
 }
 

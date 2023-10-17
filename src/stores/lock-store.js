@@ -9,7 +9,6 @@ const LOCK_TYPE = {
   batch: 'batch',
   event: 'event',
   document: 'document',
-  documentInput: 'document-input',
   storagePlan: 'storage-plan',
   maintenance: 'maintenance'
 };
@@ -43,10 +42,6 @@ class LockStore {
 
   takeDocumentLock(key) {
     return this._takeLock({ type: LOCK_TYPE.document, key, expirationTimeInMinutes: 1 });
-  }
-
-  takeDocumentInputLock(key) {
-    return this._takeLock({ type: LOCK_TYPE.documentInput, key, expirationTimeInMinutes: 1 });
   }
 
   takeStoragePlanLock(key) {
