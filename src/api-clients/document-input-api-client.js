@@ -25,6 +25,15 @@ class DocumentInputApiClient {
       .then(res => res.data);
   }
 
+  getDocumentInputsByDocumentIdAndUserId({ documentId, createdByUserId }) {
+    return this.httpClient
+      .get(
+        `/api/v1/doc-inputs/documents/${encodeURIComponent(documentId)}?createdByUserId=${encodeURIComponent(createdByUserId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getDocumentInputsByRoomId(roomId) {
     return this.httpClient
       .get(
@@ -34,7 +43,7 @@ class DocumentInputApiClient {
       .then(res => res.data);
   }
 
-  getDocumentInputsCreatedByUser(userId) {
+  getAllDocumentInputsCreatedByUser(userId) {
     return this.httpClient
       .get(
         `/api/v1/doc-inputs/users/${encodeURIComponent(userId)}`,

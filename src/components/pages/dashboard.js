@@ -146,7 +146,7 @@ function Dashboard({ PageTemplate }) {
   const fetchDocumentInputs = useCallback(async () => {
     try {
       setFetchingDocumentInputs(true);
-      const documentInputApiClientResponse = await documentInputApiClient.getDocumentInputsCreatedByUser(user._id);
+      const documentInputApiClientResponse = await documentInputApiClient.getAllDocumentInputsCreatedByUser(user._id);
       setDocumentInputs(documentInputApiClientResponse.documentInputs);
     } finally {
       setFetchingDocumentInputs(false);

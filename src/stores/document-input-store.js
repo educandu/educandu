@@ -13,7 +13,7 @@ class DocumentInputStore {
     return this.collection.findOne({ _id: documentInputId }, { session });
   }
 
-  getDocumentInputsCreatedByUser(userId, { session } = {}) {
+  getAllDocumentInputsCreatedByUser(userId, { session } = {}) {
     return this.collection.find({ createdBy: userId }, { session }).toArray();
   }
 
