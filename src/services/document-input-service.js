@@ -40,7 +40,7 @@ class DocumentInputService {
   }
 
   async getAllDocumentInputsCreatedByUser(userId) {
-    const documentInputs = await this.documentInputStore.getDocumentInputsCreatedByUser(userId);
+    const documentInputs = await this.documentInputStore.getAllDocumentInputsCreatedByUser(userId);
     return documentInputs.sort(by(input => input.createdOn, 'desc'));
   }
 
@@ -99,7 +99,7 @@ class DocumentInputService {
   }
 
   async createDocumentInputSectionComment({ documentInputId, sectionKey, text, user }) {
-    const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
+    const documentInput = await this.documentInputStore.getAllDocumentInputById(documentInputId);
 
     if (!documentInput) {
       throw new NotFound(`Document input '${documentInputId}' not found.`);
