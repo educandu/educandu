@@ -213,6 +213,26 @@ export function createTestDocumentInput(container, user, data) {
   });
 }
 
+export async function createTestDocumentInputMediaItem(container, user, data) {
+  const now = new Date();
+  const db = container.get(Database);
+
+  const newItem = {
+    _id: uniqueId.create(),
+    roomId: data.roomId,
+    documentInputId: data.documentInputId,
+    resourceType: data.resourceType,
+    contentType: data.contentType,
+    size: data.size || 1,
+    createdBy: user._id,
+    createdOn: data.createdOn || now,
+    url: data.storageUrl || ''
+  };
+
+  await db.documentInputMediaItems.insertOne(newItem);
+  return newItem;
+}
+
 export function createTestDocument(container, user, data) {
   const documentService = container.get(DocumentService);
 

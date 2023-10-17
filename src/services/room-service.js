@@ -16,6 +16,7 @@ import DocumentStore from '../stores/document-store.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import DocumentInputStore from '../stores/document-input-store.js';
 import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
@@ -23,7 +24,7 @@ import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
-import { createUniqueStorageFileName, getPrivateStorageOverview, getRoomMediaRoomPath } from '../utils/storage-utils.js';
+import { createUniqueStorageFileName, getDocumentInputMediaPath, getPrivateStorageOverview, getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import {
   CDN_URL_PREFIX,
   DEFAULT_CONTENT_TYPE,
@@ -44,6 +45,7 @@ export default class RoomService {
     DocumentRevisionStore,
     DocumentCommentStore,
     DocumentStore,
+    DocumentInputStore,
     UserStore,
     StoragePlanStore,
     EventStore,
@@ -60,6 +62,7 @@ export default class RoomService {
     documentRevisionStore,
     documentCommentStore,
     documentStore,
+    documentInputStore,
     userStore,
     storagePlanStore,
     eventStore,
@@ -76,6 +79,7 @@ export default class RoomService {
     this.storagePlanStore = storagePlanStore;
     this.transactionRunner = transactionRunner;
     this.roomMediaItemStore = roomMediaItemStore;
+    this.documentInputStore = documentInputStore;
     this.roomInvitationStore = roomInvitationStore;
     this.documentCommentStore = documentCommentStore;
     this.documentRevisionStore = documentRevisionStore;
@@ -198,12 +202,15 @@ export default class RoomService {
         await this.documentCommentStore.deleteDocumentCommentsByDocumentIds(documentIds, { session });
         await this.documentRevisionStore.deleteDocumentsByRoomId(room._id, { session });
         await this.documentStore.deleteDocumentsByRoomId(room._id, { session });
+        await this.documentInputStore.deleteDocumentInputsByDocumentIds(documentIds, { session });
         await this.roomInvitationStore.deleteRoomInvitationsByRoomId(room._id, { session });
         await this.roomStore.deleteRoomById(room._id, { session });
         await this.roomMediaItemStore.deleteRoomMediaItemsByRoomId(room._id, { session });
+        await this.documentInputMediaItemStore.deleteDocumentInputMediaItemsByRoomId(room._id, { session });
       });
 
       await this.cdn.deleteDirectory({ directoryPath: getRoomMediaRoomPath(room._id) });
+      await this.cdn.deleteDirectory({ directoryPath: getDocumentInputMediaPath({ roomId: room._id }) });
 
       const { usedBytes } = await this.getRoomMediaOverview({ user: roomOwner });
       const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes });

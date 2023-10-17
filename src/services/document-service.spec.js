@@ -1,3 +1,4 @@
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
@@ -19,7 +20,9 @@ import {
   pruneTestEnvironment,
   setupTestEnvironment,
   createTestUser,
-  createTestDocumentComment
+  createTestDocumentComment,
+  createTestDocumentInput,
+  createTestDocumentInputMediaItem
 } from '../test-helper.js';
 
 const { NotFound, Forbidden } = httpErrors;
@@ -41,6 +44,7 @@ describe('document-service', () => {
   let adminUser;
   let user;
   let sut;
+  let cdn;
   let db;
 
   beforeAll(async () => {
@@ -52,6 +56,7 @@ describe('document-service', () => {
     lockStore = container.get(LockStore);
     sut = container.get(DocumentService);
     db = container.get(Database);
+    cdn = container.get(Cdn);
   });
 
   afterAll(async () => {
@@ -439,6 +444,7 @@ describe('document-service', () => {
   describe('hardDeletePrivateDocument', () => {
     let room;
     let documentToDelete;
+    let documentInputToDelete;
     const roomLock = { _id: uniqueId.create() };
     const documentLock = { _id: uniqueId.create() };
 
@@ -446,10 +452,13 @@ describe('document-service', () => {
       sandbox.stub(lockStore, 'takeDocumentLock').resolves(documentLock);
       sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
       sandbox.stub(lockStore, 'releaseLock');
+      sandbox.stub(cdn, 'deleteDirectory').resolves();
 
       room = await createTestRoom(container, { ownedBy: user._id });
       documentToDelete = await createTestDocument(container, user, { roomId: room._id });
       await createTestDocumentComment(container, user, { documentId: documentToDelete._id });
+      documentInputToDelete = await createTestDocumentInput(container, user, { documentId: documentToDelete._id, documentRevisionId: documentToDelete.revision, sections: {} });
+      await createTestDocumentInputMediaItem(container, user, { documentInputId: documentInputToDelete._id });
 
       await db.rooms.updateOne({ _id: room._id }, { $set: { documents: ['otherDocumentId', documentToDelete._id] } });
 
@@ -479,9 +488,23 @@ describe('document-service', () => {
       expect(documentAfterDeletion).toEqual(null);
     });
 
+    it('deletes the document inputs', async () => {
+      const documentInputsAfterDeletion = await db.documentInputs.find({ documentId: documentToDelete._id }).toArray();
+      expect(documentInputsAfterDeletion).toEqual([]);
+    });
+
+    it('deletes the document input media items', async () => {
+      const mediaItemsAfterDeletion = await db.documentInputMediaItems.find({ documentInputId: documentInputToDelete._id }).toArray();
+      expect(mediaItemsAfterDeletion).toEqual([]);
+    });
+
     it('deletes the comments for the document', async () => {
       const commentAfterDeletion = await db.documentComments.findOne({ documentId: documentToDelete._id });
       expect(commentAfterDeletion).toEqual(null);
+    });
+
+    it('deleted the CDN resources for the document inputs', () => {
+      assert.calledWith(cdn.deleteDirectory, { directoryPath: `document-input-media/${room._id}/${documentInputToDelete._id}` });
     });
 
     it('releases the lock on the document', () => {

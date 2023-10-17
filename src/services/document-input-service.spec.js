@@ -1,9 +1,10 @@
 import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
-import { createSandbox } from 'sinon';
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
+import { assert, createSandbox } from 'sinon';
 import { ROLE } from '../domain/constants.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
 import DocumentInputService from './document-input-service.js';
 import TextFieldInfo from '../plugins/text-field/text-field-info.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -17,9 +18,9 @@ import {
   createTestDocumentInput,
   hardDeletePrivateTestDocument,
   updateTestDocument,
-  createTestSection
+  createTestSection,
+  createTestDocumentInputMediaItem
 } from '../test-helper.js';
-import StoragePlanStore from '../stores/storage-plan-store.js';
 
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
@@ -512,6 +513,8 @@ describe('document-input-service', () => {
     let documentInput;
 
     beforeEach(async () => {
+      sandbox.stub(cdn, 'deleteDirectory').resolves();
+
       room = await createTestRoom(
         container,
         {
@@ -532,6 +535,10 @@ describe('document-input-service', () => {
         documentId: document._id,
         documentRevisionId: document.revision,
         sections: {}
+      });
+      await createTestDocumentInputMediaItem(container, inputtingUser, {
+        documentId: document._id,
+        roomId: room._id
       });
     });
 
@@ -560,6 +567,15 @@ describe('document-input-service', () => {
         result = await db.documentInputs.findOne({ _id: documentInput._id });
         expect(result).toEqual(null);
       });
+
+      it('should delete the document input media items', async () => {
+        result = await db.documentInputMediaItems.find({ documentInputId: documentInput._id }).toArray();
+        expect(result).toEqual([]);
+      });
+
+      it('should delete the CDN resources', () => {
+        assert.calledWith(cdn.deleteDirectory, { directoryPath: `document-input-media/${room._id}/${documentInput._id}` });
+      });
     });
 
     describe('when the room is no longer collaborative and the user is a room member and the creator of the documentInput', () => {
@@ -570,6 +586,15 @@ describe('document-input-service', () => {
       it('should delete the document input', async () => {
         result = await db.documentInputs.findOne({ _id: documentInput._id });
         expect(result).toEqual(null);
+      });
+
+      it('should delete the document input media items', async () => {
+        result = await db.documentInputMediaItems.find({ documentInputId: documentInput._id }).toArray();
+        expect(result).toEqual([]);
+      });
+
+      it('should delete the CDN resources', () => {
+        assert.calledWith(cdn.deleteDirectory, { directoryPath: `document-input-media/${room._id}/${documentInput._id}` });
       });
     });
 
@@ -592,6 +617,15 @@ describe('document-input-service', () => {
       it('should delete the document input', async () => {
         result = await db.documentInputs.findOne({ _id: documentInput._id });
         expect(result).toEqual(null);
+      });
+
+      it('should delete the document input media items', async () => {
+        result = await db.documentInputMediaItems.find({ documentInputId: documentInput._id }).toArray();
+        expect(result).toEqual([]);
+      });
+
+      it('should delete the CDN resources', () => {
+        assert.calledWith(cdn.deleteDirectory, { directoryPath: `document-input-media/${room._id}/${documentInput._id}` });
       });
     });
   });

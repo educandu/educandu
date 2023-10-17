@@ -27,6 +27,9 @@ import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
+import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
+import DocumentInputStore from '../stores/document-input-store.js';
+import { getDocumentInputMediaPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -39,6 +42,8 @@ class DocumentService {
     DocumentCommentStore,
     DocumentOrderStore,
     DocumentStore,
+    DocumentInputStore,
+    DocumentInputMediaItemStore,
     RoomStore,
     BatchStore,
     TaskStore,
@@ -54,6 +59,8 @@ class DocumentService {
     documentCommentStore,
     documentOrderStore,
     documentStore,
+    documentInputStore,
+    documentInputMediaItemStore,
     roomStore,
     batchStore,
     taskStore,
@@ -67,6 +74,8 @@ class DocumentService {
     this.documentCommentStore = documentCommentStore;
     this.documentOrderStore = documentOrderStore;
     this.documentStore = documentStore;
+    this.documentInputStore = documentInputStore;
+    this.documentInputMediaItemStore = documentInputMediaItemStore;
     this.roomStore = roomStore;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
@@ -346,8 +355,11 @@ class DocumentService {
   }
 
   async hardDeletePrivateDocument({ documentId, user }) {
+    let doc;
+    let room;
     let roomLock;
     let documentLock;
+    let documentInputIds;
 
     try {
       documentLock = await this.lockStore.takeDocumentLock(documentId);
@@ -355,23 +367,32 @@ class DocumentService {
       logger.info(`Hard deleting document '${documentId}'`);
 
       await this.transactionRunner.run(async session => {
-        const doc = await this.documentStore.getDocumentById(documentId, { session });
+        doc = await this.documentStore.getDocumentById(documentId, { session });
         if (!doc.roomId) {
           throw new Forbidden('Cannot delete public documents');
         }
 
         roomLock = await this.lockStore.takeRoomLock(doc.roomId);
-        const room = await this.roomStore.getRoomById(doc.roomId, { session });
+        room = await this.roomStore.getRoomById(doc.roomId, { session });
         if (!isRoomOwner({ room, userId: user._id })) {
           throw new Forbidden('Only room owners can delete room documents');
         }
 
+        const documentInputs = await this.documentInputStore.getDocumentInputsByDocumentId(documentId, { session });
+        documentInputIds = documentInputs.map(input => input._id);
+
         room.documents = ensureIsExcluded(room.documents, doc._id);
         await this.roomStore.saveRoom(room, { session });
         await this.documentStore.deleteDocumentById(documentId, { session });
+        await this.documentInputStore.deleteDocumentInputsByDocumentId(documentId, { session });
         await this.documentRevisionStore.deleteDocumentRevisionsByDocumentId(documentId, { session });
         await this.documentCommentStore.deleteDocumentCommentsByDocumentId(documentId, { session });
+        await this.documentInputMediaItemStore.deleteDocumentInputMediaItemsByDocumentInputIds(documentInputIds, { session });
       });
+
+      for (const documentInputId of documentInputIds) {
+        await this.cdn.deleteDirectory({ directoryPath: getDocumentInputMediaPath({ roomId: doc.roomId, documentInputId }) });
+      }
     } finally {
       if (documentLock) {
         await this.lockStore.releaseLock(documentLock);

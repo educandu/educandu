@@ -21,8 +21,9 @@ export function getRoomMediaRoomPath(roomId) {
   return `room-media/${roomId}`;
 }
 
-export function getDocumentInputMediaPath(roomId, documentInputId) {
-  return `document-input-media/${roomId}/${documentInputId}`;
+export function getDocumentInputMediaPath({ roomId, documentInputId }) {
+  const roomPath = `document-input-media/${roomId}`;
+  return documentInputId ? `${roomPath}/${documentInputId}` : roomPath;
 }
 
 const getScaledDownDimensions = img => {

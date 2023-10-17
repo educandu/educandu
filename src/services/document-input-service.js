@@ -13,6 +13,7 @@ import EventStore from '../stores/event-store.js';
 import DocumentStore from '../stores/document-store.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
+import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentInputStore from '../stores/document-input-store.js';
 import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
@@ -36,7 +37,8 @@ class DocumentInputService {
     StoragePlanStore,
     LockStore,
     Cdn,
-    EventStore
+    EventStore,
+    TransactionRunner
   ];
 
   constructor(
@@ -50,7 +52,8 @@ class DocumentInputService {
     storagePlanStore,
     lockStore,
     cdn,
-    eventStore
+    eventStore,
+    transactionRunner
   ) {
     this.documentInputStore = documentInputStore;
     this.documentStore = documentStore;
@@ -63,6 +66,7 @@ class DocumentInputService {
     this.lockStore = lockStore;
     this.cdn = cdn;
     this.eventStore = eventStore;
+    this.transactionRunner = transactionRunner;
   }
 
   async getDocumentInputById({ documentInputId, user }) {
@@ -148,7 +152,7 @@ class DocumentInputService {
           }
 
           const storageFileName = createUniqueStorageFileName(sectionFile.name);
-          const storagePath = urlUtils.concatParts(getDocumentInputMediaPath(room._id, documentInputId), storageFileName);
+          const storagePath = urlUtils.concatParts(getDocumentInputMediaPath({ roomId: room._id, documentInputId }), storageFileName);
           const storageUrl = `${CDN_URL_PREFIX}${storagePath}`;
 
           const resourceType = getResourceType(storageUrl);
@@ -305,23 +309,39 @@ class DocumentInputService {
   }
 
   async hardDeleteDocumentInput({ documentInputId, user }) {
-    const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
+    let documentInput;
+    let documentInputLock;
 
-    if (!documentInput) {
-      throw new NotFound(`Document input '${documentInputId}' not found.`);
+    try {
+      documentInputLock = await this.lockStore.takeDocumentInputLock(documentInputId);
+
+      documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
+
+      if (!documentInput) {
+        throw new NotFound(`Document input '${documentInputId}' not found.`);
+      }
+
+      const document = await this.documentStore.getDocumentById(documentInput.documentId);
+      if (!document) {
+        throw new NotFound(`Document '${documentInput.documentId}' not found.`);
+      }
+
+      const room = await this.roomStore.getRoomById(document.roomId);
+      if (documentInput.createdBy !== user._id && !isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
+        throw new Forbidden(`User is not authorized to delete document input '${documentInputId}'`);
+      }
+
+      await this.transactionRunner.run(async session => {
+        await this.documentInputMediaItemStore.deleteDocumentInputMediaItemsByDocumentInputId(documentInputId, { session });
+        await this.documentInputStore.deleteDocumentInputById(documentInputId, { session });
+      });
+
+      await this.cdn.deleteDirectory({ directoryPath: getDocumentInputMediaPath({ roomId: room._id, documentInputId }) });
+    } finally {
+      if (documentInputLock) {
+        await this.lockStore.releaseLock(documentInputLock);
+      }
     }
-
-    const document = await this.documentStore.getDocumentById(documentInput.documentId);
-    if (!document) {
-      throw new NotFound(`Document '${documentInput.documentId}' not found.`);
-    }
-
-    const room = await this.roomStore.getRoomById(document.roomId);
-    if (documentInput.createdBy !== user._id && !isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })) {
-      throw new Forbidden(`User is not authorized to delete document input '${documentInputId}'`);
-    }
-
-    await this.documentInputStore.deleteDocumentInputById(documentInputId);
   }
 }
 
