@@ -875,7 +875,7 @@ function Document({ initialState, PageTemplate }) {
 
   useEffect(() => {
     if (isCurrentInputSubmitted && documentInputs.length) {
-      handleViewDocumentInputClick(documentInputs[documentInputs.length - 1]._id);
+      handleViewDocumentInputClick(documentInputs[0]._id);
     }
   }, [isCurrentInputSubmitted, documentInputs, handleViewDocumentInputClick]);
 
