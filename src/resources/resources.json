@@ -4156,6 +4156,10 @@
       "en": "Upload a file",
       "de": "Eine Datei hochladen"
     },
+    "mediaUploadMultipleEmptyStateTitle": {
+      "en": "Upload files",
+      "de": "Dateien hochladen"
+    },
     "mediaUploadAlternativeTitle": {
       "en": "Upload a different file",
       "de": "Eine andere Datei hochladen"
@@ -4163,6 +4167,10 @@
     "mediaUploadEmptyStateSubtitle": {
       "en": "Drag and drop a file here to upload it or use the button to select a file from your machine.",
       "de": "Ziehe eine Datei hierher, um sie hochzuladen, oder benutze den Button, um eine Datei von deinem Computer auszuwählen."
+    },
+    "mediaUploadMultipleEmptyStateSubtitle": {
+      "en": "Drag and drop files here to upload them or use the button to select files from your machine.",
+      "de": "Ziehe Dateien hierher, um sie hochzuladen, oder benutze den Button, um Dateien von deinem Computer auszuwählen."
     },
     "browse": {
       "en": "Browse ...",
@@ -4173,8 +4181,8 @@
       "de": "Hochladen"
     },
     "uploadLimitInfo": {
-      "en": "(max. {limit})",
-      "de": "(max. {limit})"
+      "en": "(max. {limit}{maxFiles, plural, =1 {} other {, max. # files}})",
+      "de": "(max. {limit}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
     },
     "fileIsTooBig": {
       "en": "The file is too big. The upload limit is {limit}.",

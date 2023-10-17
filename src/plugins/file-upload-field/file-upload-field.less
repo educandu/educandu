@@ -1,0 +1,14 @@
+.FileUploadFieldDisplay {}
+
+.FileUploadFieldDisplay-dropzone {
+  .m-dropzone;
+  display: grid;
+
+  &.is-dropping {
+    .m-dropzone-active;
+  }
+
+  &.is-drop-rejected {
+    .m-dropzone-error;
+  }
+}
