@@ -648,6 +648,14 @@
       "en": "New message in room",
       "de": "Neue Nachricht im Raum"
     },
+    "documentInputCreatedNotification": {
+      "en": "New input submitted for document",
+      "de": "Neue Eingabe gesendet für Dokument"
+    },
+    "documentInputCommentCreatedNotification": {
+      "en": "New comment on document input",
+      "de": "Neuer Kommentar zur Dokumenteingabe"
+    },
     "remove": {
       "en": "Remove",
       "de": "Entfernen"
@@ -655,6 +663,10 @@
     "removeAll": {
       "en": "Remove all",
       "de": "Alle entfernen"
+    },
+    "documentInputNotAvailable": {
+      "en": "[Document input no longer available]\n",
+      "de": "[Dokumenteingabe nicht mehr verfügbar]\n"
     }
   },
   "roomsTab": {

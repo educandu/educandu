@@ -10,6 +10,7 @@ import DocumentStore from '../stores/document-store.js';
 import notificationUtils from '../utils/notification-utils.js';
 import NotificationStore from '../stores/notification-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import DocumentInputStore from '../stores/document-input-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { EVENT_TYPE, NOTIFICATION_EXPIRATION_IN_MONTHS } from '../domain/constants.js';
 
@@ -37,14 +38,35 @@ const createNotificationForEvent = ({ event, user, reasons }) => {
 };
 
 class EventService {
-  static dependencies = [EventStore, NotificationStore, UserStore, DocumentStore, DocumentRevisionStore, RoomStore, LockStore, TransactionRunner];
+  static dependencies = [
+    EventStore,
+    NotificationStore,
+    UserStore,
+    DocumentStore,
+    DocumentRevisionStore,
+    DocumentInputStore,
+    RoomStore,
+    LockStore,
+    TransactionRunner
+  ];
 
-  constructor(eventStore, notificationStore, userStore, documentStore, documentRevisionStore, roomStore, lockStore, transactionRunner) {
+  constructor(
+    eventStore,
+    notificationStore,
+    userStore,
+    documentStore,
+    documentRevisionStore,
+    documentInputStore,
+    roomStore,
+    lockStore,
+    transactionRunner
+  ) {
     this.eventStore = eventStore;
     this.notificationStore = notificationStore;
     this.userStore = userStore;
     this.documentStore = documentStore;
     this.documentRevisionStore = documentRevisionStore;
+    this.documentInputStore = documentInputStore;
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.transactionRunner = transactionRunner;
@@ -164,6 +186,86 @@ class EventService {
     }
   }
 
+  async _processDocumentInputCreatedEvent(event, context) {
+    const userIterator = this.userStore.getActiveUsersIterator();
+
+    try {
+      const { documentInputId, documentId, roomId } = event.params;
+      const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
+      const document = await this.documentStore.getDocumentById(documentId);
+      const room = await this.roomStore.getRoomById(roomId);
+
+      const createdNotifications = [];
+      for await (const user of userIterator) {
+        if (context.cancellationRequested) {
+          return {
+            status: PROCESSING_RESULT.cancelled,
+            notifications: []
+          };
+        }
+
+        const reasons = notificationUtils.determineNotificationReasonsForDocumentInputCreatedEvent({
+          event,
+          documentInput,
+          document,
+          room,
+          notifiedUser: user
+        });
+
+        if (reasons.length) {
+          createdNotifications.push(createNotificationForEvent({ event, user, reasons }));
+        }
+      }
+
+      return {
+        status: PROCESSING_RESULT.succeeded,
+        notifications: createdNotifications
+      };
+    } finally {
+      await userIterator.close();
+    }
+  }
+
+  async _processDocumentInputCommentCreatedEvent(event, context) {
+    const userIterator = this.userStore.getActiveUsersIterator();
+
+    try {
+      const { documentInputId, documentId, roomId } = event.params;
+      const documentInput = await this.documentInputStore.getDocumentInputById(documentInputId);
+      const document = await this.documentStore.getDocumentById(documentId);
+      const room = await this.roomStore.getRoomById(roomId);
+
+      const createdNotifications = [];
+      for await (const user of userIterator) {
+        if (context.cancellationRequested) {
+          return {
+            status: PROCESSING_RESULT.cancelled,
+            notifications: []
+          };
+        }
+
+        const reasons = notificationUtils.determineNotificationReasonsForDocumentInputCommentCreatedEvent({
+          event,
+          documentInput,
+          document,
+          room,
+          notifiedUser: user
+        });
+
+        if (reasons.length) {
+          createdNotifications.push(createNotificationForEvent({ event, user, reasons }));
+        }
+      }
+
+      return {
+        status: PROCESSING_RESULT.succeeded,
+        notifications: createdNotifications
+      };
+    } finally {
+      await userIterator.close();
+    }
+  }
+
   async _processEvent(eventId, context) {
     let lock;
     try {
@@ -192,6 +294,12 @@ class EventService {
             break;
           case EVENT_TYPE.roomMessageCreated:
             processingResult = await this._processRoomMessageCreatedEvent(event, context);
+            break;
+          case EVENT_TYPE.documentInputCreated:
+            processingResult = await this._processDocumentInputCreatedEvent(event, context);
+            break;
+          case EVENT_TYPE.documentInputCommentCreated:
+            processingResult = await this._processDocumentInputCommentCreatedEvent(event, context);
             break;
           default:
             throw new Error(`Event type ${event.type} is unknown`);

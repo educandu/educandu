@@ -1,8 +1,8 @@
 import cloneDeep from './clone-deep.js';
-import { isRoomOwnerOrInvitedMember } from './room-utils.js';
+import { isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from './room-utils.js';
 import { EVENT_TYPE, FAVORITE_TYPE, NOTIFICATION_REASON } from '../domain/constants.js';
 
-function shouldProcessEvent({ event, documentRevision, document, room, notifiedUser }) {
+function shouldProcessEvent({ event, documentRevision, document, documentInput, room, notifiedUser }) {
   let dataEntryWasDeleted = false;
 
   switch (event.type) {
@@ -14,6 +14,10 @@ function shouldProcessEvent({ event, documentRevision, document, room, notifiedU
       break;
     case EVENT_TYPE.roomMessageCreated:
       dataEntryWasDeleted = !room || !room.messages.find(message => message.key === event.params.roomMessageKey);
+      break;
+    case EVENT_TYPE.documentInputCreated:
+    case EVENT_TYPE.documentInputCommentCreated:
+      dataEntryWasDeleted = !documentInput || !document || !room;
       break;
     default:
       throw new Error(`Unexpected event type '${event.type}'`);
@@ -81,6 +85,18 @@ function collectFavoriteReasonsAfterRoomEvent({ reasons, roomId, notifiedUser })
   }
 }
 
+function collectAuthorReasonAfterDocumentInputEvent({ reasons, documentInput, notifiedUser }) {
+  if (documentInput.createdBy === notifiedUser._id) {
+    reasons.add(NOTIFICATION_REASON.documentInputAuthor);
+  }
+}
+
+function collectRoomMembershipReasonsAfterDocumentInputEvent({ reasons, room, notifiedUser }) {
+  if (room && isRoomOwnerOrInvitedCollaborator({ room, userId: notifiedUser._id })) {
+    reasons.add(NOTIFICATION_REASON.roomMembership);
+  }
+}
+
 function determineNotificationReasonsForDocumentRevisionCreatedEvent({ event, documentRevision, document, room, notifiedUser }) {
   if (!shouldProcessEvent({ event, documentRevision, document, room, notifiedUser })) {
     return [];
@@ -120,6 +136,31 @@ function determineNotificationReasonsForRoomMessageCreatedEvent({ event, room, n
   return [...reasons];
 }
 
+function determineNotificationReasonsForDocumentInputCreatedEvent({ event, documentInput, document, room, notifiedUser }) {
+  if (!shouldProcessEvent({ event, documentInput, document, room, notifiedUser })) {
+    return [];
+  }
+
+  const reasons = new Set();
+
+  collectRoomMembershipReasonsAfterDocumentInputEvent({ reasons, room, notifiedUser });
+
+  return [...reasons];
+}
+
+function determineNotificationReasonsForDocumentInputCommentCreatedEvent({ event, documentInput, document, room, notifiedUser }) {
+  if (!shouldProcessEvent({ event, documentInput, document, room, notifiedUser })) {
+    return [];
+  }
+
+  const reasons = new Set();
+
+  collectAuthorReasonAfterDocumentInputEvent({ reasons, documentInput, notifiedUser });
+  collectRoomMembershipReasonsAfterDocumentInputEvent({ reasons, room, notifiedUser });
+
+  return [...reasons];
+}
+
 function _createGroupKey(notification) {
   switch (notification.eventType) {
     case EVENT_TYPE.documentRevisionCreated:
@@ -127,6 +168,11 @@ function _createGroupKey(notification) {
       return [notification.eventType, notification.eventParams.documentId].join('|');
     case EVENT_TYPE.roomMessageCreated:
       return [notification.eventType, notification.eventParams.roomId, notification.eventParams.roomMessageKey].join('|');
+    case EVENT_TYPE.documentInputCreated:
+      return [notification.eventType, notification.eventParams.documentInputId].join('|');
+    case EVENT_TYPE.documentInputCommentCreated:
+      return [notification.eventType, notification.eventParams.documentInputId, notification.commentKey].join('|');
+
     default:
       throw new Error(`Unsupported event type '${notification.eventType}'`);
   }
@@ -161,5 +207,7 @@ export default {
   groupNotifications,
   determineNotificationReasonsForRoomMessageCreatedEvent,
   determineNotificationReasonsForDocumentCommentCreatedEvent,
-  determineNotificationReasonsForDocumentRevisionCreatedEvent
+  determineNotificationReasonsForDocumentRevisionCreatedEvent,
+  determineNotificationReasonsForDocumentInputCreatedEvent,
+  determineNotificationReasonsForDocumentInputCommentCreatedEvent
 };

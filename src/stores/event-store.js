@@ -49,6 +49,22 @@ class EventStore {
     );
   }
 
+  recordDocumentInputCreatedEvent({ documentInput, room, user }, { session } = {}) {
+    return this._recordEvent(
+      EVENT_TYPE.documentInputCreated,
+      { userId: user._id, documentInputId: documentInput._id, documentId: documentInput.documentId, roomId: room._id },
+      { session }
+    );
+  }
+
+  recordDocumentInputCommentCreatedEvent({ commentKey, documentInput, room, user }, { session } = {}) {
+    return this._recordEvent(
+      EVENT_TYPE.documentInputCommentCreated,
+      { userId: user._id, commentKey, documentInputId: documentInput._id, documentId: documentInput.documentId, roomId: room._id },
+      { session }
+    );
+  }
+
   async _recordEvent(type, params, { session } = {}) {
     const event = {
       _id: uniqueId.create(),

@@ -9,6 +9,7 @@ import { BellOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { EVENT_TYPE } from '../../domain/constants.js';
+import InputsIcon from '../icons/general/inputs-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
 import MessageIcon from '../icons/general/message-icon.js';
 import WriteIconIcon from '../icons/general/write-icon.js';
@@ -26,6 +27,7 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
 
     const roomNotAvailable = !notificationGroup.eventParams.room;
     const documentNotAvailable = !notificationGroup.eventParams.document;
+    const documentInputNotAvailable = !notificationGroup.eventParams.documentInput;
 
     if (notificationGroup.eventType === EVENT_TYPE.documentRevisionCreated) {
       icon = <WriteIconIcon />;
@@ -56,6 +58,22 @@ function NotificationsTab({ loading, notificationGroups, onRemoveNotificationGro
       title = roomNotAvailable ? t('common:roomNotAvailable') : notificationGroup.eventParams.room.name;
       href = roomNotAvailable ? null : routes.getRoomUrl({ id: notificationGroup.eventParams.room._id });
       description = t('roomMessageCreatedNotification');
+    }
+
+    if (notificationGroup.eventType === EVENT_TYPE.documentInputCreated) {
+      icon = <InputsIcon />;
+      const documentTitle = notificationGroup.eventParams.document?.title;
+      title = documentInputNotAvailable ? t('documentInputNotAvailable') : documentTitle;
+      href = documentInputNotAvailable ? null : routes.getDocumentInputUrl(notificationGroup.eventParams.documentInput._id);
+      description = t('documentInputCreatedNotification');
+    }
+
+    if (notificationGroup.eventType === EVENT_TYPE.documentInputCommentCreated) {
+      icon = <CommentIcon />;
+      const documentTitle = notificationGroup.eventParams.document?.title;
+      title = documentInputNotAvailable ? t('documentInputNotAvailable') : documentTitle;
+      href = documentInputNotAvailable ? null : routes.getDocumentInputUrl(notificationGroup.eventParams.documentInput._id);
+      description = t('documentInputCommentCreatedNotification');
     }
 
     return (

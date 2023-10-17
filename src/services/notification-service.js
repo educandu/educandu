@@ -12,7 +12,7 @@ import {
 
 const logger = new Logger(import.meta.url);
 
-class EventService {
+class NotificationService {
   static dependencies = [NotificationStore, UserStore];
 
   constructor(notificationStore, userStore) {
@@ -66,4 +66,4 @@ class EventService {
   }
 }
 
-export default EventService;
+export default NotificationService;

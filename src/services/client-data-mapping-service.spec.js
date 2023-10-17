@@ -2,21 +2,27 @@ import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import UserStore from '../stores/user-store.js';
+import RoomStore from '../stores/room-store.js';
 import permissions from '../domain/permissions.js';
+import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
+import DocumentInputStore from '../stores/document-input-store.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, EVENT_TYPE, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
   const sandbox = createSandbox();
   const now = new Date();
 
+  let documentInputStore;
+  let documentStore;
   let serverConfig;
   let markdownInfo;
   let userStore;
+  let roomStore;
   let container;
   let user1;
   let user2;
@@ -25,9 +31,12 @@ describe('client-data-mapping-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
+    roomStore = container.get(RoomStore);
     markdownInfo = container.get(MarkdownInfo);
     serverConfig = container.get(ServerConfig);
+    documentStore = container.get(DocumentStore);
     sut = container.get(ClientDataMappingService);
+    documentInputStore = container.get(DocumentInputStore);
   });
 
   beforeEach(async () => {
@@ -1057,4 +1066,200 @@ describe('client-data-mapping-service', () => {
       ]);
     });
   });
+
+  describe('mapUserNotificationGroups', () => {
+    let rooms;
+    let result;
+    let documents;
+    let documentInputs;
+    let notificationGroups;
+
+    beforeEach(async () => {
+      notificationGroups = [
+        {
+          eventParams: { documentId: 'document-id-1' },
+          eventType: EVENT_TYPE.documentRevisionCreated,
+          notificationIds: ['notification-id-A'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { documentId: 'document-id-3' },
+          eventType: EVENT_TYPE.documentRevisionCreated,
+          notificationIds: ['notification-id-B'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { documentId: 'document-id-4' },
+          eventType: EVENT_TYPE.documentRevisionCreated,
+          notificationIds: ['notification-id-C'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { documentId: 'document-id-1' },
+          eventType: EVENT_TYPE.documentCommentCreated,
+          notificationIds: ['notification-id-D'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { roomId: 'room-id-1' },
+          eventType: EVENT_TYPE.roomMessageCreated,
+          notificationIds: ['notification-id-E'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { documentId: 'document-id-1', documentInputId: 'document-input-id-1', roomId: 'room-id-1' },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-F'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { documentId: 'document-id-2', documentInputId: 'document-input-id-2', roomId: 'room-id-2' },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-G'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { documentId: 'document-id-5', documentInputId: 'document-input-id-3', roomId: 'room-id-other' },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-H'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        },
+        {
+          eventParams: { documentId: 'document-id-6', documentInputId: 'document-input-id-4', roomId: 'room-id-6' },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-I'],
+          firstCreatedOn: now,
+          lastCreatedOn: now
+        }
+      ];
+      documents = [
+        { _id: 'document-id-1', roomId: 'room-id-1' },
+        { _id: 'document-id-2', roomId: 'room-id-2' },
+        { _id: 'document-id-3', roomId: 'room-id-other' },
+        { _id: 'document-id-4', roomId: null },
+        { _id: 'document-id-5', roomId: 'room-id-other' },
+        { _id: 'document-id-6', roomId: 'room-id-6' }
+      ];
+      documentInputs = [
+        { _id: 'document-input-id-1', documentId: 'document-id-1' },
+        { _id: 'document-input-id-2', documentId: 'document-id-2' },
+        { _id: 'document-input-id-3', documentId: 'document-id-3' },
+        { _id: 'document-input-id-4', documentId: 'document-id-6' }
+      ];
+      rooms = [
+        { _id: 'room-id-1', ownedBy: user1._id, members: [] },
+        { _id: 'room-id-2', ownedBy: user2._id, members: [{ userId: user1._id, joinedOn: now }], isCollaborative: true },
+        { _id: 'room-id-3', ownedBy: user2._id, members: [{ userId: user1._id, joinedOn: now }], isCollaborative: false }
+      ];
+
+      sandbox.stub(documentStore, 'getDocumentsMetadataByIds').resolves(documents);
+      sandbox.stub(documentInputStore, 'getDocumentInputsByIds').resolves(documentInputs);
+      sandbox.stub(roomStore, 'getRoomsOwnedOrJoinedByUser').resolves(rooms);
+
+      result = await sut.mapUserNotificationGroups(notificationGroups, user1);
+    });
+
+    it('should return the mapped groups when data is accessible', () => {
+      expect(result).toEqual([
+        {
+          eventParams: {
+            document: { _id: 'document-id-1', roomId: 'room-id-1' }
+          },
+          eventType: EVENT_TYPE.documentRevisionCreated,
+          notificationIds: ['notification-id-A'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            document: null
+          },
+          eventType: EVENT_TYPE.documentRevisionCreated,
+          notificationIds: ['notification-id-B'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            document: { _id: 'document-id-4', roomId: null }
+          },
+          eventType: EVENT_TYPE.documentRevisionCreated,
+          notificationIds: ['notification-id-C'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            document: { _id: 'document-id-1', roomId: 'room-id-1' }
+          },
+          eventType: EVENT_TYPE.documentCommentCreated,
+          notificationIds: ['notification-id-D'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            room: { _id: 'room-id-1', ownedBy: user1._id, members: [] }
+          },
+          eventType: EVENT_TYPE.roomMessageCreated,
+          notificationIds: ['notification-id-E'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            document: { _id: 'document-id-1', roomId: 'room-id-1' },
+            documentInput: { _id: 'document-input-id-1', documentId: 'document-id-1' },
+            room: { _id: 'room-id-1', ownedBy: user1._id, members: [] }
+          },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-F'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            document: { _id: 'document-id-2', roomId: 'room-id-2' },
+            documentInput: { _id: 'document-input-id-2', documentId: 'document-id-2' },
+            room: { _id: 'room-id-2', ownedBy: user2._id, members: [{ userId: user1._id, joinedOn: now }], isCollaborative: true }
+          },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-G'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            document: null,
+            documentInput: null,
+            room: null
+          },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-H'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        },
+        {
+          eventParams: {
+            document: null,
+            documentInput: null,
+            room: null
+          },
+          eventType: EVENT_TYPE.documentInputCreated,
+          notificationIds: ['notification-id-I'],
+          firstCreatedOn: now.toISOString(),
+          lastCreatedOn: now.toISOString()
+        }
+      ]);
+    });
+  });
+
 });
