@@ -81,9 +81,11 @@ const VIEW = {
   comments: DOC_VIEW_QUERY_PARAM.comments
 };
 
+const createPendingSectionInput = () => ({ data: null, files: [], comments: [] });
+
 const createPendingDocumentInput = sections => {
   return {
-    sections: Object.fromEntries(sections.map(section => [section.key, { data: null, files: [], comments: [] }])),
+    sections: Object.fromEntries(sections.map(section => [section.key, createPendingSectionInput()])),
     pendingFileMap: {},
     pendingFilesSize: 0
   };
@@ -637,9 +639,7 @@ function Document({ initialState, PageTemplate }) {
     const newSections = insertItemAt(currentSections, newSection, index);
     setCurrentSections(newSections);
     setEditedSectionKeys(keys => ensureIsIncluded(keys, newSection.key));
-    if (plugin.info.allowsInput) {
-      setPendingDocumentInput(oldInputs => ({ ...oldInputs, [newSection.key]: null }));
-    }
+    setPendingDocumentInput(oldInputs => ({ ...oldInputs, sections: { ...oldInputs.sections, [newSection.key]: createPendingSectionInput() } }));
     setIsDirty(true);
   }, [currentSections, pluginRegistry, t]);
 
@@ -650,13 +650,10 @@ function Document({ initialState, PageTemplate }) {
 
     const expandedSections = insertItemAt(currentSections, duplicatedSection, index + 1);
     setCurrentSections(expandedSections);
-    const plugin = pluginRegistry.getRegisteredPlugin(duplicatedSection.type);
-    if (plugin.info.allowsInput) {
-      setPendingDocumentInput(oldInputs => ({ ...oldInputs, [duplicatedSection.key]: null }));
-    }
+    setPendingDocumentInput(oldInputs => ({ ...oldInputs, sections: { ...oldInputs.sections, [duplicatedSection.key]: createPendingSectionInput() } }));
     setIsDirty(true);
     setEditedSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
-  }, [currentSections, pluginRegistry]);
+  }, [currentSections]);
 
   const handleSectionCopyToClipboard = useCallback(async index => {
     const originalSection = currentSections[index];
@@ -687,9 +684,7 @@ function Document({ initialState, PageTemplate }) {
       const redactedSection = redactSectionContent({ section: newSection, pluginRegistry, targetRoomId });
       const newSections = insertItemAt(currentSections, redactedSection, index);
       setCurrentSections(newSections);
-      if (plugin.info.allowsInput) {
-        setPendingDocumentInput(oldInputs => ({ ...oldInputs, [redactedSection.key]: null }));
-      }
+      setPendingDocumentInput(oldInputs => ({ ...oldInputs, sections: { ...oldInputs.sections, [redactedSection.key]: createPendingSectionInput() } }));
       setIsDirty(true);
       return true;
     } catch (error) {
@@ -706,7 +701,7 @@ function Document({ initialState, PageTemplate }) {
         const reducedSections = removeItemAt(currentSections, index);
         setEditedSectionKeys(keys => ensureIsExcluded(keys, section.key));
         setCurrentSections(reducedSections);
-        setPendingDocumentInput(oldInputs => ensureKeyIsExcluded(oldInputs, section.key));
+        setPendingDocumentInput(oldInputs => ({ ...oldInputs, sections: ensureKeyIsExcluded(oldInputs.sections, section.key) }));
         setIsDirty(true);
       }
     );
@@ -715,7 +710,7 @@ function Document({ initialState, PageTemplate }) {
   const handleSectionEditEnter = useCallback(index => {
     const section = currentSections[index];
     setEditedSectionKeys(keys => ensureIsIncluded(keys, section.key));
-    setPendingDocumentInput(oldInputs => oldInputs[section.key] ? { ...oldInputs, [section.key]: null } : oldInputs);
+    setPendingDocumentInput(oldInputs => ({ ...oldInputs, sections: { ...oldInputs.sections, [section.key]: createPendingSectionInput() } }));
   }, [currentSections]);
 
   const handleSectionEditLeave = useCallback(index => {
@@ -732,7 +727,7 @@ function Document({ initialState, PageTemplate }) {
   const handlePendingSectionDiscard = useCallback(index => {
     const discardedSection = currentSections[index];
     setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
-    setPendingDocumentInput(oldInputs => ensureKeyIsExcluded(oldInputs, discardedSection.key));
+    setPendingDocumentInput(oldInputs => ({ ...oldInputs, sections: ensureKeyIsExcluded(oldInputs.sections, discardedSection.key) }));
     setIsDirty(true);
   }, [currentSections]);
 
