@@ -663,4 +663,7 @@ common:
   postCommentButtonText:
     en: Post comment
     de: Kommentar abschicken
+  totalCommentsNumberTooltip:
+    en: Total number of comments
+    de: Gesamtanzahl an Kommentaren
 

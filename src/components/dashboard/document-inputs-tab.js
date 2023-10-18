@@ -58,10 +58,12 @@ function DocumentInputsTab({ loading, documentInputs, onDeleteDocumentInput }) {
                     <a href={url}>{documentInput.documentTitle}</a>
                   </div>
                   <div className="DocumentInputsTab-actions">
-                    <div className="DocumentInputsTab-comments">
-                      <CommentOutlined shape="square" size="large" />
-                      <div className="DocumentInputsTab-commentsCount">{commentsCount}</div>
-                    </div>
+                    <Tooltip title={t('common:totalCommentsNumberTooltip')}>
+                      <div className="DocumentInputsTab-comments">
+                        <CommentOutlined shape="square" size="large" />
+                        <div className="DocumentInputsTab-commentsCount">{commentsCount}</div>
+                      </div>
+                    </Tooltip>
                     <Tooltip title={t('common:delete')}>
                       <Button
                         type="text"

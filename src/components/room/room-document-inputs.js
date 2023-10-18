@@ -57,7 +57,7 @@ export default function RoomDocumentInputs({ documentInputs, onDelete }) {
               {prettyBytes(usedBytes, { locale: uiLocale })}
             </div>
           </Tooltip>
-          <Tooltip title={t('commentsTooltip')}>
+          <Tooltip title={t('common:totalCommentsNumberTooltip')}>
             <div className="RoomDocumentInputs-commentsGroup">
               <CommentOutlined shape="square" size="large" />
               <div className="RoomDocumentInputs-commentsCount">{commentsCount}</div>

@@ -2294,10 +2294,6 @@
       "en": "Documents which contain input fields can be filled in an submitted by room members. They can be then managed here.",
       "de": "Dokumente, die Eingabefelder enthalten, können von den Raummitgliedern ausgefüllt und abgeschickt werden. Diese können dann hier verwaltet werden."
     },
-    "commentsTooltip": {
-      "en": "Total number of comments",
-      "de": "Gesamtanzahl an Kommentaren"
-    },
     "storageSpaceTooltip": {
       "en": "Occupied storage space",
       "de": "Belegter Speicherplatz"
@@ -4327,6 +4323,10 @@
     "postCommentButtonText": {
       "en": "Post comment",
       "de": "Kommentar abschicken"
+    },
+    "totalCommentsNumberTooltip": {
+      "en": "Total number of comments",
+      "de": "Gesamtanzahl an Kommentaren"
     }
   },
   "pageNames": {
