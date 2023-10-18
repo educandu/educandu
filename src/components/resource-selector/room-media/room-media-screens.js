@@ -36,7 +36,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
-  const roomId = roomMediaContext?.roomId || null;
+  const roomId = roomMediaContext?.singleRoomMediaOverview.roomStorage.roomId || null;
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
@@ -53,9 +53,14 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
 
     try {
       setIsLoading(true);
-      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.getAllRoomMedia({ roomId });
-      setFiles(roomStorage.roomMediaItems);
-      setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan?.maxBytes || 0, usedBytes }));
+      const newSingleRoomMediaOverview = await roomApiClient.getSingleRoomMediaOverview({ roomId });
+      setFiles(newSingleRoomMediaOverview.roomStorage.roomMediaItems);
+      setRoomMediaContext(oldContext => (
+        {
+          ...oldContext,
+          singleRoomMediaOverview: newSingleRoomMediaOverview
+        }
+      ));
     } catch (err) {
       message.error(err.message);
     } finally {

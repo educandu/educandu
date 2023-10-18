@@ -3,7 +3,6 @@ import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import DocumentService from '../services/document-service.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
@@ -25,13 +24,10 @@ class TestsController {
 
     let roomMediaContext;
     if (room) {
-      const { storagePlan, usedBytes } = await this.roomService.getAllRoomMedia({ user, roomId: room._id });
-      roomMediaContext = storagePlan || usedBytes
+      const singleRoomMediaOverview = await this.roomService.getSingleRoomMediaOverview({ user, roomId: room._id });
+      roomMediaContext = singleRoomMediaOverview.storagePlan || singleRoomMediaOverview.usedBytes
         ? {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: usedBytes || 0,
-          maxBytes: storagePlan?.maxBytes || 0,
+          singleRoomMediaOverview,
           isDeletionEnabled: true
         }
         : null;

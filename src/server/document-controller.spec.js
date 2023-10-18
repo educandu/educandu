@@ -4,7 +4,6 @@ import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import DocumentController from './document-controller.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
@@ -35,7 +34,7 @@ describe('document-controller', () => {
 
     roomService = {
       getRoomById: sandbox.stub(),
-      getAllRoomMedia: sandbox.stub()
+      getSingleRoomMediaOverview: sandbox.stub()
     };
 
     clientDataMappingService = {
@@ -82,7 +81,7 @@ describe('document-controller', () => {
     let templateSections;
     let templateDocument;
     let mappedTemplateDocument;
-    let roomMedia;
+    let roomMediaOverview;
     let roomMediaContext;
 
     describe('when the document does not exist', () => {
@@ -180,7 +179,7 @@ describe('document-controller', () => {
 
         doc.slug = 'doc-slug';
 
-        roomMedia = null;
+        roomMediaOverview = null;
         templateSections = [{}];
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
@@ -189,7 +188,7 @@ describe('document-controller', () => {
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
 
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
@@ -225,9 +224,9 @@ describe('document-controller', () => {
         doc.roomId = null;
         room.ownedBy = uniqueId.create();
         room.members = [];
-        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -253,9 +252,9 @@ describe('document-controller', () => {
         doc.roomId = null;
         room.ownedBy = uniqueId.create();
         room.members = [];
-        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -287,7 +286,7 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -325,7 +324,7 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -461,16 +460,13 @@ describe('document-controller', () => {
         mappedRoom = { ...room };
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
-        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
         roomMediaContext = {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: roomMedia.usedBytes,
-          maxBytes: roomMedia.storagePlan.maxBytes,
+          singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: true
         };
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -508,16 +504,13 @@ describe('document-controller', () => {
         mappedRoom = { ...room };
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
-        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
         roomMediaContext = {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: roomMedia.usedBytes,
-          maxBytes: roomMedia.storagePlan.maxBytes,
+          singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: true
         };
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
@@ -555,16 +548,13 @@ describe('document-controller', () => {
         mappedRoom = { ...room };
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
-        roomMedia = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
         roomMediaContext = {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: roomMedia.usedBytes,
-          maxBytes: roomMedia.storagePlan.maxBytes,
+          singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: false
         };
 
-        roomService.getAllRoomMedia.resolves(roomMedia);
+        roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);

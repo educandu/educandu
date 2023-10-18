@@ -11,11 +11,10 @@ import PrivateIcon from '../icons/general/private-icon.js';
 import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { getRoomMediaRoomPath } from '../../utils/storage-utils.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
-import { roomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import UploadButton from '../resource-selector/shared/upload-button.js';
+import { allRoomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import RoomMediaUploadModal from '../resource-selector/room-media/room-media-upload-modal.js';
 import RoomMediaFilesViewer from '../resource-selector/room-media/room-media-files-viewer.js';
@@ -26,7 +25,7 @@ const logger = new Logger(import.meta.url);
 const createUploadModalProps = ({ isOpen = false, files = [] }) => ({ isOpen, files });
 const createPreviewModalProps = ({ isOpen = false, file = null }) => ({ isOpen, file });
 
-function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
+function StorageTab({ allRoomMediaOverview, loading, onAllRoomMediaOverviewChange }) {
   const { t } = useTranslation('storageTab');
 
   const filesViewerApiRef = useRef(null);
@@ -41,25 +40,30 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
   const roomMediaContext = useMemo(() => {
-    return selectedRoomId && roomMediaOverview
-      ? {
-        roomId: selectedRoomId,
-        path: getRoomMediaRoomPath(selectedRoomId),
-        usedBytes: roomMediaOverview.usedBytes || 0,
-        maxBytes: roomMediaOverview.storagePlan?.maxBytes || 0,
-        isDeletionEnabled: true
-      }
-      : null;
-  }, [selectedRoomId, roomMediaOverview]);
+    if (!selectedRoomId || !allRoomMediaOverview) {
+      return null;
+    }
+
+    const singleRoomMediaOverview = {
+      storagePlan: allRoomMediaOverview.storagePlan,
+      usedBytes: allRoomMediaOverview.usedBytes || 0,
+      roomStorage: allRoomMediaOverview.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId)
+    };
+
+    return {
+      singleRoomMediaOverview,
+      isDeletionEnabled: true
+    };
+  }, [selectedRoomId, allRoomMediaOverview]);
 
   useEffect(() => {
-    if (!roomMediaOverview) {
+    if (!allRoomMediaOverview) {
       setRoomOptions([]);
       setSelectedRoomId(null);
       return;
     }
 
-    const newRoomOptions = roomMediaOverview.roomStorageList
+    const newRoomOptions = allRoomMediaOverview.roomStorageList
       .map(roomStorage => ({ value: roomStorage.roomId, label: roomStorage.roomName }))
       .sort(by(option => option.label));
 
@@ -69,13 +73,13 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
         ? oldSelectedRoomId
         : newRoomOptions[0]?.value || null;
     });
-  }, [roomMediaOverview]);
+  }, [allRoomMediaOverview]);
 
   useEffect(() => {
-    const newFiles = roomMediaOverview?.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId)?.roomMediaItems || [];
+    const newFiles = allRoomMediaOverview?.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId)?.roomMediaItems || [];
     setFiles(newFiles);
     setHighlightedFile(oldFile => newFiles.find(file => file.url === oldFile?.url) || null);
-  }, [selectedRoomId, roomMediaOverview]);
+  }, [selectedRoomId, allRoomMediaOverview]);
 
   const handleFileClick = newFile => {
     setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
@@ -90,8 +94,8 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
       try {
         setIsUpdating(true);
         await roomApiClient.deleteRoomMedia({ roomId: selectedRoomId, roomMediaItemId: file._id });
-        const overview = await roomApiClient.getRoomMediaOverview();
-        onRoomMediaOverviewChange(overview);
+        const overview = await roomApiClient.getAllRoomMediaOverview();
+        onAllRoomMediaOverviewChange(overview);
       } catch (error) {
         handleApiError({ error, logger, t });
       } finally {
@@ -117,8 +121,8 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
     setUploadModalProps(oldProps => ({ ...oldProps, isOpen: false }));
     try {
       setIsUpdating(true);
-      const overview = await roomApiClient.getRoomMediaOverview();
-      onRoomMediaOverviewChange(overview);
+      const overview = await roomApiClient.getAllRoomMediaOverview();
+      onAllRoomMediaOverviewChange(overview);
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
@@ -147,7 +151,7 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
     </div>
   );
 
-  const showEmptyState = !roomMediaOverview?.storagePlan && !roomMediaOverview?.usedBytes;
+  const showEmptyState = !allRoomMediaOverview?.storagePlan && !allRoomMediaOverview?.usedBytes;
 
   return (
     <div className="StorageTab">
@@ -162,14 +166,14 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
           {!loading && !showEmptyState && (
             <Fragment>
               <div className="StorageTab-planName">
-                {!roomMediaOverview?.storagePlan && t('noStoragePlan')}
-                {!!roomMediaOverview?.storagePlan && (
-                  <div>{t('storagePlanName')}: <b>{roomMediaOverview.storagePlan.name}</b></div>
+                {!allRoomMediaOverview?.storagePlan && t('noStoragePlan')}
+                {!!allRoomMediaOverview?.storagePlan && (
+                  <div>{t('storagePlanName')}: <b>{allRoomMediaOverview.storagePlan.name}</b></div>
                 )}
               </div>
               <Fragment>
                 <div className="StorageTab-usedStorage">
-                  <UsedStorage usedBytes={roomMediaOverview.usedBytes} maxBytes={roomMediaOverview.storagePlan?.maxBytes} showLabel />
+                  <UsedStorage usedBytes={allRoomMediaOverview.usedBytes} maxBytes={allRoomMediaOverview.storagePlan?.maxBytes} showLabel />
                 </div>
                 {!!selectedRoomId && (
                   <Fragment>
@@ -192,7 +196,7 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
                     </div>
                     <div>
                       <UploadButton
-                        disabled={loading || isUpdating || !roomMediaOverview?.storagePlan}
+                        disabled={loading || isUpdating || !allRoomMediaOverview?.storagePlan}
                         onClick={handleUploadButtonClick}
                         />
                     </div>
@@ -211,14 +215,14 @@ function StorageTab({ roomMediaOverview, loading, onRoomMediaOverviewChange }) {
 
 StorageTab.propTypes = {
   loading: PropTypes.bool,
-  roomMediaOverview: roomMediaOverviewShape,
-  onRoomMediaOverviewChange: PropTypes.func
+  allRoomMediaOverview: allRoomMediaOverviewShape,
+  onAllRoomMediaOverviewChange: PropTypes.func
 };
 
 StorageTab.defaultProps = {
   loading: false,
-  roomMediaOverview: null,
-  onRoomMediaOverviewChange: () => {}
+  allRoomMediaOverview: null,
+  onAllRoomMediaOverviewChange: () => {}
 };
 
 export default StorageTab;

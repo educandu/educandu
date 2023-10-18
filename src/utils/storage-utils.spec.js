@@ -75,10 +75,13 @@ describe('storage-utils', () => {
     let storagePlan;
     let room1MediaItems;
     let room2MediaItems;
+    let documentInputId;
     let room1MediaInputItems;
     let room2MediaInputItems;
 
     beforeEach(async () => {
+      documentInputId = uniqueId.create();
+
       const roomMediaItemStore = {
         getAllRoomMediaItemsByRoomId: stub()
       };
@@ -114,11 +117,13 @@ describe('storage-utils', () => {
       room1MediaItems = [
         {
           _id: uniqueId.create(),
+          documentInputId,
           size: 10,
           url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
         },
         {
           _id: uniqueId.create(),
+          documentInputId,
           size: 20,
           url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png'
         }
@@ -136,6 +141,7 @@ describe('storage-utils', () => {
       room2MediaInputItems = [
         {
           _id: uniqueId.create(),
+          documentInputId,
           size: 50,
           url: 'cdn://document-input-media/dD6coNQoTsK8pgmy94P83g/UtzL4CqWGfoptve6Ddkazn/some-file-UtzL4CqWGfoptve6Ddkazn.png'
         }
@@ -170,12 +176,20 @@ describe('storage-utils', () => {
           {
             roomId: rooms[0]._id,
             roomMediaItems: room1MediaItems,
-            roomName: rooms[0].name
+            roomName: rooms[0].name,
+            usedBytesByDocumentInputMediaItems: 0,
+            usedBytesByRoomMediaItems: 30,
+            usedBytesPerDocumentInput: {}
           },
           {
             roomId: rooms[1]._id,
             roomMediaItems: room2MediaItems,
-            roomName: rooms[1].name
+            roomName: rooms[1].name,
+            usedBytesByDocumentInputMediaItems: 50,
+            usedBytesByRoomMediaItems: 30,
+            usedBytesPerDocumentInput: {
+              [documentInputId]: 50
+            }
           }
         ]
       });

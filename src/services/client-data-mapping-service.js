@@ -161,32 +161,32 @@ class ClientDataMappingService {
     });
   }
 
-  async mapRoomMedia(roomMedia, user) {
+  async mapSingleRoomMediaOverview(singleRoomMediaOverview, user) {
     const grantedPermissions = getUserPermissions(user);
-    const mappedRoomMedia = cloneDeep(roomMedia);
+    const mappedSingleRoomMediaOverview = cloneDeep(singleRoomMediaOverview);
 
-    const { roomMediaItems } = mappedRoomMedia.roomStorage;
+    const { roomMediaItems } = mappedSingleRoomMediaOverview.roomStorage;
     const userMap = await this._getUserMapForRoomMediaItems(roomMediaItems.filter(x => !!x));
 
     const mappedRoomMediaItems = roomMediaItems.map(roomMediaItem => this._mapRoomMediaItem(roomMediaItem, userMap, grantedPermissions));
-    mappedRoomMedia.roomStorage.roomMediaItems = mappedRoomMediaItems;
+    mappedSingleRoomMediaOverview.roomStorage.roomMediaItems = mappedRoomMediaItems;
 
-    return mappedRoomMedia;
+    return mappedSingleRoomMediaOverview;
   }
 
-  async mapRoomMediaOverview(roomMediaOverview, user) {
+  async mapAllRoomMediaOverview(allRoomMediaOverview, user) {
     const grantedPermissions = getUserPermissions(user);
-    const mappedRoomMediaOverview = cloneDeep(roomMediaOverview);
+    const mappedAllRoomMediaOverview = cloneDeep(allRoomMediaOverview);
 
-    const allRoomMediaItems = mappedRoomMediaOverview.roomStorageList.map(storage => storage.roomMediaItems).flat();
+    const allRoomMediaItems = mappedAllRoomMediaOverview.roomStorageList.map(storage => storage.roomMediaItems).flat();
     const userMap = await this._getUserMapForRoomMediaItems(allRoomMediaItems.filter(x => !!x));
 
-    mappedRoomMediaOverview.roomStorageList.forEach(storage => {
+    mappedAllRoomMediaOverview.roomStorageList.forEach(storage => {
       const mappedRoomMediaItems = storage.roomMediaItems.map(roomMediaItem => this._mapRoomMediaItem(roomMediaItem, userMap, grantedPermissions));
       storage.roomMediaItems = mappedRoomMediaItems;
     });
 
-    return mappedRoomMediaOverview;
+    return mappedAllRoomMediaOverview;
   }
 
   _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById, allowedDocumentInputsById) {
