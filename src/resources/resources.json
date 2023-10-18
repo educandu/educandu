@@ -795,8 +795,8 @@
       "de": "Mit deinem Konto ist kein Speicherplan verbunden."
     },
     "roomSelectDetailsTooltip": {
-      "en": "Storage space occupied by non-shared files, uploaded through document inputs",
-      "de": "Storage space occupied by non-shared files, uploaded through document inputs"
+      "en": "Storage space occupied by non-shared files, uploaded through document inputs.",
+      "de": "Speicherplatz, der von nicht gemeinsam genutzten Dateien belegt wird, hochgeladen durch Dokumenteingaben."
     }
   },
   "displayNameFormItem": {
@@ -2085,8 +2085,8 @@
       "de": "Dateien hochladen"
     },
     "emptyStateTitle": {
-      "en": "There are no files shared in this room",
-      "de": "In diesem Raum gibt es keine Dateien"
+      "en": "There are no shared files in this room",
+      "de": "In diesem Raum gibt es keine gemeinsam genutzten Dateien"
     },
     "emptyStateSubtitle": {
       "en": "Drag and drop files here to upload them or use the upload button to select files from your machine.",
@@ -2295,8 +2295,8 @@
       "de": "Dokumente, die Eingabefelder enthalten, können von den Raummitgliedern ausgefüllt und abgeschickt werden. Diese können dann hier verwaltet werden."
     },
     "commentsTooltip": {
-      "en": "Total comments",
-      "de": "Gesamtkommentare"
+      "en": "Total number of comments",
+      "de": "Gesamtanzahl an Kommentaren"
     },
     "storageSpaceTooltip": {
       "en": "Occupied storage space",
