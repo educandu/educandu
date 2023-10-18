@@ -59,7 +59,7 @@ function RoomMediaUploadScreen({
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
 
-  const roomId = roomMediaContext?.roomId || null;
+  const roomId = roomMediaContext?.singleRoomMediaOverview.roomStorage.roomId || null;
 
   useEffect(() => {
     setOptimizeImages(true);
@@ -82,7 +82,10 @@ function RoomMediaUploadScreen({
       }));
     }
 
-    const availableBytes = roomMediaContext ? Math.max(0, (roomMediaContext.maxBytes || 0) - (roomMediaContext.usedBytes || 0)) : 0;
+    const maxBytes = roomMediaContext?.singleRoomMediaOverview.storagePlan?.maxBytes || 0;
+    const usedBytes = roomMediaContext?.singleRoomMediaOverview.usedBytes.usedBytes || 0;
+    const availableBytes = Math.max(0, maxBytes - usedBytes);
+
     if (file.size > availableBytes) {
       throw new Error(t('insufficientPrivateStorge'));
     }
@@ -106,7 +109,17 @@ function RoomMediaUploadScreen({
           status: ITEM_STATUS.succeeded,
           uploadedFile: roomStorage.roomMediaItems.find(item => item._id === createdRoomMediaItemId) || null
         };
-        setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan.maxBytes, usedBytes }));
+
+        setRoomMediaContext(oldContext => (
+          {
+            ...oldContext,
+            singleRoomMediaOverview: {
+              storagePlan,
+              usedBytes,
+              roomStorage
+            }
+          }
+        ));
       } catch (error) {
         updatedItem = {
           ...currentItem,
@@ -232,7 +245,11 @@ function RoomMediaUploadScreen({
         <div className="RoomMediaUploadScreen">
           {!!roomMediaContext && (
             <div className="RoomMediaUploadScreen-usedStorage" >
-              <UsedStorage usedBytes={roomMediaContext.usedBytes} maxBytes={roomMediaContext.maxBytes} showLabel />
+              <UsedStorage
+                usedBytes={roomMediaContext.singleRoomMediaOverview.usedBytes}
+                maxBytes={roomMediaContext.singleRoomMediaOverview.storagePlan?.maxBytes || 0}
+                showLabel
+                />
             </div>
           )}
           {renderUploadMessage()}

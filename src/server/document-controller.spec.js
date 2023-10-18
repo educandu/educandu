@@ -4,7 +4,6 @@ import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import DocumentController from './document-controller.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
@@ -463,10 +462,7 @@ describe('document-controller', () => {
         mappedTemplateDocument = { ...templateDocument };
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
         roomMediaContext = {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: roomMediaOverview.usedBytes,
-          maxBytes: roomMediaOverview.storagePlan.maxBytes,
+          singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: true
         };
 
@@ -510,10 +506,7 @@ describe('document-controller', () => {
         mappedTemplateDocument = { ...templateDocument };
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
         roomMediaContext = {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: roomMediaOverview.usedBytes,
-          maxBytes: roomMediaOverview.storagePlan.maxBytes,
+          singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: true
         };
 
@@ -557,10 +550,7 @@ describe('document-controller', () => {
         mappedTemplateDocument = { ...templateDocument };
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
         roomMediaContext = {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: roomMediaOverview.usedBytes,
-          maxBytes: roomMediaOverview.storagePlan.maxBytes,
+          singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: false
         };
 

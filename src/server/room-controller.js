@@ -12,7 +12,6 @@ import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentService from '../services/document-service.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentInputService from '../services/document-input-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
@@ -387,13 +386,11 @@ export default class RoomController {
       ? await this.documentInputService.getDocumentInputsByRoomId(roomId)
       : [];
 
-    const { storagePlan, usedBytes } = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
-    const roomMediaContext = storagePlan || usedBytes
+    const singleRoomMediaOverview = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
+
+    const roomMediaContext = singleRoomMediaOverview.storagePlan || singleRoomMediaOverview.usedBytes
       ? {
-        roomId: room._id,
-        path: getRoomMediaRoomPath(room._id),
-        usedBytes: usedBytes || 0,
-        maxBytes: storagePlan?.maxBytes || 0,
+        singleRoomMediaOverview,
         isDeletionEnabled: isRoomOwner({ room: room || null, userId: user._id })
       }
       : null;

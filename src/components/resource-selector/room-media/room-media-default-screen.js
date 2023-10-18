@@ -41,7 +41,11 @@ function RoomMediaDefaultScreen({
       ? (
         <div className="RoomMediaDefaultScreen-alertPrivateStorage">
           <div className="RoomMediaDefaultScreen-alertPrivateStorageUsage">
-            <UsedStorage usedBytes={roomMediaContext.usedBytes} maxBytes={roomMediaContext.maxBytes} showLabel />
+            <UsedStorage
+              usedBytes={roomMediaContext.singleRoomMediaOverview.usedBytes}
+              maxBytes={roomMediaContext.singleRoomMediaOverview.storagePlan?.maxBytes || 0}
+              showLabel
+              />
           </div>
         </div>
       )

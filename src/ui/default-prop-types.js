@@ -378,11 +378,14 @@ export const allRoomMediaOverviewShape = PropTypes.shape({
   roomStorageList: PropTypes.arrayOf(roomStorageShape).isRequired
 });
 
-export const roomMediaContextShape = PropTypes.shape({
-  roomId: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
-  maxBytes: PropTypes.number.isRequired,
+export const singleRoomMediaOverviewShape = PropTypes.shape({
+  storagePlan: storagePlanShape,
   usedBytes: PropTypes.number.isRequired,
+  roomStorage: roomStorageShape.isRequired
+});
+
+export const roomMediaContextShape = PropTypes.shape({
+  singleRoomMediaOverview: singleRoomMediaOverviewShape.isRequired,
   isDeletionEnabled: PropTypes.bool.isRequired
 });
 

@@ -12,7 +12,6 @@ import SettingService from '../services/setting-service.js';
 import { canEditDocument } from '../utils/document-utils.js';
 import DocumentService from '../services/document-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
-import { getRoomMediaRoomPath } from '../utils/storage-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -106,13 +105,11 @@ class DocumentController {
         throw new Forbidden();
       }
 
-      const { storagePlan, usedBytes } = await this.roomService.getSingleRoomMediaOverview({ user, roomId: room._id });
-      roomMediaContext = storagePlan || usedBytes
+      const singleRoomMediaOverview = await this.roomService.getSingleRoomMediaOverview({ user, roomId: room._id });
+
+      roomMediaContext = singleRoomMediaOverview.storagePlan || singleRoomMediaOverview.usedBytes
         ? {
-          roomId: room._id,
-          path: getRoomMediaRoomPath(room._id),
-          usedBytes: usedBytes || 0,
-          maxBytes: storagePlan?.maxBytes || 0,
+          singleRoomMediaOverview,
           isDeletionEnabled: isRoomOwner({ room: room || null, userId: user._id })
         }
         : null;

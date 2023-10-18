@@ -11,11 +11,10 @@ import PrivateIcon from '../icons/general/private-icon.js';
 import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { getRoomMediaRoomPath } from '../../utils/storage-utils.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
-import { allRoomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import UploadButton from '../resource-selector/shared/upload-button.js';
+import { allRoomMediaOverviewShape } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import RoomMediaUploadModal from '../resource-selector/room-media/room-media-upload-modal.js';
 import RoomMediaFilesViewer from '../resource-selector/room-media/room-media-files-viewer.js';
@@ -41,15 +40,20 @@ function StorageTab({ allRoomMediaOverview, loading, onAllRoomMediaOverviewChang
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
   const roomMediaContext = useMemo(() => {
-    return selectedRoomId && allRoomMediaOverview
-      ? {
-        roomId: selectedRoomId,
-        path: getRoomMediaRoomPath(selectedRoomId),
-        usedBytes: allRoomMediaOverview.usedBytes || 0,
-        maxBytes: allRoomMediaOverview.storagePlan?.maxBytes || 0,
-        isDeletionEnabled: true
-      }
-      : null;
+    if (!selectedRoomId || !allRoomMediaOverview) {
+      return null;
+    }
+
+    const singleRoomMediaOverview = {
+      storagePlan: allRoomMediaOverview.storagePlan,
+      usedBytes: allRoomMediaOverview.usedBytes || 0,
+      roomStorage: allRoomMediaOverview.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId)
+    };
+
+    return {
+      singleRoomMediaOverview,
+      isDeletionEnabled: true
+    };
   }, [selectedRoomId, allRoomMediaOverview]);
 
   useEffect(() => {

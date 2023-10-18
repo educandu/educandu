@@ -684,6 +684,7 @@ describe('room-service', () => {
             roomId: rooms[0]._id,
             roomMediaItems: room1MediaItems,
             roomName: rooms[0].name,
+            roomMediaPath: `room-media/${rooms[0]._id}`,
             usedBytesByDocumentInputMediaItems: 0,
             usedBytesByRoomMediaItems: 30,
             usedBytesPerDocumentInput: {}
@@ -692,6 +693,7 @@ describe('room-service', () => {
             roomId: rooms[1]._id,
             roomMediaItems: room2MediaItems,
             roomName: rooms[1].name,
+            roomMediaPath: `room-media/${rooms[1]._id}`,
             usedBytesByDocumentInputMediaItems: 0,
             usedBytesByRoomMediaItems: 30,
             usedBytesPerDocumentInput: {}
@@ -840,6 +842,7 @@ describe('room-service', () => {
             roomId: room._id,
             roomMediaItems,
             roomName: 'Room 1',
+            roomMediaPath: `room-media/${room._id}`,
             usedBytesByDocumentInputMediaItems: 0,
             usedBytesByRoomMediaItems: 30,
             usedBytesPerDocumentInput: {}
