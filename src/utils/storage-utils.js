@@ -119,10 +119,16 @@ export async function getPrivateStorageOverview({ user, roomStore, storagePlanSt
 
     const usedBytesByRoomMediaItems = roomMediaItems.reduce((accu, item) => accu + item.size, 0);
     const usedBytesByDocumentInputMediaItems = documentInputMediaItems.reduce((accu, item) => accu + item.size, 0);
+
+    const usedBytesPerDocumentInput = documentInputMediaItems.reduce((accu, mediaItem) => {
+      accu[mediaItem.documentInputId] = (accu[mediaItem.documentInputId] || 0) + mediaItem.size;
+      return accu;
+    }, {});
+
     return {
       room,
       roomMediaItems,
-      documentInputMediaItems,
+      usedBytesPerDocumentInput,
       usedBytesByRoomMediaItems,
       usedBytesByDocumentInputMediaItems,
       totalUsedBytes: usedBytesByRoomMediaItems + usedBytesByDocumentInputMediaItems
@@ -134,10 +140,14 @@ export async function getPrivateStorageOverview({ user, roomStore, storagePlanSt
   return {
     storagePlan: storagePlan || null,
     usedBytes: usedBytesInAllRooms,
-    roomStorageList: mediaItemsPerRoom.map(({ room, roomMediaItems }) => ({
-      roomId: room._id,
-      roomName: room.name,
-      roomMediaItems
+    roomStorageList: mediaItemsPerRoom.map(roomStorageItem => ({
+      roomId: roomStorageItem.room._id,
+      roomName: roomStorageItem.room.name,
+      roomMediaItems: roomStorageItem.roomMediaItems,
+      roomMediaPath: getRoomMediaRoomPath(roomStorageItem.room._id),
+      usedBytesByRoomMediaItems: roomStorageItem.usedBytesByRoomMediaItems,
+      usedBytesByDocumentInputMediaItems: roomStorageItem.usedBytesByDocumentInputMediaItems,
+      usedBytesPerDocumentInput: roomStorageItem.usedBytesPerDocumentInput
     }))
   };
 }

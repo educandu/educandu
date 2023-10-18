@@ -683,12 +683,18 @@ describe('room-service', () => {
           {
             roomId: rooms[0]._id,
             roomMediaItems: room1MediaItems,
-            roomName: rooms[0].name
+            roomName: rooms[0].name,
+            usedBytesByDocumentInputMediaItems: 0,
+            usedBytesByRoomMediaItems: 30,
+            usedBytesPerDocumentInput: {}
           },
           {
             roomId: rooms[1]._id,
             roomMediaItems: room2MediaItems,
-            roomName: rooms[1].name
+            roomName: rooms[1].name,
+            usedBytesByDocumentInputMediaItems: 0,
+            usedBytesByRoomMediaItems: 30,
+            usedBytesPerDocumentInput: {}
           }
         ]
       });
@@ -765,7 +771,7 @@ describe('room-service', () => {
           size: 15,
           path: 'file/path'
         };
-        room = { _id: uniqueId.create(), ownedBy: myUser._id };
+        room = { _id: uniqueId.create(), ownedBy: myUser._id, name: 'Room 1' };
         userLock = { id: uniqueId.create() };
 
         const storagePlanId = uniqueId.create();
@@ -832,7 +838,11 @@ describe('room-service', () => {
           usedBytes,
           roomStorage: {
             roomId: room._id,
-            roomMediaItems
+            roomMediaItems,
+            roomName: 'Room 1',
+            usedBytesByDocumentInputMediaItems: 0,
+            usedBytesByRoomMediaItems: 30,
+            usedBytesPerDocumentInput: {}
           }
         });
       });
