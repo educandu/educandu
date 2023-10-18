@@ -20,8 +20,28 @@
   display: grid;
   align-items: baseline;
   grid-auto-flow: column;
+  gap: 20px;
+}
+
+.StorageTab-roomSelectField {
+  display: grid;
+  align-items: baseline;
+  grid-auto-flow: column;
   gap: @edu-control-spacing-wide;
   grid-template-columns: auto 1fr;
+}
+
+.StorageTab-roomSelectDetails {
+  cursor: help;
+  color: @edu-error-color;
+  display: grid;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-base;
+}
+
+.StorageTab-roomSelectDetailsText {
+  font-size: @edu-font-size-xs;
+  white-space: nowrap;
 }
 
 .StorageTab-roomSelect {

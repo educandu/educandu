@@ -1,11 +1,14 @@
 import by from 'thenby';
-import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner.js';
+import prettyBytes from 'pretty-bytes';
+import { Select, Tooltip } from 'antd';
 import EmptyState from '../empty-state.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from '../locale-context.js';
+import InputsIcon from '../icons/general/inputs-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
 import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
@@ -28,6 +31,7 @@ const createPreviewModalProps = ({ isOpen = false, file = null }) => ({ isOpen, 
 function StorageTab({ allRoomMediaOverview, loading, onAllRoomMediaOverviewChange }) {
   const { t } = useTranslation('storageTab');
 
+  const { uiLocale } = useLocale();
   const filesViewerApiRef = useRef(null);
   const [files, setFiles] = useState([]);
   const [roomOptions, setRoomOptions] = useState([]);
@@ -138,18 +142,32 @@ function StorageTab({ allRoomMediaOverview, loading, onAllRoomMediaOverviewChang
     filesViewerApiRef.current.open();
   };
 
-  const renderRoomSelect = () => (
-    <div className="StorageTab-roomSelectContainer">
-      <span className="u-label">{t('common:room')}:</span>
-      <Select
-        options={roomOptions}
-        value={selectedRoomId}
-        onChange={setSelectedRoomId}
-        dropdownMatchSelectWidth={false}
-        className="StorageTab-roomSelect"
-        />
-    </div>
-  );
+  const renderRoomSelect = () => {
+    const { usedBytesByDocumentInputMediaItems } = allRoomMediaOverview.roomStorageList.find(roomStorage => roomStorage.roomId === selectedRoomId);
+
+    return (
+      <div className="StorageTab-roomSelectContainer">
+        <div className="StorageTab-roomSelectField">
+          <span className="u-label">{t('common:room')}:</span>
+          <Select
+            options={roomOptions}
+            value={selectedRoomId}
+            onChange={setSelectedRoomId}
+            dropdownMatchSelectWidth={false}
+            className="StorageTab-roomSelect"
+            />
+        </div>
+        <Tooltip title={t('roomSelectDetailsTooltip')}>
+          <div className="StorageTab-roomSelectDetails">
+            <InputsIcon />
+            <div className="StorageTab-roomSelectDetailsText">
+              {prettyBytes(usedBytesByDocumentInputMediaItems, { locale: uiLocale })}
+            </div>
+          </div>
+        </Tooltip>
+      </div>
+    );
+  };
 
   const showEmptyState = !allRoomMediaOverview?.storagePlan && !allRoomMediaOverview?.usedBytes;
 

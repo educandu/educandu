@@ -113,6 +113,7 @@ export async function getPrivateStorageOverview({ user, roomStore, storagePlanSt
     : null;
 
   const rooms = await roomStore.getRoomsByOwnerUserId(user._id);
+
   const mediaItemsPerRoom = await Promise.all(rooms.map(async room => {
     const roomMediaItems = await roomMediaItemStore.getAllRoomMediaItemsByRoomId(room._id);
     const documentInputMediaItems = await documentInputMediaItemStore.getAllDocumentInputMediaItemByRoomId(room._id);

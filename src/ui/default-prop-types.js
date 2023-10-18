@@ -369,7 +369,10 @@ export const wikimediaFileShape = PropTypes.shape({
 const roomStorageShape = PropTypes.shape({
   roomId: PropTypes.string.isRequired,
   roomName: PropTypes.string.isRequired,
-  roomMediaItems: PropTypes.arrayOf(roomMediaItemShape).isRequired
+  roomMediaItems: PropTypes.arrayOf(roomMediaItemShape).isRequired,
+  usedBytesByRoomMediaItems: PropTypes.number.isRequired,
+  usedBytesByDocumentInputMediaItems: PropTypes.number.isRequired,
+  usedBytesPerDocumentInput: PropTypes.object.isRequired
 });
 
 export const allRoomMediaOverviewShape = PropTypes.shape({

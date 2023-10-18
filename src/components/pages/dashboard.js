@@ -75,8 +75,8 @@ function Dashboard({ PageTemplate }) {
   const [fetchingFavorites, setFetchingFavorites] = useDebouncedFetchingState(true);
   const [fetchingActivities, setFetchingActivities] = useDebouncedFetchingState(true);
   const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
-  const [fetchingRoomMediaOverview, setFetchingRoomMediaOverview] = useDebouncedFetchingState(true);
   const [fetchingNotificationGroups, setFetchingNotificationGroups] = useDebouncedFetchingState(true);
+  const [fetchingAllRoomMediaOverview, setFetchingAllRoomMediaOverview] = useDebouncedFetchingState(true);
 
   const fetchActivities = useCallback(async () => {
     try {
@@ -135,13 +135,13 @@ function Dashboard({ PageTemplate }) {
 
   const fetchRoomMediaOverview = useCallback(async () => {
     try {
-      setFetchingRoomMediaOverview(true);
+      setFetchingAllRoomMediaOverview(true);
       const overview = await roomApiClient.getAllRoomMediaOverview();
       setAllRoomMediaOverview(overview);
     } finally {
-      setFetchingRoomMediaOverview(false);
+      setFetchingAllRoomMediaOverview(false);
     }
-  }, [setFetchingRoomMediaOverview, roomApiClient]);
+  }, [setFetchingAllRoomMediaOverview, roomApiClient]);
 
   const fetchDocumentInputs = useCallback(async () => {
     try {
@@ -291,7 +291,7 @@ function Dashboard({ PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           <StorageTab
-            loading={fetchingRoomMediaOverview}
+            loading={fetchingAllRoomMediaOverview}
             allRoomMediaOverview={allRoomMediaOverview}
             onAllRoomMediaOverviewChange={handleAllRoomMediaOverviewChange}
             />

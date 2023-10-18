@@ -11,3 +11,6 @@ storageTab:
   noStoragePlan:
     en: There is no storage plan associated with your account.
     de: Mit deinem Konto ist kein Speicherplan verbunden.
+  roomSelectDetailsTooltip:
+    en: Storage space occupied by non-shared files, uploaded through document inputs.
+    de: Speicherplatz, der von nicht gemeinsam genutzten Dateien belegt wird, hochgeladen durch Dokumenteingaben.

@@ -24,10 +24,10 @@ import { TeamOutlined, UserOutlined } from '@ant-design/icons';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import RoomDocumentInputs from '../room/room-document-inputs.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { RoomMediaContextProvider } from '../room-media-context.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
+import { RoomMediaContextProvider, useSetRoomMediaContext } from '../room-media-context.js';
 import { roomShape, roomInvitationShape, documentExtendedMetadataShape, roomMediaContextShape, documentInputShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -49,6 +49,7 @@ export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('room');
+  const setRoomMediaContext = useSetRoomMediaContext();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
@@ -69,12 +70,16 @@ export default function Room({ PageTemplate, initialState }) {
     return VIEW_MODE.nonCollaboratingMember;
   }, [room, user]);
 
+  const updateDocumentInputsData = async () => {
+    const documentInputApiResponse = await documentInputApiClient.getDocumentInputsByRoomId(room._id);
+    setDocumentInputs(documentInputApiResponse.documentInputs);
+  };
+
   const handleTabChange = async tab => {
     history.replaceState(null, '', routes.getRoomUrl({ id: room._id, slug: room.slug, tab }));
 
     if (tab === TAB_KEYS.documentInputs) {
-      const response = await documentInputApiClient.getDocumentInputsByRoomId(room._id);
-      setDocumentInputs(response.documentInputs);
+      await updateDocumentInputsData();
     }
   };
 
@@ -106,9 +111,11 @@ export default function Room({ PageTemplate, initialState }) {
 
   const handleDeleteDocumentInput = async documentInput => {
     await documentInputApiClient.hardDeleteDocumentInput(documentInput._id);
-    const response = await documentInputApiClient.getDocumentInputsByRoomId(room._id);
 
-    setDocumentInputs(response.documentInputs);
+    const singleRoomMediaOverview = await roomApiClient.getSingleRoomMediaOverview({ roomId: room._id });
+    setRoomMediaContext(oldContext => ({ ...oldContext, singleRoomMediaOverview }));
+
+    await updateDocumentInputsData();
   };
 
   const renderSubtitleLink = () => {

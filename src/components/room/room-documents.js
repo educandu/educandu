@@ -16,6 +16,7 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
+import { useSetRoomMediaContext } from '../room-media-context.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
@@ -63,6 +64,7 @@ export default function RoomDocuments({
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
+  const setRoomMediaContext = useSetRoomMediaContext();
   const [roomDocumentIds, setRoomDocumentIds] = useState(initialRoomDocumentIds);
   const [roomDocuments, setRoomDocuments] = useState(getDocumentsByRoomDictatedOrder(initialRoomDocumentIds, initialRoomDocuments));
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, roomId, canManageDraftDocuments }));
@@ -103,6 +105,9 @@ export default function RoomDocuments({
 
       const response = await roomApiClient.getRoom({ roomId });
       const newRoomDocumentIds = response.room.documents;
+
+      const singleRoomMediaOverview = await roomApiClient.getSingleRoomMediaOverview({ roomId });
+      setRoomMediaContext(oldContext => ({ ...oldContext, singleRoomMediaOverview }));
 
       setRoomDocumentIds(newRoomDocumentIds);
       setRoomDocuments(getDocumentsByRoomDictatedOrder(newRoomDocumentIds, ensureIsExcluded(roomDocuments, doc)));
