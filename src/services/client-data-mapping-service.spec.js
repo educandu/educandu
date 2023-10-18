@@ -764,12 +764,12 @@ describe('client-data-mapping-service', () => {
     });
   });
 
-  describe('mapRoomMedia', () => {
+  describe('mapSingleRoomMediaOverview', () => {
     let result;
-    let roomMedia;
+    let singleRoomMediaOverview;
 
     beforeEach(async () => {
-      roomMedia = {
+      singleRoomMediaOverview = {
         storagePlan: 'plan1',
         usedBytes: '100',
         roomStorage: {
@@ -796,7 +796,7 @@ describe('client-data-mapping-service', () => {
 
       sandbox.stub(serverConfig, 'cdnRootUrl').value('http://cdn-root');
 
-      result = await sut.mapRoomMedia(roomMedia, user1);
+      result = await sut.mapSingleRoomMediaOverview(singleRoomMediaOverview, user1);
     });
 
     it('should map room media item data', () => {
@@ -808,8 +808,8 @@ describe('client-data-mapping-service', () => {
           roomName: 'Room 1',
           roomMediaItems: [
             {
-              ...roomMedia.roomStorage.roomMediaItems[0],
-              createdOn: roomMedia.roomStorage.roomMediaItems[0].createdOn.toISOString(),
+              ...singleRoomMediaOverview.roomStorage.roomMediaItems[0],
+              createdOn: singleRoomMediaOverview.roomStorage.roomMediaItems[0].createdOn.toISOString(),
               createdBy: {
                 _id: user1._id,
                 displayName: user1.displayName
@@ -819,8 +819,8 @@ describe('client-data-mapping-service', () => {
               name: 'calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
             },
             {
-              ...roomMedia.roomStorage.roomMediaItems[1],
-              createdOn: roomMedia.roomStorage.roomMediaItems[1].createdOn.toISOString(),
+              ...singleRoomMediaOverview.roomStorage.roomMediaItems[1],
+              createdOn: singleRoomMediaOverview.roomStorage.roomMediaItems[1].createdOn.toISOString(),
               createdBy: {
                 _id: user2._id,
                 displayName: user2.displayName

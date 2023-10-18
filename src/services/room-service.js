@@ -305,15 +305,13 @@ export default class RoomService {
         throw error;
       }
 
-      const overview = await this.getAllRoomMediaOverview({ user: roomOwner });
-      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes: overview.usedBytes });
+      const singleRoomMediaOverview = await this.getSingleRoomMediaOverview({ user: roomOwner, roomId });
+      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: roomOwner._id, usedBytes: singleRoomMediaOverview.usedBytes });
 
       Object.assign(roomOwner, updatedUser);
 
       return {
-        storagePlan: overview.storagePlan,
-        usedBytes: overview.usedBytes,
-        roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId),
+        ...singleRoomMediaOverview,
         createdRoomMediaItemId: roomMediaItem._id
       };
     } finally {
@@ -339,16 +337,12 @@ export default class RoomService {
       await this.cdn.deleteObject(getCdnPath({ url: roomMediaItemToDelete.url }));
       await this.roomMediaItemStore.deleteRoomMediaItem(roomMediaItemId);
 
-      const overview = await this.getAllRoomMediaOverview({ user });
-      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: user._id, usedBytes: overview.usedBytes });
+      const singleRoomMediaOverview = await this.getSingleRoomMediaOverview({ user, roomId });
+      const updatedUser = await this.userStore.updateUserUsedBytes({ userId: user._id, usedBytes: singleRoomMediaOverview.usedBytes });
 
       Object.assign(user, updatedUser);
 
-      return {
-        storagePlan: overview.storagePlan,
-        usedBytes: overview.usedBytes,
-        roomStorage: overview.roomStorageList.find(roomStorage => roomStorage.roomId === roomId)
-      };
+      return singleRoomMediaOverview;
     } finally {
       await this.lockStore.releaseLock(lock);
     }

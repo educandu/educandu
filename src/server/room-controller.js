@@ -80,28 +80,28 @@ export default class RoomController {
   async handleGetSingleRoomMediaOverview(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const roomMedia = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
-    const mappedRoomMedia = await this.clientDataMappingService.mapRoomMedia(roomMedia, user);
+    const singleRoomMediaOverview = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
+    const mappedSingleRoomMediaOverview = await this.clientDataMappingService.mapSingleRoomMediaOverview(singleRoomMediaOverview, user);
 
-    return res.send(mappedRoomMedia);
+    return res.send(mappedSingleRoomMediaOverview);
   }
 
   async handlePostRoomMedia(req, res) {
     const { user, file } = req;
     const { roomId } = req.params;
-    const roomMedia = await this.roomService.createRoomMedia({ user, roomId, file });
-    const mappedRoomMedia = await this.clientDataMappingService.mapRoomMedia(roomMedia, user);
+    const singleRoomMediaOverview = await this.roomService.createRoomMedia({ user, roomId, file });
+    const mappedSingleRoomMediaOverview = await this.clientDataMappingService.mapSingleRoomMediaOverview(singleRoomMediaOverview, user);
 
-    return res.status(201).send(mappedRoomMedia);
+    return res.status(201).send(mappedSingleRoomMediaOverview);
   }
 
   async handleDeleteRoomMedia(req, res) {
     const { user } = req;
     const { roomId, roomMediaItemId } = req.params;
-    const roomMedia = await this.roomService.deleteRoomMedia({ user, roomId, roomMediaItemId });
-    const mappedRoomMedia = await this.clientDataMappingService.mapRoomMedia(roomMedia, user);
+    const singleRoomMediaOverview = await this.roomService.deleteRoomMedia({ user, roomId, roomMediaItemId });
+    const mappedSingleRoomMediaOverview = await this.clientDataMappingService.mapSingleRoomMediaOverview(singleRoomMediaOverview, user);
 
-    return res.send(mappedRoomMedia);
+    return res.send(mappedSingleRoomMediaOverview);
   }
 
   async handleGetRoomMembershipConfirmationPage(req, res) {
