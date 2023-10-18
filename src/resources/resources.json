@@ -793,6 +793,10 @@
     "noStoragePlan": {
       "en": "There is no storage plan associated with your account.",
       "de": "Mit deinem Konto ist kein Speicherplan verbunden."
+    },
+    "roomSelectDetailsTooltip": {
+      "en": "Storage space occupied by non-shared files, uploaded through document inputs",
+      "de": "Storage space occupied by non-shared files, uploaded through document inputs"
     }
   },
   "displayNameFormItem": {
@@ -2081,7 +2085,7 @@
       "de": "Dateien hochladen"
     },
     "emptyStateTitle": {
-      "en": "There are no files in this room",
+      "en": "There are no files shared in this room",
       "de": "In diesem Raum gibt es keine Dateien"
     },
     "emptyStateSubtitle": {
