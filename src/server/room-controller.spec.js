@@ -45,7 +45,7 @@ describe('room-controller', () => {
       deleteRoomInvitation: sandbox.stub(),
       createRoomMessage: sandbox.stub(),
       deleteRoomMessage: sandbox.stub(),
-      getAllRoomMedia: sandbox.stub()
+      getSingleRoomMediaOverview: sandbox.stub()
     };
     documentService = {
       getDocumentsExtendedMetadataByIds: sandbox.stub()
@@ -635,7 +635,7 @@ describe('room-controller', () => {
       };
       mappedRoom = { ...room };
 
-      roomService.getAllRoomMedia.resolves({});
+      roomService.getSingleRoomMediaOverview.resolves({});
     });
 
     describe('when the request is made by the room owner', () => {

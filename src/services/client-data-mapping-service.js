@@ -174,19 +174,19 @@ class ClientDataMappingService {
     return mappedRoomMedia;
   }
 
-  async mapRoomMediaOverview(roomMediaOverview, user) {
+  async mapAllRoomMediaOverview(allRoomMediaOverview, user) {
     const grantedPermissions = getUserPermissions(user);
-    const mappedRoomMediaOverview = cloneDeep(roomMediaOverview);
+    const mappedAllRoomMediaOverview = cloneDeep(allRoomMediaOverview);
 
-    const allRoomMediaItems = mappedRoomMediaOverview.roomStorageList.map(storage => storage.roomMediaItems).flat();
+    const allRoomMediaItems = mappedAllRoomMediaOverview.roomStorageList.map(storage => storage.roomMediaItems).flat();
     const userMap = await this._getUserMapForRoomMediaItems(allRoomMediaItems.filter(x => !!x));
 
-    mappedRoomMediaOverview.roomStorageList.forEach(storage => {
+    mappedAllRoomMediaOverview.roomStorageList.forEach(storage => {
       const mappedRoomMediaItems = storage.roomMediaItems.map(roomMediaItem => this._mapRoomMediaItem(roomMediaItem, userMap, grantedPermissions));
       storage.roomMediaItems = mappedRoomMediaItems;
     });
 
-    return mappedRoomMediaOverview;
+    return mappedAllRoomMediaOverview;
   }
 
   _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById, allowedDocumentInputsById) {

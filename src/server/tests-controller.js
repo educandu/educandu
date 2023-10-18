@@ -25,7 +25,7 @@ class TestsController {
 
     let roomMediaContext;
     if (room) {
-      const { storagePlan, usedBytes } = await this.roomService.getAllRoomMedia({ user, roomId: room._id });
+      const { storagePlan, usedBytes } = await this.roomService.getSingleRoomMediaOverview({ user, roomId: room._id });
       roomMediaContext = storagePlan || usedBytes
         ? {
           roomId: room._id,

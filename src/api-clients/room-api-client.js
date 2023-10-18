@@ -112,7 +112,7 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  getRoomMediaOverview() {
+  getAllRoomMediaOverview() {
     return this.httpClient
       .get(
         '/api/v1/room-media-overview',
@@ -121,10 +121,10 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
-  getAllRoomMedia({ roomId }) {
+  getSingleRoomMediaOverview({ roomId }) {
     return this.httpClient
       .get(
-        `/api/v1/room-media/${encodeURIComponent(roomId)}`,
+        `/api/v1/room-media-overview/${encodeURIComponent(roomId)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -68,8 +68,8 @@ function Dashboard({ PageTemplate }) {
   const [documentInputs, setDocumentInputs] = useState([]);
   const [selectedTab, setSelectedTab] = useState(initialTab);
   const [favoriteDocuments, setFavoriteDocuments] = useState([]);
-  const [roomMediaOverview, setRoomMediaOverview] = useState(null);
   const [notificationGroups, setNotificationGroups] = useState([]);
+  const [allRoomMediaOverview, setAllRoomMediaOverview] = useState(null);
   const [fetchingRooms, setFetchingRooms] = useDebouncedFetchingState(true);
   const [fetchingDocuments, setFetchingDocuments] = useDebouncedFetchingState(true);
   const [fetchingFavorites, setFetchingFavorites] = useDebouncedFetchingState(true);
@@ -136,8 +136,8 @@ function Dashboard({ PageTemplate }) {
   const fetchRoomMediaOverview = useCallback(async () => {
     try {
       setFetchingRoomMediaOverview(true);
-      const overview = await roomApiClient.getRoomMediaOverview();
-      setRoomMediaOverview(overview);
+      const overview = await roomApiClient.getAllRoomMediaOverview();
+      setAllRoomMediaOverview(overview);
     } finally {
       setFetchingRoomMediaOverview(false);
     }
@@ -201,8 +201,8 @@ function Dashboard({ PageTemplate }) {
     setNotificationsCount(response.notificationGroups.length);
   };
 
-  const handleRoomMediaOverviewChange = newStorage => {
-    setRoomMediaOverview(newStorage);
+  const handleAllRoomMediaOverviewChange = newStorage => {
+    setAllRoomMediaOverview(newStorage);
   };
 
   const handleDeleteDocumentInput = async documentInput => {
@@ -292,8 +292,8 @@ function Dashboard({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <StorageTab
             loading={fetchingRoomMediaOverview}
-            roomMediaOverview={roomMediaOverview}
-            onRoomMediaOverviewChange={handleRoomMediaOverviewChange}
+            allRoomMediaOverview={allRoomMediaOverview}
+            onAllRoomMediaOverviewChange={handleAllRoomMediaOverviewChange}
             />
         </div>
       )

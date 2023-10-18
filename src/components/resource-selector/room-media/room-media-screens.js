@@ -53,7 +53,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
 
     try {
       setIsLoading(true);
-      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.getAllRoomMedia({ roomId });
+      const { storagePlan, usedBytes, roomStorage } = await roomApiClient.getSingleRoomMediaOverview({ roomId });
       setFiles(roomStorage.roomMediaItems);
       setRoomMediaContext(oldContext => ({ ...oldContext, maxBytes: storagePlan?.maxBytes || 0, usedBytes }));
     } catch (err) {

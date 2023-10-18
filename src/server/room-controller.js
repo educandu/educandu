@@ -45,7 +45,7 @@ import {
   getAuthorizeResourcesAccessParamsSchema,
   getRoomMembershipConfirmationParamsSchema,
   deleteRoomMediaParamsSchema,
-  getAllRoomMediaParamsSchema,
+  getSingeRoomMediaOverviewParamsSchema,
   postRoomMediaParamsSchema,
   patchRoomContentBodySchema
 } from '../domain/schemas/room-schemas.js';
@@ -69,18 +69,18 @@ export default class RoomController {
     this.clientDataMappingService = clientDataMappingService;
   }
 
-  async handleGetRoomMediaOverview(req, res) {
+  async handleGetAllRoomMediaOverview(req, res) {
     const { user } = req;
-    const roomMediaOverview = await this.roomService.getRoomMediaOverview({ user });
-    const mappedRoomMediaOverview = await this.clientDataMappingService.mapRoomMediaOverview(roomMediaOverview, user);
+    const allRoomMediaOverview = await this.roomService.getAllRoomMediaOverview({ user });
+    const mappedAllRoomMediaOverview = await this.clientDataMappingService.mapAllRoomMediaOverview(allRoomMediaOverview, user);
 
-    return res.send(mappedRoomMediaOverview);
+    return res.send(mappedAllRoomMediaOverview);
   }
 
-  async handleGetAllRoomMedia(req, res) {
+  async handleGetSingleRoomMediaOverview(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const roomMedia = await this.roomService.getAllRoomMedia({ user, roomId });
+    const roomMedia = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
     const mappedRoomMedia = await this.clientDataMappingService.mapRoomMedia(roomMedia, user);
 
     return res.send(mappedRoomMedia);
@@ -387,7 +387,7 @@ export default class RoomController {
       ? await this.documentInputService.getDocumentInputsByRoomId(roomId)
       : [];
 
-    const { storagePlan, usedBytes } = await this.roomService.getAllRoomMedia({ user, roomId });
+    const { storagePlan, usedBytes } = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
     const roomMediaContext = storagePlan || usedBytes
       ? {
         roomId: room._id,
@@ -499,14 +499,14 @@ export default class RoomController {
     router.get(
       '/api/v1/room-media-overview',
       needsPermission(permissions.BROWSE_STORAGE),
-      (req, res) => this.handleGetRoomMediaOverview(req, res)
+      (req, res) => this.handleGetAllRoomMediaOverview(req, res)
     );
 
     router.get(
-      '/api/v1/room-media/:roomId',
+      '/api/v1/room-media-overview/:roomId',
       needsPermission(permissions.BROWSE_STORAGE),
-      validateParams(getAllRoomMediaParamsSchema),
-      (req, res) => this.handleGetAllRoomMedia(req, res)
+      validateParams(getSingeRoomMediaOverviewParamsSchema),
+      (req, res) => this.handleGetSingleRoomMediaOverview(req, res)
     );
 
     router.post(

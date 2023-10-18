@@ -621,7 +621,7 @@ describe('room-service', () => {
     });
   });
 
-  describe('getRoomMediaOverview', () => {
+  describe('getAllRoomMediaOverview', () => {
     let rooms;
     let result;
     let storagePlan;
@@ -671,7 +671,7 @@ describe('room-service', () => {
       roomMediaItemStore.getAllRoomMediaItemsByRoomId.withArgs(rooms[0]._id).resolves(room1MediaItems);
       roomMediaItemStore.getAllRoomMediaItemsByRoomId.withArgs(rooms[1]._id).resolves(room2MediaItems);
 
-      result = await sut.getRoomMediaOverview({ user: myUser });
+      result = await sut.getAllRoomMediaOverview({ user: myUser });
     });
 
     it('should return the room media overview', () => {

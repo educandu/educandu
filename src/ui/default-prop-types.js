@@ -372,7 +372,7 @@ const roomStorageShape = PropTypes.shape({
   roomMediaItems: PropTypes.arrayOf(roomMediaItemShape).isRequired
 });
 
-export const roomMediaOverviewShape = PropTypes.shape({
+export const allRoomMediaOverviewShape = PropTypes.shape({
   storagePlan: storagePlanShape,
   usedBytes: PropTypes.number.isRequired,
   roomStorageList: PropTypes.arrayOf(roomStorageShape).isRequired
