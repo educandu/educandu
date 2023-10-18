@@ -194,7 +194,7 @@ function MediaLibrarySearchScreen({
                       button={{
                         isDefaultType: true,
                         text: t('common:browse'),
-                        subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) }),
+                        subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES), maxFiles: 1 }),
                         onClick: handleUploadButtonClick
                       }}
                       />

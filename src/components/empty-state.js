@@ -23,6 +23,7 @@ function EmptyState({ icon, title, subtitle, button, compact, status }) {
         <Button
           type={button.isDefaultType ? 'default' : 'primary'}
           icon={button.icon || null}
+          disabled={!!button.isDisabled}
           onClick={event => button.onClick(event)}
           >
           {button.text}
@@ -75,6 +76,7 @@ EmptyState.propTypes = {
     icon: PropTypes.node,
     text: PropTypes.node.isRequired,
     subtext: PropTypes.string,
+    isDisabled: PropTypes.bool,
     isDefaultType: PropTypes.bool,
     onClick: PropTypes.func.isRequired
   }),
