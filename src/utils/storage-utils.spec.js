@@ -177,7 +177,6 @@ describe('storage-utils', () => {
             roomId: rooms[0]._id,
             roomMediaItems: room1MediaItems,
             roomName: rooms[0].name,
-            roomMediaPath: `room-media/${rooms[0]._id}`,
             usedBytesByDocumentInputMediaItems: 0,
             usedBytesByRoomMediaItems: 30,
             usedBytesPerDocumentInput: {}
@@ -186,7 +185,6 @@ describe('storage-utils', () => {
             roomId: rooms[1]._id,
             roomMediaItems: room2MediaItems,
             roomName: rooms[1].name,
-            roomMediaPath: `room-media/${rooms[1]._id}`,
             usedBytesByDocumentInputMediaItems: 50,
             usedBytesByRoomMediaItems: 30,
             usedBytesPerDocumentInput: {

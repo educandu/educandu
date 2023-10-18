@@ -144,7 +144,6 @@ export async function getPrivateStorageOverview({ user, roomStore, storagePlanSt
       roomId: roomStorageItem.room._id,
       roomName: roomStorageItem.room.name,
       roomMediaItems: roomStorageItem.roomMediaItems,
-      roomMediaPath: getRoomMediaRoomPath(roomStorageItem.room._id),
       usedBytesByRoomMediaItems: roomStorageItem.usedBytesByRoomMediaItems,
       usedBytesByDocumentInputMediaItems: roomStorageItem.usedBytesByDocumentInputMediaItems,
       usedBytesPerDocumentInput: roomStorageItem.usedBytesPerDocumentInput
