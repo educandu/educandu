@@ -38,6 +38,10 @@ class DocumentInputStore {
     return this.collection.deleteOne({ _id: documentInputId }, { session });
   }
 
+  deleteDocumentInputsByIds(documentInputIds, { session } = {}) {
+    return this.collection.deleteMany({ _id: { $in: documentInputIds } }, { session });
+  }
+
   deleteDocumentInputsByDocumentId(documentId, { session } = {}) {
     return this.collection.deleteMany({ documentId }, { session });
   }
