@@ -1,22 +1,22 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { WhiteboardCanvas } from './whiteboard-canvas.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
-const createInitialData = () => ({});
+const createInitialData = () => ({ canvasData: null });
 
-export default function WhiteboardDisplay({ content, input, canModifyInput, onInputChanged }) {
+export default function WhiteboardDisplay({ content, input, onInputChanged }) {
   const { width } = content;
   const data = input.data || createInitialData();
 
-  // eslint-disable-next-line no-unused-vars
-  const handleDataChange = newData => {
-    onInputChanged(newData);
-  };
+  const handleCanvasDataChange = useCallback(newCanvasData => {
+    onInputChanged({ canvasData: newCanvasData });
+  }, [onInputChanged]);
 
   return (
     <div className={`u-horizontally-centered u-width-${width}`}>
-      <pre>
-        {JSON.stringify({ data, canModifyInput }, null, 2)}
-      </pre>
+      <div style={{ width: '500px', height: '500px' }}>
+        <WhiteboardCanvas data={data.canvasData} onChange={handleCanvasDataChange} />
+      </div>
     </div>
   );
 }
