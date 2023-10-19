@@ -10,6 +10,7 @@ import MarkdownInfo from './markdown/markdown-info.js';
 import SeparatorInfo from './separator/separator-info.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
 import TextFieldInfo from './text-field/text-field-info.js';
+import WhiteboardInfo from './whiteboard/whiteboard-info.js';
 import AnnotationInfo from './annotation/annotation-info.js';
 import DiagramNetInfo from './diagram-net/diagram-net-info.js';
 import QuickTesterInfo from './quick-tester/quick-tester-info.js';
@@ -41,6 +42,7 @@ const builtInPluginInfos = [
   PdfViewerInfo,
   TextFieldInfo,
   SeparatorInfo,
+  WhiteboardInfo,
   AnnotationInfo,
   DiagramNetInfo,
   QuickTesterInfo,
