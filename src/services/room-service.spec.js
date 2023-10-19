@@ -24,7 +24,9 @@ import {
   pruneTestEnvironment,
   createTestUser,
   createTestRoom,
-  createTestDocument
+  createTestDocument,
+  createTestDocumentInput,
+  createTestDocumentInputMediaItem
 } from '../test-helper.js';
 
 const { BadRequest, NotFound, Forbidden } = httpErrors;
@@ -937,6 +939,96 @@ describe('room-service', () => {
 
       it('should release the lock', () => {
         assert.called(lockStore.releaseLock);
+      });
+    });
+  });
+
+  describe('removeRoomMember', () => {
+    let currentRoom;
+    let otherRoom;
+    let documentInCurrentRoom;
+    let documentInOtherRoom;
+    let documentInputInCurrentRoom1;
+    let documentInputInCurrentRoom2;
+    let documentInputInOtherRoom;
+
+    describe('when a room member is removed', () => {
+      beforeEach(async () => {
+        const currentRoomId = uniqueId.create();
+        const otherRoomId = uniqueId.create();
+
+        currentRoom = await createTestRoom(container, {
+          _id: currentRoomId,
+          ownedBy: otherUser._id,
+          members: [{ userId: myUser._id, joinedOn: new Date() }]
+        });
+        documentInCurrentRoom = await createTestDocument(container, otherUser, { roomId: currentRoomId, roomContext: { draft: false, inputSubmittingDisabled: false } });
+        await db.rooms.updateOne({ _id: currentRoomId }, { $set: { documents: [documentInCurrentRoom._id] } });
+        // eslint-disable-next-line require-atomic-updates
+        currentRoom = await db.rooms.findOne({ _id: currentRoom._id });
+
+        otherRoom = await createTestRoom(container, {
+          _id: otherRoomId,
+          ownedBy: otherUser._id,
+          members: [{ userId: myUser._id, joinedOn: new Date() }]
+        });
+        documentInOtherRoom = await createTestDocument(container, otherUser, { roomId: otherRoomId, roomContext: { draft: false, inputSubmittingDisabled: false } });
+        await db.rooms.updateOne({ _id: currentRoomId }, { $set: { documents: [documentInOtherRoom._id] } });
+        // eslint-disable-next-line require-atomic-updates
+        otherRoom = await db.rooms.findOne({ _id: otherRoom._id });
+
+        documentInputInCurrentRoom1 = await createTestDocumentInput(container, myUser, {
+          documentId: documentInCurrentRoom._id,
+          documentRevisionId: documentInCurrentRoom.revision,
+          sections: {}
+        });
+        documentInputInCurrentRoom2 = await createTestDocumentInput(container, otherUser, {
+          documentId: documentInCurrentRoom._id,
+          documentRevisionId: documentInCurrentRoom.revision,
+          sections: {}
+        });
+        documentInputInOtherRoom = await createTestDocumentInput(container, myUser, {
+          documentId: documentInOtherRoom._id,
+          documentRevisionId: documentInOtherRoom.revision,
+          sections: {}
+        });
+
+        await createTestDocumentInputMediaItem(container, myUser, {
+          documentInputId: documentInputInCurrentRoom1._id,
+          documentId: documentInCurrentRoom._id,
+          roomId: currentRoomId
+        });
+        await createTestDocumentInputMediaItem(container, otherUser, {
+          documentInputId: documentInputInCurrentRoom2._id,
+          documentId: documentInCurrentRoom._id,
+          roomId: currentRoomId
+        });
+        await createTestDocumentInputMediaItem(container, myUser, {
+          documentInputId: documentInputInOtherRoom._id,
+          documentId: documentInOtherRoom._id,
+          roomId: otherRoomId
+        });
+
+        sandbox.stub(cdn, 'deleteDirectory').resolves();
+
+        await sut.removeRoomMember({ room: currentRoom, memberUserId: myUser._id });
+      });
+
+      it('should update the room members list', async () => {
+        const updatedRoom = await db.rooms.findOne({ _id: currentRoom._id });
+        expect(updatedRoom.members).toEqual([]);
+      });
+
+      it('should delete the user\'s document inputs in the current room', async () => {
+        const allRemainingUserDocumentInputs = await db.documentInputs.find({ createdBy: myUser._id }).toArray();
+        expect(allRemainingUserDocumentInputs.length).toEqual(1);
+        expect(allRemainingUserDocumentInputs[0]._id).toEqual(documentInputInOtherRoom._id);
+      });
+
+      it('should delete the user\'s document inputs media in the current room', async () => {
+        const allRemainingDocumentInputsMediaInCurrentRoom = await db.documentInputMediaItems.find({ roomId: currentRoom._id }).toArray();
+        expect(allRemainingDocumentInputsMediaInCurrentRoom.length).toEqual(1);
+        expect(allRemainingDocumentInputsMediaInCurrentRoom[0].createdBy).toEqual(otherUser._id);
       });
     });
   });

@@ -506,7 +506,18 @@ export default class RoomService {
   async removeRoomMember({ room, memberUserId }) {
     const member = room.members.find(m => m.userId === memberUserId);
     const remainingMembers = ensureIsExcluded(room.members, member);
+
+    const userDocumentInputs = await this.documentInputStore.getAllDocumentInputsCreatedByUser(memberUserId);
+    const documentInputsToDelete = userDocumentInputs.filter(documentInput => room.documents.includes(documentInput.documentId));
+    const documentInputIdsToDelete = documentInputsToDelete.map(documentInput => documentInput._id);
+
     await this.roomStore.updateRoomMembers(room._id, remainingMembers);
+    await this.documentInputStore.deleteDocumentInputsByIds(documentInputIdsToDelete);
+    await this.documentInputMediaItemStore.deleteDocumentInputMediaItemsByDocumentInputIds(documentInputIdsToDelete);
+
+    for (const documentInputId of documentInputsToDelete) {
+      await this.cdn.deleteDirectory({ directoryPath: getDocumentInputMediaPath({ roomId: room._id, documentInputId }) });
+    }
 
     const updatedRoom = await this.roomStore.getRoomById(room._id);
 

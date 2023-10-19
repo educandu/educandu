@@ -226,7 +226,7 @@ export async function createTestDocumentInputMediaItem(container, user, data) {
     size: data.size || 1,
     createdBy: user._id,
     createdOn: data.createdOn || now,
-    url: data.storageUrl || ''
+    url: data.storageUrl || uniqueId.create()
   };
 
   await db.documentInputMediaItems.insertOne(newItem);
