@@ -387,10 +387,11 @@ export default class RoomController {
       : [];
 
     const singleRoomMediaOverview = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
+    const mappedSingleRoomMediaOverview = await this.clientDataMappingService.mapSingleRoomMediaOverview(singleRoomMediaOverview, user);
 
     const roomMediaContext = singleRoomMediaOverview.storagePlan || singleRoomMediaOverview.usedBytes
       ? {
-        singleRoomMediaOverview,
+        singleRoomMediaOverview: mappedSingleRoomMediaOverview,
         isDeletionEnabled: isRoomOwner({ room: room || null, userId: user._id })
       }
       : null;

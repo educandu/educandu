@@ -41,7 +41,8 @@ describe('document-controller', () => {
       mapRoom: sandbox.stub(),
       mapDocOrRevision: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
-      createProposedSections: sandbox.stub()
+      createProposedSections: sandbox.stub(),
+      mapSingleRoomMediaOverview: sandbox.stub()
     };
 
     settingService = {
@@ -83,6 +84,7 @@ describe('document-controller', () => {
     let mappedTemplateDocument;
     let roomMediaOverview;
     let roomMediaContext;
+    let mappedRoomMediaOverview;
 
     describe('when the document does not exist', () => {
       beforeEach(() => {
@@ -180,6 +182,7 @@ describe('document-controller', () => {
         doc.slug = 'doc-slug';
 
         roomMediaOverview = null;
+        mappedRoomMediaOverview = null;
         templateSections = [{}];
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
@@ -192,6 +195,7 @@ describe('document-controller', () => {
 
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(roomMediaOverview);
         pageRenderer.sendPage.resolves();
 
         return sut.handleGetDocPage(req, res);
@@ -225,11 +229,14 @@ describe('document-controller', () => {
         room.ownedBy = uniqueId.create();
         room.members = [];
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        mappedRoomMediaOverview = { ...roomMediaOverview };
 
         roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
+
         pageRenderer.sendPage.resolves();
       });
 
@@ -253,11 +260,14 @@ describe('document-controller', () => {
         room.ownedBy = uniqueId.create();
         room.members = [];
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        mappedRoomMediaOverview = { ...roomMediaOverview };
 
         roomService.getSingleRoomMediaOverview.resolves(roomMediaOverview);
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
         documentService.getDocumentById.withArgs(templateDocument._id).resolves(templateDocument);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
+
         pageRenderer.sendPage.resolves();
       });
 
@@ -294,6 +304,7 @@ describe('document-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
         pageRenderer.sendPage.resolves();
 
         return sut.handleGetDocPage(req, res);
@@ -332,6 +343,7 @@ describe('document-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
         pageRenderer.sendPage.resolves();
 
         return sut.handleGetDocPage(req, res);
@@ -461,6 +473,7 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        mappedRoomMediaOverview = { ...roomMediaOverview };
         roomMediaContext = {
           singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: true
@@ -474,6 +487,8 @@ describe('document-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
+
         pageRenderer.sendPage.resolves();
 
         return sut.handleGetDocPage(req, res);
@@ -505,6 +520,7 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        mappedRoomMediaOverview = { ...roomMediaOverview };
         roomMediaContext = {
           singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: true
@@ -518,6 +534,8 @@ describe('document-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
+
         pageRenderer.sendPage.resolves();
 
         return sut.handleGetDocPage(req, res);
@@ -549,6 +567,7 @@ describe('document-controller', () => {
         mappedDocument = { ...doc };
         mappedTemplateDocument = { ...templateDocument };
         roomMediaOverview = { storagePlan: { maxBytes: 50 }, usedBytes: 25 };
+        mappedRoomMediaOverview = { ...roomMediaOverview };
         roomMediaContext = {
           singleRoomMediaOverview: roomMediaOverview,
           isDeletionEnabled: false
@@ -562,6 +581,8 @@ describe('document-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
+
         pageRenderer.sendPage.resolves();
 
         return sut.handleGetDocPage(req, res);

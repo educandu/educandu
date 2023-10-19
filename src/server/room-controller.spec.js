@@ -72,7 +72,8 @@ describe('room-controller', () => {
       mapRoom: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
       mapRoomInvitations: sandbox.stub(),
-      mapDocumentInputs: sandbox.stub()
+      mapDocumentInputs: sandbox.stub(),
+      mapSingleRoomMediaOverview: sandbox.stub()
     };
 
     pageRenderer = {
@@ -754,6 +755,7 @@ describe('room-controller', () => {
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
         clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
         clientDataMappingService.mapDocumentInputs.returns(mappedDocumentInputs);
+        clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedDocuments);
 
         await sut.handleGetRoomPage(request, {});
       });
