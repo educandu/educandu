@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
@@ -8,24 +7,48 @@ import { useTranslation } from 'react-i18next';
 import { CommentOutlined } from '@ant-design/icons';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import InputsIcon from '../icons/general/inputs-icon.js';
-import { useRoomMediaContext } from '../room-media-context.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
-import { documentInputShape } from '../../ui/default-prop-types.js';
+import React, { useCallback, useEffect, useState } from 'react';
+import RoomApiClient from '../../api-clients/room-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentInputDelete } from '../confirmation-dialogs.js';
+import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
+import { useRoomMediaContext, useSetRoomMediaContext } from '../room-media-context.js';
 
-export default function RoomDocumentInputs({ documentInputs, onDelete }) {
+export default function RoomDocumentInputs({ roomId }) {
   const { uiLocale } = useLocale();
   const { formatDate } = useDateFormat();
   const roomMediaContext = useRoomMediaContext();
   const { t } = useTranslation('roomDocumentInputs');
+  const setRoomMediaContext = useSetRoomMediaContext();
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
-  const showEmptyState = !documentInputs.length;
+  const [documentInputs, setDocumentInputs] = useState([]);
+
+  const fetchDocumentInputs = useCallback(async () => {
+    const documentInputApiResponse = await documentInputApiClient.getDocumentInputsByRoomId(roomId);
+    setDocumentInputs(documentInputApiResponse.documentInputs);
+  }, [roomId, documentInputApiClient]);
+
+  useEffect(() => {
+    fetchDocumentInputs();
+  }, [fetchDocumentInputs, roomMediaContext]);
+
+  const handleDeleteDocumentInput = async documentInput => {
+    await documentInputApiClient.hardDeleteDocumentInput(documentInput._id);
+
+    const singleRoomMediaOverview = await roomApiClient.getSingleRoomMediaOverview({ roomId });
+    setRoomMediaContext(oldContext => ({ ...oldContext, singleRoomMediaOverview }));
+
+    await fetchDocumentInputs();
+  };
 
   const handleDocumentInputDeleteClick = documentInput => {
     confirmDocumentInputDelete(
       t,
       formatDate(documentInput.createdOn),
-      () => onDelete(documentInput)
+      () => handleDeleteDocumentInput(documentInput)
     );
   };
 
@@ -77,6 +100,8 @@ export default function RoomDocumentInputs({ documentInputs, onDelete }) {
     );
   };
 
+  const showEmptyState = !documentInputs.length;
+
   return (
     <div className="RoomDocumentInputs">
       {!!showEmptyState && (
@@ -93,6 +118,5 @@ export default function RoomDocumentInputs({ documentInputs, onDelete }) {
 }
 
 RoomDocumentInputs.propTypes = {
-  documentInputs: PropTypes.arrayOf(documentInputShape).isRequired,
-  onDelete: PropTypes.func.isRequired
+  roomId: PropTypes.string.isRequired
 };

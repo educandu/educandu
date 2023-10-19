@@ -24,10 +24,9 @@ import { TeamOutlined, UserOutlined } from '@ant-design/icons';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import RoomDocumentInputs from '../room/room-document-inputs.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { RoomMediaContextProvider } from '../room-media-context.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
-import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
-import { RoomMediaContextProvider, useSetRoomMediaContext } from '../room-media-context.js';
 import { roomShape, roomInvitationShape, documentExtendedMetadataShape, roomMediaContextShape, documentInputShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -49,14 +48,11 @@ export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('room');
-  const setRoomMediaContext = useSetRoomMediaContext();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
   const initialTab = request.query.tab || TAB_KEYS.view;
 
   const [room, setRoom] = useState(initialState.room);
-  const [documentInputs, setDocumentInputs] = useState(initialState.documentInputs);
   const [membersCount, setMembersCount] = useState(initialState.room.members.length);
   const [invitationsCount, setInvitationsCount] = useState(initialState.invitations.length);
 
@@ -70,17 +66,8 @@ export default function Room({ PageTemplate, initialState }) {
     return VIEW_MODE.nonCollaboratingMember;
   }, [room, user]);
 
-  const updateDocumentInputsData = async () => {
-    const documentInputApiResponse = await documentInputApiClient.getDocumentInputsByRoomId(room._id);
-    setDocumentInputs(documentInputApiResponse.documentInputs);
-  };
-
-  const handleTabChange = async tab => {
+  const handleTabChange = tab => {
     history.replaceState(null, '', routes.getRoomUrl({ id: room._id, slug: room.slug, tab }));
-
-    if (tab === TAB_KEYS.documentInputs) {
-      await updateDocumentInputsData();
-    }
   };
 
   const handleLeaveRoom = async () => {
@@ -107,15 +94,6 @@ export default function Room({ PageTemplate, initialState }) {
   const handleRoomMembersChange = membersInfo => {
     setMembersCount(membersInfo.membersCount);
     setInvitationsCount(membersInfo.invitationsCount);
-  };
-
-  const handleDeleteDocumentInput = async documentInput => {
-    await documentInputApiClient.hardDeleteDocumentInput(documentInput._id);
-
-    const singleRoomMediaOverview = await roomApiClient.getSingleRoomMediaOverview({ roomId: room._id });
-    setRoomMediaContext(oldContext => ({ ...oldContext, singleRoomMediaOverview }));
-
-    await updateDocumentInputsData();
   };
 
   const renderSubtitleLink = () => {
@@ -241,10 +219,7 @@ export default function Room({ PageTemplate, initialState }) {
                   label: <div><InputsIcon />{t('common:documentInputs')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
-                      <RoomDocumentInputs
-                        documentInputs={documentInputs}
-                        onDelete={handleDeleteDocumentInput}
-                        />
+                      <RoomDocumentInputs roomId={room._id} />
                     </div>
                   )
                 }
@@ -274,10 +249,7 @@ export default function Room({ PageTemplate, initialState }) {
                   label: <div><InputsIcon />{t('common:documentInputs')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
-                      <RoomDocumentInputs
-                        documentInputs={documentInputs}
-                        onDelete={handleDeleteDocumentInput}
-                        />
+                      <RoomDocumentInputs roomId={room._id} />
                     </div>
                   )
                 },
