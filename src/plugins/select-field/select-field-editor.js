@@ -77,7 +77,7 @@ export default function SelectFieldEditor({ content, onContentChanged }) {
           isOtherDragged={isOtherDragged}
           dragHandleProps={dragHandleProps}
           itemsCount={items.length}
-          header={`${t('itemNumber', { number: index + 1 })}${item.text ? ': ' : ''}${item.text}`}
+          header={t('itemNumber', { number: index + 1 })}
           onMoveUp={handleItemMoveUp}
           onMoveDown={handleItemMoveDown}
           onDelete={handleItemDelete}
