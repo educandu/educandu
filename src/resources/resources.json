@@ -3467,6 +3467,12 @@
       "de": "Video"
     }
   },
+  "whiteboard": {
+    "name": {
+      "en": "Whiteboard",
+      "de": "Whiteboard"
+    }
+  },
   "common": {
     "yes": {
       "en": "Yes",

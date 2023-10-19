@@ -36,7 +36,8 @@ const plugins = [
   'custom-plugin/server-time',
   'text-field',
   'select-field',
-  'file-upload-field'
+  'file-upload-field',
+  'whiteboard'
 ];
 
 const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)
