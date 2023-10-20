@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import CircleIcon from './icons/circle-icon.js';
 import SelectIcon from './icons/select-icon.js';
 import EraserIcon from './icons/eraser-icon.js';
+import React, { Fragment, useState } from 'react';
 import TriangleIcon from './icons/triangle-icon.js';
 import FontSizeIcon from './icons/font-size-icon.js';
 import FreeDrawIcon from './icons/free-draw-icon.js';
@@ -16,7 +17,6 @@ import FillColorIcon from './icons/fill-color-icon.js';
 import StrokeWidthIcon from './icons/stroke-width-icon.js';
 import StrokeColorIcon from './icons/stroke-color-icon.js';
 import SwatchesPickerNs from 'react-color/lib/Swatches.js';
-import React, { Fragment, useMemo, useState } from 'react';
 import { Button, Dropdown, Popover, Radio, Tooltip } from 'antd';
 import { DEFAULT_COLOR_SWATCHES, DEFAULT_COLOR_PICKER_WIDTH } from '../../domain/constants.js';
 
@@ -55,6 +55,59 @@ const MENUS = {
   strokeWidth: 'strokeWidth'
 };
 
+const shapeMenuItems = [
+  {
+    key: SHAPE_TYPES.line,
+    label: <LineIcon />
+  },
+  {
+    key: SHAPE_TYPES.arrow,
+    label: <ArrowIcon />
+  },
+  {
+    key: SHAPE_TYPES.circle,
+    label: <CircleIcon />
+  },
+  {
+    key: SHAPE_TYPES.triangle,
+    label: <TriangleIcon />
+  },
+  {
+    key: SHAPE_TYPES.rectangle,
+    label: <RectangleIcon />
+  }
+];
+
+const fontSizeMenuItems = [
+  {
+    key: FONT_SIZES.small,
+    label: 'S'
+  },
+  {
+    key: FONT_SIZES.medium,
+    label: 'M'
+  },
+  {
+    key: FONT_SIZES.large,
+    label: 'L'
+  }
+];
+
+const strokeWidthMenuItems = [
+  {
+    key: STROKE_WIDTHS.small,
+    label: 'S'
+  },
+  {
+    key: STROKE_WIDTHS.medium,
+    label: 'M'
+  },
+  {
+    key: STROKE_WIDTHS.large,
+    label: 'L'
+  }
+];
+
 export function WhiteboardToolbar({
   mode,
   fontSize,
@@ -80,64 +133,6 @@ export function WhiteboardToolbar({
 
   const [openMenu, setOpenMenu] = useState(null);
 
-  const shapeMenuItems = useMemo(() => [
-    {
-      key: SHAPE_TYPES.line,
-      label: <LineIcon />,
-      onClick: onLineClick
-    },
-    {
-      key: SHAPE_TYPES.arrow,
-      label: <ArrowIcon />,
-      onClick: onArrowClick
-    },
-    {
-      key: SHAPE_TYPES.circle,
-      label: <CircleIcon />,
-      onClick: onCircleClick
-    },
-    {
-      key: SHAPE_TYPES.triangle,
-      label: <TriangleIcon />,
-      onClick: onTriangleClick
-    },
-    {
-      key: SHAPE_TYPES.rectangle,
-      label: <RectangleIcon />,
-      onClick: onRectangleClick
-    }
-  ], [onLineClick, onArrowClick, onCircleClick, onTriangleClick, onRectangleClick]);
-
-  const fontSizeMenuItems = [
-    {
-      key: FONT_SIZES.small,
-      label: 'S'
-    },
-    {
-      key: FONT_SIZES.medium,
-      label: 'M'
-    },
-    {
-      key: FONT_SIZES.large,
-      label: 'L'
-    }
-  ];
-
-  const strokeWidthMenuItems = [
-    {
-      key: STROKE_WIDTHS.small,
-      label: 'S'
-    },
-    {
-      key: STROKE_WIDTHS.medium,
-      label: 'M'
-    },
-    {
-      key: STROKE_WIDTHS.large,
-      label: 'L'
-    }
-  ];
-
   const handleModeChange = event => {
     onModeChange(event.target.value);
   };
@@ -147,8 +142,25 @@ export function WhiteboardToolbar({
   };
 
   const handleShapeMenuClick = ({ key }) => {
-    const menuItem = shapeMenuItems.find(item => item.key === key);
-    menuItem.onClick();
+    switch (key) {
+      case SHAPE_TYPES.line:
+        onLineClick();
+        break;
+      case SHAPE_TYPES.arrow:
+        onArrowClick();
+        break;
+      case SHAPE_TYPES.circle:
+        onCircleClick();
+        break;
+      case SHAPE_TYPES.triangle:
+        onTriangleClick();
+        break;
+      case SHAPE_TYPES.rectangle:
+        onRectangleClick();
+        break;
+      default:
+        break;
+    }
     setOpenMenu(null);
   };
 
