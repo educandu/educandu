@@ -52,7 +52,7 @@ export function WhiteboardCanvas({ data, onChange }) {
 
       if (event.code === 'Delete' || event.code === 'Backspace') {
         const activeObject = newCanvas.getActiveObject();
-        if (activeObject) {
+        if (activeObject && !activeObject.isEditing) {
           newCanvas.remove(activeObject);
         }
       }
