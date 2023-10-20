@@ -12,18 +12,24 @@ import SelectIcon from './icons/select-icon.js';
 import EraserIcon from './icons/eraser-icon.js';
 import { UndoOutlined } from '@ant-design/icons';
 import TriangleIcon from './icons/triangle-icon.js';
+import { cssUrl } from '../../utils/css-utils.js';
+import useDimensionsNs from 'react-cool-dimensions';
 import RectangleIcon from './icons/rectangle-icon.js';
 import { RgbaStringColorPicker } from 'react-colorful';
 import WhiteboardDropdown from './whiteboard-dropdown.js';
 import React, { useEffect, useRef, useState } from 'react';
 
+const useDimensions = useDimensionsNs.default || useDimensionsNs;
+
 const canvasOptions = { selectionLineWidth: 2, isDrawingMode: false };
 
-export function WhiteboardCanvas({ data, onChange }) {
+export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHeight, data, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
   const isLoadingData = useRef(false);
   const [canvas, setCanvas] = useState();
+  const { observe: dimensionsContainerRef, width: containerWidth } = useDimensions();
+  const [canvasViewportInfo, setCanvasViewportInfo] = useState({ width: 0, height: 0, scale: 1 });
 
   const [objOptions, setObjOptions] = useState({
     stroke: '#000000', fontSize: 22, fill: 'rgba(255, 255, 255, 0.0)', strokeWidth: 3
@@ -49,8 +55,7 @@ export function WhiteboardCanvas({ data, onChange }) {
     newCanvas.on('object:removed', handleCanvasChange);
     newCanvas.on('object:modified', handleCanvasChange);
 
-    newCanvas.setHeight(parentRef.current?.clientHeight || 0);
-    newCanvas.setWidth(parentRef.current?.clientWidth || 0);
+    newCanvas.setDimensions({ width: 0, height: 0 });
     newCanvas.renderAll();
 
     const onKeydown = event => {
@@ -88,6 +93,23 @@ export function WhiteboardCanvas({ data, onChange }) {
       });
     }
   }, [canvas, data]);
+
+  useEffect(() => {
+    const numericalAspectRatio = viewportWidth / viewportHeight;
+    setCanvasViewportInfo({
+      width: Math.round(containerWidth),
+      height: Math.round(containerWidth / numericalAspectRatio),
+      scale: containerWidth / viewportWidth
+    });
+  }, [canvas, containerWidth, viewportWidth, viewportHeight]);
+
+  useEffect(() => {
+    if (canvas?.getContext()) {
+      canvas.setDimensions({ width: canvasViewportInfo.width, height: canvasViewportInfo.height });
+      canvas.setViewportTransform([canvasViewportInfo.scale, 0, 0, canvasViewportInfo.scale, 0, 0]);
+      canvas.renderAll();
+    }
+  }, [canvas, canvasViewportInfo]);
 
   const onRadioColor = e => {
     setColorProp(e.target.value);
@@ -217,68 +239,84 @@ export function WhiteboardCanvas({ data, onChange }) {
 
   return (
     <div
-      className="w-100 h-100 Whiteboard"
-      ref={parentRef}
+      ref={dimensionsContainerRef}
+      style={{ position: 'relative', height: canvasViewportInfo.height }}
       >
+      <div
+        ref={parentRef}
+        className="Whiteboard"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: canvasViewportInfo.width,
+          height: canvasViewportInfo.height,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundImage: backgroundImageUrl ? cssUrl(backgroundImageUrl) : 'none'
+        }}
+        >
 
-      <div className="left-menu">
-        <div className="bg-white d-flex align-center justify-between shadow br-7">
-          <label>Font size</label>
-          <input type="number" min="1" name="fontSize" onChange={onOptionsChange} defaultValue="22" />
-        </div>
-
-        <div className="bg-white d-flex align-center justify-between shadow br-7">
-          <label>Stroke</label>
-          <input type="number" min="1" name="strokeWidth" onChange={onOptionsChange} defaultValue="3" />
-        </div>
-
-        <div className="bg-white d-flex flex-column shadow br-7">
-          <div className="d-flex align-end mb-10">
-            <input className="mr-10" type="radio" onChange={onRadioColor} name="color" defaultValue="backgroundColor" />
-            <label htmlFor="backgroundColor">background</label>
-          </div>
-          <div className="d-flex align-end mb-10">
-            <input className="mr-10" type="radio" onChange={onRadioColor} id="stroke" name="color" defaultValue="stroke" />
-            <label htmlFor="stroke">stroke</label>
-          </div>
-
-          <div className="d-flex align-end mb-10">
-            <input className="mr-10" type="radio" onChange={onRadioColor} id="fill" name="color" defaultValue="fill" />
-            <label htmlFor="fill">fill</label>
+        <div className="left-menu" style={{ display: 'none' }}>
+          <div className="bg-white d-flex align-center justify-between shadow br-7">
+            <label>Font size</label>
+            <input type="number" min="1" name="fontSize" onChange={onOptionsChange} defaultValue="22" />
           </div>
 
-          <RgbaStringColorPicker onChange={onColorChange} />
+          <div className="bg-white d-flex align-center justify-between shadow br-7">
+            <label>Stroke</label>
+            <input type="number" min="1" name="strokeWidth" onChange={onOptionsChange} defaultValue="3" />
+          </div>
+
+          <div className="bg-white d-flex flex-column shadow br-7">
+            <div className="d-flex align-end mb-10">
+              <input className="mr-10" type="radio" onChange={onRadioColor} name="color" defaultValue="backgroundColor" />
+              <label htmlFor="backgroundColor">background</label>
+            </div>
+            <div className="d-flex align-end mb-10">
+              <input className="mr-10" type="radio" onChange={onRadioColor} id="stroke" name="color" defaultValue="stroke" />
+              <label htmlFor="stroke">stroke</label>
+            </div>
+
+            <div className="d-flex align-end mb-10">
+              <input className="mr-10" type="radio" onChange={onRadioColor} id="fill" name="color" defaultValue="fill" />
+              <label htmlFor="fill">fill</label>
+            </div>
+
+            <RgbaStringColorPicker onChange={onColorChange} />
+          </div>
         </div>
-      </div>
 
-      <div className="w-100 d-flex justify-center align-center" style={{ position: 'fixed', top: '10px', left: 0, zIndex: 9999 }}>
-        <div className="bg-white d-flex justify-center align-center shadow br-7">
-          <button type="button" onClick={handleSelectClick}><SelectIcon /></button>
-          <button type="button" onClick={handleDrawClick}><DrawIcon /></button>
-          <button type="button" onClick={handleTextClick}><TextIcon /></button>
-          <WhiteboardDropdown title={<ShapeIcon />}>
-            <button type="button" onClick={handleLineClick}><LineIcon /></button>
-            <button type="button" onClick={handleArrowClick}><ArrowIcon /></button>
-            <button type="button" onClick={handleRectangleClick}><RectangleIcon /></button>
-            <button type="button" onClick={handleCircleClick}><CircleIcon /></button>
-            <button type="button" onClick={handleTriangleClick}><TriangleIcon /></button>
-          </WhiteboardDropdown>
-          <button type="button" onClick={handleEraseClick}><EraserIcon /></button>
-          <button type="button" onClick={handleClearClick}><UndoOutlined /></button>
+        <div className="w-100 d-flex justify-center align-center" style={{ position: 'fixed', top: '10px', left: 0, zIndex: 9999 }}>
+          <div className="bg-white d-flex justify-center align-center shadow br-7">
+            <button type="button" onClick={handleSelectClick}><SelectIcon /></button>
+            <button type="button" onClick={handleDrawClick}><DrawIcon /></button>
+            <button type="button" onClick={handleTextClick}><TextIcon /></button>
+            <WhiteboardDropdown title={<ShapeIcon />}>
+              <button type="button" onClick={handleLineClick}><LineIcon /></button>
+              <button type="button" onClick={handleArrowClick}><ArrowIcon /></button>
+              <button type="button" onClick={handleRectangleClick}><RectangleIcon /></button>
+              <button type="button" onClick={handleCircleClick}><CircleIcon /></button>
+              <button type="button" onClick={handleTriangleClick}><TriangleIcon /></button>
+            </WhiteboardDropdown>
+            <button type="button" onClick={handleEraseClick}><EraserIcon /></button>
+            <button type="button" onClick={handleClearClick}><UndoOutlined /></button>
+          </div>
         </div>
-      </div>
 
-      <canvas ref={canvasRef} className="canvas" />
+        <canvas ref={canvasRef} className="canvas" />
 
-      <div className="w-100 bottom-menu">
-        <select className="d-flex align-center bg-white br-7 shadow border-0 pr-1 pl-1" onChange={onZoom} defaultValue="1">
-          <option value="2">200%</option>
-          <option value="1.5">150%</option>
-          <option value="1">100%</option>
-          <option value="0.75">75%</option>
-          <option value="0.50">50%</option>
-          <option value="0.25">25%</option>
-        </select>
+        <div className="w-100 bottom-menu">
+          <select className="d-flex align-center bg-white br-7 shadow border-0 pr-1 pl-1" onChange={onZoom} defaultValue="1">
+            <option value="2">200%</option>
+            <option value="1.5">150%</option>
+            <option value="1">100%</option>
+            <option value="0.75">75%</option>
+            <option value="0.50">50%</option>
+            <option value="0.25">25%</option>
+          </select>
+        </div>
       </div>
     </div>
   );
@@ -286,9 +324,13 @@ export function WhiteboardCanvas({ data, onChange }) {
 
 WhiteboardCanvas.propTypes = {
   data: PropTypes.object,
+  backgroundImageUrl: PropTypes.string,
+  viewportWidth: PropTypes.number.isRequired,
+  viewportHeight: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired
 };
 
 WhiteboardCanvas.defaultProps = {
-  data: null
+  data: null,
+  backgroundImageUrl: null
 };

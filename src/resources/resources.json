@@ -2610,10 +2610,6 @@
       "en": "Generate image from audio file",
       "de": "Bild aus Audio-Datei erstellen"
     },
-    "imageUrl": {
-      "en": "Image URL",
-      "de": "Bild-URL"
-    },
     "displayModeInfo": {
       "en": "In interactive mode, users are able to hand-draw a waveform, and then compare with the uploaded image.",
       "de": "Im interaktiven Modus können Benutzer eine Wellenform händisch zeichnen und mit dem hochgeladenen Bild vergleichen."
@@ -2955,10 +2951,6 @@
     "textOffsetInfo": {
       "en": "1em corresponds to the current paragraph font size",
       "de": "1 em entspricht der verwendeten Absatz-Schriftgröße"
-    },
-    "imageUrl": {
-      "en": "Image URL",
-      "de": "Bild-URL"
     },
     "imageWidth": {
       "en": "Image width",
@@ -3773,6 +3765,10 @@
     "url": {
       "en": "URL",
       "de": "URL"
+    },
+    "imageUrl": {
+      "en": "Image URL",
+      "de": "Bild-URL"
     },
     "daily": {
       "en": "daily",

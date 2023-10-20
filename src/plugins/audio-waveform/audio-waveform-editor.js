@@ -89,7 +89,7 @@ function AudioWaveformEditor({ content, onContentChanged }) {
           </Button>
         </FormItem>
 
-        <FormItem {...FORM_ITEM_LAYOUT} label={t('imageUrl')}>
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:imageUrl')}>
           <UrlInput value={sourceUrl} onChange={handleSourceUrlChange} allowedSourceTypes={allowedSourceTypes} />
         </FormItem>
 
