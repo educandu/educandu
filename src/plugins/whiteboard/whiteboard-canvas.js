@@ -7,9 +7,8 @@ import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js
 import { FONT_SIZES, MODES, STROKE_WIDTHS, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
 const transparentColor = 'rgba(255, 255, 255, 0.0)';
-const getDefaultCanvasOptions = () => ({ selectionLineWidth: 2, isDrawingMode: false });
 
-export function WhiteboardCanvas({ data, onChange }) {
+export function WhiteboardCanvas({ data, disabled, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
   const isLoadingData = useRef(false);
@@ -27,7 +26,11 @@ export function WhiteboardCanvas({ data, onChange }) {
       return () => {};
     }
 
-    const newCanvas = new fabric.Canvas(canvasRef.current, getDefaultCanvasOptions);
+    const newCanvas = new fabric.Canvas(canvasRef.current, {
+      selectionLineWidth: 2,
+      isDrawingMode: false
+    });
+
     setToolbarMode(MODES.select);
 
     const handleCanvasChange = () => {
@@ -69,7 +72,7 @@ export function WhiteboardCanvas({ data, onChange }) {
       document.removeEventListener('keydown', onKeydown, false);
       newCanvas.dispose();
     };
-  }, [canvasRef, parentRef, onChange]);
+  }, [canvasRef, parentRef, disabled, onChange]);
 
   useEffect(() => {
     if (canvas?.getContext() && data && !deepEqual(data, canvas.toDatalessJSON())) {
@@ -306,33 +309,37 @@ export function WhiteboardCanvas({ data, onChange }) {
       <div className="Whiteboard-canvasContainer">
         <canvas ref={canvasRef} className="canvas" />
       </div>
-      <WhiteboardToolbar
-        mode={toolbarMode}
-        fontSize={fontSize}
-        strokeWidth={strokeWidth}
-        strokeColor={strokeColor}
-        fillColor={fillColor}
-        onModeChange={handleToolbarModeChange}
-        onTextClick={handleTextClick}
-        onLineClick={handleLineClick}
-        onArrowClick={handleArrowClick}
-        onRectangleClick={handleRectangleClick}
-        onTriangleClick={handleTriangleClick}
-        onCircleClick={handleCircleClick}
-        onEraseClick={handleEraseClick}
-        onFontSizeChange={handleFontSizeChange}
-        onStrokeWidthChange={handleStrokeWidthChange}
-        onStrokeColorChange={handleStrokeColorChange}
-        onFillColorChange={handleFillColorChange}
-        onFillColorRemove={handleFillColorRemove}
-        onResetClick={handleResetClick}
-        />
+
+      {!disabled && (
+        <WhiteboardToolbar
+          mode={toolbarMode}
+          fontSize={fontSize}
+          strokeWidth={strokeWidth}
+          strokeColor={strokeColor}
+          fillColor={fillColor}
+          onModeChange={handleToolbarModeChange}
+          onTextClick={handleTextClick}
+          onLineClick={handleLineClick}
+          onArrowClick={handleArrowClick}
+          onRectangleClick={handleRectangleClick}
+          onTriangleClick={handleTriangleClick}
+          onCircleClick={handleCircleClick}
+          onEraseClick={handleEraseClick}
+          onFontSizeChange={handleFontSizeChange}
+          onStrokeWidthChange={handleStrokeWidthChange}
+          onStrokeColorChange={handleStrokeColorChange}
+          onFillColorChange={handleFillColorChange}
+          onFillColorRemove={handleFillColorRemove}
+          onResetClick={handleResetClick}
+          />
+      )}
     </div>
   );
 }
 
 WhiteboardCanvas.propTypes = {
   data: PropTypes.object,
+  disabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired
 };
 
