@@ -2,41 +2,31 @@ import { Modal } from 'antd';
 import { fabric } from 'fabric';
 import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
-import LineIcon from './icons/line-icon.js';
-import DrawIcon from './icons/draw-icon.js';
-import TextIcon from './icons/text-icon.js';
-import ShapeIcon from './icons/shape-icon.js';
-import ArrowIcon from './icons/arrow-icon.js';
-import CircleIcon from './icons/circle-icon.js';
-import SelectIcon from './icons/select-icon.js';
-import EraserIcon from './icons/eraser-icon.js';
-import { UndoOutlined } from '@ant-design/icons';
-import TriangleIcon from './icons/triangle-icon.js';
-import RectangleIcon from './icons/rectangle-icon.js';
-import { RgbaStringColorPicker } from 'react-colorful';
-import WhiteboardDropdown from './whiteboard-dropdown.js';
+import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
+import { FONT_SIZES, MODES, STROKE_WIDTHS, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
-const canvasOptions = { selectionLineWidth: 2, isDrawingMode: false };
-
+const getDefaultCanvasOptions = () => ({ selectionLineWidth: 2, isDrawingMode: false });
 export function WhiteboardCanvas({ data, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
   const isLoadingData = useRef(false);
+  const { t } = useTranslation('whiteboard');
+
   const [canvas, setCanvas] = useState();
-
-  const [objOptions, setObjOptions] = useState({
-    stroke: '#000000', fontSize: 22, fill: 'rgba(255, 255, 255, 0.0)', strokeWidth: 3
-  });
-
-  const [colorProp, setColorProp] = useState('background');
+  const [toolbarMode, setToolbarMode] = useState(MODES.select);
+  const [fontSize, setFontSize] = useState(FONT_SIZES.medium);
+  const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTHS.medium);
+  const [strokeColor, setStrokeColor] = useState('#000000');
+  const [fillColor, setFillColor] = useState('rgba(255, 255, 255, 0.0)');
 
   useEffect(() => {
     if (!canvasRef.current || !parentRef.current) {
       return () => {};
     }
 
-    const newCanvas = new fabric.Canvas(canvasRef.current, canvasOptions);
+    const newCanvas = new fabric.Canvas(canvasRef.current, getDefaultCanvasOptions);
+    setToolbarMode(MODES.select);
 
     const handleCanvasChange = () => {
       if (!isLoadingData.current) {
@@ -89,83 +79,56 @@ export function WhiteboardCanvas({ data, onChange }) {
     }
   }, [canvas, data]);
 
-  const onRadioColor = e => {
-    setColorProp(e.target.value);
-  };
+  const handleToolbarModeChange = newToolbarMode => {
+    setToolbarMode(newToolbarMode);
 
-  const onColorChange = value => {
-    const activeObj = canvas.getActiveObject();
-
-    if (canvas.isDrawingMode) {
-      canvas.freeDrawingBrush.color = value;
+    if (newToolbarMode === MODES.select) {
+      canvas.isDrawingMode = false;
+      canvas.discardActiveObject().renderAll();
     }
-    if (activeObj) {
-      activeObj.set(colorProp, value);
-      const ops = { ...objOptions, [colorProp]: value };
-      setObjOptions(ops);
-      canvas.renderAll();
-    } else if (colorProp === 'backgroundColor') {
-      canvas.backgroundColor = value;
-      canvas.renderAll();
+
+    if (newToolbarMode === MODES.freeDraw) {
+      canvas.isDrawingMode = true;
+      canvas.freeDrawingBrush.width = strokeWidth;
+      canvas.freeDrawingBrush.color = strokeColor;
     }
   };
 
-  const onOptionsChange = e => {
-    let val = e.target.value;
-    const name = e.target.name;
-    const activeObj = canvas.getActiveObject();
-
-    if (canvas.isDrawingMode && name === 'strokeWidth') {
-      canvas.freeDrawingBrush.width = val;
-    }
-
-    if (activeObj) {
-      val = isNaN(val) ? val : Number(val);
-      activeObj.set(name, val);
-
-      const ops = { ...objOptions, [name]: val };
-      setObjOptions(ops);
-      canvas.renderAll();
-    }
-  };
-
-  const onZoom = e => {
-    canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), Number(e.target.value));
-    const units = 10;
-    const delta = new fabric.Point(units, 0);
-    canvas.relativePan(delta);
-
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleSelectClick = () => {
-    canvas.isDrawingMode = false;
-    canvas.discardActiveObject().renderAll();
-  };
-  const handleDrawClick = () => {
-    canvas.isDrawingMode = true;
-    canvas.freeDrawingBrush.width = 5;
-    canvas.freeDrawingBrush.color = '#000000';
-  };
   const handleTextClick = () => {
+    setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
-    const textbox = new fabric.Textbox('Your text here', { fontSize: objOptions.fontSize });
+
+    const textbox = new fabric.Textbox(t('text'), {
+      fontSize
+    });
+
     canvas.add(textbox);
     canvas.centerObject(textbox);
     canvas.renderAll();
   };
+
   const handleLineClick = () => {
+    setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
-    const line = new fabric.Line([50, 10, 200, 150], { ...objOptions, angle: 47 });
+
+    const line = new fabric.Line([50, 10, 200, 150], {
+      strokeWidth,
+      stroke: strokeColor,
+      angle: 47
+    });
+
     canvas.add(line);
     canvas.centerObject(line);
     canvas.renderAll();
   };
+
   const handleArrowClick = () => {
+    setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
+
     const triangle = new fabric.Triangle({
-      ...objOptions,
+      strokeWidth,
+      stroke: strokeColor,
       width: 10,
       height: 15,
       left: 235,
@@ -173,39 +136,127 @@ export function WhiteboardCanvas({ data, onChange }) {
       angle: 90
     });
 
-    const line = new fabric.Line([50, 100, 200, 100], { ...objOptions, left: 75, top: 70 });
+    const line = new fabric.Line([50, 100, 200, 100], {
+      strokeWidth,
+      stroke: strokeColor,
+      left: 75,
+      top: 70
+    });
+
     const arrow = new fabric.Group([line, triangle]);
     canvas.add(arrow);
     canvas.centerObject(arrow);
     canvas.renderAll();
   };
+
   const handleRectangleClick = () => {
+    setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
-    const rectangle = new fabric.Rect({ ...objOptions, width: 100, height: 100 });
+
+    const rectangle = new fabric.Rect({
+      strokeWidth,
+      stroke: strokeColor,
+      fill: fillColor,
+      width: 100,
+      height: 100
+    });
+
     canvas.add(rectangle);
     canvas.centerObject(rectangle);
     canvas.renderAll();
   };
+
   const handleCircleClick = () => {
+    setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
-    const circle = new fabric.Circle({ ...objOptions, radius: 70 });
+
+    const circle = new fabric.Circle({
+      strokeWidth,
+      stroke: strokeColor,
+      fill: fillColor,
+      radius: 70
+    });
+
     canvas.add(circle);
     canvas.centerObject(circle);
     canvas.renderAll();
   };
+
   const handleTriangleClick = () => {
+    setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
-    const triangle = new fabric.Triangle({ ...objOptions, width: 100, height: 100 });
+
+    const triangle = new fabric.Triangle({
+      stroke: strokeColor,
+      strokeWidth,
+      fill: fillColor,
+      width: 100,
+      height: 100
+    });
+
     canvas.add(triangle);
     canvas.centerObject(triangle);
     canvas.renderAll();
   };
+
   const handleEraseClick = () => {
+    setToolbarMode(MODES.select);
+    canvas.isDrawingMode = false;
+
     const activeObject = canvas.getActiveObject();
     if (activeObject) {
       canvas.remove(activeObject);
     }
   };
+
+  const handleFontSizeChange = newFontSize => {
+    setFontSize(newFontSize);
+    const activeObject = canvas.getActiveObject();
+
+    if (activeObject) {
+      activeObject.set('fontSize', newFontSize);
+      canvas.renderAll();
+    }
+  };
+
+  const handleStrokeWidthChange = newStrokeWidth => {
+    setStrokeWidth(newStrokeWidth);
+    const activeObject = canvas.getActiveObject();
+
+    if (canvas.isDrawingMode) {
+      canvas.freeDrawingBrush.width = newStrokeWidth;
+    }
+
+    if (activeObject) {
+      activeObject.set('strokeWidth', newStrokeWidth);
+      canvas.renderAll();
+    }
+  };
+
+  const handleStrokeColorChange = newStrokeColor => {
+    setStrokeColor(newStrokeColor);
+    const activeObject = canvas.getActiveObject();
+
+    if (canvas.isDrawingMode) {
+      canvas.freeDrawingBrush.color = newStrokeColor;
+    }
+    if (activeObject) {
+      activeObject.set('stroke', newStrokeColor);
+      canvas.renderAll();
+    }
+  };
+
+  const handleFillColorChange = newFillColor => {
+    setFillColor(newFillColor);
+
+    const activeObject = canvas.getActiveObject();
+
+    if (activeObject) {
+      activeObject.set('fill', newFillColor);
+      canvas.renderAll();
+    }
+  };
+
   const handleClearClick = () => {
     Modal.confirm({
       title: 'Are you sure to reset the whiteboard?',
@@ -216,70 +267,30 @@ export function WhiteboardCanvas({ data, onChange }) {
   };
 
   return (
-    <div
-      className="w-100 h-100 Whiteboard"
-      ref={parentRef}
-      >
-
-      <div className="left-menu">
-        <div className="bg-white d-flex align-center justify-between shadow br-7">
-          <label>Font size</label>
-          <input type="number" min="1" name="fontSize" onChange={onOptionsChange} defaultValue="22" />
-        </div>
-
-        <div className="bg-white d-flex align-center justify-between shadow br-7">
-          <label>Stroke</label>
-          <input type="number" min="1" name="strokeWidth" onChange={onOptionsChange} defaultValue="3" />
-        </div>
-
-        <div className="bg-white d-flex flex-column shadow br-7">
-          <div className="d-flex align-end mb-10">
-            <input className="mr-10" type="radio" onChange={onRadioColor} name="color" defaultValue="backgroundColor" />
-            <label htmlFor="backgroundColor">background</label>
-          </div>
-          <div className="d-flex align-end mb-10">
-            <input className="mr-10" type="radio" onChange={onRadioColor} id="stroke" name="color" defaultValue="stroke" />
-            <label htmlFor="stroke">stroke</label>
-          </div>
-
-          <div className="d-flex align-end mb-10">
-            <input className="mr-10" type="radio" onChange={onRadioColor} id="fill" name="color" defaultValue="fill" />
-            <label htmlFor="fill">fill</label>
-          </div>
-
-          <RgbaStringColorPicker onChange={onColorChange} />
-        </div>
+    <div className="Whiteboard" ref={parentRef}>
+      <div className="Whiteboard-canvasContainer">
+        <canvas ref={canvasRef} className="canvas" />
       </div>
-
-      <div className="w-100 d-flex justify-center align-center" style={{ position: 'fixed', top: '10px', left: 0, zIndex: 9999 }}>
-        <div className="bg-white d-flex justify-center align-center shadow br-7">
-          <button type="button" onClick={handleSelectClick}><SelectIcon /></button>
-          <button type="button" onClick={handleDrawClick}><DrawIcon /></button>
-          <button type="button" onClick={handleTextClick}><TextIcon /></button>
-          <WhiteboardDropdown title={<ShapeIcon />}>
-            <button type="button" onClick={handleLineClick}><LineIcon /></button>
-            <button type="button" onClick={handleArrowClick}><ArrowIcon /></button>
-            <button type="button" onClick={handleRectangleClick}><RectangleIcon /></button>
-            <button type="button" onClick={handleCircleClick}><CircleIcon /></button>
-            <button type="button" onClick={handleTriangleClick}><TriangleIcon /></button>
-          </WhiteboardDropdown>
-          <button type="button" onClick={handleEraseClick}><EraserIcon /></button>
-          <button type="button" onClick={handleClearClick}><UndoOutlined /></button>
-        </div>
-      </div>
-
-      <canvas ref={canvasRef} className="canvas" />
-
-      <div className="w-100 bottom-menu">
-        <select className="d-flex align-center bg-white br-7 shadow border-0 pr-1 pl-1" onChange={onZoom} defaultValue="1">
-          <option value="2">200%</option>
-          <option value="1.5">150%</option>
-          <option value="1">100%</option>
-          <option value="0.75">75%</option>
-          <option value="0.50">50%</option>
-          <option value="0.25">25%</option>
-        </select>
-      </div>
+      <WhiteboardToolbar
+        mode={toolbarMode}
+        fontSize={fontSize}
+        strokeWidth={strokeWidth}
+        strokeColor={strokeColor}
+        fillColor={fillColor}
+        onModeChange={handleToolbarModeChange}
+        onTextClick={handleTextClick}
+        onLineClick={handleLineClick}
+        onArrowClick={handleArrowClick}
+        onRectangleClick={handleRectangleClick}
+        onTriangleClick={handleTriangleClick}
+        onCircleClick={handleCircleClick}
+        onEraseClick={handleEraseClick}
+        onFontSizeChange={handleFontSizeChange}
+        onStrokeWidthChange={handleStrokeWidthChange}
+        onStrokeColorChange={handleStrokeColorChange}
+        onFillColorChange={handleFillColorChange}
+        onClearClick={handleClearClick}
+        />
     </div>
   );
 }

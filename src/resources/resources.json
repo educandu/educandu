@@ -3471,6 +3471,50 @@
     "name": {
       "en": "Whiteboard",
       "de": "Whiteboard"
+    },
+    "selectTooltip": {
+      "en": "Select mode",
+      "de": "Select mode"
+    },
+    "freeDrawTooltip": {
+      "en": "Freedraw mode",
+      "de": "Freedraw mode"
+    },
+    "textTooltip": {
+      "en": "Add text",
+      "de": "Add text"
+    },
+    "shapeTooltip": {
+      "en": "Add shape",
+      "de": "Add shape"
+    },
+    "eraseTooltip": {
+      "en": "Erase shape",
+      "de": "Erase shape"
+    },
+    "clearTooltip": {
+      "en": "Clear whiteboard",
+      "de": "Clear whiteboard"
+    },
+    "fontSizeTooltip": {
+      "en": "Font size",
+      "de": "Font size"
+    },
+    "strokeWidthTooltip": {
+      "en": "Stroke width",
+      "de": "Stroke width"
+    },
+    "strokeColorTooltip": {
+      "en": "Stroke color",
+      "de": "Stroke color"
+    },
+    "fillColorTooltip": {
+      "en": "Fill color",
+      "de": "Fill color"
+    },
+    "text": {
+      "en": "Text",
+      "de": "Text"
     }
   },
   "common": {

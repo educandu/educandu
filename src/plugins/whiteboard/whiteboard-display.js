@@ -14,7 +14,7 @@ export default function WhiteboardDisplay({ content, input, onInputChanged }) {
 
   return (
     <div className={`u-horizontally-centered u-width-${width}`}>
-      <div style={{ width: '500px', height: '500px' }}>
+      <div style={{ width: '600px', height: '500px' }}>
         <WhiteboardCanvas data={data.canvasData} onChange={handleCanvasDataChange} />
       </div>
     </div>
