@@ -233,9 +233,9 @@ function Document({ initialState, PageTemplate }) {
       return null;
     }
 
-    const count = documentInputs.findIndex(input => input._id === selectedDocumentInput._id) + 1;
+    const index = documentInputs.findIndex(input => input._id === selectedDocumentInput._id);
 
-    return t('input', { count });
+    return t('input', { count: documentInputs.length - index });
   }, [selectedDocumentInput, documentInputs, t]);
 
   useBeforeunload(event => {
