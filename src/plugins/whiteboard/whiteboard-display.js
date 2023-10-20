@@ -4,15 +4,13 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 const createInitialData = () => ({ canvasData: null });
 
-export default function WhiteboardDisplay({ content, input, canModifyInput, onInputChanged }) {
+export default function WhiteboardDisplay({ content, input, onInputChanged }) {
   const { width } = content;
   const data = input.data || createInitialData();
 
   const handleCanvasDataChange = useCallback(newCanvasData => {
-    if (canModifyInput) {
-      onInputChanged({ canvasData: newCanvasData });
-    }
-  }, [canModifyInput, onInputChanged]);
+    onInputChanged({ canvasData: newCanvasData });
+  }, [onInputChanged]);
 
   return (
     <div className={`u-horizontally-centered u-width-${width}`}>

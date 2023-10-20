@@ -1,6 +1,7 @@
 import { Modal } from 'antd';
 import { fabric } from 'fabric';
 import PropTypes from 'prop-types';
+import deepEqual from 'fast-deep-equal';
 import LineIcon from './icons/line-icon.js';
 import DrawIcon from './icons/draw-icon.js';
 import TextIcon from './icons/text-icon.js';
@@ -21,8 +22,8 @@ const canvasOptions = { selectionLineWidth: 2, isDrawingMode: false };
 export function WhiteboardCanvas({ data, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
+  const isLoadingData = useRef(false);
   const [canvas, setCanvas] = useState();
-  const canvasDataFromLastChange = useRef();
 
   const [objOptions, setObjOptions] = useState({
     stroke: '#000000', fontSize: 22, fill: 'rgba(255, 255, 255, 0.0)', strokeWidth: 3
@@ -38,9 +39,10 @@ export function WhiteboardCanvas({ data, onChange }) {
     const newCanvas = new fabric.Canvas(canvasRef.current, canvasOptions);
 
     const handleCanvasChange = () => {
-      const newCanvasData = newCanvas.toDatalessJSON();
-      canvasDataFromLastChange.current = newCanvasData;
-      onChange(newCanvasData);
+      if (!isLoadingData.current) {
+        const newCanvasData = newCanvas.toDatalessJSON();
+        onChange(newCanvasData);
+      }
     };
 
     newCanvas.on('object:added', handleCanvasChange);
@@ -78,8 +80,12 @@ export function WhiteboardCanvas({ data, onChange }) {
   }, [canvasRef, parentRef, onChange]);
 
   useEffect(() => {
-    if (canvas && data && JSON.stringify(data) !== JSON.stringify(canvasDataFromLastChange.current)) {
-      canvas.loadFromJSON(data, canvas.renderAll.bind(canvas));
+    if (canvas?.getContext() && data && !deepEqual(data, canvas.toDatalessJSON())) {
+      isLoadingData.current = true;
+      canvas.loadFromJSON(data, () => {
+        canvas.renderAll();
+        isLoadingData.current = false;
+      });
     }
   }, [canvas, data]);
 
