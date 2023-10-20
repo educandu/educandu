@@ -1,9 +1,9 @@
-import { Modal } from 'antd';
 import { fabric } from 'fabric';
 import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
+import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
 import { FONT_SIZES, MODES, STROKE_WIDTHS, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
 const transparentColor = 'rgba(255, 255, 255, 0.0)';
@@ -264,11 +264,8 @@ export function WhiteboardCanvas({ data, onChange }) {
   };
 
   const handleResetClick = () => {
-    Modal.confirm({
-      title: 'Are you sure to reset the whiteboard?',
-      onOk: () => {
-        canvas.clear();
-      }
+    confirmWhiteboardReset(t, () => {
+      canvas.clear();
     });
   };
 

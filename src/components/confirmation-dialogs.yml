@@ -89,3 +89,6 @@ confirmationDialogs:
   genericDeleteConfirmation:
     en: Do you really want to delete "{title}"?
     de: Möchtest du "{title}" wirklich löschen?
+  whiteboardResetConfirmation:
+    en: Do you really want to reset the whiteboard?
+    de: Möchtest du die Whiteboard wirklich zurücksetzen?
