@@ -31,14 +31,14 @@ export const MODES = {
 
 export const FONT_SIZES = {
   small: 16,
-  medium: 20,
-  large: 24
+  medium: 22,
+  large: 26
 };
 
 export const STROKE_WIDTHS = {
-  small: 1,
+  small: 2,
   medium: 3,
-  large: 5
+  large: 6
 };
 
 const SHAPE_TYPES = {
