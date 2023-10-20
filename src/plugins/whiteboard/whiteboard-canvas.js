@@ -51,9 +51,9 @@ export function WhiteboardCanvas({ data, onChange }) {
       }
 
       if (event.code === 'Delete' || event.code === 'Backspace') {
-        const activeObject = newCanvas.getActiveObject();
-        if (activeObject && !activeObject.isEditing) {
-          newCanvas.remove(activeObject);
+        const activeObjects = newCanvas.getActiveObjects();
+        if (activeObjects.length && !activeObjects[0].isEditing) {
+          newCanvas.remove(...activeObjects);
         }
       }
     };
@@ -101,11 +101,12 @@ export function WhiteboardCanvas({ data, onChange }) {
     canvas.isDrawingMode = false;
 
     const textbox = new fabric.Textbox(t('text'), {
+      fill: strokeColor,
       fontSize
     });
 
-    canvas.add(textbox);
     canvas.centerObject(textbox);
+    canvas.add(textbox);
     canvas.renderAll();
   };
 
@@ -113,14 +114,13 @@ export function WhiteboardCanvas({ data, onChange }) {
     setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
 
-    const line = new fabric.Line([50, 10, 200, 150], {
+    const line = new fabric.Line([50, 100, 200, 100], {
       strokeWidth,
-      stroke: strokeColor,
-      angle: 47
+      stroke: strokeColor
     });
 
-    canvas.add(line);
     canvas.centerObject(line);
+    canvas.add(line);
     canvas.renderAll();
   };
 
@@ -131,6 +131,7 @@ export function WhiteboardCanvas({ data, onChange }) {
     const triangle = new fabric.Triangle({
       strokeWidth,
       stroke: strokeColor,
+      fill: strokeColor,
       width: 10,
       height: 15,
       left: 235,
@@ -146,8 +147,9 @@ export function WhiteboardCanvas({ data, onChange }) {
     });
 
     const arrow = new fabric.Group([line, triangle]);
-    canvas.add(arrow);
+
     canvas.centerObject(arrow);
+    canvas.add(arrow);
     canvas.renderAll();
   };
 
@@ -163,8 +165,8 @@ export function WhiteboardCanvas({ data, onChange }) {
       height: 100
     });
 
-    canvas.add(rectangle);
     canvas.centerObject(rectangle);
+    canvas.add(rectangle);
     canvas.renderAll();
   };
 
@@ -179,8 +181,8 @@ export function WhiteboardCanvas({ data, onChange }) {
       radius: 70
     });
 
-    canvas.add(circle);
     canvas.centerObject(circle);
+    canvas.add(circle);
     canvas.renderAll();
   };
 
@@ -196,8 +198,8 @@ export function WhiteboardCanvas({ data, onChange }) {
       height: 100
     });
 
-    canvas.add(triangle);
     canvas.centerObject(triangle);
+    canvas.add(triangle);
     canvas.renderAll();
   };
 
@@ -205,45 +207,71 @@ export function WhiteboardCanvas({ data, onChange }) {
     setToolbarMode(MODES.select);
     canvas.isDrawingMode = false;
 
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      canvas.remove(activeObject);
+    const activeObjects = canvas.getActiveObjects();
+    if (activeObjects.length && !activeObjects[0].isEditing) {
+      canvas.remove(...activeObjects);
     }
   };
 
   const handleFontSizeChange = newFontSize => {
     setFontSize(newFontSize);
-    const activeObject = canvas.getActiveObject();
+    const activeObjects = canvas.getActiveObjects();
 
-    if (activeObject) {
-      activeObject.set('fontSize', newFontSize);
+    if (activeObjects.length) {
+      activeObjects.forEach(activeObject => {
+        activeObject.set('fontSize', newFontSize);
+      });
       canvas.renderAll();
     }
   };
 
   const handleStrokeWidthChange = newStrokeWidth => {
     setStrokeWidth(newStrokeWidth);
-    const activeObject = canvas.getActiveObject();
+    const activeObjects = canvas.getActiveObjects();
 
     if (canvas.isDrawingMode) {
       canvas.freeDrawingBrush.width = newStrokeWidth;
     }
 
-    if (activeObject) {
-      activeObject.set('strokeWidth', newStrokeWidth);
+    if (activeObjects.length) {
+      activeObjects.forEach(activeObject => {
+        const isArrow = activeObject.type === 'group';
+        if (isArrow) {
+          activeObject.getObjects().forEach(arrowPart => {
+            arrowPart.set('strokeWidth', newStrokeWidth);
+          });
+        } else if (activeObject.type !== 'textbox') {
+          activeObject.set('strokeWidth', newStrokeWidth);
+        }
+      });
       canvas.renderAll();
     }
   };
 
   const handleStrokeColorChange = newStrokeColor => {
     setStrokeColor(newStrokeColor);
-    const activeObject = canvas.getActiveObject();
+    const activeObjects = canvas.getActiveObjects();
 
     if (canvas.isDrawingMode) {
       canvas.freeDrawingBrush.color = newStrokeColor;
     }
-    if (activeObject) {
-      activeObject.set('stroke', newStrokeColor);
+
+    if (activeObjects.length) {
+      activeObjects.forEach(activeObject => {
+        const isArrow = activeObject.type === 'group';
+        if (isArrow) {
+          activeObject.getObjects().forEach(arrowPart => {
+            arrowPart.set('stroke', newStrokeColor);
+            if (arrowPart.type === 'triangle') {
+              arrowPart.set('fill', newStrokeColor);
+            }
+          });
+        } else if (activeObject.type === 'textbox') {
+          activeObject.set('fill', newStrokeColor);
+        } else {
+          activeObject.set('stroke', newStrokeColor);
+        }
+      });
       canvas.renderAll();
     }
   };
@@ -251,10 +279,14 @@ export function WhiteboardCanvas({ data, onChange }) {
   const handleFillColorChange = newFillColor => {
     setFillColor(newFillColor);
 
-    const activeObject = canvas.getActiveObject();
+    const activeObjects = canvas.getActiveObjects();
 
-    if (activeObject) {
-      activeObject.set('fill', newFillColor);
+    if (activeObjects.length) {
+      activeObjects.forEach(activeObject => {
+        if (activeObject.type !== 'textbox') {
+          activeObject.set('fill', newFillColor);
+        }
+      });
       canvas.renderAll();
     }
   };
