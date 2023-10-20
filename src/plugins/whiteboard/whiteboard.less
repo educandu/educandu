@@ -12,13 +12,22 @@
 }
 
 .WhiteboardToolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.WhiteboardToolbar-group {
   display: grid;
   grid-auto-flow: column;
   justify-content: center;
-  gap: @edu-control-spacing-wide;
+  gap: @edu-control-spacing-base;
+  margin: @edu-control-spacing-base @edu-control-spacing-wide;
 }
 
-.WhiteboardToolbar-sizeButton {
+.WhiteboardToolbar-buttonWithSelection {
   width: 45px;
   padding: 0 !important;
   display: grid !important;
@@ -27,7 +36,17 @@
   grid-template-columns: 1fr 1fr;
 }
 
-.WhiteboardToolbar-sizeButtonText {
+.WhiteboardToolbar-buttonWithSelectionText {
   font-size: @edu-font-size-xs;
   margin-inline-start: 0 !important;
+}
+
+.WhiteboardToolbar-selectedColor {
+  width: 15px;
+  height: 15px;
+  border: 1px solid @edu-border-color-dark;
+}
+
+.WhiteboardToolbar-removeColor {
+  margin-top: @edu-control-spacing-wide;
 }

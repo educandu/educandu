@@ -5,7 +5,7 @@ const Icon = iconNs.default || iconNs;
 
 // SVG is taken and adapted from: https://tabler-icons.io/i/ballpen (MIT licensed - Copyright (c) 2020-2023 Paweł Kuna)
 
-export function DrawIconComponent() {
+export function FreeDrawIconComponent() {
   return (
     <svg height="1em" style={{ enableBackground: 'new 0 0 24 24' }} width="1em" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -16,10 +16,10 @@ export function DrawIconComponent() {
   );
 }
 
-function DrawIcon(props) {
+function FreeDrawIcon(props) {
   return (
-    <Icon component={DrawIconComponent} {...props} />
+    <Icon component={FreeDrawIconComponent} {...props} />
   );
 }
 
-export default DrawIcon;
+export default FreeDrawIcon;

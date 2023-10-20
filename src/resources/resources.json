@@ -3492,9 +3492,9 @@
       "en": "Erase shape",
       "de": "Erase shape"
     },
-    "clearTooltip": {
-      "en": "Clear whiteboard",
-      "de": "Clear whiteboard"
+    "resetTooltip": {
+      "en": "Reset whiteboard",
+      "de": "Reset whiteboard"
     },
     "fontSizeTooltip": {
       "en": "Font size",
@@ -3515,6 +3515,10 @@
     "text": {
       "en": "Text",
       "de": "Text"
+    },
+    "removeFillColor": {
+      "en": "Remove fill",
+      "de": "Remove fill"
     }
   },
   "common": {

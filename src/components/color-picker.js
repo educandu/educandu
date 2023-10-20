@@ -3,7 +3,7 @@ import { Popover } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SwatchesPickerNs from 'react-color/lib/Swatches.js';
-import { DEFAULT_COLOR_SWATCHES } from '../domain/constants.js';
+import { DEFAULT_COLOR_PICKER_WIDTH, DEFAULT_COLOR_SWATCHES } from '../domain/constants.js';
 
 const SwatchesPicker = SwatchesPickerNs.default || SwatchesPickerNs;
 
@@ -51,7 +51,7 @@ ColorPicker.defaultProps = {
   inline: false,
   onChange: () => {},
   placement: 'bottomLeft',
-  width: 382
+  width: DEFAULT_COLOR_PICKER_WIDTH
 };
 
 export default ColorPicker;

@@ -1,24 +1,28 @@
 import PropTypes from 'prop-types';
 import LineIcon from './icons/line-icon.js';
-import DrawIcon from './icons/draw-icon.js';
 import TextIcon from './icons/text-icon.js';
 import ShapeIcon from './icons/shape-icon.js';
 import ArrowIcon from './icons/arrow-icon.js';
-import ClearIcon from './icons/clear-icon.js';
+import ResetIcon from './icons/reset-icon.js';
 import { useTranslation } from 'react-i18next';
 import CircleIcon from './icons/circle-icon.js';
 import SelectIcon from './icons/select-icon.js';
 import EraserIcon from './icons/eraser-icon.js';
-import React, { useMemo, useState } from 'react';
 import TriangleIcon from './icons/triangle-icon.js';
 import FontSizeIcon from './icons/font-size-icon.js';
+import FreeDrawIcon from './icons/free-draw-icon.js';
 import RectangleIcon from './icons/rectangle-icon.js';
-import { Button, Dropdown, Radio, Tooltip } from 'antd';
-import ColorPicker from '../../components/color-picker.js';
+import FillColorIcon from './icons/fill-color-icon.js';
 import StrokeWidthIcon from './icons/stroke-width-icon.js';
+import StrokeColorIcon from './icons/stroke-color-icon.js';
+import SwatchesPickerNs from 'react-color/lib/Swatches.js';
+import React, { Fragment, useMemo, useState } from 'react';
+import { Button, Dropdown, Popover, Radio, Tooltip } from 'antd';
+import { DEFAULT_COLOR_SWATCHES, DEFAULT_COLOR_PICKER_WIDTH } from '../../domain/constants.js';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
+const SwatchesPicker = SwatchesPickerNs.default || SwatchesPickerNs;
 
 export const MODES = {
   select: 'select',
@@ -69,7 +73,8 @@ export function WhiteboardToolbar({
   onStrokeWidthChange,
   onStrokeColorChange,
   onFillColorChange,
-  onClearClick
+  onFillColorRemove,
+  onResetClick
 }) {
   const { t } = useTranslation('whiteboard');
 
@@ -162,75 +167,112 @@ export function WhiteboardToolbar({
 
   return (
     <div className="WhiteboardToolbar">
-      <RadioGroup value={mode} onChange={handleModeChange}>
-        <Tooltip title={t('selectTooltip')}>
-          <RadioButton value={MODES.select}><SelectIcon /></RadioButton>
+      <div className="WhiteboardToolbar-group">
+        <RadioGroup value={mode} onChange={handleModeChange}>
+          <Tooltip title={t('selectTooltip')}>
+            <RadioButton value={MODES.select}><SelectIcon /></RadioButton>
+          </Tooltip>
+          <Tooltip title={t('freeDrawTooltip')}>
+            <RadioButton value={MODES.freeDraw}><FreeDrawIcon /></RadioButton>
+          </Tooltip>
+        </RadioGroup>
+        <Tooltip title={t('textTooltip')}>
+          <Button onClick={onTextClick} icon={<TextIcon />} />
         </Tooltip>
-        <Tooltip title={t('freeDrawTooltip')}>
-          <RadioButton value={MODES.freeDraw}><DrawIcon /></RadioButton>
+        <Tooltip title={t('shapeTooltip')}>
+          <Dropdown
+            trigger={['click']}
+            placement="top"
+            open={openMenu === MENUS.shape}
+            onOpenChange={() => handleMenuOpenChange(MENUS.shape)}
+            menu={{ items: shapeMenuItems, onClick: handleShapeMenuClick }}
+            >
+            <Button icon={<ShapeIcon />} />
+          </Dropdown>
         </Tooltip>
-      </RadioGroup>
-      <Tooltip title={t('textTooltip')}>
-        <Button onClick={onTextClick} icon={<TextIcon />} />
-      </Tooltip>
-      <Tooltip title={t('shapeTooltip')}>
-        <Dropdown
-          trigger={['click']}
-          placement="bottom"
-          open={openMenu === MENUS.shape}
-          onOpenChange={() => handleMenuOpenChange(MENUS.shape)}
-          menu={{ items: shapeMenuItems, onClick: handleShapeMenuClick }}
+        <Tooltip title={t('eraseTooltip')}>
+          <Button onClick={onEraseClick} icon={<EraserIcon />} disabled={mode === MODES.freeDraw} />
+        </Tooltip>
+
+        <Tooltip title={t('resetTooltip')}>
+          <Button onClick={onResetClick} icon={<ResetIcon />} />
+        </Tooltip>
+      </div>
+
+      <div className="WhiteboardToolbar-group">
+        <Tooltip title={t('fontSizeTooltip')}>
+          <Dropdown
+            trigger={['click']}
+            placement="top"
+            open={openMenu === MENUS.fontSize}
+            onOpenChange={() => handleMenuOpenChange(MENUS.fontSize)}
+            menu={{ items: fontSizeMenuItems, onClick: handleFontSizeMenuClick }}
+            >
+            <Button icon={<FontSizeIcon />} className="WhiteboardToolbar-buttonWithSelection">
+              <span className="WhiteboardToolbar-buttonWithSelectionText">
+                {selectedFontSizeItem.label}
+              </span>
+            </Button>
+          </Dropdown>
+        </Tooltip>
+
+        <Tooltip title={t('strokeWidthTooltip')}>
+          <Dropdown
+            trigger={['click']}
+            placement="top"
+            open={openMenu === MENUS.strokeWidth}
+            onOpenChange={() => handleMenuOpenChange(MENUS.strokeWidth)}
+            menu={{ items: strokeWidthMenuItems, onClick: handleStrokeWidthMenuClick }}
+            >
+            <Button icon={<StrokeWidthIcon />} className="WhiteboardToolbar-buttonWithSelection">
+              <span className="WhiteboardToolbar-buttonWithSelectionText">
+                {selectedStrokeWidthItem.label}
+              </span>
+            </Button>
+          </Dropdown>
+        </Tooltip>
+
+        <Popover
+          trigger="click"
+          content={
+            <SwatchesPicker
+              color={strokeColor}
+              colors={DEFAULT_COLOR_SWATCHES}
+              width={DEFAULT_COLOR_PICKER_WIDTH}
+              onChange={({ hex }) => onStrokeColorChange(hex)}
+              />
+          }
           >
-          <Button icon={<ShapeIcon />} />
-        </Dropdown>
-      </Tooltip>
-      <Tooltip title={t('eraseTooltip')}>
-        <Button onClick={onEraseClick} icon={<EraserIcon />} disabled={mode === MODES.freeDraw} />
-      </Tooltip>
+          <Tooltip title={t('strokeColorTooltip')}>
+            <Button icon={<StrokeColorIcon />} className="WhiteboardToolbar-buttonWithSelection">
+              <div className="WhiteboardToolbar-selectedColor" style={{ backgroundColor: strokeColor }} />
+            </Button>
+          </Tooltip>
+        </Popover>
 
-      <Tooltip title={t('fontSizeTooltip')}>
-        <Dropdown
-          trigger={['click']}
-          placement="bottom"
-          open={openMenu === MENUS.fontSize}
-          onOpenChange={() => handleMenuOpenChange(MENUS.fontSize)}
-          menu={{ items: fontSizeMenuItems, onClick: handleFontSizeMenuClick }}
+        <Popover
+          trigger="click"
+          content={
+            <Fragment>
+              <SwatchesPicker
+                color={fillColor}
+                colors={DEFAULT_COLOR_SWATCHES}
+                width={DEFAULT_COLOR_PICKER_WIDTH}
+                onChange={({ hex }) => onFillColorChange(hex)}
+                />
+              <Button className="WhiteboardToolbar-removeColor" onClick={onFillColorRemove}>
+                {t('removeFillColor')}
+              </Button>
+            </Fragment>
+          }
           >
-          <Button icon={<FontSizeIcon />} className="WhiteboardToolbar-sizeButton">
-            <span className="WhiteboardToolbar-sizeButtonText">
-              {selectedFontSizeItem.label}
-            </span>
-          </Button>
-        </Dropdown>
-      </Tooltip>
-
-      <Tooltip title={t('strokeWidthTooltip')}>
-        <Dropdown
-          trigger={['click']}
-          placement="bottom"
-          open={openMenu === MENUS.strokeWidth}
-          onOpenChange={() => handleMenuOpenChange(MENUS.strokeWidth)}
-          menu={{ items: strokeWidthMenuItems, onClick: handleStrokeWidthMenuClick }}
-          >
-          <Button icon={<StrokeWidthIcon />} className="WhiteboardToolbar-sizeButton">
-            <span className="WhiteboardToolbar-sizeButtonText">
-              {selectedStrokeWidthItem.label}
-            </span>
-          </Button>
-        </Dropdown>
-      </Tooltip>
-
-      <Tooltip title={t('strokeColorTooltip')}>
-        <ColorPicker color={strokeColor} onChange={onStrokeColorChange} />
-      </Tooltip>
-
-      <Tooltip title={t('fillColorTooltip')}>
-        <ColorPicker color={fillColor} onChange={onFillColorChange} />
-      </Tooltip>
-
-      <Tooltip title={t('clearTooltip')}>
-        <Button onClick={onClearClick} icon={<ClearIcon />} />
-      </Tooltip>
+          <Tooltip title={t('fillColorTooltip')}>
+            <Button icon={<FillColorIcon />} className="WhiteboardToolbar-buttonWithSelection">
+              <div className="WhiteboardToolbar-selectedColor" style={{ backgroundColor: fillColor }} />
+            </Button>
+          </Tooltip>
+        </Popover>
+      </div>
     </div>
   );
 }
@@ -253,5 +295,6 @@ WhiteboardToolbar.propTypes = {
   onStrokeWidthChange: PropTypes.func.isRequired,
   onStrokeColorChange: PropTypes.func.isRequired,
   onFillColorChange: PropTypes.func.isRequired,
-  onClearClick: PropTypes.func.isRequired
+  onFillColorRemove: PropTypes.func.isRequired,
+  onResetClick: PropTypes.func.isRequired
 };

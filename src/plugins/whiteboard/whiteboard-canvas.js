@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { FONT_SIZES, MODES, STROKE_WIDTHS, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
+const transparentColor = 'rgba(255, 255, 255, 0.0)';
 const getDefaultCanvasOptions = () => ({ selectionLineWidth: 2, isDrawingMode: false });
+
 export function WhiteboardCanvas({ data, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
@@ -18,7 +20,7 @@ export function WhiteboardCanvas({ data, onChange }) {
   const [fontSize, setFontSize] = useState(FONT_SIZES.medium);
   const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTHS.medium);
   const [strokeColor, setStrokeColor] = useState('#000000');
-  const [fillColor, setFillColor] = useState('rgba(255, 255, 255, 0.0)');
+  const [fillColor, setFillColor] = useState(transparentColor);
 
   useEffect(() => {
     if (!canvasRef.current || !parentRef.current) {
@@ -257,7 +259,11 @@ export function WhiteboardCanvas({ data, onChange }) {
     }
   };
 
-  const handleClearClick = () => {
+  const handleFillColorRemove = () => {
+    handleFillColorChange(transparentColor);
+  };
+
+  const handleResetClick = () => {
     Modal.confirm({
       title: 'Are you sure to reset the whiteboard?',
       onOk: () => {
@@ -289,7 +295,8 @@ export function WhiteboardCanvas({ data, onChange }) {
         onStrokeWidthChange={handleStrokeWidthChange}
         onStrokeColorChange={handleStrokeColorChange}
         onFillColorChange={handleFillColorChange}
-        onClearClick={handleClearClick}
+        onFillColorRemove={handleFillColorRemove}
+        onResetClick={handleResetClick}
         />
     </div>
   );
