@@ -4,10 +4,7 @@ import deepEqual from 'fast-deep-equal';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
-import { FONT_SIZE, MODE, STROKE_WIDTH, WhiteboardToolbar } from './whiteboard-toolbar.js';
-
-const transparentColor = 'rgba(255, 255, 255, 0.0)';
-
+import { FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_COLOR, WhiteboardToolbar } from './whiteboard-toolbar.js';
 export function WhiteboardCanvas({ data, disabled, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
@@ -19,7 +16,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   const [fontSize, setFontSize] = useState(FONT_SIZE.medium);
   const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH.medium);
   const [strokeColor, setStrokeColor] = useState('#000000');
-  const [fillColor, setFillColor] = useState(transparentColor);
+  const [fillColor, setFillColor] = useState(TRANSPARENT_FILL_COLOR);
 
   useEffect(() => {
     if (!canvasRef.current || !parentRef.current) {
@@ -295,7 +292,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleFillColorRemove = () => {
-    handleFillColorChange(transparentColor);
+    handleFillColorChange(TRANSPARENT_FILL_COLOR);
   };
 
   const handleResetClick = () => {
