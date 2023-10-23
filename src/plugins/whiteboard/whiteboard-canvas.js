@@ -83,7 +83,9 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     }
 
     if (!data) {
+      isLoadingData.current = true;
       canvas.clear();
+      isLoadingData.current = false;
     }
 
     if (data && !deepEqual(data, canvas.toDatalessJSON())) {
