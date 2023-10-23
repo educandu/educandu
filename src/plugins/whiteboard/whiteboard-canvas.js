@@ -6,24 +6,21 @@ import { cssUrl } from '../../utils/css-utils.js';
 import useDimensionsNs from 'react-cool-dimensions';
 import React, { useEffect, useRef, useState } from 'react';
 import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
-import { FONT_SIZE, MODE, STROKE_WIDTH, WhiteboardToolbar } from './whiteboard-toolbar.js';
+import { DEFAULT_STROKE_COLOR, FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_COLOR, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
 const useDimensions = useDimensionsNs.default || useDimensionsNs;
 
-const blackColor = '#000000';
-const transparentColor = 'rgba(255, 255, 255, 0.0)';
-
-export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHeight, data, disabled, onChange }) {
+export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight, backgroundImageUrl, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
   const isLoadingData = useRef(false);
   const [canvas, setCanvas] = useState();
   const { t } = useTranslation('whiteboard');
   const [fontSize, setFontSize] = useState(FONT_SIZE.medium);
-  const [strokeColor, setStrokeColor] = useState(blackColor);
   const [toolbarMode, setToolbarMode] = useState(MODE.select);
-  const [fillColor, setFillColor] = useState(transparentColor);
+  const [fillColor, setFillColor] = useState(TRANSPARENT_FILL_COLOR);
   const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH.medium);
+  const [strokeColor, setStrokeColor] = useState(DEFAULT_STROKE_COLOR);
   const { observe: dimensionsContainerRef, width: containerWidth } = useDimensions();
   const [canvasViewportInfo, setCanvasViewportInfo] = useState({ width: 0, height: 0, scale: 1, offset: 0 });
 
@@ -80,7 +77,15 @@ export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHe
   }, [canvasRef, parentRef, disabled, onChange]);
 
   useEffect(() => {
-    if (canvas?.getContext() && data && !deepEqual(data, canvas.toDatalessJSON())) {
+    if (!canvas?.getContext()) {
+      return;
+    }
+
+    if (!data) {
+      canvas.clear();
+    }
+
+    if (data && !deepEqual(data, canvas.toDatalessJSON())) {
       isLoadingData.current = true;
       canvas.loadFromJSON(data, () => {
         canvas.renderAll();
@@ -327,7 +332,7 @@ export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHe
   };
 
   const handleFillColorRemove = () => {
-    handleFillColorChange(transparentColor);
+    handleFillColorChange(TRANSPARENT_FILL_COLOR);
   };
 
   const handleResetClick = () => {
