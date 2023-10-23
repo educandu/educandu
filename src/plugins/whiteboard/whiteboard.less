@@ -1,3 +1,6 @@
+@whiteboard-toolbar-select-color-size: 15px;
+@whiteboard-toolbar-select-color-border: 1px solid @edu-border-color-dark;
+
 .Whiteboard {
   width: 100%;
   height: 100%;
@@ -42,9 +45,21 @@
 }
 
 .WhiteboardToolbar-selectedColor {
-  width: 15px;
-  height: 15px;
-  border: 1px solid @edu-border-color-dark;
+  position: relative;
+  width: @whiteboard-toolbar-select-color-size;
+  height: @whiteboard-toolbar-select-color-size;
+  border: @whiteboard-toolbar-select-color-border;
+  overflow: hidden;
+}
+
+.WhiteboardToolbar-selectedColorDiagonalLine {
+  position: absolute;
+  top: -2px;
+  left: -1px;
+  border-top: @whiteboard-toolbar-select-color-border;
+  width: calc(1.414 * @whiteboard-toolbar-select-color-size);
+  transform: rotate(45deg);
+  transform-origin: top left;
 }
 
 .WhiteboardToolbar-removeColor {

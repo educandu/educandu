@@ -24,6 +24,8 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const SwatchesPicker = SwatchesPickerNs.default || SwatchesPickerNs;
 
+export const TRANSPARENT_FILL_COLOR = 'rgba(255, 255, 255, 0.0)';
+
 export const MODE = {
   select: 'select',
   freeDraw: 'freeDraw'
@@ -280,7 +282,11 @@ export function WhiteboardToolbar({
           >
           <Tooltip title={t('fillColorTooltip')}>
             <Button icon={<FillColorIcon />} className="WhiteboardToolbar-buttonWithSelection">
-              <div className="WhiteboardToolbar-selectedColor" style={{ backgroundColor: fillColor }} />
+              <div className="WhiteboardToolbar-selectedColor" style={{ backgroundColor: fillColor }}>
+                {fillColor === TRANSPARENT_FILL_COLOR && (
+                  <div className="WhiteboardToolbar-selectedColorDiagonalLine" />
+                )}
+              </div>
             </Button>
           </Tooltip>
         </Popover>
