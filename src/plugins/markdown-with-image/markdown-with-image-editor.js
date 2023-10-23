@@ -86,7 +86,7 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
             onChange={handleTextOffsetInEmChange}
             />
         </FormItem>
-        <FormItem {...FORM_ITEM_LAYOUT} label={t('imageUrl')}>
+        <FormItem {...FORM_ITEM_LAYOUT} label={t('common:imageUrl')}>
           <UrlInput
             value={image.sourceUrl}
             onChange={handleImageSourceUrlChange}

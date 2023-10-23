@@ -2,21 +2,27 @@ import { fabric } from 'fabric';
 import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
 import { useTranslation } from 'react-i18next';
+import { cssUrl } from '../../utils/css-utils.js';
+import useDimensionsNs from 'react-cool-dimensions';
 import React, { useEffect, useRef, useState } from 'react';
 import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
-import { FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_COLOR, WhiteboardToolbar } from './whiteboard-toolbar.js';
-export function WhiteboardCanvas({ data, disabled, onChange }) {
+import { DEFAULT_STROKE_COLOR, FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_COLOR, WhiteboardToolbar } from './whiteboard-toolbar.js';
+
+const useDimensions = useDimensionsNs.default || useDimensionsNs;
+
+export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight, backgroundImageUrl, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
   const isLoadingData = useRef(false);
-  const { t } = useTranslation('whiteboard');
-
   const [canvas, setCanvas] = useState();
-  const [toolbarMode, setToolbarMode] = useState(MODE.select);
+  const { t } = useTranslation('whiteboard');
   const [fontSize, setFontSize] = useState(FONT_SIZE.medium);
-  const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH.medium);
-  const [strokeColor, setStrokeColor] = useState('#000000');
+  const [toolbarMode, setToolbarMode] = useState(MODE.select);
   const [fillColor, setFillColor] = useState(TRANSPARENT_FILL_COLOR);
+  const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH.medium);
+  const [strokeColor, setStrokeColor] = useState(DEFAULT_STROKE_COLOR);
+  const { observe: dimensionsContainerRef, width: containerWidth } = useDimensions();
+  const [canvasViewportInfo, setCanvasViewportInfo] = useState({ width: 0, height: 0, scale: 1, offset: 0 });
 
   useEffect(() => {
     if (!canvasRef.current || !parentRef.current) {
@@ -41,8 +47,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
     newCanvas.on('object:removed', handleCanvasChange);
     newCanvas.on('object:modified', handleCanvasChange);
 
-    newCanvas.setHeight(parentRef.current?.clientHeight || 0);
-    newCanvas.setWidth(parentRef.current?.clientWidth || 0);
+    newCanvas.setDimensions({ width: 0, height: 0 });
     newCanvas.renderAll();
 
     const onKeydown = event => {
@@ -88,6 +93,33 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
       });
     }
   }, [canvas, data]);
+
+  useEffect(() => {
+    const pixelsLeftWhenInNaturalScale = containerWidth - viewportWidth;
+    const isOffByOnlyFewPixels = pixelsLeftWhenInNaturalScale >= 0 && pixelsLeftWhenInNaturalScale < 10;
+    const newViewportInfo = isOffByOnlyFewPixels
+      ? {
+        width: viewportWidth,
+        height: viewportHeight,
+        scale: 1,
+        offset: Math.round(pixelsLeftWhenInNaturalScale / 2)
+      }
+      : {
+        width: Math.round(containerWidth),
+        height: Math.round(containerWidth / (viewportWidth / viewportHeight)),
+        scale: containerWidth / viewportWidth,
+        offset: 0
+      };
+    setCanvasViewportInfo(newViewportInfo);
+  }, [canvas, containerWidth, viewportWidth, viewportHeight]);
+
+  useEffect(() => {
+    if (canvas?.getContext()) {
+      canvas.setDimensions({ width: canvasViewportInfo.width, height: canvasViewportInfo.height });
+      canvas.setViewportTransform([canvasViewportInfo.scale, 0, 0, canvasViewportInfo.scale, 0, 0]);
+      canvas.renderAll();
+    }
+  }, [canvas, canvasViewportInfo]);
 
   const handleToolbarModeChange = newToolbarMode => {
     setToolbarMode(newToolbarMode);
@@ -314,9 +346,24 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   return (
-    <div className="Whiteboard" ref={parentRef}>
-      <div className="Whiteboard-canvasContainer">
-        <canvas ref={canvasRef} className="canvas" />
+    <div className="WhiteboardCanvas">
+      <div
+        ref={dimensionsContainerRef}
+        className="WhiteboardCanvas-dimensionsContainer"
+        style={{ height: canvasViewportInfo.height }}
+        >
+        <div
+          ref={parentRef}
+          className="WhiteboardCanvas-canvasContainer"
+          style={{
+            left: canvasViewportInfo.offset,
+            width: canvasViewportInfo.width,
+            height: canvasViewportInfo.height,
+            backgroundImage: backgroundImageUrl ? cssUrl(backgroundImageUrl) : 'none'
+          }}
+          >
+          <canvas ref={canvasRef} />
+        </div>
       </div>
 
       {!disabled && (
@@ -349,9 +396,13 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
 WhiteboardCanvas.propTypes = {
   data: PropTypes.object,
   disabled: PropTypes.bool.isRequired,
+  backgroundImageUrl: PropTypes.string,
+  viewportWidth: PropTypes.number.isRequired,
+  viewportHeight: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired
 };
 
 WhiteboardCanvas.defaultProps = {
-  data: null
+  data: null,
+  backgroundImageUrl: null
 };

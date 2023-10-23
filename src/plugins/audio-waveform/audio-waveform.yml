@@ -8,9 +8,6 @@ audioWaveform:
   createImageButton:
     en: Generate image from audio file
     de: Bild aus Audio-Datei erstellen
-  imageUrl:
-    en: Image URL
-    de: Bild-URL
   displayModeInfo:
     en: In interactive mode, users are able to hand-draw a waveform, and then compare with the uploaded image.
     de: Im interaktiven Modus können Benutzer eine Wellenform händisch zeichnen und mit dem hochgeladenen Bild vergleichen.

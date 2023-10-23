@@ -8,9 +8,6 @@ markdownWithImage:
   textOffsetInfo:
     en: 1em corresponds to the current paragraph font size
     de: "1\u00A0em entspricht der verwendeten Absatz-Schriftgröße"
-  imageUrl:
-    en: Image URL
-    de: Bild-URL
   imageWidth:
     en: Image width
     de: Bildbreite

@@ -24,6 +24,8 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const SwatchesPicker = SwatchesPickerNs.default || SwatchesPickerNs;
 
+export const DEFAULT_STROKE_COLOR = '#000000';
+
 export const TRANSPARENT_FILL_COLOR = 'rgba(255, 255, 255, 0.0)';
 
 export const MODE = {

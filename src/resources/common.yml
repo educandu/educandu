@@ -236,6 +236,9 @@ common:
   url:
     en: URL
     de: URL
+  imageUrl:
+    en: Image URL
+    de: Bild-URL
   daily:
     en: daily
     de: täglich
