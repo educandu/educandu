@@ -669,4 +669,6 @@ common:
   totalCommentsNumberTooltip:
     en: Total number of comments
     de: Gesamtanzahl an Kommentaren
-
+  border:
+    en: Border
+    de: Rahmen

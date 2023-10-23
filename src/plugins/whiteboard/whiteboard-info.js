@@ -35,7 +35,8 @@ class WhiteboardInfo {
       image: {
         sourceUrl: '',
         copyrightNotice: ''
-      }
+      },
+      isBorderVisible: true
     };
   }
 
@@ -47,7 +48,8 @@ class WhiteboardInfo {
       image: joi.object({
         sourceUrl: joi.string().allow('').required(),
         copyrightNotice: joi.string().allow('').required()
-      }).required()
+      }).required(),
+      isBorderVisible: joi.boolean().required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

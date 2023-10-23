@@ -17,6 +17,11 @@
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  border: 1px solid transparent;
+
+  &.WhiteboardCanvas-canvasContainer--withBorder {
+    border-color: @edu-border-color-dark;
+  }
 
   &.is-disabled {
     pointer-events: none;
