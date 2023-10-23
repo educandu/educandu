@@ -1,126 +1,52 @@
 .Whiteboard {
+  width: 100%;
+  height: 100%;
+}
+
+.Whiteboard-canvasContainer {
   background-color: rgb(244, 245, 255);
   background-size: 40px 40px;
   letter-spacing: 0.6px;
   width: 100%;
   height: 100%;
+}
 
-  .canvas-container {
-    width: 100% !important;
-    height: 100% !important;
-  }
+.WhiteboardToolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
 
-  .left-menu {
-    position: fixed;
-    left: 10px;
-    top: 50%;
-    transform: translate(0, -50%);
-    z-index: 99999;
-    text-transform: uppercase;
-    font-size: 14px;
-  }
+.WhiteboardToolbar-group {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: center;
+  gap: @edu-control-spacing-base;
+  margin: @edu-control-spacing-base @edu-control-spacing-wide;
+}
 
-  .left-menu > div {
-    padding: 12px;
-    margin-bottom: 10px;
-  }
+.WhiteboardToolbar-buttonWithSelection {
+  width: 45px;
+  padding: 0 !important;
+  display: grid !important;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: 1fr 1fr;
+}
 
-  & button {
-    background-color: inherit;
-    border: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    cursor: pointer;
-    transition: opacity 0.25s;
-  }
+.WhiteboardToolbar-buttonWithSelectionText {
+  font-size: @edu-font-size-xs;
+  margin-inline-start: 0 !important;
+}
 
-  button:hover {
-    opacity: 0.8;
-  }
+.WhiteboardToolbar-selectedColor {
+  width: 15px;
+  height: 15px;
+  border: 1px solid @edu-border-color-dark;
+}
 
-  button:active,
-  button:focus,
-  button:target {
-    background-color: black;
-    color: #fff;
-  }
-
-  input[type="number"] {
-    font-size: 14px;
-    padding: 0 0 0 10px;
-    width: 70px;
-    outline: none;
-  }
-
-  .shadow {
-    box-shadow: 0 0 0 1px rgb(255 255 255 / 24%), 1px 1px 5px rgb(0 0 0 / 22%);
-  }
-
-  .w-100 {
-    width: 100%;
-  }
-
-  .h-100 {
-    height: 100%;
-  }
-
-  .bg-white {
-    background-color: #fff;
-  }
-
-  .border-0 {
-    border: 0;
-  }
-
-  .d-flex {
-    display: flex;
-  }
-
-  .flex-column {
-    flex-direction: column;
-  }
-
-  .justify-between {
-    justify-content: space-between;
-  }
-
-  .justify-center {
-    justify-content: center;
-  }
-
-  .align-center {
-    align-items: center;
-  }
-
-  .align-end {
-    align-items: flex-end;
-  }
-
-  .br-7 {
-    border-radius: 7px;
-  }
-
-  .mb-10 {
-    margin-bottom: 10px;
-  }
-
-  .mr-10 {
-    margin-right: 10px;
-  }
-
-  .pr-1 {
-    padding-right: 12px;
-  }
-
-  .pl-1 {
-    padding-left: 12px;
-  }
-
-  .py-1 {
-    padding-top: 12px;
-    padding-bottom: 12px;
-  }
-
+.WhiteboardToolbar-removeColor {
+  margin-top: @edu-control-spacing-wide;
 }

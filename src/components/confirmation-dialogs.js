@@ -507,3 +507,15 @@ export function confirmDocumentInputSectionCommentDelete(t, timestamp, onOk, onC
     onCancel
   });
 }
+
+export function confirmWhiteboardReset(t, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:whiteboardResetConfirmation'),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
