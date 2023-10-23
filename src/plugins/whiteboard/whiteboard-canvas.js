@@ -25,7 +25,7 @@ export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHe
   const [fillColor, setFillColor] = useState(transparentColor);
   const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH.medium);
   const { observe: dimensionsContainerRef, width: containerWidth } = useDimensions();
-  const [canvasViewportInfo, setCanvasViewportInfo] = useState({ width: 0, height: 0, scale: 1 });
+  const [canvasViewportInfo, setCanvasViewportInfo] = useState({ width: 0, height: 0, scale: 1, offset: 0 });
 
   useEffect(() => {
     if (!canvasRef.current || !parentRef.current) {
@@ -90,12 +90,22 @@ export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHe
   }, [canvas, data]);
 
   useEffect(() => {
-    const numericalAspectRatio = viewportWidth / viewportHeight;
-    setCanvasViewportInfo({
-      width: Math.round(containerWidth),
-      height: Math.round(containerWidth / numericalAspectRatio),
-      scale: containerWidth / viewportWidth
-    });
+    const pixelsLeftWhenInNaturalScale = containerWidth - viewportWidth;
+    const isOffByOnlyFewPixels = pixelsLeftWhenInNaturalScale >= 0 && pixelsLeftWhenInNaturalScale < 10;
+    const newViewportInfo = isOffByOnlyFewPixels
+      ? {
+        width: viewportWidth,
+        height: viewportHeight,
+        scale: 1,
+        offset: Math.round(pixelsLeftWhenInNaturalScale / 2)
+      }
+      : {
+        width: Math.round(containerWidth),
+        height: Math.round(containerWidth / (viewportWidth / viewportHeight)),
+        scale: containerWidth / viewportWidth,
+        offset: 0
+      };
+    setCanvasViewportInfo(newViewportInfo);
   }, [canvas, containerWidth, viewportWidth, viewportHeight]);
 
   useEffect(() => {
@@ -337,6 +347,7 @@ export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHe
           ref={parentRef}
           className="WhiteboardCanvas-canvasContainer"
           style={{
+            left: canvasViewportInfo.offset,
             width: canvasViewportInfo.width,
             height: canvasViewportInfo.height,
             backgroundImage: backgroundImageUrl ? cssUrl(backgroundImageUrl) : 'none'
@@ -347,27 +358,27 @@ export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHe
       </div>
 
       {!disabled && (
-      <WhiteboardToolbar
-        mode={toolbarMode}
-        fontSize={fontSize}
-        strokeWidth={strokeWidth}
-        strokeColor={strokeColor}
-        fillColor={fillColor}
-        onModeChange={handleToolbarModeChange}
-        onTextClick={handleTextClick}
-        onLineClick={handleLineClick}
-        onArrowClick={handleArrowClick}
-        onRectangleClick={handleRectangleClick}
-        onTriangleClick={handleTriangleClick}
-        onCircleClick={handleCircleClick}
-        onEraseClick={handleEraseClick}
-        onFontSizeChange={handleFontSizeChange}
-        onStrokeWidthChange={handleStrokeWidthChange}
-        onStrokeColorChange={handleStrokeColorChange}
-        onFillColorChange={handleFillColorChange}
-        onFillColorRemove={handleFillColorRemove}
-        onResetClick={handleResetClick}
-        />
+        <WhiteboardToolbar
+          mode={toolbarMode}
+          fontSize={fontSize}
+          strokeWidth={strokeWidth}
+          strokeColor={strokeColor}
+          fillColor={fillColor}
+          onModeChange={handleToolbarModeChange}
+          onTextClick={handleTextClick}
+          onLineClick={handleLineClick}
+          onArrowClick={handleArrowClick}
+          onRectangleClick={handleRectangleClick}
+          onTriangleClick={handleTriangleClick}
+          onCircleClick={handleCircleClick}
+          onEraseClick={handleEraseClick}
+          onFontSizeChange={handleFontSizeChange}
+          onStrokeWidthChange={handleStrokeWidthChange}
+          onStrokeColorChange={handleStrokeColorChange}
+          onFillColorChange={handleFillColorChange}
+          onFillColorRemove={handleFillColorRemove}
+          onResetClick={handleResetClick}
+          />
       )}
     </div>
   );
