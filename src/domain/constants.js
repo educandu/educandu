@@ -257,6 +257,8 @@ export const DEFAULT_COLOR_SWATCHES = [
   ['#ffffff', '#fafafa', '#f5f5f5', '#e8e8e8', '#d9d9d9', '#bfbfbf', '#8c8c8c', '#595959', '#262626', '#000000']
 ];
 
+export const DEFAULT_COLOR_PICKER_WIDTH = 382;
+
 export const HTTP_STATUS = {
   badRequest: 400,
   unauthorized: 401,

@@ -489,6 +489,10 @@
     "genericDeleteConfirmation": {
       "en": "Do you really want to delete \"{title}\"?",
       "de": "Möchtest du \"{title}\" wirklich löschen?"
+    },
+    "whiteboardResetConfirmation": {
+      "en": "Do you really want to reset the whiteboard?",
+      "de": "Möchtest du das Whiteboard wirklich zurücksetzen?"
     }
   },
   "consentDialog": {
@@ -3463,6 +3467,54 @@
     "name": {
       "en": "Whiteboard",
       "de": "Whiteboard"
+    },
+    "selectTooltip": {
+      "en": "Select mode",
+      "de": "Auswahl-Modus"
+    },
+    "freeDrawTooltip": {
+      "en": "Freedraw mode",
+      "de": "Freihand-Modus"
+    },
+    "textTooltip": {
+      "en": "Add text",
+      "de": "Text hinzufügen"
+    },
+    "shapeTooltip": {
+      "en": "Add shape",
+      "de": "Form hinzufügen"
+    },
+    "eraseTooltip": {
+      "en": "Erase object",
+      "de": "Objekt löschen"
+    },
+    "resetTooltip": {
+      "en": "Reset whiteboard",
+      "de": "Whiteboard zurücksetzen"
+    },
+    "fontSizeTooltip": {
+      "en": "Font size",
+      "de": "Schriftgröße"
+    },
+    "strokeWidthTooltip": {
+      "en": "Stroke width",
+      "de": "Strichbreite"
+    },
+    "strokeColorTooltip": {
+      "en": "Stroke color",
+      "de": "Strichfarbe"
+    },
+    "fillColorTooltip": {
+      "en": "Fill color",
+      "de": "Füllfarbe"
+    },
+    "text": {
+      "en": "Text",
+      "de": "Text"
+    },
+    "removeFillColor": {
+      "en": "Remove fill",
+      "de": "Füllung entfernen"
     }
   },
   "common": {
