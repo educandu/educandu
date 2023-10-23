@@ -11,7 +11,7 @@ import { DEFAULT_STROKE_COLOR, FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_C
 
 const useDimensions = useDimensionsNs.default || useDimensionsNs;
 
-export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight, backgroundImageUrl, onChange }) {
+export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight, backgroundImageUrl, isBorderVisible, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
   const isLoadingData = useRef(false);
@@ -357,7 +357,11 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
         >
         <div
           ref={parentRef}
-          className={classNames('WhiteboardCanvas-canvasContainer', { 'is-disabled': disabled })}
+          className={classNames(
+            'WhiteboardCanvas-canvasContainer',
+            { 'WhiteboardCanvas-canvasContainer--withBorder': isBorderVisible },
+            { 'is-disabled': disabled }
+          )}
           style={{
             left: canvasViewportInfo.offset,
             width: canvasViewportInfo.width,
@@ -402,6 +406,7 @@ WhiteboardCanvas.propTypes = {
   backgroundImageUrl: PropTypes.string,
   viewportWidth: PropTypes.number.isRequired,
   viewportHeight: PropTypes.number.isRequired,
+  isBorderVisible: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired
 };
 

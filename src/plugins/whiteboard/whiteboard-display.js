@@ -10,7 +10,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 const createInitialData = () => ({ canvasData: null });
 
 export default function WhiteboardDisplay({ content, input, canModifyInput, onInputChanged }) {
-  const { width, viewportWidth, aspectRatio, image } = content;
+  const { width, viewportWidth, aspectRatio, image, isBorderVisible } = content;
   const data = input.data || createInitialData();
 
   const clientConfig = useService(ClientConfig);
@@ -32,6 +32,7 @@ export default function WhiteboardDisplay({ content, input, canModifyInput, onIn
         disabled={!canModifyInput}
         viewportWidth={viewportWidth}
         viewportHeight={viewportHeight}
+        isBorderVisible={isBorderVisible}
         backgroundImageUrl={backgroundImageUrl}
         onChange={handleCanvasDataChange}
         />

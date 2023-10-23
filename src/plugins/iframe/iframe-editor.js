@@ -45,7 +45,7 @@ function IframeEditor({ content, onContentChanged }) {
         <FormItem {...FORM_ITEM_LAYOUT} label={t('common:url')}>
           <Input value={url} onChange={handleExternalUrlValueChanged} />
         </FormItem>
-        <Form.Item label={t('border')} {...FORM_ITEM_LAYOUT}>
+        <Form.Item label={t('common:border')} {...FORM_ITEM_LAYOUT}>
           <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />
         </Form.Item>
         <Form.Item label={t('height')} {...FORM_ITEM_LAYOUT}>

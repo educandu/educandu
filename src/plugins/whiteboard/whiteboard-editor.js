@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Radio } from 'antd';
 import Info from '../../components/info.js';
+import { Checkbox, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
@@ -33,6 +33,11 @@ export default function WhiteboardEditor({ content, onContentChanged }) {
     updateContent({ aspectRatio: event.target.value });
   };
 
+  const handleIsBorderVisibleValueChanged = event => {
+    const { checked } = event.target;
+    updateContent({ isBorderVisible: checked });
+  };
+
   const handleImageSourceUrlChange = (value, metadata) => {
     const newImage = {
       ...image,
@@ -59,6 +64,9 @@ export default function WhiteboardEditor({ content, onContentChanged }) {
         <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={image.copyrightNotice} onChange={handleImageCopyrightNoticeChange} />
         </FormItem>
+        <Form.Item label={t('common:border')} {...FORM_ITEM_LAYOUT}>
+          <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />
+        </Form.Item>
         <FormItem label={t('common:aspectRatio')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} onChange={handleAspectRatioChange}>
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
