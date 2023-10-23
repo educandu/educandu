@@ -225,6 +225,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
         activeObject.set('fontSize', newFontSize);
       });
       canvas.renderAll();
+      canvas.fire('object:modified');
     }
   };
 
@@ -248,6 +249,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
         }
       });
       canvas.renderAll();
+      canvas.fire('object:modified');
     }
   };
 
@@ -276,6 +278,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
         }
       });
       canvas.renderAll();
+      canvas.fire('object:modified');
     }
   };
 
@@ -291,6 +294,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
         }
       });
       canvas.renderAll();
+      canvas.fire('object:modified');
     }
   };
 
