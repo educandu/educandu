@@ -350,7 +350,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     <div className="WhiteboardCanvas">
       <div
         ref={dimensionsContainerRef}
-        className="WhiteboardCanvas-dimensionsContainer"
+        className={classNames('WhiteboardCanvas-dimensionsContainer', { 'is-disabled': disabled })}
         style={{ height: canvasViewportInfo.height }}
         >
         <div
