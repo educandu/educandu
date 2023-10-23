@@ -24,24 +24,24 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const SwatchesPicker = SwatchesPickerNs.default || SwatchesPickerNs;
 
-export const MODES = {
+export const MODE = {
   select: 'select',
   freeDraw: 'freeDraw'
 };
 
-export const FONT_SIZES = {
+export const FONT_SIZE = {
   small: 16,
   medium: 22,
   large: 26
 };
 
-export const STROKE_WIDTHS = {
+export const STROKE_WIDTH = {
   small: 2,
   medium: 3,
   large: 6
 };
 
-const SHAPE_TYPES = {
+const SHAPE_TYPE = {
   line: 'line',
   arrow: 'arrow',
   circle: 'circle',
@@ -49,7 +49,7 @@ const SHAPE_TYPES = {
   rectangle: 'rectangle'
 };
 
-const MENUS = {
+const MENU = {
   shape: 'shape',
   fontSize: 'fontSize',
   strokeWidth: 'strokeWidth'
@@ -57,53 +57,53 @@ const MENUS = {
 
 const shapeMenuItems = [
   {
-    key: SHAPE_TYPES.line,
+    key: SHAPE_TYPE.line,
     label: <LineIcon />
   },
   {
-    key: SHAPE_TYPES.arrow,
+    key: SHAPE_TYPE.arrow,
     label: <ArrowIcon />
   },
   {
-    key: SHAPE_TYPES.circle,
+    key: SHAPE_TYPE.circle,
     label: <CircleIcon />
   },
   {
-    key: SHAPE_TYPES.triangle,
+    key: SHAPE_TYPE.triangle,
     label: <TriangleIcon />
   },
   {
-    key: SHAPE_TYPES.rectangle,
+    key: SHAPE_TYPE.rectangle,
     label: <RectangleIcon />
   }
 ];
 
 const fontSizeMenuItems = [
   {
-    key: FONT_SIZES.small,
+    key: FONT_SIZE.small,
     label: 'S'
   },
   {
-    key: FONT_SIZES.medium,
+    key: FONT_SIZE.medium,
     label: 'M'
   },
   {
-    key: FONT_SIZES.large,
+    key: FONT_SIZE.large,
     label: 'L'
   }
 ];
 
 const strokeWidthMenuItems = [
   {
-    key: STROKE_WIDTHS.small,
+    key: STROKE_WIDTH.small,
     label: 'S'
   },
   {
-    key: STROKE_WIDTHS.medium,
+    key: STROKE_WIDTH.medium,
     label: 'M'
   },
   {
-    key: STROKE_WIDTHS.large,
+    key: STROKE_WIDTH.large,
     label: 'L'
   }
 ];
@@ -143,19 +143,19 @@ export function WhiteboardToolbar({
 
   const handleShapeMenuClick = ({ key }) => {
     switch (key) {
-      case SHAPE_TYPES.line:
+      case SHAPE_TYPE.line:
         onLineClick();
         break;
-      case SHAPE_TYPES.arrow:
+      case SHAPE_TYPE.arrow:
         onArrowClick();
         break;
-      case SHAPE_TYPES.circle:
+      case SHAPE_TYPE.circle:
         onCircleClick();
         break;
-      case SHAPE_TYPES.triangle:
+      case SHAPE_TYPE.triangle:
         onTriangleClick();
         break;
-      case SHAPE_TYPES.rectangle:
+      case SHAPE_TYPE.rectangle:
         onRectangleClick();
         break;
       default:
@@ -182,10 +182,10 @@ export function WhiteboardToolbar({
       <div className="WhiteboardToolbar-group">
         <RadioGroup value={mode} onChange={handleModeChange}>
           <Tooltip title={t('selectTooltip')}>
-            <RadioButton value={MODES.select}><SelectIcon /></RadioButton>
+            <RadioButton value={MODE.select}><SelectIcon /></RadioButton>
           </Tooltip>
           <Tooltip title={t('freeDrawTooltip')}>
-            <RadioButton value={MODES.freeDraw}><FreeDrawIcon /></RadioButton>
+            <RadioButton value={MODE.freeDraw}><FreeDrawIcon /></RadioButton>
           </Tooltip>
         </RadioGroup>
         <Tooltip title={t('textTooltip')}>
@@ -195,15 +195,15 @@ export function WhiteboardToolbar({
           <Dropdown
             trigger={['click']}
             placement="top"
-            open={openMenu === MENUS.shape}
-            onOpenChange={() => handleMenuOpenChange(MENUS.shape)}
+            open={openMenu === MENU.shape}
+            onOpenChange={() => handleMenuOpenChange(MENU.shape)}
             menu={{ items: shapeMenuItems, onClick: handleShapeMenuClick }}
             >
             <Button icon={<ShapeIcon />} />
           </Dropdown>
         </Tooltip>
         <Tooltip title={t('eraseTooltip')}>
-          <Button onClick={onEraseClick} icon={<EraserIcon />} disabled={mode === MODES.freeDraw} />
+          <Button onClick={onEraseClick} icon={<EraserIcon />} disabled={mode === MODE.freeDraw} />
         </Tooltip>
 
         <Tooltip title={t('resetTooltip')}>
@@ -216,8 +216,8 @@ export function WhiteboardToolbar({
           <Dropdown
             trigger={['click']}
             placement="top"
-            open={openMenu === MENUS.fontSize}
-            onOpenChange={() => handleMenuOpenChange(MENUS.fontSize)}
+            open={openMenu === MENU.fontSize}
+            onOpenChange={() => handleMenuOpenChange(MENU.fontSize)}
             menu={{ items: fontSizeMenuItems, onClick: handleFontSizeMenuClick }}
             >
             <Button icon={<FontSizeIcon />} className="WhiteboardToolbar-buttonWithSelection">
@@ -232,8 +232,8 @@ export function WhiteboardToolbar({
           <Dropdown
             trigger={['click']}
             placement="top"
-            open={openMenu === MENUS.strokeWidth}
-            onOpenChange={() => handleMenuOpenChange(MENUS.strokeWidth)}
+            open={openMenu === MENU.strokeWidth}
+            onOpenChange={() => handleMenuOpenChange(MENU.strokeWidth)}
             menu={{ items: strokeWidthMenuItems, onClick: handleStrokeWidthMenuClick }}
             >
             <Button icon={<StrokeWidthIcon />} className="WhiteboardToolbar-buttonWithSelection">
@@ -290,9 +290,9 @@ export function WhiteboardToolbar({
 }
 
 WhiteboardToolbar.propTypes = {
-  mode: PropTypes.oneOf(Object.values(MODES)).isRequired,
-  fontSize: PropTypes.oneOf(Object.values(FONT_SIZES)).isRequired,
-  strokeWidth: PropTypes.oneOf(Object.values(STROKE_WIDTHS)).isRequired,
+  mode: PropTypes.oneOf(Object.values(MODE)).isRequired,
+  fontSize: PropTypes.oneOf(Object.values(FONT_SIZE)).isRequired,
+  strokeWidth: PropTypes.oneOf(Object.values(STROKE_WIDTH)).isRequired,
   strokeColor: PropTypes.string.isRequired,
   fillColor: PropTypes.string.isRequired,
   onModeChange: PropTypes.func.isRequired,

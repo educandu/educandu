@@ -4,7 +4,7 @@ import deepEqual from 'fast-deep-equal';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
-import { FONT_SIZES, MODES, STROKE_WIDTHS, WhiteboardToolbar } from './whiteboard-toolbar.js';
+import { FONT_SIZE, MODE, STROKE_WIDTH, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
 const transparentColor = 'rgba(255, 255, 255, 0.0)';
 
@@ -15,9 +15,9 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   const { t } = useTranslation('whiteboard');
 
   const [canvas, setCanvas] = useState();
-  const [toolbarMode, setToolbarMode] = useState(MODES.select);
-  const [fontSize, setFontSize] = useState(FONT_SIZES.medium);
-  const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTHS.medium);
+  const [toolbarMode, setToolbarMode] = useState(MODE.select);
+  const [fontSize, setFontSize] = useState(FONT_SIZE.medium);
+  const [strokeWidth, setStrokeWidth] = useState(STROKE_WIDTH.medium);
   const [strokeColor, setStrokeColor] = useState('#000000');
   const [fillColor, setFillColor] = useState(transparentColor);
 
@@ -31,7 +31,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
       isDrawingMode: false
     });
 
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
 
     const handleCanvasChange = () => {
       if (!isLoadingData.current) {
@@ -87,12 +87,12 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   const handleToolbarModeChange = newToolbarMode => {
     setToolbarMode(newToolbarMode);
 
-    if (newToolbarMode === MODES.select) {
+    if (newToolbarMode === MODE.select) {
       canvas.isDrawingMode = false;
       canvas.discardActiveObject().renderAll();
     }
 
-    if (newToolbarMode === MODES.freeDraw) {
+    if (newToolbarMode === MODE.freeDraw) {
       canvas.isDrawingMode = true;
       canvas.freeDrawingBrush.width = strokeWidth;
       canvas.freeDrawingBrush.color = strokeColor;
@@ -100,7 +100,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleTextClick = () => {
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
     const textbox = new fabric.Textbox(t('text'), {
@@ -114,7 +114,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleLineClick = () => {
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
     const line = new fabric.Line([50, 100, 200, 100], {
@@ -128,7 +128,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleArrowClick = () => {
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
     const triangle = new fabric.Triangle({
@@ -157,7 +157,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleRectangleClick = () => {
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
     const rectangle = new fabric.Rect({
@@ -174,7 +174,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleCircleClick = () => {
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
     const circle = new fabric.Circle({
@@ -190,7 +190,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleTriangleClick = () => {
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
     const triangle = new fabric.Triangle({
@@ -207,7 +207,7 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   };
 
   const handleEraseClick = () => {
-    setToolbarMode(MODES.select);
+    setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
     const activeObjects = canvas.getActiveObjects();
