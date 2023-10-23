@@ -5,6 +5,10 @@
 
 .WhiteboardCanvas-dimensionsContainer {
   position: relative;
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
 }
 
 .WhiteboardCanvas-canvasContainer {
@@ -13,6 +17,10 @@
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+
+  &.is-disabled {
+    pointer-events: none;
+  }
 }
 
 .WhiteboardToolbar {

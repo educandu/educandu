@@ -1,5 +1,6 @@
 import { fabric } from 'fabric';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import deepEqual from 'fast-deep-equal';
 import { useTranslation } from 'react-i18next';
 import { cssUrl } from '../../utils/css-utils.js';
@@ -349,12 +350,12 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     <div className="WhiteboardCanvas">
       <div
         ref={dimensionsContainerRef}
-        className="WhiteboardCanvas-dimensionsContainer"
+        className={classNames('WhiteboardCanvas-dimensionsContainer', { 'is-disabled': disabled })}
         style={{ height: canvasViewportInfo.height }}
         >
         <div
           ref={parentRef}
-          className="WhiteboardCanvas-canvasContainer"
+          className={classNames('WhiteboardCanvas-canvasContainer', { 'is-disabled': disabled })}
           style={{
             left: canvasViewportInfo.offset,
             width: canvasViewportInfo.width,
