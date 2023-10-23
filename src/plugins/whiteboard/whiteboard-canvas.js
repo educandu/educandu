@@ -75,7 +75,15 @@ export function WhiteboardCanvas({ data, disabled, onChange }) {
   }, [canvasRef, parentRef, disabled, onChange]);
 
   useEffect(() => {
-    if (canvas?.getContext() && data && !deepEqual(data, canvas.toDatalessJSON())) {
+    if (!canvas?.getContext()) {
+      return;
+    }
+
+    if (!data) {
+      canvas.clear();
+    }
+
+    if (data && !deepEqual(data, canvas.toDatalessJSON())) {
       isLoadingData.current = true;
       canvas.loadFromJSON(data, () => {
         canvas.renderAll();
