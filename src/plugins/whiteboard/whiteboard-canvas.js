@@ -331,24 +331,18 @@ export function WhiteboardCanvas({ backgroundImageUrl, viewportWidth, viewportHe
       <div
         ref={dimensionsContainerRef}
         className="WhiteboardCanvas-dimensionsContainer"
-        style={{ position: 'relative', height: canvasViewportInfo.height }}
+        style={{ height: canvasViewportInfo.height }}
         >
         <div
           ref={parentRef}
           className="WhiteboardCanvas-canvasContainer"
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
             width: canvasViewportInfo.width,
             height: canvasViewportInfo.height,
-            backgroundSize: 'contain',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
             backgroundImage: backgroundImageUrl ? cssUrl(backgroundImageUrl) : 'none'
           }}
           >
-          <canvas ref={canvasRef} className="canvas" />
+          <canvas ref={canvasRef} />
         </div>
       </div>
 
