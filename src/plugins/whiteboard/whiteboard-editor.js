@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { OPTIMAL_VIEWPORT_WIDTH_FACTOR } from './constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
@@ -25,7 +26,7 @@ export default function WhiteboardEditor({ content, onContentChanged }) {
   };
 
   const handleWidthChange = value => {
-    updateContent({ width: value, viewportWidth: value * 10 });
+    updateContent({ width: value, viewportWidth: value * OPTIMAL_VIEWPORT_WIDTH_FACTOR });
   };
 
   const handleAspectRatioChange = event => {
