@@ -68,3 +68,16 @@ document:
   submitInput:
     en: Submit input
     de: Eingabe senden
+  proposedSectionsAlertMarkdown:
+    en: |
+      Apply or discard the proposed sections one by one or click "Apply all".
+      \
+      Unapplied sections are only visible until you leave the current view.
+    de: |
+      Übernimm oder verwirf die vorgeschlagenen Abschnitte.
+      \
+      Nicht übernommene Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.
+  applyAll:
+    en: Apply all
+    de: Alle anwenden
+

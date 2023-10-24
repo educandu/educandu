@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -91,12 +92,17 @@ const createPendingDocumentInput = sections => {
   };
 };
 
-function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, t }) {
+function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, handleApplyAllPendingSections, t }) {
   const alerts = [];
   const review = docRevision ? docRevision.publicContext?.review : doc.publicContext?.review;
 
   if (view === VIEW.edit && hasPendingTemplateSectionKeys) {
-    alerts.push({ message: t('common:proposedSectionsAlert') });
+    alerts.push({ message: (
+      <div className="DocumentPage-proposedSectionsAlert">
+        <Markdown>{t('proposedSectionsAlertMarkdown')}</Markdown>
+        <Button onClick={handleApplyAllPendingSections}>{t('applyAll')}</Button>
+      </div>
+    ) });
   }
 
   if (review) {
@@ -210,11 +216,17 @@ function Document({ initialState, PageTemplate }) {
   const [pendingDocumentInput, setPendingDocumentInput] = useState(() => createPendingDocumentInput(getInitialSections()));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
 
+  const handleApplyAllPendingSections = () => {
+    setPendingTemplateSectionKeys([]);
+    setIsDirty(true);
+  };
+
   const [alerts, setAlerts] = useState(createPageAlerts({
     t,
     doc,
     view,
-    hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
+    hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length,
+    handleApplyAllPendingSections
   }));
 
   const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
@@ -396,9 +408,10 @@ function Document({ initialState, PageTemplate }) {
     setAlerts(createPageAlerts({
       t,
       doc,
-      docRevision: historySelectedDocumentRevision,
       view,
-      hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length
+      docRevision: historySelectedDocumentRevision,
+      hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length,
+      handleApplyAllPendingSections
     }));
   }, [doc, historySelectedDocumentRevision, view, pendingTemplateSectionKeys, t]);
 
