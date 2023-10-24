@@ -14,7 +14,7 @@ export function supportsClipboardPaste() {
   return typeof window.navigator.clipboard?.readText === 'function';
 }
 
-export function getCurrentUrl() {
+export function getCurrentUrlFromLocation() {
   const { pathname, search, hash } = window.location;
   return `${pathname}${search}${hash}`;
 }

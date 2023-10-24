@@ -26,22 +26,6 @@ const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
-function isApiPath(path) {
-  return path.startsWith(apiPrefix);
-}
-
-function isHomePath(path) {
-  return path === homePath;
-}
-
-function isResetPasswordPath(path) {
-  return path === resetPasswordPath;
-}
-
-function isConnectExternalAccountPath(path) {
-  return path === connectExternalAccountPath;
-}
-
 function getUserProfileUrl(id) {
   return urlUtils.concatParts(userProfilePrefix, encodeURIComponent(id));
 }
@@ -85,10 +69,6 @@ function getRoomMembershipConfirmationUrl(token) {
   return urlUtils.concatParts(roomMembershipConfirmationPrefix, token);
 }
 
-function getPreferredLoginRedirectUrlForCurrentUrl(currentUrl) {
-  return !currentUrl || isHomePath(currentUrl) ? null : currentUrl;
-}
-
 function getDefaultLoginRedirectUrl() {
   return dashboardPath;
 }
@@ -103,6 +83,10 @@ function getHomeUrl(language = null) {
 
 function getLoginUrl(redirect = null) {
   return redirect ? urlUtils.createRedirectUrl(loginPath, redirect) : loginPath;
+}
+
+function getLoginUrlForCurrentUrl(currentUrl) {
+  return getLoginUrl(currentUrl === homePath ? null : currentUrl);
 }
 
 function getLogoutUrl() {
@@ -150,11 +134,19 @@ function getSamlAuthLoginCallbackPath(providerKey) {
   return urlUtils.concatParts(samlAuthLoginCallbackPrefix, encodeURIComponent(providerKey));
 }
 
+function isApiPath(path) {
+  return path.startsWith(apiPrefix);
+}
+
+function isResetPasswordPath(path) {
+  return path === resetPasswordPath;
+}
+
+function isConnectExternalAccountPath(path) {
+  return path === connectExternalAccountPath;
+}
+
 export default {
-  isApiPath,
-  isHomePath,
-  isResetPasswordPath,
-  isConnectExternalAccountPath,
   getUserProfileUrl,
   getRedactionUrl,
   getDocUrl,
@@ -164,11 +156,11 @@ export default {
   getRoomUrl,
   getAdminUrl,
   getRoomMembershipConfirmationUrl,
-  getPreferredLoginRedirectUrlForCurrentUrl,
   getDefaultLoginRedirectUrl,
   getDefaultLogoutRedirectUrl,
   getHomeUrl,
   getLoginUrl,
+  getLoginUrlForCurrentUrl,
   getLogoutUrl,
   getDashboardUrl,
   getRegisterUrl,
@@ -178,5 +170,8 @@ export default {
   getBatchUrl,
   getDocIdIfDocUrl,
   getSamlAuthLoginPath,
-  getSamlAuthLoginCallbackPath
+  getSamlAuthLoginCallbackPath,
+  isApiPath,
+  isResetPasswordPath,
+  isConnectExternalAccountPath
 };

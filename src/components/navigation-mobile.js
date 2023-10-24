@@ -6,10 +6,10 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { Button, Collapse, Drawer } from 'antd';
+import { useGetCurrentUrl } from '../ui/hooks.js';
 import { useSettings } from './settings-context.js';
 import { useService } from './container-context.js';
 import MenuIcon from './icons/main-menu/menu-icon.js';
-import { getCurrentUrl } from '../ui/browser-helper.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
 import { useNotificationsCount } from './notification-context.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
@@ -21,6 +21,7 @@ const { Panel } = Collapse;
 function NavigationMobile() {
   const user = useUser();
   const settings = useSettings();
+  const getCurrentUrl = useGetCurrentUrl();
   const notificationsCount = useNotificationsCount();
   const { t, i18n } = useTranslation('navigationMobile');
   const { supportedUiLanguages, uiLanguage } = useLocale();
@@ -40,9 +41,7 @@ function NavigationMobile() {
   };
 
   const handleLogInClick = () => {
-    const currentPath = getCurrentUrl();
-    const redirectPath = routes.getPreferredLoginRedirectUrlForCurrentUrl(currentPath);
-    window.location = routes.getLoginUrl(redirectPath);
+    window.location = routes.getLoginUrlForCurrentUrl(getCurrentUrl());
   };
 
   const handleLogOutClick = () => {

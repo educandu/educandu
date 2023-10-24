@@ -2,8 +2,15 @@ import deepEqual from 'fast-deep-equal';
 import { delay } from '../utils/time-utils.js';
 import { useUser } from '../components/user-context.js';
 import { hasUserPermission } from '../domain/permissions.js';
+import { useRequest } from '../components/request-context.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { getCurrentUrlFromLocation, isBrowser } from './browser-helper.js';
 import { LOADING_SPINNER_MINIMUM_PERIOD_IN_MILLISECONDS } from '../domain/constants.js';
+
+export function useGetCurrentUrl() {
+  const req = useRequest();
+  return useMemo(() => () => isBrowser() ? getCurrentUrlFromLocation() : req.originalUrl, [req]);
+}
 
 export function usePermission(permissionToCheck) {
   const user = useUser();

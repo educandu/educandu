@@ -8,12 +8,11 @@ import { useLocale } from './locale-context.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
-import { useScrollTopOffset } from '../ui/hooks.js';
-import { getCurrentUrl } from '../ui/browser-helper.js';
 import { Avatar, Badge, Dropdown, Tooltip } from 'antd';
 import LogoutIcon from './icons/main-menu/logout-icon.js';
 import { useNotificationsCount } from './notification-context.js';
 import { getCommonNavigationMenuItems } from './navigation-utils.js';
+import { useGetCurrentUrl, useScrollTopOffset } from '../ui/hooks.js';
 import LanguageDataProvider from '../localization/language-data-provider.js';
 import { BellOutlined, DownOutlined, SearchOutlined, UpOutlined } from '@ant-design/icons';
 
@@ -21,6 +20,7 @@ function NavigationDesktop() {
   const user = useUser();
   const settings = useSettings();
   const topOffset = useScrollTopOffset();
+  const getCurrentUrl = useGetCurrentUrl();
   const { t, i18n } = useTranslation('navigationDesktop');
   const { supportedUiLanguages, uiLanguage } = useLocale();
   const languageDataProvider = useService(LanguageDataProvider);
@@ -68,9 +68,7 @@ function NavigationDesktop() {
   };
 
   const handleLogInClick = () => {
-    const currentPath = getCurrentUrl();
-    const redirectPath = routes.getPreferredLoginRedirectUrlForCurrentUrl(currentPath);
-    window.location = routes.getLoginUrl(redirectPath);
+    window.location = routes.getLoginUrlForCurrentUrl(getCurrentUrl());
   };
 
   const handleLogOutClick = () => {
