@@ -9,7 +9,7 @@
   border: 1px dotted transparent;
   border-radius: @edu-border-radius-base;
 
-  &.is-submittable-input {
+  &.SectionDisplay--allowsInput {
     border-left: 3px solid @edu-secondary-color-dark;
     border-radius: 15px;
 
@@ -18,7 +18,7 @@
     }
   }
 
-  &.is-editable {
+  &.SectionDisplay--permanent {
     padding-top: @section-display-editable-padding-top;
     border: 1px dotted @edu-border-color-dark;
     border-radius: @edu-border-radius-base;
@@ -36,7 +36,7 @@
     }
   }
 
-  &.is-hard-deletable {
+  &.SectionDisplay--hoverable {
     padding-top: @section-display-editable-padding-top;
     border: 1px dotted transparent;
     border-radius: @edu-border-radius-base;
@@ -67,12 +67,12 @@
   border-top-left-radius: @edu-border-radius-base;
   border-top-right-radius: @edu-border-radius-base;
 
-  &.is-editing {
-    background-color: @edu-secondary-color-light;
+  &.SectionDisplay-toolbar--hoverable {
+    display: none;
   }
 
-  &.is-hidden {
-    display: none;
+  &.is-editing {
+    background-color: @edu-secondary-color-light;
   }
 }
 
