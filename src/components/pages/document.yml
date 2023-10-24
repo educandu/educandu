@@ -74,10 +74,10 @@ document:
       \
       Unapplied sections are only visible until you leave the current view.
     de: |
-      Übernimm oder verwirf die vorgeschlagenen Abschnitte.
+      Übernimm oder verwirf die vorgeschlagenen Abschnitte jeweils individuell oder klicke auf "Alle übernehmen".
       \
       Nicht übernommene Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.
   applyAll:
     en: Apply all
-    de: Alle anwenden
+    de: Alle übernehmen
 
