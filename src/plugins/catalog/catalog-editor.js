@@ -102,7 +102,7 @@ function CatalogEditor({ content, onContentChanged }) {
   return (
     <div className="CatalogEditor">
       <Form layout="horizontal" labelAlign="left">
-        <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('headline')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={title} onChange={handleTitleChange} />
         </FormItem>
         <FormItem
