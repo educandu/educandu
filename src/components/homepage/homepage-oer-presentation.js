@@ -13,7 +13,7 @@ function HomepageOerPresentation() {
     window.location = routes.getRegisterUrl();
   };
 
-  const logInUrl = routes.getLoginUrlForCurrentUrl(getCurrentUrl());
+  const logInUrl = routes.getLoginUrl({ currentUrl: getCurrentUrl() });
 
   return (
     <div className="HomepageOerPresentation">

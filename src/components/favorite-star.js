@@ -36,7 +36,7 @@ function FavoriteStar({ type, id, useTooltip, disabled, onToggle }) {
     }
 
     if (!user) {
-      window.location = routes.getLoginUrlForCurrentUrl(getCurrentUrl());
+      window.location = routes.getLoginUrl({ currentUrl: getCurrentUrl() });
     }
 
     const newIsSet = !isSet;

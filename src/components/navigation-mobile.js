@@ -41,7 +41,7 @@ function NavigationMobile() {
   };
 
   const handleLogInClick = () => {
-    window.location = routes.getLoginUrlForCurrentUrl(getCurrentUrl());
+    window.location = routes.getLoginUrl({ currentUrl: getCurrentUrl() });
   };
 
   const handleLogOutClick = () => {

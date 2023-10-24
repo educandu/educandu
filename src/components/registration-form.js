@@ -4,6 +4,7 @@ import { useSetUser } from './user-context.js';
 import { useLocale } from './locale-context.js';
 import EmailFormItem from './email-form-item.js';
 import UserStepsForm from './user-steps-form.js';
+import { useGetCurrentUrl } from '../ui/hooks.js';
 import React, { useState, Fragment } from 'react';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
@@ -20,6 +21,7 @@ function RegistrationForm() {
   const settings = useSettings();
   const { uiLanguage } = useLocale();
   const [enterDataForm] = Form.useForm();
+  const getCurrentUrl = useGetCurrentUrl();
   const userApiClient = useService(UserApiClient);
   const { t } = useTranslation('registrationForm');
   const [createdUser, setCreatedUser] = useState(null);
@@ -88,7 +90,7 @@ function RegistrationForm() {
           </Checkbox>
         </FormItem>
         <div className="RegistrationForm-alternativeActionLink">
-          <a href={routes.getLoginUrl()}>{t('common:logInAlternative')}</a>
+          <a href={routes.getLoginUrl({ currentUrl: getCurrentUrl(), suppressRedirect: true })}>{t('common:logInAlternative')}</a>
         </div>
       </Fragment>
     );
