@@ -74,13 +74,6 @@ common:
   languages:
     en: Languages
     de: Sprachen
-  proposedSectionsAlert:
-    en: |
-      Apply or discard the proposed sections. Unapplied sections are
-      only visible until you leave the current view.
-    de: |
-      Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene
-      Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.
   version:
     en: Version
     de: Version

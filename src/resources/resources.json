@@ -1685,6 +1685,14 @@
     "submitInput": {
       "en": "Submit input",
       "de": "Eingabe senden"
+    },
+    "proposedSectionsAlertMarkdown": {
+      "en": "Apply or discard the proposed sections one by one or click \"Apply all\".\n\\\nUnapplied sections are only visible until you leave the current view.\n",
+      "de": "Übernimm oder verwirf die vorgeschlagenen Abschnitte jeweils individuell oder klicke auf \"Alle übernehmen\".\n\\\nNicht übernommene Abschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.\n"
+    },
+    "applyAll": {
+      "en": "Apply all",
+      "de": "Alle übernehmen"
     }
   },
   "error": {
@@ -3617,10 +3625,6 @@
     "languages": {
       "en": "Languages",
       "de": "Sprachen"
-    },
-    "proposedSectionsAlert": {
-      "en": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
-      "de": "Übernimm oder verwirf die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis du die Ansicht verlässt.\n"
     },
     "version": {
       "en": "Version",
