@@ -40,7 +40,9 @@ function NavigationMobile() {
   };
 
   const handleLogInClick = () => {
-    window.location = routes.getLoginUrl(getCurrentUrl());
+    const currentPath = getCurrentUrl();
+    const redirectPath = routes.getPreferredLoginRedirectUrlForCurrentUrl(currentPath);
+    window.location = routes.getLoginUrl(redirectPath);
   };
 
   const handleLogOutClick = () => {

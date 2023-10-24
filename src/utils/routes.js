@@ -26,6 +26,22 @@ const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
+function isApiPath(path) {
+  return path.startsWith(apiPrefix);
+}
+
+function isHomePath(path) {
+  return path === homePath;
+}
+
+function isResetPasswordPath(path) {
+  return path === resetPasswordPath;
+}
+
+function isConnectExternalAccountPath(path) {
+  return path === connectExternalAccountPath;
+}
+
 function getUserProfileUrl(id) {
   return urlUtils.concatParts(userProfilePrefix, encodeURIComponent(id));
 }
@@ -67,6 +83,10 @@ function getBatchUrl(id) {
 
 function getRoomMembershipConfirmationUrl(token) {
   return urlUtils.concatParts(roomMembershipConfirmationPrefix, token);
+}
+
+function getPreferredLoginRedirectUrlForCurrentUrl(currentUrl) {
+  return !currentUrl || isHomePath(currentUrl) ? null : currentUrl;
 }
 
 function getDefaultLoginRedirectUrl() {
@@ -130,19 +150,11 @@ function getSamlAuthLoginCallbackPath(providerKey) {
   return urlUtils.concatParts(samlAuthLoginCallbackPrefix, encodeURIComponent(providerKey));
 }
 
-function isApiPath(path) {
-  return path.startsWith(apiPrefix);
-}
-
-function isResetPasswordPath(path) {
-  return path === resetPasswordPath;
-}
-
-function isConnectExternalAccountPath(path) {
-  return path === connectExternalAccountPath;
-}
-
 export default {
+  isApiPath,
+  isHomePath,
+  isResetPasswordPath,
+  isConnectExternalAccountPath,
   getUserProfileUrl,
   getRedactionUrl,
   getDocUrl,
@@ -152,6 +164,7 @@ export default {
   getRoomUrl,
   getAdminUrl,
   getRoomMembershipConfirmationUrl,
+  getPreferredLoginRedirectUrlForCurrentUrl,
   getDefaultLoginRedirectUrl,
   getDefaultLogoutRedirectUrl,
   getHomeUrl,
@@ -165,8 +178,5 @@ export default {
   getBatchUrl,
   getDocIdIfDocUrl,
   getSamlAuthLoginPath,
-  getSamlAuthLoginCallbackPath,
-  isApiPath,
-  isResetPasswordPath,
-  isConnectExternalAccountPath
+  getSamlAuthLoginCallbackPath
 };

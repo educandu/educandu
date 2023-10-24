@@ -87,7 +87,8 @@ class ErrorController {
 
   tryRespondToPageError(req, res, err) {
     if (err.status === HTTP_STATUS.unauthorized && err.code !== ERROR_CODES.userAccountLocked && !req.isAuthenticated()) {
-      const url = routes.getLoginUrl(req.originalUrl);
+      const redirectPath = routes.getPreferredLoginRedirectUrlForCurrentUrl(req.originalUrl);
+      const url = routes.getLoginUrl(redirectPath);
       res.redirect(url);
       return true;
     }
