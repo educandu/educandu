@@ -1,7 +1,9 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
+import { isTouchDevice } from '../../ui/browser-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
@@ -90,9 +92,15 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia, c
       return null;
     }
 
+    const classes = classNames(
+      'MatchingCardsTileDisplay-mediaControlBar',
+      { 'MatchingCardsTileDisplay-mediaControlBar--alwaysVisible': isTouchDevice() }
+    );
+
     return (
-      <div className="MatchingCardsTileDisplay-mediaControlBar">
+      <div className={classes}>
         <Button
+          size="small"
           icon={playMedia ? <StopIcon /> : <PlayIcon />}
           onClick={handleMediaControlClick}
           />
