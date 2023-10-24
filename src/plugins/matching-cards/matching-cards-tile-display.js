@@ -1,6 +1,5 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { StopFilled } from '@ant-design/icons';
 import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -9,6 +8,7 @@ import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import PlayIcon from '../../components/icons/media-player/play-icon.js';
+import StopIcon from '../../components/icons/media-player/stop-icon.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 
@@ -25,6 +25,13 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia, c
 
   const handleMediaReady = () => {
     setIsMediaReady(true);
+  };
+
+  const handleMediaControlClick = event => {
+    if (hasPlayedAtLeastOnce.current) {
+      mediaPlayerRef.current.seekToTimecode(0);
+    }
+    onTogglePlayMedia(event);
   };
 
   useEffect(() => {
@@ -85,7 +92,10 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia, c
 
     return (
       <div className="MatchingCardsTileDisplay-mediaControlBar">
-        <Button icon={playMedia ? <StopFilled /> : <PlayIcon />} onClick={onTogglePlayMedia} />
+        <Button
+          icon={playMedia ? <StopIcon /> : <PlayIcon />}
+          onClick={handleMediaControlClick}
+          />
       </div>
     );
   };
