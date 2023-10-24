@@ -81,7 +81,8 @@ function getHomeUrl(language = null) {
   return language ? `${homePath}?language=${encodeURIComponent(language)}` : homePath;
 }
 
-function getLoginUrl(redirect = null) {
+function getLoginUrl({ currentUrl, suppressRedirect = false }) {
+  const redirect = suppressRedirect || currentUrl === homePath ? null : currentUrl;
   return redirect ? urlUtils.createRedirectUrl(loginPath, redirect) : loginPath;
 }
 

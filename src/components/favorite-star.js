@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { useGetCurrentUrl } from '../ui/hooks.js';
 import StarIcon from './icons/general/star-icon.js';
 import { handleApiError } from '../ui/error-helper.js';
-import { getCurrentUrl } from '../ui/browser-helper.js';
 import { useSetUser, useUser } from './user-context.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
@@ -21,6 +21,7 @@ function getIsSet(user, type, id) {
 function FavoriteStar({ type, id, useTooltip, disabled, onToggle }) {
   const user = useUser();
   const setUser = useSetUser();
+  const getCurrentUrl = useGetCurrentUrl();
   const { t } = useTranslation('favoriteStar');
   const [isSet, setIsSet] = useState(getIsSet(user, type, id));
   const userApiClient = useSessionAwareApiClient(UserApiClient);
@@ -35,7 +36,7 @@ function FavoriteStar({ type, id, useTooltip, disabled, onToggle }) {
     }
 
     if (!user) {
-      window.location = routes.getLoginUrl(getCurrentUrl());
+      window.location = routes.getLoginUrl({ currentUrl: getCurrentUrl() });
     }
 
     const newIsSet = !isSet;

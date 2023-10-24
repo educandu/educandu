@@ -3,15 +3,17 @@ import { Button } from 'antd';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
+import { useGetCurrentUrl } from '../../ui/hooks.js';
 
 function HomepageOerPresentation() {
+  const getCurrentUrl = useGetCurrentUrl();
   const { t } = useTranslation('homepageOerPresentation');
 
   const handleSignUpClick = () => {
     window.location = routes.getRegisterUrl();
   };
 
-  const logInUrl = routes.getLoginUrl();
+  const logInUrl = routes.getLoginUrl({ currentUrl: getCurrentUrl() });
 
   return (
     <div className="HomepageOerPresentation">
