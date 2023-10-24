@@ -108,8 +108,8 @@ userAccountsTab:
 
       # Maintainer
 
-      Maintainers have extended content management permissions over public content and can curate documents and the media library resources.
-      These permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media library resources.
+      Maintainers have extended content management permissions over public content and can curate documents and the media center resources.
+      These permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media center resources.
 
       # Admin
 
@@ -130,8 +130,8 @@ userAccountsTab:
 
       # Redakteur
 
-      Redakteure haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Medienbibliothek pflegen.
-      Diese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Medienbibliothek.
+      Redakteure haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen.
+      Diese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Mediathek.
 
       # Admin
 
