@@ -24,6 +24,7 @@ function CreditsFooter({ doc, revision }) {
   }, [setIsMounted]);
 
   const title = doc?.title || revision?.title;
+  const showLicense = !(doc?.roomId || revision?.roomId);
 
   const currentHost = request.hostInfo.host;
   const citation = t('citation', { title });
@@ -62,7 +63,7 @@ function CreditsFooter({ doc, revision }) {
     <div className="CreditsFooter">
       {!!isMounted && (
         <p>
-          {!!settings.license?.name && !!settings.license?.url && (
+          {!!showLicense && !!settings.license?.name && !!settings.license?.url && (
             <Fragment>
               <b>{t('license')}:</b> <a href={settings.license.url}>{settings.license.name}</a>
               <br />
