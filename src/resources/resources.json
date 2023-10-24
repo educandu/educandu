@@ -2690,6 +2690,10 @@
       "en": "Catalog",
       "de": "Katalog"
     },
+    "headline": {
+      "en": "Headline",
+      "de": "Überschrift"
+    },
     "noTitle": {
       "en": "No title",
       "de": "Kein Titel"

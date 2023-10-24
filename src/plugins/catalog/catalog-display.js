@@ -39,7 +39,7 @@ function CatalogDisplay({ content }) {
       <li key={index.toString()} className="CatalogDisplay-linkListItem">
         {!itemLinkUrl && itemTitle}
         {!!itemLinkUrl && <a href={itemLinkUrl}>{itemTitle}</a>}
-        <div className="CatalogDisplay-itemLinkDescription">{item.link.description}</div>
+        <Markdown className="CatalogDisplay-itemLinkDescription">{item.link.description}</Markdown>
       </li>
     );
   };
@@ -67,7 +67,7 @@ function CatalogDisplay({ content }) {
           </Fragment>
         )}
         {!!itemLinkUrl && <a href={itemLinkUrl}>{itemImage}{itemTitle}</a>}
-        <div className="CatalogDisplay-itemLinkDescription CatalogDisplay-itemLinkDescription--centered">{item.link.description}</div>
+        <Markdown className="CatalogDisplay-itemLinkDescription CatalogDisplay-itemLinkDescription--centered">{item.link.description}</Markdown>
       </li>
     );
   };

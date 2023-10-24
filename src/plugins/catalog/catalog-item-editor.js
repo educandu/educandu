@@ -8,7 +8,6 @@ import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import DocumentSelector from '../../components/document-selector.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
-import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -98,11 +97,11 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
         </FormItem>
       )}
       <FormItem {...FORM_ITEM_LAYOUT} label={t('common:description')}>
-        <NeverScrollingTextArea
+        <MarkdownInput
           debounced
           minRows={2}
           value={link.description}
-          className="CatalogItemEditor-description"
+          disableResourceSelector
           onChange={handleOnLinkDescriptionChange}
           />
       </FormItem>
