@@ -31,9 +31,9 @@ export function FlipCardFace({ content, color, faceType, locked, hidden, highlig
   );
 }
 
-function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, onClick, locked, disabled, highlighted }) {
+function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, onClick, locked, highlighted }) {
   const handleClick = () => {
-    if (!locked && !disabled) {
+    if (!locked) {
       onClick();
     }
   };
@@ -50,7 +50,6 @@ function FlipCard({ flipped, frontContent, frontColor, backContent, backColor, o
         <FlipCardFace content={backContent} color={backColor} locked={locked} hidden={flipped} faceType={FACE_TYPE.back} />
         <FlipCardFace content={frontContent} color={frontColor} locked={locked} hidden={!flipped} highlighted={highlighted} faceType={FACE_TYPE.front} />
       </div>
-      {!!disabled && <div className="FlipCard-disabledOverlay" />}
     </div>
   );
 }
@@ -76,7 +75,6 @@ FlipCardFace.defaultProps = {
 FlipCard.propTypes = {
   backColor: PropTypes.string,
   backContent: PropTypes.any,
-  disabled: PropTypes.bool,
   flipped: PropTypes.bool,
   frontColor: PropTypes.string,
   frontContent: PropTypes.any,
@@ -88,7 +86,6 @@ FlipCard.propTypes = {
 FlipCard.defaultProps = {
   backColor: '',
   backContent: null,
-  disabled: false,
   flipped: false,
   frontColor: '',
   frontContent: null,

@@ -84,6 +84,23 @@
   }
 }
 
-.MatchingCardsTileDisplay-noInnerClickMask {
+.MatchingCardsTileDisplay-surfaceOverlay {
   .m-mask;
+  display: flex;
+  align-items: flex-end;
+
+  &:hover {
+    & > .MatchingCardsTileDisplay-mediaControlBar {
+      display: flex;
+    }
+  }
+}
+
+.MatchingCardsTileDisplay-mediaControlBar {
+  display: none;
+  height: 40px;
+  width: 100%;
+  padding: 5px;
+  justify-content: center;
+  background-color: darken(@edu-background-color-base, 5%);
 }
