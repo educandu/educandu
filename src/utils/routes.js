@@ -107,8 +107,17 @@ function getConnectExternalAccountPath(redirect = null) {
   return redirect ? urlUtils.createRedirectUrl(connectExternalAccountPath, redirect) : connectExternalAccountPath;
 }
 
-function getSearchUrl(query) {
-  return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
+function getSearchUrl({ query, tags, sorting, direction, page, pageSize }) {
+  const queryString = urlUtils.composeQueryString({
+    query: (query || '').trim(),
+    tags: (tags || []).filter(tag => tag).join(','),
+    sorting,
+    direction,
+    page,
+    pageSize
+  });
+
+  return `${searchPath}?${queryString}`;
 }
 
 function getRoomUrl({ id, slug, tab } = {}) {

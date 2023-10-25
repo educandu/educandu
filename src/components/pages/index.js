@@ -9,11 +9,11 @@ function Index({ HomePageTemplate, initialState }) {
   const { t } = useTranslation('index');
 
   const handleSearch = searchText => {
-    window.location = routes.getSearchUrl(searchText.trim());
+    window.location = routes.getSearchUrl({ query: searchText });
   };
 
   const handleTagClick = tag => {
-    window.location = routes.getSearchUrl(tag);
+    window.location = routes.getSearchUrl({ query: tag });
   };
 
   const renderTag = tag => {
