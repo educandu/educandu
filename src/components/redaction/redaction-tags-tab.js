@@ -87,15 +87,15 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
   const [filterText, setFilterText] = useState('');
   const { t } = useTranslation('redactionTagsTab');
   const [allTableRows, setAllTableRows] = useState([]);
-  const [currentPagination, setCurrentPagination] = useState(1);
   const [displayedTableRows, setDisplayedTableRows] = useState([]);
   const [tagCategoryFilter, setTagCategoryFilter] = useState(TAG_CATEGORY_FILTER.documentsAndMedia);
   const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'name', direction: 'asc' });
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
+  const [currentTablePagination, setCurrentTablePagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [currentPagination]);
+  }, [currentTablePagination]);
 
   useEffect(() => {
     setAllTableRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
@@ -129,8 +129,8 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
     setDisplayedTableRows(sortedRows);
   }, [allTableRows, filterText, currentTableSorting, tableSorters]);
 
-  const handleTableChange = ({ current, pageSize }) => {
-    setCurrentPagination([current, pageSize].join());
+  const handleTableChange = newPagination => {
+    setCurrentTablePagination(oldPagination => ({ ...oldPagination, ...newPagination }));
   };
 
   const handleCurrentTableSortingChange = newSorting => {
@@ -243,6 +243,7 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
         columns={tableColumns}
         dataSource={displayedTableRows}
         expandable={{ expandedRowRender: renderExpandedRow }}
+        pagination={currentTablePagination}
         onChange={handleTableChange}
         />
       <MediaLibaryItemModal {...mediaLibraryItemModalState} onClose={handleMediaLibraryItemModalClose} />

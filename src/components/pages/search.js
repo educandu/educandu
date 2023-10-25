@@ -33,9 +33,9 @@ function Search({ PageTemplate }) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
   const [unselectedTags, setUnselectedTags] = useState([]);
-  const [currentPagination, setCurrentPagination] = useState(1);
   const [searchText, setSearchText] = useState(request.query.query);
   const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
+  const [currentTablePagination, setCurrentTablePagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
 
   const sortingOptions = [
     { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: 'relevance' },
@@ -55,7 +55,7 @@ function Search({ PageTemplate }) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [currentPagination]);
+  }, [currentTablePagination]);
 
   useEffect(() => {
     (async () => {
@@ -100,7 +100,9 @@ function Search({ PageTemplate }) {
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
-  const handleResultTableChange = ({ current, pageSize }) => setCurrentPagination([current, pageSize].join());
+  const handleResultTableChange = newPagination => {
+    setCurrentTablePagination(oldPagination => ({ ...oldPagination, ...newPagination }));
+  };
 
   const renderLanguage = (_, row) => (
     <LanguageIcon language={row.document.language} />
@@ -200,6 +202,7 @@ function Search({ PageTemplate }) {
           className="SearchPage-table"
           dataSource={[...displayedRows]}
           rowClassName={() => 'SearchPage-tableRow'}
+          pagination={currentTablePagination}
           onChange={handleResultTableChange}
           />
       </div>
