@@ -110,7 +110,9 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     setFilterText(newFilterText);
   };
 
-  const handleInfoCellTitleClick = row => {
+  const handleInfoCellTitleClick = (row, event) => {
+    event.preventDefault();
+    event.stopPropagation();
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
     setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
   };
@@ -165,7 +167,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
             </div>
           </div>
         }
-        onTitleClick={() => handleInfoCellTitleClick(row)}
+        onTitleClick={event => handleInfoCellTitleClick(row, event)}
         />
     );
   };
