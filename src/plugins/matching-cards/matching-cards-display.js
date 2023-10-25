@@ -6,10 +6,9 @@ import { useIsMounted } from '../../ui/hooks.js';
 import { UndoOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import FlipCard from '../../components/flip-card.js';
-import MatchingCardsTile from './matching-cards-tile-display.js';
-import CheckIcon from '../../components/icons/general/check-icon.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { getRandomizedTilesFromPairs } from './matching-cards-utils.js';
+import MatchingCardsTileDisplay from './matching-cards-tile-display.js';
 
 function MatchingCardsDisplay({ content }) {
   const { size, tilePairs, width } = content;
@@ -17,6 +16,7 @@ function MatchingCardsDisplay({ content }) {
 
   const isMounted = useIsMounted();
   const [tiles, setTiles] = useState([]);
+  const [playingTileKey, setPlayingTileKey] = useState(null);
   const [matchedTilePairKeys, setMatchedTilePairKeys] = useState([]);
   const [currentlyFlippedTiles, setCurrentlyFlippedTiles] = useState([]);
 
@@ -74,10 +74,21 @@ function MatchingCardsDisplay({ content }) {
     }, 500);
   };
 
+  const handleTogglePlayMediaInTile = (event, tileKey) => {
+    event.stopPropagation();
+    setPlayingTileKey(playingTileKey === tileKey ? null : tileKey);
+  };
+
+  useEffect(() => {
+    const lastFlippedTile = currentlyFlippedTiles[currentlyFlippedTiles.length - 1];
+    const wasMatched = lastFlippedTile && matchedTilePairKeys.includes(lastFlippedTile.pairKey);
+
+    setPlayingTileKey(lastFlippedTile && !wasMatched ? lastFlippedTile.key : null);
+  }, [currentlyFlippedTiles, matchedTilePairKeys]);
+
   const renderTile = (tile, index) => {
     const elementsToRender = [];
     const isFlipped = currentlyFlippedTiles.includes(tile);
-    const isLastFlipped = currentlyFlippedTiles[currentlyFlippedTiles.length - 1] === tile;
     const isSingleFlipped = isFlipped && currentlyFlippedTiles.length === 1;
     const wasMatched = matchedTilePairKeys.includes(tile.pairKey);
     const reserveCentralSpace = size === SIZE.threeByThree && index === 4;
@@ -91,16 +102,15 @@ function MatchingCardsDisplay({ content }) {
         key={tile.key}
         flipped={isFlipped || wasMatched}
         locked={isSingleFlipped}
-        disabled={wasMatched}
-        disabledContent={
-          <div className="MatchingCardsDisplay-matchedTileOverlay"><CheckIcon /></div>
-        }
+        highlighted={wasMatched}
         frontContent={
-          <MatchingCardsTile
+          <MatchingCardsTileDisplay
             text={tile.text}
             sourceUrl={tile.sourceUrl}
             playbackRange={tile.playbackRange}
-            playMedia={isLastFlipped ? !wasMatched : null}
+            playMedia={playingTileKey === tile.key}
+            canTogglePlayMedia
+            onTogglePlayMedia={event => handleTogglePlayMediaInTile(event, tile.key)}
             />
         }
         onClick={() => handleTileClick(tile)}

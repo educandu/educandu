@@ -31,15 +31,6 @@
   margin: 15px auto 0 auto;
 }
 
-.MatchingCardsDisplay-matchedTileOverlay {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: @edu-success-color;
-}
-
 .MatchingCardsEditor {}
 
 .MatchingCardsEditor-tileButtonGroup {
@@ -93,6 +84,33 @@
   }
 }
 
-.MatchingCardsTileDisplay-noInnerClickMask {
+.MatchingCardsTileDisplay-surfaceOverlay {
   .m-mask;
+  display: flex;
+  align-items: flex-end;
+
+  &:hover {
+    & > .MatchingCardsTileDisplay-mediaControlBar {
+      display: flex;
+    }
+  }
+}
+
+.MatchingCardsTileDisplay-mediaControlBar {
+  display: none;
+  height: 30px;
+  width: 100%;
+  padding: 3px;
+  justify-content: center;
+  background-color: darken(@edu-background-color-base, 5%);
+
+  &.is-visible {
+    display: flex;
+  }
+
+  button {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
 }

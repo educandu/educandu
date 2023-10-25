@@ -3,13 +3,6 @@
   position: relative;
 }
 
-.FlipCard-disabledOverlay {
-  .m-mask;
-  border-radius: @edu-border-radius-base;
-  background-color: darken(@edu-background-color-base, 5%);
-  opacity: 0.85;
-}
-
 .FlipCard-content {
   position: relative;
   width: 100%;
@@ -67,6 +60,14 @@
 
     &:hover {
       border-color: @edu-border-color-light;
+    }
+  }
+
+  &.is-highlighted {
+    border: 2px solid @edu-success-color;
+
+    &:hover {
+      border: 2px solid @edu-success-color;
     }
   }
 }

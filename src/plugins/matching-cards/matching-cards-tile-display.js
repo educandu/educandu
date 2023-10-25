@@ -1,15 +1,20 @@
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
+import { isTouchDevice } from '../../ui/browser-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
+import PlayIcon from '../../components/icons/media-player/play-icon.js';
+import StopIcon from '../../components/icons/media-player/stop-icon.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 
-function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia }) {
+function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia, canTogglePlayMedia, onTogglePlayMedia }) {
   const mediaPlayerRef = useRef();
   const isMounted = useIsMounted();
   const timeoutToPlayMedia = useRef();
@@ -22,6 +27,13 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
 
   const handleMediaReady = () => {
     setIsMediaReady(true);
+  };
+
+  const handleMediaControlClick = event => {
+    if (hasPlayedAtLeastOnce.current) {
+      mediaPlayerRef.current.seekToTimecode(0);
+    }
+    onTogglePlayMedia(event);
   };
 
   useEffect(() => {
@@ -75,29 +87,56 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia })
     }
   };
 
+  const renderMediaControlBar = () => {
+    if (resourceType !== RESOURCE_TYPE.audio && resourceType !== RESOURCE_TYPE.video) {
+      return null;
+    }
+
+    const classes = classNames(
+      'MatchingCardsTileDisplay-mediaControlBar',
+      { 'is-visible': isTouchDevice() || !!playMedia }
+    );
+
+    return (
+      <div className={classes}>
+        <Button
+          size="small"
+          icon={playMedia ? <StopIcon /> : <PlayIcon />}
+          onClick={handleMediaControlClick}
+          />
+      </div>
+    );
+  };
+
   return (
     <div className="MatchingCardsTileDisplay">
       <div>
         {!!text && (<div className="MatchingCardsTileDisplay-markdown"><Markdown>{text}</Markdown></div>)}
         {!!accessibleUrl && renderMedia()}
       </div>
-      <div className="MatchingCardsTileDisplay-noInnerClickMask" />
+      <div className="MatchingCardsTileDisplay-surfaceOverlay">
+        {!!canTogglePlayMedia && renderMediaControlBar()}
+      </div>
     </div>
   );
 }
 
 MatchingCardsTileDisplay.propTypes = {
+  canTogglePlayMedia: PropTypes.bool,
+  onTogglePlayMedia: PropTypes.func,
+  playbackRange: PropTypes.arrayOf(PropTypes.number),
   playMedia: PropTypes.bool,
-  text: PropTypes.string,
   sourceUrl: PropTypes.string,
-  playbackRange: PropTypes.arrayOf(PropTypes.number)
+  text: PropTypes.string
 };
 
 MatchingCardsTileDisplay.defaultProps = {
+  canTogglePlayMedia: false,
+  onTogglePlayMedia: () => {},
+  playbackRange: [0, 1],
   playMedia: false,
-  text: '',
   sourceUrl: '',
-  playbackRange: [0, 1]
+  text: ''
 };
 
 export default MatchingCardsTileDisplay;
