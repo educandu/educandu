@@ -84,21 +84,23 @@ function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.cr
 }
 
 function RedactionTagsTab({ documents, mediaLibraryItems }) {
-  const [filterText, setFilterText] = useState('');
   const { t } = useTranslation('redactionTagsTab');
-  const [allTableRows, setAllTableRows] = useState([]);
-  const [displayedTableRows, setDisplayedTableRows] = useState([]);
+
+  const [filter, setFilter] = useState('');
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
+  const [sorting, setSorting] = useState({ value: 'name', direction: 'asc' });
+
+  const [allRows, setAllRows] = useState([]);
+  const [displayedRows, setDisplayedRows] = useState([]);
   const [tagCategoryFilter, setTagCategoryFilter] = useState(TAG_CATEGORY_FILTER.documentsAndMedia);
-  const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'name', direction: 'asc' });
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
-  const [currentTablePagination, setCurrentTablePagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [currentTablePagination]);
+  }, [pagination]);
 
   useEffect(() => {
-    setAllTableRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
+    setAllRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
   }, [documents, mediaLibraryItems, tagCategoryFilter]);
 
   const tagCategoryFilterOptions = useMemo(() => {
@@ -118,27 +120,29 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
   }), []);
 
   useEffect(() => {
-    const filter = filterText.toLowerCase().trim();
-    const filteredRows = filter
-      ? allTableRows.filter(row => row.name.toLowerCase().includes(filter))
-      : allTableRows;
+    const lowerCasedFilter = filter.toLowerCase().trim();
 
-    const sorter = tableSorters[currentTableSorting.value];
-    const sortedRows = sorter(filteredRows, currentTableSorting.direction);
+    const filteredRows = lowerCasedFilter
+      ? allRows.filter(row => row.name.toLowerCase().includes(lowerCasedFilter))
+      : allRows;
 
-    setDisplayedTableRows(sortedRows);
-  }, [allTableRows, filterText, currentTableSorting, tableSorters]);
+    const sorter = tableSorters[sorting.value];
+    const sortedRows = sorter(filteredRows, sorting.direction);
 
-  const handleTableChange = newPagination => {
-    setCurrentTablePagination(oldPagination => ({ ...oldPagination, ...newPagination }));
+    setDisplayedRows(sortedRows);
+  }, [allRows, filter, sorting, tableSorters]);
+
+  const handleTableChange = ({ current, pageSize }) => {
+    setPagination({ page: current, pageSize });
   };
 
   const handleCurrentTableSortingChange = newSorting => {
-    setCurrentTableSorting(newSorting);
+    setSorting(newSorting);
   };
 
-  const handleFilterTextChange = event => {
-    setFilterText(event.target.value);
+  const handleFilterChange = event => {
+    const newFilter = event.target.value;
+    setFilter(newFilter);
   };
 
   const handleMediaLibraryItemPreviewClick = (mediaLibraryItem, event) => {
@@ -222,14 +226,14 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
         <FilterInput
           size="large"
           className="RedactionTagsTab-textFilter"
-          value={filterText}
-          onChange={handleFilterTextChange}
+          value={filter}
+          onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
           />
         <SortingSelector
           size="large"
           options={tableSortingOptions}
-          sorting={currentTableSorting}
+          sorting={sorting}
           onChange={handleCurrentTableSortingChange}
           />
         <Select
@@ -242,9 +246,13 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
       <Table
         className="u-table-with-pagination"
         columns={tableColumns}
-        dataSource={displayedTableRows}
+        dataSource={displayedRows}
         expandable={{ expandedRowRender: renderExpandedRow }}
-        pagination={currentTablePagination}
+        pagination={{
+          current: pagination.page,
+          pageSize: pagination.pageSize,
+          showSizeChanger: true
+        }}
         onChange={handleTableChange}
         />
       <MediaLibaryItemModal {...mediaLibraryItemModalState} onClose={handleMediaLibraryItemModalClose} />

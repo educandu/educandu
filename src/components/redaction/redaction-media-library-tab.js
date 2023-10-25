@@ -36,36 +36,38 @@ function createTableRows(mediaLibraryItems, t) {
   }));
 }
 
-function filterRow(row, lowerCasedFilterText) {
-  return row.name.toLowerCase().includes(lowerCasedFilterText)
-    || row.tags.some(tag => tag.toLowerCase().includes(lowerCasedFilterText))
-    || row.licenses.some(license => license.toLowerCase().includes(lowerCasedFilterText))
-    || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilterText)
-    || row.updatedBy.displayName.toLowerCase().includes(lowerCasedFilterText);
+function filterRow(row, lowerCasedFilter) {
+  return row.name.toLowerCase().includes(lowerCasedFilter)
+    || row.tags.some(tag => tag.toLowerCase().includes(lowerCasedFilter))
+    || row.licenses.some(license => license.toLowerCase().includes(lowerCasedFilter))
+    || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilter)
+    || row.updatedBy.displayName.toLowerCase().includes(lowerCasedFilter);
 }
 
-function filterRows(rows, filterText) {
-  const lowerCasedFilterText = filterText.toLowerCase().trim();
-  return lowerCasedFilterText ? rows.filter(row => filterRow(row, lowerCasedFilterText)) : rows;
+function filterRows(rows, filter) {
+  const lowerCasedFilter = filter.toLowerCase().trim();
+  return lowerCasedFilter ? rows.filter(row => filterRow(row, lowerCasedFilter)) : rows;
 }
 
 function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
   const { formatDate } = useDateFormat();
-  const [filterText, setFilterText] = useState('');
-  const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionMediaLibraryTab');
-  const [displayedTableRows, setDisplayedTableRows] = useState([]);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
+
+  const [filter, setFilter] = useState('');
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
+  const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
+
+  const [allRows, setAllRows] = useState([]);
+  const [displayedRows, setDisplayedRows] = useState([]);
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
-  const [currentTablePagination, setCurrentTablePagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [currentTablePagination]);
+  }, [pagination]);
 
   useEffect(() => {
-    setAllTableRows(createTableRows(mediaLibraryItems, t));
+    setAllRows(createTableRows(mediaLibraryItems, t));
   }, [mediaLibraryItems, t]);
 
   const sortingOptions = useMemo(() => {
@@ -91,23 +93,23 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   }), []);
 
   useEffect(() => {
-    const filteredRows = filterRows(allTableRows, filterText);
-    const sorter = tableSorters[currentTableSorting.value];
-    const sortedRows = sorter ? sorter(filteredRows, currentTableSorting.direction) : filteredRows;
-    setDisplayedTableRows(sortedRows);
-  }, [allTableRows, filterText, currentTableSorting, tableSorters]);
+    const filteredRows = filterRows(allRows, filter);
+    const sorter = tableSorters[sorting.value];
+    const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
+    setDisplayedRows(sortedRows);
+  }, [allRows, filter, sorting, tableSorters]);
 
-  const handleTableChange = newPagination => {
-    setCurrentTablePagination(oldPagination => ({ ...oldPagination, ...newPagination }));
+  const handleTableChange = ({ current, pageSize }) => {
+    setPagination({ page: current, pageSize });
   };
 
-  const handleCurrentTableSortingChange = ({ value, direction }) => {
-    setCurrentTableSorting({ value, direction });
+  const handleSortingChange = ({ value, direction }) => {
+    setSorting({ value, direction });
   };
 
-  const handleFilterTextChange = event => {
-    const newFilterText = event.target.value;
-    setFilterText(newFilterText);
+  const handleFilterChange = event => {
+    const newFilter = event.target.value;
+    setFilter(newFilter);
   };
 
   const handleInfoCellTitleClick = (row, event) => {
@@ -204,7 +206,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     );
   };
 
-  const tableColumns = [
+  const columns = [
     {
       title: t('common:name'),
       dataIndex: 'name',
@@ -242,25 +244,28 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
         <FilterInput
           size="large"
           className="RedactionMediaLibraryTab-filter"
-          value={filterText}
-          onChange={handleFilterTextChange}
+          value={filter}
+          onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
           />
         <SortingSelector
           size="large"
-          sorting={currentTableSorting}
+          sorting={sorting}
           options={sortingOptions}
-          onChange={handleCurrentTableSortingChange}
+          onChange={handleSortingChange}
           />
         <Button type="primary" onClick={handleCreateItemClick}>
           {t('common:create')}
         </Button>
       </div>
       <Table
-        className="u-table-with-pagination"
-        dataSource={[...displayedTableRows]}
-        columns={tableColumns}
-        pagination={currentTablePagination}
+        dataSource={[...displayedRows]}
+        columns={columns}
+        pagination={{
+          current: pagination.page,
+          pageSize: pagination.pageSize,
+          showSizeChanger: true
+        }}
         onChange={handleTableChange}
         />
       <MediaLibaryItemModal

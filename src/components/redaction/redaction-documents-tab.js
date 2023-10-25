@@ -67,23 +67,25 @@ function createTableRows(docs) {
 
 function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   const { formatDate } = useDateFormat();
-  const [filterText, setFilterText] = useState('');
-  const [allTableRows, setAllTableRows] = useState([]);
   const { t } = useTranslation('redactionDocumentsTab');
-  const [displayedTableRows, setDisplayedTableRows] = useState([]);
-  const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'updatedOn', direction: 'desc' });
+
+  const [filter, setFilter] = useState('');
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
+  const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
+
+  const [allRows, setAllRows] = useState([]);
+  const [displayedRows, setDisplayedRows] = useState([]);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
-  const [currentTablePagination, setCurrentTablePagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [currentTablePagination]);
+  }, [pagination]);
 
   useEffect(() => {
-    setAllTableRows(createTableRows(documents));
+    setAllRows(createTableRows(documents));
   }, [documents]);
 
-  const documentsSortingOptions = useMemo(() => [
+  const sortingOptions = useMemo(() => [
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
     { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
     { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
@@ -104,28 +106,30 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   }), []);
 
   useEffect(() => {
-    const filter = filterText.toLowerCase();
-    const filteredRows = filterText
-      ? allTableRows.filter(row => row.title.toLowerCase().includes(filter) || row.createdBy.displayName.toLowerCase().includes(filter))
-      : allTableRows;
+    const lowerCasedFilter = filter.toLowerCase();
 
-    const sorter = tableSorters[currentTableSorting.value];
-    const sortedRows = sorter ? sorter(filteredRows, currentTableSorting.direction) : filteredRows;
+    const filteredRows = lowerCasedFilter
+      ? allRows.filter(row => row.title.toLowerCase().includes(lowerCasedFilter)
+          || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilter))
+      : allRows;
 
-    setDisplayedTableRows(sortedRows);
-  }, [allTableRows, filterText, currentTableSorting, tableSorters]);
+    const sorter = tableSorters[sorting.value];
+    const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
 
-  const handleTableChange = newPagination => {
-    setCurrentTablePagination(oldPagination => ({ ...oldPagination, ...newPagination }));
+    setDisplayedRows(sortedRows);
+  }, [allRows, filter, sorting, tableSorters]);
+
+  const handleTableChange = ({ current, pageSize }) => {
+    setPagination({ page: current, pageSize });
   };
 
-  const handleCurrentTableSortingChange = ({ value, direction }) => {
-    setCurrentTableSorting({ value, direction });
+  const handleSortingChange = ({ value, direction }) => {
+    setSorting({ value, direction });
   };
 
-  const handleFilterTextChange = event => {
-    const newFilterText = event.target.value;
-    setFilterText(newFilterText);
+  const handleFilterChange = event => {
+    const newFilter = event.target.value;
+    setFilter(newFilter);
   };
 
   const handleDocumentEditClick = row => {
@@ -265,7 +269,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     );
   };
 
-  const documentsTableColumns = [
+  const columns = [
     {
       title: t('common:title'),
       dataIndex: 'title',
@@ -302,15 +306,15 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
         <FilterInput
           size="large"
           className="RedactionDocumentsTab-filter"
-          value={filterText}
-          onChange={handleFilterTextChange}
+          value={filter}
+          onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
           />
         <SortingSelector
           size="large"
-          sorting={currentTableSorting}
-          options={documentsSortingOptions}
-          onChange={handleCurrentTableSortingChange}
+          sorting={sorting}
+          options={sortingOptions}
+          onChange={handleSortingChange}
           />
         <Button type="primary" onClick={handleCreateDocumentClick}>
           {t('common:create')}
@@ -318,9 +322,13 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       </div>
       <Table
         className="u-table-with-pagination"
-        dataSource={[...displayedTableRows]}
-        columns={documentsTableColumns}
-        pagination={currentTablePagination}
+        dataSource={[...displayedRows]}
+        columns={columns}
+        pagination={{
+          current: pagination.page,
+          pageSize: pagination.pageSize,
+          showSizeChanger: true
+        }}
         onChange={handleTableChange}
         />
       <DocumentMetadataModal
