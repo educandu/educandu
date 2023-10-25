@@ -94,7 +94,7 @@ function MatchingCardsTileDisplay({ text, sourceUrl, playbackRange, playMedia, c
 
     const classes = classNames(
       'MatchingCardsTileDisplay-mediaControlBar',
-      { 'MatchingCardsTileDisplay-mediaControlBar--alwaysVisible': isTouchDevice() }
+      { 'is-visible': isTouchDevice() || !!playMedia }
     );
 
     return (
