@@ -2,21 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function ResourceInfoCell({ title, url, shortDescription, subtext, onTitleClick }) {
-  const handleTitleClick = event => {
-    if (onTitleClick) {
-      event.preventDefault();
-      event.stopPropagation();
-      onTitleClick();
-    } else {
-      window.location = url;
-    }
-  };
-
   return (
     <div className="ResourceInfoCell" >
       <div className="ResourceInfoCell-content">
         <div>
-          <a className="ResourceInfoCell-title" onClick={handleTitleClick}>
+          <a className="ResourceInfoCell-title" href={url} onClick={onTitleClick}>
             {title}
           </a>
           {!!shortDescription && <div className="ResourceInfoCell-description">{shortDescription}</div>}
