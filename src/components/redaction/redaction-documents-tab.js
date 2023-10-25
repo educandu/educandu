@@ -317,6 +317,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
         </Button>
       </div>
       <Table
+        className="u-table-with-pagination"
         dataSource={[...displayedTableRows]}
         columns={documentsTableColumns}
         pagination={currentTablePagination}

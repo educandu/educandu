@@ -240,6 +240,7 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
           />
       </div>
       <Table
+        className="u-table-with-pagination"
         columns={tableColumns}
         dataSource={displayedTableRows}
         expandable={{ expandedRowRender: renderExpandedRow }}

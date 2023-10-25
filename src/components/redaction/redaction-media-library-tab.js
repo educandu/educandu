@@ -255,6 +255,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
         </Button>
       </div>
       <Table
+        className="u-table-with-pagination"
         dataSource={[...displayedTableRows]}
         columns={tableColumns}
         pagination={currentTablePagination}
