@@ -27,6 +27,12 @@ import DocumentInputSectionComments from './document-input-section-comments.js';
 import { CheckOutlined, CloseCircleFilled, CloseOutlined } from '@ant-design/icons';
 import { sectionContextShape, sectionInputShape, sectionShape } from '../ui/default-prop-types.js';
 
+const BORDER_DISPLAY = {
+  permanent: 'permanent',
+  hoverable: 'hoverable',
+  none: 'none'
+};
+
 const createComponents = registeredPlugin => ({
   editorComponent: registeredPlugin?.editorComponent || null,
   displayComponent: registeredPlugin?.displayComponent || null
@@ -38,8 +44,9 @@ function SectionDisplay({
   section,
   context,
   canEdit,
-  canModifyInput,
   canHardDelete,
+  canModifyInput,
+  canCopyToClipboard,
   dragHandleProps,
   isDragged,
   isEditing,
@@ -62,7 +69,7 @@ function SectionDisplay({
   const { uiLanguage } = useLocale();
   const { t } = useTranslation('sectionDisplay');
   const pluginRegistry = useService(PluginRegistry);
-
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const registeredPlugin = pluginRegistry.getRegisteredPlugin(section.type);
   const [components, setComponents] = useState(createComponents(registeredPlugin));
 
@@ -86,20 +93,7 @@ function SectionDisplay({
     }
   }, [registeredPlugin, components, isEditing]);
 
-  const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
-
-  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
-
   const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
-
-  const sectionClasses = classNames({
-    'SectionDisplay': true,
-    'is-editable': canEdit,
-    'is-hard-deletable': isHardDeleteEnabled,
-    'is-dragged': isDragged,
-    'is-other-section-dragged': isOtherSectionDragged,
-    'is-submittable-input': !!registeredPlugin?.info.allowsInput
-  });
 
   const composeShortcutText = parts => parts.map(part => t(`common:${part}`)).join(' + ');
 
@@ -118,70 +112,87 @@ function SectionDisplay({
     );
   };
 
-  const editActions = [
+  const toolbarActions = [
     {
       type: 'edit',
       tooltip: renderActionTooltip('edit', ['ctrl', 'click']),
       icon: <EditIcon key="edit" />,
       handleAction: () => onSectionEditEnter(),
-      isVisible: !isEditing,
-      isEnabled: !isEditing && !!section.content
+      isVisible: canEdit && !isEditing,
+      isEnabled: !isEditing && !!section.content,
+      isDangerous: false
     },
     {
       type: 'preview',
       tooltip: renderActionTooltip('preview', ['ctrl', 'click']),
       icon: <PreviewIcon key="preview" />,
       handleAction: () => onSectionEditLeave(),
-      isVisible: isEditing,
-      isEnabled: isEditing
+      isVisible: canEdit && isEditing,
+      isEnabled: isEditing,
+      isDangerous: false
     },
     {
       type: 'duplicate',
       tooltip: renderActionTooltip('duplicate', ['shift', 'ctrl', 'click']),
       icon: <DuplicateIcon key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
-      isVisible: true,
-      isEnabled: true
+      isVisible: canEdit,
+      isEnabled: true,
+      isDangerous: false
     },
     {
       type: 'copyToClipboard',
       tooltip: renderActionTooltip('copyToClipboard'),
       icon: <CopyToClipboardIcon key="copyToClipboard" />,
       handleAction: () => onSectionCopyToClipboard(),
-      isVisible: true,
-      isEnabled: !!section.content
+      isVisible: canCopyToClipboard,
+      isEnabled: !!section.content,
+      isDangerous: false
     },
     {
       type: 'delete',
       tooltip: renderActionTooltip('delete', ['shift', 'ctrl', 'alt', 'click']),
       icon: <DeleteIcon key="delete" />,
       handleAction: () => onSectionDelete(),
-      isVisible: true,
-      isEnabled: true
+      isVisible: canEdit,
+      isEnabled: true,
+      isDangerous: true
+    },
+    {
+      type: 'hardDelete',
+      tooltip: renderActionTooltip('hardDelete'),
+      icon: <HardDeleteIcon key="hardDelete" />,
+      handleAction: () => onSectionHardDelete(),
+      isVisible: canHardDelete,
+      isEnabled: !!section.content,
+      isDangerous: true
     },
     {
       type: 'moveUp',
       tooltip: null,
       icon: <MoveUpIcon key="moveUp" />,
       handleAction: () => onSectionMoveUp(),
-      isVisible: true,
-      isEnabled: true
+      isVisible: canEdit,
+      isEnabled: true,
+      isDangerous: false
     },
     {
       type: 'moveDown',
       tooltip: null,
       icon: <MoveDownIcon key="moveDown" />,
       handleAction: () => onSectionMoveDown(),
-      isVisible: true,
-      isEnabled: true
+      isVisible: canEdit,
+      isEnabled: true,
+      isDangerous: false
     },
     {
       type: 'openHelp',
       tooltip: renderActionTooltip('openHelp'),
       icon: <HelpIcon key="openHelp" />,
       handleAction: () => setIsHelpModalOpen(true),
-      isVisible: !!settings.pluginsHelpTexts?.[section.type]?.[uiLanguage],
-      isEnabled: true
+      isVisible: canEdit && !!settings.pluginsHelpTexts?.[section.type]?.[uiLanguage],
+      isEnabled: true,
+      isDangerous: false
     }
   ].filter(action => action.isVisible);
 
@@ -263,30 +274,23 @@ function SectionDisplay({
     );
   };
 
-  const renderEditAction = (action, index) => (
-    <Tooltip key={index} title={action.tooltip} placement="topRight">
+  const renderToolbarAction = action => {
+    const button = (
       <Button
         type="text"
         size="small"
+        key={action.type}
         icon={action.icon}
         disabled={!action.isEnabled}
-        className={classNames('u-action-button', { 'u-danger-action-button': action.type === 'delete' })}
+        className={classNames('u-action-button', { 'u-danger-action-button': action.isEnabled && action.isDangerous })}
         onClick={action.handleAction}
         />
-    </Tooltip>
-  );
+    );
 
-  const renderHardDeleteAction = () => (
-    <Tooltip title={t('common:hardDelete')} placement="topRight">
-      <Button
-        size="small"
-        type="text"
-        icon={<HardDeleteIcon />}
-        onClick={onSectionHardDelete}
-        className="u-danger-action-button"
-        />
-    </Tooltip>
-  );
+    return action.isEnabled
+      ? <Tooltip key={action.type} title={action.tooltip} placement="topRight">{button}</Tooltip>
+      : button;
+  };
 
   const renderSectionType = () => {
     return registeredPlugin?.info.getDisplayName(t) || `${t('common:unknown')} (${section.type})`;
@@ -323,59 +327,71 @@ function SectionDisplay({
     }
   };
 
+  let borderDisplay;
+  if (canEdit) {
+    borderDisplay = BORDER_DISPLAY.permanent;
+  } else if (toolbarActions.length) {
+    borderDisplay = BORDER_DISPLAY.hoverable;
+  } else {
+    borderDisplay = BORDER_DISPLAY.none;
+  }
+
+  const sectionClasses = classNames({
+    'SectionDisplay': true,
+    'SectionDisplay--permanent': borderDisplay === BORDER_DISPLAY.permanent,
+    'SectionDisplay--hoverable': borderDisplay === BORDER_DISPLAY.hoverable,
+    'SectionDisplay--allowsInput': !!registeredPlugin?.info.allowsInput,
+    'is-dragged': isDragged,
+    'is-other-section-dragged': isOtherSectionDragged
+  });
+
+  const sectionToolbarClasses = classNames({
+    'SectionDisplay-toolbar': true,
+    'SectionDisplay-toolbar--hoverable': borderDisplay === BORDER_DISPLAY.hoverable,
+    'is-editing': isEditing
+  });
+
   return (
     <section className={sectionClasses} {...getSectionElementDataAttributes(section)} onClick={handleSectionClick}>
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
 
-      {!!canEdit && (
-        <Fragment>
-          <div className={classNames('SectionDisplay-toolbar', { 'is-editing': isEditing })}>
-            <div className="SectionDisplay-toolbarInfo" {...dragHandleProps}>
-              {renderSectionType()}
-              {!!section.revision && <span className="SectionDisplay-sectionRevisionSeparator">|</span>}
-              {renderSectionRevision()}
-            </div>
-            <div className="SectionDisplay-toolbarButtons">
-              {editActions.map(renderEditAction)}
-            </div>
-          </div>
-          {!!isPending && (
-          <Fragment>
-            <div className="SectionDisplay-overlay" />
-            <div className="SectionDisplay-overlay SectionDisplay-overlay--withButtons">
-              <Tooltip title={t('common:apply')}>
-                <Button
-                  type="link"
-                  onClick={onPendingSectionApply}
-                  className="SectionDisplay-overlayButton SectionDisplay-overlayButton--apply"
-                  >
-                  <div className="SectionDisplay-overlayButtonIcon"><CheckOutlined /></div>
-                </Button>
-              </Tooltip>
-              <Tooltip title={t('common:discard')}>
-                <Button
-                  type="link"
-                  onClick={onPendingSectionDiscard}
-                  className="SectionDisplay-overlayButton SectionDisplay-overlayButton--discard"
-                  >
-                  <div className="SectionDisplay-overlayButtonIcon"><CloseOutlined /></div>
-                </Button>
-              </Tooltip>
-            </div>
-          </Fragment>
-          )}
-        </Fragment>
-      )}
-
-      {!!isHardDeleteEnabled && (
-        <div className="SectionDisplay-toolbar is-hidden">
-          <div className="SectionDisplay-toolbarInfo">
+      {borderDisplay !== BORDER_DISPLAY.none && (
+        <div className={sectionToolbarClasses}>
+          <div className="SectionDisplay-toolbarInfo" {...dragHandleProps}>
+            {renderSectionType()}
+            {!!section.revision && <span className="SectionDisplay-sectionRevisionSeparator">|</span>}
             {renderSectionRevision()}
           </div>
           <div className="SectionDisplay-toolbarButtons">
-            {renderHardDeleteAction()}
+            {toolbarActions.map(renderToolbarAction)}
           </div>
         </div>
+      )}
+
+      {!!isPending && (
+        <Fragment>
+          <div className="SectionDisplay-overlay" />
+          <div className="SectionDisplay-overlay SectionDisplay-overlay--withButtons">
+            <Tooltip title={t('common:apply')}>
+              <Button
+                type="link"
+                onClick={onPendingSectionApply}
+                className="SectionDisplay-overlayButton SectionDisplay-overlayButton--apply"
+                >
+                <div className="SectionDisplay-overlayButtonIcon"><CheckOutlined /></div>
+              </Button>
+            </Tooltip>
+            <Tooltip title={t('common:discard')}>
+              <Button
+                type="link"
+                onClick={onPendingSectionDiscard}
+                className="SectionDisplay-overlayButton SectionDisplay-overlayButton--discard"
+                >
+                <div className="SectionDisplay-overlayButtonIcon"><CloseOutlined /></div>
+              </Button>
+            </Tooltip>
+          </div>
+        </Fragment>
       )}
 
       <Modal
@@ -396,8 +412,9 @@ SectionDisplay.propTypes = {
   section: sectionShape.isRequired,
   context: sectionContextShape.isRequired,
   canEdit: PropTypes.bool.isRequired,
-  canModifyInput: PropTypes.bool.isRequired,
   canHardDelete: PropTypes.bool.isRequired,
+  canModifyInput: PropTypes.bool.isRequired,
+  canCopyToClipboard: PropTypes.bool.isRequired,
   dragHandleProps: PropTypes.object.isRequired,
   isDragged: PropTypes.bool.isRequired,
   isEditing: PropTypes.bool.isRequired,

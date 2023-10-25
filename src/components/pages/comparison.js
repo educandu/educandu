@@ -168,6 +168,7 @@ function Comparison({ initialState, PageTemplate }) {
       <SectionDisplay
         canModifyInput
         canEdit={false}
+        canCopyToClipboard={false}
         key={`${section.key}-${target}`}
         section={section}
         sectionInput={pendingInput?.sections[sectionComparisonKey] || null}

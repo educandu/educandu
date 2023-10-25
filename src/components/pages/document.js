@@ -1019,6 +1019,7 @@ function Document({ initialState, PageTemplate }) {
                 canEdit={view === VIEW.edit}
                 canModifyInputs={!selectedDocumentInput}
                 canHardDelete={!!userCanHardDelete && view === VIEW.history}
+                canCopyToClipboard={view === VIEW.edit || view === VIEW.history}
                 onPendingSectionApply={handlePendingSectionApply}
                 onPendingSectionDiscard={handlePendingSectionDiscard}
                 onSectionContentChange={handleSectionContentChange}

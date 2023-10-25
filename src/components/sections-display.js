@@ -21,6 +21,7 @@ function SectionsDisplay({
   canEdit,
   canModifyInputs,
   canHardDelete,
+  canCopyToClipboard,
   editedSectionKeys,
   onPendingSectionApply,
   onPendingSectionDiscard,
@@ -73,9 +74,10 @@ function SectionsDisplay({
         section={section}
         documentInputId={documentInput?._id}
         sectionInput={documentInput?.sections[section.key] ?? null}
-        canEdit={!!dragHandleProps && canEdit}
-        canModifyInput={canModifyInputs}
+        canEdit={canEdit}
         canHardDelete={canHardDelete}
+        canModifyInput={canModifyInputs}
+        canCopyToClipboard={canCopyToClipboard}
         dragHandleProps={dragHandleProps}
         isDragged={isDragged}
         isEditing={isEditing}
@@ -164,6 +166,7 @@ SectionsDisplay.propTypes = {
   canEdit: PropTypes.bool,
   canModifyInputs: PropTypes.bool,
   canHardDelete: PropTypes.bool,
+  canCopyToClipboard: PropTypes.bool,
   editedSectionKeys: PropTypes.arrayOf(PropTypes.string),
   onPendingSectionApply: PropTypes.func,
   onPendingSectionDiscard: PropTypes.func,
@@ -187,6 +190,7 @@ SectionsDisplay.defaultProps = {
   canEdit: false,
   canModifyInputs: false,
   canHardDelete: false,
+  canCopyToClipboard: false,
   editedSectionKeys: [],
   onPendingSectionApply: () => {},
   onPendingSectionDiscard: () => {},
