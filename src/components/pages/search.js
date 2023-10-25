@@ -35,14 +35,15 @@ const SORTING_DIRECTION = {
 };
 
 const getSanitizedQueryFromRequest = request => {
-  const pageNumber = Number(request.query.page);
-  const pageSizeNumber = Number(request.query.pageSize);
+  const query = request.query;
+  const pageNumber = Number(query.page);
+  const pageSizeNumber = Number(query.pageSize);
 
   return {
-    query: request.query.query.trim(),
-    tags: (request.query.tags?.trim() || '').split(',').filter(tag => tag),
-    sorting: Object.values(SORTING_VALUE).includes(request.query.sorting) ? request.query.sorting : SORTING_VALUE.relevance,
-    direction: Object.values(SORTING_DIRECTION).includes(request.query.direction) ? request.query.direction : SORTING_DIRECTION.desc,
+    query: query.query.trim(),
+    tags: (query.tags?.trim() || '').split(',').filter(tag => tag),
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.relevance,
+    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
     page: !isNaN(pageNumber) ? pageNumber : 1,
     pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
   };
@@ -88,7 +89,7 @@ function Search({ PageTemplate }) {
   }, [pagination]);
 
   useEffect(() => {
-    const searchParams = {
+    const queryParams = {
       query: searchText,
       tags: selectedTags,
       page: pagination.current,
@@ -97,7 +98,7 @@ function Search({ PageTemplate }) {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getSearchUrl(searchParams));
+    history.replaceState(null, '', routes.getSearchUrl(queryParams));
   }, [searchText, selectedTags, sorting, pagination]);
 
   useEffect(() => {

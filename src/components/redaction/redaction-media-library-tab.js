@@ -6,11 +6,13 @@ import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { Button, message, Table, Tag } from 'antd';
+import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
+import { SORTING_DIRECTION, TABS } from './constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -23,6 +25,30 @@ import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/arr
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
+
+const SORTING_VALUE = {
+  name: 'name',
+  createdOn: 'createdOn',
+  updatedOn: 'updatedOn',
+  user: 'user',
+  size: 'size',
+  type: 'type'
+};
+
+const getSanitizedQueryFromRequest = request => {
+  const query = request.query.tab === TABS.mediaLibrary ? request.query : {};
+
+  const pageNumber = Number(query.page);
+  const pageSizeNumber = Number(query.pageSize);
+
+  return {
+    filter: (query.filter || '').trim(),
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.updatedOn,
+    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
+    page: !isNaN(pageNumber) ? pageNumber : 1,
+    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
+  };
+};
 
 function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.create, mediaLibraryItem = null, isOpen = false }) {
   return { mode, isOpen, mediaLibraryItem };
@@ -50,13 +76,16 @@ function filterRows(rows, filter) {
 }
 
 function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
+  const request = useRequest();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('redactionMediaLibraryTab');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
-  const [filter, setFilter] = useState('');
-  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
-  const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
+  const requestQuery = getSanitizedQueryFromRequest(request);
+
+  const [filter, setFilter] = useState(requestQuery.filter);
+  const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
+  const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
@@ -67,17 +96,29 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   }, [pagination]);
 
   useEffect(() => {
+    const queryParams = {
+      filter,
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+      sorting: sorting.value,
+      direction: sorting.direction
+    };
+
+    history.replaceState(null, '', routes.getRedactionUrl(TABS.mediaLibrary, queryParams));
+  }, [filter, sorting, pagination]);
+
+  useEffect(() => {
     setAllRows(createTableRows(mediaLibraryItems, t));
   }, [mediaLibraryItems, t]);
 
   const sortingOptions = useMemo(() => {
     const options = [
-      { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: 'name' },
-      { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-      { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
-      { label: t('common:user'), appliedLabel: t('common:sortedByCreator'), value: 'user' },
-      { label: t('common:size'), appliedLabel: t('common:sortedBySize'), value: 'size' },
-      { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'type' }
+      { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: SORTING_VALUE.name },
+      { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
+      { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn },
+      { label: t('common:user'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.user },
+      { label: t('common:size'), appliedLabel: t('common:sortedBySize'), value: SORTING_VALUE.size },
+      { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: SORTING_VALUE.type }
     ];
 
     return options;

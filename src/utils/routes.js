@@ -51,8 +51,8 @@ function getDocumentRevisionComparisonUrl({ documentId, oldId, newId }) {
   return `${urlUtils.concatParts(comparisonPrefix, documentId)}?${queryString}`;
 }
 
-function getRedactionUrl({ tab } = {}) {
-  const queryString = urlUtils.composeQueryString({ tab });
+function getRedactionUrl(tab, params) {
+  const queryString = urlUtils.composeQueryString({ tab, ...params });
   return queryString ? `${redactionPath}?${queryString}` : redactionPath;
 }
 

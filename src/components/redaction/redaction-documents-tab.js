@@ -5,10 +5,12 @@ import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { Button, Table, Tag, Tooltip } from 'antd';
+import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
 import ResourceInfoCell from '../resource-info-cell.js';
+import { SORTING_DIRECTION, TABS } from './constants.js';
 import { replaceItem } from '../../utils/array-utils.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -18,6 +20,16 @@ import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { InboxOutlined, SafetyCertificateOutlined, TeamOutlined, KeyOutlined } from '@ant-design/icons';
+
+const SORTING_VALUE = {
+  title: 'title',
+  createdOn: 'createdOn',
+  updatedOn: 'updatedOn',
+  creator: 'creator',
+  archived: 'archived',
+  protected: 'protected',
+  verified: 'verified'
+};
 
 function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.create, document = null, isOpen = false }) {
   let initialDocumentMetadata;
@@ -65,13 +77,31 @@ function createTableRows(docs) {
   }));
 }
 
+const getSanitizedQueryFromRequest = request => {
+  const query = request.query.tab === TABS.documents ? request.query : {};
+
+  const pageNumber = Number(query.page);
+  const pageSizeNumber = Number(query.pageSize);
+
+  return {
+    filter: (query.filter || '').trim(),
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.title,
+    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.asc,
+    page: !isNaN(pageNumber) ? pageNumber : 1,
+    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
+  };
+};
+
 function RedactionDocumentsTab({ documents, onDocumentsChange }) {
+  const request = useRequest();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('redactionDocumentsTab');
 
-  const [filter, setFilter] = useState('');
-  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
-  const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
+  const requestQuery = getSanitizedQueryFromRequest(request);
+
+  const [filter, setFilter] = useState(requestQuery.filter);
+  const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
+  const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
@@ -82,17 +112,29 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   }, [pagination]);
 
   useEffect(() => {
+    const queryParams = {
+      filter,
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+      sorting: sorting.value,
+      direction: sorting.direction
+    };
+
+    history.replaceState(null, '', routes.getRedactionUrl(TABS.documents, queryParams));
+  }, [filter, sorting, pagination]);
+
+  useEffect(() => {
     setAllRows(createTableRows(documents));
   }, [documents]);
 
   const sortingOptions = useMemo(() => [
-    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
-    { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-    { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
-    { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: 'creator' },
-    { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' },
-    { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: 'protected' },
-    { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: 'verified' }
+    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: SORTING_VALUE.title },
+    { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
+    { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn },
+    { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.creator },
+    { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: SORTING_VALUE.archived },
+    { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: SORTING_VALUE.protected },
+    { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: SORTING_VALUE.verified }
   ], [t]);
 
   const tableSorters = useMemo(() => ({
