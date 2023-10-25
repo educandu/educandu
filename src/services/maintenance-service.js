@@ -45,6 +45,7 @@ export default class MaintenanceService {
       logger.info('Creating basic CDN directories');
       await this.cdn.ensureDirectory('media-library');
       await this.cdn.ensureDirectory('room-media');
+      await this.cdn.ensureDirectory('document-input-media');
       logger.info('Finished creating basic CDN directories successfully');
     } finally {
       await this.lockStore.releaseLock(lock);
