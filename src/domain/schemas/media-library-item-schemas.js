@@ -1,7 +1,6 @@
 import joi from 'joi';
 import spdxLicenseList from 'spdx-license-list';
-import { RESOURCE_TYPE } from '../constants.js';
-import { idOrKeySchema } from './shared-schemas.js';
+import { commonMediaItemProperties, idOrKeySchema } from './shared-schemas.js';
 import { maxMediaLibraryItemShortDescriptionLength } from '../validation-constants.js';
 
 const licenseSchema = joi.string().valid(...Object.keys(spdxLicenseList));
@@ -14,16 +13,10 @@ const mediaLibraryItemMetadataProperties = {
 };
 
 export const mediaLibraryItemDbSchema = joi.object({
-  _id: idOrKeySchema.required(),
-  resourceType: joi.string().valid(...Object.values(RESOURCE_TYPE)).required(),
-  contentType: joi.string().required(),
-  size: joi.number().integer().min(0).required(),
-  createdOn: joi.date().required(),
-  createdBy: idOrKeySchema.required(),
+  ...commonMediaItemProperties,
+  ...mediaLibraryItemMetadataProperties,
   updatedOn: joi.date().required(),
-  updatedBy: idOrKeySchema.required(),
-  url: joi.string().required(),
-  ...mediaLibraryItemMetadataProperties
+  updatedBy: idOrKeySchema.required()
 });
 
 export const mediaLibraryItemMetadataUpdateDbSchema = joi.object({

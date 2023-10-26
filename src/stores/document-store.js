@@ -1,7 +1,7 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { createTagsPipelineQuery } from '../utils/tag-utils.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
+import { combineQueryConditions, createTagsPipelineQuery } from '../utils/query-utils.js';
 
 const documentTagsProjection = {
   _id: 1,
@@ -110,7 +110,7 @@ class DocumentStore {
   }
 
   getDocumentsMetadataByConditions(conditions, { session } = {}) {
-    const predicate = conditions.length ? { $and: conditions } : {};
+    const predicate = combineQueryConditions('$and', conditions, true) || {};
     return this.collection.find(predicate, { projection: documentMetadataProjection, session }).toArray();
   }
 

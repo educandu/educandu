@@ -1,6 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { createTagsPipelineQuery } from '../utils/tag-utils.js';
+import { combineQueryConditions, createTagsPipelineQuery } from '../utils/query-utils.js';
 import { mediaLibraryItemDbSchema, mediaLibraryItemMetadataUpdateDbSchema } from '../domain/schemas/media-library-item-schemas.js';
 
 class MediaLibraryItemStore {
@@ -14,12 +14,16 @@ class MediaLibraryItemStore {
     return this.collection.findOne({ _id: mediaLibraryItemId }, { session });
   }
 
+  getMediaLibraryItemByUrl(url, { session } = {}) {
+    return this.collection.findOne({ url }, { session }).toArray();
+  }
+
   getAllMediaLibraryItems({ session } = {}) {
     return this.collection.find({}, { session }).toArray();
   }
 
   getMediaLibraryItemsByConditions(conditions, { session } = {}) {
-    return this.collection.find({ $and: conditions }, { session }).toArray();
+    return this.collection.find(combineQueryConditions('$and', conditions), { session }).toArray();
   }
 
   getMediaLibraryItemTagsMatchingText(text) {

@@ -247,11 +247,9 @@ export default class RoomService {
     };
   }
 
-  createRoomMediaItem({ user, roomId, file, cdnObjectPath }) {
+  createRoomMediaItem({ user, roomId, file, storageUrl }) {
     const now = new Date();
     const roomMediaItemId = uniqueId.create();
-
-    const storageUrl = `${CDN_URL_PREFIX}${cdnObjectPath}`;
 
     const resourceType = getResourceType(storageUrl);
     const contentType = mime.getType(storageUrl) || DEFAULT_CONTENT_TYPE;
@@ -265,7 +263,8 @@ export default class RoomService {
       size,
       createdBy: user._id,
       createdOn: now,
-      url: storageUrl
+      url: storageUrl,
+      name: urlUtils.getFileName(storageUrl)
     };
 
     return newRoomMediaItem;
@@ -295,7 +294,8 @@ export default class RoomService {
       const parentPath = getRoomMediaRoomPath(roomId);
       const uniqueFileName = createUniqueStorageFileName(file.originalname);
       const cdnObjectPath = urlUtils.concatParts(parentPath, uniqueFileName);
-      const roomMediaItem = this.createRoomMediaItem({ user, roomId, file, cdnObjectPath });
+      const storageUrl = `${CDN_URL_PREFIX}${cdnObjectPath}`;
+      const roomMediaItem = this.createRoomMediaItem({ user, roomId, file, storageUrl });
 
       try {
         await this.cdn.uploadObject(cdnObjectPath, file.path);

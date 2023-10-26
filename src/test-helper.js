@@ -2,6 +2,7 @@ import Cdn from './stores/cdn.js';
 import deepEqual from 'fast-deep-equal';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
+import urlUtils from './utils/url-utils.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import { SAVE_USER_RESULT } from './domain/constants.js';
@@ -217,6 +218,7 @@ export async function createTestDocumentInputMediaItem(container, user, data) {
   const now = new Date();
   const db = container.get(Database);
 
+  const url = data.storageUrl || uniqueId.create();
   const newItem = {
     _id: uniqueId.create(),
     roomId: data.roomId,
@@ -226,7 +228,8 @@ export async function createTestDocumentInputMediaItem(container, user, data) {
     size: data.size || 1,
     createdBy: user._id,
     createdOn: data.createdOn || now,
-    url: data.storageUrl || uniqueId.create()
+    url,
+    name: data.name || urlUtils.getFileName(url)
   };
 
   await db.documentInputMediaItems.insertOne(newItem);

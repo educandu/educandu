@@ -1288,7 +1288,7 @@ describe('document-service', () => {
         shortDescription: 'Description 1',
         slug: 'doc-1',
         sections: [],
-        tags: ['music', 'instructor', 'Dj.D', 'Cretu', '1'],
+        tags: ['music', 'instructor', 'Dj.D', 'Cretu', 'Gogaballa', '1', 'xy', 'ab'],
         language: 'en',
         roomId: null,
         roomContext: null,
@@ -1306,7 +1306,7 @@ describe('document-service', () => {
         shortDescription: 'Description 2',
         slug: 'doc-2',
         sections: [],
-        tags: ['Music', 'Instructor', 'Goga', '2'],
+        tags: ['Music', 'Instructor', 'Goga', '2', 'xy', 'ab'],
         language: 'en',
         roomId: null,
         roomContext: null,
@@ -1324,7 +1324,7 @@ describe('document-service', () => {
         shortDescription: 'Description 3',
         slug: 'doc-3',
         sections: [],
-        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music', 'xyz', 'ab'],
         language: 'en',
         roomId: null,
         roomContext: null,
@@ -1342,7 +1342,7 @@ describe('document-service', () => {
         shortDescription: 'Description 4',
         slug: 'doc-4',
         sections: [],
-        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music', 'ab'],
         language: 'en',
         roomId: null,
         roomContext: null,
@@ -1361,7 +1361,7 @@ describe('document-service', () => {
         shortDescription: 'Description 5',
         slug: 'doc-5',
         sections: [],
-        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music', 'ab'],
         language: 'en',
         roomId: room._id,
         roomContext: { draft: false, inputSubmittingDisabled: false },
@@ -1393,15 +1393,15 @@ describe('document-service', () => {
     });
 
     describe('when the query consists of tokens with a length less than 3 that require tags to match exactly', () => {
-      it('should return only documents that have exactly matching tags', async () => {
-        const results = await sut.getSearchableDocumentsMetadataByTags('1 or 2');
+      it('should return only documents that have an exactly matching tag', async () => {
+        const results = await sut.getSearchableDocumentsMetadataByTags('xy');
         expect(results).toHaveLength(2);
       });
     });
 
     describe('when the query consists of multiple tokens so that both partial and exact matching logic has to be applied', () => {
-      it('should return documents both matching partially as well as exactly', async () => {
-        const results = await sut.getSearchableDocumentsMetadataByTags('structor 1');
+      it('should return documents where each document matches partially as well as exactly', async () => {
+        const results = await sut.getSearchableDocumentsMetadataByTags('structor ab');
         expect(results).toHaveLength(2);
       });
     });
@@ -1431,7 +1431,7 @@ describe('document-service', () => {
       it('contains all documents with the correct relevance', async () => {
         const results = await sut.getSearchableDocumentsMetadataByTags('music instructor goga');
 
-        expect(results).toHaveLength(3);
+        expect(results).toHaveLength(2);
 
         const resultMap = results.reduce((acc, doc) => {
           acc[doc.title] = { ...doc };
@@ -1440,24 +1440,22 @@ describe('document-service', () => {
 
         expect(resultMap[doc1.title].relevance).toEqual(2);
         expect(resultMap[doc2.title].relevance).toEqual(3);
-        expect(resultMap[doc3.title].relevance).toEqual(4);
       });
     });
 
     describe('when the query contains the minus search operators', () => {
-      it('excludes all documents containing a tag exactly matched by the minus search operator', async () => {
-        const results = await sut.getSearchableDocumentsMetadataByTags('music -goga -cretu');
+      it('excludes all documents containing a tag exactly or partly matched by the minus search operator when the token is at least 3 characters long', async () => {
+        const results = await sut.getSearchableDocumentsMetadataByTags('music -goga');
 
         expect(results).toHaveLength(1);
         expect(results[0].title).toBe('Doc 3');
       });
 
-      it('does not exclude documents with tags only partially matched by the minus search operator', async () => {
-        const results = await sut.getSearchableDocumentsMetadataByTags('music -goga -cret');
+      it('does not exclude documents with tags only partially matched by the minus search operator when the token is shorter than 3 characters', async () => {
+        const results = await sut.getSearchableDocumentsMetadataByTags('music -xy');
 
-        expect(results).toHaveLength(2);
-        expect(results[0].title).toBe('Doc 1');
-        expect(results[1].title).toBe('Doc 3');
+        expect(results).toHaveLength(1);
+        expect(results[0].title).toBe('Doc 3');
       });
 
       it('does not return any result when the query contains only minus operator expressions', async () => {
