@@ -84,7 +84,7 @@ function NavigationDesktop() {
   };
 
   const handleSearch = searchText => {
-    window.location = routes.getSearchUrl(searchText.trim());
+    window.location = routes.getSearchUrl({ query: searchText });
   };
 
   const renderNotificationsIndicator = () => (

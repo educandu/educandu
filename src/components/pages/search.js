@@ -21,6 +21,34 @@ import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
 
+const SORTING_VALUE = {
+  relevance: 'relevance',
+  title: 'title',
+  language: 'language',
+  createdOn: 'createdOn',
+  updatedOn: 'updatedOn'
+};
+
+const SORTING_DIRECTION = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+const getSanitizedQueryFromRequest = request => {
+  const query = request.query;
+  const pageNumber = Number(query.page);
+  const pageSizeNumber = Number(query.pageSize);
+
+  return {
+    query: query.query.trim(),
+    tags: (query.tags?.trim() || '').split(',').filter(tag => tag),
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.relevance,
+    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
+    page: !isNaN(pageNumber) ? pageNumber : 1,
+    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
+  };
+};
+
 function Search({ PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('search');
@@ -30,23 +58,26 @@ function Search({ PageTemplate }) {
   const [allTags, setAllTags] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
-  const [selectedTags, setSelectedTags] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
   const [unselectedTags, setUnselectedTags] = useState([]);
-  const [searchText, setSearchText] = useState(request.query.query);
-  const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
-  const [currentTablePagination, setCurrentTablePagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
+
+  const requestQuery = getSanitizedQueryFromRequest(request);
+
+  const [searchText, setSearchText] = useState(requestQuery.query);
+  const [selectedTags, setSelectedTags] = useState(requestQuery.tags);
+  const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
+  const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
 
   const sortingOptions = [
-    { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: 'relevance' },
-    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
-    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
-    { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
-    { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' }
+    { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: SORTING_VALUE.relevance },
+    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: SORTING_VALUE.title },
+    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: SORTING_VALUE.language },
+    { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
+    { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn }
   ];
 
   const sorters = useMemo(() => ({
-    relevance: rowsToSort => rowsToSort.sort(by(row => row.document.relevance, sorting.direction).thenBy(row => row.document.updatedOn, 'desc')),
+    relevance: rowsToSort => rowsToSort.sort(by(row => row.document.relevance, sorting.direction).thenBy(row => row.document.updatedOn, SORTING_DIRECTION.desc)),
     title: rowsToSort => rowsToSort.sort(by(row => row.document.title, { direction: sorting.direction, ignoreCase: true })),
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.document.createdOn, sorting.direction)),
     updatedOn: rowsToSort => rowsToSort.sort(by(row => row.document.updatedOn, sorting.direction)),
@@ -55,15 +86,26 @@ function Search({ PageTemplate }) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [currentTablePagination]);
+  }, [pagination]);
+
+  useEffect(() => {
+    const queryParams = {
+      query: searchText,
+      tags: selectedTags,
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+      sorting: sorting.value,
+      direction: sorting.direction
+    };
+
+    history.replaceState(null, '', routes.getSearchUrl(queryParams));
+  }, [searchText, selectedTags, sorting, pagination]);
 
   useEffect(() => {
     (async () => {
       setIsSearching(true);
       try {
-        const trimmedSearchText = searchText.trim();
-        history.replaceState(null, '', routes.getSearchUrl(trimmedSearchText));
-        const result = await searchApiClient.search(trimmedSearchText);
+        const result = await searchApiClient.search(searchText.trim());
         setDocuments(result.documents);
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -100,9 +142,7 @@ function Search({ PageTemplate }) {
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
-  const handleResultTableChange = newPagination => {
-    setCurrentTablePagination(oldPagination => ({ ...oldPagination, ...newPagination }));
-  };
+  const handleResultTableChange = ({ current, pageSize }) => setPagination({ page: current, pageSize });
 
   const renderLanguage = (_, row) => (
     <LanguageIcon language={row.document.language} />
@@ -202,7 +242,11 @@ function Search({ PageTemplate }) {
           className="SearchPage-table u-table-with-pagination"
           dataSource={[...displayedRows]}
           rowClassName={() => 'SearchPage-tableRow'}
-          pagination={currentTablePagination}
+          pagination={{
+            current: pagination.page,
+            pageSize: pagination.pageSize,
+            showSizeChanger: true
+          }}
           onChange={handleResultTableChange}
           />
       </div>

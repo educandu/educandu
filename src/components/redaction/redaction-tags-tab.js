@@ -1,10 +1,12 @@
 import by from 'thenby';
-import { Select, Table, Tag } from 'antd';
 import PropTypes from 'prop-types';
+import { Select, Table, Tag } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
+import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
+import { SORTING_DIRECTION, TABS } from './constants.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
@@ -13,6 +15,12 @@ const TAG_CATEGORY_FILTER = {
   documentsAndMedia: 'documentsAndMedia',
   documentsOnly: 'documentsOnly',
   mediaOnly: 'mediaOnly'
+};
+
+const SORTING_VALUE = {
+  name: 'name',
+  frequency: 'frequency',
+  companionTagCount: 'companionTagCount'
 };
 
 function createTableRow(tag) {
@@ -72,7 +80,7 @@ function createTableRows(documents, mediaLibraryItems, tagCategoryFilter) {
     row.mediaLibraryItems.sort(by(x => x.name, { ignoreCase: true }));
     row.companionTags = Object.entries(row.companionTagFrequencies)
       .map(([name, frequency]) => ({ name, frequency }))
-      .sort(by(x => x.frequency, 'desc').thenBy(x => x.name, { ignoreCase: true }));
+      .sort(by(x => x.frequency, SORTING_DIRECTION.desc).thenBy(x => x.name, { ignoreCase: true }));
     row.companionTagCount = row.companionTags.length;
   }
 
@@ -83,32 +91,66 @@ function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.cr
   return { mode, isOpen, mediaLibraryItem };
 }
 
+const getSanitizedQueryFromRequest = request => {
+  const query = request.query.tab === TABS.tags ? request.query : {};
+
+  const pageNumber = Number(query.page);
+  const pageSizeNumber = Number(query.pageSize);
+
+  return {
+    filter: (query.filter || '').trim(),
+    tagCategoryFilter: Object.values(TAG_CATEGORY_FILTER).includes(query.tagCategoryFilter) ? query.tagCategoryFilter : TAG_CATEGORY_FILTER.documentsAndMedia,
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.name,
+    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.asc,
+    page: !isNaN(pageNumber) ? pageNumber : 1,
+    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
+  };
+};
+
 function RedactionTagsTab({ documents, mediaLibraryItems }) {
-  const [filterText, setFilterText] = useState('');
+  const request = useRequest();
   const { t } = useTranslation('redactionTagsTab');
-  const [allTableRows, setAllTableRows] = useState([]);
-  const [displayedTableRows, setDisplayedTableRows] = useState([]);
-  const [tagCategoryFilter, setTagCategoryFilter] = useState(TAG_CATEGORY_FILTER.documentsAndMedia);
-  const [currentTableSorting, setCurrentTableSorting] = useState({ value: 'name', direction: 'asc' });
+
+  const requestQuery = getSanitizedQueryFromRequest(request);
+
+  const [filter, setFilter] = useState(requestQuery.filter);
+  const [tagCategoryFilter, setTagCategoryFilter] = useState(requestQuery.tagCategoryFilter);
+  const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
+  const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
+
+  const [allRows, setAllRows] = useState([]);
+  const [displayedRows, setDisplayedRows] = useState([]);
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
-  const [currentTablePagination, setCurrentTablePagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [currentTablePagination]);
+  }, [pagination]);
 
   useEffect(() => {
-    setAllTableRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
+    const queryParams = {
+      filter,
+      tagCategoryFilter,
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+      sorting: sorting.value,
+      direction: sorting.direction
+    };
+
+    history.replaceState(null, '', routes.getRedactionUrl(TABS.tags, queryParams));
+  }, [filter, tagCategoryFilter, sorting, pagination]);
+
+  useEffect(() => {
+    setAllRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
   }, [documents, mediaLibraryItems, tagCategoryFilter]);
 
   const tagCategoryFilterOptions = useMemo(() => {
     return Object.values(TAG_CATEGORY_FILTER).map(value => ({ value, label: t(`tagCategoryFilter_${value}`) }));
   }, [t]);
 
-  const tableSortingOptions = useMemo(() => [
-    { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: 'name' },
-    { label: t('frequency'), appliedLabel: t('sortedByFrequency'), value: 'frequency' },
-    { label: t('companionTagCount'), appliedLabel: t('sortedByCompanionTagCount'), value: 'companionTagCount' }
+  const sortingOptions = useMemo(() => [
+    { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: SORTING_VALUE.name },
+    { label: t('frequency'), appliedLabel: t('sortedByFrequency'), value: SORTING_VALUE.frequency },
+    { label: t('companionTagCount'), appliedLabel: t('sortedByCompanionTagCount'), value: SORTING_VALUE.companionTagCount }
   ], [t]);
 
   const tableSorters = useMemo(() => ({
@@ -118,27 +160,29 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
   }), []);
 
   useEffect(() => {
-    const filter = filterText.toLowerCase().trim();
-    const filteredRows = filter
-      ? allTableRows.filter(row => row.name.toLowerCase().includes(filter))
-      : allTableRows;
+    const lowerCasedFilter = filter.toLowerCase().trim();
 
-    const sorter = tableSorters[currentTableSorting.value];
-    const sortedRows = sorter(filteredRows, currentTableSorting.direction);
+    const filteredRows = lowerCasedFilter
+      ? allRows.filter(row => row.name.toLowerCase().includes(lowerCasedFilter))
+      : allRows;
 
-    setDisplayedTableRows(sortedRows);
-  }, [allTableRows, filterText, currentTableSorting, tableSorters]);
+    const sorter = tableSorters[sorting.value];
+    const sortedRows = sorter(filteredRows, sorting.direction);
 
-  const handleTableChange = newPagination => {
-    setCurrentTablePagination(oldPagination => ({ ...oldPagination, ...newPagination }));
+    setDisplayedRows(sortedRows);
+  }, [allRows, filter, sorting, tableSorters]);
+
+  const handleTableChange = ({ current, pageSize }) => {
+    setPagination({ page: current, pageSize });
   };
 
   const handleCurrentTableSortingChange = newSorting => {
-    setCurrentTableSorting(newSorting);
+    setSorting(newSorting);
   };
 
-  const handleFilterTextChange = event => {
-    setFilterText(event.target.value);
+  const handleFilterChange = event => {
+    const newFilter = event.target.value;
+    setFilter(newFilter);
   };
 
   const handleMediaLibraryItemPreviewClick = (mediaLibraryItem, event) => {
@@ -222,14 +266,14 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
         <FilterInput
           size="large"
           className="RedactionTagsTab-textFilter"
-          value={filterText}
-          onChange={handleFilterTextChange}
+          value={filter}
+          onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
           />
         <SortingSelector
           size="large"
-          options={tableSortingOptions}
-          sorting={currentTableSorting}
+          options={sortingOptions}
+          sorting={sorting}
           onChange={handleCurrentTableSortingChange}
           />
         <Select
@@ -242,9 +286,13 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
       <Table
         className="u-table-with-pagination"
         columns={tableColumns}
-        dataSource={displayedTableRows}
+        dataSource={displayedRows}
         expandable={{ expandedRowRender: renderExpandedRow }}
-        pagination={currentTablePagination}
+        pagination={{
+          current: pagination.page,
+          pageSize: pagination.pageSize,
+          showSizeChanger: true
+        }}
         onChange={handleTableChange}
         />
       <MediaLibaryItemModal {...mediaLibraryItemModalState} onClose={handleMediaLibraryItemModalClose} />

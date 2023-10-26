@@ -58,7 +58,7 @@ function NavigationMobile() {
   };
 
   const handleSearch = searchText => {
-    window.location = routes.getSearchUrl(searchText.trim());
+    window.location = routes.getSearchUrl({ query: searchText });
   };
 
   const renderDrawerTitle = () => {
