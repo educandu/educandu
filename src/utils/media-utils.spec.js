@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import { analyzeMediaUrl, formatMediaPosition, formatMillisecondsAsDuration } from './media-utils.js';
+import { analyzeMediaUrl, formatMediaPosition, formatMillisecondsAsDuration, tryConvertDurationToMilliseconds } from './media-utils.js';
 
 describe('media-utils', () => {
 
@@ -113,6 +113,50 @@ describe('media-utils', () => {
       describe(`when called with milliseconds = ${milliseconds}`, () => {
         it(`should return '${expectedResult}'`, () => {
           expect(formatMillisecondsAsDuration(milliseconds, { millisecondsLength })).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('tryConvertDurationToMilliseconds', () => {
+    const testCases = [
+      { duration: '', expectedResult: null },
+      { duration: '.0', expectedResult: 0 },
+      { duration: '.001', expectedResult: 1 },
+      { duration: '.01', expectedResult: 10 },
+      { duration: '.1', expectedResult: 100 },
+      { duration: '.10', expectedResult: 100 },
+      { duration: '.100', expectedResult: 100 },
+      { duration: '.999', expectedResult: 999 },
+      { duration: '.1000', expectedResult: null },
+      { duration: '60', expectedResult: null },
+      { duration: '59', expectedResult: 59 * 1000 },
+      { duration: '59.100', expectedResult: 100 + (59 * 1000) },
+      { duration: '59:', expectedResult: 59 * 60 * 1000 },
+      { duration: '00:01', expectedResult: 1 * 1000 },
+      { duration: '00:60', expectedResult: null },
+      { duration: '1:59', expectedResult: (59 * 1000) + (1 * 60 * 1000) },
+      { duration: '01:59', expectedResult: (59 * 1000) + (1 * 60 * 1000) },
+      { duration: '01:59.100', expectedResult: 100 + (59 * 1000) + (1 * 60 * 1000) },
+      { duration: '59:59', expectedResult: (59 * 1000) + (59 * 60 * 1000) },
+      { duration: '60:59', expectedResult: null },
+      { duration: '00:00:01', expectedResult: 1 * 1000 },
+      { duration: '01:01:01', expectedResult: (1 * 1000) + (1 * 60 * 1000) + (1 * 60 * 60 * 1000) },
+      { duration: '01:01:01.100', expectedResult: 100 + (1 * 1000) + (1 * 60 * 1000) + (1 * 60 * 60 * 1000) },
+      { duration: ':01:01:01.100', expectedResult: null },
+      { duration: '10:01:01:01.100', expectedResult: null },
+      { duration: '01:01.100.99', expectedResult: null },
+      { duration: 'a', expectedResult: null },
+      { duration: 'c.100', expectedResult: null },
+      { duration: 'c.100', expectedResult: null },
+      { duration: '1b2.100', expectedResult: null },
+      { duration: 'a:1.100', expectedResult: null }
+    ];
+
+    testCases.forEach(({ duration, expectedResult }) => {
+      describe(`when called with duration = '${duration}'`, () => {
+        it(`should return ${expectedResult} milliseconds`, () => {
+          expect(tryConvertDurationToMilliseconds(duration)).toBe(expectedResult);
         });
       });
     });

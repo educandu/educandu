@@ -132,6 +132,42 @@ export function formatMillisecondsAsDuration(milliseconds, { millisecondsLength 
   return millisecondsLength ? `${durationParts.join(':')}.${millisecondsText}` : durationParts.join(':');
 }
 
+export function tryConvertDurationToMilliseconds(duration) {
+  const durationRegexp = /(?<segment3>[0-9]+:)?(?<segment2>[0-9]+:)?(?<segment1>[0-9]+)?(?<milliseconds>\.[0-9]+)?/;
+
+  const tooManyMillisecondSegments = (duration.match(/\./g) || []).length > 1;
+  const tooManyTimeSegments = (duration.match(/:/g) || []).length > 2;
+  const illegalCharacters = (duration.match(/[^0-9,.,:]/g) || []).length > 0;
+
+  if (tooManyMillisecondSegments || tooManyTimeSegments || illegalCharacters) {
+    return null;
+  }
+
+  const groups = (duration || '').match(durationRegexp)?.groups;
+
+  if (!groups.milliseconds && !groups.segment1 && !groups.segment2 && !groups.segment3) {
+    return null;
+  }
+
+  const millisecondsValue = parseInt((groups.milliseconds || '').replace('.', '').padEnd(3, '0'), 10);
+  const segment1Value = parseInt(groups.segment1, 10);
+  const segment2Value = parseInt(groups.segment2, 10);
+  const segment3Value = parseInt(groups.segment3, 10);
+
+  const areBothHoursAndMinutesGiven = !isNaN(segment2Value) && !isNaN(segment3Value);
+
+  const milliseconds = millisecondsValue || 0;
+  const seconds = segment1Value || 0;
+  const minutes = (areBothHoursAndMinutesGiven ? segment2Value : segment3Value) || 0;
+  const hours = (areBothHoursAndMinutesGiven ? segment3Value : null) || 0;
+
+  if (milliseconds > 999 || seconds > 59 || minutes > 59) {
+    return null;
+  }
+
+  return milliseconds + (seconds * 1000) + (minutes * 60 * 1000) + (hours * 60 * 60 * 1000);
+}
+
 export function ensureValidMediaPosition(position) {
   return Math.max(0, Math.min(1, Number(position)));
 }

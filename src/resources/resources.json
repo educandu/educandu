@@ -1352,9 +1352,9 @@
     }
   },
   "timecodeFineTunningInput": {
-    "milliseconds": {
-      "en": "milliseconds",
-      "de": "Millisekunden"
+    "invalidValue": {
+      "en": "Invalid time",
+      "de": "Ungültige Zeit"
     }
   },
   "timeline": {
