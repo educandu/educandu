@@ -52,7 +52,7 @@ function FilesListViewer({
       return null;
     }
 
-    const Icon = getResourceIcon({ url: row.url });
+    const Icon = getResourceIcon({ url: row.key });
     return (
       <Tooltip title={name}>
         <div className="FilesListViewer-fileNameCell" >
