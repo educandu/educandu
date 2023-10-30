@@ -172,7 +172,8 @@ class DocumentInputService {
             size,
             createdBy: user._id,
             createdOn: now,
-            url: storageUrl
+            url: storageUrl,
+            name: storageFileName
           });
 
           Object.assign(sectionFile, {

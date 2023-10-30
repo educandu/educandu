@@ -15,21 +15,21 @@ import { isRoomOwner } from '../utils/room-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
-import { createTagSearchQuery } from '../utils/tag-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import { createTextSearchQuery } from '../utils/query-utils.js';
+import DocumentInputStore from '../stores/document-input-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
+import { getDocumentInputMediaPath } from '../utils/storage-utils.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { canRestoreDocumentRevisions } from '../utils/document-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { DOCUMENT_VERIFIED_RELEVANCE_POINTS } from '../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
+import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
-import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
-import DocumentInputStore from '../stores/document-input-store.js';
-import { getDocumentInputMediaPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -153,23 +153,23 @@ class DocumentService {
   }
 
   async getSearchableDocumentsMetadataByTags(searchQuery) {
-    const tagQuery = createTagSearchQuery(searchQuery);
-    if (!tagQuery.isValid) {
+    const textQuery = createTextSearchQuery(searchQuery, ['tags']);
+    if (!textQuery.isValid) {
       return [];
     }
 
     const queryConditions = [
       { roomId: null },
       { 'publicContext.archived': false },
-      tagQuery.query
+      textQuery.query
     ];
 
     const documents = await this.documentStore.getDocumentsExtendedMetadataByConditions(queryConditions);
 
     return documents.map(document => {
-      const tagMatchCount = document.tags.filter(tag => tagQuery.positiveTokens.has(tag.toLowerCase())).length;
+      const exactTagMatchCount = document.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
       const verifiedPoints = document.publicContext.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
-      const relevance = tagMatchCount + verifiedPoints;
+      const relevance = exactTagMatchCount + verifiedPoints;
       return { ...document, relevance };
     });
   }

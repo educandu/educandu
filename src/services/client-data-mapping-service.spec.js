@@ -709,6 +709,7 @@ describe('client-data-mapping-service', () => {
           createdBy: user1._id,
           updatedOn: new Date(),
           updatedBy: user2._id,
+          name: 'calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
           url: 'cdn://media-library/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
         },
         {
@@ -718,6 +719,7 @@ describe('client-data-mapping-service', () => {
           createdBy: user2._id,
           updatedOn: new Date(),
           updatedBy: user1._id,
+          name: 'flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
           url: 'cdn://media-library/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
         }
       ];
@@ -781,6 +783,7 @@ describe('client-data-mapping-service', () => {
               roomId: uniqueId.create(),
               createdOn: new Date(),
               createdBy: user1._id,
+              name: 'calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
               url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
             },
             {
@@ -788,6 +791,7 @@ describe('client-data-mapping-service', () => {
               roomId: uniqueId.create(),
               createdOn: new Date(),
               createdBy: user2._id,
+              name: 'flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
               url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
             }
           ]
@@ -853,6 +857,7 @@ describe('client-data-mapping-service', () => {
                 roomId: uniqueId.create(),
                 createdOn: new Date(),
                 createdBy: user1._id,
+                name: 'calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png',
                 url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/calendar-times-cTKKnzk7MMwbxRWTHXmoJ5.png'
               },
               {
@@ -860,6 +865,7 @@ describe('client-data-mapping-service', () => {
                 roomId: uniqueId.create(),
                 createdOn: new Date(),
                 createdBy: user2._id,
+                name: 'flight-schedule-UtzL4CqWGfoptve6Ddkazn.png',
                 url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/flight-schedule-UtzL4CqWGfoptve6Ddkazn.png'
               }
             ]
@@ -873,6 +879,7 @@ describe('client-data-mapping-service', () => {
                 roomId: uniqueId.create(),
                 createdOn: new Date(),
                 createdBy: user1._id,
+                name: 'boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png',
                 url: 'cdn://room-media/dD6coNQoTsK8pgmy94P83g/boat-trips-KIoLnzk8NNwbxRWTHXmoI7.png'
               }
             ]

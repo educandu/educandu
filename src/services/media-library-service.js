@@ -6,7 +6,7 @@ import urlUtils from '../utils/url-utils.js';
 import { getCdnPath } from '../utils/source-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import { getResourceType } from '../utils/resource-utils.js';
-import { createTagSearchQuery } from '../utils/tag-utils.js';
+import { createTextSearchQuery } from '../utils/query-utils.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
@@ -23,25 +23,29 @@ class MediaLibraryService {
     return this.mediaLibraryItemStore.getAllMediaLibraryItems();
   }
 
-  async getSearchableMediaLibraryItemsByTags({ query, resourceTypes }) {
-    const tagQuery = createTagSearchQuery(query);
-    if (!tagQuery.isValid) {
+  async getSearchableMediaLibraryItemsByTagsOrName({ query, resourceTypes }) {
+    const textQuery = createTextSearchQuery(query, ['tags', 'name']);
+    if (!textQuery.isValid) {
       return [];
     }
 
-    const queryConditions = [tagQuery.query, { resourceType: { $in: resourceTypes } }];
-    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions(queryConditions);
+    const textAndResourceTypeQueryConditions = [textQuery.query, { resourceType: { $in: resourceTypes } }];
+    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions(textAndResourceTypeQueryConditions);
+
+    const positiveTokensArray = [...textQuery.positiveTokens].filter(token => token.toLowerCase());
     return mediaLibraryItems
-      .map(item => ({
-        ...item,
-        relevance: item.tags.filter(tag => tagQuery.positiveTokens.has(tag.toLowerCase())).length
-      }))
-      .sort(by(item => item.relevance).thenBy(item => item.url));
+      .map(item => {
+        const exactTagMatchCount = item.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
+        const partialNameMatchCount = positiveTokensArray.filter(token => item.name.toLowerCase().includes(token)).length;
+        const relevance = exactTagMatchCount + partialNameMatchCount;
+        return { ...item, relevance };
+      })
+      .sort(by(item => item.relevance).thenBy(item => item.name));
   }
 
   async getMediaLibraryItemByUrl({ url }) {
-    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions([{ url }]);
-    return mediaLibraryItems[0] || null;
+    const mediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemByUrl(url);
+    return mediaLibraryItem || null;
   }
 
   async createMediaLibraryItem({ file, metadata, user }) {
@@ -66,6 +70,7 @@ class MediaLibraryService {
       updatedBy: user._id,
       updatedOn: now,
       url: storageUrl,
+      name: storageFileName,
       shortDescription: metadata.shortDescription,
       languages: metadata.languages,
       licenses: metadata.licenses,
