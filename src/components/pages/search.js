@@ -14,7 +14,6 @@ import CloseIcon from '../icons/general/close-icon.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import LanguageIcon from '../localization/language-icon.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
@@ -24,7 +23,6 @@ const logger = new Logger(import.meta.url);
 const SORTING_VALUE = {
   relevance: 'relevance',
   title: 'title',
-  language: 'language',
   createdOn: 'createdOn',
   updatedOn: 'updatedOn'
 };
@@ -71,7 +69,6 @@ function Search({ PageTemplate }) {
   const sortingOptions = [
     { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: SORTING_VALUE.relevance },
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: SORTING_VALUE.title },
-    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: SORTING_VALUE.language },
     { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
     { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn }
   ];
@@ -80,8 +77,7 @@ function Search({ PageTemplate }) {
     relevance: rowsToSort => rowsToSort.sort(by(row => row.document.relevance, sorting.direction).thenBy(row => row.document.updatedOn, SORTING_DIRECTION.desc)),
     title: rowsToSort => rowsToSort.sort(by(row => row.document.title, { direction: sorting.direction, ignoreCase: true })),
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.document.createdOn, sorting.direction)),
-    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.document.updatedOn, sorting.direction)),
-    language: rowsToSort => rowsToSort.sort(by(row => row.document.language, sorting.direction))
+    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.document.updatedOn, sorting.direction))
   }), [sorting.direction]);
 
   useEffect(() => {
@@ -144,10 +140,6 @@ function Search({ PageTemplate }) {
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
   const handleResultTableChange = ({ current, pageSize }) => setPagination({ page: current, pageSize });
 
-  const renderLanguage = (_, row) => (
-    <LanguageIcon language={row.document.language} />
-  );
-
   const renderTitle = (_, row) => {
     const subtext = [
       `${t('created')}: ${formatDate(row.document.createdOn)}`,
@@ -199,11 +191,6 @@ function Search({ PageTemplate }) {
       render: renderCellTags,
       responsive: ['md'],
       width: '45%'
-    },
-    {
-      title: t('common:language'),
-      key: 'language',
-      render: renderLanguage
     }
   ];
 
