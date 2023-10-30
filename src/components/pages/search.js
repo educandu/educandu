@@ -190,11 +190,9 @@ function Search({ PageTemplate }) {
       key: 'tags',
       render: renderCellTags,
       responsive: ['md'],
-      width: '45%'
+      width: '35%'
     }
   ];
-
-  const showSearchingHeadline = isSearching && documents.length === 0;
 
   return (
     <PageTemplate>
@@ -217,11 +215,6 @@ function Search({ PageTemplate }) {
           )}
         </div>
 
-        <div className="SearchPage-resultsCount">
-          {!!showSearchingHeadline && t('searching')}
-          {!showSearchingHeadline && t('documentsFound', { count: displayedRows.length })}
-        </div>
-
         <Table
           key={searchText}
           columns={columns}
@@ -232,7 +225,8 @@ function Search({ PageTemplate }) {
           pagination={{
             current: pagination.page,
             pageSize: pagination.pageSize,
-            showSizeChanger: true
+            showSizeChanger: true,
+            showTotal: count => t('totalItems', { count })
           }}
           onChange={handleResultTableChange}
           />

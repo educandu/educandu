@@ -1828,14 +1828,6 @@
     }
   },
   "search": {
-    "searching": {
-      "en": "Searching ...",
-      "de": "Suchen ..."
-    },
-    "documentsFound": {
-      "en": "{count, plural, =1 {# document} other {# documents}} found\n",
-      "de": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n"
-    },
     "sorting": {
       "en": "Sorting",
       "de": "Sortierung"
@@ -1847,6 +1839,10 @@
     "lastUpdate": {
       "en": "Last update",
       "de": "Letzte Änderung"
+    },
+    "totalItems": {
+      "en": "{count, plural, =1 {# result} other {# results}} found\n",
+      "de": "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden\n"
     }
   },
   "userProfile": {
