@@ -107,9 +107,9 @@ class MediaLibraryController {
       multipartParser.single('file'),
       validateFile('file'),
       (req, _res, next) => {
-        // Multipart form data cannot transport "empty" arrays,
-        // so in case no language was provided we have to set an empty array
-        req.body.languages ||= [];
+        // Transform the body as if it were a REST call,
+        // so we can nicely validate it and work with it
+        req.body = JSON.parse(req.body.metadata || 'null') || {};
         next();
       },
       validateBody(mediaLibraryItemMetadataBodySchema),

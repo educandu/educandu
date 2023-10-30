@@ -29,6 +29,7 @@ import { roomMediaContextShape, roomShape } from '../../ui/default-prop-types.js
 import AudioWaveformCanvas from '../../plugins/audio-waveform/audio-waveform-canvas.js';
 import { HORIZONTAL_ALIGNMENT, SOURCE_TYPE, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Slider, Tabs, message, Upload } from 'antd';
+import MediaLibraryMetadataForm from '../resource-selector/media-library/media-library-metadata-form.js';
 import {
   DEFAULT_WAVEFORM_BACKGROUND_COLOR,
   DEFAULT_WAVEFORM_BASELINE_COLOR,
@@ -56,6 +57,16 @@ function Tests({ PageTemplate, initialState }) {
   const handleCopyToClipboard = async clipboardText => {
     await window.navigator.clipboard.writeText(clipboardText);
     message.success('Copied to clipboard');
+  };
+
+  // MediaLibraryMetadataForm
+  const [mediaLibraryMetadataForm] = Form.useForm();
+  const [mediaLibraryMetadataFormResult, setMediaLibraryMetadataFormResult] = useState(null);
+  const handleMediaLibraryMetadataFormFinish = result => setMediaLibraryMetadataFormResult(result);
+  const handleMediaLibraryMetadataFormSubmitClick = () => mediaLibraryMetadataForm.submit();
+  const handleMediaLibraryMetadataFormResetClick = () => {
+    mediaLibraryMetadataForm.resetFields();
+    setMediaLibraryMetadataFormResult(null);
   };
 
   // ResourceSelector
@@ -238,6 +249,24 @@ function Tests({ PageTemplate, initialState }) {
             onChange={handleTabChange}
             destroyInactiveTabPane
             items={[
+              {
+                key: 'MediaLibraryMetadataForm',
+                label: 'MediaLibraryMetadataForm',
+                children: (
+                  <div>
+                    <h3>Form</h3>
+                    <MediaLibraryMetadataForm form={mediaLibraryMetadataForm} onFinish={handleMediaLibraryMetadataFormFinish} />
+                    <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                      <Button type="primary" onClick={handleMediaLibraryMetadataFormSubmitClick}>Submit</Button>
+                      <Button type="primary" onClick={handleMediaLibraryMetadataFormResetClick}>Reset</Button>
+                    </div>
+                    <h3 style={{ marginTop: '50px' }}>Result</h3>
+                    <pre style={{ backgroundColor: '#fbfbfb', border: '1px solid #e3e3e3', padding: '2px', fontSize: '9px', minHeight: '200px' }}>
+                      {!!mediaLibraryMetadataFormResult && JSON.stringify(mediaLibraryMetadataFormResult, null, 2)}
+                    </pre>
+                  </div>
+                )
+              },
               {
                 key: 'ResourceSelector',
                 label: 'ResourceSelector',

@@ -343,6 +343,7 @@ const mediaLibraryItemProps = {
   shortDescription: PropTypes.string.isRequired,
   languages: PropTypes.arrayOf(PropTypes.string).isRequired,
   licenses: PropTypes.arrayOf(PropTypes.string).isRequired,
+  allRightsReserved: PropTypes.bool.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 

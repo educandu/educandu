@@ -68,6 +68,7 @@ class MediaLibraryService {
       url: storageUrl,
       shortDescription: metadata.shortDescription,
       languages: metadata.languages,
+      allRightsReserved: metadata.allRightsReserved,
       licenses: metadata.licenses,
       tags: metadata.tags
     };
@@ -89,6 +90,7 @@ class MediaLibraryService {
       updatedOn: now,
       shortDescription: data.shortDescription,
       languages: data.languages,
+      allRightsReserved: data.allRightsReserved,
       licenses: data.licenses,
       tags: data.tags
     };

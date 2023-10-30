@@ -19,6 +19,8 @@ function MediaLibraryMetadataDisplay({ mediaLibraryItem }) {
 
   const renderMissingData = () => <i>{t('missingDataPlaceholder')}</i>;
 
+  const renderAllRightsReserved = () => <i>{t('common:allRightsReserved')}</i>;
+
   return (
     <div className="MediaLibraryMetadataDisplay">
       <div>
@@ -31,7 +33,7 @@ function MediaLibraryMetadataDisplay({ mediaLibraryItem }) {
       </div>
       <div>
         <b>{t('common:licenses')}</b>
-        <div>{mediaLibraryItem.licenses.join(', ')}</div>
+        <div>{mediaLibraryItem.allRightsReserved ? renderAllRightsReserved() : mediaLibraryItem.licenses.join(', ')}</div>
       </div>
       <div>
         <b>{t('common:tags')}</b>
@@ -47,6 +49,7 @@ MediaLibraryMetadataDisplay.propTypes = {
     size: PropTypes.number.isRequired,
     shortDescription: PropTypes.string.isRequired,
     languages: PropTypes.arrayOf(PropTypes.string).isRequired,
+    allRightsReserved: PropTypes.bool.isRequired,
     licenses: PropTypes.arrayOf(PropTypes.string).isRequired,
     tags: PropTypes.arrayOf(PropTypes.string).isRequired
   }).isRequired
