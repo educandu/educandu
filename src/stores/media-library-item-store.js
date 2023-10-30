@@ -15,7 +15,7 @@ class MediaLibraryItemStore {
   }
 
   getMediaLibraryItemByUrl(url, { session } = {}) {
-    return this.collection.findOne({ url }, { session }).toArray();
+    return this.collection.findOne({ url }, { session });
   }
 
   getAllMediaLibraryItems({ session } = {}) {
