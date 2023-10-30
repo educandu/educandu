@@ -1,3 +1,4 @@
+import mime from 'mime';
 import Cdn from './stores/cdn.js';
 import deepEqual from 'fast-deep-equal';
 import Database from './stores/database.js';
@@ -5,12 +6,14 @@ import uniqueId from './utils/unique-id.js';
 import urlUtils from './utils/url-utils.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
-import { SAVE_USER_RESULT } from './domain/constants.js';
+import { getResourceType } from './utils/resource-utils.js';
 import DocumentService from './services/document-service.js';
 import DocumentInputService from './services/document-input-service.js';
 import DocumentCommentService from './services/document-comment-service.js';
-import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 import { createDocumentInputUploadedFileName } from './utils/document-input-utils.js';
+import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
+import { getDocumentInputMediaPath, getMediaLibraryPath } from './utils/storage-utils.js';
+import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, SAVE_USER_RESULT } from './domain/constants.js';
 
 async function purgeDatabase(db) {
   const collections = await db._db.collections();
@@ -218,21 +221,49 @@ export async function createTestDocumentInputMediaItem(container, user, data) {
   const now = new Date();
   const db = container.get(Database);
 
-  const url = data.storageUrl || uniqueId.create();
+  const roomId = data.roomId || uniqueId.create();
+  const documentInputId = data.documentInputId || uniqueId.create();
+  const url = data.url || `${CDN_URL_PREFIX}${urlUtils.concatParts(getDocumentInputMediaPath({ roomId, documentInputId }), `${uniqueId.create()}.txt`)}`;
   const newItem = {
     _id: uniqueId.create(),
-    roomId: data.roomId,
-    documentInputId: data.documentInputId,
-    resourceType: data.resourceType,
-    contentType: data.contentType,
+    roomId,
+    documentInputId,
+    resourceType: data.resourceType || getResourceType(url),
+    contentType: data.contentType || mime.getType(url) || DEFAULT_CONTENT_TYPE,
     size: data.size || 1,
-    createdBy: user._id,
+    createdBy: data.createdBy || user._id,
     createdOn: data.createdOn || now,
     url,
     name: data.name || urlUtils.getFileName(url)
   };
 
   await db.documentInputMediaItems.insertOne(newItem);
+  return newItem;
+}
+
+export async function createTestMediaLibraryItem(container, user, data) {
+  const now = new Date();
+  const db = container.get(Database);
+
+  const url = data.url || `${CDN_URL_PREFIX}${urlUtils.concatParts(getMediaLibraryPath(), `${uniqueId.create()}.txt`)}`;
+  const newItem = {
+    _id: uniqueId.create(),
+    resourceType: data.resourceType || getResourceType(url),
+    contentType: data.contentType || mime.getType(url) || DEFAULT_CONTENT_TYPE,
+    size: data.size || 1,
+    createdBy: data.createdBy || user._id,
+    createdOn: data.createdOn || now,
+    updatedBy: data.updatedBy || user._id,
+    updatedOn: data.updatedOn || now,
+    url,
+    name: data.name || urlUtils.getFileName(url),
+    shortDescription: data.shortDescription || 'Lorem Ipsum',
+    languages: data.languages || ['en'],
+    licenses: data.licenses || ['CC0-1.0'],
+    tags: data.tags || ['test']
+  };
+
+  await db.mediaLibraryItems.insertOne(newItem);
   return newItem;
 }
 
