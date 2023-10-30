@@ -283,9 +283,6 @@ common:
   sortedByTitle:
     en: Sorted by title
     de: Nach Titel sortiert
-  sortedByLanguage:
-    en: Sorted by language
-    de: Nach Sprache sortiert
   sortedByCreatedOn:
     en: Sorted by creation date
     de: Nach Erstellungsdatum sortiert
