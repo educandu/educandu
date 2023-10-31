@@ -278,6 +278,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
               {!playbackDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
               {!!playbackDuration && (
                 <TimecodeFineTunningInput
+                  key={selectedChapterIndex}
                   disabled={selectedChapterIndex === 0}
                   lowerLimit={selectedChapterLowerTimecodeLimit}
                   upperLimit={selectedChapterUpperTimecodeLimit}
