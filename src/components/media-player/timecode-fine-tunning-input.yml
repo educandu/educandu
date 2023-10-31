@@ -1,4 +1,4 @@
 timecodeFineTunningInput:
   invalidValue:
-    en: Invalid time
-    de: Ungültige Zeit
+    en: Invalid timecode
+    de: Ungültige Zeitstempel

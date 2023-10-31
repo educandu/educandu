@@ -25,6 +25,7 @@ function TimecodeFineTunningInput({
   const [valueAsDuration, setValueAsDuration] = useState(null);
 
   useEffect(() => {
+    setIsInvalid(false);
     setValueAsDuration(getDuration(value));
   }, [value]);
 
