@@ -29,6 +29,12 @@
   .m-fake-flex-gap(@edu-control-spacing-wide);
 }
 
+.MediaRangeSelector-selectorQuickSelectButtons {
+  display: grid;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+}
+
 .MediaRangeSelector-selectorFineTunning {
   display: grid;
   grid-auto-flow: row;
@@ -41,6 +47,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: @edu-control-spacing-base;
   .m-fake-flex-gap(@edu-control-spacing-wide);
 }
 

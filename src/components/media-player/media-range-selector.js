@@ -10,6 +10,8 @@ import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { getAccessibleUrl, getSourceDuration } from '../../utils/source-utils.js';
 import { analyzeMediaUrl, ensureValidMediaPosition } from '../../utils/media-utils.js';
 
+const MINIMUM_LENGTH_IN_MILLISECONDS = 100;
+
 function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaRangeSelector');
@@ -163,26 +165,27 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
                   <span>
                     {t('selectRangeLabel')}
                   </span>
-                  <Button
-                    onClick={handleSetAsStartClick}
-                    disabled={currentRange[1] <= currentPosition}
-                    >
-                    {`${t('as')} ${t('startTime')}`}
-                  </Button>
-                  <Button
-                    onClick={handleSetAsEndClick}
-                    disabled={currentPosition <= currentRange[0]}
-                    >
-                    {`${t('as')} ${t('endTime')}`}
-                  </Button>
+                  <div className="MediaRangeSelector-selectorQuickSelectButtons">
+                    <Button
+                      onClick={handleSetAsStartClick}
+                      disabled={currentRange[1] <= currentPosition}
+                      >
+                      {`${t('as')} ${t('startTime')}`}
+                    </Button>
+                    <Button
+                      onClick={handleSetAsEndClick}
+                      disabled={currentPosition <= currentRange[0]}
+                      >
+                      {`${t('as')} ${t('endTime')}`}
+                    </Button>
+                  </div>
                 </div>
                 <div className="MediaRangeSelector-selectorFineTunning">
                   <div className="MediaRangeSelector-selectorFineTunningInput">
                     <span><b>{t('startTime')}:</b></span>
                     <TimecodeFineTunningInput
                       lowerLimit={0}
-                      upperLimit={currentEndTime}
-                      roundToLowerLimit
+                      upperLimit={currentEndTime - MINIMUM_LENGTH_IN_MILLISECONDS}
                       value={currentStartTime}
                       onValueChange={handleStartFineTunningValueChange}
                       />
@@ -190,9 +193,8 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
                   <div className="MediaRangeSelector-selectorFineTunningInput">
                     <span><b>{t('endTime')}:</b></span>
                     <TimecodeFineTunningInput
-                      lowerLimit={currentStartTime}
+                      lowerLimit={currentStartTime + MINIMUM_LENGTH_IN_MILLISECONDS}
                       upperLimit={currentMediaInfo?.duration || 0}
-                      roundToUpperLimit
                       value={currentEndTime}
                       onValueChange={handleEndFineTunningValueChange}
                       />

@@ -410,6 +410,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
                 {!mainTrackPlaybackDuration && formatPercentage(chapters[selectedChapterIndex].startPosition)}
                 {!!mainTrackPlaybackDuration && (
                   <TimecodeFineTunningInput
+                    key={selectedChapterIndex}
                     disabled={selectedChapterIndex === 0}
                     lowerLimit={selectedChapterLowerTimecodeLimit}
                     upperLimit={selectedChapterUpperTimecodeLimit}

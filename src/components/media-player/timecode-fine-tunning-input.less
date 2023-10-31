@@ -1,24 +1,25 @@
 .TimecodeFineTunningInput {
   display: grid;
-  gap: 30px;
   align-items: center;
   place-content: start;
   grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+}
+
+.TimecodeFineTunningInput-value {
+  width: 120px;
+  position: relative;
+}
+
+.TimecodeFineTunningInput-valueInvalidMessage {
+  position: absolute;
+  color: @edu-error-color;
+  font-size: @edu-font-size-xs;
 }
 
 .TimecodeFineTunningInput-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  .m-fake-flex-gap(@edu-control-spacing-base);
-}
-
-.TimecodeFineTunningInput-select {
-  width: 80px !important;
-}
-
-.TimecodeFineTunningInput-unit {
-  &.is-disabled {
-    color: @edu-text-color-secondary;
-  }
+  display: grid;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-base;
+  width: 70px;
 }
