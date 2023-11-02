@@ -23,7 +23,7 @@ class MediaLibraryService {
     return this.mediaLibraryItemStore.getAllMediaLibraryItems();
   }
 
-  async getSearchableMediaLibraryItemsByTags({ query }) {
+  async getSearchableMediaLibraryItemsByTags(query) {
     const textQuery = createTextSearchQuery(query, ['tags']);
     const items = await this._getSearchableMediaLibraryItems({ textQuery });
     return items;
