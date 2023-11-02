@@ -141,7 +141,7 @@ function Search({ PageTemplate }) {
       .filter(row => selectedTags.every(selectedTag => row.tags.some(tag => tag.toLowerCase() === selectedTag)));
 
     if (searchResourceType !== SEARCH_RESOURCE_TYPE.any) {
-      filteredRows = filteredRows.filter(row => row.type === searchResourceType);
+      filteredRows = filteredRows.filter(row => row.searchResourceType === searchResourceType);
     }
     const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
@@ -156,16 +156,16 @@ function Search({ PageTemplate }) {
   const handleSearcheResourceTypeChange = event => setSearchResourceType(event.target.value);
 
   const renderType = (_, row) => {
-    const Icon = row.type === SEARCH_RESOURCE_TYPE.document
+    const Icon = row.searchResourceType === SEARCH_RESOURCE_TYPE.document
       ? DocumentIcon
-      : getResourceIconByResourceType({ resourceType: row.type });
+      : getResourceIconByResourceType({ resourceType: row.searchResourceType });
 
-    const tooltip = row.type === SEARCH_RESOURCE_TYPE.document
-      ? t('documentIconTooltip')
-      : t(`common:resourceType_${row.type}`);
+    const tooltip = row.searchResourceType === SEARCH_RESOURCE_TYPE.document
+      ? t('common:searchResourceType_document')
+      : t(`common:resourceType_${row.searchResourceType}`);
 
     return (
-      <div className="SearchPage-cellType">
+      <div className="u-cell-type-icon">
         <Tooltip title={tooltip}>
           <Icon />
         </Tooltip>
@@ -179,7 +179,7 @@ function Search({ PageTemplate }) {
       `${t('lastUpdate')}: ${formatDate(row.updatedOn)}`
     ].join(' | ');
 
-    const url = row.type === SEARCH_RESOURCE_TYPE.document
+    const url = row.searchResourceType === SEARCH_RESOURCE_TYPE.document
       ? routes.getDocUrl({ id: row._id, slug: row.slug })
       : '';
 

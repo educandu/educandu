@@ -147,10 +147,10 @@ class ClientDataMappingService {
   mapSearchableResults({ documents, mediaLibraryItems }) {
     const mappedDocuments = documents.map(document => ({
       _id: document._id,
-      type: SEARCH_RESOURCE_TYPE.document,
       tags: document.tags,
       slug: document.slug,
       title: document.title,
+      searchResourceType: SEARCH_RESOURCE_TYPE.document,
       relevance: document.relevance,
       shortDescription: document.shortDescription,
       createdOn: document.createdOn.toISOString(),
@@ -162,10 +162,10 @@ class ClientDataMappingService {
 
       return {
         _id: mediaLibraryItem._id,
-        type: resourceType,
         tags: mediaLibraryItem.tags,
         slug: null,
         title: urlUtils.getFileName(mediaLibraryItem.url),
+        searchResourceType: resourceType,
         relevance: mediaLibraryItem.relevance,
         shortDescription: mediaLibraryItem.shortDescription,
         createdOn: mediaLibraryItem.createdOn.toISOString(),

@@ -13,6 +13,7 @@ import ResourceInfoCell from '../resource-info-cell.js';
 import { SORTING_DIRECTION, TABS } from './constants.js';
 import { replaceItem } from '../../utils/array-utils.js';
 import React, { useEffect, useMemo, useState } from 'react';
+import DocumentIcon from '../icons/general/document-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
@@ -225,6 +226,16 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
+  const renderType = () => {
+    return (
+      <div className="u-cell-type-icon">
+        <Tooltip title={t('common:searchResourceType_document')}>
+          <DocumentIcon />
+        </Tooltip>
+      </div>
+    );
+  };
+
   const renderDocumentTitle = (_title, row) => {
     const doc = documents.find(d => d._id === row.documentId);
     if (!doc) {
@@ -312,6 +323,12 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   };
 
   const columns = [
+    {
+      title: t('common:type'),
+      key: 'type',
+      render: renderType,
+      width: '60px'
+    },
     {
       title: t('common:title'),
       dataIndex: 'title',

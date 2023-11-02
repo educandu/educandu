@@ -1843,10 +1843,6 @@
     "totalItems": {
       "en": "{count, plural, =1 {# result} other {# results}} found\n",
       "de": "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden\n"
-    },
-    "documentIconTooltip": {
-      "en": "document",
-      "de": "Dokument"
     }
   },
   "userProfile": {
@@ -4313,6 +4309,10 @@
     "notificationsTooltip": {
       "en": "You {count, plural, =0 {don't have any notifications} =1 {have # notification} other {have # notifications}}",
       "de": "Du hast {count, plural, =0 {keine Benachrichtigungen} =1 {# Benachrichtigung} other {# Benachrichtigungen}}"
+    },
+    "searchResourceType_document": {
+      "en": "document",
+      "de": "Dokument"
     },
     "resourceType_none": {
       "en": "(not available)",
