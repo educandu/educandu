@@ -7,16 +7,16 @@ import { useService } from '../../container-context.js';
 import { replaceItem } from '../../../utils/array-utils.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaLibraryEditScreen from './media-library-edit-screen.js';
-import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibrarySearchScreen from './media-library-search-screen.js';
 import MediaLibraryUploadScreen from './media-library-upload-screen.js';
 import { getCookie, setSessionCookie } from '../../../common/cookie.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import { MEDIA_SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { mapSearchResourceTypeToMediaLibraryResourceTypes } from '../../../utils/media-library-utils.js';
 import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
+import { mapMediaSearchResourceTypeToMediaLibraryResourceTypes } from '../../../utils/media-library-utils.js';
 
 const SCREEN = {
   search: 'search',
@@ -36,7 +36,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
-  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceType: SEARCH_RESOURCE_TYPE.any });
+  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceType: MEDIA_SEARCH_RESOURCE_TYPE.any });
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
@@ -49,7 +49,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
 
     try {
       setIsLoading(true);
-      const resourceTypes = mapSearchResourceTypeToMediaLibraryResourceTypes(searchResourceType);
+      const resourceTypes = mapMediaSearchResourceTypeToMediaLibraryResourceTypes(searchResourceType);
       const foundItems = await mediaLibraryApiClient.queryMediaLibraryItems({ query: searchTerm, resourceTypes });
       if (isMounted.current) {
         setFiles(foundItems);

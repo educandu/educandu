@@ -5,8 +5,8 @@ import { useIsMounted } from '../../../ui/hooks.js';
 import { useService } from '../../container-context.js';
 import { ensureIsUnique } from '../../../utils/array-utils.js';
 import WikimediaSearchScreen from './wikimedia-search-screen.js';
-import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
+import { MEDIA_SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import WikimediaApiClient from '../../../api-clients/wikimedia-api-client.js';
 import { mapSearchResourceTypeToWikimediaApiFileTypes, processWikimediaResponse } from '../../../utils/wikimedia-utils.js';
@@ -26,7 +26,7 @@ function WikimediaScreens({ initialUrl, onSelect, onCancel }) {
   const [highlightedFile, setHighlightedFile] = useState(null);
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
-  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceType: SEARCH_RESOURCE_TYPE.any });
+  const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceType: MEDIA_SEARCH_RESOURCE_TYPE.any });
 
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = newScreen => setScreenStack(oldVal => oldVal[oldVal.length - 1] !== newScreen ? [...oldVal, newScreen] : oldVal);
