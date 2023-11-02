@@ -7,7 +7,7 @@ import TrackMixerDisplay from './track-mixer-display.js';
 import MediaPlayerControls from './media-player-controls.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../empty-state.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 const sourcesCanBeConsideredEqual = (sources1, sources2) => {
   if (!sources1 || !sources2 || sources1 === sources2) {
@@ -43,12 +43,13 @@ function MultitrackMediaPlayer({
 }) {
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [loopMedia, setLoopMedia] = useState(false);
   const [trackStates, setTrackStates] = useState([]);
-  const [playbackRate, setPlaybackRate] = useState(1);
   const [lastSources, setLastSources] = useState(null);
   const [trackVolumes, setTrackVolumes] = useState([]);
   const [mixVolume, setMixVolume] = useState(initialVolume);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(DEFAULT_MEDIA_PLAYBACK_RATE);
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
   const screenMode = showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none;
@@ -188,6 +189,12 @@ function MultitrackMediaPlayer({
     // Stop only secondary tracks, as to not reset progress to 0.
     // Main track is internally (at player level) paused within range, not stopped.
     triggerStopAllSecondaryTracks();
+
+    if (loopMedia) {
+      // As the secondary tracks have not yet been stopped during this tick
+      // we have to re-start everything on the next tick only.
+      setTimeout(() => triggerPlayMainTrack(), 0);
+    }
   };
 
   const handleMainTrackSeekStart = () => {
@@ -204,13 +211,16 @@ function MultitrackMediaPlayer({
         <MediaPlayerControls
           volume={mixVolume}
           isPlaying={isPlaying}
+          loopMedia={loopMedia}
           screenMode={screenMode}
+          playbackRate={playbackRate}
           playedMilliseconds={playedMilliseconds}
           durationInMilliseconds={trackStates[0]?.durationInMilliseconds || 0}
           onVolumeChange={setMixVolume}
           onPlayClick={triggerPlayAll}
           onPauseClick={triggerPauseAll}
           onPlaybackRateChange={setPlaybackRate}
+          onLoopMediaChange={setLoopMedia}
           />
         {!!showTrackMixer && trackStates.length > 1 && (
           <div className="MultitrackMediaPlayer-trackMixerDisplay">

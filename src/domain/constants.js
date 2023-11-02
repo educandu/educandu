@@ -271,3 +271,7 @@ export const HTTP_STATUS = {
 export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
 
 export const LOADING_SPINNER_MINIMUM_PERIOD_IN_MILLISECONDS = 1000;
+
+export const MEDIA_PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
+export const DEFAULT_MEDIA_PLAYBACK_RATE = 1;

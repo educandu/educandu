@@ -1,19 +1,16 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { Fragment } from 'react';
 import { Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
-import React, { Fragment, useState } from 'react';
+import { CheckOutlined } from '@ant-design/icons';
 import { useNumberFormat } from '../locale-context.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
-import DownloadIcon from '../icons/general/download-icon.js';
-import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
-import { CheckOutlined, FastForwardOutlined } from '@ant-design/icons';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
-
-const NORMAL_PLAYBACK_RATE = 1;
-const PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+import { BrandSpeedtestIcon, DownloadIcon, RepeatIcon, RepeatOffIcon } from '../icons/tabler-icons.js';
+import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
 
 function MediaPlayerControls({
   durationInMilliseconds,
@@ -22,31 +19,35 @@ function MediaPlayerControls({
   playedMilliseconds,
   screenMode,
   volume,
+  loopMedia,
+  playbackRate,
   onDownloadClick,
   onPauseClick,
   onPlaybackRateChange,
+  onLoopMediaChange,
   onPlayClick,
   onVolumeChange
 }) {
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
-  const [playbackRate, setPlaybackRate] = useState(NORMAL_PLAYBACK_RATE);
 
   const handlePlaybackRateMenuItemClick = ({ key }) => {
-    const newPlaybackRate = Number(key);
-    setPlaybackRate(newPlaybackRate);
-    onPlaybackRateChange(newPlaybackRate);
+    onPlaybackRateChange(Number(key));
+  };
+
+  const handleLoopToggleButtonClick = () => {
+    onLoopMediaChange(!loopMedia);
   };
 
   const getPlaybackRateMenuItems = () => {
-    return PLAYBACK_RATES.map(rate => ({
+    return MEDIA_PLAYBACK_RATES.map(rate => ({
       key: rate.toString(),
       label: (
         <div className="MediaPlayerControls-playbackRateItem">
           <div className="MediaPlayerControls-playbackRateItemSelection">
             {rate === playbackRate && <CheckOutlined />}
           </div>
-          {rate === NORMAL_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
+          {rate === DEFAULT_MEDIA_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
         </div>
       )
     }));
@@ -59,6 +60,10 @@ function MediaPlayerControls({
     return durationInMilliseconds
       ? <Fragment>{formattedPlayedTime}&nbsp;/&nbsp;{formattedDuration}</Fragment>
       : <Fragment>--:--&nbsp;/&nbsp;--:--</Fragment>;
+  };
+
+  const renderMediaPlaybackRate = () => {
+    return <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>;
   };
 
   return (
@@ -82,11 +87,18 @@ function MediaPlayerControls({
             >
             <Button
               type="link"
-              icon={playbackRate === NORMAL_PLAYBACK_RATE ? <FastForwardOutlined /> : null}
+              icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <BrandSpeedtestIcon /> : null}
               >
-              {playbackRate === NORMAL_PLAYBACK_RATE ? null : <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>}
+              {playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? null : renderMediaPlaybackRate()}
             </Button>
           </Dropdown>
+          {!!onLoopMediaChange && (
+            <Button
+              type="link"
+              icon={loopMedia ? <RepeatIcon /> : <RepeatOffIcon size="1em" stroke={1} />}
+              onClick={handleLoopToggleButtonClick}
+              />
+          )}
           {!!onDownloadClick && (
             <Button type="link" icon={<DownloadIcon />} onClick={onDownloadClick} />
           )}
@@ -103,10 +115,13 @@ MediaPlayerControls.propTypes = {
   playedMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   volume: PropTypes.number.isRequired,
+  loopMedia: PropTypes.bool.isRequired,
+  playbackRate: PropTypes.oneOf(MEDIA_PLAYBACK_RATES).isRequired,
   onDownloadClick: PropTypes.func,
   onPauseClick: PropTypes.func.isRequired,
   onPlayClick: PropTypes.func.isRequired,
-  onPlaybackRateChange: PropTypes.func,
+  onPlaybackRateChange: PropTypes.func.isRequired,
+  onLoopMediaChange: PropTypes.func,
   onVolumeChange: PropTypes.func.isRequired
 };
 
@@ -114,7 +129,7 @@ MediaPlayerControls.defaultProps = {
   millisecondsLength: 0,
   screenMode: MEDIA_SCREEN_MODE.video,
   onDownloadClick: null,
-  onPlaybackRateChange: () => {}
+  onLoopMediaChange: null
 };
 
 export default MediaPlayerControls;

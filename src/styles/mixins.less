@@ -362,12 +362,23 @@
   opacity: 0.9;
 }
 
+@keyframes fade-in-animation {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+}
+
 .m-video-play-overlay {
   .m-mask;
+  opacity: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.2);
+  animation: fade-in-animation 300ms ease-in 300ms forwards;
 }
 
 .m-user-form-title {
