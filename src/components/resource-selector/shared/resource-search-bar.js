@@ -60,7 +60,7 @@ function ResourceSearchBar({ isLoading, initialSearchParams, onSearch }) {
         <RadioButton value={MEDIA_SEARCH_RESOURCE_TYPE.video}>{t(`common:resourceType_${MEDIA_SEARCH_RESOURCE_TYPE.video}`)}</RadioButton>
         <RadioButton value={MEDIA_SEARCH_RESOURCE_TYPE.image}>{t(`common:resourceType_${MEDIA_SEARCH_RESOURCE_TYPE.image}`)}</RadioButton>
         <RadioButton value={MEDIA_SEARCH_RESOURCE_TYPE.pdf}>{t(`common:resourceType_${MEDIA_SEARCH_RESOURCE_TYPE.pdf}`)}</RadioButton>
-        <RadioButton value={MEDIA_SEARCH_RESOURCE_TYPE.any}>{t('common:any')}</RadioButton>
+        <RadioButton value={MEDIA_SEARCH_RESOURCE_TYPE.any}>{t(`common:resourceType_${MEDIA_SEARCH_RESOURCE_TYPE.any}`)}</RadioButton>
       </RadioGroup>
     </div>
   );

@@ -14,10 +14,11 @@ import CloseIcon from '../icons/general/close-icon.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import { getResourceIcon } from '../../utils/resource-utils.js';
+import DocumentIcon from '../icons/general/document-icon.js';
 import { SEARCH_RESOURCE_TYPE } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
+import { getResourceIconByResourceType } from '../../utils/resource-utils.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -69,7 +70,7 @@ function Search({ PageTemplate }) {
 
   const [searchText, setSearchText] = useState(requestQuery.query);
   const [selectedTags, setSelectedTags] = useState(requestQuery.tags);
-  const [resourceType, setResourceType] = useState(requestQuery.type);
+  const [searchResourceType, setSearchResourceType] = useState(requestQuery.type);
   const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
 
@@ -95,7 +96,7 @@ function Search({ PageTemplate }) {
     const queryParams = {
       query: searchText,
       tags: selectedTags,
-      type: resourceType,
+      type: searchResourceType,
       page: pagination.page,
       pageSize: pagination.pageSize,
       sorting: sorting.value,
@@ -103,7 +104,7 @@ function Search({ PageTemplate }) {
     };
 
     history.replaceState(null, '', routes.getSearchUrl(queryParams));
-  }, [searchText, selectedTags, resourceType, sorting, pagination]);
+  }, [searchText, selectedTags, searchResourceType, sorting, pagination]);
 
   useEffect(() => {
     (async () => {
@@ -139,26 +140,33 @@ function Search({ PageTemplate }) {
     let filteredRows = newRows
       .filter(row => selectedTags.every(selectedTag => row.tags.some(tag => tag.toLowerCase() === selectedTag)));
 
-    if (resourceType !== SEARCH_RESOURCE_TYPE.any) {
-      filteredRows = filteredRows.filter(row => row.type === resourceType);
+    if (searchResourceType !== SEARCH_RESOURCE_TYPE.any) {
+      filteredRows = filteredRows.filter(row => row.type === searchResourceType);
     }
     const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
     setDisplayedRows(sortedRows);
-  }, [searchResults, selectedTags, resourceType, sorting, sorters]);
+  }, [searchResults, selectedTags, searchResourceType, sorting, sorters]);
 
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
   const handleResultTableChange = ({ current, pageSize }) => setPagination({ page: current, pageSize });
-  const handleResourceTypeChange = event => setResourceType(event.target.value);
+  const handleSearcheResourceTypeChange = event => setSearchResourceType(event.target.value);
 
   const renderType = (_, row) => {
-    const Icon = getResourceIcon({ url: row.title });
+    const Icon = row.type === SEARCH_RESOURCE_TYPE.document
+      ? DocumentIcon
+      : getResourceIconByResourceType({ resourceType: row.type });
+
+    const tooltip = row.type === SEARCH_RESOURCE_TYPE.document
+      ? t('documentIconTooltip')
+      : t(`common:resourceType_${row.type}`);
+
     return (
       <div className="SearchPage-cellType">
-        <Tooltip title={t('common:document')}>
+        <Tooltip title={tooltip}>
           <Icon />
         </Tooltip>
       </div>
@@ -250,13 +258,13 @@ function Search({ PageTemplate }) {
           )}
         </div>
 
-        <RadioGroup value={resourceType} disabled={isSearching} onChange={handleResourceTypeChange}>
+        <RadioGroup className="SearchPage-typeFilter" value={searchResourceType} disabled={isSearching} onChange={handleSearcheResourceTypeChange}>
           <RadioButton value={SEARCH_RESOURCE_TYPE.document}>{t('common:document')}</RadioButton>
           <RadioButton value={SEARCH_RESOURCE_TYPE.audio}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.audio}`)}</RadioButton>
           <RadioButton value={SEARCH_RESOURCE_TYPE.video}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.video}`)}</RadioButton>
           <RadioButton value={SEARCH_RESOURCE_TYPE.image}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.image}`)}</RadioButton>
           <RadioButton value={SEARCH_RESOURCE_TYPE.pdf}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.pdf}`)}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t('common:any')}</RadioButton>
+          <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.any}`)}</RadioButton>
         </RadioGroup>
 
         <Table
