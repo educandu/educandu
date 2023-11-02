@@ -5,7 +5,6 @@ import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
-import { Button, message, Table, Tag } from 'antd';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
@@ -15,13 +14,14 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import { SORTING_DIRECTION, TABS } from './constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useMemo, useState } from 'react';
+import { Button, message, Table, Tag, Tooltip } from 'antd';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
-import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
+import { getResourceIconByUrl, getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -192,6 +192,18 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
   };
 
+  const renderType = (_, row) => {
+    const Icon = getResourceIconByUrl({ url: row.url });
+
+    return (
+      <div className="u-cell-type-icon">
+        <Tooltip title={t(`common:resourceType_${row.resourceType}`)}>
+          <Icon />
+        </Tooltip>
+      </div>
+    );
+  };
+
   const renderName = (_, row) => {
     return (
       <ResourceInfoCell
@@ -248,6 +260,12 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   };
 
   const columns = [
+    {
+      title: t('common:type'),
+      key: 'type',
+      render: renderType,
+      width: '60px'
+    },
     {
       title: t('common:name'),
       dataIndex: 'name',
