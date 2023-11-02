@@ -57,11 +57,23 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
     onResourceLoad({ resourceType, durationInMilliseconds });
   };
 
-  const renderAudio = () => (
-    <div className="ResourcePreview-mediaPlayer">
-      <MediaPlayer sourceUrl={sourceUrl} canDownload screenMode={MEDIA_SCREEN_MODE.none} onDuration={handleMediaLoad} />
-    </div>
-  );
+  const renderAudio = () => {
+    const classes = classNames(
+      'ResourcePreview-mediaPlayer',
+      { 'ResourcePreview-mediaPlayer--fullWidth': fullWidth }
+    );
+
+    return (
+      <div className={classes}>
+        <MediaPlayer
+          canDownload
+          sourceUrl={sourceUrl}
+          screenMode={MEDIA_SCREEN_MODE.none}
+          onDuration={handleMediaLoad}
+          />
+      </div>
+    );
+  };
 
   const renderVideo = () => (
     <div className="ResourcePreview-mediaPlayer">

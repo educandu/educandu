@@ -51,51 +51,53 @@ function MediaLibraryItem({ initialState, PageTemplate }) {
           <div className="MediaLibraryItemPage-infoName">{mediaLibraryItem.name}</div>
           <div className="MediaLibraryItemPage-infoDescription">{mediaLibraryItem.shortDescription}</div>
 
-          <div className="MediaLibraryItemPage-infoSection">
-            <div>{t('common:size')}:</div>
-            <div>{prettyBytes(mediaLibraryItem.size)}</div>
-          </div>
-          {!!hasDimensions && (
+          <div className="MediaLibraryItemPage-infoSections">
             <div className="MediaLibraryItemPage-infoSection">
               <div>{t('common:size')}:</div>
-              <div>{resourceData.width}&nbsp;⨉&nbsp;{resourceData.height}&nbsp;px</div>
+              <div>{prettyBytes(mediaLibraryItem.size)}</div>
             </div>
-          )}
-          {!!hasDuration && (
+            {!!hasDimensions && (
+              <div className="MediaLibraryItemPage-infoSection">
+                <div>{t('common:size')}:</div>
+                <div>{resourceData.width}&nbsp;⨉&nbsp;{resourceData.height}&nbsp;px</div>
+              </div>
+            )}
+            {!!hasDuration && (
+              <div className="MediaLibraryItemPage-infoSection">
+                <div>{t('common:duration')}:</div>
+                {formatMediaPosition({ position: 1, duration: resourceData.durationInMilliseconds, formatPercentage })}
+              </div>
+            )}
             <div className="MediaLibraryItemPage-infoSection">
-              <div>{t('common:duration')}:</div>
-              {formatMediaPosition({ position: 1, duration: resourceData.durationInMilliseconds, formatPercentage })}
-            </div>
-          )}
-          <div className="MediaLibraryItemPage-infoSection">
-            <div>{t('created')}:</div>
-            <div>
-              {formatDate(mediaLibraryItem.createdOn)}, <a href={createdByProfileUrl}>{mediaLibraryItem.createdBy.displayName}</a>
-            </div>
-          </div>
-          {!!hasUpdateDate && (
-            <div className="MediaLibraryItemPage-infoSection">
-              <div>{t('updated')}:</div>
+              <div>{t('created')}:</div>
               <div>
-                {formatDate(mediaLibraryItem.updatedOn)}, <a href={updatedByProfileUrl}>{mediaLibraryItem.updatedBy.displayName}</a>
+                {formatDate(mediaLibraryItem.createdOn)}, <a href={createdByProfileUrl}>{mediaLibraryItem.createdBy.displayName}</a>
               </div>
             </div>
-          )}
-          {!!languageNames && (
+            {!!hasUpdateDate && (
+              <div className="MediaLibraryItemPage-infoSection">
+                <div>{t('updated')}:</div>
+                <div>
+                  {formatDate(mediaLibraryItem.updatedOn)}, <a href={updatedByProfileUrl}>{mediaLibraryItem.updatedBy.displayName}</a>
+                </div>
+              </div>
+            )}
+            {!!languageNames && (
+              <div className="MediaLibraryItemPage-infoSection">
+                <div>{t('common:languages')}:</div>
+                <div>{languageNames}</div>
+              </div>
+            )}
+            {!!mediaLibraryItem.licenses.length && (
+              <div className="MediaLibraryItemPage-infoSection">
+                <div>{t('common:licenses')}:</div>
+                <div>{mediaLibraryItem.licenses.join(', ')}</div>
+              </div>
+            )}
             <div className="MediaLibraryItemPage-infoSection">
-              <div>{t('common:languages')}:</div>
-              <div>{languageNames}</div>
+              <div>{t('common:tags')}:</div>
+              <div>{mediaLibraryItem.tags.join(', ')}</div>
             </div>
-          )}
-          {!!mediaLibraryItem.licenses.length && (
-            <div className="MediaLibraryItemPage-infoSection">
-              <div>{t('common:licenses')}:</div>
-              <div>{mediaLibraryItem.licenses.join(', ')}</div>
-            </div>
-          )}
-          <div className="MediaLibraryItemPage-infoSection">
-            <div>{t('common:tags')}:</div>
-            <div>{mediaLibraryItem.tags.join(', ')}</div>
           </div>
 
           <ResourceUrl url={mediaLibraryItem.url} />
