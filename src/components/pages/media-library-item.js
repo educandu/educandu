@@ -88,12 +88,15 @@ function MediaLibraryItem({ initialState, PageTemplate }) {
                 <div>{languageNames}</div>
               </div>
             )}
-            {!!mediaLibraryItem.licenses.length && (
-              <div className="MediaLibraryItemPage-infoSection">
-                <div>{t('common:licenses')}:</div>
+            <div className="MediaLibraryItemPage-infoSection">
+              <div>{t('common:licenses')}:</div>
+              {!mediaLibraryItem.allRightsReserved && (
                 <div>{mediaLibraryItem.licenses.join(', ')}</div>
-              </div>
-            )}
+              )}
+              {!!mediaLibraryItem.allRightsReserved && (
+                <div>{t('common:allRightsReserved')}</div>
+              )}
+            </div>
             <div className="MediaLibraryItemPage-infoSection">
               <div>{t('common:tags')}:</div>
               <div>{mediaLibraryItem.tags.join(', ')}</div>
