@@ -1634,10 +1634,6 @@
       "en": "There are unsaved changes",
       "de": "Änderungen nicht gespeichert"
     },
-    "editMetadata": {
-      "en": "Edit metadata",
-      "de": "Metadaten bearbeiten"
-    },
     "saveChanges": {
       "en": "Save changes",
       "de": "Änderungen speichern"
@@ -3573,6 +3569,10 @@
     "edit": {
       "en": "Edit",
       "de": "Bearbeiten"
+    },
+    "editMetadata": {
+      "en": "Edit metadata",
+      "de": "Metadaten bearbeiten"
     },
     "apply": {
       "en": "Apply",

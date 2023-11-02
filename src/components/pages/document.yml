@@ -29,9 +29,6 @@ document:
   statusIconTooltipDirty:
     en: There are unsaved changes
     de: Änderungen nicht gespeichert
-  editMetadata:
-    en: Edit metadata
-    de: Metadaten bearbeiten
   saveChanges:
     en: Save changes
     de: Änderungen speichern

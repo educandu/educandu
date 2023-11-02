@@ -914,7 +914,7 @@ function Document({ initialState, PageTemplate }) {
         className="DocumentPage-focusHeaderButton"
         onClick={handleEditMetadataOpen}
         >
-        {t('editMetadata')}
+        {t('common:editMetadata')}
       </Button>
       <Button
         icon={<SaveIcon />}
