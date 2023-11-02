@@ -10,7 +10,7 @@ import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import DocumentInputStore from '../stores/document-input-store.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, EVENT_TYPE, FAVORITE_TYPE, ROLE, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, EVENT_TYPE, FAVORITE_TYPE, ROLE, SEARCH_RESOURCE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
@@ -1264,6 +1264,64 @@ describe('client-data-mapping-service', () => {
           notificationIds: ['notification-id-I'],
           firstCreatedOn: now.toISOString(),
           lastCreatedOn: now.toISOString()
+        }
+      ]);
+    });
+  });
+
+  describe('mapSearchableResults', () => {
+    let result;
+
+    beforeEach(() => {
+      const documents = [
+        {
+          _id: 'D1',
+          title: 'Document A',
+          tags: ['music'],
+          slug: 'music-lesson',
+          relevance: 1,
+          shortDescription: 'Details about document content',
+          createdOn: new Date('2024-11-01T10:00:00.000Z'),
+          updatedOn: new Date('2024-11-01T10:01:00.000Z')
+        }
+      ];
+      const mediaLibraryItems = [
+        {
+          _id: 'MLI1',
+          tags: ['theory'],
+          url: 'cdn://media-library/theory.jpeg',
+          relevance: 2,
+          shortDescription: 'Details about media item content',
+          createdOn: new Date('2024-11-01T10:02:00.000Z'),
+          updatedOn: new Date('2024-11-01T10:03:00.000Z')
+        }
+      ];
+
+      result = sut.mapSearchableResults({ documents, mediaLibraryItems });
+    });
+
+    it('should map documents and media library items to a unified result set', () => {
+      expect(result).toEqual([
+        {
+          _id: 'D1',
+          title: 'Document A',
+          tags: ['music'],
+          slug: 'music-lesson',
+          searchResourceType: SEARCH_RESOURCE_TYPE.document,
+          relevance: 1,
+          shortDescription: 'Details about document content',
+          createdOn: '2024-11-01T10:00:00.000Z',
+          updatedOn: '2024-11-01T10:01:00.000Z'
+        }, {
+          _id: 'MLI1',
+          tags: ['theory'],
+          slug: null,
+          title: 'theory.jpeg',
+          relevance: 2,
+          searchResourceType: SEARCH_RESOURCE_TYPE.image,
+          shortDescription: 'Details about media item content',
+          createdOn: '2024-11-01T10:02:00.000Z',
+          updatedOn: '2024-11-01T10:03:00.000Z'
         }
       ]);
     });

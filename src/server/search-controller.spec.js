@@ -2,7 +2,6 @@ import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'node:events';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
-import cloneDeep from '../utils/clone-deep.js';
 import SearchController from './search-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -10,6 +9,7 @@ describe('search-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
+  let mediaLibraryService;
   let documentService;
   let user;
   let req;
@@ -20,12 +20,15 @@ describe('search-controller', () => {
     documentService = {
       getSearchableDocumentsMetadataByTags: sandbox.stub()
     };
+    mediaLibraryService = {
+      getSearchableMediaLibraryItemsByTags: sandbox.stub()
+    };
     clientDataMappingService = {
-      mapDocsOrRevisions: sandbox.stub()
+      mapSearchableResults: sandbox.stub()
     };
     user = { _id: uniqueId.create() };
 
-    sut = new SearchController(documentService, clientDataMappingService, {});
+    sut = new SearchController(documentService, mediaLibraryService, clientDataMappingService, {});
   });
 
   afterEach(() => {
@@ -34,7 +37,8 @@ describe('search-controller', () => {
 
   describe('handleGetSearchResult', () => {
     let documents;
-    let mappedDocuments;
+    let mappedResults;
+    let mediaLibraryItems;
 
     beforeEach(() => new Promise((resolve, reject) => {
       req = { user, query: { query: 'Musik' } };
@@ -46,10 +50,16 @@ describe('search-controller', () => {
         { _id: 'D2' },
         { _id: 'D3' }
       ];
-      mappedDocuments = cloneDeep(documents);
+      mediaLibraryItems = [
+        { _id: 'I1' },
+        { _id: 'I2' },
+        { _id: 'I3' }
+      ];
+      mappedResults = [...documents, ...mediaLibraryItems];
 
-      clientDataMappingService.mapDocsOrRevisions.resolves(mappedDocuments);
       documentService.getSearchableDocumentsMetadataByTags.resolves(documents);
+      mediaLibraryService.getSearchableMediaLibraryItemsByTags.resolves(mediaLibraryItems);
+      clientDataMappingService.mapSearchableResults.resolves(mappedResults);
 
       sut.handleGetSearchResult(req, res).catch(reject);
     }));
@@ -58,8 +68,12 @@ describe('search-controller', () => {
       assert.calledWith(documentService.getSearchableDocumentsMetadataByTags, 'Musik');
     });
 
-    it('should call clientDataMappingService.mapDocsOrRevisions', () => {
-      assert.calledWith(clientDataMappingService.mapDocsOrRevisions, documents, user);
+    it('should call mediaLibraryService.getSearchableMediaLibraryItemsByTags', () => {
+      assert.calledWith(mediaLibraryService.getSearchableMediaLibraryItemsByTags, 'Musik');
+    });
+
+    it('should call clientDataMappingService.mapSearchableResults', () => {
+      assert.calledWith(clientDataMappingService.mapSearchableResults, { documents, mediaLibraryItems });
     });
 
     it('should return status 200', () => {
