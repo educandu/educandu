@@ -12,7 +12,7 @@ import FileUnknownFilledIcon from '../../icons/files/file-unknown-filled-icon.js
 import { getAccessibleUrl, isInternalSourceType } from '../../../utils/source-utils.js';
 import { MEDIA_SCREEN_MODE, ORIENTATION, RESOURCE_TYPE } from '../../../domain/constants.js';
 
-function ResourcePreview({ urlOrFile, onResourceLoad }) {
+function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
   const [pdf, setPdf] = useState(null);
   const [pdfFile, setPdfFile] = useState(null);
   const clientConfig = useService(ClientConfig);
@@ -95,8 +95,14 @@ function ResourcePreview({ urlOrFile, onResourceLoad }) {
     <div className="ResourcePreview-icon"><FileUnknownFilledIcon /></div>
   );
 
+  const classes = classNames(
+    'ResourcePreview',
+    { 'ResourcePreview--fullWidth': fullWidth },
+    { 'ResourcePreview--pdf': resourceType === RESOURCE_TYPE.pdf }
+  );
+
   return (
-    <div className={classNames('ResourcePreview', { 'ResourcePreview--pdf': resourceType === RESOURCE_TYPE.pdf })}>
+    <div className={classes}>
       {resourceType === RESOURCE_TYPE.audio && renderAudio()}
       {resourceType === RESOURCE_TYPE.video && renderVideo()}
       {resourceType === RESOURCE_TYPE.image && renderImage()}
@@ -111,10 +117,12 @@ ResourcePreview.propTypes = {
     PropTypes.string,
     browserFileType
   ]).isRequired,
+  fullWidth: PropTypes.bool,
   onResourceLoad: PropTypes.func
 };
 
 ResourcePreview.defaultProps = {
+  fullWidth: false,
   onResourceLoad: () => {}
 };
 

@@ -1727,6 +1727,20 @@
       "de": "Empfohlene Suchbegriffe"
     }
   },
+  "mediaLibraryItem": {
+    "title": {
+      "en": "Media center resource",
+      "de": "Mediathek-Ressource"
+    },
+    "created": {
+      "en": "Created",
+      "de": "Erstellt"
+    },
+    "updated": {
+      "en": "Updated",
+      "de": "Aktualisiert"
+    }
+  },
   "redaction": {
     "documentsTabTitle": {
       "en": "Documents",

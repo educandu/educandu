@@ -1,12 +1,41 @@
-.MediaLibraryItemPage {
-  display: grid;
-  gap: 20px;
-  grid-auto-flow: column;
-  grid-template-rows: auto;
+.MediaLibraryItemPage {}
 
-  @media @edu-media-phone {
-    grid-auto-flow: row;
-    grid-template-rows: repeat(2, auto);
-    grid-template-columns: auto;
-  }
+.MediaLibraryItemPage-title {
+  display: flex;
+  padding-bottom: 5px;
+  font-weight: bold;
+  font-size: @edu-heading-1-size;
+  margin-bottom: 50px;
+}
+
+.MediaLibraryItemPage-resource {
+  border: 1px solid @edu-border-color-dark;
+  border-radius: @edu-border-radius-base;
+  padding: @edu-content-padding;
+}
+
+.MediaLibraryItemPage-info {
+  margin: 30px auto 0 auto;
+  max-width: 600px;
+}
+
+.MediaLibraryItemPage-infoName {
+  display: flex;
+  font-weight: bold;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.MediaLibraryItemPage-infoDescription {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.MediaLibraryItemPage-infoSection {
+  display: grid;
+  gap: 10px;
+  margin: 5px 0;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 3fr;
 }
