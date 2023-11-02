@@ -65,8 +65,8 @@ function RegistrationForm() {
     const termsPage = settings.termsPage?.[uiLanguage];
     const agreementValidationRules = [
       {
-        message: t('confirmTerms'),
-        validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error(t('confirmTerms')))
+        message: t('common:confirmationValidationMessage'),
+        validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error(t('common:confirmationValidationMessage')))
       }
     ];
     return (

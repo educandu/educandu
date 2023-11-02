@@ -8,8 +8,13 @@ const licenseSchema = joi.string().valid(...Object.keys(spdxLicenseList));
 const mediaLibraryItemMetadataProperties = {
   shortDescription: joi.string().allow('').max(maxMediaLibraryItemShortDescriptionLength).required(),
   languages: joi.array().items(joi.string().case('lower')).required(),
-  licenses: joi.array().min(1).items(licenseSchema.required()).required(),
-  tags: joi.array().min(1).items(joi.string().required()).required()
+  allRightsReserved: joi.boolean().required(),
+  licenses: joi.alternatives().conditional('allRightsReserved', {
+    is: true,
+    then: joi.array().max(0).items(licenseSchema).required(),
+    otherwise: joi.array().min(1).items(licenseSchema).required()
+  }),
+  tags: joi.array().min(1).items(joi.string()).required()
 };
 
 export const mediaLibraryItemDbSchema = joi.object({

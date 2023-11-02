@@ -97,7 +97,7 @@ function MediaLibaryItemModal({
     }
   };
 
-  const handleCreateItemFinish = async ({ shortDescription, languages, licenses, tags, optimizeImage }) => {
+  const handleCreateItemFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImage }) => {
     try {
       setIsSaving(true);
       const processedFile = await processFileBeforeUpload({ file: fileInfo.file, optimizeImage });
@@ -106,6 +106,7 @@ function MediaLibaryItemModal({
         shortDescription,
         languages,
         licenses,
+        allRightsReserved,
         tags
       });
 
@@ -118,7 +119,7 @@ function MediaLibaryItemModal({
     }
   };
 
-  const handleUpdateItemFinish = async ({ shortDescription, languages, licenses, tags }) => {
+  const handleUpdateItemFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags }) => {
     try {
       setIsSaving(true);
       const updatedItem = await mediaLibraryApiClient.updateMediaLibraryItem({
@@ -126,6 +127,7 @@ function MediaLibaryItemModal({
         shortDescription,
         languages,
         licenses,
+        allRightsReserved,
         tags
       });
 

@@ -95,6 +95,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
         shortDescription,
         languages,
         licenses,
+        allRightsReserved: false,
         tags
       });
 
@@ -260,7 +261,7 @@ function AudioWaveformGeneratorDialog({ isOpen, onSelect, onCancel }) {
             {!!imageUrl && renderGeneratedWafevorm()}
             {renderColorPickers()}
           </div>
-          <MediaLibraryMetadataForm form={metadataForm} onFinish={handleMetadataFormFinish} />
+          <MediaLibraryMetadataForm form={metadataForm} useAllRightsReserved={false} onFinish={handleMetadataFormFinish} />
         </div>
       </Modal>
       <ResourceSelectorDialog

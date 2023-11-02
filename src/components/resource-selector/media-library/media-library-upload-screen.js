@@ -55,7 +55,7 @@ function MediaLibraryUploadScreen({
     }
   };
 
-  const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, tags, optimizeImage }) => {
+  const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImage }) => {
     const currentFile = fileInfo?.file || null;
     if (!currentFile) {
       return;
@@ -69,6 +69,7 @@ function MediaLibraryUploadScreen({
         shortDescription,
         languages,
         licenses,
+        allRightsReserved,
         tags
       });
       setCreatedItem(result);

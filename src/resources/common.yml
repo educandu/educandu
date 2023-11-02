@@ -665,3 +665,9 @@ common:
   border:
     en: Border
     de: Rahmen
+  confirmationValidationMessage:
+    en: Please confirm that you agree.
+    de: Bitte bestätige, dass du einverstanden bist.
+  allRightsReserved:
+    en: All rights reserved
+    de: Alle Rechte vorbehalten

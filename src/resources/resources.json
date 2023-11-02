@@ -2020,9 +2020,21 @@
     }
   },
   "mediaLibraryMetadataForm": {
+    "freeLicense": {
+      "en": "Free license",
+      "de": "Freie Lizenz"
+    },
     "licensesRequired": {
       "en": "Please select at least one license",
       "de": "Bitte wähle mindestens eine Lizenz aus"
+    },
+    "allRightsReservedConfirmedRequired": {
+      "en": "Please confirm that you agree",
+      "de": "Bitte bestätige, dass du einverstanden bist"
+    },
+    "allRightsReservedConfirmationWarning": {
+      "en": "I hereby confirm that I am aware of the legal implications when making copyright protected material available.",
+      "de": "Ich bestätige hiermit, dass ich mir der rechtlichen Implikationen bewusst bin, wenn ich urheberrechtlich geschütztes Material bereitstelle."
     },
     "tagsInfo": {
       "en": "Specify search terms with which your resource can be found by other users",
@@ -4389,6 +4401,14 @@
     "border": {
       "en": "Border",
       "de": "Rahmen"
+    },
+    "confirmationValidationMessage": {
+      "en": "Please confirm that you agree.",
+      "de": "Bitte bestätige, dass du einverstanden bist."
+    },
+    "allRightsReserved": {
+      "en": "All rights reserved",
+      "de": "Alle Rechte vorbehalten"
     }
   },
   "pageNames": {
