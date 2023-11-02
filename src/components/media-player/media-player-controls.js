@@ -9,7 +9,6 @@ import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
 import DownloadIcon from '../icons/general/download-icon.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
-import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import { CheckOutlined, FastForwardOutlined } from '@ant-design/icons';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
@@ -33,46 +32,26 @@ function MediaPlayerControls({
   const { t } = useTranslation('mediaPlayerControls');
   const [playbackRate, setPlaybackRate] = useState(NORMAL_PLAYBACK_RATE);
 
-  const handleSettingsMenuItemClick = ({ key }) => {
-    if (key === 'download') {
-      onDownloadClick();
-    } else if (key.startsWith('playbackRate-')) {
-      const newPlaybackRate = Number(key.split('-')[1]);
-      setPlaybackRate(newPlaybackRate);
-      onPlaybackRateChange(newPlaybackRate);
-    }
+  const handlePlaybackRateMenuItemClick = ({ key }) => {
+    const newPlaybackRate = Number(key);
+    setPlaybackRate(newPlaybackRate);
+    onPlaybackRateChange(newPlaybackRate);
   };
 
-  const getSettingsMenuItems = () => {
-    const items = [];
-
-    if (onDownloadClick) {
-      items.push({
-        key: 'download',
-        label: t('download'),
-        icon: <DownloadIcon className="u-dropdown-icon" />
-      });
-    }
-
-    items.push({
-      key: 'playbackRate',
-      label: t('playbackRate'),
-      icon: <FastForwardOutlined />,
-      children: PLAYBACK_RATES.map(rate => ({
-        key: `playbackRate-${rate}`,
-        label: (
-          <div className="MediaPlayerControls-playbackRateItem">
-            <div className="MediaPlayerControls-playbackRateItemSelection">
-              {rate === playbackRate && <CheckOutlined />}
-            </div>
-            {rate === NORMAL_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
+  const getPlaybackRateMenuItems = () => {
+    return PLAYBACK_RATES.map(rate => ({
+      key: rate.toString(),
+      label: (
+        <div className="MediaPlayerControls-playbackRateItem">
+          <div className="MediaPlayerControls-playbackRateItemSelection">
+            {rate === playbackRate && <CheckOutlined />}
           </div>
-        )
-      }))
-    });
-
-    return items;
+          {rate === NORMAL_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
+        </div>
+      )
+    }));
   };
+
   const formattedPlayedTime = formatMillisecondsAsDuration(playedMilliseconds, { millisecondsLength });
   const formattedDuration = formatMillisecondsAsDuration(durationInMilliseconds, { millisecondsLength });
 
@@ -96,16 +75,21 @@ function MediaPlayerControls({
       </div>
       <div className="MediaPlayerControls-controlsGroup">
         <div>
-          {playbackRate !== NORMAL_PLAYBACK_RATE && (
-            <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>
-          )}
           <Dropdown
+            placement="top"
             trigger={['click']}
-            placement="bottomRight"
-            menu={{ items: getSettingsMenuItems(), onClick: handleSettingsMenuItemClick }}
+            menu={{ items: getPlaybackRateMenuItems(), onClick: handlePlaybackRateMenuItemClick }}
             >
-            <Button type="link" icon={<SettingsIcon />} />
+            <Button
+              type="link"
+              icon={playbackRate === NORMAL_PLAYBACK_RATE ? <FastForwardOutlined /> : null}
+              >
+              {playbackRate === NORMAL_PLAYBACK_RATE ? null : <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>}
+            </Button>
           </Dropdown>
+          {!!onDownloadClick && (
+            <Button type="link" icon={<DownloadIcon />} onClick={onDownloadClick} />
+          )}
         </div>
       </div>
     </div>
