@@ -2,15 +2,17 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import DocumentService from '../services/document-service.js';
 import { validateQuery } from '../domain/validation-middleware.js';
+import MediaLibraryService from '../services/media-library-service.js';
 import { getSearchQuerySchema } from '../domain/schemas/search-schemas.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 export default class SearchController {
-  static dependencies = [DocumentService, ClientDataMappingService, PageRenderer];
+  static dependencies = [DocumentService, MediaLibraryService, ClientDataMappingService, PageRenderer];
 
-  constructor(documentService, clientDataMappingService, pageRenderer) {
+  constructor(documentService, mediaLibraryService, clientDataMappingService, pageRenderer) {
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
+    this.mediaLibraryService = mediaLibraryService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
@@ -20,11 +22,13 @@ export default class SearchController {
 
   async handleGetSearchResult(req, res) {
     const { query } = req.query;
-    const docs = await this.documentService.getSearchableDocumentsMetadataByTags(query);
 
-    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(docs, req.user);
+    const documents = await this.documentService.getSearchableDocumentsMetadataByTags(query);
+    const mediaLibraryItems = await this.mediaLibraryService.getSearchableMediaLibraryItemsByTags({ query });
 
-    return res.send({ documents: mappedDocuments });
+    const searchableResults = await this.clientDataMappingService.mapSearchableResults({ documents, mediaLibraryItems });
+
+    return res.send(searchableResults);
   }
 
   registerPages(router) {

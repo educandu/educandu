@@ -6,11 +6,12 @@ import RoomStore from '../stores/room-store.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import { getResourceType } from '../utils/resource-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import DocumentInputStore from '../stores/document-input-store.js';
 import { getAccessibleUrl, getPortableUrl } from '../utils/source-utils.js';
-import { BATCH_TYPE, EVENT_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import permissions, { getUserPermissions, hasUserPermission } from '../domain/permissions.js';
+import { BATCH_TYPE, SEARCH_RESOURCE_TYPE, EVENT_TYPE, FAVORITE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import {
   extractUserIdsFromDocsOrRevisions,
   extractUserIdsFromMediaLibraryItems,
@@ -141,6 +142,38 @@ class ClientDataMappingService {
         ? this._mapDocOrRevision(docOrRevision, userMap, grantedPermissions)
         : docOrRevision;
     });
+  }
+
+  mapSearchableResults({ documents, mediaLibraryItems }) {
+    const mappedDocuments = documents.map(document => ({
+      _id: document._id,
+      type: SEARCH_RESOURCE_TYPE.document,
+      tags: document.tags,
+      slug: document.slug,
+      title: document.title,
+      relevance: document.relevance,
+      shortDescription: document.shortDescription,
+      createdOn: document.createdOn.toISOString(),
+      updatedOn: document.updatedOn.toISOString()
+    }));
+
+    const mappedMediaLibraryItems = mediaLibraryItems.map(mediaLibraryItem => {
+      const resourceType = getResourceType(mediaLibraryItem.url);
+
+      return {
+        _id: mediaLibraryItem._id,
+        type: resourceType,
+        tags: mediaLibraryItem.tags,
+        slug: null,
+        title: urlUtils.getFileName(mediaLibraryItem.url),
+        relevance: mediaLibraryItem.relevance,
+        shortDescription: mediaLibraryItem.shortDescription,
+        createdOn: mediaLibraryItem.createdOn.toISOString(),
+        updatedOn: mediaLibraryItem.updatedOn.toISOString()
+      };
+    });
+
+    return [...mappedDocuments, ...mappedMediaLibraryItems];
   }
 
   async mapMediaLibraryItem(mediaLibraryItem, user) {
