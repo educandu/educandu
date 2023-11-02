@@ -611,7 +611,7 @@ common:
   resourceType_pdf:
     en: PDF
     de: PDF
-  any:
+  resourceType_any:
     en: any
     de: Alle
   creator:

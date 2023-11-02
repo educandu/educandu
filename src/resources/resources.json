@@ -1843,6 +1843,10 @@
     "totalItems": {
       "en": "{count, plural, =1 {# result} other {# results}} found\n",
       "de": "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden\n"
+    },
+    "documentIconTooltip": {
+      "en": "document",
+      "de": "Dokument"
     }
   },
   "userProfile": {
@@ -4334,7 +4338,7 @@
       "en": "PDF",
       "de": "PDF"
     },
-    "any": {
+    "resourceType_any": {
       "en": "any",
       "de": "Alle"
     },

@@ -13,3 +13,6 @@ search:
       {count, plural, =1 {# result} other {# results}} found
     de: |
       {count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden
+  documentIconTooltip:
+    en: document
+    de: Dokument
