@@ -16,6 +16,7 @@ export const PAGE_NAME = {
   userProfile: 'user-profile',
   documentInput: 'document-input',
   resetPassword: 'reset-password',
+  mediaLibraryItem: 'media-library-item',
   browserNotSupported: 'browser-not-supported',
   connectExternalAccount: 'connect-external-account',
   roomMembershipConfirmation: 'room-membership-confirmation'

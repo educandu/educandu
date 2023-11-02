@@ -13,6 +13,7 @@ import ResourceInfoCell from '../resource-info-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { SORTING_DIRECTION, TABS } from './constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import PreviewIcon from '../icons/general/preview-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, message, Table, Tag, Tooltip } from 'antd';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -153,7 +154,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     setFilter(newFilter);
   };
 
-  const handleInfoCellTitleClick = (row, event) => {
+  const handlePreviewItemClick = row => {
     event.preventDefault();
     event.stopPropagation();
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
@@ -207,7 +208,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   const renderName = (_, row) => {
     return (
       <ResourceInfoCell
-        url={row.url}
+        url={routes.getMediaLibraryItemUrl(row._id)}
         title={row.name}
         shortDescription={row.shortDescription}
         subtext={
@@ -222,7 +223,6 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
             </div>
           </div>
         }
-        onTitleClick={event => handleInfoCellTitleClick(row, event)}
         />
     );
   };
@@ -242,6 +242,12 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
     return (
       <div>
         <ActionButtonGroup>
+          <ActionButton
+            title={t('common:preview')}
+            icon={<PreviewIcon />}
+            intent={ACTION_BUTTON_INTENT.default}
+            onClick={() => handlePreviewItemClick(row)}
+            />
           <ActionButton
             title={t('common:edit')}
             icon={<EditIcon />}

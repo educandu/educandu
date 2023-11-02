@@ -35,6 +35,11 @@ class MediaLibraryService {
     return items;
   }
 
+  async getMediaLibraryItemById(mediaLibraryItemId) {
+    const mediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemById(mediaLibraryItemId);
+    return mediaLibraryItem || null;
+  }
+
   async getMediaLibraryItemByUrl({ url }) {
     const mediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemByUrl(url);
     return mediaLibraryItem || null;

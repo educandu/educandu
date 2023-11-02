@@ -1,0 +1,12 @@
+.MediaLibraryItemPage {
+  display: grid;
+  gap: 20px;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: auto;
+  }
+}
