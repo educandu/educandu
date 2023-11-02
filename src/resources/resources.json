@@ -4007,8 +4007,8 @@
       "de": "Text"
     },
     "resource_pdf": {
-      "en": "document",
-      "de": "Dokument"
+      "en": "PDF document",
+      "de": "PDF-Dokument"
     },
     "resource_none": {
       "en": "Unknown",

@@ -100,12 +100,17 @@ export const RESOURCE_TYPE = {
   pdf: 'pdf'
 };
 
-export const SEARCH_RESOURCE_TYPE = {
+export const MEDIA_SEARCH_RESOURCE_TYPE = {
   audio: RESOURCE_TYPE.audio,
   video: RESOURCE_TYPE.video,
   image: RESOURCE_TYPE.image,
   pdf: RESOURCE_TYPE.pdf,
   any: 'any'
+};
+
+export const SEARCH_RESOURCE_TYPE = {
+  document: 'document',
+  ...MEDIA_SEARCH_RESOURCE_TYPE
 };
 
 export const MEDIA_ASPECT_RATIO = {

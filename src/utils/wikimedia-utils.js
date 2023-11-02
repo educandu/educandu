@@ -1,5 +1,5 @@
 import urlUtils from './url-utils.js';
-import { SEARCH_RESOURCE_TYPE } from '../domain/constants.js';
+import { MEDIA_SEARCH_RESOURCE_TYPE } from '../domain/constants.js';
 
 const WIKIMEDIA_COMMONS_PAGE_URL_PREFIX = 'https://commons.wikimedia.org/wiki/File:';
 
@@ -15,17 +15,17 @@ export const WIKIMEDIA_API_FILE_TYPE = {
 
 export function mapSearchResourceTypeToWikimediaApiFileTypes(searchResourceType) {
   const fileTypes = [];
-  if (searchResourceType === SEARCH_RESOURCE_TYPE.image || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+  if (searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.image || searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.any) {
     fileTypes.push(WIKIMEDIA_API_FILE_TYPE.bitmap);
     fileTypes.push(WIKIMEDIA_API_FILE_TYPE.drawing);
   }
-  if (searchResourceType === SEARCH_RESOURCE_TYPE.video || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+  if (searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.video || searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.any) {
     fileTypes.push(WIKIMEDIA_API_FILE_TYPE.video);
   }
-  if (searchResourceType === SEARCH_RESOURCE_TYPE.audio || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+  if (searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.audio || searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.any) {
     fileTypes.push(WIKIMEDIA_API_FILE_TYPE.audio);
   }
-  if (searchResourceType === SEARCH_RESOURCE_TYPE.pdf || searchResourceType === SEARCH_RESOURCE_TYPE.any) {
+  if (searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.pdf || searchResourceType === MEDIA_SEARCH_RESOURCE_TYPE.any) {
     fileTypes.push(WIKIMEDIA_API_FILE_TYPE.pdf);
   }
   return fileTypes;
