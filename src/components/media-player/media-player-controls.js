@@ -95,7 +95,7 @@ function MediaPlayerControls({
           {!!onLoopMediaChange && (
             <Button
               type="link"
-              icon={loopMedia ? <RepeatIcon /> : <RepeatOffIcon size="1em" stroke={1} />}
+              icon={loopMedia ? <RepeatIcon /> : <RepeatOffIcon />}
               onClick={handleLoopToggleButtonClick}
               />
           )}
