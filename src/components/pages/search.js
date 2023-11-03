@@ -92,7 +92,7 @@ function Search({ PageTemplate }) {
     const queryParams = {
       query: searchText,
       tags: selectedTags,
-      page: pagination.current,
+      page: pagination.page,
       pageSize: pagination.pageSize,
       sorting: sorting.value,
       direction: sorting.direction
