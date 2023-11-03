@@ -121,8 +121,8 @@
       "de": "Video-Quelle"
     },
     "aboutDocument": {
-      "en": "'Learn more' document\n",
-      "de": "'Mehr erfahren'-Dokument\n"
+      "en": "'Learn more' document",
+      "de": "'Mehr erfahren'-Dokument"
     }
   },
   "homepageTrustLogosSettings": {
@@ -581,16 +581,16 @@
       "de": "Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen.\n\n**Hinweis**: Öffentliche Dokumente können nicht gelöscht werden!\n"
     },
     "createPublicDocumentMarkdown": {
-      "en": "Create **public** document\n",
-      "de": "**Öffentliches** Dokument erstellen\n"
+      "en": "Create **public** document",
+      "de": "**Öffentliches** Dokument erstellen"
     },
     "ownDocumentOnly": {
       "en": "Only documents created by me",
       "de": "Nur Dokumente, die ich erstellt habe"
     },
     "documentsCount": {
-      "en": "{count, plural, =1 {# document} other {# documents}}\n",
-      "de": "{count, plural, =1 {# Dokument} other {# Dokumente}}\n"
+      "en": "{count, plural, =1 {# document} other {# documents}}",
+      "de": "{count, plural, =1 {# Dokument} other {# Dokumente}}"
     }
   },
   "favoritesTab": {
@@ -669,8 +669,8 @@
       "de": "Alle entfernen"
     },
     "documentInputNotAvailable": {
-      "en": "[Document input no longer available]\n",
-      "de": "[Dokumenteingabe nicht mehr verfügbar]\n"
+      "en": "[Document input no longer available]",
+      "de": "[Dokumenteingabe nicht mehr verfügbar]"
     }
   },
   "roomsTab": {
@@ -1163,8 +1163,8 @@
   },
   "homepageTrustFooter": {
     "supportedBy": {
-      "en": "Supported by:\n",
-      "de": "Unterstützt durch:\n"
+      "en": "Supported by:",
+      "de": "Unterstützt durch:"
     }
   },
   "imageEditor": {
@@ -1828,14 +1828,6 @@
     }
   },
   "search": {
-    "searching": {
-      "en": "Searching ...",
-      "de": "Suchen ..."
-    },
-    "documentsFound": {
-      "en": "{count, plural, =1 {# document} other {# documents}} found\n",
-      "de": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n"
-    },
     "sorting": {
       "en": "Sorting",
       "de": "Sortierung"
@@ -1847,6 +1839,10 @@
     "lastUpdate": {
       "en": "Last update",
       "de": "Letzte Änderung"
+    },
+    "totalItems": {
+      "en": "{count, plural, =1 {# result} other {# results}} found",
+      "de": "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden"
     }
   },
   "userProfile": {
@@ -1856,7 +1852,7 @@
     },
     "moreButton": {
       "en": "Show {count} more",
-      "de": "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen\n"
+      "de": "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen"
     }
   },
   "passwordFormItem": {
@@ -2027,10 +2023,6 @@
     "licensesRequired": {
       "en": "Please select at least one license",
       "de": "Bitte wähle mindestens eine Lizenz aus"
-    },
-    "allRightsReservedConfirmedRequired": {
-      "en": "Please confirm that you agree",
-      "de": "Bitte bestätige, dass du einverstanden bist"
     },
     "allRightsReservedConfirmationWarning": {
       "en": "I hereby confirm that I am aware of the legal implications when making copyright protected material available.",
@@ -2515,8 +2507,8 @@
       "de": "E-Mail an {email} schicken."
     },
     "pendingInvitation": {
-      "en": "[Pending invitation]\n",
-      "de": "[Ausstehende Einladung]\n"
+      "en": "[Pending invitation]",
+      "de": "[Ausstehende Einladung]"
     },
     "invitationExpiresOnDate": {
       "en": "Expires on {date}.",
@@ -3906,10 +3898,6 @@
       "en": "Sorted by title",
       "de": "Nach Titel sortiert"
     },
-    "sortedByLanguage": {
-      "en": "Sorted by language",
-      "de": "Nach Sprache sortiert"
-    },
     "sortedByCreatedOn": {
       "en": "Sorted by creation date",
       "de": "Nach Erstellungsdatum sortiert"
@@ -4015,8 +4003,8 @@
       "de": "Text"
     },
     "resource_pdf": {
-      "en": "document",
-      "de": "Dokument"
+      "en": "PDF document",
+      "de": "PDF-Dokument"
     },
     "resource_none": {
       "en": "Unknown",
@@ -4175,8 +4163,8 @@
       "de": "Zu den Favoriten hinzufügen"
     },
     "favoritedByTooltip": {
-      "en": "Favorited by {count, plural, =1 {# user} other {# users}}.\n",
-      "de": "Als Favorit markiert von {count} Benutzer.\n"
+      "en": "Favorited by {count, plural, =1 {# user} other {# users}}.",
+      "de": "Als Favorit markiert von {count} Benutzer."
     },
     "createDocument": {
       "en": "Create document",
@@ -4318,6 +4306,10 @@
       "en": "You {count, plural, =0 {don't have any notifications} =1 {have # notification} other {have # notifications}}",
       "de": "Du hast {count, plural, =0 {keine Benachrichtigungen} =1 {# Benachrichtigung} other {# Benachrichtigungen}}"
     },
+    "searchResourceType_document": {
+      "en": "document",
+      "de": "Dokument"
+    },
     "resourceType_none": {
       "en": "(not available)",
       "de": "(nicht verfügbar)"
@@ -4342,7 +4334,7 @@
       "en": "PDF",
       "de": "PDF"
     },
-    "any": {
+    "resourceType_any": {
       "en": "any",
       "de": "Alle"
     },
@@ -4351,16 +4343,16 @@
       "de": "Ersteller"
     },
     "documentNotAvailable": {
-      "en": "[Document no longer available]\n",
-      "de": "[Dokument nicht mehr verfügbar]\n"
+      "en": "[Document no longer available]",
+      "de": "[Dokument nicht mehr verfügbar]"
     },
     "roomNotAvailable": {
-      "en": "[Room no longer available]\n",
-      "de": "[Raum nicht mehr verfügbar]\n"
+      "en": "[Room no longer available]",
+      "de": "[Raum nicht mehr verfügbar]"
     },
     "accountClosed": {
-      "en": "[This user account was closed]\n",
-      "de": "[Dieses Benutzerkonto wurde geschlossen]\n"
+      "en": "[This user account was closed]",
+      "de": "[Dieses Benutzerkonto wurde geschlossen]"
     },
     "cannotPlayMediaEmptyStateTitle": {
       "en": "Cannot play media",

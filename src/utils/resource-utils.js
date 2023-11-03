@@ -47,9 +47,7 @@ export const getResourceType = url => {
     : RESOURCE_TYPE.none;
 };
 
-export const getResourceIcon = ({ url, filled }) => {
-  const resourceType = getResourceType(url);
-
+export const getResourceIconByResourceType = ({ resourceType, filled }) => {
   switch (resourceType) {
     case RESOURCE_TYPE.image:
       return filled ? FileImageFilledIcon : FileImageIcon;
@@ -62,6 +60,12 @@ export const getResourceIcon = ({ url, filled }) => {
     default:
       return filled ? FileUnknownFilledIcon : FileUnknownIcon;
   }
+};
+
+export const getResourceIconByUrl = ({ url, filled }) => {
+  const resourceType = getResourceType(url);
+
+  return getResourceIconByResourceType({ resourceType, filled });
 };
 
 export const getResourceTypeTranslation = ({ resourceType, t }) => {

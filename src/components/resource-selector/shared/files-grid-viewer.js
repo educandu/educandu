@@ -10,7 +10,7 @@ import DeleteIcon from '../../icons/general/delete-icon.js';
 import { RESOURCE_TYPE } from '../../../domain/constants.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
 import { commonMediaFileShape } from '../../../ui/default-prop-types.js';
-import { getResourceIcon, getResourceType } from '../../../utils/resource-utils.js';
+import { getResourceIconByUrl, getResourceType } from '../../../utils/resource-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../../action-button.js';
 
 function FilesGridViewer({
@@ -47,7 +47,7 @@ function FilesGridViewer({
     if (getResourceType(file.url) === RESOURCE_TYPE.image) {
       fileDisplay = <img className="FilesGridViewer-fileDisplayImage" src={file.url} />;
     } else {
-      const Icon = getResourceIcon({ url: file.url, filled: true });
+      const Icon = getResourceIconByUrl({ url: file.url, filled: true });
       fileDisplay = <Icon />;
     }
     const classes = classNames('FilesGridViewer-fileContainer', { 'is-selected': file.portableUrl === selectedFileUrl });

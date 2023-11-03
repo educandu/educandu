@@ -10,7 +10,7 @@ import PreviewIcon from '../../icons/general/preview-icon.js';
 import DimensionsProvider from '../../dimensions-provider.js';
 import { useDateFormat, useLocale } from '../../locale-context.js';
 import { commonMediaFileShape } from '../../../ui/default-prop-types.js';
-import { getResourceIcon, getResourceType } from '../../../utils/resource-utils.js';
+import { getResourceIconByUrl, getResourceType } from '../../../utils/resource-utils.js';
 
 const HEADER_ROW_HEIGHT_IN_PX = 47;
 
@@ -52,7 +52,7 @@ function FilesListViewer({
       return null;
     }
 
-    const Icon = getResourceIcon({ url: row.url });
+    const Icon = getResourceIconByUrl({ url: row.key });
     return (
       <Tooltip title={name}>
         <div className="FilesListViewer-fileNameCell" >

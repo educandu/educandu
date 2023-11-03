@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { SearchOutlined } from '@ant-design/icons';
 import WikimediaFilesViewer from './wikimedia-files-viewer.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
-import { SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import { wikimediaFileShape } from '../../../ui/default-prop-types.js';
+import { MEDIA_SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 
 const SCREEN = {
@@ -136,7 +136,7 @@ WikimediaSearchScreen.propTypes = {
   onSelectInitialUrlClick: PropTypes.func.isRequired,
   searchParams: PropTypes.shape({
     searchTerm: PropTypes.string.isRequired,
-    searchResourceType: PropTypes.oneOf(Object.values(SEARCH_RESOURCE_TYPE)).isRequired
+    searchResourceType: PropTypes.oneOf(Object.values(MEDIA_SEARCH_RESOURCE_TYPE)).isRequired
   }).isRequired
 };
 

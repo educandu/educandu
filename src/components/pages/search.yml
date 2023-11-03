@@ -1,12 +1,4 @@
 search:
-  searching:
-    en: Searching ...
-    de: Suchen ...
-  documentsFound:
-    en: |
-      {count, plural, =1 {# document} other {# documents}} found
-    de: |
-      {count, plural, =1 {# Dokument} other {# Dokumente}} gefunden
   sorting:
     en: Sorting
     de: Sortierung
@@ -16,3 +8,6 @@ search:
   lastUpdate:
     en: Last update
     de: Letzte Änderung
+  totalItems:
+    en: "{count, plural, =1 {# result} other {# results}} found"
+    de: "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden"

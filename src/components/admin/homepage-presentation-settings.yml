@@ -3,7 +3,5 @@ homepagePresentationSettings:
     en: Video source
     de: Video-Quelle
   aboutDocument:
-    en: |
-      'Learn more' document
-    de: |
-      'Mehr erfahren'-Dokument
+    en: "'Learn more' document"
+    de: "'Mehr erfahren'-Dokument"

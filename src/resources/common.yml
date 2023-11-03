@@ -283,9 +283,6 @@ common:
   sortedByTitle:
     en: Sorted by title
     de: Nach Titel sortiert
-  sortedByLanguage:
-    en: Sorted by language
-    de: Nach Sprache sortiert
   sortedByCreatedOn:
     en: Sorted by creation date
     de: Nach Erstellungsdatum sortiert
@@ -365,8 +362,8 @@ common:
     en: text
     de: Text
   resource_pdf:
-    en: document
-    de: Dokument
+    en: PDF document
+    de: PDF-Dokument
   resource_none:
     en: Unknown
     de: Unbekannt
@@ -487,10 +484,8 @@ common:
     en: Add to favorites
     de: Zu den Favoriten hinzufügen
   favoritedByTooltip:
-    en: |
-      Favorited by {count, plural, =1 {# user} other {# users}}.
-    de: |
-      Als Favorit markiert von {count} Benutzer.
+    en: "Favorited by {count, plural, =1 {# user} other {# users}}."
+    de: "Als Favorit markiert von {count} Benutzer."
   createDocument:
     en: Create document
     de: Dokument erstellen
@@ -596,6 +591,9 @@ common:
   notificationsTooltip:
     en: "You {count, plural, =0 {don't have any notifications} =1 {have # notification} other {have # notifications}}"
     de: "Du hast {count, plural, =0 {keine Benachrichtigungen} =1 {# Benachrichtigung} other {# Benachrichtigungen}}"
+  searchResourceType_document:
+    en: document
+    de: Dokument
   resourceType_none:
     en: (not available)
     de: (nicht verfügbar)
@@ -614,27 +612,21 @@ common:
   resourceType_pdf:
     en: PDF
     de: PDF
-  any:
+  resourceType_any:
     en: any
     de: Alle
   creator:
     en: Creator
     de: Ersteller
   documentNotAvailable:
-    en: |
-      [Document no longer available]
-    de: |
-      [Dokument nicht mehr verfügbar]
+    en: "[Document no longer available]"
+    de: "[Dokument nicht mehr verfügbar]"
   roomNotAvailable:
-    en: |
-      [Room no longer available]
-    de: |
-      [Raum nicht mehr verfügbar]
+    en: "[Room no longer available]"
+    de: "[Raum nicht mehr verfügbar]"
   accountClosed:
-    en: |
-      [This user account was closed]
-    de: |
-      [Dieses Benutzerkonto wurde geschlossen]
+    en: "[This user account was closed]"
+    de: "[Dieses Benutzerkonto wurde geschlossen]"
   cannotPlayMediaEmptyStateTitle:
     en: Cannot play media
     de: Wiedergabe nicht möglich

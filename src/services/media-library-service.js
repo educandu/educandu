@@ -23,24 +23,14 @@ class MediaLibraryService {
     return this.mediaLibraryItemStore.getAllMediaLibraryItems();
   }
 
+  async getSearchableMediaLibraryItemsByTags(query) {
+    const items = await this._getSearchableMediaLibraryItems({ query, searchAlsoInNames: false });
+    return items;
+  }
+
   async getSearchableMediaLibraryItemsByTagsOrName({ query, resourceTypes }) {
-    const textQuery = createTextSearchQuery(query, ['tags', 'name']);
-    if (!textQuery.isValid) {
-      return [];
-    }
-
-    const textAndResourceTypeQueryConditions = [textQuery.query, { resourceType: { $in: resourceTypes } }];
-    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions(textAndResourceTypeQueryConditions);
-
-    const positiveTokensArray = [...textQuery.positiveTokens].filter(token => token.toLowerCase());
-    return mediaLibraryItems
-      .map(item => {
-        const exactTagMatchCount = item.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
-        const partialNameMatchCount = positiveTokensArray.filter(token => item.name.toLowerCase().includes(token)).length;
-        const relevance = exactTagMatchCount + partialNameMatchCount;
-        return { ...item, relevance };
-      })
-      .sort(by(item => item.relevance).thenBy(item => item.name));
+    const items = await this._getSearchableMediaLibraryItems({ query, resourceTypes, searchAlsoInNames: true });
+    return items;
   }
 
   async getMediaLibraryItemByUrl({ url }) {
@@ -115,6 +105,40 @@ class MediaLibraryService {
     const sanitizedSearchString = escapeStringRegexp((searchString || '').trim());
     const result = await this.mediaLibraryItemStore.getMediaLibraryItemTagsMatchingText(sanitizedSearchString);
     return result[0]?.uniqueTags || [];
+  }
+
+  async _getSearchableMediaLibraryItems({ query, resourceTypes, searchAlsoInNames }) {
+    const searchKeys = ['tags'];
+    if (searchAlsoInNames) {
+      searchKeys.push('name');
+    }
+
+    const textQuery = createTextSearchQuery(query, searchKeys);
+    if (!textQuery.isValid) {
+      return [];
+    }
+
+    const textAndResourceTypeQueryConditions = [textQuery.query];
+    if (resourceTypes) {
+      textAndResourceTypeQueryConditions.push({ resourceType: { $in: resourceTypes } });
+    }
+
+    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions(textAndResourceTypeQueryConditions);
+
+    const positiveTokensArray = [...textQuery.positiveTokens].filter(token => token.toLowerCase());
+    return mediaLibraryItems
+      .map(item => {
+        const exactTagMatchCount = item.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
+
+        let relevance = exactTagMatchCount;
+        if (searchAlsoInNames) {
+          const partialNameMatchCount = positiveTokensArray.filter(token => item.name.toLowerCase().includes(token)).length;
+          relevance += partialNameMatchCount;
+        }
+
+        return { ...item, relevance };
+      })
+      .sort(by(item => item.relevance).thenBy(item => item.name));
   }
 }
 

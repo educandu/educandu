@@ -12,15 +12,11 @@ documentsTab:
 
       **Hinweis**: Öffentliche Dokumente können nicht gelöscht werden!
   createPublicDocumentMarkdown:
-    en: |
-      Create **public** document
-    de: |
-      **Öffentliches** Dokument erstellen
+    en: "Create **public** document"
+    de: "**Öffentliches** Dokument erstellen"
   ownDocumentOnly:
     en: Only documents created by me
     de: Nur Dokumente, die ich erstellt habe
   documentsCount:
-    en: |
-      {count, plural, =1 {# document} other {# documents}}
-    de: |
-      {count, plural, =1 {# Dokument} other {# Dokumente}}
+    en: "{count, plural, =1 {# document} other {# documents}}"
+    de: "{count, plural, =1 {# Dokument} other {# Dokumente}}"

@@ -18,8 +18,8 @@ import { CloudUploadOutlined, SearchOutlined } from '@ant-design/icons';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { SEARCH_RESOURCE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
+import { MEDIA_SEARCH_RESOURCE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -226,7 +226,7 @@ MediaLibrarySearchScreen.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   searchParams: PropTypes.shape({
     searchTerm: PropTypes.string.isRequired,
-    searchResourceType: PropTypes.oneOf(Object.values(SEARCH_RESOURCE_TYPE)).isRequired
+    searchResourceType: PropTypes.oneOf(Object.values(MEDIA_SEARCH_RESOURCE_TYPE)).isRequired
   }).isRequired,
   onFileDrop: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
