@@ -24,14 +24,12 @@ class MediaLibraryService {
   }
 
   async getSearchableMediaLibraryItemsByTags(query) {
-    const textQuery = createTextSearchQuery(query, ['tags']);
-    const items = await this._getSearchableMediaLibraryItems({ textQuery });
+    const items = await this._getSearchableMediaLibraryItems({ query, searchAlsoInNames: false });
     return items;
   }
 
   async getSearchableMediaLibraryItemsByTagsOrName({ query, resourceTypes }) {
-    const textQuery = createTextSearchQuery(query, ['tags', 'name']);
-    const items = await this._getSearchableMediaLibraryItems({ textQuery, resourceTypes });
+    const items = await this._getSearchableMediaLibraryItems({ query, resourceTypes, searchAlsoInNames: true });
     return items;
   }
 
@@ -109,7 +107,13 @@ class MediaLibraryService {
     return result[0]?.uniqueTags || [];
   }
 
-  async _getSearchableMediaLibraryItems({ textQuery, resourceTypes }) {
+  async _getSearchableMediaLibraryItems({ query, resourceTypes, searchAlsoInNames }) {
+    const searchKeys = ['tags'];
+    if (searchAlsoInNames) {
+      searchKeys.push('name');
+    }
+
+    const textQuery = createTextSearchQuery(query, searchKeys);
     if (!textQuery.isValid) {
       return [];
     }
@@ -125,8 +129,13 @@ class MediaLibraryService {
     return mediaLibraryItems
       .map(item => {
         const exactTagMatchCount = item.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
-        const partialNameMatchCount = positiveTokensArray.filter(token => item.name.toLowerCase().includes(token)).length;
-        const relevance = exactTagMatchCount + partialNameMatchCount;
+
+        let relevance = exactTagMatchCount;
+        if (searchAlsoInNames) {
+          const partialNameMatchCount = positiveTokensArray.filter(token => item.name.toLowerCase().includes(token)).length;
+          relevance += partialNameMatchCount;
+        }
+
         return { ...item, relevance };
       })
       .sort(by(item => item.relevance).thenBy(item => item.name));
