@@ -130,7 +130,7 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
     const queryParams = {
       filter,
       tagCategoryFilter,
-      page: pagination.current,
+      page: pagination.page,
       pageSize: pagination.pageSize,
       sorting: sorting.value,
       direction: sorting.direction

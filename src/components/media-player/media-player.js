@@ -11,7 +11,7 @@ import MediaPlayerControls from './media-player-controls.js';
 import { remountOnPropChanges } from '../../ui/react-helper.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
-import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS } from '../../domain/constants.js';
+import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS, DEFAULT_MEDIA_PLAYBACK_RATE } from '../../domain/constants.js';
 
 const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
   const info = { currentPartIndex: -1, isPartEndReached: false };
@@ -44,6 +44,7 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 function MediaPlayer({
   allowPartClick,
   aspectRatio,
+  canLoop,
   canDownload,
   clickToPlay,
   customScreenOverlay,
@@ -80,10 +81,11 @@ function MediaPlayer({
   const clientConfig = useService(ClientConfig);
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [loopMedia, setLoopMedia] = useState(false);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
-  const [internalPlaybackRate, setInternaPlaybackRate] = useState(1);
   const [internalVolume, setInternalVolume] = useState(initialVolume);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
+  const [internalPlaybackRate, setInternaPlaybackRate] = useState(DEFAULT_MEDIA_PLAYBACK_RATE);
 
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
@@ -127,6 +129,9 @@ function MediaPlayer({
       onPartEndReached(parts.length - 1);
     }
     setIsPlaying(false);
+    if (!isSeeking && loopMedia) {
+      playerRef.current.play();
+    }
   };
 
   const handleSeek = milliseconds => {
@@ -271,9 +276,12 @@ function MediaPlayer({
           playedMilliseconds={playedMilliseconds}
           screenMode={screenMode}
           volume={appliedVolume}
+          loopMedia={loopMedia}
+          playbackRate={internalPlaybackRate}
           onDownloadClick={canDownload ? handleDownloadClick : null}
           onPauseClick={handlePauseClick}
           onPlaybackRateChange={setInternaPlaybackRate}
+          onLoopMediaChange={canLoop ? setLoopMedia : null}
           onPlayClick={handlePlayClick}
           onVolumeChange={setInternalVolume}
           />
@@ -285,6 +293,7 @@ function MediaPlayer({
 MediaPlayer.propTypes = {
   allowPartClick: PropTypes.bool,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
+  canLoop: PropTypes.bool,
   canDownload: PropTypes.bool,
   clickToPlay: PropTypes.bool,
   customScreenOverlay: PropTypes.node,
@@ -324,6 +333,7 @@ MediaPlayer.propTypes = {
 MediaPlayer.defaultProps = {
   allowPartClick: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+  canLoop: true,
   canDownload: false,
   clickToPlay: true,
   customScreenOverlay: null,

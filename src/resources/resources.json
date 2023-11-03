@@ -121,8 +121,8 @@
       "de": "Video-Quelle"
     },
     "aboutDocument": {
-      "en": "'Learn more' document\n",
-      "de": "'Mehr erfahren'-Dokument\n"
+      "en": "'Learn more' document",
+      "de": "'Mehr erfahren'-Dokument"
     }
   },
   "homepageTrustLogosSettings": {
@@ -581,16 +581,16 @@
       "de": "Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen.\n\n**Hinweis**: Öffentliche Dokumente können nicht gelöscht werden!\n"
     },
     "createPublicDocumentMarkdown": {
-      "en": "Create **public** document\n",
-      "de": "**Öffentliches** Dokument erstellen\n"
+      "en": "Create **public** document",
+      "de": "**Öffentliches** Dokument erstellen"
     },
     "ownDocumentOnly": {
       "en": "Only documents created by me",
       "de": "Nur Dokumente, die ich erstellt habe"
     },
     "documentsCount": {
-      "en": "{count, plural, =1 {# document} other {# documents}}\n",
-      "de": "{count, plural, =1 {# Dokument} other {# Dokumente}}\n"
+      "en": "{count, plural, =1 {# document} other {# documents}}",
+      "de": "{count, plural, =1 {# Dokument} other {# Dokumente}}"
     }
   },
   "favoritesTab": {
@@ -669,8 +669,8 @@
       "de": "Alle entfernen"
     },
     "documentInputNotAvailable": {
-      "en": "[Document input no longer available]\n",
-      "de": "[Dokumenteingabe nicht mehr verfügbar]\n"
+      "en": "[Document input no longer available]",
+      "de": "[Dokumenteingabe nicht mehr verfügbar]"
     }
   },
   "roomsTab": {
@@ -1163,8 +1163,8 @@
   },
   "homepageTrustFooter": {
     "supportedBy": {
-      "en": "Supported by:\n",
-      "de": "Unterstützt durch:\n"
+      "en": "Supported by:",
+      "de": "Unterstützt durch:"
     }
   },
   "imageEditor": {
@@ -1851,8 +1851,8 @@
       "de": "Letzte Änderung"
     },
     "totalItems": {
-      "en": "{count, plural, =1 {# result} other {# results}} found\n",
-      "de": "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden\n"
+      "en": "{count, plural, =1 {# result} other {# results}} found",
+      "de": "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden"
     }
   },
   "userProfile": {
@@ -1862,7 +1862,7 @@
     },
     "moreButton": {
       "en": "Show {count} more",
-      "de": "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen\n"
+      "de": "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen"
     }
   },
   "passwordFormItem": {
@@ -2517,8 +2517,8 @@
       "de": "E-Mail an {email} schicken."
     },
     "pendingInvitation": {
-      "en": "[Pending invitation]\n",
-      "de": "[Ausstehende Einladung]\n"
+      "en": "[Pending invitation]",
+      "de": "[Ausstehende Einladung]"
     },
     "invitationExpiresOnDate": {
       "en": "Expires on {date}.",
@@ -4177,8 +4177,8 @@
       "de": "Zu den Favoriten hinzufügen"
     },
     "favoritedByTooltip": {
-      "en": "Favorited by {count, plural, =1 {# user} other {# users}}.\n",
-      "de": "Als Favorit markiert von {count} Benutzer.\n"
+      "en": "Favorited by {count, plural, =1 {# user} other {# users}}.",
+      "de": "Als Favorit markiert von {count} Benutzer."
     },
     "createDocument": {
       "en": "Create document",
@@ -4357,16 +4357,16 @@
       "de": "Ersteller"
     },
     "documentNotAvailable": {
-      "en": "[Document no longer available]\n",
-      "de": "[Dokument nicht mehr verfügbar]\n"
+      "en": "[Document no longer available]",
+      "de": "[Dokument nicht mehr verfügbar]"
     },
     "roomNotAvailable": {
-      "en": "[Room no longer available]\n",
-      "de": "[Raum nicht mehr verfügbar]\n"
+      "en": "[Room no longer available]",
+      "de": "[Raum nicht mehr verfügbar]"
     },
     "accountClosed": {
-      "en": "[This user account was closed]\n",
-      "de": "[Dieses Benutzerkonto wurde geschlossen]\n"
+      "en": "[This user account was closed]",
+      "de": "[Dieses Benutzerkonto wurde geschlossen]"
     },
     "cannotPlayMediaEmptyStateTitle": {
       "en": "Cannot play media",

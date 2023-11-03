@@ -97,7 +97,7 @@ function Search({ PageTemplate }) {
       query: searchText,
       tags: selectedTags,
       type: searchResourceType,
-      page: pagination.current,
+      page: pagination.page,
       pageSize: pagination.pageSize,
       sorting: sorting.value,
       direction: sorting.direction

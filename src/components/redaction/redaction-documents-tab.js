@@ -115,7 +115,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   useEffect(() => {
     const queryParams = {
       filter,
-      page: pagination.current,
+      page: pagination.page,
       pageSize: pagination.pageSize,
       sorting: sorting.value,
       direction: sorting.direction
