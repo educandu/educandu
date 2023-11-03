@@ -38,6 +38,11 @@ class MediaLibraryService {
     return mediaLibraryItem || null;
   }
 
+  async getMediaLibraryItemById(mediaLibraryItemId) {
+    const mediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemById(mediaLibraryItemId);
+    return mediaLibraryItem || null;
+  }
+
   async createMediaLibraryItem({ file, metadata, user }) {
     const now = new Date();
     const mediaLibraryItemId = uniqueId.create();

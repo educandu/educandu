@@ -29,6 +29,9 @@ common:
   edit:
     en: Edit
     de: Bearbeiten
+  editMetadata:
+    en: Edit metadata
+    de: Metadaten bearbeiten
   apply:
     en: Apply
     de: Übernehmen

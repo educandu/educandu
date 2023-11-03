@@ -279,7 +279,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       <div>
         <ActionButtonGroup>
           <ActionButton
-            title={t('common:edit')}
+            title={t('common:editMetadata')}
             icon={<EditIcon />}
             intent={ACTION_BUTTON_INTENT.default}
             onClick={() => handleDocumentEditClick(row)}

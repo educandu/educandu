@@ -1634,10 +1634,6 @@
       "en": "There are unsaved changes",
       "de": "Änderungen nicht gespeichert"
     },
-    "editMetadata": {
-      "en": "Edit metadata",
-      "de": "Metadaten bearbeiten"
-    },
     "saveChanges": {
       "en": "Save changes",
       "de": "Änderungen speichern"
@@ -1729,6 +1725,20 @@
     "recommendedSearches": {
       "en": "Recommended searches",
       "de": "Empfohlene Suchbegriffe"
+    }
+  },
+  "mediaLibraryItem": {
+    "title": {
+      "en": "Media center resource",
+      "de": "Mediathek-Ressource"
+    },
+    "created": {
+      "en": "Created",
+      "de": "Erstellt"
+    },
+    "updated": {
+      "en": "Updated",
+      "de": "Aktualisiert"
     }
   },
   "redaction": {
@@ -3569,6 +3579,10 @@
     "edit": {
       "en": "Edit",
       "de": "Bearbeiten"
+    },
+    "editMetadata": {
+      "en": "Edit metadata",
+      "de": "Metadaten bearbeiten"
     },
     "apply": {
       "en": "Apply",

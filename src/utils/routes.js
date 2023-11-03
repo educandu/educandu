@@ -20,6 +20,7 @@ const revisionPrefix = '/revs/';
 const comparisonPrefix = '/comparison/';
 const userProfilePrefix = '/user-profile/';
 const documentInputPrefix = '/doc-inputs/';
+const mediaLibraryPrefix = '/media-library/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
 const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
@@ -141,6 +142,10 @@ function getSamlAuthLoginCallbackPath(providerKey) {
   return urlUtils.concatParts(samlAuthLoginCallbackPrefix, encodeURIComponent(providerKey));
 }
 
+function getMediaLibraryItemUrl(mediaLibraryItemId) {
+  return urlUtils.concatParts(mediaLibraryPrefix, mediaLibraryItemId);
+}
+
 function isApiPath(path) {
   return path.startsWith(apiPrefix);
 }
@@ -177,6 +182,7 @@ export default {
   getDocIdIfDocUrl,
   getSamlAuthLoginPath,
   getSamlAuthLoginCallbackPath,
+  getMediaLibraryItemUrl,
   isApiPath,
   isResetPasswordPath,
   isConnectExternalAccountPath

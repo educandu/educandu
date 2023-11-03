@@ -181,7 +181,7 @@ function Search({ PageTemplate }) {
 
     const url = row.searchResourceType === SEARCH_RESOURCE_TYPE.document
       ? routes.getDocUrl({ id: row._id, slug: row.slug })
-      : '';
+      : routes.getMediaLibraryItemUrl(row._id);
 
     return (
       <ResourceInfoCell
