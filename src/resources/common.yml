@@ -484,10 +484,8 @@ common:
     en: Add to favorites
     de: Zu den Favoriten hinzufügen
   favoritedByTooltip:
-    en: |
-      Favorited by {count, plural, =1 {# user} other {# users}}.
-    de: |
-      Als Favorit markiert von {count} Benutzer.
+    en: "Favorited by {count, plural, =1 {# user} other {# users}}."
+    de: "Als Favorit markiert von {count} Benutzer."
   createDocument:
     en: Create document
     de: Dokument erstellen
@@ -621,20 +619,14 @@ common:
     en: Creator
     de: Ersteller
   documentNotAvailable:
-    en: |
-      [Document no longer available]
-    de: |
-      [Dokument nicht mehr verfügbar]
+    en: "[Document no longer available]"
+    de: "[Dokument nicht mehr verfügbar]"
   roomNotAvailable:
-    en: |
-      [Room no longer available]
-    de: |
-      [Raum nicht mehr verfügbar]
+    en: "[Room no longer available]"
+    de: "[Raum nicht mehr verfügbar]"
   accountClosed:
-    en: |
-      [This user account was closed]
-    de: |
-      [Dieses Benutzerkonto wurde geschlossen]
+    en: "[This user account was closed]"
+    de: "[Dieses Benutzerkonto wurde geschlossen]"
   cannotPlayMediaEmptyStateTitle:
     en: Cannot play media
     de: Wiedergabe nicht möglich

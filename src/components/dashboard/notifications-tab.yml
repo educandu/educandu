@@ -39,7 +39,5 @@ notificationsTab:
     en: Remove all
     de: Alle entfernen
   documentInputNotAvailable:
-    en: |
-      [Document input no longer available]
-    de: |
-      [Dokumenteingabe nicht mehr verfügbar]
+    en: "[Document input no longer available]"
+    de: "[Dokumenteingabe nicht mehr verfügbar]"

@@ -4,5 +4,4 @@ userProfile:
     de: Letzte Beiträge
   moreButton:
     en: Show {count} more
-    de: |
-      {count, plural, =1 {# weiteren} other {# weitere}} anzeigen
+    de: "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen"

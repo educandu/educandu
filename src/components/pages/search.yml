@@ -9,7 +9,5 @@ search:
     en: Last update
     de: Letzte Änderung
   totalItems:
-    en: |
-      {count, plural, =1 {# result} other {# results}} found
-    de: |
-      {count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden
+    en: "{count, plural, =1 {# result} other {# results}} found"
+    de: "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden"
