@@ -185,17 +185,17 @@ export function WhiteboardToolbar({
     <div className="WhiteboardToolbar">
       <div className="WhiteboardToolbar-group">
         <RadioGroup value={mode} onChange={handleModeChange}>
-          <Tooltip title={t('selectTooltip')}>
+          <Tooltip title={t('selectTooltip')} placement="bottom">
             <RadioButton value={MODE.select}><SelectIcon /></RadioButton>
           </Tooltip>
-          <Tooltip title={t('freeDrawTooltip')}>
+          <Tooltip title={t('freeDrawTooltip')} placement="bottom">
             <RadioButton value={MODE.freeDraw}><FreeDrawIcon /></RadioButton>
           </Tooltip>
         </RadioGroup>
-        <Tooltip title={t('textTooltip')}>
+        <Tooltip title={t('textTooltip')} placement="bottom">
           <Button onClick={onTextClick} icon={<TextIcon />} />
         </Tooltip>
-        <Tooltip title={t('shapeTooltip')}>
+        <Tooltip title={t('shapeTooltip')} placement="bottom">
           <Dropdown
             trigger={['click']}
             placement="top"
@@ -206,17 +206,17 @@ export function WhiteboardToolbar({
             <Button icon={<ShapeIcon />} />
           </Dropdown>
         </Tooltip>
-        <Tooltip title={t('eraseTooltip')}>
+        <Tooltip title={t('eraseTooltip')} placement="bottom">
           <Button onClick={onEraseClick} icon={<EraserIcon />} disabled={mode === MODE.freeDraw} />
         </Tooltip>
 
-        <Tooltip title={t('resetTooltip')}>
+        <Tooltip title={t('resetTooltip')} placement="bottom">
           <Button onClick={onResetClick} icon={<ResetIcon />} />
         </Tooltip>
       </div>
 
       <div className="WhiteboardToolbar-group">
-        <Tooltip title={t('fontSizeTooltip')}>
+        <Tooltip title={t('fontSizeTooltip')} placement="bottom">
           <Dropdown
             trigger={['click']}
             placement="top"
@@ -232,7 +232,7 @@ export function WhiteboardToolbar({
           </Dropdown>
         </Tooltip>
 
-        <Tooltip title={t('strokeWidthTooltip')}>
+        <Tooltip title={t('strokeWidthTooltip')} placement="bottom">
           <Dropdown
             trigger={['click']}
             placement="top"
@@ -259,7 +259,7 @@ export function WhiteboardToolbar({
               />
           }
           >
-          <Tooltip title={t('strokeColorTooltip')}>
+          <Tooltip title={t('strokeColorTooltip')} placement="bottom">
             <Button icon={<StrokeColorIcon />} className="WhiteboardToolbar-buttonWithSelection">
               <div className="WhiteboardToolbar-selectedColor" style={{ backgroundColor: strokeColor }} />
             </Button>
@@ -282,7 +282,7 @@ export function WhiteboardToolbar({
             </Fragment>
           }
           >
-          <Tooltip title={t('fillColorTooltip')}>
+          <Tooltip title={t('fillColorTooltip')} placement="bottom">
             <Button icon={<FillColorIcon />} className="WhiteboardToolbar-buttonWithSelection">
               <div className="WhiteboardToolbar-selectedColor" style={{ backgroundColor: fillColor }}>
                 {fillColor === TRANSPARENT_FILL_COLOR && (
