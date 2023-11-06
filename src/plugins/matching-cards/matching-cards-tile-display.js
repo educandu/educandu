@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
+import { StopIcon } from '../../components/icons/icons.js';
 import { isTouchDevice } from '../../ui/browser-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -10,7 +11,6 @@ import { analyzeMediaUrl } from '../../utils/media-utils.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import PlayIcon from '../../components/icons/media-player/play-icon.js';
-import StopIcon from '../../components/icons/media-player/stop-icon.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../domain/constants.js';
 

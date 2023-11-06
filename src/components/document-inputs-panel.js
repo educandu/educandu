@@ -2,15 +2,16 @@ import by from 'thenby';
 import Spinner from './spinner.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import prettyBytes from 'pretty-bytes';
 import routes from '../utils/routes.js';
 import EmptyState from './empty-state.js';
 import { useUser } from './user-context.js';
 import CustomAlert from './custom-alert.js';
 import urlUtils from '../utils/url-utils.js';
+import { InputsIcon } from './icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
-import InputsIcon from './icons/general/inputs-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { EyeOutlined, LinkOutlined } from '@ant-design/icons';
@@ -19,7 +20,6 @@ import { confirmDocumentInputDelete } from './confirmation-dialogs.js';
 import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
 import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../domain/constants.js';
 import { documentInputShape, documentRevisionShape } from '../ui/default-prop-types.js';
-import prettyBytes from 'pretty-bytes';
 
 const { Panel } = Collapse;
 

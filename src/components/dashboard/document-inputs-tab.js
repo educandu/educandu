@@ -5,11 +5,11 @@ import Markdown from '../markdown.js';
 import { Button, Tooltip } from 'antd';
 import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
+import { InputsIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import { CommentOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../locale-context.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import InputsIcon from '../icons/general/inputs-icon.js';
 import { documentInputShape } from '../../ui/default-prop-types.js';
 import { confirmDocumentInputDelete } from '../confirmation-dialogs.js';
 

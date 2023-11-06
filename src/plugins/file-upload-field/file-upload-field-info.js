@@ -1,8 +1,8 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-import FileUploadFieldIcon from './file-upload-field-icon.js';
 import { MAXIMUM_ALLOWED_UPLOAD_FILE_COUNT } from './constants.js';
+import { FileUploadFieldIcon } from '../../components/icons/icons.js';
 
 class FileUploadFieldInfo {
   static typeName = 'file-upload-field';
