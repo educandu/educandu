@@ -1,9 +1,9 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-import WhiteboardIcon from './whiteboard-icon.js';
 import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { OPTIMAL_VIEWPORT_WIDTH_FACTOR } from './constants.js';
+import { WhiteboardIcon } from '../../components/icons/icons.js';
 
 class WhiteboardInfo {
   static typeName = 'whiteboard';

@@ -1,24 +1,26 @@
 import PropTypes from 'prop-types';
-import LineIcon from './icons/line-icon.js';
-import TextIcon from './icons/text-icon.js';
-import ShapeIcon from './icons/shape-icon.js';
-import ArrowIcon from './icons/arrow-icon.js';
-import ResetIcon from './icons/reset-icon.js';
 import { useTranslation } from 'react-i18next';
-import CircleIcon from './icons/circle-icon.js';
-import SelectIcon from './icons/select-icon.js';
-import EraserIcon from './icons/eraser-icon.js';
 import React, { Fragment, useState } from 'react';
-import TriangleIcon from './icons/triangle-icon.js';
-import FontSizeIcon from './icons/font-size-icon.js';
-import FreeDrawIcon from './icons/free-draw-icon.js';
-import RectangleIcon from './icons/rectangle-icon.js';
-import FillColorIcon from './icons/fill-color-icon.js';
-import StrokeWidthIcon from './icons/stroke-width-icon.js';
-import StrokeColorIcon from './icons/stroke-color-icon.js';
 import SwatchesPickerNs from 'react-color/lib/Swatches.js';
 import { Button, Dropdown, Popover, Radio, Tooltip } from 'antd';
 import { DEFAULT_COLOR_SWATCHES, DEFAULT_COLOR_PICKER_WIDTH } from '../../domain/constants.js';
+import {
+  ArrowIcon,
+  CircleIcon,
+  EraserIcon,
+  FillColorIcon,
+  FontSizeIcon,
+  FreeDrawIcon,
+  LineIcon,
+  RectangleIcon,
+  ResetIcon,
+  SelectIcon,
+  ShapeIcon,
+  StrokeColorIcon,
+  StrokeWidthIcon,
+  TextIcon,
+  TriangleIcon
+} from '../../components/icons/icons.js';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;

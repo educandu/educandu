@@ -1,6 +1,6 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-import SelectFieldIcon from './select-field-icon.js';
+import { SelectFieldIcon } from '../../components/icons/icons.js';
 import { createDefaultContent, validateContent } from './select-field-utils.js';
 
 class SelectFieldInfo {

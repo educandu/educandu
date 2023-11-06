@@ -9,7 +9,7 @@ import MediaVolumeSlider from './media-volume-slider.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
-import { BrandSpeedtestIcon, DownloadIcon, RepeatIcon, RepeatOffIcon } from '../icons/tabler-icons.js';
+import { DownloadIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon } from '../icons/icons.js';
 import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
 
 function MediaPlayerControls({
@@ -87,7 +87,7 @@ function MediaPlayerControls({
             >
             <Button
               type="link"
-              icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <BrandSpeedtestIcon /> : null}
+              icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <PlaybackRateIcon /> : null}
               >
               {playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? null : renderMediaPlaybackRate()}
             </Button>
