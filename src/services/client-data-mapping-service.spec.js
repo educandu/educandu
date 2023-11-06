@@ -73,6 +73,7 @@ describe('client-data-mapping-service', () => {
         shortDescription: 'Educandu test user',
         storage: {},
         favorites: [],
+        dashboardSettings: {},
         accountLockedOn: null,
         accountClosedOn: null
       };
@@ -197,6 +198,11 @@ describe('client-data-mapping-service', () => {
             setOn: favoriteSetOnDate
           }
         ],
+        dashboardSettings: {
+          rooms: {
+            hiddenRooms: ['r1']
+          }
+        },
         emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
       };
       result = sut.mapWebsiteUser(dbUser);
@@ -218,6 +224,11 @@ describe('client-data-mapping-service', () => {
             setOn: favoriteSetOnDate.toISOString()
           }
         ],
+        dashboardSettings: {
+          rooms: {
+            hiddenRooms: ['r1']
+          }
+        },
         emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
       });
     });

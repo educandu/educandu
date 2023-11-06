@@ -4,25 +4,29 @@ import classNames from 'classnames';
 import Markdown from './markdown.js';
 import { Card, Tooltip } from 'antd';
 import routes from '../utils/routes.js';
-import { useUser } from './user-context.js';
 import FavoriteStar from './favorite-star.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
+import { useSetUser, useUser } from './user-context.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
+import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { InfoCircleOutlined, MailOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { favoriteRoomShape, roomInvitationBasicShape, roomShape } from '../ui/default-prop-types.js';
+import { EyeInvisibleOutlined, EyeOutlined, InfoCircleOutlined, MailOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 
-function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
+function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite, useHidden }) {
   const user = useUser();
+  const setUser = useSetUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const userAccessibleRoom = room || favoriteRoom?.data;
   const isDeletedRoom = !userAccessibleRoom && !roomInvitation?.room;
   const roomId = room?._id || favoriteRoom?.id || roomInvitation?.room?._id;
+  const isHiddenRoom = user.dashboardSettings.rooms.hiddenRooms.includes(room._id);
 
   const handleCardClick = () => {
     if (userAccessibleRoom) {
@@ -33,6 +37,13 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
   const handleAcceptInvitationClick = async () => {
     await roomApiClient.confirmInvitation({ token: roomInvitation.token });
     window.location = routes.getRoomUrl({ id: roomId });
+  };
+
+  const handleHiddenRoomToggle = async () => {
+    const updatedUser = isHiddenRoom
+      ? await userApiClient.removeHiddenRoom({ roomId: room._id })
+      : await userApiClient.addHiddenRoom({ roomId: room._id });
+    setUser(updatedUser);
   };
 
   const renderTitle = () => {
@@ -139,6 +150,16 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite }) {
     ));
   }
 
+  if (useHidden) {
+    actions.push((
+      <Tooltip title={isHiddenRoom ? t('showRoomTooltip') : t('hideRoomTooltip')}>
+        <div onClick={handleHiddenRoomToggle}>
+          {isHiddenRoom ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+        </div>
+      </Tooltip>
+    ));
+  }
+
   const contentClasses = classNames(
     'RoomCard-content',
     { 'RoomCard-content--deletedRoom': isDeletedRoom },
@@ -168,6 +189,7 @@ RoomCard.propTypes = {
     data: favoriteRoomShape
   }),
   roomInvitation: roomInvitationBasicShape,
+  useHidden: PropTypes.bool,
   onToggleFavorite: PropTypes.func
 };
 
@@ -175,6 +197,7 @@ RoomCard.defaultProps = {
   room: null,
   favoriteRoom: null,
   roomInvitation: null,
+  useHidden: false,
   onToggleFavorite: () => {}
 };
 

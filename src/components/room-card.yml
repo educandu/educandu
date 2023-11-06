@@ -23,3 +23,9 @@ roomCard:
   hasCountCollaborators:
     en: Has {count, plural, =1 {# collaborator} other {# collaborators}}.
     de: Hat {count} Mitarbeiter.
+  hideRoomTooltip:
+    en: Hide room
+    de: Raum ausblenden
+  showRoomTooltip:
+    en: Show room
+    de: Raum einblenden

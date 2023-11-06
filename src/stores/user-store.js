@@ -96,6 +96,14 @@ class UserStore {
     return this.collection.updateOne({ _id: userId }, { $pull: { favorites: filter } }, { session });
   }
 
+  addToUserHiddenRooms({ userId, roomId }, { session } = {}) {
+    return this.collection.updateOne({ _id: userId }, { $push: { 'dashboardSettings.rooms.hiddenRooms': roomId } }, { session });
+  }
+
+  removeFromUserHiddenRooms({ userId, roomId }, { session } = {}) {
+    return this.collection.updateOne({ _id: userId }, { $pull: { 'dashboardSettings.rooms.hiddenRooms': roomId } }, { session });
+  }
+
   async checkUsersWithStoragePlanExistByStoragePlanId(storagePlanId, { session } = {}) {
     const matchingUser = await this.collection.findOne({ 'storage.planId': storagePlanId }, { session });
     return !!matchingUser;

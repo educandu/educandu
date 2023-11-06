@@ -79,6 +79,10 @@ export const favoriteBodySchema = joi.object({
   id: idOrKeySchema.required()
 });
 
+export const hiddenRoomsBodySchema = joi.object({
+  roomId: idOrKeySchema.required()
+});
+
 export const loginBodySchema = joi.object({
   email: joi.string().required(),
   password: joi.string().required(),
