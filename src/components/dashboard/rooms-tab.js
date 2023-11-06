@@ -1,5 +1,4 @@
 import by from 'thenby';
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner.js';
 import RoomCard from '../room-card.js';
@@ -7,22 +6,25 @@ import EmptyState from '../empty-state.js';
 import { useUser } from '../user-context.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, Switch, Tooltip } from 'antd';
 import FilterIcon from '../icons/general/filter-icon.js';
 import RoomCreationModal from '../room-creation-modal.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import RoomJoinedIcon from '../icons/user-activities/room-joined-icon.js';
 import RoomCreatedIcon from '../icons/user-activities/room-created-icon.js';
+import { EyeInvisibleOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 
 function RoomsTab({ rooms, invitations, loading }) {
   const user = useUser();
+
   const { t } = useTranslation('roomsTab');
 
-  const [filterText, setFilterText] = useState(null);
   const [ownedRooms, setOwnedRooms] = useState([]);
+  const [filterText, setFilterText] = useState(null);
   const [memberOfRooms, setMemberOfRooms] = useState([]);
   const [filteredOwnedRooms, setFilteredOwnedRooms] = useState([]);
   const [filteredInvitations, setFilteredInvitations] = useState([]);
+  const [includeHiddenRooms, setIncludeHiddenRooms] = useState(false);
   const [filteredMemberOfRooms, setFilteredMemberOfRooms] = useState([]);
   const [isRoomCreationModalOpen, setIsRoomCreationModalOpen] = useState(false);
 
@@ -33,17 +35,17 @@ function RoomsTab({ rooms, invitations, loading }) {
       .filter(room => room.ownedBy === user._id)
       .sort(by(room => room.createdOn));
 
-    const newFilteredOwnedRooms = filterText
-      ? newOwnedRooms.filter(room => room.name.toLowerCase().includes(lowerCasedFilter))
-      : newOwnedRooms;
+    const newFilteredOwnedRooms = newOwnedRooms
+      .filter(room => filterText ? room.name.toLowerCase().includes(lowerCasedFilter) : true)
+      .filter(room => includeHiddenRooms ? true : !user.dashboardSettings.rooms.hiddenRooms.includes(room._id));
 
     const newMemberOfRooms = rooms
       .filter(room => room.ownedBy !== user._id)
       .sort(by(room => room.members.find(member => member.userId === user._id).joinedOn));
 
-    const newFilteredMemberOfRooms = filterText
-      ? newMemberOfRooms.filter(room => room.name.toLowerCase().includes(lowerCasedFilter))
-      : newMemberOfRooms;
+    const newFilteredMemberOfRooms = newMemberOfRooms
+      .filter(room => filterText ? room.name.toLowerCase().includes(lowerCasedFilter) : true)
+      .filter(room => includeHiddenRooms ? true : !user.dashboardSettings.rooms.hiddenRooms.includes(room._id));
 
     const newFilteredInvitations = filterText
       ? invitations.filter(invitation => invitation.room.name.toLowerCase().includes(lowerCasedFilter))
@@ -54,7 +56,7 @@ function RoomsTab({ rooms, invitations, loading }) {
     setFilteredOwnedRooms(newFilteredOwnedRooms);
     setFilteredMemberOfRooms(newFilteredMemberOfRooms);
     setFilteredInvitations(newFilteredInvitations);
-  }, [user, rooms, invitations, filterText]);
+  }, [user, rooms, invitations, filterText, includeHiddenRooms]);
 
   const handleCreateRoomClick = () => {
     setIsRoomCreationModalOpen(true);
@@ -69,6 +71,10 @@ function RoomsTab({ rooms, invitations, loading }) {
     setFilterText(value);
   };
 
+  const handleIncludeHiddenRoomsChange = checked => {
+    setIncludeHiddenRooms(checked);
+  };
+
   const showOwnedRoomsEmptyState = !ownedRooms.length;
   const showMemberRoomsEmptyState = !memberOfRooms.length && !invitations.length;
 
@@ -80,8 +86,20 @@ function RoomsTab({ rooms, invitations, loading }) {
         <Fragment>
           {!showOwnedRoomsEmptyState && (
             <div className="RoomsTab-controls">
-              <div className="RoomsTab-filter">
-                <FilterInput value={filterText} onChange={handleFilterTextChange} />
+              <div className="RoomsTab-filters">
+                <FilterInput
+                  className="RoomsTab-textFilter"
+                  value={filterText}
+                  onChange={handleFilterTextChange}
+                  />
+                <Tooltip title={includeHiddenRooms ? t('excludeHiddenRoomsTooltip') : t('includeHiddenRoomsTooltip')}>
+                  <Switch
+                    checkedChildren={<EyeOutlined />}
+                    unCheckedChildren={<EyeInvisibleOutlined />}
+                    checked={includeHiddenRooms}
+                    onChange={handleIncludeHiddenRoomsChange}
+                    />
+                </Tooltip>
               </div>
               <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateRoomClick}>
                 {t('common:createRoom')}
@@ -104,12 +122,14 @@ function RoomsTab({ rooms, invitations, loading }) {
           )}
           {!showOwnedRoomsEmptyState && (
             <section className="RoomsTab-roomsGroup">
-              {filteredOwnedRooms.map(room => (<RoomCard key={room._id} room={room} />))}
+              {filteredOwnedRooms.map(room => (
+                <RoomCard key={room._id} room={room} useHidden />
+              ))}
               {!filteredOwnedRooms.length && (
                 <div className="RoomsTab-roomsGroupFilterEmptyState">
                   <EmptyState
                     icon={<FilterIcon />}
-                    title={t('common:filterResultEmptyStateTitle')}
+                    title={t('multipleFiltersResultEmptyStateTitle')}
                     subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
                     />
                 </div>
@@ -127,13 +147,17 @@ function RoomsTab({ rooms, invitations, loading }) {
           )}
           {!showMemberRoomsEmptyState && (
             <section className="RoomsTab-roomsGroup">
-              {filteredMemberOfRooms.map(room => <RoomCard key={room._id} room={room} />)}
-              {filteredInvitations.map(invitation => <RoomCard key={invitation._id} roomInvitation={invitation} />)}
+              {filteredMemberOfRooms.map(room => (
+                <RoomCard key={room._id} room={room} useHidden />
+              ))}
+              {filteredInvitations.map(invitation => (
+                <RoomCard key={invitation._id} roomInvitation={invitation} />
+              ))}
               {!filteredMemberOfRooms.length && !filteredInvitations.length && (
                 <div className="RoomsTab-roomsGroupFilterEmptyState">
                   <EmptyState
                     icon={<FilterIcon />}
-                    title={t('common:filterResultEmptyStateTitle')}
+                    title={t('multipleFiltersResultEmptyStateTitle')}
                     subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
                     />
                 </div>

@@ -275,6 +275,18 @@ class UserService {
     return updatedUser;
   }
 
+  async addHiddenRoom({ user, roomId }) {
+    await this.userStore.addToUserHiddenRooms({ userId: user._id, roomId });
+    const updatedUser = await this.userStore.getUserById(user._id);
+    return updatedUser;
+  }
+
+  async deleteHiddenRoom({ user, roomId }) {
+    await this.userStore.removeFromUserHiddenRooms({ userId: user._id, roomId });
+    const updatedUser = await this.userStore.getUserById(user._id);
+    return updatedUser;
+  }
+
   async getActivities({ userId, limit = 30 }) {
     const user = await this.userStore.getUserById(userId);
 

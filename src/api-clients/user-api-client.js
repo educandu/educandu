@@ -210,6 +210,26 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  addHiddenRoom({ roomId }) {
+    return this.httpClient
+      .post(
+        '/api/v1/users/hidden-rooms',
+        { roomId },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  removeHiddenRoom({ roomId }) {
+    return this.httpClient
+      .delete(
+        '/api/v1/users/hidden-rooms',
+        { data: { roomId } },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getActivities() {
     return this.httpClient
       .get(

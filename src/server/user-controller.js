@@ -38,7 +38,8 @@ import {
   loginBodySchema,
   externalAccountIdParamsSchema,
   getUsersBySearchQuerySchema,
-  postUserNotificationSettingsBodySchema
+  postUserNotificationSettingsBodySchema,
+  hiddenRoomsBodySchema
 } from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
@@ -464,6 +465,20 @@ class UserController {
     return res.send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
   }
 
+  async handlePostHiddenRoom(req, res) {
+    const { user } = req;
+    const { roomId } = req.body;
+    const updatedUser = await this.userService.addHiddenRoom({ user, roomId });
+    return res.status(201).send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
+  }
+
+  async handleDeleteHiddenRoom(req, res) {
+    const { user } = req;
+    const { roomId } = req.body;
+    const updatedUser = await this.userService.deleteHiddenRoom({ user, roomId });
+    return res.send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
+  }
+
   async handleGetActivities(req, res) {
     const { user } = req;
     const activities = await this.userService.getActivities({ userId: user._id, limit: 25 });
@@ -764,6 +779,22 @@ class UserController {
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handleDeleteFavorite(req, res)
+    );
+
+    router.post(
+      '/api/v1/users/hidden-rooms',
+      needsAuthentication(),
+      jsonParser,
+      validateBody(hiddenRoomsBodySchema),
+      (req, res) => this.handlePostHiddenRoom(req, res)
+    );
+
+    router.delete(
+      '/api/v1/users/hidden-rooms',
+      needsAuthentication(),
+      jsonParser,
+      validateBody(hiddenRoomsBodySchema),
+      (req, res) => this.handleDeleteHiddenRoom(req, res)
     );
 
     router.get(

@@ -70,6 +70,7 @@ class ClientDataMappingService {
         ...favorite,
         setOn: favorite.setOn.toISOString()
       })),
+      dashboardSettings: user.dashboardSettings,
       emailNotificationFrequency: user.emailNotificationFrequency
     };
   }
