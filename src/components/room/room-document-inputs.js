@@ -3,15 +3,17 @@ import { Button, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
 import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
+import FilterInput from '../filter-input.js';
 import { InputsIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import { CommentOutlined } from '@ant-design/icons';
+import FilterIcon from '../icons/general/filter-icon.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
-import React, { useCallback, useEffect, useState } from 'react';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentInputDelete } from '../confirmation-dialogs.js';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
 import { useRoomMediaContext, useSetRoomMediaContext } from '../room-media-context.js';
 
@@ -24,7 +26,23 @@ export default function RoomDocumentInputs({ roomId }) {
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
+  const [filterText, setFilterText] = useState(null);
   const [documentInputs, setDocumentInputs] = useState([]);
+  const [filteredDocumentInputs, setFilteredDocumentInputs] = useState([]);
+
+  useEffect(() => {
+    const lowerCasedFilter = (filterText || '').toLowerCase();
+
+    const newFilteredDocumentInputs = lowerCasedFilter
+      ? documentInputs.filter(documentInput => {
+        const matchesDocumentTitle = documentInput.documentTitle.toLowerCase().includes(lowerCasedFilter);
+        const matchesUserDisplayName = documentInput.createdBy.displayName.toLowerCase().includes(lowerCasedFilter);
+        return matchesDocumentTitle || matchesUserDisplayName;
+      })
+      : documentInputs;
+
+    setFilteredDocumentInputs(newFilteredDocumentInputs);
+  }, [documentInputs, filterText]);
 
   const fetchDocumentInputs = useCallback(async () => {
     const documentInputApiResponse = await documentInputApiClient.getDocumentInputsByRoomId(roomId);
@@ -34,6 +52,11 @@ export default function RoomDocumentInputs({ roomId }) {
   useEffect(() => {
     fetchDocumentInputs();
   }, [fetchDocumentInputs, roomMediaContext]);
+
+  const handleFilterTextChange = event => {
+    const { value } = event.target;
+    setFilterText(value);
+  };
 
   const handleDeleteDocumentInput = async documentInput => {
     await documentInputApiClient.hardDeleteDocumentInput(documentInput._id);
@@ -112,7 +135,25 @@ export default function RoomDocumentInputs({ roomId }) {
           />
       )}
 
-      {!showEmptyState && documentInputs.map(renderDocumentInput)}
+      {!showEmptyState && (
+        <Fragment>
+          <FilterInput
+            className="RoomDocumentInputs-textFilter"
+            value={filterText}
+            onChange={handleFilterTextChange}
+            />
+
+          {!filteredDocumentInputs.length && (
+            <EmptyState
+              icon={<FilterIcon />}
+              title={t('common:filterResultEmptyStateTitle')}
+              subtitle={t('common:searchOrFilterResultEmptyStateSubtitle')}
+              />
+          )}
+
+          {filteredDocumentInputs.map(renderDocumentInput)}
+        </Fragment>
+      )}
     </div>
   );
 }
