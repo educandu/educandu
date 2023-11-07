@@ -19,10 +19,14 @@ const allowedImageSourceTypes = ensureIsExcluded(Object.values(SOURCE_TYPE), SOU
 
 export default function WhiteboardEditor({ content, onContentChanged }) {
   const { t } = useTranslation('whiteboard');
-  const { width, aspectRatio, image } = content;
+  const { label, width, aspectRatio, image } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
+  };
+
+  const handleLabelChange = event => {
+    updateContent({ label: event.target.value });
   };
 
   const handleWidthChange = value => {
@@ -54,6 +58,9 @@ export default function WhiteboardEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form labelAlign="left">
+        <FormItem label={t('common:label')} {...FORM_ITEM_LAYOUT}>
+          <MarkdownInput inline value={label} onChange={handleLabelChange} />
+        </FormItem>
         <FormItem {...FORM_ITEM_LAYOUT} label={t('common:imageUrl')}>
           <UrlInput
             value={image.sourceUrl}
