@@ -117,7 +117,7 @@ describe('amb-service', () => {
           expect(result).toEqual([
             {
               '@context': [
-                'https://w3id.org/kim/amb/draft/context.jsonld',
+                'https://w3id.org/kim/amb/context.jsonld',
                 {
                   '@language': 'de'
                 }
@@ -196,7 +196,7 @@ describe('amb-service', () => {
           expect(result).toEqual([
             {
               '@context': [
-                'https://w3id.org/kim/amb/draft/context.jsonld',
+                'https://w3id.org/kim/amb/context.jsonld',
                 {
                   '@language': 'de'
                 }

@@ -9,7 +9,7 @@ import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js'
 
 const defaultMetadata = {
   '@context': [
-    'https://w3id.org/kim/amb/draft/context.jsonld',
+    'https://w3id.org/kim/amb/context.jsonld',
     {
       '@language': 'de'
     }
