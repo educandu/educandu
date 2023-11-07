@@ -29,6 +29,7 @@ class WhiteboardInfo {
   getDefaultContent() {
     const defaultWidth = 100;
     return {
+      label: '',
       width: defaultWidth,
       viewportWidth: defaultWidth * OPTIMAL_VIEWPORT_WIDTH_FACTOR,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -42,6 +43,7 @@ class WhiteboardInfo {
 
   validateContent(content) {
     const schema = joi.object({
+      label: joi.string().allow('').required(),
       width: joi.number().integer().min(0).max(100).required(),
       viewportWidth: joi.number().min(0).max(1000).required(),
       aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),

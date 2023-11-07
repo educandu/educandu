@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import Markdown from '../../components/markdown.js';
 import { WhiteboardCanvas } from './whiteboard-canvas.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
@@ -10,8 +11,8 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 const createInitialData = () => ({ canvasData: null });
 
 export default function WhiteboardDisplay({ content, input, canModifyInput, onInputChanged }) {
-  const { width, viewportWidth, aspectRatio, image, isBorderVisible } = content;
   const data = input.data || createInitialData();
+  const { label, width, viewportWidth, aspectRatio, image, isBorderVisible } = content;
 
   const clientConfig = useService(ClientConfig);
   const backgroundImageUrl = image.sourceUrl
@@ -26,7 +27,12 @@ export default function WhiteboardDisplay({ content, input, canModifyInput, onIn
   const viewportHeight = Math.round(viewportWidth / numericalAspectRatio);
 
   return (
-    <div className={`u-horizontally-centered u-width-${width}`}>
+    <div className={`WhiteboardDisplay u-horizontally-centered u-width-${width}`}>
+      {!!label && (
+        <div className="WhiteboardDisplay-label">
+          <Markdown inline>{label}</Markdown>
+        </div>
+      )}
       <WhiteboardCanvas
         data={data.canvasData}
         disabled={!canModifyInput}
