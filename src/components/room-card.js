@@ -26,7 +26,7 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite, useHid
   const userAccessibleRoom = room || favoriteRoom?.data;
   const isDeletedRoom = !userAccessibleRoom && !roomInvitation?.room;
   const roomId = room?._id || favoriteRoom?.id || roomInvitation?.room?._id;
-  const isHiddenRoom = user.dashboardSettings.rooms.hiddenRooms.includes(room._id);
+  const isHiddenRoom = useHidden && user.dashboardSettings.rooms.hiddenRooms.includes(roomId);
 
   const handleCardClick = () => {
     if (userAccessibleRoom) {
