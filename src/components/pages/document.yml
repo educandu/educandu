@@ -51,8 +51,8 @@ document:
     en: Latest version
     de: Letzte version
   input:
-    en: Input {count}
-    de: Eingabe {count}
+    en: Input {count} by <0>{userDisplayName}</0>
+    de: Eingabe {count} von <0>{userDisplayName}</0>
   inputs:
     en: Inputs
     de: Eingaben
