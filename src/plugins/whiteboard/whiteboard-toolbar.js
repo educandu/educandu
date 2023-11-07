@@ -58,7 +58,9 @@ const SHAPE_TYPE = {
 const MENU = {
   shape: 'shape',
   fontSize: 'fontSize',
-  strokeWidth: 'strokeWidth'
+  strokeWidth: 'strokeWidth',
+  strokeColor: 'strokeColor',
+  fillColor: 'fillColor'
 };
 
 const shapeMenuItems = [
@@ -144,7 +146,7 @@ export function WhiteboardToolbar({
   };
 
   const handleMenuOpenChange = menu => {
-    setOpenMenu(openMenu ? null : menu);
+    setOpenMenu(openMenu === menu ? null : menu);
   };
 
   const handleShapeMenuClick = ({ key }) => {
@@ -177,6 +179,21 @@ export function WhiteboardToolbar({
 
   const handleStrokeWidthMenuClick = ({ key }) => {
     onStrokeWidthChange(Number(key));
+    setOpenMenu(null);
+  };
+
+  const handleStrokeColorChange = ({ hex }) => {
+    onStrokeColorChange(hex);
+    setOpenMenu(null);
+  };
+
+  const handleFillColorChange = ({ hex }) => {
+    onFillColorChange(hex);
+    setOpenMenu(null);
+  };
+
+  const handleFillColorRemove = () => {
+    onFillColorRemove();
     setOpenMenu(null);
   };
 
@@ -252,12 +269,15 @@ export function WhiteboardToolbar({
 
         <Popover
           trigger="click"
+          placement="top"
+          open={openMenu === MENU.strokeColor}
+          onOpenChange={() => handleMenuOpenChange(MENU.strokeColor)}
           content={
             <SwatchesPicker
               color={strokeColor}
               colors={DEFAULT_COLOR_SWATCHES}
               width={DEFAULT_COLOR_PICKER_WIDTH}
-              onChange={({ hex }) => onStrokeColorChange(hex)}
+              onChange={handleStrokeColorChange}
               />
           }
           >
@@ -270,15 +290,18 @@ export function WhiteboardToolbar({
 
         <Popover
           trigger="click"
+          placement="top"
+          open={openMenu === MENU.fillColor}
+          onOpenChange={() => handleMenuOpenChange(MENU.fillColor)}
           content={
             <Fragment>
               <SwatchesPicker
                 color={fillColor}
                 colors={DEFAULT_COLOR_SWATCHES}
                 width={DEFAULT_COLOR_PICKER_WIDTH}
-                onChange={({ hex }) => onFillColorChange(hex)}
+                onChange={handleFillColorChange}
                 />
-              <Button className="WhiteboardToolbar-removeColor" onClick={onFillColorRemove}>
+              <Button className="WhiteboardToolbar-removeColor" onClick={handleFillColorRemove}>
                 {t('removeFillColor')}
               </Button>
             </Fragment>
