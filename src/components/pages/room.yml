@@ -2,6 +2,9 @@ room:
   roomViewTitle:
     en: Room view
     de: Raum-Ansicht
+  roomDocumentInputsTitle:
+    en: Room document inputs
+    de: Raum-Dokumenteingaben
   overviewEmptyStateTitle:
     en: You have not written an overview text
     de: Du hast noch keinen Überblickstext geschrieben
