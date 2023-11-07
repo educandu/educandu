@@ -7,7 +7,6 @@ import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
 import FavoriteStar from '../favorite-star.js';
 import { InputsIcon } from '../icons/icons.js';
-import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
 import CreditsFooter from '../credits-footer.js';
@@ -18,6 +17,7 @@ import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useBeforeunload } from 'react-beforeunload';
+import { Trans, useTranslation } from 'react-i18next';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
@@ -246,9 +246,12 @@ function Document({ initialState, PageTemplate }) {
     }
 
     const index = documentInputs.findIndex(input => input._id === selectedDocumentInput._id);
-
-    return t('input', { count: documentInputs.length - index });
-  }, [selectedDocumentInput, documentInputs, t]);
+    return {
+      count: documentInputs.length - index,
+      userId: selectedDocumentInput.createdBy._id,
+      userDisplayName: selectedDocumentInput.createdBy.displayName
+    };
+  }, [selectedDocumentInput, documentInputs]);
 
   useBeforeunload(event => {
     if (isDirty) {
@@ -945,7 +948,19 @@ function Document({ initialState, PageTemplate }) {
     <FocusHeader title={t('inputs')} onClose={handleInputsClose}>
       {!!selectedDocumentInput && (
         <div className="DocumentPage-focusHeaderInfo">
-          <EyeOutlined />{focusHeaderInputInfo}
+          <EyeOutlined />
+          {focusHeaderInputInfo
+            ? (
+              <span>
+                <Trans
+                  t={t}
+                  i18nKey="input"
+                  values={{ count: focusHeaderInputInfo.count, userDisplayName: focusHeaderInputInfo.userDisplayName }}
+                  components={[<a key="user-profile-link" href={routes.getUserProfileUrl(focusHeaderInputInfo.userId)} />]}
+                  />
+              </span>
+            )
+            : null}
         </div>
       )}
       {!selectedDocumentInput && (
