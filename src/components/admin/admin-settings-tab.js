@@ -160,6 +160,33 @@ function AdminSettingsTab({ onDirtyStateChange }) {
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('helpPageHeader')} key="helpPage">
+            <div className="AdminSettingsTab-collapseInfo">{t('helpPageInfo')}</div>
+            <SpecialPageSettings
+              settings={settings.helpPage}
+              onChange={handleHelpPageChange}
+              />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('termsPageHeader')} key="termsPage">
+            <div className="AdminSettingsTab-collapseInfo">{t('termsPageInfo')}</div>
+            <SpecialPageSettings
+              settings={settings.termsPage}
+              onChange={handleTermsPageChange}
+              />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('footerLinksHeader')} key="footerLinks">
+            <div className="AdminSettingsTab-collapseInfo">{t('footerLinksInfo')}</div>
+            <FooterLinksSettings
+              footerLinks={settings.footerLinks}
+              onChange={handleFooterLinksChange}
+              />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('homepageTagsHeader')} key="homepageTags">
             <div className="AdminSettingsTab-collapseInfo">{t('homepageTagsInfo')}</div>
             <HomepageTagsSettings
@@ -196,6 +223,11 @@ function AdminSettingsTab({ onDirtyStateChange }) {
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('dashboardHelpLinksHeader')} key="dashboardHelpLinks">
+            <div className="AdminSettingsTab-collapseInfo">{t('dashboardHelpLinksInfo')}</div>
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
           <Collapse.Panel header={t('templateDocumentHeader')} key="templateDocument">
             <div className="AdminSettingsTab-collapseInfo">{t('templateDocumentInfo')}</div>
             <div className="AdminSettingsTab-templateDocument" >
@@ -204,33 +236,6 @@ function AdminSettingsTab({ onDirtyStateChange }) {
                 onChange={handleTemplateDocumentChange}
                 />
             </div>
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('helpPageHeader')} key="helpPage">
-            <div className="AdminSettingsTab-collapseInfo">{t('helpPageInfo')}</div>
-            <SpecialPageSettings
-              settings={settings.helpPage}
-              onChange={handleHelpPageChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('termsPageHeader')} key="termsPage">
-            <div className="AdminSettingsTab-collapseInfo">{t('termsPageInfo')}</div>
-            <SpecialPageSettings
-              settings={settings.termsPage}
-              onChange={handleTermsPageChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('footerLinksHeader')} key="footerLinks">
-            <div className="AdminSettingsTab-collapseInfo">{t('footerLinksInfo')}</div>
-            <FooterLinksSettings
-              footerLinks={settings.footerLinks}
-              onChange={handleFooterLinksChange}
-              />
           </Collapse.Panel>
         </Collapse>
         <Collapse className="AdminSettingsTab-collapse">

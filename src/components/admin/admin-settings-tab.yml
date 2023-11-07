@@ -1,73 +1,73 @@
 adminSettingsTab:
   announcementHeader:
-    en: Global announcement
-    de: Globale Ankündigung
+    en: "Global: Announcement"
+    de: "Global: Ankündigung"
   announcementInfo:
     en: This announcement is shown under the website header on all pages. Users can close it and it will only appear again when the text or type are changed.
     de: Diese Ankündigung wird auf allen Seiten unter dem Website-Header angezeigt. Benutzer können sie schließen, und sie wird erst wieder erscheinen, wenn sich der Text oder Typ geändert hat.
   consentHeader:
-    en: Consent text
-    de: Zustimmungstext
+    en: "Global: Consent text"
+    de: "Global: Zustimmungstext"
   consentInfo:
     en: This is the text of the consent dialog shown to users. They have to agree to the terms written here in order to use the website.
     de: Dies ist der Text für den Zustimmungsdialog, der den Benutzern gezeigt wird. Diese müssen den Bedingungen dort zustimmen, um die Website benutzen zu können.
   homepageTagsHeader:
-    en: Homepage recommended tags
-    de: Empfohlene Tags auf der Homepage
+    en: "Homepage: Recommended tags"
+    de: "Homepage: Empfohlene Tags"
   homepageTagsInfo:
     en: These tags appear as recommended searched on the homepage. When they are not set, the top 5 most used tags are recommended.
     de: Diese Tags erscheinen als empfohlene Suchbegriffe auf der Homepage. Wenn sie nicht gesetzt sind, werden die 5 am häufigsten verwendeten Tags empfohlen.
   homepageDocumentsHeader:
-    en: Homepage documents pool
-    de: Homepage-Dokumente-Fundus
+    en: "Homepage: Documents pool"
+    de: "Homepage: Dokumente-Fundus"
   homepageDocumentsInfo:
     en: From this list, 3 documents are randomly selected and displayed on the homepage.
     de: Aus dieser Liste werden 3 zufällig ausgewählte Dokumente auf der Homepage angezeigt.
   homepagePresentationHeader:
-    en: Homepage presentation
-    de: Homepage-Präsentation
+    en: "Homepage: Presentation"
+    de: "Homepage: Präsentation"
   homepagePresentationInfo:
     en: This video is displayed on the homepage, in the project presentation section. If a 'Learn more' document is selected, a button is displayed at the end of the presentation section, which leads users to this document.
     de: Dieses Video wird auf der Homepage im Präsentationsabschnitt angezeigt. Wenn ein 'Mehr erfahren'-Dokument ausgewählt wurde, wird ein Button am Ende des Präsentationsabschnitts angezeigt, der die Benutzer zu diesem Dokument führt.
   homepageTrustLogosHeader:
-    en: Homepage trust logos
-    de: Homepage-Vertrauens-Logos
+    en: "Homepage: Trust logos"
+    de: "Homepage: Vertrauens-Logos"
   homepageTrustLogosInfo:
     en: The logos of the trusted institutions are displayed in an extra footer on the homepage. Please provide SVGs with transparent background and links to the home pages of each institution.
     de: Die Vertrauens-Logos werden in einem Extra-Footer auf der Homepage angezeigt. Bitte gib hier SVGs mit transparentem Hintergrund und Links zur Startseite der jeweiligen Institution an.
   helpPageHeader:
-    en: Help page
-    de: Hilfe-Seite
+    en: "Global: Help page"
+    de: "Global: Hilfe-Seite"
   helpPageInfo:
     en: The selected document is included in the website navigation menu under the given name.
     de: Das ausgewählte Dokument wird im Website-Navigationsmenu unter dem angegebenen Namen erscheinen.
   termsPageHeader:
-    en: Terms and conditions page for account creation
-    de: Nutzungsbedingungen-Seite für die Kontoerstellung
+    en: "Global: Terms and conditions page"
+    de: "Global: Nutzungsbedingungen-Seite"
   termsPageInfo:
     en: The selected document is used for the 'terms and conditions' link in the account registration form.
     de: Das ausgewählte Dokument wird als 'Nutzungsbedingungen'-Link im Kontoerstellungsformular benutzt.
   footerLinksHeader:
-    en: Footer links
-    de: Footer-Links
+    en: "Global: Footer links"
+    de: "Global: Footer-Links"
   footerLinksInfo:
     en: The selected documents are shown under the given name on all pages in the footer section.
     de: Die ausgewählten Dokumente werden unter dem angegebenen Namen auf allen Seiten im Footer-Abschnitt angezeigt.
   templateDocumentHeader:
-    en: Template for new documents
-    de: Vorlage für neue Dokumente
+    en: "Document: Template"
+    de: "Dokument: Vorlage"
   templateDocumentInfo:
     en: The selected document is used to serve as a template for creating new documents, when the user opts for using the template instead of starting with empty content.
     de: Das gewählte Dokument dient als Vorlage beim Erstellen neuer Dokumente für den Fall, dass der Benutzer sich dafür entscheidet, die Vorlage zu nutzen, anstatt mit einem Dokument ohne Inhalt zu starten.
   licenseHeader:
-    en: Document license
-    de: Dokument-Lizenz
+    en: "Document: License"
+    de: "Dokument: Lizenz"
   licenseInfo:
     en: The provided URL is used as a license link under the given name at the end of each document page.
     de: Die angegebene URL wird als Lizenz-Link unter dem angegebenen Namen am Ende jeder Dokumentseite angezeigt.
   pluginsHelpTextsHeader:
-    en: Help texts for plugins
-    de: Hilfetexte für Plugins
+    en: "Document: Help texts for plugins"
+    de: "Dokument: Hilfetexte für Plugins"
   pluginsHelpTextsInfo:
     en: |
       If a text is provided for a plugin type, a help icon is shown in the toolbar of the respective section when the document is in edit mode.
@@ -75,3 +75,10 @@ adminSettingsTab:
     de: |
       Wenn ein Text für einen Plugin-Typ angegeben wurde, wird ein Hilfe-Icon in der Toolbar des zugehörigen Abschnitts angezeigt, wenn das Dokument im Bearbeitungsmodus ist.
       Der Hilfetext wird in einem Dialogfenster angezeigt, welches sich durch Klick auf das Hilfe-Icon öffnet.
+  dashboardHelpLinksHeader:
+    en: "Dashboard: Help links"
+    de: "Dashboard: Hilfe-Links"
+  dashboardHelpLinksInfo:
+    en: Dashboard tabs for which a "help" document is provided will display a link for accessing that document.
+    de: Dashboard tabs for which a "help" document is provided will display a link for accessing that document.
+

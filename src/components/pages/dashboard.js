@@ -30,19 +30,8 @@ import DocumentInputsTab from '../dashboard/document-inputs-tab.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
-import { AVATAR_SIZE_BIG, FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 import { useNotificationsCount, useSetNotificationsCount } from '../notification-context.js';
-
-const TAB_KEYS = {
-  activities: 'activities',
-  favorites: 'favorites',
-  documents: 'documents',
-  rooms: 'rooms',
-  documentInputs: 'document-inputs',
-  notifications: 'notifications',
-  storage: 'storage',
-  settings: 'settings'
-};
+import { AVATAR_SIZE_BIG, DASHBOARD_TAB_KEY, FAVORITE_TYPE, ROOM_USER_ROLE } from '../../domain/constants.js';
 
 function Dashboard({ PageTemplate }) {
   const user = useUser();
@@ -56,7 +45,7 @@ function Dashboard({ PageTemplate }) {
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
   const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
-  const initialTab = request.query.tab || TAB_KEYS.activities;
+  const initialTab = request.query.tab || DASHBOARD_TAB_KEY.activities;
   const gravatarUrl = urlUtils.getGravatarUrl(user.email);
 
   const [rooms, setRooms] = useState([]);
@@ -156,25 +145,25 @@ function Dashboard({ PageTemplate }) {
   useEffect(() => {
     (async () => {
       switch (selectedTab) {
-        case TAB_KEYS.activities:
+        case DASHBOARD_TAB_KEY.activities:
           await fetchActivities();
           break;
-        case TAB_KEYS.favorites:
+        case DASHBOARD_TAB_KEY.favorites:
           await fetchFavorites();
           break;
-        case TAB_KEYS.documents:
+        case DASHBOARD_TAB_KEY.documents:
           await fetchDocuments();
           break;
-        case TAB_KEYS.rooms:
+        case DASHBOARD_TAB_KEY.rooms:
           await fetchRooms();
           break;
-        case TAB_KEYS.documentInputs:
+        case DASHBOARD_TAB_KEY.documentInputs:
           await fetchDocumentInputs();
           break;
-        case TAB_KEYS.notifications:
+        case DASHBOARD_TAB_KEY.notifications:
           await fetchNotifications();
           break;
-        case TAB_KEYS.storage:
+        case DASHBOARD_TAB_KEY.storage:
           await fetchRoomMediaOverview();
           break;
         default:
@@ -212,7 +201,7 @@ function Dashboard({ PageTemplate }) {
 
   const items = [
     {
-      key: TAB_KEYS.activities,
+      key: DASHBOARD_TAB_KEY.activities,
       label: <div><HistoryIcon />{t('activitiesTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -221,7 +210,7 @@ function Dashboard({ PageTemplate }) {
       )
     },
     {
-      key: TAB_KEYS.favorites,
+      key: DASHBOARD_TAB_KEY.favorites,
       label: <div><StarIcon />{t('favoritesTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -235,7 +224,7 @@ function Dashboard({ PageTemplate }) {
       )
     },
     {
-      key: TAB_KEYS.documents,
+      key: DASHBOARD_TAB_KEY.documents,
       label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -244,7 +233,7 @@ function Dashboard({ PageTemplate }) {
       )
     },
     {
-      key: TAB_KEYS.rooms,
+      key: DASHBOARD_TAB_KEY.rooms,
       label: <div><RoomIcon />{t('roomsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -253,7 +242,7 @@ function Dashboard({ PageTemplate }) {
       )
     },
     {
-      key: TAB_KEYS.documentInputs,
+      key: DASHBOARD_TAB_KEY.documentInputs,
       label: <div><InputsIcon />{t('common:documentInputs')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -266,7 +255,7 @@ function Dashboard({ PageTemplate }) {
       )
     },
     {
-      key: TAB_KEYS.notifications,
+      key: DASHBOARD_TAB_KEY.notifications,
       label: (
         <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
           <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
@@ -286,7 +275,7 @@ function Dashboard({ PageTemplate }) {
       )
     },
     {
-      key: TAB_KEYS.storage,
+      key: DASHBOARD_TAB_KEY.storage,
       label: <div><PrivateIcon />{t('common:storage')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -299,7 +288,7 @@ function Dashboard({ PageTemplate }) {
       )
     },
     {
-      key: TAB_KEYS.settings,
+      key: DASHBOARD_TAB_KEY.settings,
       label: <div><SettingsIcon />{t('common:settings')}</div>,
       children: (
         <div className="Tabs-tabPane">

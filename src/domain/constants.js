@@ -140,6 +140,17 @@ export const STORAGE_LOCATION_TYPE = {
   mediaLibrary: 'media-library'
 };
 
+export const DASHBOARD_TAB_KEY = {
+  activities: 'activities',
+  favorites: 'favorites',
+  documents: 'documents',
+  rooms: 'rooms',
+  documentInputs: 'document-inputs',
+  notifications: 'notifications',
+  storage: 'storage',
+  settings: 'settings'
+};
+
 export const ORIENTATION = {
   vertical: 'vertical',
   horizontal: 'horizontal'
