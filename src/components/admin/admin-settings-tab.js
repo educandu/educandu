@@ -17,6 +17,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
 import HomepageDocumentsSettings from './homepage-documents-settings.js';
+import DashboardHelpLinksSettings from './dashboard-help-links-settings.js';
 import HomepageTrustLogosSettings from './homepage-trust-logos-settings.js';
 import HomepagePresentationSettings from './homepage-presentation-settings.js';
 import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
@@ -104,6 +105,11 @@ function AdminSettingsTab({ onDirtyStateChange }) {
   const handleLicenseChange = useCallback(value => {
     handleChange('license', value);
   }, [handleChange]);
+
+  const handleDashboardHelpLinksChange = useCallback((tabKey, value) => {
+    const newHelpLinks = { ...cloneDeep(settings.dashboardHelpLinks), [tabKey]: value };
+    handleChange('dashboardHelpLinks', newHelpLinks);
+  }, [settings, handleChange]);
 
   const cleanUpSettings = () => {
     if (settings.announcement) {
@@ -233,7 +239,12 @@ function AdminSettingsTab({ onDirtyStateChange }) {
                 key: tabKey,
                 label: t(`common:dashboardTab_${tabKey}`),
                 children: (
-                  <div className="AdminSettingsTab-collapseTabPane" />
+                  <div className="AdminSettingsTab-collapseTabPane">
+                    <DashboardHelpLinksSettings
+                      settings={settings.dashboardHelpLinks?.[tabKey]}
+                      onChange={value => handleDashboardHelpLinksChange(tabKey, value)}
+                      />
+                  </div>
                 )
               }))}
               />
