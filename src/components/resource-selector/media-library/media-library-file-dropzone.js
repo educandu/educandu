@@ -5,9 +5,11 @@ import { Button, Divider } from 'antd';
 import React, { Fragment } from 'react';
 import reactDropzoneNs from 'react-dropzone';
 import EmptyState from '../../empty-state.js';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useService } from '../../container-context.js';
 import { CloudUploadOutlined } from '@ant-design/icons';
 import WarningIcon from '../../icons/general/warning-icon.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { isEditableImageFile } from '../../../utils/storage-utils.js';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
@@ -15,6 +17,7 @@ import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
 function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, uploadLimit, showSizeWarning, onFileDrop, onEditImageClick }) {
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibraryFileDropzone');
 
   const canEditImage = file && isEditableImageFile(file);
@@ -76,10 +79,21 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, uploadLimi
               button={{
                 isDefaultType: true,
                 text: t('common:browse'),
-                subtext: t('common:uploadLimitInfo', {
-                  limit: uploadLimit ? prettyBytes(uploadLimit) : 'none',
-                  maxFiles: 1
-                }),
+                subtext: (
+                  <Fragment>
+                    {t('common:uploadLimitInfo', { limit: uploadLimit ? prettyBytes(uploadLimit) : 'none', maxFiles: 1 })}
+                    {!!uploadLimit && !!clientConfig.adminEmailAddress && (
+                      <Fragment>
+                        <br />
+                        <Trans
+                          t={t}
+                          i18nKey="common:uploadLimitAdminContactInfo"
+                          components={[<a key="email-link" href={`mailto:${encodeURIComponent(clientConfig.adminEmailAddress)}`} />]}
+                          />
+                      </Fragment>
+                    )}
+                  </Fragment>
+                ),
                 onClick: handleUploadButtonClick
               }}
               />

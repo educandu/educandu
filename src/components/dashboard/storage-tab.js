@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
-import { FILES_VIEWER_DISPLAY } from '../../domain/constants.js';
+import { FILES_VIEWER_DISPLAY, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../domain/constants.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
@@ -214,6 +214,7 @@ function StorageTab({ allRoomMediaOverview, loading, onAllRoomMediaOverviewChang
                     </div>
                     <div>
                       <UploadButton
+                        uploadLimit={STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
                         disabled={loading || isUpdating || !allRoomMediaOverview?.storagePlan}
                         onClick={handleUploadButtonClick}
                         />
