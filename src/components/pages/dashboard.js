@@ -202,7 +202,7 @@ function Dashboard({ PageTemplate }) {
   const items = [
     {
       key: DASHBOARD_TAB_KEY.activities,
-      label: <div><HistoryIcon />{t('activitiesTabTitle')}</div>,
+      label: <div><HistoryIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.activities}`)}</div>,
       children: (
         <div className="Tabs-tabPane">
           <ActivitiesTab activities={activities} loading={fetchingActivities} />
@@ -211,7 +211,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: DASHBOARD_TAB_KEY.favorites,
-      label: <div><StarIcon />{t('favoritesTabTitle')}</div>,
+      label: <div><StarIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.favorites}`)}</div>,
       children: (
         <div className="Tabs-tabPane">
           <FavoritesTab
@@ -225,7 +225,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: DASHBOARD_TAB_KEY.documents,
-      label: <div><FileIcon />{t('documentsTabTitle')}</div>,
+      label: <div><FileIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.documents}`)}</div>,
       children: (
         <div className="Tabs-tabPane">
           <DocumentsTab documents={documents} loading={fetchingDocuments} />
@@ -234,7 +234,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: DASHBOARD_TAB_KEY.rooms,
-      label: <div><RoomIcon />{t('roomsTabTitle')}</div>,
+      label: <div><RoomIcon />{t(t(`common:dashboardTab_${DASHBOARD_TAB_KEY.rooms}`))}</div>,
       children: (
         <div className="Tabs-tabPane">
           <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
@@ -243,7 +243,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: DASHBOARD_TAB_KEY.documentInputs,
-      label: <div><InputsIcon />{t('common:documentInputs')}</div>,
+      label: <div><InputsIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.documentInputs}`)}</div>,
       children: (
         <div className="Tabs-tabPane">
           <DocumentInputsTab
@@ -259,7 +259,7 @@ function Dashboard({ PageTemplate }) {
       label: (
         <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
           <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
-            <div><BellOutlined /> {t('common:notifications')}</div>
+            <div><BellOutlined /> {t(`common:dashboardTab_${DASHBOARD_TAB_KEY.notifications}`)}</div>
           </Badge>
         </Tooltip>
       ),
@@ -276,7 +276,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: DASHBOARD_TAB_KEY.storage,
-      label: <div><PrivateIcon />{t('common:storage')}</div>,
+      label: <div><PrivateIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.storage}`)}</div>,
       children: (
         <div className="Tabs-tabPane">
           <StorageTab
@@ -289,7 +289,7 @@ function Dashboard({ PageTemplate }) {
     },
     {
       key: DASHBOARD_TAB_KEY.settings,
-      label: <div><SettingsIcon />{t('common:settings')}</div>,
+      label: <div><SettingsIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.settings}`)}</div>,
       children: (
         <div className="Tabs-tabPane">
           <SettingsTab />

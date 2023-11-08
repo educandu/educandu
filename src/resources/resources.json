@@ -1589,24 +1589,6 @@
       "de": "Wenn du dich zum ersten Mal mit Shibboleth angemeldet hast, musst du dein Shibboleth-Konto\nerst mit deinem {appName}-Konto verknüpfen. Das {appName}-Konto bleibt erhalten, selbst\nwenn du die Institution verlässt und keinen Zugang mehr über Shibboleth hast. So kannst\ndu weiterhin deinen Content bearbeiten und als derselbe {appName}-Autor auftreten. Es empfiehlt\nsich daher, für dein {appName}-Konto deine private E-Mail-Adresse zu verwenden. Falls du dein\nShibboleth-Konto bereits einmal verknüpft hast und dich wunderst, warum du diese Seite\nsiehst, liegt das daran, dass du dich über einen längeren Zeitraum nicht mit Shibboleth\nangemeldet hast. Aus Datenschutzgründen und zu deiner eigenen Sicherheit löschen wir\nAnmeldungen, die länger nicht benutzt wurden. Du kannst die Verknüpfung zu deinem\n{appName}-Konto auf dieser Seite aber ganz einfach wieder herstellen.\n"
     }
   },
-  "dashboard": {
-    "activitiesTabTitle": {
-      "en": "Activities",
-      "de": "Aktivitäten"
-    },
-    "favoritesTabTitle": {
-      "en": "Favorites",
-      "de": "Favoriten"
-    },
-    "documentsTabTitle": {
-      "en": "Public documents",
-      "de": "Öffentliche Dokumente"
-    },
-    "roomsTabTitle": {
-      "en": "Rooms",
-      "de": "Räume"
-    }
-  },
   "documentInput": {
     "alertMarkdown": {
       "en": "You are viewing a document input from [{userName}]({userUrl}), submitted on {date} on document \"[{documentTitle}]({documentUrl})\"\n",
@@ -4447,6 +4429,38 @@
     "allRightsReserved": {
       "en": "All rights reserved",
       "de": "Alle Rechte vorbehalten"
+    },
+    "dashboardTab_activities": {
+      "en": "Activities",
+      "de": "Aktivitäten"
+    },
+    "dashboardTab_favorites": {
+      "en": "Favorites",
+      "de": "Favoriten"
+    },
+    "dashboardTab_documents": {
+      "en": "Public documents",
+      "de": "Öffentliche Dokumente"
+    },
+    "dashboardTab_rooms": {
+      "en": "Rooms",
+      "de": "Räume"
+    },
+    "dashboardTab_document-inputs": {
+      "en": "Document inputs",
+      "de": "Dokumenteingaben"
+    },
+    "dashboardTab_notifications": {
+      "en": "Notifications",
+      "de": "Benachrichtigungen"
+    },
+    "dashboardTab_storage": {
+      "en": "Storage",
+      "de": "Speicher"
+    },
+    "dashboardTab_settings": {
+      "en": "Settings",
+      "de": "Einstellungen"
     }
   },
   "pageNames": {
