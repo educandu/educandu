@@ -1,8 +1,8 @@
-.Dashboard {
+.DashboardPage {
   margin-top: 75px;
 }
 
-.Dashboard-contentHeader {
+.DashboardPage-contentHeader {
   position: absolute;
   left: 0;
   height: 140px;
@@ -14,7 +14,7 @@
   z-index: @edu-z-index-background-layer
 }
 
-.Dashboard-profile {
+.DashboardPage-profile {
   display: grid;
   gap: 20px;
   align-items: start;
@@ -30,13 +30,13 @@
   }
 }
 
-.Dashboard-profileAvatar {
+.DashboardPage-profileAvatar {
   padding: 10px;
   border-radius: 50%;
   background-color: @edu-white;
 }
 
-.Dashboard-profileInfo {
+.DashboardPage-profileInfo {
   margin-top: 55px;
   font-size: @edu-font-size-sm;
   color: @edu-text-color-secondary;
@@ -47,4 +47,13 @@
     grid-auto-flow: row;
     justify-items: center;
   }
+}
+
+
+.DashboardPage-tabHelp {
+  height: 20px;
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: end;
+  font-size: @edu-font-size-sm;
 }

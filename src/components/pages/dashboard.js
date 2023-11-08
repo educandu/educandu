@@ -6,6 +6,7 @@ import { InputsIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../utils/url-utils.js';
 import RoomsTab from '../dashboard/rooms-tab.js';
+import { useLocale } from '../locale-context.js';
 import { BellOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { Avatar, Badge, Tabs, Tooltip } from 'antd';
@@ -13,6 +14,7 @@ import RoomIcon from '../icons/general/room-icon.js';
 import StarIcon from '../icons/general/star-icon.js';
 import StorageTab from '../dashboard/storage-tab.js';
 import FileIcon from '../icons/general/file-icon.js';
+import { useSettings } from '../settings-context.js';
 import SettingsTab from '../dashboard/settings-tab.js';
 import FavoritesTab from '../dashboard/favorites-tab.js';
 import DocumentsTab from '../dashboard/documents-tab.js';
@@ -36,6 +38,8 @@ import { AVATAR_SIZE_BIG, DASHBOARD_TAB_KEY, FAVORITE_TYPE, ROOM_USER_ROLE } fro
 function Dashboard({ PageTemplate }) {
   const user = useUser();
   const request = useRequest();
+  const settings = useSettings();
+  const { uiLanguage } = useLocale();
   const { t } = useTranslation('dashboard');
   const notificationsCount = useNotificationsCount();
   const setNotificationsCount = useSetNotificationsCount();
@@ -45,8 +49,8 @@ function Dashboard({ PageTemplate }) {
   const notificationsApiClient = useSessionAwareApiClient(NotificationsApiClient);
   const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
 
-  const initialTab = request.query.tab || DASHBOARD_TAB_KEY.activities;
   const gravatarUrl = urlUtils.getGravatarUrl(user.email);
+  const initialTab = request.query.tab || DASHBOARD_TAB_KEY.activities;
 
   const [rooms, setRooms] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -199,113 +203,121 @@ function Dashboard({ PageTemplate }) {
     fetchDocumentInputs();
   };
 
+  const createTabItem = ({ tabKey, icon, customLabel, content }) => {
+    const helpDocumentId = settings.dashboardHelpLinks?.[tabKey]?.[uiLanguage]?.documentId;
+    const helpUrl = helpDocumentId ? routes.getDocUrl({ id: helpDocumentId }) : null;
+
+    return {
+      key: tabKey,
+      label: customLabel || (
+        <div>{icon}{t(`common:dashboardTab_${tabKey}`)}</div>
+      ),
+      children: (
+        <div>
+          <div className="DashboardPage-tabHelp">
+            {!!helpUrl && (
+              <a href={helpUrl}>{t('tabsHelpLinkText')}</a>
+            )}
+          </div>
+          <div className="Tabs-tabPane">
+            {content}
+          </div>
+        </div>
+      )
+    };
+  };
+
   const items = [
-    {
-      key: DASHBOARD_TAB_KEY.activities,
-      label: <div><HistoryIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.activities}`)}</div>,
-      children: (
-        <div className="Tabs-tabPane">
-          <ActivitiesTab activities={activities} loading={fetchingActivities} />
-        </div>
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.activities,
+      icon: <HistoryIcon />,
+      content: (
+        <ActivitiesTab activities={activities} loading={fetchingActivities} />
       )
-    },
-    {
-      key: DASHBOARD_TAB_KEY.favorites,
-      label: <div><StarIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.favorites}`)}</div>,
-      children: (
-        <div className="Tabs-tabPane">
-          <FavoritesTab
-            favoriteUsers={favoriteUsers}
-            favoriteRooms={favoriteRooms}
-            favoriteDocuments={favoriteDocuments}
-            loading={fetchingFavorites}
-            />
-        </div>
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.favorites,
+      icon: <StarIcon />,
+      content: (
+        <FavoritesTab
+          favoriteUsers={favoriteUsers}
+          favoriteRooms={favoriteRooms}
+          favoriteDocuments={favoriteDocuments}
+          loading={fetchingFavorites}
+          />
       )
-    },
-    {
-      key: DASHBOARD_TAB_KEY.documents,
-      label: <div><FileIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.documents}`)}</div>,
-      children: (
-        <div className="Tabs-tabPane">
-          <DocumentsTab documents={documents} loading={fetchingDocuments} />
-        </div>
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.documents,
+      icon: <FileIcon />,
+      content: (
+        <DocumentsTab documents={documents} loading={fetchingDocuments} />
       )
-    },
-    {
-      key: DASHBOARD_TAB_KEY.rooms,
-      label: <div><RoomIcon />{t(t(`common:dashboardTab_${DASHBOARD_TAB_KEY.rooms}`))}</div>,
-      children: (
-        <div className="Tabs-tabPane">
-          <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
-        </div>
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.rooms,
+      icon: <RoomIcon />,
+      content: (
+        <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
       )
-    },
-    {
-      key: DASHBOARD_TAB_KEY.documentInputs,
-      label: <div><InputsIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.documentInputs}`)}</div>,
-      children: (
-        <div className="Tabs-tabPane">
-          <DocumentInputsTab
-            loading={fetchingDocumentInputs}
-            documentInputs={documentInputs}
-            onDeleteDocumentInput={handleDeleteDocumentInput}
-            />
-        </div>
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.documentInputs,
+      icon: <InputsIcon />,
+      content: (
+        <DocumentInputsTab
+          loading={fetchingDocumentInputs}
+          documentInputs={documentInputs}
+          onDeleteDocumentInput={handleDeleteDocumentInput}
+          />
       )
-    },
-    {
-      key: DASHBOARD_TAB_KEY.notifications,
-      label: (
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.notifications,
+      customLabel: (
         <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
           <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
             <div><BellOutlined /> {t(`common:dashboardTab_${DASHBOARD_TAB_KEY.notifications}`)}</div>
           </Badge>
         </Tooltip>
       ),
-      children: (
-        <div className="Tabs-tabPane">
-          <NotificationsTab
-            loading={fetchingNotificationGroups}
-            notificationGroups={notificationGroups}
-            onRemoveNotificationGroup={handleRemoveNotificationGroup}
-            onRemoveNotifications={handleRemoveNotifications}
-            />
-        </div>
+      content: (
+        <NotificationsTab
+          loading={fetchingNotificationGroups}
+          notificationGroups={notificationGroups}
+          onRemoveNotificationGroup={handleRemoveNotificationGroup}
+          onRemoveNotifications={handleRemoveNotifications}
+          />
       )
-    },
-    {
-      key: DASHBOARD_TAB_KEY.storage,
-      label: <div><PrivateIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.storage}`)}</div>,
-      children: (
-        <div className="Tabs-tabPane">
-          <StorageTab
-            loading={fetchingAllRoomMediaOverview}
-            allRoomMediaOverview={allRoomMediaOverview}
-            onAllRoomMediaOverviewChange={handleAllRoomMediaOverviewChange}
-            />
-        </div>
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.storage,
+      icon: <PrivateIcon />,
+      content: (
+        <StorageTab
+          loading={fetchingAllRoomMediaOverview}
+          allRoomMediaOverview={allRoomMediaOverview}
+          onAllRoomMediaOverviewChange={handleAllRoomMediaOverviewChange}
+          />
       )
-    },
-    {
-      key: DASHBOARD_TAB_KEY.settings,
-      label: <div><SettingsIcon />{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.settings}`)}</div>,
-      children: (
-        <div className="Tabs-tabPane">
-          <SettingsTab />
-        </div>
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.settings,
+      icon: <SettingsIcon />,
+      content: (
+        <SettingsTab />
       )
-    }
+    })
   ];
 
   return (
-    <PageTemplate contentHeader={<div className="Dashboard-contentHeader" />}>
-      <div className="Dashboard">
-        <section className="Dashboard-profile">
-          <div className="Dashboard-profileAvatar">
+    <PageTemplate contentHeader={<div className="DashboardPage-contentHeader" />}>
+      <div className="DashboardPage">
+        <section className="DashboardPage-profile">
+          <div className="DashboardPage-profileAvatar">
             <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE_BIG} src={gravatarUrl} alt={user.displayName} />
           </div>
-          <div className="Dashboard-profileInfo">
+          <div className="DashboardPage-profileInfo">
             <div className="u-page-title">{user.displayName}</div>
             <div>{user.organization}</div>
           </div>
