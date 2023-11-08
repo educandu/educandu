@@ -101,8 +101,8 @@
       "de": "Dashboard: Hilfe-Links"
     },
     "dashboardHelpLinksInfo": {
-      "en": "Dashboard tabs for which a \"help\" document is provided will display a link for accessing that document.",
-      "de": "Dashboard tabs for which a \"help\" document is provided will display a link for accessing that document."
+      "en": "Each dashboard tab that has a \"help\" document set will display a link for the user to access that document.",
+      "de": "Each dashboard tab that has a \"help\" document set will display a link for the user to access that document."
     }
   },
   "announcementSettings": {
