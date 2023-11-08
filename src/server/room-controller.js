@@ -1,5 +1,3 @@
-import os from 'node:os';
-import multer from 'multer';
 import express from 'express';
 import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
@@ -12,12 +10,12 @@ import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentService from '../services/document-service.js';
+import multipartMiddleware from '../domain/multipart-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentInputService from '../services/document-input-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
-import { validateBody, validateFile, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import {
   NOT_ROOM_OWNER_ERROR_MESSAGE,
@@ -50,7 +48,6 @@ import {
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
-const multipartParser = multer({ dest: os.tmpdir() });
 
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
@@ -510,9 +507,7 @@ export default class RoomController {
     router.post(
       '/api/v1/room-media/:roomId',
       needsPermission(permissions.CREATE_CONTENT),
-      uploadLimitExceededMiddleware(),
-      multipartParser.single('file'),
-      validateFile('file'),
+      multipartMiddleware({ fileField: 'file', allowUnlimitedUploadForElevatedRoles: true }),
       validateParams(postRoomMediaParamsSchema),
       (req, res) => this.handlePostRoomMedia(req, res)
     );
