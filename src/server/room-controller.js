@@ -1,4 +1,5 @@
 import express from 'express';
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
@@ -52,9 +53,10 @@ const jsonParser = express.json();
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 export default class RoomController {
-  static dependencies = [ServerConfig, RoomService, DocumentService, DocumentInputService, UserService, MailService, ClientDataMappingService, PageRenderer];
+  static dependencies = [ServerConfig, RoomService, DocumentService, DocumentInputService, UserService, MailService, ClientDataMappingService, PageRenderer, Cdn];
 
-  constructor(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer) {
+  constructor(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer, cdn) {
+    this.cdn = cdn;
     this.roomService = roomService;
     this.userService = userService;
     this.mailService = mailService;
@@ -507,7 +509,7 @@ export default class RoomController {
     router.post(
       '/api/v1/room-media/:roomId',
       needsPermission(permissions.CREATE_CONTENT),
-      multipartMiddleware({ fileField: 'file', allowUnlimitedUploadForElevatedRoles: true }),
+      multipartMiddleware({ cdn: this.cdn, fileField: 'file' }),
       validateParams(postRoomMediaParamsSchema),
       (req, res) => this.handlePostRoomMedia(req, res)
     );

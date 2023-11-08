@@ -4289,8 +4289,8 @@
       "de": "Hochladen"
     },
     "uploadLimitInfo": {
-      "en": "(max. {limit}{maxFiles, plural, =1 {} other {, max. # files}})",
-      "de": "(max. {limit}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
+      "en": "({limit, select, none {without size limit} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # files}})",
+      "de": "({limit, select, none {keine Größenbegrenzung} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
     },
     "fileIsTooBig": {
       "en": "The file is too big. The upload limit is {limit}.",

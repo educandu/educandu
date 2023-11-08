@@ -1,4 +1,5 @@
 import express from 'express';
+import Cdn from '../stores/cdn.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
@@ -18,12 +19,13 @@ import {
 const jsonParser = express.json();
 
 class MediaLibraryController {
-  static dependencies = [MediaLibraryService, ClientDataMappingService, PageRenderer];
+  static dependencies = [MediaLibraryService, ClientDataMappingService, PageRenderer, Cdn];
 
-  constructor(mediaLibraryService, clientDataMappingService, pageRenderer) {
+  constructor(mediaLibraryService, clientDataMappingService, pageRenderer, cdn) {
     this.mediaLibraryService = mediaLibraryService;
     this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
+    this.cdn = cdn;
   }
 
   async handleGetMediaLibraryItemPage(req, res) {
@@ -122,7 +124,7 @@ class MediaLibraryController {
     router.post(
       '/api/v1/media-library/items',
       needsPermission(permissions.CREATE_CONTENT),
-      multipartMiddleware({ fileField: 'file', bodyField: 'metadata', allowUnlimitedUploadForElevatedRoles: true }),
+      multipartMiddleware({ cdn: this.cdn, fileField: 'file', bodyField: 'metadata', allowUnlimitedUploadForElevatedRoles: true }),
       validateBody(mediaLibraryItemMetadataBodySchema),
       (req, res) => this.handleCreateMediaLibraryItem(req, res)
     );

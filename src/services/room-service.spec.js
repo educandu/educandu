@@ -805,7 +805,7 @@ describe('room-service', () => {
           }
         ];
 
-        sandbox.stub(cdn, 'uploadObject').resolves();
+        sandbox.stub(cdn, 'moveObject').resolves();
         sandbox.stub(roomMediaItemStore, 'insertRoomMediaItem').resolves();
 
         sandbox.stub(roomStore, 'getRoomsByOwnerUserId').resolves([room]);
@@ -823,8 +823,8 @@ describe('room-service', () => {
         assert.calledWith(roomStore.getRoomById, room._id);
       });
 
-      it('should call cdn.uploadObject', () => {
-        assert.called(cdn.uploadObject);
+      it('should call cdn.moveObject', () => {
+        assert.called(cdn.moveObject);
       });
 
       it('should call userStore.updateUserUsedBytes', () => {

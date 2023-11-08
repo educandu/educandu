@@ -74,7 +74,7 @@ class MediaLibraryService {
     };
 
     try {
-      await this.cdn.uploadObject(storagePath, file.path);
+      await this.cdn.moveObject(file.key, storagePath);
       return this.mediaLibraryItemStore.insertMediaLibraryItem(newMediaLibraryItem);
     } catch (error) {
       await this.cdn.deleteObject(storagePath);

@@ -54,7 +54,7 @@ describe('permissions', () => {
         const user = { role: ROLE.accreditedAuthor };
         result = getUserPermissions(user);
       });
-      it('should return all user permissions', () => {
+      it('should return all accreditedAuthor permissions', () => {
         expect(result).toEqual([
           permissions.CREATE_CONTENT,
           permissions.BROWSE_STORAGE,
@@ -77,7 +77,8 @@ describe('permissions', () => {
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
           permissions.VIEW_USERS,
-          permissions.MANAGE_PUBLIC_CONTENT
+          permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION
         ]);
       });
     });
@@ -88,7 +89,7 @@ describe('permissions', () => {
         result = getUserPermissions(user);
       });
 
-      it('should return all user permissions', () => {
+      it('should return all admin permissions', () => {
         expect(result).toEqual([
           permissions.CREATE_CONTENT,
           permissions.BROWSE_STORAGE,
@@ -96,6 +97,7 @@ describe('permissions', () => {
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
           permissions.VIEW_USERS,
           permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION,
           permissions.MANAGE_USERS,
           permissions.MANAGE_SETUP,
           permissions.BATCH_PROCESS_DATA,

@@ -11,11 +11,10 @@ import WarningIcon from '../../icons/general/warning-icon.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { isEditableImageFile } from '../../../utils/storage-utils.js';
 import SelectedResourceDisplay from '../shared/selected-resource-display.js';
-import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, showSizeWarning, onFileDrop, onEditImageClick }) {
+function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, uploadLimit, showSizeWarning, onFileDrop, onEditImageClick }) {
   const { t } = useTranslation('mediaLibraryFileDropzone');
 
   const canEditImage = file && isEditableImageFile(file);
@@ -48,10 +47,10 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, showSizeWa
                       {!showSizeWarning && (
                         <div>{t('fileWillBeAddedToMediaLibrary')}</div>
                       )}
-                      {!!showSizeWarning && (
+                      {!!showSizeWarning && !!uploadLimit && (
                         <div className="MediaLibraryFileDropzone-sizeWarning">
                           <WarningIcon />
-                          {t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) })}
+                          {t('common:fileIsTooBig', { limit: prettyBytes(uploadLimit) })}
                         </div>
                       )}
                       {!!canEditImage && (
@@ -77,7 +76,10 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, showSizeWa
               button={{
                 isDefaultType: true,
                 text: t('common:browse'),
-                subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES), maxFiles: 1 }),
+                subtext: t('common:uploadLimitInfo', {
+                  limit: uploadLimit ? prettyBytes(uploadLimit) : 'none',
+                  maxFiles: 1
+                }),
                 onClick: handleUploadButtonClick
               }}
               />
@@ -94,6 +96,7 @@ MediaLibraryFileDropzone.propTypes = {
   }).isRequired,
   file: browserFileType,
   canAcceptFile: PropTypes.bool,
+  uploadLimit: PropTypes.number,
   showSizeWarning: PropTypes.bool,
   onFileDrop: PropTypes.func.isRequired,
   onEditImageClick: PropTypes.func.isRequired
@@ -102,6 +105,7 @@ MediaLibraryFileDropzone.propTypes = {
 MediaLibraryFileDropzone.defaultProps = {
   file: null,
   canAcceptFile: true,
+  uploadLimit: null,
   showSizeWarning: false
 };
 

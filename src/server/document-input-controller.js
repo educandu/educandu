@@ -1,4 +1,5 @@
 import express from 'express';
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
@@ -32,14 +33,15 @@ const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentInputController {
-  static dependencies = [DocumentInputService, DocumentService, RoomService, ClientDataMappingService, PageRenderer];
+  static dependencies = [DocumentInputService, DocumentService, RoomService, ClientDataMappingService, PageRenderer, Cdn];
 
-  constructor(documentInputService, documentService, roomService, clientDataMappingService, pageRenderer) {
+  constructor(documentInputService, documentService, roomService, clientDataMappingService, pageRenderer, cdn) {
     this.roomService = roomService;
     this.documentService = documentService;
     this.documentInputService = documentInputService;
     this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
+    this.cdn = cdn;
   }
 
   async handleGetDocumentInputPage(req, res) {
@@ -225,7 +227,7 @@ class DocumentInputController {
     router.post(
       '/api/v1/doc-inputs',
       needsPermission(permissions.CREATE_CONTENT),
-      multipartMiddleware({ fileField: 'files', multipleFiles: true, bodyField: 'documentInput' }),
+      multipartMiddleware({ cdn: this.cdn, fileField: 'files', multipleFiles: true, bodyField: 'documentInput' }),
       validateBody(createDocumentInputDataBodySchema),
       (req, res) => this.handlePostDocumentInput(req, res)
     );

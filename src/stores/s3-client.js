@@ -6,12 +6,12 @@ import { splitIntoChunks } from '../utils/array-utils.js';
 const { S3, Credentials } = awsSdk;
 
 const MAX_REQUESTS = 250;
-const PRIORITY_UPLOAD = 2;
-const PRIORITY_DOWNLOAD = 1;
-const PRIORITY_ADMINISTRATIVE = 0;
+const PRIORITY_LOW = 1;
+const PRIORITY_HIGH = 0;
 
 // Wraps AWS S3 client into a promise-friendly interface,
 // also limits concurrent requests using a priority queue.
+// Potentially longer-running tasks have a lower priority.
 // Works with AWS S3 as well as MinIO S3-compatible storage.
 class S3Client {
   constructor({ endpoint, region, accessKey, secretKey }) {
@@ -39,7 +39,7 @@ class S3Client {
       }
     };
 
-    await this._pushTask(() => this.client.createBucket(params), PRIORITY_ADMINISTRATIVE);
+    await this._pushTask(() => this.client.createBucket(params), PRIORITY_HIGH);
   }
 
   async putBucketPolicy(bucketName, bucketPolicy) {
@@ -48,7 +48,7 @@ class S3Client {
       Policy: bucketPolicy
     };
 
-    await this._pushTask(() => this.client.putBucketPolicy(params), PRIORITY_ADMINISTRATIVE);
+    await this._pushTask(() => this.client.putBucketPolicy(params), PRIORITY_HIGH);
   }
 
   async listObjects(bucketName, prefix, recursive) {
@@ -65,7 +65,7 @@ class S3Client {
 
     do {
       // eslint-disable-next-line no-loop-func
-      const response = await this._pushTask(() => this.client.listObjects({ ...params, Marker: marker }), PRIORITY_DOWNLOAD);
+      const response = await this._pushTask(() => this.client.listObjects({ ...params, Marker: marker }), PRIORITY_HIGH);
 
       const keys = params.Delimiter
         ? (response.CommonPrefixes || []).map(pre => pre.Prefix)
@@ -102,7 +102,7 @@ class S3Client {
       Key: objectName
     };
 
-    await this._pushTask(() => this.client.deleteObject(params), PRIORITY_ADMINISTRATIVE);
+    await this._pushTask(() => this.client.deleteObject(params), PRIORITY_HIGH);
   }
 
   async deleteObjects(bucketName, objectNames) {
@@ -117,7 +117,7 @@ class S3Client {
         }
       };
 
-      return this._pushTask(() => this.client.deleteObjects(params), PRIORITY_ADMINISTRATIVE);
+      return this._pushTask(() => this.client.deleteObjects(params), PRIORITY_HIGH);
     });
 
     const results = await Promise.all(requests);
@@ -125,6 +125,18 @@ class S3Client {
     if (errors.length) {
       throw new Error(['CDN Error. Could not delete following objects:', ...errors.map(err => err.Key)].join(EOL));
     }
+  }
+
+  async copyObject(bucketName, oldObjectName, newObjectName, contentType, metadata = {}) {
+    const params = {
+      Bucket: bucketName,
+      Key: newObjectName,
+      CopySource: `${bucketName}/${oldObjectName}`,
+      ContentType: contentType,
+      Metadata: metadata
+    };
+
+    await this._pushTask(() => this.client.copyObject(params), PRIORITY_LOW);
   }
 
   async upload(bucketName, objectName, body, contentType, metadata = {}) {
@@ -141,7 +153,7 @@ class S3Client {
       queueSize: 1
     };
 
-    const data = await this._pushTask(() => this.client.upload(params, options), PRIORITY_UPLOAD);
+    const data = await this._pushTask(() => this.client.upload(params, options), PRIORITY_LOW);
     return {
       name: data.Key
     };
@@ -152,7 +164,7 @@ class S3Client {
       Bucket: bucketName
     };
 
-    await this._pushTask(() => this.client.deleteBucket(params), PRIORITY_ADMINISTRATIVE);
+    await this._pushTask(() => this.client.deleteBucket(params), PRIORITY_HIGH);
   }
 
   _pushTask(createRequest, priority) {

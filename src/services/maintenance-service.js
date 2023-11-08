@@ -3,6 +3,7 @@ import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
 import LockStore from '../stores/lock-store.js';
+import { getDocumentInputMediaRootPath, getMediaLibraryPath, getRoomMediaRootPath, getTemporaryUploadsPath } from '../utils/storage-utils.js';
 
 const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 
@@ -43,9 +44,10 @@ export default class MaintenanceService {
       logger.info('Finished database checks successfully');
 
       logger.info('Creating basic CDN directories');
-      await this.cdn.ensureDirectory('media-library');
-      await this.cdn.ensureDirectory('room-media');
-      await this.cdn.ensureDirectory('document-input-media');
+      await this.cdn.ensureDirectory({ directoryPath: getTemporaryUploadsPath() });
+      await this.cdn.ensureDirectory({ directoryPath: getMediaLibraryPath() });
+      await this.cdn.ensureDirectory({ directoryPath: getRoomMediaRootPath() });
+      await this.cdn.ensureDirectory({ directoryPath: getDocumentInputMediaRootPath() });
       logger.info('Finished creating basic CDN directories successfully');
     } finally {
       await this.lockStore.releaseLock(lock);

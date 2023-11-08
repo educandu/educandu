@@ -3,11 +3,12 @@ import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import ImageEditor from '../../image-editor.js';
 import ResourceUrl from '../shared/resource-url.js';
-import { useIsMounted } from '../../../ui/hooks.js';
 import { Button, Form, message, Modal } from 'antd';
+import permissions from '../../../domain/permissions.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ResourceDetails from '../shared/resource-details.js';
 import { handleApiError } from '../../../ui/error-helper.js';
+import { useIsMounted, usePermission } from '../../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { confirmExitFileEditor } from '../../confirmation-dialogs.js';
 import MediaLibraryFileDropzone from './media-library-file-dropzone.js';
@@ -20,7 +21,9 @@ import MediaLibraryApiClient from '../../../api-clients/media-library-api-client
 
 const logger = new Logger(import.meta.url);
 
-const createFileInfo = file => file ? { file, isEdited: false, isTooBig: file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } : null;
+const createFileInfo = (file, allowUnlimitedUpload) => file
+  ? { file, isEdited: false, isTooBig: !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES }
+  : null;
 
 export const MEDIA_LIBRARY_ITEM_MODAL_MODE = {
   preview: 'preview',
@@ -35,6 +38,7 @@ function MediaLibaryItemModal({
   onSave,
   onClose
 }) {
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -42,7 +46,7 @@ function MediaLibaryItemModal({
   const imageEditorRef = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditingImage, setIsEditingImage] = useState(false);
-  const [fileInfo, setFileInfo] = useState(createFileInfo(null));
+  const [fileInfo, setFileInfo] = useState(createFileInfo(null, allowUnlimitedUpload));
   const [isEditedImageDirty, setIsEditedImageDirty] = useState(false);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
@@ -74,7 +78,7 @@ function MediaLibaryItemModal({
 
   const handleApplyImageEditorChanges = async () => {
     const newFile = await imageEditorRef.current.getCroppedFile();
-    setFileInfo({ ...createFileInfo(newFile), isEdited: true });
+    setFileInfo({ ...createFileInfo(newFile, allowUnlimitedUpload), isEdited: true });
     setIsEditingImage(false);
   };
 
@@ -93,7 +97,7 @@ function MediaLibaryItemModal({
 
   const handleFileDrop = ([newFile]) => {
     if (!isSaving && newFile) {
-      setFileInfo(createFileInfo(newFile));
+      setFileInfo(createFileInfo(newFile, allowUnlimitedUpload));
     }
   };
 
@@ -228,6 +232,7 @@ function MediaLibaryItemModal({
                 dropzoneRef={dropzoneRef}
                 file={fileInfo?.file || null}
                 canAcceptFile={!isSaving}
+                uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
                 showSizeWarning={!!fileInfo?.isTooBig}
                 onFileDrop={handleFileDrop}
                 onEditImageClick={handleEditImageClick}

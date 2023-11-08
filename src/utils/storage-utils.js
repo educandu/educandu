@@ -13,16 +13,28 @@ import {
 
 const rasterImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
+export function getTemporaryUploadsPath() {
+  return 'temporary-uploads';
+}
+
 export function getMediaLibraryPath() {
   return 'media-library';
 }
 
+export function getRoomMediaRootPath() {
+  return 'room-media';
+}
+
+export function getDocumentInputMediaRootPath() {
+  return 'document-input-media';
+}
+
 export function getRoomMediaRoomPath(roomId) {
-  return `room-media/${roomId}`;
+  return `${getRoomMediaRootPath()}/${roomId}`;
 }
 
 export function getDocumentInputMediaPath({ roomId, documentInputId }) {
-  const roomPath = `document-input-media/${roomId}`;
+  const roomPath = `${getDocumentInputMediaRootPath()}/${roomId}`;
   return documentInputId ? `${roomPath}/${documentInputId}` : roomPath;
 }
 
