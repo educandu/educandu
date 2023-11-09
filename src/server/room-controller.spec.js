@@ -23,6 +23,7 @@ describe('room-controller', () => {
   let userService;
   let mailService;
   let user;
+  let cdn;
   let req;
   let res;
   let sut;
@@ -67,7 +68,6 @@ describe('room-controller', () => {
       _id: uniqueId.create(),
       displayName: 'dagobert-the-third'
     };
-
     clientDataMappingService = {
       mapRoom: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
@@ -75,11 +75,12 @@ describe('room-controller', () => {
       mapDocumentInputs: sandbox.stub(),
       mapSingleRoomMediaOverview: sandbox.stub()
     };
-
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    sut = new RoomController(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer);
+    cdn = {};
+
+    sut = new RoomController(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer, cdn);
   });
 
   afterEach(() => {

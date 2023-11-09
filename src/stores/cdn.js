@@ -55,9 +55,15 @@ class Cdn {
   uploadObject(objectPath, filePath) {
     const metadata = this._getDefaultMetadata();
     const stream = fs.createReadStream(filePath);
-    const sanitizedObjectName = objectPath.replace(/\\/g, '/');
-    const contentType = mime.getType(sanitizedObjectName) || DEFAULT_CONTENT_TYPE;
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, metadata);
+    const contentType = mime.getType(objectPath) || DEFAULT_CONTENT_TYPE;
+    return this.s3Client.upload(this.bucketName, objectPath, stream, contentType, metadata);
+  }
+
+  async moveObject(oldObjectPath, newObjectPath) {
+    const metadata = this._getDefaultMetadata();
+    const contentType = mime.getType(newObjectPath) || DEFAULT_CONTENT_TYPE;
+    await this.s3Client.copyObject(this.bucketName, oldObjectPath, newObjectPath, contentType, metadata);
+    await this.s3Client.deleteObject(this.bucketName, oldObjectPath);
   }
 
   async deleteObject(objectPath) {

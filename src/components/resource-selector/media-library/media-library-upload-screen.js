@@ -2,7 +2,9 @@ import PropTypes from 'prop-types';
 import { Button, Form } from 'antd';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { usePermission } from '../../../ui/hooks.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import permissions from '../../../domain/permissions.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { handleApiError } from '../../../ui/error-helper.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
@@ -24,7 +26,9 @@ const SCREEN = {
   previewCreatedItem: 'preview-created-item'
 };
 
-const createFileInfo = file => file ? { file, isEdited: false, isTooBig: file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } : null;
+const createFileInfo = (file, allowUnlimitedUpload) => file
+  ? { file, isEdited: false, isTooBig: !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES }
+  : null;
 
 function MediaLibraryUploadScreen({
   initialFile,
@@ -32,26 +36,27 @@ function MediaLibraryUploadScreen({
   onCancelClick,
   onSelectNewUrl
 }) {
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
   const [createdItem, setCreatedItem] = useState(null);
   const { t } = useTranslation('mediaLibraryUploadScreen');
   const [currentScreen, setCurrentScreen] = useState(SCREEN.enterData);
-  const [fileInfo, setFileInfo] = useState(createFileInfo(initialFile));
+  const [fileInfo, setFileInfo] = useState(createFileInfo(initialFile, allowUnlimitedUpload));
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
   useEffect(() => {
     setCreatedItem(null);
     setCurrentScreen(SCREEN.enterData);
-    setFileInfo(createFileInfo(initialFile));
-  }, [initialFile, form]);
+    setFileInfo(createFileInfo(initialFile, allowUnlimitedUpload));
+  }, [allowUnlimitedUpload, initialFile, form]);
 
   const isCurrentlyUploading = currentScreen === SCREEN.createItem;
   const canEditImage = fileInfo && isEditableImageFile(fileInfo.file);
 
   const handleFileDrop = ([newFile]) => {
     if (!isCurrentlyUploading && newFile) {
-      setFileInfo(createFileInfo(newFile));
+      setFileInfo(createFileInfo(newFile, allowUnlimitedUpload));
     }
   };
 
@@ -98,7 +103,7 @@ function MediaLibraryUploadScreen({
   };
 
   const handleEditorApplyClick = newFile => {
-    setFileInfo({ ...createFileInfo(newFile), isEdited: true });
+    setFileInfo({ ...createFileInfo(newFile, allowUnlimitedUpload), isEdited: true });
     setCurrentScreen(SCREEN.enterData);
   };
 
@@ -134,6 +139,7 @@ function MediaLibraryUploadScreen({
             dropzoneRef={dropzoneRef}
             file={fileInfo?.file || null}
             canAcceptFile={!isCurrentlyUploading}
+            uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
             showSizeWarning={!!fileInfo?.isTooBig}
             onFileDrop={handleFileDrop}
             onEditImageClick={handleEditImageClick}

@@ -1,6 +1,5 @@
-import os from 'node:os';
-import multer from 'multer';
 import express from 'express';
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
@@ -12,12 +11,12 @@ import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentService from '../services/document-service.js';
+import multipartMiddleware from '../domain/multipart-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentInputService from '../services/document-input-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
-import { validateBody, validateFile, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import {
   NOT_ROOM_OWNER_ERROR_MESSAGE,
@@ -50,14 +49,14 @@ import {
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
-const multipartParser = multer({ dest: os.tmpdir() });
 
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 export default class RoomController {
-  static dependencies = [ServerConfig, RoomService, DocumentService, DocumentInputService, UserService, MailService, ClientDataMappingService, PageRenderer];
+  static dependencies = [ServerConfig, RoomService, DocumentService, DocumentInputService, UserService, MailService, ClientDataMappingService, PageRenderer, Cdn];
 
-  constructor(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer) {
+  constructor(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer, cdn) {
+    this.cdn = cdn;
     this.roomService = roomService;
     this.userService = userService;
     this.mailService = mailService;
@@ -510,9 +509,7 @@ export default class RoomController {
     router.post(
       '/api/v1/room-media/:roomId',
       needsPermission(permissions.CREATE_CONTENT),
-      uploadLimitExceededMiddleware(),
-      multipartParser.single('file'),
-      validateFile('file'),
+      multipartMiddleware({ cdn: this.cdn, fileField: 'file' }),
       validateParams(postRoomMediaParamsSchema),
       (req, res) => this.handlePostRoomMedia(req, res)
     );

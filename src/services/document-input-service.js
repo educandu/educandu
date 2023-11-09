@@ -161,7 +161,7 @@ class DocumentInputService {
 
           totalRequiredSize += size;
 
-          newCdnFiles.push({ sourcePath: uploadedFile.path, storagePath });
+          newCdnFiles.push({ sourceKey: uploadedFile.key, storagePath });
 
           newDocumentInputMediaItems.push({
             _id: uniqueId.create(),
@@ -206,7 +206,7 @@ class DocumentInputService {
         }
 
         for (const newCdnFile of newCdnFiles) {
-          await this.cdn.uploadObject(newCdnFile.storagePath, newCdnFile.sourcePath);
+          await this.cdn.moveObject(newCdnFile.sourceKey, newCdnFile.storagePath);
         }
 
         for (const newDocumentInputMediaItem of newDocumentInputMediaItems) {

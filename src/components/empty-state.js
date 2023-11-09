@@ -75,7 +75,7 @@ EmptyState.propTypes = {
   button: PropTypes.shape({
     icon: PropTypes.node,
     text: PropTypes.node.isRequired,
-    subtext: PropTypes.string,
+    subtext: PropTypes.node,
     isDisabled: PropTypes.bool,
     isDefaultType: PropTypes.bool,
     onClick: PropTypes.func.isRequired

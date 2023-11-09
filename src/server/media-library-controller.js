@@ -1,14 +1,13 @@
-import os from 'node:os';
-import multer from 'multer';
 import express from 'express';
+import Cdn from '../stores/cdn.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import multipartMiddleware from '../domain/multipart-middleware.js';
 import MediaLibraryService from '../services/media-library-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
-import { validateBody, validateFile, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   mediaLibraryItemMetadataBodySchema,
   mediaLibraryItemIdParamsSchema,
@@ -18,15 +17,15 @@ import {
 } from '../domain/schemas/media-library-item-schemas.js';
 
 const jsonParser = express.json();
-const multipartParser = multer({ dest: os.tmpdir() });
 
 class MediaLibraryController {
-  static dependencies = [MediaLibraryService, ClientDataMappingService, PageRenderer];
+  static dependencies = [MediaLibraryService, ClientDataMappingService, PageRenderer, Cdn];
 
-  constructor(mediaLibraryService, clientDataMappingService, pageRenderer) {
+  constructor(mediaLibraryService, clientDataMappingService, pageRenderer, cdn) {
     this.mediaLibraryService = mediaLibraryService;
     this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
+    this.cdn = cdn;
   }
 
   async handleGetMediaLibraryItemPage(req, res) {
@@ -125,15 +124,7 @@ class MediaLibraryController {
     router.post(
       '/api/v1/media-library/items',
       needsPermission(permissions.CREATE_CONTENT),
-      uploadLimitExceededMiddleware(),
-      multipartParser.single('file'),
-      validateFile('file'),
-      (req, _res, next) => {
-        // Transform the body as if it were a REST call,
-        // so we can nicely validate it and work with it
-        req.body = JSON.parse(req.body.metadata || 'null') || {};
-        next();
-      },
+      multipartMiddleware({ cdn: this.cdn, fileField: 'file', bodyField: 'metadata', allowUnlimitedUploadForElevatedRoles: true }),
       validateBody(mediaLibraryItemMetadataBodySchema),
       (req, res) => this.handleCreateMediaLibraryItem(req, res)
     );

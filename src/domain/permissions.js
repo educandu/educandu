@@ -10,6 +10,7 @@ const MANAGE_PUBLIC_CONTENT = 'manage-public-content';
 const PROTECT_OWN_PUBLIC_CONTENT = 'protect-own-public-content';
 const DELETE_OWN_PRIVATE_CONTENT = 'delete-own-private-content';
 const DELETE_ANY_PRIVATE_CONTENT = 'delete-any-private-content';
+const UPLOAD_WITHOUT_SIZE_RESTRICTION = 'upload-without-size-restriction';
 
 const userPermissions = [
   CREATE_CONTENT,
@@ -27,7 +28,8 @@ const maintainerPermissions = [
     ...userPermissions,
     ...accreditedAuthorPermissions,
     VIEW_USERS,
-    MANAGE_PUBLIC_CONTENT
+    MANAGE_PUBLIC_CONTENT,
+    UPLOAD_WITHOUT_SIZE_RESTRICTION
   ])
 ];
 
@@ -68,5 +70,6 @@ export default {
   MANAGE_USERS,
   MANAGE_SETUP,
   BATCH_PROCESS_DATA,
-  DELETE_ANY_PRIVATE_CONTENT
+  DELETE_ANY_PRIVATE_CONTENT,
+  UPLOAD_WITHOUT_SIZE_RESTRICTION
 };

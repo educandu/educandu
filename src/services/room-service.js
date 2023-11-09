@@ -298,7 +298,7 @@ export default class RoomService {
       const roomMediaItem = this.createRoomMediaItem({ user, roomId, file, storageUrl });
 
       try {
-        await this.cdn.uploadObject(cdnObjectPath, file.path);
+        await this.cdn.moveObject(file.key, cdnObjectPath);
         await this.roomMediaItemStore.insertRoomMediaItem(roomMediaItem);
       } catch (error) {
         await this.cdn.deleteObject(cdnObjectPath);

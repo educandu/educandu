@@ -1,18 +1,17 @@
-import os from 'node:os';
-import multer from 'multer';
 import express from 'express';
+import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import DocumentService from '../services/document-service.js';
+import multipartMiddleware from '../domain/multipart-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentInputService from '../services/document-input-service.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import uploadLimitExceededMiddleware from '../domain/upload-limit-exceeded-middleware.js';
-import { validateBody, validateFile, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   documentInputIdParamsOrQuerySchema,
   getDocumentInputsCreatedByUserParams,
@@ -32,17 +31,17 @@ const { Forbidden, NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
-const multipartParser = multer({ dest: os.tmpdir() });
 
 class DocumentInputController {
-  static dependencies = [DocumentInputService, DocumentService, RoomService, ClientDataMappingService, PageRenderer];
+  static dependencies = [DocumentInputService, DocumentService, RoomService, ClientDataMappingService, PageRenderer, Cdn];
 
-  constructor(documentInputService, documentService, roomService, clientDataMappingService, pageRenderer) {
+  constructor(documentInputService, documentService, roomService, clientDataMappingService, pageRenderer, cdn) {
     this.roomService = roomService;
     this.documentService = documentService;
     this.documentInputService = documentInputService;
     this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
+    this.cdn = cdn;
   }
 
   async handleGetDocumentInputPage(req, res) {
@@ -228,15 +227,7 @@ class DocumentInputController {
     router.post(
       '/api/v1/doc-inputs',
       needsPermission(permissions.CREATE_CONTENT),
-      uploadLimitExceededMiddleware(),
-      multipartParser.array('files[]'),
-      validateFile('files'),
-      (req, _res, next) => {
-        // Transform the body as if it were a REST call,
-        // so we can nicely validate it and work with it
-        req.body = JSON.parse(req.body.documentInput || 'null') || {};
-        next();
-      },
+      multipartMiddleware({ cdn: this.cdn, fileField: 'files', multipleFiles: true, bodyField: 'documentInput' }),
       validateBody(createDocumentInputDataBodySchema),
       (req, res) => this.handlePostDocumentInput(req, res)
     );

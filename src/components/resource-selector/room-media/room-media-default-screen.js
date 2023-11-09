@@ -7,6 +7,7 @@ import UploadButton from '../shared/upload-button.js';
 import RoomMediaFilesViewer from './room-media-files-viewer.js';
 import { useRoomMediaContext } from '../../room-media-context.js';
 import { roomMediaItemShape } from '../../../ui/default-prop-types.js';
+import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 function RoomMediaDefaultScreen({
   files,
@@ -74,7 +75,7 @@ function RoomMediaDefaultScreen({
         {renderStorageInfo()}
       </div>
       <div className="u-resource-selector-screen-footer">
-        <UploadButton onClick={handleUploadButtonClick} />
+        <UploadButton uploadLimit={STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES} onClick={handleUploadButtonClick} />
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick}>
             {t('common:cancel')}

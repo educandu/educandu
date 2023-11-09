@@ -4,13 +4,16 @@ import { Button, Spin } from 'antd';
 import prettyBytes from 'pretty-bytes';
 import reactDropzoneNs from 'react-dropzone';
 import EmptyState from '../../empty-state.js';
-import { useTranslation } from 'react-i18next';
 import { useUser } from '../../user-context.js';
+import { usePermission } from '../../../ui/hooks.js';
 import UploadButton from '../shared/upload-button.js';
+import { Trans, useTranslation } from 'react-i18next';
 import EditIcon from '../../icons/general/edit-icon.js';
+import { useService } from '../../container-context.js';
 import FilesGridViewer from '../shared/files-grid-viewer.js';
 import MediaLibraryOptions from './media-library-options.js';
 import PreviewIcon from '../../icons/general/preview-icon.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
 import ResourceSearchBar from '../shared/resource-search-bar.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
@@ -49,8 +52,10 @@ function MediaLibrarySearchScreen({
 }) {
   const user = useUser();
   const dropzoneRef = useRef();
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibrarySearchScreen');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
 
   const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
   const [initialMediaLibraryItem, setInitialMediaLibraryItem] = useState(null);
@@ -194,7 +199,21 @@ function MediaLibrarySearchScreen({
                       button={{
                         isDefaultType: true,
                         text: t('common:browse'),
-                        subtext: t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES), maxFiles: 1 }),
+                        subtext: (
+                          <Fragment>
+                            {t('common:uploadLimitInfo', { limit: allowUnlimitedUpload ? 'none' : prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES), maxFiles: 1 })}
+                            {!allowUnlimitedUpload && !!clientConfig.adminEmailAddress && (
+                              <Fragment>
+                                <br />
+                                <Trans
+                                  t={t}
+                                  i18nKey="common:uploadLimitAdminContactInfo"
+                                  components={[<a key="email-link" href={`mailto:${encodeURIComponent(clientConfig.adminEmailAddress)}`} />]}
+                                  />
+                              </Fragment>
+                            )}
+                          </Fragment>
+                        ),
                         onClick: handleUploadButtonClick
                       }}
                       />
@@ -206,7 +225,10 @@ function MediaLibrarySearchScreen({
         )}
         <div className={currentScreen === SCREEN.search ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
           {currentScreen === SCREEN.search && (
-            <UploadButton onClick={handleUploadButtonClick} />
+            <UploadButton
+              uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
+              onClick={handleUploadButtonClick}
+              />
           )}
           <div className="u-resource-selector-screen-footer-buttons">
             <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
