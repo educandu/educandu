@@ -6,12 +6,11 @@
 
 .Markdown {
   blockquote {
-    display: block;
+    display: grid;
     background: @edu-white;
     padding: 15px 20px 15px 45px;
     margin: 40px 80px;
     position: relative;
-    clear: both;
     border-left: 15px solid @markdown-blockquote-color;
     border-right: 2px solid @markdown-blockquote-color;
     box-shadow: 2px 2px 15px @edu-border-color-base;
@@ -21,7 +20,7 @@
     }
   }
 
-  blockquote::before{
+  blockquote::before {
     content: "\201C";
     line-height: 60px;
     font-family: Georgia, serif;
@@ -30,10 +29,10 @@
     color: @markdown-blockquote-quotations-color;
     position: absolute;
     left: 10px;
-    top:5px;
+    top: 5px;
   }
 
-  blockquote::after{
+  blockquote::after {
     content: "";
   }
 
@@ -65,7 +64,9 @@
     font-weight: normal;
   }
 
-  ol, dl, ul {
+  ol,
+  dl,
+  ul {
     overflow: hidden;
     padding-left: 2.5em;
     list-style-position: outside;
