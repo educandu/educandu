@@ -666,3 +666,27 @@ common:
   allRightsReserved:
     en: All rights reserved
     de: Alle Rechte vorbehalten
+  dashboardTab_activities:
+    en: Activities
+    de: Aktivitäten
+  dashboardTab_favorites:
+    en: Favorites
+    de: Favoriten
+  dashboardTab_documents:
+    en: Public documents
+    de: Öffentliche Dokumente
+  dashboardTab_rooms:
+    en: Rooms
+    de: Räume
+  dashboardTab_document-inputs:
+    en: Document inputs
+    de: Dokumenteingaben
+  dashboardTab_notifications:
+    en: Notifications
+    de: Benachrichtigungen
+  dashboardTab_storage:
+    en: Storage
+    de: Speicher
+  dashboardTab_settings:
+    en: Settings
+    de: Einstellungen

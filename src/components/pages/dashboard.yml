@@ -1,13 +1,4 @@
 dashboard:
-  activitiesTabTitle:
-    en: Activities
-    de: Aktivitäten
-  favoritesTabTitle:
-    en: Favorites
-    de: Favoriten
-  documentsTabTitle:
-    en: Public documents
-    de: Öffentliche Dokumente
-  roomsTabTitle:
-    en: Rooms
-    de: Räume
+  tabsHelpLinkText:
+    en: Find out more?
+    de: Mehr entdecken?
