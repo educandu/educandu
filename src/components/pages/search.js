@@ -46,7 +46,7 @@ const getSanitizedQueryFromRequest = request => {
   return {
     query: query.query.trim(),
     tags: (query.tags?.trim() || '').split(',').filter(tag => tag),
-    type: Object.values(SEARCH_RESOURCE_TYPE).includes(query.type) ? query.type : SEARCH_RESOURCE_TYPE.any,
+    type: Object.values(SEARCH_RESOURCE_TYPE).includes(query.type) ? query.type : SEARCH_RESOURCE_TYPE.document,
     sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.relevance,
     direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
     page: !isNaN(pageNumber) ? pageNumber : 1,
