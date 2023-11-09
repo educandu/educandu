@@ -80,4 +80,4 @@ adminSettingsTab:
     de: "Dashboard: Hilfe-Links"
   dashboardHelpLinksInfo:
     en: Each dashboard tab that has a "help" document set will display a link for the user to access that document.
-    de: Each dashboard tab that has a "help" document set will display a link for the user to access that document.
+    de: Jeder Dashboard-Reiter, für den ein Hilfe-Dokument gesetzt wird, zeigt einen Link an, mit dem der Benutzer auf dieses Dokument gelangt.
