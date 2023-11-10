@@ -999,7 +999,12 @@ describe('user-service', () => {
         emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.never,
         accountLockedOn: null,
         accountClosedOn: expect.any(Date),
-        lastLoggedInOn: null
+        lastLoggedInOn: null,
+        dashboardSettings: {
+          rooms: {
+            hiddenRooms: []
+          }
+        }
       });
     });
   });

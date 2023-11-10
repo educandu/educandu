@@ -565,7 +565,12 @@ class UserService {
       emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.never,
       accountLockedOn: null,
       accountClosedOn: null,
-      lastLoggedInOn: null
+      lastLoggedInOn: null,
+      dashboardSettings: {
+        rooms: {
+          hiddenRooms: []
+        }
+      }
     };
   }
 }
