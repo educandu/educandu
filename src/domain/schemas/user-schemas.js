@@ -108,8 +108,12 @@ export const favoriteDBSchema = joi.object({
 
 export const userDBSchema = joi.object({
   _id: idOrKeySchema.required(),
-  passwordHash: joi.string().allow(null).required(),
   email: joi.string().case('lower').allow(null).required(),
+  passwordHash: joi.string().allow(null).required(),
+  displayName: joi.string().required(),
+  organization: joi.string().allow('').max(maxUserOrganizationLength).required(),
+  profileOverview: joi.string().allow('').required(),
+  shortDescription: joi.string().allow('').max(maxUserShortDescriptionLength).required(),
   role: joi.string().valid(...Object.values(ROLE)).required(),
   expiresOn: joi.date().allow(null).required(),
   verificationCode: joi.string().allow(null).required(),
@@ -119,8 +123,9 @@ export const userDBSchema = joi.object({
   accountLockedOn: joi.date().allow(null).required(),
   accountClosedOn: joi.date().allow(null).required(),
   lastLoggedInOn: joi.date().allow(null).required(),
-  displayName: joi.string().required(),
-  organization: joi.string().allow('').max(maxUserOrganizationLength).required(),
-  profileOverview: joi.string().allow('').required(),
-  shortDescription: joi.string().allow('').max(maxUserShortDescriptionLength).required()
+  dashboardSettings: joi.object({
+    rooms: joi.object({
+      hiddenRooms: joi.array().items(idOrKeySchema)
+    })
+  })
 });
