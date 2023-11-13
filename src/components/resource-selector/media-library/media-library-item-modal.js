@@ -46,9 +46,10 @@ function MediaLibaryItemModal({
   const imageEditorRef = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditingImage, setIsEditingImage] = useState(false);
-  const [fileInfo, setFileInfo] = useState(createFileInfo(null, allowUnlimitedUpload));
+  const [isVisibleToUser, setIsVisibleToUser] = useState(false);
   const [isEditedImageDirty, setIsEditedImageDirty] = useState(false);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const [fileInfo, setFileInfo] = useState(createFileInfo(null, allowUnlimitedUpload));
 
   if (mode !== MEDIA_LIBRARY_ITEM_MODAL_MODE.create && !mediaLibraryItem) {
     throw new Error('Cannot preview or update without a media library item');
@@ -64,6 +65,7 @@ function MediaLibaryItemModal({
     }
 
     setIsEditingImage(false);
+    setIsVisibleToUser(true);
     setIsEditedImageDirty(false);
     setFileInfo(createFileInfo(null));
   }, [isOpen, mode, form]);
@@ -144,48 +146,108 @@ function MediaLibaryItemModal({
     }
   };
 
+  const handleAfterOpenChange = open => {
+    if (!open) {
+      setIsVisibleToUser(false);
+    }
+  };
+
   let dialogTitle;
   let dialogFooter;
   let dialogContent;
   let isDialogClosable;
 
-  switch (mode) {
-    case MEDIA_LIBRARY_ITEM_MODAL_MODE.preview:
-      isDialogClosable = true;
-      dialogTitle = t('common:preview');
+  if (!isVisibleToUser) {
+    isDialogClosable = false;
+    dialogTitle = null;
+    dialogContent = null;
+    dialogFooter = null;
+  } else if (mode === MEDIA_LIBRARY_ITEM_MODAL_MODE.preview) {
+    isDialogClosable = true;
+    dialogTitle = t('common:preview');
+    dialogContent = (
+      <div className="MediaLibaryItemModal">
+        <div className="MediaLibaryItemModal-name">
+          {mediaLibraryItem.name}
+        </div>
+        <div className="MediaLibaryItemModal-splitView">
+          <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />
+          <MediaLibraryMetadataDisplay mediaLibraryItem={mediaLibraryItem} />
+        </div>
+        <div className="MediaLibaryItemModal-url">
+          <ResourceUrl url={mediaLibraryItem.url} />
+        </div>
+      </div>
+    );
+    dialogFooter = (
+      <div className="MediaLibaryItemModal-footer">
+        <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
+          <Button type="primary" onClick={onClose}>{t('common:ok')}</Button>
+        </div>
+      </div>
+    );
+  } else if (mode === MEDIA_LIBRARY_ITEM_MODAL_MODE.update) {
+    isDialogClosable = false;
+    dialogTitle = t('common:edit');
+    dialogContent = (
+      <div className="MediaLibaryItemModal">
+        <div className="MediaLibaryItemModal-name">
+          {mediaLibraryItem.name}
+        </div>
+        <div className="MediaLibaryItemModal-splitView">
+          <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />
+          <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImage={false} onFinish={handleUpdateItemFinish} />
+        </div>
+      </div>
+    );
+    dialogFooter = (
+      <div className="MediaLibaryItemModal-footer">
+        <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
+          <Button onClick={onClose}>{t('common:cancel')}</Button>
+          <Button type="primary" loading={isSaving} onClick={handleSaveClick}>{t('common:save')}</Button>
+        </div>
+      </div>
+    );
+  } else if (mode === MEDIA_LIBRARY_ITEM_MODAL_MODE.create) {
+    isDialogClosable = false;
+    dialogTitle = t('common:create');
+    if (isEditingImage) {
       dialogContent = (
         <div className="MediaLibaryItemModal">
-          <div className="MediaLibaryItemModal-name">
-            {mediaLibraryItem.name}
-          </div>
-          <div className="MediaLibaryItemModal-splitView">
-            <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />
-            <MediaLibraryMetadataDisplay mediaLibraryItem={mediaLibraryItem} />
-          </div>
-          <div className="MediaLibaryItemModal-url">
-            <ResourceUrl url={mediaLibraryItem.url} />
+          <div className="MediaLibaryItemModal-imageEditor">
+            <ImageEditor
+              file={fileInfo.file}
+              editorRef={imageEditorRef}
+              onCrop={handleImageEditorCrop}
+              />
           </div>
         </div>
       );
       dialogFooter = (
         <div className="MediaLibaryItemModal-footer">
+          <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--extra">
+            <Button onClick={handleImageEditorBackClick}>{t('common:back')}</Button>
+          </div>
           <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
-            <Button type="primary" onClick={onClose}>{t('common:ok')}</Button>
+            <Button onClick={onClose}>{t('common:cancel')}</Button>
+            <Button type="primary" loading={isSaving} disabled={!isEditedImageDirty} onClick={handleApplyImageEditorChanges}>{t('common:apply')}</Button>
           </div>
         </div>
       );
-      break;
-    case MEDIA_LIBRARY_ITEM_MODAL_MODE.update:
-      isDialogClosable = false;
-      dialogTitle = t('common:edit');
+    } else {
       dialogContent = (
         <div className="MediaLibaryItemModal">
-          <div className="MediaLibaryItemModal-name">
-            {mediaLibraryItem.name}
-          </div>
           <div className="MediaLibaryItemModal-splitView">
-            <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />
-            <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImage={false} onFinish={handleUpdateItemFinish} />
+            <MediaLibraryFileDropzone
+              dropzoneRef={dropzoneRef}
+              file={fileInfo?.file || null}
+              canAcceptFile={!isSaving}
+              uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
+              showSizeWarning={!!fileInfo?.isTooBig}
+              onFileDrop={handleFileDrop}
+              onEditImageClick={handleEditImageClick}
+              />
+            <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImage onFinish={handleCreateItemFinish} />
           </div>
         </div>
       );
@@ -193,66 +255,13 @@ function MediaLibaryItemModal({
         <div className="MediaLibaryItemModal-footer">
           <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
             <Button onClick={onClose}>{t('common:cancel')}</Button>
-            <Button type="primary" loading={isSaving} onClick={handleSaveClick}>{t('common:save')}</Button>
+            <Button type="primary" loading={isSaving} disabled={!fileInfo || !!fileInfo.isTooBig} onClick={handleSaveClick}>{t('common:save')}</Button>
           </div>
         </div>
       );
-      break;
-    case MEDIA_LIBRARY_ITEM_MODAL_MODE.create:
-      isDialogClosable = false;
-      dialogTitle = t('common:create');
-      if (isEditingImage) {
-        dialogContent = (
-          <div className="MediaLibaryItemModal">
-            <div className="MediaLibaryItemModal-imageEditor">
-              <ImageEditor
-                file={fileInfo.file}
-                editorRef={imageEditorRef}
-                onCrop={handleImageEditorCrop}
-                />
-            </div>
-          </div>
-        );
-        dialogFooter = (
-          <div className="MediaLibaryItemModal-footer">
-            <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--extra">
-              <Button onClick={handleImageEditorBackClick}>{t('common:back')}</Button>
-            </div>
-            <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
-              <Button onClick={onClose}>{t('common:cancel')}</Button>
-              <Button type="primary" loading={isSaving} disabled={!isEditedImageDirty} onClick={handleApplyImageEditorChanges}>{t('common:apply')}</Button>
-            </div>
-          </div>
-        );
-      } else {
-        dialogContent = (
-          <div className="MediaLibaryItemModal">
-            <div className="MediaLibaryItemModal-splitView">
-              <MediaLibraryFileDropzone
-                dropzoneRef={dropzoneRef}
-                file={fileInfo?.file || null}
-                canAcceptFile={!isSaving}
-                uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
-                showSizeWarning={!!fileInfo?.isTooBig}
-                onFileDrop={handleFileDrop}
-                onEditImageClick={handleEditImageClick}
-                />
-              <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImage onFinish={handleCreateItemFinish} />
-            </div>
-          </div>
-        );
-        dialogFooter = (
-          <div className="MediaLibaryItemModal-footer">
-            <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
-              <Button onClick={onClose}>{t('common:cancel')}</Button>
-              <Button type="primary" loading={isSaving} disabled={!fileInfo || !!fileInfo.isTooBig} onClick={handleSaveClick}>{t('common:save')}</Button>
-            </div>
-          </div>
-        );
-      }
-      break;
-    default:
-      throw new Error(`Invalid media library metadata modal mode: '${mode}'`);
+    }
+  } else {
+    throw new Error(`Invalid media library metadata modal mode: '${mode}'`);
   }
 
   return !!isMounted.current && (
@@ -265,6 +274,7 @@ function MediaLibaryItemModal({
       closable={isDialogClosable}
       maskClosable={isDialogClosable}
       onCancel={onClose}
+      afterOpenChange={handleAfterOpenChange}
       >
       {dialogContent}
     </Modal>
