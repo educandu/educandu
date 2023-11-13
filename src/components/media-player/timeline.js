@@ -4,7 +4,6 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import PinIcon from '../icons/general/pin-icon.js';
 import CloseIcon from '../icons/general/close-icon.js';
-import { isTouchDevice } from '../../ui/browser-helper.js';
 import { confirmDelete } from '../confirmation-dialogs.js';
 import { usePercentageFormat } from '../locale-context.js';
 import { getContrastColor } from '../../ui/color-helper.js';
@@ -31,7 +30,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     });
   };
 
-  const handleMarkerMouseDown = (marker, index) => () => {
+  const handleMarkerMouseDown = (marker, index) => {
     const prevMarker = timelineState.markers[index - 1];
     const nextMarker = timelineState.markers[index + 1];
     const timelineBounds = timelineRef.current.getBoundingClientRect();
@@ -81,7 +80,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   }, [dragState, timelineState, onStartPositionChange]);
 
   const handleMarkersBarClick = () => {
-    if (!timelineState.currentTimelineWidth || isTouchDevice()) {
+    if (!timelineState.currentTimelineWidth) {
       return;
     }
 
@@ -97,7 +96,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   };
 
   const handleMarkersBarMouseMove = event => {
-    if (dragState || isTouchDevice()) {
+    if (dragState) {
       return;
     }
     const timelineBounds = timelineRef.current.getBoundingClientRect();
@@ -193,7 +192,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   }, [updateStates]);
 
   useEffect(() => {
-    if (!dragState || isTouchDevice()) {
+    if (!dragState) {
       return () => {};
     }
     window.addEventListener('mousemove', handleWindowMouseMove);
@@ -217,7 +216,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         {!!dragState && (
           <div className="Timeline-markerTimecode">{markerText}</div>
         )}
-        <div onMouseDown={handleMarkerMouseDown(marker, index)}>
+        <div onMouseDown={() => handleMarkerMouseDown(marker, index)}>
           <PinIcon />
         </div>
       </div>
