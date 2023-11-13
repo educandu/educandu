@@ -14,9 +14,9 @@ import DocumentController from './document-controller.js';
 import RevisionController from './revision-controller.js';
 import PdfJsApiController from './pdfjs-api-controller.js';
 import DashboardController from './dashboard-controller.js';
-import RedactionController from './redaction-controller.js';
 import UserAgentController from './user-agent-controller.js';
 import ComparisonController from './comparison-controller.js';
+import MaintenanceController from './maintenance-controller.js';
 import StoragePlanController from './storage-plan-controller.js';
 import NotificationController from './notification-controller.js';
 import MediaLibraryController from './media-library-controller.js';
@@ -47,7 +47,7 @@ const pageAndApiControllers = [
   AmbController,
   DocumentInputController,
   DocumentCommentController,
-  RedactionController,
+  MaintenanceController,
   NotificationController
 ];
 

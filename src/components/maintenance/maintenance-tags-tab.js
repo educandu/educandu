@@ -107,9 +107,9 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function RedactionTagsTab({ documents, mediaLibraryItems }) {
+function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
   const request = useRequest();
-  const { t } = useTranslation('redactionTagsTab');
+  const { t } = useTranslation('maintenanceTagsTab');
 
   const requestQuery = getSanitizedQueryFromRequest(request);
 
@@ -136,7 +136,7 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getRedactionUrl(TABS.tags, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TABS.tags, queryParams));
   }, [filter, tagCategoryFilter, sorting, pagination]);
 
   useEffect(() => {
@@ -200,11 +200,11 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
 
   const renderExpandedRow = row => {
     return (
-      <div className="RedactionTagsTab-expandedRow">
+      <div className="MaintenanceTagsTab-expandedRow">
         {!!row.documents.length && (
           <Fragment>
-            <div className="RedactionTagsTab-expandedRowHeader">{t('documents')}:</div>
-            <ul className="RedactionTagsTab-documentList">
+            <div className="MaintenanceTagsTab-expandedRowHeader">{t('documents')}:</div>
+            <ul className="MaintenanceTagsTab-documentList">
               {row.documents.map(doc => (
                 <li key={doc._id}>
                   <a href={routes.getDocUrl({ id: doc._id, slug: doc.slug })}>{doc.title}</a>
@@ -215,8 +215,8 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
         )}
         {!!row.mediaLibraryItems.length && (
           <Fragment>
-            <div className="RedactionTagsTab-expandedRowHeader">{t('mediaLibraryItems')}:</div>
-            <ul className="RedactionTagsTab-documentList">
+            <div className="MaintenanceTagsTab-expandedRowHeader">{t('mediaLibraryItems')}:</div>
+            <ul className="MaintenanceTagsTab-documentList">
               {row.mediaLibraryItems.map(item => (
                 <li key={item._id}>
                   <a href={item.url} onClick={event => handleMediaLibraryItemPreviewClick(item, event)}>{item.name}</a>
@@ -227,12 +227,12 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
         )}
         {!!row.companionTags.length && (
           <Fragment>
-            <div className="RedactionTagsTab-expandedRowHeader">{t('companionTags')}:</div>
-            <div className="RedactionTagsTab-companionTags">
+            <div className="MaintenanceTagsTab-expandedRowHeader">{t('companionTags')}:</div>
+            <div className="MaintenanceTagsTab-companionTags">
               {row.companionTags.map(ctag => (
-                <span key={ctag.name} className="RedactionTagsTab-companionTag">
+                <span key={ctag.name} className="MaintenanceTagsTab-companionTag">
                   <Tag>{ctag.name}</Tag>
-                  <span className="RedactionTagsTab-companionTagFrequency">({ctag.frequency})</span>
+                  <span className="MaintenanceTagsTab-companionTagFrequency">({ctag.frequency})</span>
                 </span>
               ))}
             </div>
@@ -261,11 +261,11 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
   ];
 
   return (
-    <div className="RedactionTagsTab">
-      <div className="RedactionTagsTab-controls">
+    <div className="MaintenanceTagsTab">
+      <div className="MaintenanceTagsTab-controls">
         <FilterInput
           size="large"
-          className="RedactionTagsTab-textFilter"
+          className="MaintenanceTagsTab-textFilter"
           value={filter}
           onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
@@ -279,7 +279,7 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
         <Select
           value={tagCategoryFilter}
           options={tagCategoryFilterOptions}
-          className="RedactionTagsTab-tagCategoryFilter"
+          className="MaintenanceTagsTab-tagCategoryFilter"
           onChange={setTagCategoryFilter}
           />
       </div>
@@ -300,9 +300,9 @@ function RedactionTagsTab({ documents, mediaLibraryItems }) {
   );
 }
 
-RedactionTagsTab.propTypes = {
+MaintenanceTagsTab.propTypes = {
   documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
   mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired
 };
 
-export default RedactionTagsTab;
+export default MaintenanceTagsTab;

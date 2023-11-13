@@ -93,10 +93,10 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function RedactionDocumentsTab({ documents, onDocumentsChange }) {
+function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
   const request = useRequest();
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('redactionDocumentsTab');
+  const { t } = useTranslation('maintenanceDocumentsTab');
 
   const requestQuery = getSanitizedQueryFromRequest(request);
 
@@ -121,7 +121,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getRedactionUrl(TABS.documents, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TABS.documents, queryParams));
   }, [filter, sorting, pagination]);
 
   useEffect(() => {
@@ -247,7 +247,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
         title={doc.title}
         shortDescription={doc.shortDescription}
         subtext={
-          <div className="RedactionDocumentsTab-titleSubtext">
+          <div className="MaintenanceDocumentsTab-titleSubtext">
             <div>
               <span>{`${t('common:createdOnDateBy', { date: formatDate(doc.createdOn) })} `}</span>
               <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
@@ -266,8 +266,8 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   const renderCellTags = (_, row) => (
     <div>
       <ItemsExpander
-        className="RedactionDocumentsTab-tags"
-        expandLinkClassName="RedactionDocumentsTab-tagsExpandLink"
+        className="MaintenanceDocumentsTab-tags"
+        expandLinkClassName="MaintenanceDocumentsTab-tagsExpandLink"
         items={row.tags}
         renderItem={tag => <Tag className="Tag" key={tag}>{tag}</Tag>}
         />
@@ -297,7 +297,7 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
 
   const renderDocumentBadges = (_, row) => {
     return (
-      <div className="RedactionDocumentsTab-badges">
+      <div className="MaintenanceDocumentsTab-badges">
         {!!row.archived && (
           <Tooltip title={t('archivedDocumentBadge')}>
             <InboxOutlined className="u-large-badge" />
@@ -360,11 +360,11 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   ];
 
   return (
-    <div className="RedactionDocumentsTab">
-      <div className="RedactionDocumentsTab-controls">
+    <div className="MaintenanceDocumentsTab">
+      <div className="MaintenanceDocumentsTab-controls">
         <FilterInput
           size="large"
-          className="RedactionDocumentsTab-filter"
+          className="MaintenanceDocumentsTab-filter"
           value={filter}
           onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
@@ -399,9 +399,9 @@ function RedactionDocumentsTab({ documents, onDocumentsChange }) {
   );
 }
 
-RedactionDocumentsTab.propTypes = {
+MaintenanceDocumentsTab.propTypes = {
   documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
   onDocumentsChange: PropTypes.func.isRequired
 };
 
-export default RedactionDocumentsTab;
+export default MaintenanceDocumentsTab;

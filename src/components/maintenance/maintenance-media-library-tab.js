@@ -76,10 +76,10 @@ function filterRows(rows, filter) {
   return lowerCasedFilter ? rows.filter(row => filterRow(row, lowerCasedFilter)) : rows;
 }
 
-function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
+function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
   const request = useRequest();
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('redactionMediaLibraryTab');
+  const { t } = useTranslation('maintenanceMediaLibraryTab');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
   const requestQuery = getSanitizedQueryFromRequest(request);
@@ -105,7 +105,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getRedactionUrl(TABS.mediaLibrary, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TABS.mediaLibrary, queryParams));
   }, [filter, sorting, pagination]);
 
   useEffect(() => {
@@ -212,7 +212,7 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
         title={row.name}
         shortDescription={row.shortDescription}
         subtext={
-          <div className="RedactionDocumentsTab-titleSubtext">
+          <div className="MaintenanceDocumentsTab-titleSubtext">
             <div>
               <span>{`${t('common:createdOnDateBy', { date: formatDate(row.createdOn) })} `}</span>
               <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>
@@ -230,8 +230,8 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   const renderTagsOrLicenses = tagsOrLicenses => (
     <div>
       <ItemsExpander
-        className="RedactionMediaLibraryTab-cellTags"
-        expandLinkClassName="RedactionMediaLibraryTab-cellTagsExpandLink"
+        className="MaintenanceMediaLibraryTab-cellTags"
+        expandLinkClassName="MaintenanceMediaLibraryTab-cellTagsExpandLink"
         items={tagsOrLicenses}
         renderItem={tagOrLicense => <Tag className="Tag" key={tagOrLicense}>{tagOrLicense}</Tag>}
         />
@@ -304,11 +304,11 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   ];
 
   return (
-    <div className="RedactionMediaLibraryTab">
-      <div className="RedactionMediaLibraryTab-controls">
+    <div className="MaintenanceMediaLibraryTab">
+      <div className="MaintenanceMediaLibraryTab-controls">
         <FilterInput
           size="large"
-          className="RedactionMediaLibraryTab-filter"
+          className="MaintenanceMediaLibraryTab-filter"
           value={filter}
           onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
@@ -342,9 +342,9 @@ function RedactionMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange
   );
 }
 
-RedactionMediaLibraryTab.propTypes = {
+MaintenanceMediaLibraryTab.propTypes = {
   mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired,
   onMediaLibraryItemsChange: PropTypes.func.isRequired
 };
 
-export default RedactionMediaLibraryTab;
+export default MaintenanceMediaLibraryTab;

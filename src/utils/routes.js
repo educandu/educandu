@@ -9,7 +9,7 @@ const searchPath = '/search';
 const batchesPath = '/batches';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
-const redactionPath = '/redaction';
+const maintenancePath = '/maintenance';
 const resetPasswordPath = '/reset-password';
 const connectExternalAccountPath = '/connect-external-account';
 
@@ -52,9 +52,9 @@ function getDocumentRevisionComparisonUrl({ documentId, oldId, newId }) {
   return `${urlUtils.concatParts(comparisonPrefix, documentId)}?${queryString}`;
 }
 
-function getRedactionUrl(tab, params) {
+function getMaintenanceUrl(tab, params) {
   const queryString = urlUtils.composeQueryString({ tab, ...params });
-  return queryString ? `${redactionPath}?${queryString}` : redactionPath;
+  return queryString ? `${maintenancePath}?${queryString}` : maintenancePath;
 }
 
 function getAdminUrl({ tab } = {}) {
@@ -160,7 +160,7 @@ function isConnectExternalAccountPath(path) {
 
 export default {
   getUserProfileUrl,
-  getRedactionUrl,
+  getMaintenanceUrl,
   getDocUrl,
   getDocumentInputUrl,
   getDocumentRevisionUrl,

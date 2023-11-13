@@ -6,7 +6,7 @@ import HelpIcon from './icons/main-menu/help-icon.js';
 import UsersIcon from './icons/main-menu/users-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
 import DashboardIcon from './icons/main-menu/dashboard-icon.js';
-import RedactionIcon from './icons/main-menu/redaction-icon.js';
+import MaintenanceIcon from './icons/main-menu/maintenance-icon.js';
 import AdministrationIcon from './icons/main-menu/administration-icon.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 
@@ -45,11 +45,11 @@ export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, help
       showWhen: !!user
     },
     {
-      key: 'redaction',
-      label: t('pageNames:redaction'),
-      icon: <div><RedactionIcon /></div>,
+      key: 'maintenance',
+      label: t('pageNames:maintenance'),
+      icon: <div><MaintenanceIcon /></div>,
       badge: null,
-      onClick: () => { window.location = routes.getRedactionUrl(); },
+      onClick: () => { window.location = routes.getMaintenanceUrl(); },
       showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
     },
     {
