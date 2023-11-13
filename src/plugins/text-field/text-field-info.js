@@ -1,8 +1,8 @@
 import joi from 'joi';
 import React from 'react';
+import TextFieldIcon from './text-field-icon.js';
 import { TEXT_FIELD_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { TextFieldIcon } from '../../components/icons/icons.js';
 
 class TextFieldInfo {
   static typeName = 'text-field';

@@ -8,15 +8,11 @@ import {
   IconBrandSpeedtest,
   IconBrush,
   IconBucketDroplet,
-  IconChalkboard,
   IconCircle,
   IconCircleSquare,
   IconClick,
   IconDownload,
   IconEraser,
-  IconFileUpload,
-  IconForms,
-  IconListCheck,
   IconRepeat,
   IconRepeatOff,
   IconRuler3,
@@ -51,7 +47,6 @@ export const EraserIcon = createIconFromTablerIconComponent(IconEraser);
 export const RepeatIcon = createIconFromTablerIconComponent(IconRepeat);
 export const SquareIcon = createIconFromTablerIconComponent(IconSquare);
 export const TextIcon = createIconFromTablerIconComponent(IconTypography);
-export const TextFieldIcon = createIconFromTablerIconComponent(IconForms);
 export const ArrowIcon = createIconFromTablerIconComponent(IconArrowRight);
 export const FreeDrawIcon = createIconFromTablerIconComponent(IconBallpen);
 export const RectangleIcon = createIconFromTablerIconComponent(IconSquare);
@@ -65,8 +60,5 @@ export const ShapeIcon = createIconFromTablerIconComponent(IconCircleSquare);
 export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);
 export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);
-export const SelectFieldIcon = createIconFromTablerIconComponent(IconListCheck);
-export const WhiteboardIcon = createIconFromTablerIconComponent(IconChalkboard);
 export const FillColorIcon = createIconFromTablerIconComponent(IconBucketDroplet);
-export const FileUploadFieldIcon = createIconFromTablerIconComponent(IconFileUpload);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
