@@ -324,7 +324,9 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         {...nonTouchOnlyHoverHandlers}
         >
         {parts.length <= 1 && (
-          <div className="Timeline-markersBarPlaceholder">{t('markersBarPlaceholder')}</div>
+          <div className="Timeline-markersBarPlaceholder">
+            {isTouchDevice() ? t('markersBarPlaceholderTouch') : t('markersBarPlaceholderNonTouch')}
+          </div>
         )}
         {timelineState.markers.map(renderExistingMarker)}
         {!!newMarkerState && renderNewMarker()}
