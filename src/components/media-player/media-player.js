@@ -42,10 +42,11 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 };
 
 function MediaPlayer({
+  allowDownload,
+  allowFullscreen,
+  allowLoop,
   allowPartClick,
   aspectRatio,
-  canLoop,
-  canDownload,
   clickToPlay,
   customScreenOverlay,
   customUnderScreenContent,
@@ -227,12 +228,13 @@ function MediaPlayer({
 
   const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
   const noScreen = screenMode === MEDIA_SCREEN_MODE.none;
-  const canEnterFullscreen = screenMode !== MEDIA_SCREEN_MODE.none;
+  const canEnterFullscreen = screenMode !== MEDIA_SCREEN_MODE.none && allowFullscreen;
 
   const mainClasses = classNames(
     'MediaPlayer',
     { 'MediaPlayer--noScreen': noScreen },
-    { 'MediaPlayer--hidden': noScreen && !!renderControls && !!renderProgressBar }
+    { 'MediaPlayer--hidden': noScreen && !!renderControls && !!renderProgressBar },
+    { 'is-fullscreen': !!isFullscreen }
   );
 
   const playerClasses = classNames(
@@ -242,6 +244,11 @@ function MediaPlayer({
     { 'MediaPlayer-player--hidden': noScreen && !!renderControls && !!renderProgressBar },
     { 'MediaPlayer-player--sixteenToNine': aspectRatio === MEDIA_ASPECT_RATIO.sixteenToNine },
     { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree }
+  );
+
+  const progressAndControlsClasses = classNames(
+    'MediaPlayer-progressAndControls',
+    { 'is-fullscreen': !!isFullscreen }
   );
 
   return (
@@ -280,8 +287,9 @@ function MediaPlayer({
         )}
       </div>
       {customUnderScreenContent}
-      {!!renderProgressBar && renderProgressBar()}
-      {!renderProgressBar && (
+      <div className={progressAndControlsClasses}>
+        {!!renderProgressBar && renderProgressBar()}
+        {!renderProgressBar && (
         <MediaPlayerProgressBar
           allowPartClick={allowPartClick}
           durationInMilliseconds={durationInMilliseconds}
@@ -292,10 +300,10 @@ function MediaPlayer({
           onSeekEnd={handleSeekEnd}
           onSeekStart={handleSeekStart}
           />
-      )}
+        )}
 
-      {!!renderControls && renderControls()}
-      {!renderControls && (
+        {!!renderControls && renderControls()}
+        {!renderControls && (
         <MediaPlayerControls
           durationInMilliseconds={durationInMilliseconds}
           isPlaying={isPlaying}
@@ -306,24 +314,26 @@ function MediaPlayer({
           loopMedia={loopMedia}
           isFullscreen={isFullscreen}
           playbackRate={internalPlaybackRate}
-          onDownloadClick={canDownload ? handleDownloadClick : null}
+          onDownloadClick={allowDownload ? handleDownloadClick : null}
           onPauseClick={handlePauseClick}
           onPlaybackRateChange={setInternaPlaybackRate}
-          onLoopMediaChange={canLoop ? setLoopMedia : null}
+          onLoopMediaChange={allowLoop ? setLoopMedia : null}
           onFullscreenChange={canEnterFullscreen ? handleFullscreenChange : null}
           onPlayClick={handlePlayClick}
           onVolumeChange={setInternalVolume}
           />
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
 MediaPlayer.propTypes = {
+  allowDownload: PropTypes.bool,
+  allowFullscreen: PropTypes.bool,
+  allowLoop: PropTypes.bool,
   allowPartClick: PropTypes.bool,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  canLoop: PropTypes.bool,
-  canDownload: PropTypes.bool,
   clickToPlay: PropTypes.bool,
   customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
@@ -362,10 +372,11 @@ MediaPlayer.propTypes = {
 };
 
 MediaPlayer.defaultProps = {
+  allowDownload: false,
+  allowFullscreen: true,
+  allowLoop: true,
   allowPartClick: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  canLoop: true,
-  canDownload: false,
   clickToPlay: true,
   customScreenOverlay: null,
   customUnderScreenContent: null,

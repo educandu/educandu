@@ -25,6 +25,7 @@ const sourcesCanBeConsideredEqual = (sources1, sources2) => {
 };
 
 function MultitrackMediaPlayer({
+  allowFullscreen,
   aspectRatio,
   customUnderScreenContent,
   initialVolume,
@@ -225,7 +226,7 @@ function MultitrackMediaPlayer({
   };
 
   const renderControls = () => {
-    const canEnterFullscreen = screenMode === MEDIA_SCREEN_MODE.video;
+    const canEnterFullscreen = screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen;
 
     return (
       <div>
@@ -321,6 +322,8 @@ function MultitrackMediaPlayer({
 }
 
 MultitrackMediaPlayer.propTypes = {
+  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
+  allowFullscreen: PropTypes.bool,
   customUnderScreenContent: PropTypes.node,
   initialVolume: PropTypes.number,
   multitrackMediaPlayerRef: PropTypes.shape({
@@ -334,7 +337,6 @@ MultitrackMediaPlayer.propTypes = {
   selectedVolumePresetIndex: PropTypes.number,
   showTrackMixer: PropTypes.bool,
   showVideo: PropTypes.bool,
-  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   sources: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string,
     name: PropTypes.string,
@@ -352,6 +354,7 @@ MultitrackMediaPlayer.propTypes = {
 
 MultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+  allowFullscreen: true,
   customUnderScreenContent: null,
   initialVolume: 1,
   multitrackMediaPlayerRef: {

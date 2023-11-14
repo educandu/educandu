@@ -66,7 +66,7 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
     return (
       <div className={classes}>
         <MediaPlayer
-          canDownload
+          allowDownload
           sourceUrl={sourceUrl}
           screenMode={MEDIA_SCREEN_MODE.none}
           onDuration={handleMediaLoad}
@@ -77,7 +77,7 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
 
   const renderVideo = () => (
     <div className="ResourcePreview-mediaPlayer">
-      <MediaPlayer sourceUrl={sourceUrl} canDownload onDuration={handleMediaLoad} />
+      <MediaPlayer sourceUrl={sourceUrl} allowDownload onDuration={handleMediaLoad} />
     </div>
   );
 

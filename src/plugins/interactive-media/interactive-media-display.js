@@ -132,7 +132,7 @@ function InteractiveMediaDisplay({ content }) {
     );
   };
 
-  const canDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const allowDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   return (
     <div className="InteractiveMediaDisplay">
@@ -140,9 +140,9 @@ function InteractiveMediaDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MediaPlayer
+              allowDownload={allowDownload}
+              allowLoop={false}
               aspectRatio={aspectRatio}
-              canDownload={canDownload}
-              canLoop={false}
               customScreenOverlay={renderInteractionOverlay()}
               initialVolume={initialVolume}
               mediaPlayerRef={mediaPlayerRef}
