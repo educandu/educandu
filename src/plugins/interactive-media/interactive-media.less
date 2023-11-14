@@ -36,14 +36,14 @@
 .InteractiveMediaEditor-answerCheckmark {
   color: @edu-disabled-color;
 
-  &:hover,
-  &:active,
   &:disabled {
     color: @edu-disabled-color;
   }
 
+  &:hover,
+  &:active,
   &.is-active {
-    color: @edu-success-color;
+    color: @edu-success-color !important;
   }
 }
 
@@ -102,16 +102,20 @@
   flex: none;
   justify-content: end;
   .m-control-group-wide;
+
+  &.is-fullscreen {
+    margin: 0 40px 40px 0;
+  }
 }
 
-.InteractiveMediaDisplay-progressBar {
-  margin-top: 15px;
+.InteractiveMediaDisplay-chaptersProgressBar {
+  padding: 10px 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
 
-.InteractiveMediaDisplay-progressBarCards {
+.InteractiveMediaDisplay-chaptersProgressBarCards {
   .m-control-group-wide;
 }

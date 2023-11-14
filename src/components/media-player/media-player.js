@@ -49,6 +49,7 @@ function MediaPlayer({
   aspectRatio,
   clickToPlay,
   customScreenOverlay,
+  customUnderControlsContent,
   customUnderScreenContent,
   downloadFileName,
   initialVolume,
@@ -286,43 +287,47 @@ function MediaPlayer({
           </div>
         )}
       </div>
+
       {customUnderScreenContent}
+
       <div className={progressAndControlsClasses}>
         {!!renderProgressBar && renderProgressBar()}
         {!renderProgressBar && (
-        <MediaPlayerProgressBar
-          allowPartClick={allowPartClick}
-          durationInMilliseconds={durationInMilliseconds}
-          millisecondsLength={millisecondsLength}
-          parts={parts}
-          playedMilliseconds={playedMilliseconds}
-          onSeek={handleSeek}
-          onSeekEnd={handleSeekEnd}
-          onSeekStart={handleSeekStart}
-          />
+          <MediaPlayerProgressBar
+            allowPartClick={allowPartClick}
+            durationInMilliseconds={durationInMilliseconds}
+            millisecondsLength={millisecondsLength}
+            parts={parts}
+            playedMilliseconds={playedMilliseconds}
+            onSeek={handleSeek}
+            onSeekEnd={handleSeekEnd}
+            onSeekStart={handleSeekStart}
+            />
         )}
 
         {!!renderControls && renderControls()}
         {!renderControls && (
-        <MediaPlayerControls
-          durationInMilliseconds={durationInMilliseconds}
-          isPlaying={isPlaying}
-          millisecondsLength={millisecondsLength}
-          playedMilliseconds={playedMilliseconds}
-          screenMode={screenMode}
-          volume={appliedVolume}
-          loopMedia={loopMedia}
-          isFullscreen={isFullscreen}
-          playbackRate={internalPlaybackRate}
-          onDownloadClick={allowDownload ? handleDownloadClick : null}
-          onPauseClick={handlePauseClick}
-          onPlaybackRateChange={setInternaPlaybackRate}
-          onLoopMediaChange={allowLoop ? setLoopMedia : null}
-          onFullscreenChange={canEnterFullscreen ? handleFullscreenChange : null}
-          onPlayClick={handlePlayClick}
-          onVolumeChange={setInternalVolume}
-          />
+          <MediaPlayerControls
+            durationInMilliseconds={durationInMilliseconds}
+            isPlaying={isPlaying}
+            millisecondsLength={millisecondsLength}
+            playedMilliseconds={playedMilliseconds}
+            screenMode={screenMode}
+            volume={appliedVolume}
+            loopMedia={loopMedia}
+            isFullscreen={isFullscreen}
+            playbackRate={internalPlaybackRate}
+            onDownloadClick={allowDownload ? handleDownloadClick : null}
+            onPauseClick={handlePauseClick}
+            onPlaybackRateChange={setInternaPlaybackRate}
+            onLoopMediaChange={allowLoop ? setLoopMedia : null}
+            onFullscreenChange={canEnterFullscreen ? handleFullscreenChange : null}
+            onPlayClick={handlePlayClick}
+            onVolumeChange={setInternalVolume}
+            />
         )}
+
+        {customUnderControlsContent}
       </div>
     </div>
   );
@@ -337,6 +342,7 @@ MediaPlayer.propTypes = {
   clickToPlay: PropTypes.bool,
   customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
+  customUnderControlsContent: PropTypes.node,
   downloadFileName: PropTypes.string,
   initialVolume: PropTypes.number,
   millisecondsLength: PropTypes.number,
@@ -379,6 +385,7 @@ MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   clickToPlay: true,
   customScreenOverlay: null,
+  customUnderControlsContent: null,
   customUnderScreenContent: null,
   downloadFileName: null,
   initialVolume: 1,

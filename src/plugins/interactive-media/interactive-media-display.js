@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { Button, Radio, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
@@ -24,6 +25,7 @@ function InteractiveMediaDisplay({ content }) {
   const { t } = useTranslation('interactiveMedia');
 
   const [isMediaReady, setIsMediaReady] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [visitedChapters, setVisitedChapters] = useState([]);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
@@ -79,6 +81,14 @@ function InteractiveMediaDisplay({ content }) {
     setSelectedAnswerPerChapter(replaceItemAt(selectedAnswerPerChapter, value, interactingChapterIndex));
   };
 
+  const handleEnterFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const handleExitFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
   const renderAnswerRadio = (answer, index) => {
     const correctAnswerIndex = chapters[interactingChapterIndex].correctAnswerIndex;
     const userSelectedAnswerIndex = selectedAnswerPerChapter[interactingChapterIndex];
@@ -104,6 +114,11 @@ function InteractiveMediaDisplay({ content }) {
       return null;
     }
 
+    const controlsClasses = classNames(
+      'InteractiveMediaDisplay-overlayChapterControls',
+      { 'is-fullscreen': isFullscreen }
+    );
+
     return (
       <div className="InteractiveMediaDisplay-overlay">
         <div className="InteractiveMediaDisplay-overlayChapterTitle">{chapters[interactingChapterIndex].title}</div>
@@ -119,7 +134,7 @@ function InteractiveMediaDisplay({ content }) {
             </Space>
           </RadioGroup>
         </div>
-        <div className="InteractiveMediaDisplay-overlayChapterControls">
+        <div className={controlsClasses}>
           <Button icon={<LeftOutlined />} onClick={handleReplayChapterClick}>{t('replay')}</Button>
           {interactingChapterIndex < chapters.length - 1 && (
             <Button type="primary" icon={<RightOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
@@ -128,6 +143,34 @@ function InteractiveMediaDisplay({ content }) {
             <Button type="primary" icon={<UndoOutlined />} onClick={handleResetChaptersClick}>{t('common:reset')}</Button>
           )}
         </div>
+      </div>
+    );
+  };
+
+  const renderChaptersProgressBar = () => {
+    return (
+      <div className="InteractiveMediaDisplay-chaptersProgressBar">
+        <div className="InteractiveMediaDisplay-chaptersProgressBarCards">
+          <div>
+            {t('currentProgress')}:
+          </div>
+          <CardSelector
+            cards={chapterCards}
+            selectedCardIndex={currentChapterIndex}
+            visitedCardIndices={visitedChapters}
+            onCardSelected={handleGotoChapterClick}
+            disabled={!isMediaReady}
+            />
+        </div>
+        <IterationPanel
+          itemCount={chapters.length}
+          selectedItemIndex={currentChapterIndex}
+          onPreviousClick={handleReplayChapterClick}
+          onResetClick={handleResetChaptersClick}
+          onNextClick={handleNextChapterClick}
+          disabled={!isMediaReady}
+          alwaysAllowPreviousClick
+          />
       </div>
     );
   };
@@ -144,6 +187,7 @@ function InteractiveMediaDisplay({ content }) {
               allowLoop={false}
               aspectRatio={aspectRatio}
               customScreenOverlay={renderInteractionOverlay()}
+              customUnderControlsContent={renderChaptersProgressBar()}
               initialVolume={initialVolume}
               mediaPlayerRef={mediaPlayerRef}
               parts={playerParts}
@@ -151,34 +195,13 @@ function InteractiveMediaDisplay({ content }) {
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
               sourceUrl={sourceUrl}
+              onEnterFullscreen={handleEnterFullscreen}
+              onExitFullscreen={handleExitFullscreen}
               onPartEndReached={handlePartEndReached}
               onPlayingPartIndexChange={setCurrentChapterIndex}
               onReady={handleMediaReady}
               onSeek={handleSeek}
               />
-            <div className="InteractiveMediaDisplay-progressBar">
-              <div className="InteractiveMediaDisplay-progressBarCards">
-                <div>
-                  {t('currentProgress')}:
-                </div>
-                <CardSelector
-                  cards={chapterCards}
-                  selectedCardIndex={currentChapterIndex}
-                  visitedCardIndices={visitedChapters}
-                  onCardSelected={handleGotoChapterClick}
-                  disabled={!isMediaReady}
-                  />
-              </div>
-              <IterationPanel
-                itemCount={chapters.length}
-                selectedItemIndex={currentChapterIndex}
-                onPreviousClick={handleReplayChapterClick}
-                onResetClick={handleResetChaptersClick}
-                onNextClick={handleNextChapterClick}
-                disabled={!isMediaReady}
-                alwaysAllowPreviousClick
-                />
-            </div>
             <CopyrightNotice value={copyrightNotice} />
           </Fragment>
         )}
