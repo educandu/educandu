@@ -21,7 +21,9 @@ import {
   IconTextCaption,
   IconTextResize,
   IconTriangle,
-  IconTypography
+  IconTypography,
+  IconMaximize,
+  IconMinimize
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -62,3 +64,5 @@ export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);
 export const FillColorIcon = createIconFromTablerIconComponent(IconBucketDroplet);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
+export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximize);
+export const ExitFullscreenIcon = createIconFromTablerIconComponent(IconMinimize);

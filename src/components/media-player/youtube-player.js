@@ -20,6 +20,7 @@ function YoutubePlayer({
   aspectRatio,
   audioOnly,
   clickToPlay,
+  fullscreenContainerId,
   playbackRange,
   playbackRate,
   playerRef,
@@ -28,6 +29,8 @@ function YoutubePlayer({
   volume,
   onDuration,
   onEnded,
+  onEnterFullscreen,
+  onExitFullscreen,
   onPause,
   onPlay,
   onProgress,
@@ -132,13 +135,19 @@ function YoutubePlayer({
     if (!sourceDurationInMs) {
       return;
     }
+    const enableFullscreen = !!fullscreenContainerId;
+
     const options = {
       controls: [],
       ratio: aspectRatio,
       clickToPlay,
       loadSprite: false,
       blankVideo: '',
-      fullscreen: { enabled: false, fallback: false },
+      fullscreen: {
+        enabled: enableFullscreen,
+        fallback: enableFullscreen,
+        container: enableFullscreen ? `#${CSS.escape(fullscreenContainerId)}` : ''
+      },
       // https://developers.google.com/youtube/player_parameters#Parameters
       youtube: {
         autoplay: 0,
@@ -163,7 +172,7 @@ function YoutubePlayer({
 
     const playerInstance = new Plyr(plyrRef.current, options);
     setPlayer(playerInstance);
-  }, [plyrRef, aspectRatio, sourceDurationInMs, startTimeInS, endTimeInS, clickToPlay]);
+  }, [plyrRef, fullscreenContainerId, aspectRatio, sourceDurationInMs, startTimeInS, endTimeInS, clickToPlay]);
 
   useEffect(() => {
     if (player) {
@@ -265,6 +274,14 @@ function YoutubePlayer({
     }
   }, [handlePlaying, handlePause, handleEnded, handleProgress]);
 
+  const handleEnterFullscreen = useCallback(() => {
+    onEnterFullscreen();
+  }, [onEnterFullscreen]);
+
+  const handleExitFullscreen = useCallback(() => {
+    onExitFullscreen();
+  }, [onExitFullscreen]);
+
   useEffect(() => {
     if (!player) {
       return () => {};
@@ -274,13 +291,18 @@ function YoutubePlayer({
     player.on('progress', handleProgress);
     player.on('timeupdate', handleProgress);
     player.on('statechange', handleYoutubeStateChange);
+    player.on('enterfullscreen', handleEnterFullscreen);
+    player.on('exitfullscreen', handleExitFullscreen);
+
     return () => {
       player.off('ready', handleReady);
       player.off('progress', handleProgress);
       player.off('timeupdate', handleProgress);
       player.off('statechange', handleYoutubeStateChange);
+      player.off('enterfullscreen', handleEnterFullscreen);
+      player.off('exitfullscreen', handleExitFullscreen);
     };
-  }, [player, handleReady, handleProgress, handleYoutubeStateChange]);
+  }, [player, handleReady, handleProgress, handleYoutubeStateChange, handleEnterFullscreen, handleExitFullscreen]);
 
   useOnComponentUnmount(() => {
     setProgressInterval(null);
@@ -291,8 +313,9 @@ function YoutubePlayer({
     pause: triggerPause,
     seekToTimecode: triggerSeek,
     stop: triggerStop,
-    reset: triggerReset
-  }), [triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
+    reset: triggerReset,
+    fullscreen: player?.fullscreen
+  }), [player, triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
 
   return (
     <div className="YoutubePlayer" onClick={isPlaying ? triggerPause : triggerPlay}>
@@ -317,6 +340,7 @@ YoutubePlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
   clickToPlay: PropTypes.bool,
+  fullscreenContainerId: PropTypes.string,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
@@ -327,6 +351,8 @@ YoutubePlayer.propTypes = {
   volume: PropTypes.number,
   onDuration: PropTypes.func,
   onEnded: PropTypes.func,
+  onEnterFullscreen: PropTypes.func,
+  onExitFullscreen: PropTypes.func,
   onPause: PropTypes.func,
   onPlay: PropTypes.func,
   onProgress: PropTypes.func,
@@ -337,6 +363,7 @@ YoutubePlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
   clickToPlay: true,
+  fullscreenContainerId: null,
   playbackRange: [0, 1],
   playbackRate: 1,
   playerRef: {
@@ -346,6 +373,8 @@ YoutubePlayer.defaultProps = {
   volume: 1,
   onDuration: () => {},
   onEnded: () => {},
+  onEnterFullscreen: () => {},
+  onExitFullscreen: () => {},
   onPause: () => {},
   onPlay: () => {},
   onProgress: () => {},
@@ -355,6 +384,8 @@ YoutubePlayer.defaultProps = {
 export default memoAndTransformProps(YoutubePlayer, ({
   onDuration,
   onEnded,
+  onEnterFullscreen,
+  onExitFullscreen,
   onPause,
   onPlay,
   onProgress,
@@ -363,6 +394,8 @@ export default memoAndTransformProps(YoutubePlayer, ({
 }) => ({
   onDuration: useStableCallback(onDuration),
   onEnded: useStableCallback(onEnded),
+  onEnterFullscreen: useStableCallback(onEnterFullscreen),
+  onExitFullscreen: useStableCallback(onExitFullscreen),
   onPause: useStableCallback(onPause),
   onPlay: useStableCallback(onPlay),
   onProgress: useStableCallback(onProgress),

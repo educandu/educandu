@@ -47,6 +47,7 @@ function MultitrackMediaPlayer({
   const [trackStates, setTrackStates] = useState([]);
   const [lastSources, setLastSources] = useState(null);
   const [trackVolumes, setTrackVolumes] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [mixVolume, setMixVolume] = useState(initialVolume);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(DEFAULT_MEDIA_PLAYBACK_RATE);
@@ -205,13 +206,34 @@ function MultitrackMediaPlayer({
     setIsSeeking(false);
   };
 
+  const handleEnterFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const handleExitFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
+  const handleFullscreenChange = newIsFullscreen => {
+    const mainTrack = trackStates.find(trackState => trackState.isMainTrack);
+
+    if (newIsFullscreen) {
+      getTrackRef(mainTrack.key).current.fullscreen?.enter();
+    } else {
+      getTrackRef(mainTrack.key).current.fullscreen?.exit();
+    }
+  };
+
   const renderControls = () => {
+    const canEnterFullscreen = screenMode === MEDIA_SCREEN_MODE.video;
+
     return (
       <div>
         <MediaPlayerControls
           volume={mixVolume}
           isPlaying={isPlaying}
           loopMedia={loopMedia}
+          isFullscreen={isFullscreen}
           screenMode={screenMode}
           playbackRate={playbackRate}
           playedMilliseconds={playedMilliseconds}
@@ -221,6 +243,7 @@ function MultitrackMediaPlayer({
           onPauseClick={triggerPauseAll}
           onPlaybackRateChange={setPlaybackRate}
           onLoopMediaChange={setLoopMedia}
+          onFullscreenChange={canEnterFullscreen ? handleFullscreenChange : null}
           />
         {!!showTrackMixer && trackStates.length > 1 && (
           <div className="MultitrackMediaPlayer-trackMixerDisplay">
@@ -283,6 +306,8 @@ function MultitrackMediaPlayer({
           volume={mixVolume * trackVolumes[trackIndex]}
           onDuration={value => handleDuration(value, trackState.key)}
           onEnded={() => trackState.isMainTrack ? handleMainTrackEnded() : null}
+          onEnterFullscreen={() => trackState.isMainTrack ? handleEnterFullscreen() : null}
+          onExitFullscreen={() => trackState.isMainTrack ? handleExitFullscreen() : null}
           onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
           onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
           onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
