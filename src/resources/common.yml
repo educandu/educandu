@@ -323,8 +323,8 @@ common:
     en: rooms
     de: Räume
   youtube:
-    en: Youtube
-    de: Youtube
+    en: YouTube
+    de: YouTube
   aspectRatio:
     en: Aspect ratio
     de: Seitenverhältnis
@@ -392,8 +392,8 @@ common:
     en: The tests are arranged in random order
     de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
   youtubeCopyrightNotice:
-    en: "Source: [Youtube]({link})"
-    de: "Quelle: [Youtube]({link})"
+    en: "Source: [YouTube]({link})"
+    de: "Quelle: [YouTube]({link})"
   wikimediaCopyrightNotice:
     en: "Source: [Wikimedia]({link})"
     de: "Quelle: [Wikimedia]({link})"
