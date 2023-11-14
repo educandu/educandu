@@ -6,7 +6,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import MediaLibraryService from '../services/media-library-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
-class RedactionController {
+class MaintenanceController {
   static dependencies = [DocumentService, MediaLibraryService, ClientDataMappingService, PageRenderer];
 
   constructor(documentService, mediaLibraryService, clientDataMappingService, pageRenderer) {
@@ -16,7 +16,7 @@ class RedactionController {
     this.clientDataMappingService = clientDataMappingService;
   }
 
-  async handleGetRedactionPage(req, res) {
+  async handleGetMaintenancePage(req, res) {
     const { user } = req;
 
     const [documents, mediaLibraryItems] = await Promise.all([
@@ -29,7 +29,7 @@ class RedactionController {
       this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user)
     ]);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.redaction, {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.maintenance, {
       documents: mappedDocuments,
       mediaLibraryItems: mappedMediaLibraryItems
     });
@@ -37,11 +37,11 @@ class RedactionController {
 
   registerPages(router) {
     router.get(
-      '/redaction',
+      '/maintenance',
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
-      (req, res) => this.handleGetRedactionPage(req, res)
+      (req, res) => this.handleGetMaintenancePage(req, res)
     );
   }
 }
 
-export default RedactionController;
+export default MaintenanceController;

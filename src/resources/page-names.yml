@@ -7,13 +7,13 @@ pageNames:
     de: Dashboard
   admin:
     en: Administration
-    de: Verwaltung
+    de: Administration
   batches:
     en: Batch details
     de: Chargen-Details
-  redaction:
-    en: Redaction
-    de: Redaktion
+  maintenance:
+    en: Maintenance
+    de: Maintenance
   userProfile:
     en: Profile
     de: Profil

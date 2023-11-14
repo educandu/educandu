@@ -3,7 +3,7 @@ import iconNs from '@ant-design/icons';
 
 const Icon = iconNs.default || iconNs;
 
-export function RedactionIconComponent() {
+export function MaintenanceIconComponent() {
   return (
     <svg width="1em" height="1em" viewBox="0 0 1000 1000" style={{ enableBackground: 'new 0 0 1000 1000' }} role="img" >
       <path d="M915.83 260.45v520.42c0 37.37-30.29 67.66-67.66 67.66H369.23c-37.37 0-67.66-30.29-67.66-67.66V104c0-37.37 30.29-67.66 67.66-67.66h331.82l214.78 224.11z" style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 61.4772, strokeLinecap: 'round', strokeMiterlimit: 10 }} />
@@ -13,10 +13,10 @@ export function RedactionIconComponent() {
   );
 }
 
-function RedactionIcon() {
+function MaintenanceIcon() {
   return (
-    <Icon component={RedactionIconComponent} />
+    <Icon component={MaintenanceIconComponent} />
   );
 }
 
-export default RedactionIcon;
+export default MaintenanceIcon;

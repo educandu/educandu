@@ -399,7 +399,7 @@ common:
     de: "Quelle: [Wikimedia]({link})"
   verifiedDocumentBadge:
     en: This document was verified by a maintainer
-    de: Dieses Dokument wurde von einem Redakteur überprüft
+    de: Dieses Dokument wurde von einem Maintainer überprüft
   duration:
     en: Duration
     de: Zeitdauer

@@ -2,20 +2,20 @@ import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TABS } from '../redaction/constants.js';
+import { TABS } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { BankOutlined, TagOutlined } from '@ant-design/icons';
-import RedactionTagsTab from '../redaction/redaction-tags-tab.js';
-import RedactionDocumentsTab from '../redaction/redaction-documents-tab.js';
-import RedactionMediaLibraryTab from '../redaction/redaction-media-library-tab.js';
+import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
+import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
+import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
 import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 
 const determineTab = query => Object.values(TABS).find(val => val === query) || Object.keys(TABS)[0];
 
-function Redaction({ initialState, PageTemplate }) {
+function Maintenance({ initialState, PageTemplate }) {
   const request = useRequest();
-  const { t } = useTranslation('redaction');
+  const { t } = useTranslation('maintenance');
   const [documents, setDocuments] = useState(initialState.documents);
   const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
   const [mediaLibraryItems, setMediaLibraryItems] = useState(initialState.mediaLibraryItems);
@@ -34,7 +34,7 @@ function Redaction({ initialState, PageTemplate }) {
       label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <RedactionDocumentsTab documents={documents} onDocumentsChange={setDocuments} />
+          <MaintenanceDocumentsTab documents={documents} onDocumentsChange={setDocuments} />
         </div>
       )
     },
@@ -43,7 +43,7 @@ function Redaction({ initialState, PageTemplate }) {
       label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <RedactionMediaLibraryTab mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
+          <MaintenanceMediaLibraryTab mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
         </div>
       )
     },
@@ -52,7 +52,7 @@ function Redaction({ initialState, PageTemplate }) {
       label: <div><TagOutlined />{t('tagsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <RedactionTagsTab documents={documents} mediaLibraryItems={mediaLibraryItems} />
+          <MaintenanceTagsTab documents={documents} mediaLibraryItems={mediaLibraryItems} />
         </div>
       )
     }
@@ -60,8 +60,8 @@ function Redaction({ initialState, PageTemplate }) {
 
   return (
     <PageTemplate>
-      <div className="RedactionPage">
-        <h1 className="u-page-title">{t('pageNames:redaction')}</h1>
+      <div className="MaintenancePage">
+        <h1 className="u-page-title">{t('pageNames:maintenance')}</h1>
         <Tabs
           type="line"
           size="middle"
@@ -76,7 +76,7 @@ function Redaction({ initialState, PageTemplate }) {
   );
 }
 
-Redaction.propTypes = {
+Maintenance.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
@@ -84,4 +84,4 @@ Redaction.propTypes = {
   }).isRequired
 };
 
-export default Redaction;
+export default Maintenance;
