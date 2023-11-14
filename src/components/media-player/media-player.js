@@ -253,7 +253,7 @@ function MediaPlayer({
   );
 
   return (
-    <div className={mainClasses} id={mediaPlayerInstanceId}>
+    <div className={mainClasses} id={mediaPlayerInstanceId} key={`${mediaPlayerInstanceId}_${screenMode}`}>
       <div className={playerClasses}>
         <Player
           aspectRatio={aspectRatio}
