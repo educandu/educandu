@@ -379,7 +379,7 @@ MediaPlayer.propTypes = {
 
 MediaPlayer.defaultProps = {
   allowDownload: false,
-  allowFullscreen: true,
+  allowFullscreen: false,
   allowLoop: true,
   allowPartClick: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,

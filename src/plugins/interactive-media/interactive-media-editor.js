@@ -249,7 +249,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             )}
             {!!canRenderMediaPlayer && (
               <MediaPlayer
-                allowFullscreen={false}
                 allowPartClick
                 aspectRatio={aspectRatio}
                 parts={playerParts}

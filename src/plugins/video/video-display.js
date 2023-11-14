@@ -18,6 +18,7 @@ function VideoDisplay({ content }) {
       <div className={`VideoDisplay-content u-width-${content.width || 100}`}>
         {!!url && (
           <MediaPlayer
+            allowFullscreen
             allowDownload={allowDownload}
             aspectRatio={content.aspectRatio}
             initialVolume={content.initialVolume}

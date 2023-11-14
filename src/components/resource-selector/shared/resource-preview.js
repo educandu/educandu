@@ -79,7 +79,6 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
     <div className="ResourcePreview-mediaPlayer">
       <MediaPlayer
         allowDownload
-        allowFullscreen={false}
         sourceUrl={sourceUrl}
         onDuration={handleMediaLoad}
         />

@@ -184,6 +184,7 @@ function InteractiveMediaDisplay({ content }) {
           <Fragment>
             <MediaPlayer
               allowDownload={allowDownload}
+              allowFullscreen
               allowLoop={false}
               aspectRatio={aspectRatio}
               customScreenOverlay={renderInteractionOverlay()}

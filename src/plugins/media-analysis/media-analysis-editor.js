@@ -356,7 +356,6 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               {t('common:preview')}
             </div>
             <MultitrackMediaPlayer
-              allowFullscreen={false}
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               parts={playerParts}

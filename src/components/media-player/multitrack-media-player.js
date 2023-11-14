@@ -291,6 +291,7 @@ function MultitrackMediaPlayer({
       {trackStates.map((trackState, trackIndex) => (
         <MediaPlayer
           key={trackState.key}
+          allowFullscreen={screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen}
           aspectRatio={aspectRatio}
           customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
           parts={parts}
@@ -354,7 +355,7 @@ MultitrackMediaPlayer.propTypes = {
 
 MultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  allowFullscreen: true,
+  allowFullscreen: false,
   customUnderScreenContent: null,
   initialVolume: 1,
   multitrackMediaPlayerRef: {

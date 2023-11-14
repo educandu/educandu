@@ -151,7 +151,6 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
             <Fragment>
               <div className="MediaRangeSelector-player">
                 <MediaPlayer
-                  allowFullscreen={false}
                   allowPartClick
                   millisecondsLength={3}
                   parts={getCurrentRangeParts()}

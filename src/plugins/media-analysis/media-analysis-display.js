@@ -129,6 +129,7 @@ function MediaAnalysisDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
+              allowFullscreen
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               customUnderScreenContent={renderChapters()}
