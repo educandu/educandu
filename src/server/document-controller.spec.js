@@ -5,6 +5,7 @@ import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
 import DocumentController from './document-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { ROLE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
@@ -638,13 +639,14 @@ describe('document-controller', () => {
       });
     });
 
-    describe('when the view query param is \'edit\' but the doc is archived (thus non-editable)', () => {
+    describe('when the view query param is \'edit\' but the doc is archived (thus non-editable) and the user has required permission', () => {
       beforeEach(() => new Promise((resolve, reject) => {
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
           query: { view: 'edit' }
         };
+        user.role = ROLE.maintainer;
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', resolve);
 
@@ -660,6 +662,29 @@ describe('document-controller', () => {
 
       it('should redirect to the document url in display mode', () => {
         expect(res._getRedirectUrl()).toBe(`/docs/${doc._id}/${doc.slug}`);
+      });
+    });
+
+    describe('when the the doc is archived (thus non-editable) and the user does not have required permission', () => {
+      beforeEach(() => {
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view' }
+        };
+        user.role = ROLE.user;
+        res = {};
+
+        doc.slug = 'doc-slug';
+        doc.publicContext.archived = true;
+
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+
+        pageRenderer.sendPage.resolves();
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleGetDocPage(req, {})).rejects.toThrow(NotFound);
       });
     });
 
