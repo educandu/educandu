@@ -187,8 +187,11 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
 
   useEffect(() => {
     window.addEventListener('resize', updateStates);
+    window.addEventListener('fullscreenchange', updateStates);
+
     return () => {
       window.removeEventListener('resize', updateStates);
+      window.removeEventListener('fullscreenchange', updateStates);
     };
   }, [updateStates]);
 

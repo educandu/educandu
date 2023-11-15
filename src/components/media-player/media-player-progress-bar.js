@@ -114,9 +114,11 @@ function MediaPlayerProgressBar({
   useEffect(() => {
     captureProgressBarWidth();
     window.addEventListener('resize', captureProgressBarWidth);
+    window.addEventListener('fullscreenchange', captureProgressBarWidth);
 
     return () => {
       window.removeEventListener('resize', captureProgressBarWidth);
+      window.removeEventListener('fullscreenchange', captureProgressBarWidth);
     };
   }, [captureProgressBarWidth]);
 
