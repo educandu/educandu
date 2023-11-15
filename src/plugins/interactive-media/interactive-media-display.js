@@ -6,6 +6,7 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import IterationPanel from '../../components/iteration-panel.js';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -13,7 +14,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { ensureIsIncluded, replaceItemAt } from '../../utils/array-utils.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import { CheckOutlined, CloseOutlined, LeftOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons';
+import { ChevronLeftIcon, ChevronLeftPipeIcon, ChevronRightIcon } from '../../components/icons/icons.js';
 
 const RadioGroup = Radio.Group;
 
@@ -135,12 +136,34 @@ function InteractiveMediaDisplay({ content }) {
           </RadioGroup>
         </div>
         <div className={controlsClasses}>
-          <Button icon={<LeftOutlined />} onClick={handleReplayChapterClick}>{t('replay')}</Button>
-          {interactingChapterIndex < chapters.length - 1 && (
-            <Button type="primary" icon={<RightOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
-          )}
           {interactingChapterIndex === chapters.length - 1 && (
-            <Button type="primary" icon={<UndoOutlined />} onClick={handleResetChaptersClick}>{t('common:reset')}</Button>
+          <Button
+            type="primary"
+            icon={<ChevronLeftPipeIcon />}
+            onClick={handleResetChaptersClick}
+            className="InteractiveMediaDisplay-overlayChapterControlsButton"
+            >
+            {t('common:reset')}
+          </Button>
+          )}
+
+          <Button
+            icon={<ChevronLeftIcon />}
+            onClick={handleReplayChapterClick}
+            className="InteractiveMediaDisplay-overlayChapterControlsButton"
+            >
+            {t('replay')}
+          </Button>
+
+          {interactingChapterIndex < chapters.length - 1 && (
+            <Button
+              type="primary"
+              icon={<ChevronRightIcon />}
+              onClick={handleNextChapterClick}
+              className="InteractiveMediaDisplay-overlayChapterControlsButton"
+              >
+              {t('continue')}
+            </Button>
           )}
         </div>
       </div>
