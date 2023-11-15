@@ -42,19 +42,19 @@
 }
 
 .MediaAnalysisDisplay-chapterTexts {
-  min-height: 35px;
+  height: 35px;
   display: flex;
   overflow: hidden;
   padding-bottom: 5px;
+
+  &.is-expanded {
+    height: unset;
+  }
 }
 
 .MediaAnalysisDisplay-chapterText {
   padding: @media-analysis-text-padding;
   border-right: 1px dotted @edu-border-color-base;
-
-  &:not(.is-expanded) {
-    .m-line-clamp(1);
-  }
 
   &:last-of-type {
     border-right: none;

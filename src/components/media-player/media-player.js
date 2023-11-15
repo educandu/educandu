@@ -247,8 +247,8 @@ function MediaPlayer({
     { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree }
   );
 
-  const progressAndControlsClasses = classNames(
-    'MediaPlayer-progressAndControls',
+  const underPlayerContentClasses = classNames(
+    'MediaPlayer-underPlayerContent',
     { 'is-fullscreen': !!isFullscreen }
   );
 
@@ -288,9 +288,8 @@ function MediaPlayer({
         )}
       </div>
 
-      {customUnderScreenContent}
-
-      <div className={progressAndControlsClasses}>
+      <div className={underPlayerContentClasses}>
+        {customUnderScreenContent}
         {!!renderProgressBar && renderProgressBar()}
         {!renderProgressBar && (
           <MediaPlayerProgressBar
@@ -326,7 +325,6 @@ function MediaPlayer({
             onVolumeChange={setInternalVolume}
             />
         )}
-
         {customUnderControlsContent}
       </div>
     </div>
