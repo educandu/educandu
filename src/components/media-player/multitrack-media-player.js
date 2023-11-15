@@ -25,6 +25,7 @@ const sourcesCanBeConsideredEqual = (sources1, sources2) => {
 };
 
 function MultitrackMediaPlayer({
+  allowFullscreen,
   aspectRatio,
   customUnderScreenContent,
   initialVolume,
@@ -47,6 +48,7 @@ function MultitrackMediaPlayer({
   const [trackStates, setTrackStates] = useState([]);
   const [lastSources, setLastSources] = useState(null);
   const [trackVolumes, setTrackVolumes] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [mixVolume, setMixVolume] = useState(initialVolume);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(DEFAULT_MEDIA_PLAYBACK_RATE);
@@ -205,13 +207,34 @@ function MultitrackMediaPlayer({
     setIsSeeking(false);
   };
 
+  const handleEnterFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const handleExitFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
+  const handleFullscreenChange = newIsFullscreen => {
+    const mainTrack = trackStates.find(trackState => trackState.isMainTrack);
+
+    if (newIsFullscreen) {
+      getTrackRef(mainTrack.key).current.fullscreen?.enter();
+    } else {
+      getTrackRef(mainTrack.key).current.fullscreen?.exit();
+    }
+  };
+
   const renderControls = () => {
+    const canEnterFullscreen = screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen;
+
     return (
       <div>
         <MediaPlayerControls
           volume={mixVolume}
           isPlaying={isPlaying}
           loopMedia={loopMedia}
+          isFullscreen={isFullscreen}
           screenMode={screenMode}
           playbackRate={playbackRate}
           playedMilliseconds={playedMilliseconds}
@@ -221,6 +244,7 @@ function MultitrackMediaPlayer({
           onPauseClick={triggerPauseAll}
           onPlaybackRateChange={setPlaybackRate}
           onLoopMediaChange={setLoopMedia}
+          onFullscreenChange={canEnterFullscreen ? handleFullscreenChange : null}
           />
         {!!showTrackMixer && trackStates.length > 1 && (
           <div className="MultitrackMediaPlayer-trackMixerDisplay">
@@ -267,6 +291,7 @@ function MultitrackMediaPlayer({
       {trackStates.map((trackState, trackIndex) => (
         <MediaPlayer
           key={trackState.key}
+          allowFullscreen={screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen}
           aspectRatio={aspectRatio}
           customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
           parts={parts}
@@ -283,6 +308,8 @@ function MultitrackMediaPlayer({
           volume={mixVolume * trackVolumes[trackIndex]}
           onDuration={value => handleDuration(value, trackState.key)}
           onEnded={() => trackState.isMainTrack ? handleMainTrackEnded() : null}
+          onEnterFullscreen={() => trackState.isMainTrack ? handleEnterFullscreen() : null}
+          onExitFullscreen={() => trackState.isMainTrack ? handleExitFullscreen() : null}
           onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
           onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
           onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
@@ -296,6 +323,8 @@ function MultitrackMediaPlayer({
 }
 
 MultitrackMediaPlayer.propTypes = {
+  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
+  allowFullscreen: PropTypes.bool,
   customUnderScreenContent: PropTypes.node,
   initialVolume: PropTypes.number,
   multitrackMediaPlayerRef: PropTypes.shape({
@@ -309,7 +338,6 @@ MultitrackMediaPlayer.propTypes = {
   selectedVolumePresetIndex: PropTypes.number,
   showTrackMixer: PropTypes.bool,
   showVideo: PropTypes.bool,
-  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   sources: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string,
     name: PropTypes.string,
@@ -327,6 +355,7 @@ MultitrackMediaPlayer.propTypes = {
 
 MultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+  allowFullscreen: false,
   customUnderScreenContent: null,
   initialVolume: 1,
   multitrackMediaPlayerRef: {

@@ -9,8 +9,8 @@ import MediaVolumeSlider from './media-volume-slider.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
-import { DownloadIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon } from '../icons/icons.js';
 import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
+import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon } from '../icons/icons.js';
 
 function MediaPlayerControls({
   durationInMilliseconds,
@@ -20,11 +20,13 @@ function MediaPlayerControls({
   screenMode,
   volume,
   loopMedia,
+  isFullscreen,
   playbackRate,
   onDownloadClick,
   onPauseClick,
   onPlaybackRateChange,
   onLoopMediaChange,
+  onFullscreenChange,
   onPlayClick,
   onVolumeChange
 }) {
@@ -37,6 +39,10 @@ function MediaPlayerControls({
 
   const handleLoopToggleButtonClick = () => {
     onLoopMediaChange(!loopMedia);
+  };
+
+  const handleFullscreenButtonClick = () => {
+    onFullscreenChange(!isFullscreen);
   };
 
   const getPlaybackRateMenuItems = () => {
@@ -102,6 +108,12 @@ function MediaPlayerControls({
           {!!onDownloadClick && (
             <Button type="link" icon={<DownloadIcon />} onClick={onDownloadClick} />
           )}
+          {!!onFullscreenChange && !isFullscreen && (
+            <Button type="link" icon={<EnterFullscreenIcon />} onClick={handleFullscreenButtonClick} />
+          )}
+          {!!onFullscreenChange && !!isFullscreen && (
+            <Button type="link" icon={<ExitFullscreenIcon />} onClick={handleFullscreenButtonClick} />
+          )}
         </div>
       </div>
     </div>
@@ -111,6 +123,7 @@ function MediaPlayerControls({
 MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
   isPlaying: PropTypes.bool.isRequired,
+  isFullscreen: PropTypes.bool,
   millisecondsLength: PropTypes.number,
   playedMilliseconds: PropTypes.number.isRequired,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
@@ -118,6 +131,7 @@ MediaPlayerControls.propTypes = {
   loopMedia: PropTypes.bool.isRequired,
   playbackRate: PropTypes.oneOf(MEDIA_PLAYBACK_RATES).isRequired,
   onDownloadClick: PropTypes.func,
+  onFullscreenChange: PropTypes.func,
   onPauseClick: PropTypes.func.isRequired,
   onPlayClick: PropTypes.func.isRequired,
   onPlaybackRateChange: PropTypes.func.isRequired,
@@ -126,9 +140,11 @@ MediaPlayerControls.propTypes = {
 };
 
 MediaPlayerControls.defaultProps = {
+  isFullscreen: false,
   millisecondsLength: 0,
   screenMode: MEDIA_SCREEN_MODE.video,
   onDownloadClick: null,
+  onFullscreenChange: null,
   onLoopMediaChange: null
 };
 

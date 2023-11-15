@@ -71,13 +71,13 @@ function EarTrainingDisplay({ content }) {
 
   const renderSoundPlayer = () => {
     const url = getAccessibleUrl({ url: currentTest.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const canDownload = isInternalSourceType({ url: currentTest.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    const allowDownload = isInternalSourceType({ url: currentTest.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
     return (
       <div className="EarTrainingDisplay-soundPlayer">
         {!!url && (
           <MediaPlayer
-            canDownload={canDownload}
+            allowDownload={allowDownload}
             initialVolume={currentTest.sound.initialVolume}
             playbackRange={currentTest.sound.playbackRange}
             screenMode={MEDIA_SCREEN_MODE.none}

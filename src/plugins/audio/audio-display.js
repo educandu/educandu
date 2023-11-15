@@ -11,14 +11,14 @@ function AudioDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
   const url = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-  const canDownload = isInternalSourceType({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const allowDownload = isInternalSourceType({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   return (
     <div className="AudioDisplay">
       <div className="AudioDisplay-content">
         {!!url && (
           <MediaPlayer
-            canDownload={canDownload}
+            allowDownload={allowDownload}
             initialVolume={content.initialVolume}
             playbackRange={content.playbackRange}
             screenMode={MEDIA_SCREEN_MODE.none}
