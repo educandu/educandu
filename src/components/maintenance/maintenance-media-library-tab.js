@@ -92,6 +92,8 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   const [displayedRows, setDisplayedRows] = useState([]);
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
+  const [renderingRows, setRenderingRows] = useState(true);
+
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }, [pagination]);
@@ -191,6 +193,16 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
 
   const handleMediaLibraryItemModalClose = () => {
     setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
+  };
+
+  const handleRowRendered = (record, rowIndex) => {
+    const indexOfLastRecordOnPage = Math.min(displayedRows.length - 1, pagination.pageSize - 1);
+
+    if (rowIndex === indexOfLastRecordOnPage) {
+      const delayToAvoidRerenderingClash = 100;
+      setTimeout(() => setRenderingRows(false), delayToAvoidRerenderingClash);
+    }
+    return {};
   };
 
   const renderType = (_, row) => {
@@ -331,6 +343,8 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
+        loading={renderingRows}
+        onRow={handleRowRendered}
         onChange={handleTableChange}
         />
       <MediaLibaryItemModal
