@@ -259,12 +259,12 @@ function Search({ PageTemplate }) {
         </div>
 
         <RadioGroup className="SearchPage-typeFilter" value={searchResourceType} disabled={isSearching} onChange={handleSearcheResourceTypeChange}>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.document}>{t('common:document')}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.audio}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.audio}`)}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.video}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.video}`)}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.image}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.image}`)}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.pdf}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.pdf}`)}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t(`common:resourceType_${SEARCH_RESOURCE_TYPE.any}`)}</RadioButton>
+          <RadioButton value={SEARCH_RESOURCE_TYPE.document}>{t('common:searchResourceType_document')}</RadioButton>
+          <RadioButton value={SEARCH_RESOURCE_TYPE.audio}>{t('common:resourceType_audio')}</RadioButton>
+          <RadioButton value={SEARCH_RESOURCE_TYPE.video}>{t('common:resourceType_video')}</RadioButton>
+          <RadioButton value={SEARCH_RESOURCE_TYPE.image}>{t('common:resourceType_image')}</RadioButton>
+          <RadioButton value={SEARCH_RESOURCE_TYPE.pdf}>{t('common:resourceType_pdf')}</RadioButton>
+          <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t('common:resourceType_any')}</RadioButton>
         </RadioGroup>
 
         <Table
