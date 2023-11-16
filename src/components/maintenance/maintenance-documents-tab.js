@@ -108,6 +108,8 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
+  const [renderingRows, setRenderingRows] = useState(true);
+
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }, [pagination]);
@@ -224,6 +226,16 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
 
   const handleDocumentMetadataModalClose = () => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const handleRowRendered = (record, rowIndex) => {
+    const indexOfLastRecordOnPage = Math.min(displayedRows.length - 1, pagination.pageSize - 1);
+
+    if (rowIndex === indexOfLastRecordOnPage) {
+      const delayToAvoidRerenderingClash = 100;
+      setTimeout(() => setRenderingRows(false), delayToAvoidRerenderingClash);
+    }
+    return {};
   };
 
   const renderType = () => {
@@ -388,6 +400,8 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
+        loading={renderingRows}
+        onRow={handleRowRendered}
         onChange={handleTableChange}
         />
       <DocumentMetadataModal
