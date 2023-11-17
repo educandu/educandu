@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { Fragment } from 'react';
 import { Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { CheckOutlined } from '@ant-design/icons';
+import React, { Fragment, useState } from 'react';
 import { useNumberFormat } from '../locale-context.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
@@ -33,8 +33,11 @@ function MediaPlayerControls({
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
 
+  const [isFullscreenPlaybackRateMenuOpen, setIsFullscreenPlaybackRateMenuOpen] = useState(false);
+
   const handlePlaybackRateMenuItemClick = ({ key }) => {
     onPlaybackRateChange(Number(key));
+    setIsFullscreenPlaybackRateMenuOpen(false);
   };
 
   const handleLoopToggleButtonClick = () => {
@@ -43,20 +46,43 @@ function MediaPlayerControls({
 
   const handleFullscreenButtonClick = () => {
     onFullscreenChange(!isFullscreen);
+    setIsFullscreenPlaybackRateMenuOpen(false);
   };
+
+  const handleFullscreenPlaybackRateButtonClick = () => {
+    setIsFullscreenPlaybackRateMenuOpen(oldValue => !oldValue);
+  };
+
+  const renderPlaybackRateMenuItem = rate => (
+    <Fragment>
+      <div className="MediaPlayerControls-playbackRateItemSelection">
+        {rate === playbackRate && <CheckOutlined />}
+      </div>
+      {rate === DEFAULT_MEDIA_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
+    </Fragment>
+  );
 
   const getPlaybackRateMenuItems = () => {
     return MEDIA_PLAYBACK_RATES.map(rate => ({
       key: rate.toString(),
       label: (
         <div className="MediaPlayerControls-playbackRateItem">
-          <div className="MediaPlayerControls-playbackRateItemSelection">
-            {rate === playbackRate && <CheckOutlined />}
-          </div>
-          {rate === DEFAULT_MEDIA_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
+          {renderPlaybackRateMenuItem(rate)}
         </div>
       )
     }));
+  };
+
+  const getFullscreenPlaybackRateMenuItems = () => {
+    return MEDIA_PLAYBACK_RATES.map(rate => (
+      <div
+        key={rate.toString()}
+        className="MediaPlayerControls-playbackRateItem MediaPlayerControls-playbackRateItem--fullscreen"
+        onClick={() => handlePlaybackRateMenuItemClick({ key: rate })}
+        >
+        {renderPlaybackRateMenuItem(rate)}
+      </div>
+    ));
   };
 
   const formattedPlayedTime = formatMillisecondsAsDuration(playedMilliseconds, { millisecondsLength });
@@ -68,8 +94,18 @@ function MediaPlayerControls({
       : <Fragment>--:--&nbsp;/&nbsp;--:--</Fragment>;
   };
 
-  const renderMediaPlaybackRate = () => {
-    return <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>;
+  const renderPlaybackRateButton = (clickHandler = () => {}) => {
+    return (
+      <Button
+        type="link"
+        onClick={clickHandler}
+        icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <PlaybackRateIcon /> : null}
+        >
+        {playbackRate !== DEFAULT_MEDIA_PLAYBACK_RATE && (
+          <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>
+        )}
+      </Button>
+    );
   };
 
   return (
@@ -86,18 +122,23 @@ function MediaPlayerControls({
       </div>
       <div className="MediaPlayerControls-controlsGroup">
         <div>
-          <Dropdown
-            placement="top"
-            trigger={['click']}
-            menu={{ items: getPlaybackRateMenuItems(), onClick: handlePlaybackRateMenuItemClick }}
-            >
-            <Button
-              type="link"
-              icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <PlaybackRateIcon /> : null}
-              >
-              {playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? null : renderMediaPlaybackRate()}
-            </Button>
-          </Dropdown>
+          <div className="MediaPlayerControls-playbackRateButtonWrapper">
+            {!isFullscreen && (
+              <Dropdown
+                placement="top"
+                trigger={['click']}
+                menu={{ items: getPlaybackRateMenuItems(), onClick: handlePlaybackRateMenuItemClick }}
+                >
+                {renderPlaybackRateButton()}
+              </Dropdown>
+            )}
+            {!!isFullscreen && renderPlaybackRateButton(handleFullscreenPlaybackRateButtonClick)}
+            {!!isFullscreen && !!isFullscreenPlaybackRateMenuOpen && (
+              <div className="MediaPlayerControls-fullscreenPlaybackRateMenu">
+                {getFullscreenPlaybackRateMenuItems()}
+              </div>
+            )}
+          </div>
           {!!onLoopMediaChange && (
             <Button
               type="link"

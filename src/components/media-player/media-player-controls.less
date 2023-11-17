@@ -22,8 +22,38 @@
   font-size: @edu-font-size-sm;
 }
 
+.MediaPlayerControls-playbackRateButtonWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.MediaPlayerControls-fullscreenPlaybackRateMenu {
+  .m-box-shadow;
+  position: absolute;
+  display: grid;
+  grid-auto-flow: row;
+  gap: 2px;
+  left: -30px;
+  bottom: 40px;
+  padding: 3px;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-white;
+  transition: all 300ms ease;
+}
+
 .MediaPlayerControls-playbackRateItem {
   .m-control-group;
+
+  &.MediaPlayerControls-playbackRateItem--fullscreen {
+    width: 100%;
+    padding: 3px 12px;
+
+    &:hover {
+      cursor: pointer;
+      border-radius: @edu-border-radius-base;
+      background-color: @edu-background-color-light;
+    }
+  }
 }
 
 .MediaPlayerControls-playbackRateItemSelection {
