@@ -82,7 +82,7 @@ document:
     de: Dieses Dokument ist archiviert und nur für Benutzer mit der Rolle Admin oder Maintainer zugänglich.
   archiveAlertRedirectMarkdown:
     en: The other users are automatically redirected to [this document]({documentUrl}).
-    de: Die andere Benutzer sind zu [dieses Dokument]({documentUrl}) weitergeleitet.
+    de: Die anderen Benutzer sind zu [diesem Dokument]({documentUrl}) weitergeleitet.
   unarchive:
     en: Unarchive
     de: Dearchivieren

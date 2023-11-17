@@ -1080,7 +1080,7 @@
     },
     "archiveRedirectionInfo": {
       "en": "Users accessing this archive document will be redirected to the specified document. Maintainers will not be redirected.",
-      "de": "Users accessing this archive document will be redirected to the specified document. Maintainers will not be redirected."
+      "de": "Benutzer werden zum angegebenen Dokument weitergeleitet, wenn sie dieses Dokument aufrufen. Maintainer werden nicht weitergeleitet."
     }
   },
   "documentSelector": {
@@ -1794,7 +1794,7 @@
     },
     "archiveAlertRedirectMarkdown": {
       "en": "The other users are automatically redirected to [this document]({documentUrl}).",
-      "de": "Die andere Benutzer sind zu [dieses Dokument]({documentUrl}) weitergeleitet."
+      "de": "Die anderen Benutzer sind zu [diesem Dokument]({documentUrl}) weitergeleitet."
     },
     "unarchive": {
       "en": "Unarchive",
