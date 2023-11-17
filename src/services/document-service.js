@@ -349,11 +349,6 @@ class DocumentService {
     return this.updateDocument({ documentId, data, user });
   }
 
-  updateArchivedState({ documentId, user, archived }) {
-    const data = { publicContext: { archived } };
-    return this.updateDocument({ documentId, data, user, silentUpdate: true });
-  }
-
   async hardDeletePrivateDocument({ documentId, user }) {
     let doc;
     let room;
