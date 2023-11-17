@@ -77,4 +77,9 @@ document:
   applyAll:
     en: Apply all
     de: Alle übernehmen
-
+  archiveAlert:
+    en: This document is archived and accessible only by users with admin or maintainer role.
+    de: Dieses Dokument ist archiviert und nur für Benutzer mit der Rolle Admin oder Maintainer zugänglich.
+  unarchive:
+    en: Unarchive
+    de: Dearchivieren
