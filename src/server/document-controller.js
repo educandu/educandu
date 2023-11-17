@@ -63,6 +63,9 @@ class DocumentController {
     }
 
     if (doc.publicContext?.archived && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
+      if (doc.publicContext.archiveRedirectionDocumentId) {
+        return res.redirect(302, routes.getDocUrl({ id: doc.publicContext.archiveRedirectionDocumentId }));
+      }
       throw new NotFound();
     }
 

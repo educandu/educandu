@@ -106,9 +106,17 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
   }
 
   if ((view === VIEW.display || view === VIEW.comments) && doc.publicContext?.archived) {
+    const documentUrl = doc.publicContext.archiveRedirectionDocumentId
+      ? routes.getDocUrl({ id: doc.publicContext.archiveRedirectionDocumentId })
+      : null;
+
+    const redirectMarkdown = doc.publicContext.archiveRedirectionDocumentId
+      ? (<Markdown>{` ${t('archiveAlertRedirectMarkdown', { documentUrl })}`}</Markdown>)
+      : null;
+
     alerts.push({ message: (
       <div className="DocumentPage-alertWithButton ">
-        <div>{t('archiveAlert')}</div>
+        <div>{t('archiveAlert')}{redirectMarkdown} </div>
         <Button onClick={handleUnarchiveClick}>{t('unarchive')}</Button>
       </div>),
     type: ALERT_TYPE.warning });
@@ -239,7 +247,8 @@ function Document({ initialState, PageTemplate }) {
       tags: doc.tags,
       publicContext: {
         ...doc.publicContext,
-        archived: false
+        archived: false,
+        archiveRedirectionDocumentId: null
       },
       roomContext: doc.roomContext
     };

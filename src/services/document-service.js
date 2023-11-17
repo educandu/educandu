@@ -651,12 +651,16 @@ class DocumentService {
     const mappedSections = data.sections?.map(section => this._buildSection(section)) || [];
     validateSections(mappedSections, this.pluginRegistry);
 
+    const archived = data.publicContext?.archived || false;
+    const archiveRedirectionDocumentId = data.publicContext?.archiveRedirectionDocumentId || null;
+
     const publicContext = data.roomId
       ? null
       : {
         allowedEditors: data.publicContext?.allowedEditors || [],
         protected: data.publicContext?.protected || false,
         archived: data.publicContext?.archived || false,
+        archiveRedirectionDocumentId: archived ? archiveRedirectionDocumentId : null,
         verified: data.publicContext?.verified || false,
         review: data.publicContext?.review || ''
       };

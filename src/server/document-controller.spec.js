@@ -688,6 +688,36 @@ describe('document-controller', () => {
       });
     });
 
+    describe('when the the doc is archived (thus non-editable) and the user does not have required permission but a redirect is specified', () => {
+      const archiveRedirectionDocumentId = uniqueId.create();
+
+      beforeEach(() => new Promise((resolve, reject) => {
+        req = {
+          user,
+          params: { 0: '/doc-slug', documentId: doc._id },
+          query: { view: 'view' }
+        };
+        user.role = ROLE.user;
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', resolve);
+
+        doc.slug = 'doc-slug';
+        doc.publicContext.archived = true;
+        doc.publicContext.archiveRedirectionDocumentId = archiveRedirectionDocumentId;
+
+        documentService.getDocumentById.withArgs(doc._id).resolves(doc);
+
+        pageRenderer.sendPage.resolves();
+
+        sut.handleGetDocPage(req, res).catch(reject);
+      }));
+
+      it('should redirect to the correct document url', () => {
+        expect(res.statusCode).toBe(302);
+        expect(res._getRedirectUrl()).toBe(`/docs/${archiveRedirectionDocumentId}`);
+      });
+    });
+
     describe('when the view query param is \'edit\' but no templateDocumentId is provided', () => {
       let documentRevision;
 
