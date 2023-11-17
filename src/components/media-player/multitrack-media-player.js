@@ -55,8 +55,11 @@ function MultitrackMediaPlayer({
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
   const screenMode = showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none;
-  const isReady = useMemo(() => trackStates.every(ts => ts.isReady), [trackStates]);
   const appliedSelectedVolumePresetIndex = selectedVolumePresetIndex ?? internalSelectedVolumePresetIndex;
+
+  const isReady = useMemo(() => {
+    return !sources.length || trackStates.every(ts => ts.isReady);
+  }, [sources, trackStates]);
 
   const trackRefs = useRef({});
   const { t } = useTranslation('multitrackMediaPlayer');
@@ -260,7 +263,7 @@ function MultitrackMediaPlayer({
         )}
         {!isReady && (
           <div className="MultitrackMediaPlayer-loadingOverlay">
-            <Spin />
+            <Spin size="large" />
           </div>
         )}
       </div>
