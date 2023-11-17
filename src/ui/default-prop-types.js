@@ -224,6 +224,7 @@ export const documentPublicContextShape = PropTypes.shape({
   allowedEditors: PropTypes.arrayOf(otherUserShape),
   protected: PropTypes.bool,
   archived: PropTypes.bool,
+  archiveRedirectionDocumentId: PropTypes.string,
   verified: PropTypes.bool,
   review: PropTypes.string
 });

@@ -1023,7 +1023,7 @@
       "de": "Geschützte Dokumente können nur von einem Maintainer oder zugelassenem Bearbeiter bearbeitet werden."
     },
     "archivedInfo": {
-      "en": "Archived documents cannot be edited and cannot be discovered through search.",
+      "en": "Archived documents cannot be discovered through search or accessed by normal users. Maintainers can still access archived documents.",
       "de": "Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar."
     },
     "verifiedInfo": {
@@ -1062,9 +1062,9 @@
       "en": "No available rooms",
       "de": "Keine Räume verfügbar"
     },
-    "publicContextHeader": {
-      "en": "Advanced settings",
-      "de": "Erweiterte Einstellungen"
+    "maintenanceSettingsHeader": {
+      "en": "Maintenance settings",
+      "de": "Maintenance-Einstellungen"
     },
     "draft": {
       "en": "Mark as draft",
@@ -1073,6 +1073,14 @@
     "draftInfo": {
       "en": "Draft documents can only be accessed and edited by the room owner",
       "de": "Entwurfsdokumente können nur vom Raumbesitzer abgerufen und bearbeiten werden"
+    },
+    "archiveRedirectionLabel": {
+      "en": "Document for redirection",
+      "de": "Dokument zur Weiterleitung"
+    },
+    "archiveRedirectionInfo": {
+      "en": "Users accessing this archive document will be redirected to the specified document. Maintainers will not be redirected.",
+      "de": "Benutzer werden zum angegebenen Dokument weitergeleitet, wenn sie dieses Dokument aufrufen. Maintainer werden nicht weitergeleitet."
     }
   },
   "documentSelector": {
@@ -1783,6 +1791,10 @@
     "archiveAlert": {
       "en": "This document is archived and accessible only by users with admin or maintainer role.",
       "de": "Dieses Dokument ist archiviert und nur für Benutzer mit der Rolle Admin oder Maintainer zugänglich."
+    },
+    "archiveAlertRedirectMarkdown": {
+      "en": "The other users are automatically redirected to [this document]({documentUrl}).",
+      "de": "Die anderen Benutzer sind zu [diesem Dokument]({documentUrl}) weitergeleitet."
     },
     "unarchive": {
       "en": "Unarchive",

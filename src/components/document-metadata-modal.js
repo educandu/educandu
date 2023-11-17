@@ -8,6 +8,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
+import DocumentSelector from './document-selector.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { ROOM_USER_ROLE } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
@@ -259,7 +260,20 @@ function DocumentMetadataModal({
 
   const handleArchivedChange = event => {
     const { checked } = event.target;
-    setPublicContext(prevState => ({ ...prevState, archived: checked }));
+    setPublicContext(prevState => (
+      {
+        ...prevState,
+        archived: checked,
+        archiveRedirectionDocumentId: null
+      }));
+  };
+
+  const handleArchiveRedirectionDocumentIdChange = documentId => {
+    setPublicContext(prevState => (
+      {
+        ...prevState,
+        archiveRedirectionDocumentId: documentId
+      }));
   };
 
   const handleVerifiedChange = event => {
@@ -445,7 +459,7 @@ function DocumentMetadataModal({
         )}
         {!!isDocInPublicContext && (
           <Collapse>
-            <CollapsePanel header={t('publicContextHeader')}>
+            <CollapsePanel header={t('maintenanceSettingsHeader')}>
               {!!publicContextPermissions.canManagePublicContext && (
                 <FormItem label={<Info tooltip={t('allowedEditorsInfo')} iconAfterContent>{t('allowedEditors')}</Info>}>
                   <UserSelect value={publicContext.allowedEditors} onChange={handleAllowedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
@@ -471,6 +485,11 @@ function DocumentMetadataModal({
                       <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
                     </Checkbox>
                   </FormItem>
+                  {!!publicContext.archived && (
+                    <FormItem label={<Info tooltip={t('archiveRedirectionInfo')} iconAfterContent>{t('archiveRedirectionLabel')}</Info>}>
+                      <DocumentSelector documentId={publicContext.archiveRedirectionDocumentId} onChange={handleArchiveRedirectionDocumentIdChange} />
+                    </FormItem>
+                  )}
                   <FormItem>
                     <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
                       <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
