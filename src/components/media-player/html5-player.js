@@ -213,8 +213,10 @@ function Htlm5Player({
   }, [handleDuration]);
 
   const handleReady = useCallback(() => {
-    onReady();
-  }, [onReady]);
+    if (!sourceUrl || !!loadedSourceUrl) {
+      onReady();
+    }
+  }, [sourceUrl, loadedSourceUrl, onReady]);
 
   const handlePlaying = useCallback(() => {
     onPlay();
