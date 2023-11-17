@@ -114,7 +114,8 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
   const classes = classNames(
     'ResourcePreview',
     { 'ResourcePreview--fullWidth': fullWidth },
-    { 'ResourcePreview--pdf': resourceType === RESOURCE_TYPE.pdf }
+    { 'ResourcePreview--pdf': resourceType === RESOURCE_TYPE.pdf },
+    { 'ResourcePreview--video': resourceType === RESOURCE_TYPE.video }
   );
 
   return (
