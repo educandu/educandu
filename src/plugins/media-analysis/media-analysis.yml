@@ -20,3 +20,6 @@ mediaAnalysis:
   startPlaybackFromHere:
     en: Play from this part
     de: Ab diesem Teil abspeilen
+  chapterPointerTooltip:
+    en: View part text
+    de: Teiltext sehen

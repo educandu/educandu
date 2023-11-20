@@ -16,7 +16,7 @@ function MediaAnalysisDisplay({ content }) {
   const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
+  const [viewingChapterIndex, setViewingChapterIndex] = useState(0);
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
@@ -52,6 +52,8 @@ function MediaAnalysisDisplay({ content }) {
   };
 
   const handleChapterClick = chapterIndex => {
+    setViewingChapterIndex(chapterIndex);
+
     if (isPlaying) {
       multitrackMediaPlayerRef.current.seekToPart(chapterIndex);
     } else {
@@ -62,7 +64,7 @@ function MediaAnalysisDisplay({ content }) {
 
   const handlePlayingPartIndexChange = index => {
     if (index >= 0) {
-      setPlayingChapterIndex(index);
+      setViewingChapterIndex(index);
     }
   };
 
@@ -109,6 +111,23 @@ function MediaAnalysisDisplay({ content }) {
     );
   };
 
+  const renderChapterPointer = (chapter, index) => {
+    const widthInPercentage = determineChapterWidthInPercentage(index);
+
+    return (
+      <Tooltip title={t('chapterPointerTooltip')} placement="bottom">
+        <div
+          style={{ width: `${widthInPercentage}%` }}
+          className={classNames({
+            'MediaAnalysisDisplay-chapterPointer': true,
+            'is-visible': index === viewingChapterIndex
+          })}
+          onClick={() => setViewingChapterIndex(index)}
+          />
+      </Tooltip>
+    );
+  };
+
   const renderChapters = () => {
     const chapterTextsAreSet = chapters.some(chapter => chapter.text);
 
@@ -116,6 +135,9 @@ function MediaAnalysisDisplay({ content }) {
       <div className="MediaAnalysisDisplay-chapters">
         <div className="MediaAnalysisDisplay-chapterTitles">
           {chapters.map(renderChapterTitle)}
+        </div>
+        <div className="MediaAnalysisDisplay-chapterPointers">
+          {chapters.map(renderChapterPointer)}
         </div>
         {!!chapterTextsAreSet && (
           <Fragment>
