@@ -10,7 +10,7 @@ function VideoDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
   const url = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-  const canDownload = isInternalSourceType({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const allowDownload = isInternalSourceType({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
   const posterImageUrl = getAccessibleUrl({ url: content.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   return (
@@ -18,8 +18,9 @@ function VideoDisplay({ content }) {
       <div className={`VideoDisplay-content u-width-${content.width || 100}`}>
         {!!url && (
           <MediaPlayer
+            allowFullscreen
+            allowDownload={allowDownload}
             aspectRatio={content.aspectRatio}
-            canDownload={canDownload}
             initialVolume={content.initialVolume}
             playbackRange={content.playbackRange}
             posterImageUrl={posterImageUrl}

@@ -4,6 +4,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import DocumentService from '../services/document-service.js';
 import { isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
+import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 const { NotFound, Forbidden } = httpErrors;
@@ -23,6 +24,11 @@ class RevisionController {
     const revision = await this.documentService.getDocumentRevisionById(req.params.id);
 
     if (!revision) {
+      throw new NotFound();
+    }
+
+    const document = await this.documentService.getDocumentById(revision.documentId);
+    if (document.publicContext?.archived && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
       throw new NotFound();
     }
 

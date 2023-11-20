@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { Button, Radio, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
@@ -5,6 +6,7 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import IterationPanel from '../../components/iteration-panel.js';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import React, { Fragment, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
@@ -12,7 +14,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { ensureIsIncluded, replaceItemAt } from '../../utils/array-utils.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
-import { CheckOutlined, CloseOutlined, LeftOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons';
+import { ChevronLeftIcon, ChevronLeftPipeIcon, ChevronRightIcon } from '../../components/icons/icons.js';
 
 const RadioGroup = Radio.Group;
 
@@ -24,6 +26,7 @@ function InteractiveMediaDisplay({ content }) {
   const { t } = useTranslation('interactiveMedia');
 
   const [isMediaReady, setIsMediaReady] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [visitedChapters, setVisitedChapters] = useState([]);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
@@ -79,6 +82,14 @@ function InteractiveMediaDisplay({ content }) {
     setSelectedAnswerPerChapter(replaceItemAt(selectedAnswerPerChapter, value, interactingChapterIndex));
   };
 
+  const handleEnterFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const handleExitFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
   const renderAnswerRadio = (answer, index) => {
     const correctAnswerIndex = chapters[interactingChapterIndex].correctAnswerIndex;
     const userSelectedAnswerIndex = selectedAnswerPerChapter[interactingChapterIndex];
@@ -104,6 +115,11 @@ function InteractiveMediaDisplay({ content }) {
       return null;
     }
 
+    const controlsClasses = classNames(
+      'InteractiveMediaDisplay-overlayChapterControls',
+      { 'is-fullscreen': isFullscreen }
+    );
+
     return (
       <div className="InteractiveMediaDisplay-overlay">
         <div className="InteractiveMediaDisplay-overlayChapterTitle">{chapters[interactingChapterIndex].title}</div>
@@ -119,20 +135,70 @@ function InteractiveMediaDisplay({ content }) {
             </Space>
           </RadioGroup>
         </div>
-        <div className="InteractiveMediaDisplay-overlayChapterControls">
-          <Button icon={<LeftOutlined />} onClick={handleReplayChapterClick}>{t('replay')}</Button>
-          {interactingChapterIndex < chapters.length - 1 && (
-            <Button type="primary" icon={<RightOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
-          )}
+        <div className={controlsClasses}>
           {interactingChapterIndex === chapters.length - 1 && (
-            <Button type="primary" icon={<UndoOutlined />} onClick={handleResetChaptersClick}>{t('common:reset')}</Button>
+          <Button
+            type="primary"
+            icon={<ChevronLeftPipeIcon />}
+            onClick={handleResetChaptersClick}
+            className="InteractiveMediaDisplay-overlayChapterControlsButton"
+            >
+            {t('common:reset')}
+          </Button>
+          )}
+
+          <Button
+            icon={<ChevronLeftIcon />}
+            onClick={handleReplayChapterClick}
+            className="InteractiveMediaDisplay-overlayChapterControlsButton"
+            >
+            {t('replay')}
+          </Button>
+
+          {interactingChapterIndex < chapters.length - 1 && (
+            <Button
+              type="primary"
+              icon={<ChevronRightIcon />}
+              onClick={handleNextChapterClick}
+              className="InteractiveMediaDisplay-overlayChapterControlsButton"
+              >
+              {t('continue')}
+            </Button>
           )}
         </div>
       </div>
     );
   };
 
-  const canDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const renderChaptersProgressBar = () => {
+    return (
+      <div className="InteractiveMediaDisplay-chaptersProgressBar">
+        <div className="InteractiveMediaDisplay-chaptersProgressBarCards">
+          <div>
+            {t('currentProgress')}:
+          </div>
+          <CardSelector
+            cards={chapterCards}
+            selectedCardIndex={currentChapterIndex}
+            visitedCardIndices={visitedChapters}
+            onCardSelected={handleGotoChapterClick}
+            disabled={!isMediaReady}
+            />
+        </div>
+        <IterationPanel
+          itemCount={chapters.length}
+          selectedItemIndex={currentChapterIndex}
+          onPreviousClick={handleReplayChapterClick}
+          onResetClick={handleResetChaptersClick}
+          onNextClick={handleNextChapterClick}
+          disabled={!isMediaReady}
+          alwaysAllowPreviousClick
+          />
+      </div>
+    );
+  };
+
+  const allowDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   return (
     <div className="InteractiveMediaDisplay">
@@ -140,10 +206,12 @@ function InteractiveMediaDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MediaPlayer
+              allowDownload={allowDownload}
+              allowFullscreen
+              allowLoop={false}
               aspectRatio={aspectRatio}
-              canDownload={canDownload}
-              canLoop={false}
               customScreenOverlay={renderInteractionOverlay()}
+              customUnderControlsContent={renderChaptersProgressBar()}
               initialVolume={initialVolume}
               mediaPlayerRef={mediaPlayerRef}
               parts={playerParts}
@@ -151,34 +219,13 @@ function InteractiveMediaDisplay({ content }) {
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
               sourceUrl={sourceUrl}
+              onEnterFullscreen={handleEnterFullscreen}
+              onExitFullscreen={handleExitFullscreen}
               onPartEndReached={handlePartEndReached}
               onPlayingPartIndexChange={setCurrentChapterIndex}
               onReady={handleMediaReady}
               onSeek={handleSeek}
               />
-            <div className="InteractiveMediaDisplay-progressBar">
-              <div className="InteractiveMediaDisplay-progressBarCards">
-                <div>
-                  {t('currentProgress')}:
-                </div>
-                <CardSelector
-                  cards={chapterCards}
-                  selectedCardIndex={currentChapterIndex}
-                  visitedCardIndices={visitedChapters}
-                  onCardSelected={handleGotoChapterClick}
-                  disabled={!isMediaReady}
-                  />
-              </div>
-              <IterationPanel
-                itemCount={chapters.length}
-                selectedItemIndex={currentChapterIndex}
-                onPreviousClick={handleReplayChapterClick}
-                onResetClick={handleResetChaptersClick}
-                onNextClick={handleNextChapterClick}
-                disabled={!isMediaReady}
-                alwaysAllowPreviousClick
-                />
-            </div>
             <CopyrightNotice value={copyrightNotice} />
           </Fragment>
         )}

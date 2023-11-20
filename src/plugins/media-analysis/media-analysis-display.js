@@ -95,7 +95,7 @@ function MediaAnalysisDisplay({ content }) {
       <div
         key={chapter.key}
         style={{ width: `${widthInPercentage}%` }}
-        className={classNames('MediaAnalysisDisplay-chapterText', { 'is-expanded': areTextsExpanded })}
+        className="MediaAnalysisDisplay-chapterText"
         >
         <Markdown>{chapter.text}</Markdown>
       </div>
@@ -104,6 +104,7 @@ function MediaAnalysisDisplay({ content }) {
 
   const renderChapters = () => {
     const chapterTextsAreSet = chapters.some(chapter => chapter.text);
+
     return (
       <div className="MediaAnalysisDisplay-chapters">
         <div className="MediaAnalysisDisplay-chapterTitles">
@@ -111,7 +112,7 @@ function MediaAnalysisDisplay({ content }) {
         </div>
         {!!chapterTextsAreSet && (
           <Fragment>
-            <div className="MediaAnalysisDisplay-chapterTexts">
+            <div className={classNames('MediaAnalysisDisplay-chapterTexts', { 'is-expanded': areTextsExpanded })}>
               {chapters.map(renderChapterText)}
             </div>
             <a onClick={handleChaptersTextsToggleClick} className="MediaAnalysisDisplay-chaptersTextsToggle">
@@ -129,6 +130,7 @@ function MediaAnalysisDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
+              allowFullscreen
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               customUnderScreenContent={renderChapters()}

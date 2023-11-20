@@ -5,9 +5,9 @@ import YoutubePlayer from './youtube-player.js';
 import { useService } from '../container-context.js';
 import AudioIcon from '../icons/general/audio-icon.js';
 import HttpClient from '../../api-clients/http-client.js';
-import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { remountOnPropChanges } from '../../ui/react-helper.js';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
 import MediaPlayerControls, { MEDIA_PLAYER_CONTROLS_STATE } from './media-player-controls.js';
@@ -42,12 +42,14 @@ const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMillisecond
 };
 
 function MediaPlayer({
+  allowDownload,
+  allowFullscreen,
+  allowLoop,
   allowPartClick,
   aspectRatio,
-  canLoop,
-  canDownload,
   clickToPlay,
   customScreenOverlay,
+  customUnderControlsContent,
   customUnderScreenContent,
   downloadFileName,
   initialVolume,
@@ -66,6 +68,8 @@ function MediaPlayer({
   volume,
   onDuration,
   onEnded,
+  onEnterFullscreen,
+  onExitFullscreen,
   onPartEndReached,
   onPause,
   onPlay,
@@ -77,11 +81,13 @@ function MediaPlayer({
   onSeekStart
 }) {
   const playerRef = useRef();
+  const mediaPlayerInstanceId = useId();
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loopMedia, setLoopMedia] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [internalVolume, setInternalVolume] = useState(initialVolume);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
@@ -155,6 +161,24 @@ function MediaPlayer({
     httpClient.download(sourceUrl, downloadFileName, withCredentials);
   };
 
+  const handleEnterFullscreen = () => {
+    setIsFullscreen(true);
+    onEnterFullscreen();
+  };
+
+  const handleExitFullscreen = () => {
+    setIsFullscreen(false);
+    onExitFullscreen();
+  };
+
+  const handleFullscreenChange = newIsFullscreen => {
+    if (newIsFullscreen) {
+      playerRef.current?.fullscreen?.enter();
+    } else {
+      playerRef.current?.fullscreen?.exit();
+    }
+  };
+
   const triggerSeekToTimecode = timecodeInMilliseconds => {
     const newPlayedMilliseconds = Math.min(timecodeInMilliseconds, durationInMilliseconds);
     playerRef.current.seekToTimecode(newPlayedMilliseconds);
@@ -196,6 +220,7 @@ function MediaPlayer({
       play: playerRef.current.play,
       pause: playerRef.current.pause,
       stop: playerRef.current.stop,
+      fullscreen: playerRef.current.fullscreen,
       reset: triggerReset,
       seekToTimecode: triggerSeekToTimecode,
       seekToPart: triggerSeekToPart
@@ -204,11 +229,13 @@ function MediaPlayer({
 
   const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
   const noScreen = screenMode === MEDIA_SCREEN_MODE.none;
+  const canEnterFullscreen = screenMode !== MEDIA_SCREEN_MODE.none && allowFullscreen;
 
   const mainClasses = classNames(
     'MediaPlayer',
     { 'MediaPlayer--noScreen': noScreen },
-    { 'MediaPlayer--hidden': noScreen && !!renderControls && !!renderProgressBar }
+    { 'MediaPlayer--hidden': noScreen && !!renderControls && !!renderProgressBar },
+    { 'is-fullscreen': !!isFullscreen }
   );
 
   const playerClasses = classNames(
@@ -220,13 +247,19 @@ function MediaPlayer({
     { 'MediaPlayer-player--fourToThree': aspectRatio === MEDIA_ASPECT_RATIO.fourToThree }
   );
 
+  const underPlayerContentClasses = classNames(
+    'MediaPlayer-underPlayerContent',
+    { 'is-fullscreen': !!isFullscreen }
+  );
+
   return (
-    <div className={mainClasses}>
+    <div className={mainClasses} id={mediaPlayerInstanceId} key={`${mediaPlayerInstanceId}_${screenMode}`}>
       <div className={playerClasses}>
         <Player
           aspectRatio={aspectRatio}
           audioOnly={noScreen}
           clickToPlay={clickToPlay}
+          fullscreenContainerId={canEnterFullscreen ? mediaPlayerInstanceId : null}
           playbackRange={playbackRange}
           playbackRate={appliedPlaybackRate}
           playerRef={playerRef}
@@ -236,6 +269,8 @@ function MediaPlayer({
           volume={appliedVolume}
           onDuration={handleDuration}
           onEnded={handleEnded}
+          onEnterFullscreen={handleEnterFullscreen}
+          onExitFullscreen={handleExitFullscreen}
           onPause={handlePausing}
           onPlay={handlePlaying}
           onProgress={handleProgress}
@@ -252,54 +287,62 @@ function MediaPlayer({
           </div>
         )}
       </div>
-      {customUnderScreenContent}
-      {!!renderProgressBar && renderProgressBar()}
-      {!renderProgressBar && (
-        <MediaPlayerProgressBar
-          allowPartClick={allowPartClick}
-          durationInMilliseconds={durationInMilliseconds}
-          millisecondsLength={millisecondsLength}
-          parts={parts}
-          playedMilliseconds={playedMilliseconds}
-          onSeek={handleSeek}
-          onSeekEnd={handleSeekEnd}
-          onSeekStart={handleSeekStart}
-          />
-      )}
 
-      {!!renderControls && renderControls()}
-      {!renderControls && (
-        <MediaPlayerControls
-          allowDownload={canDownload}
-          allowLoop={canLoop}
-          durationInMilliseconds={durationInMilliseconds}
-          millisecondsLength={millisecondsLength}
-          playedMilliseconds={playedMilliseconds}
-          screenMode={screenMode}
-          state={isPlaying ? MEDIA_PLAYER_CONTROLS_STATE.playing : MEDIA_PLAYER_CONTROLS_STATE.paused}
-          volume={appliedVolume}
-          loopMedia={loopMedia}
-          playbackRate={internalPlaybackRate}
-          onDownloadClick={handleDownloadClick}
-          onPauseClick={handlePauseClick}
-          onPlaybackRateChange={setInternaPlaybackRate}
-          onLoopMediaChange={setLoopMedia}
-          onPlayClick={handlePlayClick}
-          onVolumeChange={setInternalVolume}
-          />
-      )}
+      <div className={underPlayerContentClasses}>
+        {customUnderScreenContent}
+        {!!renderProgressBar && renderProgressBar()}
+        {!renderProgressBar && (
+          <MediaPlayerProgressBar
+            allowPartClick={allowPartClick}
+            durationInMilliseconds={durationInMilliseconds}
+            millisecondsLength={millisecondsLength}
+            parts={parts}
+            playedMilliseconds={playedMilliseconds}
+            onSeek={handleSeek}
+            onSeekEnd={handleSeekEnd}
+            onSeekStart={handleSeekStart}
+            />
+        )}
+
+        {!!renderControls && renderControls()}
+        {!renderControls && (
+          <MediaPlayerControls
+            allowDownload={allowDownload}
+            allowLoop={allowLoop}
+            durationInMilliseconds={durationInMilliseconds}
+            millisecondsLength={millisecondsLength}
+            playedMilliseconds={playedMilliseconds}
+            screenMode={screenMode}
+            state={isPlaying ? MEDIA_PLAYER_CONTROLS_STATE.playing : MEDIA_PLAYER_CONTROLS_STATE.paused}
+            volume={appliedVolume}
+            loopMedia={loopMedia}
+            isFullscreen={isFullscreen}
+            playbackRate={internalPlaybackRate}
+            onDownloadClick={allowDownload ? handleDownloadClick : null}
+            onPauseClick={handlePauseClick}
+            onPlaybackRateChange={setInternaPlaybackRate}
+            onLoopMediaChange={allowLoop ? setLoopMedia : null}
+            onFullscreenChange={canEnterFullscreen ? handleFullscreenChange : null}
+            onPlayClick={handlePlayClick}
+            onVolumeChange={setInternalVolume}
+            />
+        )}
+        {customUnderControlsContent}
+      </div>
     </div>
   );
 }
 
 MediaPlayer.propTypes = {
+  allowDownload: PropTypes.bool,
+  allowFullscreen: PropTypes.bool,
+  allowLoop: PropTypes.bool,
   allowPartClick: PropTypes.bool,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  canLoop: PropTypes.bool,
-  canDownload: PropTypes.bool,
   clickToPlay: PropTypes.bool,
   customScreenOverlay: PropTypes.node,
   customUnderScreenContent: PropTypes.node,
+  customUnderControlsContent: PropTypes.node,
   downloadFileName: PropTypes.string,
   initialVolume: PropTypes.number,
   millisecondsLength: PropTypes.number,
@@ -321,6 +364,8 @@ MediaPlayer.propTypes = {
   volume: PropTypes.number,
   onDuration: PropTypes.func,
   onEnded: PropTypes.func,
+  onEnterFullscreen: PropTypes.func,
+  onExitFullscreen: PropTypes.func,
   onPartEndReached: PropTypes.func,
   onPause: PropTypes.func,
   onPlay: PropTypes.func,
@@ -333,12 +378,14 @@ MediaPlayer.propTypes = {
 };
 
 MediaPlayer.defaultProps = {
+  allowDownload: false,
+  allowFullscreen: false,
+  allowLoop: true,
   allowPartClick: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  canLoop: true,
-  canDownload: false,
   clickToPlay: true,
   customScreenOverlay: null,
+  customUnderControlsContent: null,
   customUnderScreenContent: null,
   downloadFileName: null,
   initialVolume: 1,
@@ -358,6 +405,8 @@ MediaPlayer.defaultProps = {
   volume: null,
   onDuration: () => {},
   onEnded: () => {},
+  onEnterFullscreen: () => {},
+  onExitFullscreen: () => {},
   onPartEndReached: () => {},
   onPause: () => {},
   onPlay: () => {},

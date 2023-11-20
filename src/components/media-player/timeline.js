@@ -31,7 +31,12 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     });
   };
 
-  const handleMarkerMouseDown = (marker, index) => () => {
+  const handleDragStart = (event, index) => {
+    if (event.type === 'mousedown') {
+      event.preventDefault();
+    }
+
+    const marker = timelineState.markers[index];
     const prevMarker = timelineState.markers[index - 1];
     const nextMarker = timelineState.markers[index + 1];
     const timelineBounds = timelineRef.current.getBoundingClientRect();
@@ -44,20 +49,22 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     setDragState({ marker, bounds });
   };
 
-  const handleWindowMouseUp = useCallback(() => {
+  const handleDragEnd = useCallback(() => {
     setDragState(null);
   }, []);
 
-  const handleWindowMouseMove = useCallback(event => {
+  const handleDragMove = useCallback(event => {
     if (!timelineState.currentTimelineWidth) {
       return;
     }
 
-    // Disable selection of DOM elements (e.g. text, image)
-    event.preventDefault();
-    const timelineBounds = timelineRef.current.getBoundingClientRect();
+    if (event.type === 'mousemove') {
+      // Disable selection of DOM elements (e.g. text, image)
+      event.preventDefault();
+    }
 
-    const currentLeft = event.clientX - timelineBounds.left;
+    const timelineBounds = timelineRef.current.getBoundingClientRect();
+    const currentLeft = (event.touches?.[0].clientX ?? event.clientX) - timelineBounds.left;
     const marker = { ...timelineState.markers.find(m => m.key === dragState.marker.key) };
 
     if (dragState.bounds.left > currentLeft && dragState.bounds.left !== marker.left) {
@@ -70,23 +77,48 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
       marker.left = dragState.bounds.right;
     }
 
-    setDragState(prev => ({ ...prev, marker }));
-    setTimelineState(prev => ({
-      ...prev,
-      markers: prev.markers.map(prevMarker => prevMarker.key === marker.key ? marker : prevMarker)
+    setDragState(oldState => ({ ...oldState, marker }));
+    setTimelineState(oldState => ({
+      ...oldState,
+      markers: oldState.markers.map(prevMarker => prevMarker.key === marker.key ? marker : prevMarker)
     }));
 
     const newStartPosition = ensureValidMediaPosition(dragState.marker.left / timelineState.currentTimelineWidth);
     onStartPositionChange(dragState.marker.key, newStartPosition);
   }, [dragState, timelineState, onStartPositionChange]);
 
-  const handleMarkersBarClick = () => {
-    if (!timelineState.currentTimelineWidth || isTouchDevice()) {
-      return;
+  const createNewMarkerStateFromMouseEvent = event => {
+    const timelineBounds = timelineRef.current.getBoundingClientRect();
+
+    const timelineBarHeight = timelineBounds.height / 3;
+    const segmentsBarMinTop = timelineBounds.top;
+    const segmentsBarMaxTop = timelineBounds.top + timelineBarHeight;
+
+    const isExceedingVerticalBounds = event.clientY > segmentsBarMaxTop || event.clientY < segmentsBarMinTop;
+    const isExceedingHorizontalBounds = event.clientX < timelineBounds.x || event.clientX > timelineBounds.x + timelineBounds.width;
+    if (isExceedingVerticalBounds || isExceedingHorizontalBounds) {
+      return null;
     }
 
-    if (newMarkerState?.isInBounds) {
-      const startPosition = ensureValidMediaPosition(newMarkerState.left / timelineState.currentTimelineWidth);
+    const currentLeft = event.clientX - timelineBounds.left;
+
+    const isOverlappingPin = timelineState.markers
+      .some(marker => currentLeft >= marker.left - (MARKER_WIDTH_IN_PX / 2) && currentLeft <= marker.left + (MARKER_WIDTH_IN_PX / 2));
+
+    if (isOverlappingPin) {
+      return null;
+    }
+
+    const isInBounds = newMarkerBounds
+      .some(bounds => bounds.leftMin <= currentLeft && currentLeft <= bounds.leftMax);
+
+    return { left: currentLeft, isInBounds };
+  };
+
+  const handleMarkersBarClick = event => {
+    const clickedNewMarkerState = createNewMarkerStateFromMouseEvent(event);
+    if (!dragState && timelineState.currentTimelineWidth && clickedNewMarkerState?.isInBounds) {
+      const startPosition = ensureValidMediaPosition(clickedNewMarkerState.left / timelineState.currentTimelineWidth);
       setNewMarkerState(null);
       onPartAdd(startPosition);
     }
@@ -97,34 +129,9 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
   };
 
   const handleMarkersBarMouseMove = event => {
-    if (dragState || isTouchDevice()) {
-      return;
+    if (!dragState) {
+      setNewMarkerState(createNewMarkerStateFromMouseEvent(event));
     }
-    const timelineBounds = timelineRef.current.getBoundingClientRect();
-
-    const timelineBarHeight = timelineBounds.height / 3;
-    const segmentsBarMinTop = timelineBounds.top;
-    const segmentsBarMaxTop = timelineBounds.top + timelineBarHeight;
-
-    const isExceedingVerticalBounds = event.clientY > segmentsBarMaxTop || event.clientY < segmentsBarMinTop;
-    const isExceedingHorizontalBounds = event.clientX < timelineBounds.x || event.clientX > timelineBounds.x + timelineBounds.width;
-    if (isExceedingVerticalBounds || isExceedingHorizontalBounds) {
-      handleMarkersBarMouseLeave();
-      return;
-    }
-
-    const currentLeft = event.clientX - timelineBounds.left;
-
-    const isOverlappingPin = timelineState.markers
-      .some(marker => currentLeft >= marker.left - (MARKER_WIDTH_IN_PX / 2) && currentLeft <= marker.left + (MARKER_WIDTH_IN_PX / 2));
-
-    if (isOverlappingPin) {
-      handleMarkersBarMouseLeave();
-      return;
-    }
-
-    const isInBounds = newMarkerBounds.some(bounds => bounds.leftMin <= currentLeft && currentLeft <= bounds.leftMax);
-    setNewMarkerState({ left: currentLeft, isInBounds });
   };
 
   const handleSegmentClick = (event, segment) => {
@@ -187,26 +194,32 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
 
   useEffect(() => {
     window.addEventListener('resize', updateStates);
+    window.addEventListener('fullscreenchange', updateStates);
+
     return () => {
       window.removeEventListener('resize', updateStates);
+      window.removeEventListener('fullscreenchange', updateStates);
     };
   }, [updateStates]);
 
   useEffect(() => {
-    if (!dragState || isTouchDevice()) {
+    if (!dragState) {
       return () => {};
     }
-    window.addEventListener('mousemove', handleWindowMouseMove);
-    window.addEventListener('mouseup', handleWindowMouseUp);
+    const moveEventName = isTouchDevice() ? 'touchmove' : 'mousemove';
+    const endEventName = isTouchDevice() ? 'touchend' : 'mouseup';
+    window.addEventListener(moveEventName, handleDragMove);
+    window.addEventListener(endEventName, handleDragEnd);
     return () => {
-      window.removeEventListener('mousemove', handleWindowMouseMove);
-      window.removeEventListener('mouseup', handleWindowMouseUp);
+      window.removeEventListener(moveEventName, handleDragMove);
+      window.removeEventListener(endEventName, handleDragEnd);
     };
-  }, [dragState, handleWindowMouseMove, handleWindowMouseUp]);
+  }, [dragState, handleDragMove, handleDragEnd]);
 
   const renderExistingMarker = (marker, index) => {
     const percentage = marker.left / timelineState.currentTimelineWidth;
     const markerText = formatMediaPosition({ position: percentage, duration: durationInMilliseconds, formatPercentage });
+    const dragStartTriggerPropName = isTouchDevice() ? 'onTouchStart' : 'onMouseDown';
 
     return (
       <div
@@ -217,7 +230,7 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
         {!!dragState && (
           <div className="Timeline-markerTimecode">{markerText}</div>
         )}
-        <div onMouseDown={handleMarkerMouseDown(marker, index)}>
+        <div {...{ [dragStartTriggerPropName]: event => handleDragStart(event, index) }}>
           <PinIcon />
         </div>
       </div>
@@ -302,16 +315,21 @@ function Timeline({ durationInMilliseconds, parts, selectedPartIndex, onPartAdd,
     );
   };
 
+  const nonTouchOnlyHoverHandlers = isTouchDevice()
+    ? {}
+    : { onMouseMove: handleMarkersBarMouseMove, onMouseLeave: handleMarkersBarMouseLeave };
+
   return (
     <div className={classNames('Timeline', { 'is-dragging': !!dragState })} ref={timelineRef}>
       <div
         className="Timeline-markersBar"
         onClick={handleMarkersBarClick}
-        onMouseMove={handleMarkersBarMouseMove}
-        onMouseLeave={handleMarkersBarMouseLeave}
+        {...nonTouchOnlyHoverHandlers}
         >
         {parts.length <= 1 && (
-          <div className="Timeline-markersBarPlaceholder">{t('markersBarPlaceholder')}</div>
+          <div className="Timeline-markersBarPlaceholder">
+            {isTouchDevice() ? t('markersBarPlaceholderTouch') : t('markersBarPlaceholderNonTouch')}
+          </div>
         )}
         {timelineState.markers.map(renderExistingMarker)}
         {!!newMarkerState && renderNewMarker()}

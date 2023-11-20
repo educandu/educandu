@@ -92,17 +92,34 @@ const createPendingDocumentInput = sections => {
   };
 };
 
-function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, handleApplyAllPendingSections, t }) {
+function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKeys, handleApplyAllPendingSections, handleUnarchiveClick, t }) {
   const alerts = [];
   const review = docRevision ? docRevision.publicContext?.review : doc.publicContext?.review;
 
   if (view === VIEW.edit && hasPendingTemplateSectionKeys) {
     alerts.push({ message: (
-      <div className="DocumentPage-proposedSectionsAlert">
+      <div className="DocumentPage-alertWithButton ">
         <Markdown>{t('proposedSectionsAlertMarkdown')}</Markdown>
         <Button onClick={handleApplyAllPendingSections}>{t('applyAll')}</Button>
       </div>
     ) });
+  }
+
+  if ((view === VIEW.display || view === VIEW.comments) && doc.publicContext?.archived) {
+    const documentUrl = doc.publicContext.archiveRedirectionDocumentId
+      ? routes.getDocUrl({ id: doc.publicContext.archiveRedirectionDocumentId })
+      : null;
+
+    const redirectMarkdown = doc.publicContext.archiveRedirectionDocumentId
+      ? (<Markdown>{` ${t('archiveAlertRedirectMarkdown', { documentUrl })}`}</Markdown>)
+      : null;
+
+    alerts.push({ message: (
+      <div className="DocumentPage-alertWithButton ">
+        <div>{t('archiveAlert')}{redirectMarkdown} </div>
+        <Button onClick={handleUnarchiveClick}>{t('unarchive')}</Button>
+      </div>),
+    type: ALERT_TYPE.warning });
   }
 
   if (review) {
@@ -221,12 +238,36 @@ function Document({ initialState, PageTemplate }) {
     setIsDirty(true);
   };
 
+  const handleUnarchiveClick = useCallback(async () => {
+    const documentMetadata = {
+      title: doc.title,
+      slug: doc.slug,
+      shortDescription: doc.shortDescription,
+      language: doc.language,
+      tags: doc.tags,
+      publicContext: {
+        ...doc.publicContext,
+        archived: false,
+        archiveRedirectionDocumentId: null
+      },
+      roomContext: doc.roomContext
+    };
+
+    await documentApiClient.updateDocumentMetadata({
+      documentId: doc._id,
+      metadata: documentMetadata
+    });
+
+    window.location = routes.getDocUrl({ id: doc._id, slug: doc.slug });
+  }, [doc, documentApiClient]);
+
   const [alerts, setAlerts] = useState(createPageAlerts({
     t,
     doc,
     view,
     hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length,
-    handleApplyAllPendingSections
+    handleApplyAllPendingSections:
+    handleUnarchiveClick
   }));
 
   const isVerifiedDocument = useMemo(() => doc.publicContext?.verified, [doc.publicContext]);
@@ -414,9 +455,10 @@ function Document({ initialState, PageTemplate }) {
       view,
       docRevision: historySelectedDocumentRevision,
       hasPendingTemplateSectionKeys: !!pendingTemplateSectionKeys.length,
-      handleApplyAllPendingSections
+      handleApplyAllPendingSections,
+      handleUnarchiveClick
     }));
-  }, [doc, historySelectedDocumentRevision, view, pendingTemplateSectionKeys, t]);
+  }, [doc, historySelectedDocumentRevision, view, pendingTemplateSectionKeys, handleUnarchiveClick, t]);
 
   useEffect(() => {
     if (preSetView === VIEW.history && !initialDocumentRevisionsFetched) {
@@ -458,8 +500,15 @@ function Document({ initialState, PageTemplate }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
 
     if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.update) {
-      setDoc(updatedDocuments[0]);
-      message.success(t('common:changesSavedSuccessfully'));
+      if (!doc.publicContext?.archived && updatedDocuments[0].publicContext?.archived) {
+        window.location = routes.getDocUrl({
+          id: updatedDocuments[0]._id,
+          slug: updatedDocuments[0].slug
+        });
+      } else {
+        setDoc(updatedDocuments[0]);
+        message.success(t('common:changesSavedSuccessfully'));
+      }
     }
 
     if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.clone) {

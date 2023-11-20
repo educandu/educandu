@@ -1,12 +1,13 @@
 import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import { assert, createSandbox } from 'sinon';
+import { ROLE } from '../domain/constants.js';
 import RevisionController from './revision-controller.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const { NotFound, Forbidden } = httpErrors;
 
-describe('document-controller', () => {
+describe('revision-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
@@ -15,6 +16,7 @@ describe('document-controller', () => {
   let roomService;
 
   let revision;
+  let document;
   let user;
   let room;
   let req;
@@ -23,6 +25,7 @@ describe('document-controller', () => {
 
   beforeEach(() => {
     documentService = {
+      getDocumentById: sandbox.stub(),
       getDocumentRevisionById: sandbox.stub()
     };
 
@@ -41,7 +44,8 @@ describe('document-controller', () => {
     res = {};
     user = { _id: uniqueId.create() };
     room = { _id: uniqueId.create() };
-    revision = { _id: uniqueId.create(), slug: '', sections: [] };
+    document = { _id: uniqueId.create() };
+    revision = { _id: uniqueId.create(), documentId: document._id, slug: '', sections: [] };
 
     sut = new RevisionController(documentService, roomService, clientDataMappingService, pageRenderer);
   });
@@ -73,6 +77,7 @@ describe('document-controller', () => {
       beforeEach(() => {
         req = { params: { 0: '', id: revision._id } };
 
+        documentService.getDocumentById.withArgs(document._id).resolves(document);
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
         clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
 
@@ -93,6 +98,7 @@ describe('document-controller', () => {
         room.members = [];
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(document._id).resolves(document);
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
       });
 
@@ -110,6 +116,7 @@ describe('document-controller', () => {
         room.members = [];
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(document._id).resolves(document);
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
         clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
 
@@ -130,6 +137,45 @@ describe('document-controller', () => {
         room.members = [{ userId: user._id }];
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(document._id).resolves(document);
+        documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
+        clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
+
+        return sut.handleGetRevisionPage(req, {});
+      });
+
+      it('should call pageRenderer.sendPage', () => {
+        assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
+      });
+    });
+
+    describe('when the revision is of an archived document and the user does not have required permission', () => {
+      beforeEach(() => {
+        req = { user, params: { 0: '', id: revision._id } };
+        user.role = ROLE.user;
+
+        document.publicContext = { archived: true };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(document._id).resolves(document);
+        documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
+        clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleGetRevisionPage(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the revision is of an archived document and the user has required permission', () => {
+      beforeEach(() => {
+        req = { user, params: { 0: '', id: revision._id } };
+        user.role = ROLE.maintainer;
+
+        document.publicContext = { archived: true };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        documentService.getDocumentById.withArgs(document._id).resolves(document);
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
         clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
 

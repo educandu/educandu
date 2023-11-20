@@ -9,8 +9,8 @@ import MediaVolumeSlider from './media-volume-slider.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
-import { DownloadIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon, SpinIcon } from '../icons/icons.js';
 import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
+import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon, SpinIcon } from '../icons/icons.js';
 
 export const MEDIA_PLAYER_CONTROLS_STATE = {
   paused: 'paused',
@@ -22,6 +22,7 @@ export const MEDIA_PLAYER_CONTROLS_STATE = {
 
 function MediaPlayerControls({
   allowDownload,
+  allowFullscreen,
   allowLoop,
   durationInMilliseconds,
   millisecondsLength,
@@ -30,11 +31,13 @@ function MediaPlayerControls({
   state,
   volume,
   loopMedia,
+  isFullscreen,
   playbackRate,
   onDownloadClick,
   onPauseClick,
   onPlaybackRateChange,
   onLoopMediaChange,
+  onFullscreenChange,
   onPlayClick,
   onVolumeChange
 }) {
@@ -47,6 +50,10 @@ function MediaPlayerControls({
 
   const handleLoopToggleButtonClick = () => {
     onLoopMediaChange(!loopMedia);
+  };
+
+  const handleFullscreenButtonClick = () => {
+    onFullscreenChange(!isFullscreen);
   };
 
   const getPlaybackRateMenuItems = () => {
@@ -146,6 +153,12 @@ function MediaPlayerControls({
               onClick={onDownloadClick}
               />
           )}
+          {!!allowFullscreen && !isFullscreen && (
+            <Button type="link" icon={<EnterFullscreenIcon />} onClick={handleFullscreenButtonClick} />
+          )}
+          {!!allowFullscreen && !!isFullscreen && (
+            <Button type="link" icon={<ExitFullscreenIcon />} onClick={handleFullscreenButtonClick} />
+          )}
         </div>
       </div>
     </div>
@@ -154,8 +167,10 @@ function MediaPlayerControls({
 
 MediaPlayerControls.propTypes = {
   allowDownload: PropTypes.bool,
+  allowFullscreen: PropTypes.bool,
   allowLoop: PropTypes.bool,
   durationInMilliseconds: PropTypes.number,
+  isFullscreen: PropTypes.bool,
   millisecondsLength: PropTypes.number,
   playedMilliseconds: PropTypes.number,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
@@ -164,6 +179,7 @@ MediaPlayerControls.propTypes = {
   loopMedia: PropTypes.bool,
   playbackRate: PropTypes.oneOf(MEDIA_PLAYBACK_RATES),
   onDownloadClick: PropTypes.func,
+  onFullscreenChange: PropTypes.func,
   onPauseClick: PropTypes.func,
   onPlayClick: PropTypes.func,
   onPlaybackRateChange: PropTypes.func,
@@ -173,8 +189,10 @@ MediaPlayerControls.propTypes = {
 
 MediaPlayerControls.defaultProps = {
   allowDownload: false,
+  allowFullscreen: false,
   allowLoop: false,
   durationInMilliseconds: 0,
+  isFullscreen: false,
   millisecondsLength: 0,
   playedMilliseconds: 0,
   screenMode: MEDIA_SCREEN_MODE.none,
@@ -186,6 +204,7 @@ MediaPlayerControls.defaultProps = {
   onPlayClick: () => {},
   onPlaybackRateChange: () => {},
   onDownloadClick: () => {},
+  onFullscreenChange: () => {},
   onLoopMediaChange: () => {},
   onVolumeChange: () => {}
 };

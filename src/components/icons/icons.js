@@ -22,7 +22,12 @@ import {
   IconTextCaption,
   IconTextResize,
   IconTriangle,
-  IconTypography
+  IconTypography,
+  IconMaximize,
+  IconMinimize,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronLeftPipe
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -62,5 +67,10 @@ export const ShapeIcon = createIconFromTablerIconComponent(IconCircleSquare);
 export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);
 export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);
+export const ExitFullscreenIcon = createIconFromTablerIconComponent(IconMinimize);
 export const FillColorIcon = createIconFromTablerIconComponent(IconBucketDroplet);
+export const ChevronLeftIcon = createIconFromTablerIconComponent(IconChevronLeft);
+export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximize);
+export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
+export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);

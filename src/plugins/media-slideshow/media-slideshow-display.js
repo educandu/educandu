@@ -67,7 +67,7 @@ function MediaSlideshowDisplay({ content }) {
       : renderPlayingChapterText();
   };
 
-  const canDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const allowDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
   return (
     <div className="MediaSlideshowDisplay">
@@ -75,8 +75,9 @@ function MediaSlideshowDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MediaPlayer
+              allowFullscreen
+              allowDownload={allowDownload}
               aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
-              canDownload={canDownload}
               customScreenOverlay={renderPlayingChapter()}
               initialVolume={initialVolume}
               mediaPlayerRef={mediaPlayerRef}

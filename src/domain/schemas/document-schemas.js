@@ -32,6 +32,7 @@ export const publicContextSchema = joi.object({
   allowedEditors: joi.array().items(idOrKeySchema).required(),
   protected: joi.boolean().required(),
   archived: joi.boolean().required(),
+  archiveRedirectionDocumentId: idOrKeySchema.allow(null).allow(''),
   verified: joi.boolean().required(),
   review: joi.string().allow(null).allow('').required()
 });

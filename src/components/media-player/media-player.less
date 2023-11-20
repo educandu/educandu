@@ -11,6 +11,13 @@
     padding: 0;
     height: 0;
   }
+
+  &.is-fullscreen {
+    display: grid;
+    grid-auto-flow: row;
+    align-items: center;
+    background-color: @edu-black;
+  }
 }
 
 .MediaPlayer-player {
@@ -35,6 +42,24 @@
 
   &.MediaPlayer-player--fourToThree {
     aspect-ratio: 4/3;
+  }
+}
+
+.MediaPlayer-underPlayerContent {
+  &.is-fullscreen {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    opacity: 0;
+    height: 20px;
+    padding: 5px 15px;
+    background-color: @edu-white;
+
+    &:hover {
+      height: auto;
+      opacity: 1;
+      transition: all 300ms ease;
+    }
   }
 }
 

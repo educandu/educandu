@@ -41,42 +41,26 @@
   outline: none !important; // Removes user agent black border when focused by keyboard
 }
 
-// Mixin for Antd Collapse components to remove left indentation and paddings:
-.m-antd-collapse-without-padding {
-  & > .ant-collapse-item > .ant-collapse-header {
-    padding: 0;
-  }
+// Mixin for Antd Slider component to increase the touch area and size of the handle:
+.m-antd-slider-mobile-enhancements {
+  @media @edu-media-not-desktop {
+    @ant-slider-handle-size: 10px; // This is the hard-coded Antd slider handle size
+    @ant-slider-handle-touch-margin: 12px;
+    @ant-slider-handle-touch-size: @ant-slider-handle-size + (2 * @ant-slider-handle-touch-margin);
 
-  & > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-    padding: @edu-content-padding 0 0 0;
-  }
-}
+    & .ant-slider-handle {
+      transform: scale(1.5) !important;
 
-.m-antd-inverted-slider {
-  & > .ant-slider-rail {
-    background-color: tint(@edu-primary-color-light, 20%);
-  }
-
-  &:hover > .ant-slider-rail {
-    background-color: tint(@edu-primary-color-light, 30%);
-  }
-
-  & > .ant-slider-step > .ant-slider-dot {
-    border-color: tint(@edu-primary-color-light, 40%);
-  }
-
-  & > .ant-slider-step > .ant-slider-dot-active {
-    border-color: tint(@edu-primary-color-light, 50%);
-  }
-
-  & > .ant-slider-track,
-  & > .ant-slider-handle {
-    background-color: @grey-4;
-  }
-
-  &:hover > .ant-slider-track,
-  &:hover > .ant-slider-handle {
-    background-color: @grey-1;
+      &::before {
+        content: "" !important;
+        position: absolute !important;
+        inset-inline-start: -@ant-slider-handle-touch-margin !important;
+        inset-block-start: -@ant-slider-handle-touch-margin !important;
+        width: @ant-slider-handle-touch-size !important;
+        height: @ant-slider-handle-touch-size !important;
+        background-color: transparent !important;
+      }
+    }
   }
 }
 

@@ -3,7 +3,6 @@ import httpErrors from 'http-errors';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
-import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
@@ -13,6 +12,7 @@ import { canEditDocument } from '../utils/document-utils.js';
 import DocumentService from '../services/document-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -60,6 +60,13 @@ class DocumentController {
 
     if (doc.slug !== routeWildcardValue) {
       return res.redirect(301, routes.getDocUrl({ id: doc._id, slug: doc.slug, view, templateDocumentId }));
+    }
+
+    if (doc.publicContext?.archived && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
+      if (doc.publicContext.archiveRedirectionDocumentId) {
+        return res.redirect(302, routes.getDocUrl({ id: doc.publicContext.archiveRedirectionDocumentId }));
+      }
+      throw new NotFound();
     }
 
     let templateDocument;

@@ -1,6 +1,7 @@
 import abcjs from 'abcjs';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
+import slugify from '@sindresorhus/slugify';
 import { useTranslation } from 'react-i18next';
 import { handleError } from '../ui/error-helper.js';
 import MediaPlayer from './media-player/media-player.js';
@@ -9,6 +10,7 @@ import { MEDIA_SCREEN_MODE } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { useIsMounted, useOnComponentUnmount } from '../ui/hooks.js';
 import MediaPlayerProgressBar from './media-player/media-player-progress-bar.js';
+import { hasMoreWordCharactersThanNonWordCharacters } from '../utils/string-utils.js';
 import MediaPlayerControls, { MEDIA_PLAYER_CONTROLS_STATE } from './media-player/media-player-controls.js';
 
 const logger = new Logger(import.meta.url);
@@ -22,16 +24,24 @@ let globalAudioContext;
 
 const registerUrlForDisposal = url => url && setTimeout(() => URL.revokeObjectURL(url), 1000);
 
+const createDownloadFileName = renderResult => {
+  const songTitleBaseName = slugify(renderResult?.[0]?.metaText?.title || '');
+  return songTitleBaseName.length > 3 && songTitleBaseName.length < 100 && hasMoreWordCharactersThanNonWordCharacters(songTitleBaseName)
+    ? `${songTitleBaseName}.wav`
+    : 'generated-audio.wav';
+};
+
 function AbcPlayer({ renderResult }) {
   const { t } = useTranslation();
   const isMounted = useIsMounted();
   const mediaPlayerRef = useRef(null);
-  const currentRenderResult = useRef(null);
+  const lastRenderResult = useRef(null);
   const [soundUrl, setSoundUrl] = useState(null);
   const [runningAudioContext, setRunningAudioContext] = useState(null);
   const [shouldPlayAfterRendering, setShouldPlayAfterRendering] = useState(false);
+  const [downloadFileName, setDownloadTitle] = useState(createDownloadFileName(renderResult));
 
-  currentRenderResult.current = renderResult;
+  lastRenderResult.current = renderResult;
 
   useEffect(() => {
     setShouldPlayAfterRendering(false);
@@ -71,11 +81,12 @@ function AbcPlayer({ renderResult }) {
       try {
         await createSynth.init({ audioContext: runningAudioContext, visualObj: renderResult[0], options: synthOptions });
         await createSynth.prime();
-        if (renderResult === currentRenderResult.current && isMounted.current) {
+        if (renderResult === lastRenderResult.current && isMounted.current) {
           setSoundUrl(oldValue => {
             registerUrlForDisposal(oldValue);
             return createSynth.download();
           });
+          setDownloadTitle(createDownloadFileName(renderResult));
         }
       } catch (error) {
         handleError({ message: error.message, logger, t });
@@ -125,12 +136,12 @@ function AbcPlayer({ renderResult }) {
   return (
     <div className="AbcPlayer">
       <MediaPlayer
-        canLoop
-        canDownload
+        allowLoop
+        allowDownload
         sourceUrl={soundUrl}
         mediaPlayerRef={mediaPlayerRef}
         screenMode={MEDIA_SCREEN_MODE.none}
-        downloadFileName="generated-audio.wav"
+        downloadFileName={downloadFileName}
         onDuration={handleMediaPlayerDuration}
         />
     </div>

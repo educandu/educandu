@@ -28,6 +28,7 @@ function MultitrackMediaDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
+              allowFullscreen
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}

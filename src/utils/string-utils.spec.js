@@ -1,7 +1,36 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { escapeHtml, escapeMarkdown, isLetter, kebabCaseToCamelCase, prettyPrintValue, shorten, splitAroundWords } from './string-utils.js';
+import {
+  escapeHtml,
+  escapeMarkdown,
+  hasMoreWordCharactersThanNonWordCharacters,
+  isLetter,
+  kebabCaseToCamelCase,
+  prettyPrintValue,
+  shorten,
+  splitAroundWords
+} from './string-utils.js';
 
 describe('string-utils', () => {
+
+  describe('hasMoreWordCharactersThanNonWordCharacters', () => {
+    const testCases = [
+      { input: '---', expectedResult: false },
+      { input: '---abc', expectedResult: false },
+      { input: '--abc', expectedResult: true },
+      { input: 'abc', expectedResult: true }
+    ];
+    testCases.forEach(({ input, expectedResult }) => {
+      describe(`for input '${input}'`, () => {
+        let result;
+        beforeEach(() => {
+          result = hasMoreWordCharactersThanNonWordCharacters(input);
+        });
+        it(`should return ${expectedResult}`, () => {
+          expect(result).toStrictEqual(expectedResult);
+        });
+      });
+    });
+  });
 
   describe('escapeHtml', () => {
     it('escapes all necessary characters', () => {

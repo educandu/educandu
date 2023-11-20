@@ -48,6 +48,7 @@ const documentExtendedMetadataProjection = {
   'publicContext.allowedEditors': 1,
   'publicContext.protected': 1,
   'publicContext.archived': 1,
+  'publicContext.archiveRedirectionDocumentId': 1,
   'publicContext.verified': 1,
   'publicContext.review': 1,
   'roomContext.draft': 1,

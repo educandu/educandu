@@ -1,4 +1,7 @@
 timeline:
-  markersBarPlaceholder:
+  markersBarPlaceholderNonTouch:
     en: Hover to see marker
     de: Bewege die Maus über den Streifen, um die Marker-Position zu sehen
+  markersBarPlaceholderTouch:
+    en: Tap to set marker
+    de: Tippe auf den Streifen, um einen Marker zu setzen

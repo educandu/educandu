@@ -25,6 +25,7 @@ const sourcesCanBeConsideredEqual = (sources1, sources2) => {
 };
 
 function MultitrackMediaPlayer({
+  allowFullscreen,
   aspectRatio,
   customUnderScreenContent,
   initialVolume,
@@ -47,14 +48,18 @@ function MultitrackMediaPlayer({
   const [trackStates, setTrackStates] = useState([]);
   const [lastSources, setLastSources] = useState(null);
   const [trackVolumes, setTrackVolumes] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [mixVolume, setMixVolume] = useState(initialVolume);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(DEFAULT_MEDIA_PLAYBACK_RATE);
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
   const screenMode = showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none;
-  const isReady = useMemo(() => trackStates.every(ts => ts.isReady), [trackStates]);
   const appliedSelectedVolumePresetIndex = selectedVolumePresetIndex ?? internalSelectedVolumePresetIndex;
+
+  const isReady = useMemo(() => {
+    return !sources.length || trackStates.every(ts => ts.isReady);
+  }, [sources, trackStates]);
 
   const trackRefs = useRef({});
   const { t } = useTranslation('multitrackMediaPlayer');
@@ -205,13 +210,34 @@ function MultitrackMediaPlayer({
     setIsSeeking(false);
   };
 
+  const handleEnterFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const handleExitFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
+  const handleFullscreenChange = newIsFullscreen => {
+    const mainTrack = trackStates.find(trackState => trackState.isMainTrack);
+
+    if (newIsFullscreen) {
+      getTrackRef(mainTrack.key).current.fullscreen?.enter();
+    } else {
+      getTrackRef(mainTrack.key).current.fullscreen?.exit();
+    }
+  };
+
   const renderControls = () => {
+    const canEnterFullscreen = screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen;
+
     return (
       <div>
         <MediaPlayerControls
           allowLoop
           volume={mixVolume}
           loopMedia={loopMedia}
+          isFullscreen={isFullscreen}
           screenMode={screenMode}
           state={isPlaying ? MEDIA_PLAYER_CONTROLS_STATE.playing : MEDIA_PLAYER_CONTROLS_STATE.paused}
           playbackRate={playbackRate}
@@ -222,6 +248,7 @@ function MultitrackMediaPlayer({
           onPauseClick={triggerPauseAll}
           onPlaybackRateChange={setPlaybackRate}
           onLoopMediaChange={setLoopMedia}
+          onFullscreenChange={canEnterFullscreen ? handleFullscreenChange : null}
           />
         {!!showTrackMixer && trackStates.length > 1 && (
           <div className="MultitrackMediaPlayer-trackMixerDisplay">
@@ -237,7 +264,7 @@ function MultitrackMediaPlayer({
         )}
         {!isReady && (
           <div className="MultitrackMediaPlayer-loadingOverlay">
-            <Spin />
+            <Spin size="large" />
           </div>
         )}
       </div>
@@ -268,6 +295,7 @@ function MultitrackMediaPlayer({
       {trackStates.map((trackState, trackIndex) => (
         <MediaPlayer
           key={trackState.key}
+          allowFullscreen={screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen}
           aspectRatio={aspectRatio}
           customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
           parts={parts}
@@ -284,6 +312,8 @@ function MultitrackMediaPlayer({
           volume={mixVolume * trackVolumes[trackIndex]}
           onDuration={value => handleDuration(value, trackState.key)}
           onEnded={() => trackState.isMainTrack ? handleMainTrackEnded() : null}
+          onEnterFullscreen={() => trackState.isMainTrack ? handleEnterFullscreen() : null}
+          onExitFullscreen={() => trackState.isMainTrack ? handleExitFullscreen() : null}
           onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
           onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
           onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
@@ -297,6 +327,8 @@ function MultitrackMediaPlayer({
 }
 
 MultitrackMediaPlayer.propTypes = {
+  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
+  allowFullscreen: PropTypes.bool,
   customUnderScreenContent: PropTypes.node,
   initialVolume: PropTypes.number,
   multitrackMediaPlayerRef: PropTypes.shape({
@@ -310,7 +342,6 @@ MultitrackMediaPlayer.propTypes = {
   selectedVolumePresetIndex: PropTypes.number,
   showTrackMixer: PropTypes.bool,
   showVideo: PropTypes.bool,
-  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   sources: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string,
     name: PropTypes.string,
@@ -328,6 +359,7 @@ MultitrackMediaPlayer.propTypes = {
 
 MultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+  allowFullscreen: false,
   customUnderScreenContent: null,
   initialVolume: 1,
   multitrackMediaPlayerRef: {

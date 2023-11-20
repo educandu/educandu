@@ -66,7 +66,7 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
     return (
       <div className={classes}>
         <MediaPlayer
-          canDownload
+          allowDownload
           sourceUrl={sourceUrl}
           screenMode={MEDIA_SCREEN_MODE.none}
           onDuration={handleMediaLoad}
@@ -77,7 +77,11 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
 
   const renderVideo = () => (
     <div className="ResourcePreview-mediaPlayer">
-      <MediaPlayer sourceUrl={sourceUrl} canDownload onDuration={handleMediaLoad} />
+      <MediaPlayer
+        allowDownload
+        sourceUrl={sourceUrl}
+        onDuration={handleMediaLoad}
+        />
     </div>
   );
 
@@ -110,7 +114,8 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
   const classes = classNames(
     'ResourcePreview',
     { 'ResourcePreview--fullWidth': fullWidth },
-    { 'ResourcePreview--pdf': resourceType === RESOURCE_TYPE.pdf }
+    { 'ResourcePreview--pdf': resourceType === RESOURCE_TYPE.pdf },
+    { 'ResourcePreview--video': resourceType === RESOURCE_TYPE.video }
   );
 
   return (

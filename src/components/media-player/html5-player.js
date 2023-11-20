@@ -14,6 +14,7 @@ function Htlm5Player({
   aspectRatio,
   audioOnly,
   clickToPlay,
+  fullscreenContainerId,
   playbackRange,
   playbackRate,
   playerRef,
@@ -23,6 +24,8 @@ function Htlm5Player({
   volume,
   onDuration,
   onEnded,
+  onEnterFullscreen,
+  onExitFullscreen,
   onPause,
   onPlay,
   onProgress,
@@ -135,16 +138,22 @@ function Htlm5Player({
   });
 
   useEffect(() => {
+    const enableFullscreen = !!fullscreenContainerId;
+
     const playerInstance = new Plyr(plyrRef.current, {
       controls: [],
       ratio: aspectRatio,
       clickToPlay,
       loadSprite: false,
       blankVideo: '',
-      fullscreen: { enabled: false, fallback: false }
+      fullscreen: {
+        enabled: enableFullscreen,
+        fallback: enableFullscreen,
+        container: enableFullscreen ? `#${CSS.escape(fullscreenContainerId)}` : ''
+      }
     });
     setPlayer(playerInstance);
-  }, [plyrRef, aspectRatio, clickToPlay]);
+  }, [plyrRef, fullscreenContainerId, aspectRatio, clickToPlay]);
 
   useEffect(() => {
     if (player) {
@@ -204,8 +213,10 @@ function Htlm5Player({
   }, [handleDuration]);
 
   const handleReady = useCallback(() => {
-    onReady();
-  }, [onReady]);
+    if (!sourceUrl || !!loadedSourceUrl) {
+      onReady();
+    }
+  }, [sourceUrl, loadedSourceUrl, onReady]);
 
   const handlePlaying = useCallback(() => {
     onPlay();
@@ -218,6 +229,14 @@ function Htlm5Player({
     setIsPlaying(false);
     setProgressInterval(null);
   }, [onPause]);
+
+  const handleEnterFullscreen = useCallback(() => {
+    onEnterFullscreen();
+  }, [onEnterFullscreen]);
+
+  const handleExitFullscreen = useCallback(() => {
+    onExitFullscreen();
+  }, [onExitFullscreen]);
 
   useEffect(() => {
     if (player) {
@@ -242,16 +261,23 @@ function Htlm5Player({
 
       player.off('ended', handleEnded);
       player.on('ended', handleEnded);
+
+      player.off('enterfullscreen', handleEnterFullscreen);
+      player.on('enterfullscreen', handleEnterFullscreen);
+
+      player.off('exitfullscreen', handleExitFullscreen);
+      player.on('exitfullscreen', handleExitFullscreen);
     }
-  }, [player, handleLoadedMetadata, handleReady, handlePlaying, handlePause, handleProgress, handleEnded]);
+  }, [player, handleLoadedMetadata, handleReady, handlePlaying, handlePause, handleProgress, handleEnded, handleEnterFullscreen, handleExitFullscreen]);
 
   playerRef.current = useMemo(() => ({
     play: triggerPlay,
     pause: triggerPause,
     seekToTimecode: triggerSeek,
     stop: triggerStop,
-    reset: triggerReset
-  }), [triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
+    reset: triggerReset,
+    fullscreen: player?.fullscreen
+  }), [player, triggerPlay, triggerPause, triggerSeek, triggerStop, triggerReset]);
 
   return (
     <div className="Html5Player" onClick={isPlaying ? triggerPause : triggerPlay}>
@@ -274,6 +300,7 @@ Htlm5Player.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
   clickToPlay: PropTypes.bool,
+  fullscreenContainerId: PropTypes.string,
   playbackRange: PropTypes.arrayOf(PropTypes.number),
   playbackRate: PropTypes.number,
   playerRef: PropTypes.shape({
@@ -285,6 +312,8 @@ Htlm5Player.propTypes = {
   volume: PropTypes.number,
   onDuration: PropTypes.func,
   onEnded: PropTypes.func,
+  onEnterFullscreen: PropTypes.func,
+  onExitFullscreen: PropTypes.func,
   onPause: PropTypes.func,
   onPlay: PropTypes.func,
   onProgress: PropTypes.func,
@@ -295,6 +324,7 @@ Htlm5Player.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
   clickToPlay: true,
+  fullscreenContainerId: null,
   playbackRange: [0, 1],
   playbackRate: 1,
   playerRef: {
@@ -305,6 +335,8 @@ Htlm5Player.defaultProps = {
   volume: 1,
   onDuration: () => {},
   onEnded: () => {},
+  onEnterFullscreen: () => {},
+  onExitFullscreen: () => {},
   onPause: () => {},
   onPlay: () => {},
   onProgress: () => {},
@@ -314,6 +346,8 @@ Htlm5Player.defaultProps = {
 export default memoAndTransformProps(Htlm5Player, ({
   onDuration,
   onEnded,
+  onEnterFullscreen,
+  onExitFullscreen,
   onPause,
   onPlay,
   onProgress,
@@ -322,6 +356,8 @@ export default memoAndTransformProps(Htlm5Player, ({
 }) => ({
   onDuration: useStableCallback(onDuration),
   onEnded: useStableCallback(onEnded),
+  onEnterFullscreen: useStableCallback(onEnterFullscreen),
+  onExitFullscreen: useStableCallback(onExitFullscreen),
   onPause: useStableCallback(onPause),
   onPlay: useStableCallback(onPlay),
   onProgress: useStableCallback(onProgress),

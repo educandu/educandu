@@ -2,30 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { LeftOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons';
+import { ChevronLeftIcon, ChevronLeftPipeIcon, ChevronRightIcon } from './icons/icons.js';
 
 function IterationPanel({ itemCount, selectedItemIndex, alwaysAllowPreviousClick, disabled, onNextClick, onPreviousClick, onResetClick }) {
   const { t } = useTranslation();
 
   return (
     <div className="IterationPanel">
-      <Button
-        shape="circle"
-        icon={<LeftOutlined />}
-        disabled={disabled || (!alwaysAllowPreviousClick && selectedItemIndex === 0)}
-        onClick={onPreviousClick}
-        />
       <Tooltip title={t('common:reset')} disabled={disabled}>
         <Button
           shape="circle"
-          icon={<UndoOutlined />}
+          icon={<ChevronLeftPipeIcon />}
           disabled={disabled}
           onClick={onResetClick}
           />
       </Tooltip>
       <Button
         shape="circle"
-        icon={<RightOutlined />}
+        icon={<ChevronLeftIcon />}
+        disabled={disabled || (!alwaysAllowPreviousClick && selectedItemIndex === 0)}
+        onClick={onPreviousClick}
+        />
+      <Button
+        shape="circle"
+        icon={<ChevronRightIcon />}
         disabled={disabled || selectedItemIndex === itemCount - 1}
         onClick={onNextClick}
         />
