@@ -6,7 +6,7 @@ import MuteIcon from '../icons/media-player/mute-icon.js';
 import { usePercentageFormat } from '../locale-context.js';
 import VolumeIcon from '../icons/media-player/volume-icon.js';
 
-function MediaVolumeSlider({ value, orientation, useButton, useValueLabel, onChange }) {
+function MediaVolumeSlider({ value, orientation, useButton, useValueLabel, disabled, onChange }) {
   const percentageFormatter = usePercentageFormat();
   const [lastValueBeforeMuting, setLastValueBeforeMuting] = useState(value);
 
@@ -29,6 +29,7 @@ function MediaVolumeSlider({ value, orientation, useButton, useValueLabel, onCha
       {!!useButton && (
         <Button
           type="link"
+          disabled={disabled}
           icon={value === 0 ? <MuteIcon /> : <VolumeIcon />}
           onClick={handleVolumeButtonClick}
           />
@@ -39,9 +40,10 @@ function MediaVolumeSlider({ value, orientation, useButton, useValueLabel, onCha
         max={1}
         step={0.01}
         value={value}
+        disabled={disabled}
         onChange={handleSliderChange}
-        tooltip={useValueLabel ? { open: false } : { formatter: percentageFormatter }}
         vertical={orientation === ORIENTATION.vertical}
+        tooltip={disabled || useValueLabel ? { open: false } : { formatter: percentageFormatter }}
         />
       {!!useValueLabel && (
         <div className="MediaVolumeSlider-sliderValueLabel">{percentageFormatter(value)}</div>
@@ -55,13 +57,15 @@ MediaVolumeSlider.propTypes = {
   orientation: PropTypes.oneOf(Object.values(ORIENTATION)),
   useButton: PropTypes.bool,
   useValueLabel: PropTypes.bool,
+  disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired
 };
 
 MediaVolumeSlider.defaultProps = {
   orientation: ORIENTATION.horizontal,
   useButton: true,
-  useValueLabel: false
+  useValueLabel: false,
+  disabled: false
 };
 
 export default MediaVolumeSlider;

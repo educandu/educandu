@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { handleError } from '../ui/error-helper.js';
 import MediaPlayer from './media-player/media-player.js';
 import { AudioContext } from 'standardized-audio-context';
+import { MEDIA_SCREEN_MODE } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { useIsMounted, useOnComponentUnmount } from '../ui/hooks.js';
-import MediaPlayerControls from './media-player/media-player-controls.js';
 import MediaPlayerProgressBar from './media-player/media-player-progress-bar.js';
-import { DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
+import MediaPlayerControls, { MEDIA_PLAYER_CONTROLS_STATE } from './media-player/media-player-controls.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -83,7 +83,7 @@ function AbcPlayer({ renderResult }) {
     })();
   }, [renderResult, runningAudioContext, isMounted, t]);
 
-  const handleAudioContextResumeRequested = () => {
+  const handlePlayClick = () => {
     setShouldPlayAfterRendering(true);
     setTimeout(() => globalAudioContext.resume(), 0);
   };
@@ -95,86 +95,45 @@ function AbcPlayer({ renderResult }) {
     setShouldPlayAfterRendering(false);
   };
 
+  let controlsState;
   if (!renderResult) {
-    // No render result, show disabled audio player controls:
+    controlsState = MEDIA_PLAYER_CONTROLS_STATE.disabled;
+  } else if (!runningAudioContext) {
+    controlsState = MEDIA_PLAYER_CONTROLS_STATE.waiting;
+  } else if (!soundUrl) {
+    controlsState = MEDIA_PLAYER_CONTROLS_STATE.loading;
+  } else {
+    controlsState = null;
+  }
+
+  if (controlsState) {
     return (
-      <div>
-        <MediaPlayerProgressBar disabled />
-        <MediaPlayerControls
-          volume={1}
-          isPlaying={false}
-          loopMedia={false}
-          playedMilliseconds={0}
-          durationInMilliseconds={0}
-          screenMode={MEDIA_SCREEN_MODE.none}
-          playbackRate={DEFAULT_MEDIA_PLAYBACK_RATE}
-          onPlayClick={() => {}}
-          onPauseClick={() => {}}
-          onVolumeChange={() => {}}
-          onLoopMediaChange={() => {}}
-          onPlaybackRateChange={() => {}}
-          />
+      <div className="AbcPlayer">
+        <div className="AbcPlayer-controls">
+          <MediaPlayerProgressBar disabled />
+          <MediaPlayerControls
+            allowLoop
+            allowDownload
+            state={controlsState}
+            onPlayClick={handlePlayClick}
+            />
+        </div>
       </div>
     );
   }
 
-  if (!runningAudioContext) {
-    // No audio context, wait for user pressing play (disable other controls):
-    return (
-      <div>
-        <MediaPlayerProgressBar disabled />
-        <MediaPlayerControls
-          volume={1}
-          isPlaying={false}
-          loopMedia={false}
-          playedMilliseconds={0}
-          durationInMilliseconds={0}
-          screenMode={MEDIA_SCREEN_MODE.none}
-          playbackRate={DEFAULT_MEDIA_PLAYBACK_RATE}
-          onPauseClick={() => {}}
-          onVolumeChange={() => {}}
-          onLoopMediaChange={() => {}}
-          onPlaybackRateChange={() => {}}
-          onPlayClick={handleAudioContextResumeRequested}
-          />
-      </div>
-    );
-  }
-
-  if (!soundUrl) {
-    // No sound URL for the current renderResult, wait for rendering (show loading state)
-    return (
-      <div>
-        <MediaPlayerProgressBar disabled />
-        <MediaPlayerControls
-          volume={1}
-          isPlaying={false}
-          loopMedia={false}
-          playedMilliseconds={0}
-          durationInMilliseconds={0}
-          screenMode={MEDIA_SCREEN_MODE.none}
-          playbackRate={DEFAULT_MEDIA_PLAYBACK_RATE}
-          onPlayClick={() => {}}
-          onPauseClick={() => {}}
-          onVolumeChange={() => {}}
-          onLoopMediaChange={() => {}}
-          onPlaybackRateChange={() => {}}
-          />
-      </div>
-    );
-  }
-
-  // Otherwise everything is loaded and the user can play:
   return (
-    <MediaPlayer
-      allowLoop
-      allowDownload
-      sourceUrl={soundUrl}
-      mediaPlayerRef={mediaPlayerRef}
-      screenMode={MEDIA_SCREEN_MODE.none}
-      downloadFileName="generated-audio.wav"
-      onDuration={handleMediaPlayerDuration}
-      />
+    <div className="AbcPlayer">
+      <MediaPlayer
+        canLoop
+        canDownload
+        sourceUrl={soundUrl}
+        mediaPlayerRef={mediaPlayerRef}
+        screenMode={MEDIA_SCREEN_MODE.none}
+        downloadFileName="generated-audio.wav"
+        onDuration={handleMediaPlayerDuration}
+        />
+    </div>
   );
 }
 

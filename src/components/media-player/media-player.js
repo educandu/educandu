@@ -7,10 +7,10 @@ import AudioIcon from '../icons/general/audio-icon.js';
 import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
-import MediaPlayerControls from './media-player-controls.js';
 import { remountOnPropChanges } from '../../ui/react-helper.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
+import MediaPlayerControls, { MEDIA_PLAYER_CONTROLS_STATE } from './media-player-controls.js';
 import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS, DEFAULT_MEDIA_PLAYBACK_RATE } from '../../domain/constants.js';
 
 const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
@@ -270,18 +270,20 @@ function MediaPlayer({
       {!!renderControls && renderControls()}
       {!renderControls && (
         <MediaPlayerControls
+          allowDownload={canDownload}
+          allowLoop={canLoop}
           durationInMilliseconds={durationInMilliseconds}
-          isPlaying={isPlaying}
           millisecondsLength={millisecondsLength}
           playedMilliseconds={playedMilliseconds}
           screenMode={screenMode}
+          state={isPlaying ? MEDIA_PLAYER_CONTROLS_STATE.playing : MEDIA_PLAYER_CONTROLS_STATE.paused}
           volume={appliedVolume}
           loopMedia={loopMedia}
           playbackRate={internalPlaybackRate}
-          onDownloadClick={canDownload ? handleDownloadClick : null}
+          onDownloadClick={handleDownloadClick}
           onPauseClick={handlePauseClick}
           onPlaybackRateChange={setInternaPlaybackRate}
-          onLoopMediaChange={canLoop ? setLoopMedia : null}
+          onLoopMediaChange={setLoopMedia}
           onPlayClick={handlePlayClick}
           onVolumeChange={setInternalVolume}
           />
