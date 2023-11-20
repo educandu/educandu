@@ -99,7 +99,7 @@ function AbcPlayer({ renderResult }) {
     // No render result, show disabled audio player controls:
     return (
       <div>
-        <MediaPlayerProgressBar durationInMilliseconds={0} playedMilliseconds={0} onSeek={() => {}} />
+        <MediaPlayerProgressBar disabled />
         <MediaPlayerControls
           volume={1}
           isPlaying={false}
@@ -122,7 +122,7 @@ function AbcPlayer({ renderResult }) {
     // No audio context, wait for user pressing play (disable other controls):
     return (
       <div>
-        <MediaPlayerProgressBar durationInMilliseconds={0} playedMilliseconds={0} onSeek={() => {}} />
+        <MediaPlayerProgressBar disabled />
         <MediaPlayerControls
           volume={1}
           isPlaying={false}
@@ -145,7 +145,7 @@ function AbcPlayer({ renderResult }) {
     // No sound URL for the current renderResult, wait for rendering (show loading state)
     return (
       <div>
-        <MediaPlayerProgressBar durationInMilliseconds={0} playedMilliseconds={0} onSeek={() => {}} />
+        <MediaPlayerProgressBar disabled />
         <MediaPlayerControls
           volume={1}
           isPlaying={false}
