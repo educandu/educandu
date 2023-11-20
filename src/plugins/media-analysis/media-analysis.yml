@@ -18,8 +18,8 @@ mediaAnalysis:
     en: You can drop a CSV file in this box in order to import segments
     de: Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren
   startPlaybackFromHere:
-    en: Play from this part
-    de: Ab diesem Teil abspeilen
+    en: Play from this segment
+    de: Ab diesem Segment abspeilen
   chapterPointerTooltip:
-    en: View part text
-    de: Teiltext sehen
+    en: View segment text
+    de: Segment-Text sehen
