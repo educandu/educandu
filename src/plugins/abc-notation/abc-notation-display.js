@@ -11,7 +11,11 @@ function AbcNotationDisplay({ content }) {
     <div className="AbcNotation">
       <div className={`AbcNotation-wrapper u-width-${content.width}`}>
         <AbcNotation abcCode={content.abcCode} onRender={setLastRenderResult} />
-        <AbcPlayer renderResult={lastRenderResult} />
+        {!!content.playMidi && (
+          <div className="AbcNotation-player">
+            <AbcPlayer renderResult={lastRenderResult} />
+          </div>
+        )}
         <CopyrightNotice value={content.copyrightNotice} />
       </div>
     </div>
