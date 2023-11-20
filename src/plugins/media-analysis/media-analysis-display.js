@@ -17,6 +17,7 @@ function MediaAnalysisDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
   const [isPlaying, setIsPlaying] = useState(false);
   const [viewingChapterIndex, setViewingChapterIndex] = useState(0);
+  const [chapterIndexRequestedToView, setChapterIndexRequestedToView] = useState(-1);
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
@@ -52,7 +53,7 @@ function MediaAnalysisDisplay({ content }) {
   };
 
   const handleChapterSegmentClick = chapterIndex => {
-    setViewingChapterIndex(chapterIndex);
+    setChapterIndexRequestedToView(chapterIndex);
 
     if (isPlaying) {
       multitrackMediaPlayerRef.current.seekToPart(chapterIndex);
@@ -63,7 +64,14 @@ function MediaAnalysisDisplay({ content }) {
   };
 
   const handlePlayingPartIndexChange = index => {
-    if (index >= 0) {
+    if (chapterIndexRequestedToView >= 0) {
+      // wait until parts border is crossed to desired part,
+      // as sometimes previous part index triggers the event right before the desired part does as well
+      if (chapterIndexRequestedToView === index) {
+        setViewingChapterIndex(chapterIndexRequestedToView);
+        setChapterIndexRequestedToView(-1);
+      }
+    } else if (index >= 0) {
       setViewingChapterIndex(index);
     }
   };
