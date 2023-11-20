@@ -16,6 +16,7 @@ function MediaAnalysisDisplay({ content }) {
   const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playingChapterIndex, setPlayingChapterIndex] = useState(0);
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
@@ -56,6 +57,12 @@ function MediaAnalysisDisplay({ content }) {
     } else {
       multitrackMediaPlayerRef.current.play();
       setTimeout(() => multitrackMediaPlayerRef.current.seekToPart(chapterIndex), 0);
+    }
+  };
+
+  const handlePlayingPartIndexChange = index => {
+    if (index >= 0) {
+      setPlayingChapterIndex(index);
     }
   };
 
@@ -144,6 +151,7 @@ function MediaAnalysisDisplay({ content }) {
               onEnded={handleEnded}
               onPause={handlePause}
               onPlay={handlePlay}
+              onPlayingPartIndexChange={handlePlayingPartIndexChange}
               />
             <CopyrightNotice value={combinedCopyrightNotice} />
           </Fragment>
