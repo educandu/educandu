@@ -235,6 +235,7 @@ function MultitrackMediaPlayer({
       <div>
         <MediaPlayerControls
           allowLoop
+          allowFullscreen={canEnterFullscreen}
           volume={mixVolume}
           loopMedia={loopMedia}
           isFullscreen={isFullscreen}

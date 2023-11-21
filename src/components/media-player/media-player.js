@@ -309,6 +309,7 @@ function MediaPlayer({
           <MediaPlayerControls
             allowDownload={allowDownload}
             allowLoop={allowLoop}
+            allowFullscreen={canEnterFullscreen}
             durationInMilliseconds={durationInMilliseconds}
             millisecondsLength={millisecondsLength}
             playedMilliseconds={playedMilliseconds}
