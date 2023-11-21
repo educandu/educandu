@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { Fragment } from 'react';
 import { Button, Dropdown } from 'antd';
+import React, { Fragment, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckOutlined } from '@ant-design/icons';
 import { useNumberFormat } from '../locale-context.js';
@@ -41,6 +41,7 @@ function MediaPlayerControls({
   onPlayClick,
   onVolumeChange
 }) {
+  const componentInstanceId = useId();
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
 
@@ -110,8 +111,13 @@ function MediaPlayerControls({
       throw new Error(`Invalid media player control state '${state}'`);
   }
 
+  const mainClasses = classNames(
+    'MediaPlayerControls',
+    { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none }
+  );
+
   return (
-    <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
+    <div id={componentInstanceId} className={mainClasses}>
       <div className="MediaPlayerControls-controlsGroup">
         {primaryButton}
         <div className="MediaPlayerControls-volumeControls">
@@ -126,6 +132,7 @@ function MediaPlayerControls({
           <Dropdown
             placement="top"
             trigger={['click']}
+            getPopupContainer={() => document.getElementById(componentInstanceId)}
             disabled={disableSecondaryControls}
             menu={{ items: getPlaybackRateMenuItems(), onClick: handlePlaybackRateMenuItemClick }}
             >
