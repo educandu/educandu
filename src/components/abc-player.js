@@ -31,7 +31,7 @@ const createDownloadFileName = renderResult => {
     : 'generated-audio.wav';
 };
 
-function AbcPlayer({ renderResult }) {
+function AbcPlayer({ renderResult, initialVolume }) {
   const { t } = useTranslation();
   const isMounted = useIsMounted();
   const mediaPlayerRef = useRef(null);
@@ -126,6 +126,7 @@ function AbcPlayer({ renderResult }) {
             allowLoop
             allowDownload
             state={controlsState}
+            volume={initialVolume}
             onPlayClick={handlePlayClick}
             />
         </div>
@@ -139,6 +140,7 @@ function AbcPlayer({ renderResult }) {
         allowLoop
         allowDownload
         sourceUrl={soundUrl}
+        volume={initialVolume}
         mediaPlayerRef={mediaPlayerRef}
         screenMode={MEDIA_SCREEN_MODE.none}
         downloadFileName={downloadFileName}
@@ -149,11 +151,13 @@ function AbcPlayer({ renderResult }) {
 }
 
 AbcPlayer.propTypes = {
-  renderResult: PropTypes.arrayOf(PropTypes.object)
+  renderResult: PropTypes.arrayOf(PropTypes.object),
+  initialVolume: PropTypes.number
 };
 
 AbcPlayer.defaultProps = {
-  renderResult: null
+  renderResult: null,
+  initialVolume: 1
 };
 
 export default AbcPlayer;
