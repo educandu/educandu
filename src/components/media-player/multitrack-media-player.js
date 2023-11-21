@@ -4,9 +4,9 @@ import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import TrackMixerDisplay from './track-mixer-display.js';
-import MediaPlayerControls from './media-player-controls.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../empty-state.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import MediaPlayerControls, { MEDIA_PLAYER_CONTROLS_STATE } from './media-player-controls.js';
 import { DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 
 const sourcesCanBeConsideredEqual = (sources1, sources2) => {
@@ -234,11 +234,12 @@ function MultitrackMediaPlayer({
     return (
       <div>
         <MediaPlayerControls
+          allowLoop
           volume={mixVolume}
-          isPlaying={isPlaying}
           loopMedia={loopMedia}
           isFullscreen={isFullscreen}
           screenMode={screenMode}
+          state={isPlaying ? MEDIA_PLAYER_CONTROLS_STATE.playing : MEDIA_PLAYER_CONTROLS_STATE.paused}
           playbackRate={playbackRate}
           playedMilliseconds={playedMilliseconds}
           durationInMilliseconds={trackStates[0]?.durationInMilliseconds || 0}

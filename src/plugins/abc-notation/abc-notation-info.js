@@ -33,6 +33,7 @@ class AbcNotationInfo {
   getDefaultContent() {
     return {
       abcCode: '',
+      playMidi: false,
       width: 100,
       copyrightNotice: ''
     };
@@ -41,6 +42,7 @@ class AbcNotationInfo {
   validateContent(content) {
     const schema = joi.object({
       abcCode: joi.string().allow('').required(),
+      playMidi: joi.boolean().required(),
       width: joi.number().min(0).max(100).required(),
       copyrightNotice: joi.string().allow('').required()
     });

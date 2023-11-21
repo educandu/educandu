@@ -2617,6 +2617,10 @@
     "abcCode": {
       "en": "ABC code",
       "de": "ABC-Code"
+    },
+    "playMidi": {
+      "en": "Play MIDI",
+      "de": "MIDI abspielen"
     }
   },
   "annotation": {
@@ -2834,10 +2838,6 @@
       "en": "ABC code",
       "de": "ABC-Code"
     },
-    "useMidi": {
-      "en": "Use MIDI (auto)",
-      "de": "MIDI benutzen (auto)"
-    },
     "testsOrder": {
       "en": "Order",
       "de": "Reihenfolge"
@@ -2877,6 +2877,18 @@
     "testAnswer": {
       "en": "Answer",
       "de": "Antwort"
+    },
+    "soundMode": {
+      "en": "Audio mode",
+      "de": "Audio-Modus"
+    },
+    "soundModeSource": {
+      "en": "from source",
+      "de": "aus Quelle"
+    },
+    "soundModeAbcMidi": {
+      "en": "MIDI from ABC code (auto-generated)",
+      "de": "MIDI aus ABC-Code (auto-generiert)"
     },
     "audio": {
       "en": "Audio",

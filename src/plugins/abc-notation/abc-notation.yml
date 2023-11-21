@@ -5,3 +5,6 @@ abcNotation:
   abcCode:
     en: ABC code
     de: ABC-Code
+  playMidi:
+    en: Play MIDI
+    de: MIDI abspielen

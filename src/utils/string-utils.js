@@ -30,6 +30,10 @@ const MARKDOWN_ESCAPE_REPLACEMENT_PATTERN = new RegExp(MARKDOWN_ESCAPE_TEST_PATT
 export const NO_BREAK_SPACE = '\u00A0';
 export const ZERO_WIDTH_SPACE = '\u200B';
 
+export function hasMoreWordCharactersThanNonWordCharacters(str) {
+  return [...str.matchAll(/\w/g)].length > (str.length / 2);
+}
+
 export function escapeHtml(str) {
   return HTML_ESCAPE_TEST_PATTERN.test(str)
     ? str.replace(HTML_ESCAPE_REPLACEMENT_PATTERN, c => HTML_REPLACEMENT_MAP[c])
