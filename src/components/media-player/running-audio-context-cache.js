@@ -36,10 +36,12 @@ class RunningAudioContextCache {
       const ctx = new AudioContext();
       await ctx.resume();
       this._audioContext = ctx;
+      this._tearDownAutoResume();
 
       if (this._audioContext.state !== 'running') {
         this._audioContext.close();
         this._audioContext = null;
+        this._setupAutoResume();
         throw new Error('AudioContext has to be resumed during a user interaction');
       }
 
@@ -48,6 +50,7 @@ class RunningAudioContextCache {
           this._audioContext.removeEventListener('statechange', listener);
           this._audioContext.close();
           this._audioContext = null;
+          this._setupAutoResume();
           this._updateValue();
           this._notifySubscribers();
         }
