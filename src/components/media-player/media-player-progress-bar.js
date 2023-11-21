@@ -10,6 +10,7 @@ const MARK_TIMECODE_WIDTH_IN_PX = 40;
 
 function MediaPlayerProgressBar({
   allowPartClick,
+  disabled,
   durationInMilliseconds,
   millisecondsLength,
   playedMilliseconds,
@@ -154,7 +155,7 @@ function MediaPlayerProgressBar({
     const leftPx = progressBarWidthInPx * part.startPosition;
     const markTextClasses = classNames(
       'MediaPlayerProgressBar-markText',
-      { 'MediaPlayerProgressBar-markText--clickable': allowPartClick }
+      { 'MediaPlayerProgressBar-markText--clickable': !disabled && allowPartClick }
     );
 
     return (
@@ -163,7 +164,7 @@ function MediaPlayerProgressBar({
         <div
           className={markTextClasses}
           style={{ width: `${MARK_TIMECODE_WIDTH_IN_PX}px`, left: `${leftPx - (MARK_TIMECODE_WIDTH_IN_PX / 2)}px` }}
-          onClick={() => handlePartClick(part)}
+          onClick={disabled ? null : () => handlePartClick(part)}
           >
           {part.text || formatMediaPosition({
             position: part.startPosition,
@@ -176,13 +177,17 @@ function MediaPlayerProgressBar({
     );
   };
 
-  const classes = classNames('MediaPlayerProgressBar', { 'is-enabled': isMediaLoaded });
-  const currentProgressInPx = isMediaLoaded ? (playedMilliseconds / durationInMilliseconds) * progressBarWidthInPx : 0;
+  const rootClasses = classNames('MediaPlayerProgressBar', { 'is-enabled': !disabled && isMediaLoaded });
+  const interractionOverlayClasses = classNames('MediaPlayerProgressBar-interractionOverlay', { 'is-disabled': disabled });
+
+  const currentProgressInPx = !disabled && isMediaLoaded
+    ? (playedMilliseconds / durationInMilliseconds) * progressBarWidthInPx
+    : 0;
 
   return (
-    <div className={classes} ref={progressBarRef}>
+    <div className={rootClasses} ref={progressBarRef}>
       <div className="MediaPlayerProgressBar-baseBar" />
-      {!!tooltipState && (
+      {!disabled && !!tooltipState && (
         <div
           className="MediaPlayerProgressBar-progressTooltip"
           style={{ width: `${TOOLTIP_WIDTH_IN_PX}px`, left: `${tooltipState.left}px` }}
@@ -194,12 +199,12 @@ function MediaPlayerProgressBar({
       <div className="MediaPlayerProgressBar-progress" style={{ width: `${currentProgressInPx}px` }} />
       {!!isMediaLoaded && parts.map(renderPartStart)}
       <div
-        className="MediaPlayerProgressBar-interractionOverlay"
-        onMouseDown={handleBarMouseDown}
-        onTouchStart={handleBarTouchStart}
-        onMouseOver={handleBarMouseHover}
-        onMouseMove={handleBarMouseHover}
-        onMouseLeave={handleBarMouseLeave}
+        className={interractionOverlayClasses}
+        onMouseDown={disabled ? null : handleBarMouseDown}
+        onTouchStart={disabled ? null : handleBarTouchStart}
+        onMouseOver={disabled ? null : handleBarMouseHover}
+        onMouseMove={disabled ? null : handleBarMouseHover}
+        onMouseLeave={disabled ? null : handleBarMouseLeave}
         />
     </div>
   );
@@ -207,24 +212,29 @@ function MediaPlayerProgressBar({
 
 MediaPlayerProgressBar.propTypes = {
   allowPartClick: PropTypes.bool,
-  durationInMilliseconds: PropTypes.number.isRequired,
+  disabled: PropTypes.bool,
+  durationInMilliseconds: PropTypes.number,
   millisecondsLength: PropTypes.number,
-  onSeek: PropTypes.func.isRequired,
+  onSeek: PropTypes.func,
   onSeekEnd: PropTypes.func,
   onSeekStart: PropTypes.func,
   parts: PropTypes.arrayOf(PropTypes.shape({
     startPosition: PropTypes.number.isRequired,
     text: PropTypes.string
   })),
-  playedMilliseconds: PropTypes.number.isRequired
+  playedMilliseconds: PropTypes.number
 };
 
 MediaPlayerProgressBar.defaultProps = {
   allowPartClick: false,
+  disabled: false,
+  durationInMilliseconds: 0,
   millisecondsLength: 0,
-  parts: [{ startPosition: 0 }],
+  onSeek: () => {},
   onSeekEnd: () => {},
-  onSeekStart: () => {}
+  onSeekStart: () => {},
+  parts: [{ startPosition: 0 }],
+  playedMilliseconds: 0
 };
 
 export default MediaPlayerProgressBar;

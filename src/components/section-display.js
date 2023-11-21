@@ -4,7 +4,6 @@ import Markdown from './markdown.js';
 import { Button, Modal, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
-import { isMacOs } from '../ui/browser-helper.js';
 import LoadingSection from './loading-section.js';
 import { useStableCallback } from '../ui/hooks.js';
 import HelpIcon from './icons/general/help-icon.js';
@@ -115,7 +114,7 @@ function SectionDisplay({
   const toolbarActions = [
     {
       type: 'edit',
-      tooltip: renderActionTooltip('edit', ['ctrl', 'click']),
+      tooltip: renderActionTooltip('edit', ['alt', 'click']),
       icon: <EditIcon key="edit" />,
       handleAction: () => onSectionEditEnter(),
       isVisible: canEdit && !isEditing,
@@ -124,7 +123,7 @@ function SectionDisplay({
     },
     {
       type: 'preview',
-      tooltip: renderActionTooltip('preview', ['ctrl', 'click']),
+      tooltip: renderActionTooltip('preview', ['alt', 'click']),
       icon: <PreviewIcon key="preview" />,
       handleAction: () => onSectionEditLeave(),
       isVisible: canEdit && isEditing,
@@ -133,7 +132,7 @@ function SectionDisplay({
     },
     {
       type: 'duplicate',
-      tooltip: renderActionTooltip('duplicate', ['shift', 'ctrl', 'click']),
+      tooltip: renderActionTooltip('duplicate', ['shift', 'alt', 'click']),
       icon: <DuplicateIcon key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
       isVisible: canEdit,
@@ -151,7 +150,7 @@ function SectionDisplay({
     },
     {
       type: 'delete',
-      tooltip: renderActionTooltip('delete', ['shift', 'ctrl', 'alt', 'click']),
+      tooltip: renderActionTooltip('delete'),
       icon: <DeleteIcon key="delete" />,
       handleAction: () => onSectionDelete(),
       isVisible: canEdit,
@@ -308,15 +307,9 @@ function SectionDisplay({
   };
 
   const handleSectionClick = event => {
-    const ctrlKeyIsPressed = event.ctrlKey;
-    const commandKeyIsPressed = isMacOs() && event.metaKey;
-    if (canEdit && (ctrlKeyIsPressed || commandKeyIsPressed)) {
+    if (canEdit && event.altKey) {
       if (event.shiftKey) {
-        if (event.altKey) {
-          onSectionDelete();
-        } else {
-          onSectionDuplicate();
-        }
+        onSectionDuplicate();
       } else if (section.content) {
         if (isEditing) {
           onSectionEditLeave();

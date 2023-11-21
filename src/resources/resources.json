@@ -262,22 +262,6 @@
       "en": "Active accounts",
       "de": "Aktive Konten"
     },
-    "role_user": {
-      "en": "User",
-      "de": "Benutzer"
-    },
-    "role_accredited-author": {
-      "en": "Accred. author",
-      "de": "Akkred. Autor"
-    },
-    "role_maintainer": {
-      "en": "Maintainer",
-      "de": "Maintainer"
-    },
-    "role_admin": {
-      "en": "Admin",
-      "de": "Admin"
-    },
     "unconfirmedAccounts": {
       "en": "Unconfirmed accounts",
       "de": "Unbestätigte Konten"
@@ -355,8 +339,8 @@
       "de": "Rollen in {appName}"
     },
     "roleInfoContentMarkdown": {
-      "en": "# User\n\nUsers can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.\n\n# Accredited Author\n\nAccredited authors can create protected public documents with exclusive editing permissions.\n\n# Maintainer\n\nMaintainers have extended content management permissions over public content and can curate documents and the media center resources.\nThese permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media center resources.\n\n# Admin\n\nAdmins can configure global settings, manage user accounts including storage plans, as well as execute technical maintenance tasks.\n\n***\n\n*Roles in {appName} are cumulative, meaning that each consecutive role in this list has all the permissions of the previous role and adds more permissions on top.*\n",
-      "de": "# Benutzer\n\nBenutzer können zu den Inhalten der Plattform beitragen (mit Ausnahme von geschützten oder archivierten Dokumenten), aber sie können lediglich ihre eigenen privaten Inhalte löschen.\nUsers can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.\n\n# Akkreditierter Autor\n\nAkkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.\n\n# Maintainer\n\nMaintainer haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen.\nDiese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Mediathek.\n\n# Admin\n\nAdmins können globale Einstellungen konfigurieren, Benutzerkonten inklusive Speicherpläne verwalten, sowie technische Instandhaltungstasks ausführen.\n\n***\n\n*Rollen in {appName} sind kumulativ, d.h. dass jede aufeinander folgende Rolle in dieser Liste jeweils sowohl alle Berechtigungen der\nvorhergehenden Rolle als auch darüber hinausgehende eigene Berechtigungen beinhaltet.*\n"
+      "en": "# User\n\nUsers can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.\n\n# Accredited Author\n\nAccredited authors can create protected public documents with exclusive editing permissions.\n\n# Maintainer\n\nMaintainers have extended content management permissions over public content and can curate documents and the media center resources.\\\nThese permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media center resources.\n\n# Admin\n\nAdmins can configure global settings, manage user accounts including storage plans, as well as execute technical maintenance tasks.\n\n***\n\n*Roles in {appName} are cumulative, meaning that each consecutive role in this list has all the permissions of the previous role and adds more permissions on top.*\n",
+      "de": "# Benutzer\n\nBenutzer können zu den Inhalten der Plattform beitragen (mit Ausnahme von geschützten oder archivierten Dokumenten), aber sie können lediglich ihre eigenen privaten Inhalte löschen.\n\n# Akkreditierter Autor\n\nAkkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.\n\n# Maintainer\n\nMaintainer haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen.\\\nDiese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Mediathek.\n\n# Admin\n\nAdmins können globale Einstellungen konfigurieren, Benutzerkonten inklusive Speicherpläne verwalten, sowie technische Instandhaltungstasks ausführen.\n\n***\n\n*Rollen in {appName} sind kumulativ, d.h. dass jede aufeinander folgende Rolle in dieser Liste jeweils sowohl alle Berechtigungen der\nvorhergehenden Rolle als auch darüber hinausgehende eigene Berechtigungen beinhaltet.*\n"
     }
   },
   "blockedLoginError": {
@@ -1023,7 +1007,7 @@
       "de": "Geschützte Dokumente können nur von einem Maintainer oder zugelassenem Bearbeiter bearbeitet werden."
     },
     "archivedInfo": {
-      "en": "Archived documents cannot be edited and cannot be discovered through search.",
+      "en": "Archived documents cannot be discovered through search or accessed by normal users. Maintainers can still access archived documents.",
       "de": "Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar."
     },
     "verifiedInfo": {
@@ -1062,9 +1046,9 @@
       "en": "No available rooms",
       "de": "Keine Räume verfügbar"
     },
-    "publicContextHeader": {
-      "en": "Advanced settings",
-      "de": "Erweiterte Einstellungen"
+    "maintenanceSettingsHeader": {
+      "en": "Maintenance settings",
+      "de": "Maintenance-Einstellungen"
     },
     "draft": {
       "en": "Mark as draft",
@@ -1073,6 +1057,14 @@
     "draftInfo": {
       "en": "Draft documents can only be accessed and edited by the room owner",
       "de": "Entwurfsdokumente können nur vom Raumbesitzer abgerufen und bearbeiten werden"
+    },
+    "archiveRedirectionLabel": {
+      "en": "Document for redirection",
+      "de": "Dokument zur Weiterleitung"
+    },
+    "archiveRedirectionInfo": {
+      "en": "Users accessing this archive document will be redirected to the specified document. Maintainers will not be redirected.",
+      "de": "Benutzer werden zum angegebenen Dokument weitergeleitet, wenn sie dieses Dokument aufrufen. Maintainer werden nicht weitergeleitet."
     }
   },
   "documentSelector": {
@@ -1672,6 +1664,10 @@
     }
   },
   "dashboard": {
+    "rolePrefix": {
+      "en": "Your role:",
+      "de": "Deine Rolle:"
+    },
     "tabsHelpLinkText": {
       "en": "Find out more?",
       "de": "Mehr entdecken?"
@@ -1783,6 +1779,10 @@
     "archiveAlert": {
       "en": "This document is archived and accessible only by users with admin or maintainer role.",
       "de": "Dieses Dokument ist archiviert und nur für Benutzer mit der Rolle Admin oder Maintainer zugänglich."
+    },
+    "archiveAlertRedirectMarkdown": {
+      "en": "The other users are automatically redirected to [this document]({documentUrl}).",
+      "de": "Die anderen Benutzer sind zu [diesem Dokument]({documentUrl}) weitergeleitet."
     },
     "unarchive": {
       "en": "Unarchive",
@@ -2565,6 +2565,16 @@
       "de": "Mitglied entfernen"
     }
   },
+  "userRoleInfo": {
+    "modalTitle": {
+      "en": "Roles in {appName}",
+      "de": "Rollen in {appName}"
+    },
+    "modalContentMarkdown": {
+      "en": "# User\n\nUsers can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.\n\n# Accredited Author\n\nAccredited authors can create protected public documents with exclusive editing permissions.\n\n# Maintainer\n\nMaintainers have extended content management permissions over public content and can curate documents and the media center resources.\\\nThese permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media center resources.\n\n# Administrator\n\nAdministrators can configure global settings, manage user accounts including storage plans, as well as execute technical maintenance tasks.\n\n***\n\n*Roles in {appName} are cumulative, meaning that each consecutive role in this list has all the permissions of the previous role and adds more permissions on top.*\n",
+      "de": "# Benutzer\n\nBenutzer können zu den Inhalten der Plattform beitragen (mit Ausnahme von geschützten oder archivierten Dokumenten), aber sie können lediglich ihre eigenen privaten Inhalte löschen.\n\n# Akkreditierter Autor\n\nAkkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.\n\n# Maintainer\n\nMaintainer haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen.\\\nDiese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Mediathek.\n\n# Administrator\n\nAdministratoren können globale Einstellungen konfigurieren, Benutzerkonten inklusive Speicherpläne verwalten, sowie technische Instandhaltungstasks ausführen.\n\n***\n\n*Rollen in {appName} sind kumulativ, d.h. dass jede aufeinander folgende Rolle in dieser Liste jeweils sowohl alle Berechtigungen der\nvorhergehenden Rolle als auch darüber hinausgehende eigene Berechtigungen beinhaltet.*\n"
+    }
+  },
   "userStepsForm": {
     "step_enterData": {
       "en": "Enter data",
@@ -2607,6 +2617,10 @@
     "abcCode": {
       "en": "ABC code",
       "de": "ABC-Code"
+    },
+    "playMidi": {
+      "en": "Play MIDI",
+      "de": "MIDI abspielen"
     }
   },
   "annotation": {
@@ -2824,10 +2838,6 @@
       "en": "ABC code",
       "de": "ABC-Code"
     },
-    "useMidi": {
-      "en": "Use MIDI (auto)",
-      "de": "MIDI benutzen (auto)"
-    },
     "testsOrder": {
       "en": "Order",
       "de": "Reihenfolge"
@@ -2867,6 +2877,18 @@
     "testAnswer": {
       "en": "Answer",
       "de": "Antwort"
+    },
+    "soundMode": {
+      "en": "Audio mode",
+      "de": "Audio-Modus"
+    },
+    "soundModeSource": {
+      "en": "from source",
+      "de": "aus Quelle"
+    },
+    "soundModeAbcMidi": {
+      "en": "MIDI from ABC code (auto-generated)",
+      "de": "MIDI aus ABC-Code (auto-generiert)"
     },
     "audio": {
       "en": "Audio",
@@ -4483,6 +4505,22 @@
     "dashboardTab_settings": {
       "en": "Settings",
       "de": "Einstellungen"
+    },
+    "role_user": {
+      "en": "User",
+      "de": "Benutzer"
+    },
+    "role_accredited-author": {
+      "en": "Accred. author",
+      "de": "Akkred. Autor"
+    },
+    "role_maintainer": {
+      "en": "Maintainer",
+      "de": "Maintainer"
+    },
+    "role_admin": {
+      "en": "Administrator",
+      "de": "Administrator"
     }
   },
   "pageNames": {

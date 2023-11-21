@@ -10,14 +10,25 @@ import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
-import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon } from '../icons/icons.js';
+import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon, SpinIcon } from '../icons/icons.js';
+
+export const MEDIA_PLAYER_CONTROLS_STATE = {
+  paused: 'paused',
+  playing: 'playing',
+  loading: 'loading',
+  waiting: 'waiting',
+  disabled: 'disabled'
+};
 
 function MediaPlayerControls({
+  allowDownload,
+  allowFullscreen,
+  allowLoop,
   durationInMilliseconds,
-  isPlaying,
   millisecondsLength,
   playedMilliseconds,
   screenMode,
+  state,
   volume,
   loopMedia,
   isFullscreen,
@@ -73,6 +84,33 @@ function MediaPlayerControls({
     return <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>;
   };
 
+  let primaryButton;
+  let disableSecondaryControls;
+  switch (state) {
+    case MEDIA_PLAYER_CONTROLS_STATE.paused:
+      primaryButton = <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />;
+      disableSecondaryControls = false;
+      break;
+    case MEDIA_PLAYER_CONTROLS_STATE.playing:
+      primaryButton = <Button type="link" icon={<PauseIcon />} onClick={onPauseClick} />;
+      disableSecondaryControls = false;
+      break;
+    case MEDIA_PLAYER_CONTROLS_STATE.loading:
+      primaryButton = <Button type="link" icon={<SpinIcon className="u-spin" />} />;
+      disableSecondaryControls = true;
+      break;
+    case MEDIA_PLAYER_CONTROLS_STATE.waiting:
+      primaryButton = <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />;
+      disableSecondaryControls = true;
+      break;
+    case MEDIA_PLAYER_CONTROLS_STATE.disabled:
+      primaryButton = <Button type="link" icon={<PlayIcon />} disabled />;
+      disableSecondaryControls = true;
+      break;
+    default:
+      throw new Error(`Invalid media player control state '${state}'`);
+  }
+
   const mainClasses = classNames(
     'MediaPlayerControls',
     { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none }
@@ -81,10 +119,9 @@ function MediaPlayerControls({
   return (
     <div id={componentInstanceId} className={mainClasses}>
       <div className="MediaPlayerControls-controlsGroup">
-        {!!isPlaying && <Button type="link" icon={<PauseIcon />} onClick={onPauseClick} />}
-        {!isPlaying && <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />}
+        {primaryButton}
         <div className="MediaPlayerControls-volumeControls">
-          <MediaVolumeSlider value={volume} onChange={onVolumeChange} />
+          <MediaVolumeSlider value={volume} disabled={disableSecondaryControls} onChange={onVolumeChange} />
         </div>
         <div className="MediaPlayerControls-timeDisplay">
           {renderTimeDisplay()}
@@ -96,29 +133,37 @@ function MediaPlayerControls({
             placement="top"
             trigger={['click']}
             getPopupContainer={() => document.getElementById(componentInstanceId)}
+            disabled={disableSecondaryControls}
             menu={{ items: getPlaybackRateMenuItems(), onClick: handlePlaybackRateMenuItemClick }}
             >
             <Button
               type="link"
+              disabled={disableSecondaryControls}
               icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <PlaybackRateIcon /> : null}
               >
               {playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? null : renderMediaPlaybackRate()}
             </Button>
           </Dropdown>
-          {!!onLoopMediaChange && (
+          {!!allowLoop && (
             <Button
               type="link"
+              disabled={disableSecondaryControls}
               icon={loopMedia ? <RepeatIcon /> : <RepeatOffIcon />}
               onClick={handleLoopToggleButtonClick}
               />
           )}
-          {!!onDownloadClick && (
-            <Button type="link" icon={<DownloadIcon />} onClick={onDownloadClick} />
+          {!!allowDownload && (
+            <Button
+              type="link"
+              icon={<DownloadIcon />}
+              disabled={disableSecondaryControls}
+              onClick={onDownloadClick}
+              />
           )}
-          {!!onFullscreenChange && !isFullscreen && (
+          {!!allowFullscreen && !isFullscreen && (
             <Button type="link" icon={<EnterFullscreenIcon />} onClick={handleFullscreenButtonClick} />
           )}
-          {!!onFullscreenChange && !!isFullscreen && (
+          {!!allowFullscreen && !!isFullscreen && (
             <Button type="link" icon={<ExitFullscreenIcon />} onClick={handleFullscreenButtonClick} />
           )}
         </div>
@@ -128,31 +173,47 @@ function MediaPlayerControls({
 }
 
 MediaPlayerControls.propTypes = {
-  durationInMilliseconds: PropTypes.number.isRequired,
-  isPlaying: PropTypes.bool.isRequired,
+  allowDownload: PropTypes.bool,
+  allowFullscreen: PropTypes.bool,
+  allowLoop: PropTypes.bool,
+  durationInMilliseconds: PropTypes.number,
   isFullscreen: PropTypes.bool,
   millisecondsLength: PropTypes.number,
-  playedMilliseconds: PropTypes.number.isRequired,
+  playedMilliseconds: PropTypes.number,
   screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
-  volume: PropTypes.number.isRequired,
-  loopMedia: PropTypes.bool.isRequired,
-  playbackRate: PropTypes.oneOf(MEDIA_PLAYBACK_RATES).isRequired,
+  state: PropTypes.oneOf(Object.values(MEDIA_PLAYER_CONTROLS_STATE)),
+  volume: PropTypes.number,
+  loopMedia: PropTypes.bool,
+  playbackRate: PropTypes.oneOf(MEDIA_PLAYBACK_RATES),
   onDownloadClick: PropTypes.func,
   onFullscreenChange: PropTypes.func,
-  onPauseClick: PropTypes.func.isRequired,
-  onPlayClick: PropTypes.func.isRequired,
-  onPlaybackRateChange: PropTypes.func.isRequired,
+  onPauseClick: PropTypes.func,
+  onPlayClick: PropTypes.func,
+  onPlaybackRateChange: PropTypes.func,
   onLoopMediaChange: PropTypes.func,
-  onVolumeChange: PropTypes.func.isRequired
+  onVolumeChange: PropTypes.func
 };
 
 MediaPlayerControls.defaultProps = {
+  allowDownload: false,
+  allowFullscreen: false,
+  allowLoop: false,
+  durationInMilliseconds: 0,
   isFullscreen: false,
   millisecondsLength: 0,
-  screenMode: MEDIA_SCREEN_MODE.video,
-  onDownloadClick: null,
-  onFullscreenChange: null,
-  onLoopMediaChange: null
+  playedMilliseconds: 0,
+  screenMode: MEDIA_SCREEN_MODE.none,
+  state: MEDIA_PLAYER_CONTROLS_STATE.paused,
+  volume: 1,
+  loopMedia: false,
+  playbackRate: DEFAULT_MEDIA_PLAYBACK_RATE,
+  onPauseClick: () => {},
+  onPlayClick: () => {},
+  onPlaybackRateChange: () => {},
+  onDownloadClick: () => {},
+  onFullscreenChange: () => {},
+  onLoopMediaChange: () => {},
+  onVolumeChange: () => {}
 };
 
 export default MediaPlayerControls;

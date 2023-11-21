@@ -3,7 +3,7 @@ import { Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { SwapOutlined } from '@ant-design/icons';
 import Markdown from '../../components/markdown.js';
-import { TESTS_ORDER, TEST_MODE } from './constants.js';
+import AbcPlayer from '../../components/abc-player.js';
 import AbcNotation from '../../components/abc-notation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import CardSelector from '../../components/card-selector.js';
@@ -12,6 +12,7 @@ import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import IterationPanel from '../../components/iteration-panel.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
+import { SOUND_MODE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
 import { ensureIsIncluded, shuffleItems } from '../../utils/array-utils.js';
@@ -25,6 +26,7 @@ function EarTrainingDisplay({ content }) {
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const [lastRenderResult, setLastRenderResult] = useState(null);
   const [viewedTestIndices, setViewedTestIndices] = useState([0]);
   const [isCurrentTestAnswerVisible, setIsCurrentTestAnswerVisible] = useState(false);
 
@@ -45,6 +47,7 @@ function EarTrainingDisplay({ content }) {
       setCurrentTestIndex(testIndex);
       setViewedTestIndices(ensureIsIncluded(viewedTestIndices, testIndex));
       setIsCurrentTestAnswerVisible(false);
+      setLastRenderResult(null);
     }
   };
 
@@ -53,6 +56,7 @@ function EarTrainingDisplay({ content }) {
     setCurrentTestIndex(previousTestIndex);
     setViewedTestIndices(ensureIsIncluded(viewedTestIndices, previousTestIndex));
     setIsCurrentTestAnswerVisible(false);
+    setLastRenderResult(null);
   };
 
   const handleNextTestClick = () => {
@@ -60,31 +64,41 @@ function EarTrainingDisplay({ content }) {
     setCurrentTestIndex(nextTestIndex);
     setViewedTestIndices(ensureIsIncluded(viewedTestIndices, nextTestIndex));
     setIsCurrentTestAnswerVisible(false);
+    setLastRenderResult(null);
   };
 
   const handleResetTestsClick = () => {
     setCurrentTestIndex(0);
     setViewedTestIndices([0]);
     setIsCurrentTestAnswerVisible(false);
+    setLastRenderResult(null);
     setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   };
 
   const renderSoundPlayer = () => {
-    const url = getAccessibleUrl({ url: currentTest.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
-    const allowDownload = isInternalSourceType({ url: currentTest.sound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    if (currentTest.soundMode === SOUND_MODE.source) {
+      const url = getAccessibleUrl({ url: currentTest.sourceSound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+      const allowDownload = isInternalSourceType({ url: currentTest.sourceSound.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
+      return (
+        <div className="EarTrainingDisplay-soundPlayer">
+          {!!url && (
+            <MediaPlayer
+              allowDownload={allowDownload}
+              initialVolume={currentTest.sourceSound.initialVolume}
+              playbackRange={currentTest.sourceSound.playbackRange}
+              screenMode={MEDIA_SCREEN_MODE.none}
+              sourceUrl={url}
+              />
+          )}
+          <CopyrightNotice value={currentTest.sourceSound.copyrightNotice} />
+        </div>
+      );
+    }
 
     return (
       <div className="EarTrainingDisplay-soundPlayer">
-        {!!url && (
-          <MediaPlayer
-            allowDownload={allowDownload}
-            initialVolume={currentTest.sound.initialVolume}
-            playbackRange={currentTest.sound.playbackRange}
-            screenMode={MEDIA_SCREEN_MODE.none}
-            sourceUrl={url}
-            />
-        )}
-        <CopyrightNotice value={currentTest.sound.copyrightNotice} />
+        <AbcPlayer renderResult={lastRenderResult} initialVolume={currentTest.abcMidiSound.initialVolume} />
       </div>
     );
   };
@@ -99,7 +113,7 @@ function EarTrainingDisplay({ content }) {
         </h3>
         {!!tests.length && (
           <div className="EarTrainingDisplay-test">
-            {currentTest.mode === TEST_MODE.image && (
+            {currentTest.testMode === TEST_MODE.image && (
               <Fragment>
                 <div className="EarTrainingDisplay-images">
                   <img
@@ -126,8 +140,11 @@ function EarTrainingDisplay({ content }) {
                   />
               </Fragment>
             )}
-            {currentTest.mode === TEST_MODE.abcCode && (
-              <AbcNotation abcCode={isCurrentTestAnswerVisible ? currentTest.answerAbcCode : currentTest.questionAbcCode} />
+            {currentTest.testMode === TEST_MODE.abcCode && (
+              <AbcNotation
+                abcCode={isCurrentTestAnswerVisible ? currentTest.answerAbcCode : currentTest.questionAbcCode}
+                onRender={setLastRenderResult}
+                />
             )}
             {renderSoundPlayer()}
             <RadioGroup className="EarTrainingDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>

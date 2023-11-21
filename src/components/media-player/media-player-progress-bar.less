@@ -47,6 +47,12 @@
   left: 0;
   width: 100%;
   height: @edu-progress-bar-hover-height;
+
+  &.is-disabled {
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
 }
 
 .MediaPlayerProgressBar-progressTooltip {

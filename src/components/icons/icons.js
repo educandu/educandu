@@ -13,6 +13,7 @@ import {
   IconClick,
   IconDownload,
   IconEraser,
+  IconLoader2,
   IconRepeat,
   IconRepeatOff,
   IconRuler3,
@@ -46,6 +47,7 @@ function createIconFromTablerIconComponent(TablerIconComponent) {
 }
 
 export const LineIcon = createIconFromSvgComponent(LineIconComponent);
+export const SpinIcon = createIconFromTablerIconComponent(IconLoader2);
 export const SelectIcon = createIconFromTablerIconComponent(IconClick);
 export const CircleIcon = createIconFromTablerIconComponent(IconCircle);
 export const EraserIcon = createIconFromTablerIconComponent(IconEraser);
