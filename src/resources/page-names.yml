@@ -17,3 +17,6 @@ pageNames:
   userProfile:
     en: Profile
     de: Profil
+  recentContributions:
+    en: Recent contributions
+    de: Neueste Beiträge

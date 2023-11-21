@@ -11,6 +11,7 @@ const registerPath = '/register';
 const dashboardPath = '/dashboard';
 const maintenancePath = '/maintenance';
 const resetPasswordPath = '/reset-password';
+const recentContributionsPath = '/recent-contributions';
 const connectExternalAccountPath = '/connect-external-account';
 
 const apiPrefix = '/api/';
@@ -50,6 +51,11 @@ function getDocumentRevisionUrl(revisionId) {
 function getDocumentRevisionComparisonUrl({ documentId, oldId, newId }) {
   const queryString = urlUtils.composeQueryString({ oldId, newId });
   return `${urlUtils.concatParts(comparisonPrefix, documentId)}?${queryString}`;
+}
+
+function getRecentContributionsUrl(tab, params) {
+  const queryString = urlUtils.composeQueryString({ tab, ...params });
+  return queryString ? `${recentContributionsPath}?${queryString}` : recentContributionsPath;
 }
 
 function getMaintenanceUrl(tab, params) {
@@ -183,6 +189,7 @@ export default {
   getSamlAuthLoginPath,
   getSamlAuthLoginCallbackPath,
   getMediaLibraryItemUrl,
+  getRecentContributionsUrl,
   isApiPath,
   isResetPasswordPath,
   isConnectExternalAccountPath

@@ -17,6 +17,7 @@ export const PAGE_NAME = {
   documentInput: 'document-input',
   resetPassword: 'reset-password',
   mediaLibraryItem: 'media-library-item',
+  recentContributions: 'recent-contributions',
   browserNotSupported: 'browser-not-supported',
   connectExternalAccount: 'connect-external-account',
   roomMembershipConfirmation: 'room-membership-confirmation'
