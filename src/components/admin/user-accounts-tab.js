@@ -1,5 +1,4 @@
 import by from 'thenby';
-import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import UsedStorage from '../used-storage.js';
@@ -7,15 +6,13 @@ import { useUser } from '../user-context.js';
 import FilterInput from '../filter-input.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
+import UserRoleInfo from '../user-role-info.js';
 import { ROLE } from '../../domain/constants.js';
 import EditIcon from '../icons/general/edit-icon.js';
-import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import StoragePlanSelect from './storage-plan-select.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -52,7 +49,7 @@ const getRoleWeight = role => roleWeights.get(role) ?? Number.MAX_VALUE;
 const getRoleOptions = t => {
   return Object.values(ROLE).map(role => ({
     label: (
-      <div className="UserAccountsTab-roleSegmentOption">{t(`role_${role}`)}</div>
+      <div className="UserAccountsTab-roleSegmentOption">{t(`common:role_${role}`)}</div>
     ),
     value: role
   }));
@@ -130,9 +127,7 @@ function UserAccountsTab() {
   const executingUser = useUser();
   const { formatDate } = useDateFormat();
   const [users, setUsers] = useState([]);
-  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('userAccountsTab');
-  const [modal, contextHolder] = Modal.useModal();
   const [isSaving, setIsSaving] = useState(false);
   const [filterText, setFilterText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -554,26 +549,11 @@ function UserAccountsTab() {
     return <span>{formatDate(accountClosedOn)}</span>;
   };
 
-  const handleRoleInfoIconClick = event => {
-    event.stopPropagation();
-    modal.info({
-      width: '70vw',
-      title: t('roleInfoTitle', { appName: clientConfig.appName }),
-      content: (
-        <Markdown className="UserAccountsTab-roleInfoMarkdown">
-          {t('roleInfoContentMarkdown', { appName: clientConfig.appName })}
-        </Markdown>
-      )
-    });
-  };
-
   const renderRoleHeader = () => {
     return (
       <span className="UserAccountsTab-roleInfoHeader">
         <span>{t('role')}</span>
-        <Tooltip title={t('common:openHelp')}>
-          <QuestionCircleOutlined className="UserAccountsTab-roleInfoIcon" onClick={handleRoleInfoIconClick} />
-        </Tooltip>
+        <UserRoleInfo />
       </span>
     );
   };
@@ -837,7 +817,6 @@ function UserAccountsTab() {
 
   return (
     <div className="UserAccountsTab">
-      {contextHolder}
       {!!selectedAccountKeys.length && (
         <div className="UserAccountsTab-selectedItems">
           {selectedAccountKeys.map(key => (
