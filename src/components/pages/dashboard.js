@@ -4,6 +4,7 @@ import routes from '../../utils/routes.js';
 import { useUser } from '../user-context.js';
 import { InputsIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
+import UserRoleInfo from '../user-role-info.js';
 import urlUtils from '../../utils/url-utils.js';
 import RoomsTab from '../dashboard/rooms-tab.js';
 import { useLocale } from '../locale-context.js';
@@ -319,7 +320,9 @@ function Dashboard({ PageTemplate }) {
           </div>
           <div className="DashboardPage-profileInfo">
             <div className="u-page-title">{user.displayName}</div>
-            <div>{user.organization}</div>
+            <div className="DashboardPage-profileRole">
+              {t('rolePrefix')} {t(`common:role_${user.role}`)}<UserRoleInfo />
+            </div>
           </div>
         </section>
         <Tabs
