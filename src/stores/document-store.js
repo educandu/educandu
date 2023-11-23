@@ -119,6 +119,28 @@ class DocumentStore {
     return this.collection.find({ $and: conditions }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 
+  async getDocumentsExtendedMetadataPageByConditions(conditions, { page, pageSize }, { session } = {}) {
+    const aggregatedArray = await this.collection
+      .aggregate([
+        {
+          $facet: {
+            metadata: [{ $count: 'totalCount' }],
+            data: [
+              { $sort: { order: -1 } },
+              { $match: { $and: conditions } },
+              { $skip: (page - 1) * pageSize }, { $limit: pageSize },
+              { $project: documentExtendedMetadataProjection }
+            ]
+          }
+        }
+      ], { session }).toArray();
+
+    return {
+      documents: aggregatedArray[0]?.data || [],
+      totalCount: aggregatedArray[0]?.metadata.totalCount || 0
+    };
+  }
+
   getPublicNonArchivedTaggedDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({
       'roomId': null,

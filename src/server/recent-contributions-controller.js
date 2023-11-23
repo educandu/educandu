@@ -1,38 +1,34 @@
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import DocumentService from '../services/document-service.js';
+import { validateQuery } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import MediaLibraryService from '../services/media-library-service.js';
+import { paginationSchema } from '../domain/schemas/shared-schemas.js';
+import RecentContributionsService from './recent-contributions-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class RecentContributionsController {
-  static dependencies = [DocumentService, MediaLibraryService, ClientDataMappingService, PageRenderer];
+  static dependencies = [RecentContributionsService, ClientDataMappingService, PageRenderer];
 
-  constructor(documentService, mediaLibraryService, clientDataMappingService, pageRenderer) {
+  constructor(recentContributionsService, clientDataMappingService, pageRenderer) {
     this.pageRenderer = pageRenderer;
-    this.documentService = documentService;
-    this.mediaLibraryService = mediaLibraryService;
     this.clientDataMappingService = clientDataMappingService;
+    this.recentContributionsService = recentContributionsService;
   }
 
-  async handleGetRecentContributionsPage(req, res) {
+  handleGetRecentContributionsPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.recentContributions);
+  }
+
+  async handleGetRecentDocuments(req, res) {
     const { user } = req;
+    const page = Number(req.query.page);
+    const pageSize = Number(req.query.pageSize);
 
-    const [documents, mediaLibraryItems] = await Promise.all([
-      this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true }),
-      this.mediaLibraryService.getAllMediaLibraryItems()
-    ]);
+    const { documents, totalCount } = await this.recentContributionsService.getRecentDocuments({ page, pageSize });
+    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, user);
 
-    const [mappedDocuments, mappedMediaLibraryItems] = await Promise.all([
-      this.clientDataMappingService.mapDocsOrRevisions(documents, user),
-      this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user)
-    ]);
-
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.recentContributions, {
-      documents: mappedDocuments,
-      mediaLibraryItems: mappedMediaLibraryItems
-    });
+    return res.send({ documents: mappedDocuments, documentsTotalCount: totalCount });
   }
 
   registerPages(router) {
@@ -40,6 +36,14 @@ class RecentContributionsController {
       '/recent-contributions',
       needsPermission(permissions.CREATE_CONTENT),
       (req, res) => this.handleGetRecentContributionsPage(req, res)
+    );
+  }
+
+  registerApi(router) {
+    router.get(
+      '/api/v1/recent-contributions/documents',
+      validateQuery(paginationSchema),
+      (req, res) => this.handleGetRecentDocuments(req, res)
     );
   }
 }
