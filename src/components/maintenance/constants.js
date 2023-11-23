@@ -1,4 +1,4 @@
-export const TABS = {
+export const TAB = {
   documents: 'documents',
   mediaLibrary: 'media-library',
   tags: 'tags'

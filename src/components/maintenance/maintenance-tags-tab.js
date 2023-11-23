@@ -6,7 +6,7 @@ import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
-import { SORTING_DIRECTION, TABS } from './constants.js';
+import { SORTING_DIRECTION, TAB } from './constants.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
@@ -92,7 +92,7 @@ function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.cr
 }
 
 const getSanitizedQueryFromRequest = request => {
-  const query = request.query.tab === TABS.tags ? request.query : {};
+  const query = request.query.tab === TAB.tags ? request.query : {};
 
   const pageNumber = Number(query.page);
   const pageSizeNumber = Number(query.pageSize);
@@ -138,7 +138,7 @@ function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TABS.tags, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.tags, queryParams));
   }, [filter, tagCategoryFilter, sorting, pagination]);
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TABS } from '../maintenance/constants.js';
+import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { BankOutlined, TagOutlined } from '@ant-design/icons';
@@ -11,7 +11,7 @@ import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
 import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 
-const determineTab = query => Object.values(TABS).find(val => val === query) || Object.keys(TABS)[0];
+const determineTab = query => Object.values(TAB).find(val => val === query) || Object.keys(TAB)[0];
 
 function Maintenance({ initialState, PageTemplate }) {
   const request = useRequest();
@@ -30,7 +30,7 @@ function Maintenance({ initialState, PageTemplate }) {
 
   const tabItems = [
     {
-      key: TABS.documents,
+      key: TAB.documents,
       label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -39,7 +39,7 @@ function Maintenance({ initialState, PageTemplate }) {
       )
     },
     {
-      key: TABS.mediaLibrary,
+      key: TAB.mediaLibrary,
       label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
@@ -48,7 +48,7 @@ function Maintenance({ initialState, PageTemplate }) {
       )
     },
     {
-      key: TABS.tags,
+      key: TAB.tags,
       label: <div><TagOutlined />{t('tagsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">

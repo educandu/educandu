@@ -10,7 +10,7 @@ import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
 import ResourceInfoCell from '../resource-info-cell.js';
-import { SORTING_DIRECTION, TABS } from './constants.js';
+import { SORTING_DIRECTION, TAB } from './constants.js';
 import { replaceItem } from '../../utils/array-utils.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DocumentIcon from '../icons/general/document-icon.js';
@@ -79,7 +79,7 @@ function createTableRows(docs) {
 }
 
 const getSanitizedQueryFromRequest = request => {
-  const query = request.query.tab === TABS.documents ? request.query : {};
+  const query = request.query.tab === TAB.documents ? request.query : {};
 
   const pageNumber = Number(query.page);
   const pageSizeNumber = Number(query.pageSize);
@@ -123,7 +123,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TABS.documents, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documents, queryParams));
   }, [filter, sorting, pagination]);
 
   useEffect(() => {

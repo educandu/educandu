@@ -11,7 +11,7 @@ import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import { SORTING_DIRECTION, TABS } from './constants.js';
+import { SORTING_DIRECTION, TAB } from './constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -37,7 +37,7 @@ const SORTING_VALUE = {
 };
 
 const getSanitizedQueryFromRequest = request => {
-  const query = request.query.tab === TABS.mediaLibrary ? request.query : {};
+  const query = request.query.tab === TAB.mediaLibrary ? request.query : {};
 
   const pageNumber = Number(query.page);
   const pageSizeNumber = Number(query.pageSize);
@@ -107,7 +107,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TABS.mediaLibrary, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.mediaLibrary, queryParams));
   }, [filter, sorting, pagination]);
 
   useEffect(() => {
