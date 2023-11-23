@@ -93,7 +93,7 @@
   }
 }
 
-.MediaAnalysisDisplay-viewedChapterInfoWrapper {
+.MediaAnalysisDisplay-viewedChapterInfoContainer {
   display: flex;
   flex-direction: column;
   padding-bottom: 5px;
@@ -102,11 +102,19 @@
   overflow: hidden;
 }
 
+.MediaAnalysisDisplay-viewedChapterInfoContent {
+  display: grid;
+  overflow: hidden;
+}
+
 .MediaAnalysisDisplay-viewedChapterInfo {
   overflow: hidden;
+  visibility: hidden;
+  grid-row: 1;
+  grid-column: 1;
 
-  &.is-expanded {
-    overflow-y: auto;
+  &.is-visible {
+    visibility: visible;
   }
 }
 
@@ -122,7 +130,7 @@
   .m-line-clamp(1);
 
   &.is-expanded {
-    height: 250px;
+    height: unset;
     .m-line-clamp-none();
   }
 }

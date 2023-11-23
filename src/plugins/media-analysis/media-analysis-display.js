@@ -145,14 +145,18 @@ function MediaAnalysisDisplay({ content }) {
             <div className="MediaAnalysisDisplay-chapterPointersTop">
               {chapters.map(renderChapterPointerTop)}
             </div>
-            <div className="MediaAnalysisDisplay-viewedChapterInfoWrapper">
-              <div className={classNames('MediaAnalysisDisplay-viewedChapterInfo', { 'is-expanded': areTextsExpanded })}>
-                <div className="MediaAnalysisDisplay-viewedChapterInfoTitle">
-                  {chapters[viewingChapterIndex].title}
-                </div>
-                <Markdown className={classNames('MediaAnalysisDisplay-viewedChapterInfoText', { 'is-expanded': areTextsExpanded })}>
-                  {chapters[viewingChapterIndex].text}
-                </Markdown>
+            <div className="MediaAnalysisDisplay-viewedChapterInfoContainer">
+              <div className="MediaAnalysisDisplay-viewedChapterInfoContent">
+                {chapters.map((chapter, index) => (
+                  <div key={chapter.key} className={classNames('MediaAnalysisDisplay-viewedChapterInfo', { 'is-visible': index === viewingChapterIndex })}>
+                    <div className="MediaAnalysisDisplay-viewedChapterInfoTitle">
+                      {chapter.title}
+                    </div>
+                    <Markdown className={classNames('MediaAnalysisDisplay-viewedChapterInfoText', { 'is-expanded': areTextsExpanded })}>
+                      {chapter.text}
+                    </Markdown>
+                  </div>
+                ))}
               </div>
               <a
                 onClick={handleChaptersTextsToggleClick}
