@@ -57,7 +57,7 @@ class QuickTesterInfo {
         key: joi.string().required(),
         question: joi.string().allow('').required(),
         answer: joi.string().allow('').required()
-      })).required(),
+      })).unique('key').required(),
       testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required()
     });
 

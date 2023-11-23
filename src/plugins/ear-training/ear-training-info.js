@@ -104,7 +104,7 @@ class EarTrainingInfo {
         abcMidiSound: joi.object({
           initialVolume: joi.number().min(0).max(1).required()
         }).required()
-      })).required(),
+      })).unique('key').required(),
       testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required()
     });
 
