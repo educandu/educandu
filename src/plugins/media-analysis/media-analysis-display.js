@@ -107,17 +107,29 @@ function MediaAnalysisDisplay({ content }) {
       : title;
   };
 
-  const renderChapterPointer = (chapter, index) => {
+  const renderChapterPointerTop = (chapter, index) => {
     const widthInPercentage = determineChapterSegmentWidthInPercentage(index);
 
     return (
       <Tooltip key={chapter.key} title={t('chapterPointerTooltip')} placement="bottom">
         <div
           style={{ width: `${widthInPercentage}%` }}
-          className={classNames('MediaAnalysisDisplay-chapterPointer', { 'is-visible': index === viewingChapterIndex })}
+          className={classNames('MediaAnalysisDisplay-chapterPointerTop', { 'is-visible': index === viewingChapterIndex })}
           onClick={() => setViewingChapterIndex(index)}
           />
       </Tooltip>
+    );
+  };
+
+  const renderChapterPointerBottom = (chapter, index) => {
+    const widthInPercentage = determineChapterSegmentWidthInPercentage(index);
+
+    return (
+      <div
+        key={chapter.key}
+        style={{ width: `${widthInPercentage}%` }}
+        className={classNames('MediaAnalysisDisplay-chapterPointerBottom', { 'is-visible': index === viewingChapterIndex })}
+        />
     );
   };
 
@@ -130,8 +142,8 @@ function MediaAnalysisDisplay({ content }) {
 
         {chapters.some(chapter => chapter.text) && (
           <Fragment>
-            <div className="MediaAnalysisDisplay-chapterPointers">
-              {chapters.map(renderChapterPointer)}
+            <div className="MediaAnalysisDisplay-chapterPointersTop">
+              {chapters.map(renderChapterPointerTop)}
             </div>
             <div className="MediaAnalysisDisplay-viewedChapterInfoWrapper">
               <div className={classNames('MediaAnalysisDisplay-viewedChapterInfo', { 'is-expanded': areTextsExpanded })}>
@@ -148,6 +160,9 @@ function MediaAnalysisDisplay({ content }) {
                 >
                 {areTextsExpanded ? t('common:less') : t('common:more')}
               </a>
+            </div>
+            <div className="MediaAnalysisDisplay-chapterPointersBottom">
+              {chapters.map(renderChapterPointerBottom)}
             </div>
           </Fragment>
         )}
