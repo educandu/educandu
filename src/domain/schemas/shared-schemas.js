@@ -20,3 +20,8 @@ export const commonMediaItemProperties = {
   name: joi.string().required(),
   url: joi.string().required()
 };
+
+export const paginationSchema = joi.object({
+  page: joi.string().required(),
+  pageSize: joi.string().required()
+});

@@ -33,6 +33,27 @@ class MediaLibraryItemStore {
       : Promise.resolve([]);
   }
 
+  async getMediaLibraryItemsPageByConditions(conditions, { page, pageSize }, { session } = {}) {
+    const aggregatedArray = await this.collection
+      .aggregate([
+        {
+          $facet: {
+            metadata: [{ $count: 'totalCount' }],
+            data: [
+              { $sort: { order: -1 } },
+              { $match: { $and: conditions } },
+              { $skip: (page - 1) * pageSize }, { $limit: pageSize }
+            ]
+          }
+        }
+      ], { session }).toArray();
+
+    return {
+      mediaLibraryItems: aggregatedArray[0]?.data || [],
+      totalCount: aggregatedArray[0]?.metadata[0]?.totalCount || 0
+    };
+  }
+
   async insertMediaLibraryItem(mediaLibraryItem, { session } = {}) {
     validate(mediaLibraryItem, mediaLibraryItemDbSchema);
     await this.collection.insertOne(mediaLibraryItem, { session });

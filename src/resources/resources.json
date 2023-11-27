@@ -817,6 +817,20 @@
       "de": "Der Anzeigename muss mindestens {length} Zeichen lang sein"
     }
   },
+  "documentBadgesCell": {
+    "archivedDocumentBadge": {
+      "en": "This document is archived",
+      "de": "Dieses Dokument ist archiviert"
+    },
+    "protectedDocumentBadge": {
+      "en": "This document is protected",
+      "de": "Dieses Dokument ist geschützt"
+    },
+    "allowedEditorsBadge": {
+      "en": "This document has allowed editors",
+      "de": "Dieses Dokument hat zugelassene Bearbeiter"
+    }
+  },
   "documentCard": {
     "createdOnDateByUser": {
       "en": "Created on {date} by {user}.",
@@ -1211,16 +1225,6 @@
       "de": "Unwiderrufbare Aktionen"
     }
   },
-  "itemsExpander": {
-    "expand": {
-      "en": "+ {count} more",
-      "de": "+ {count} weitere"
-    },
-    "collapse": {
-      "en": "show less",
-      "de": "weniger anzeigen"
-    }
-  },
   "loadingSection": {
     "messageTitle": {
       "en": "Loading plugin",
@@ -1253,22 +1257,6 @@
     "filterPlaceholder": {
       "en": "Filter by title or creator",
       "de": "Nach Titel oder Ersteller filtern"
-    },
-    "badges": {
-      "en": "Badges",
-      "de": "Kennzeichen"
-    },
-    "archivedDocumentBadge": {
-      "en": "This document is archived",
-      "de": "Dieses Dokument ist archiviert"
-    },
-    "protectedDocumentBadge": {
-      "en": "This document is protected",
-      "de": "Dieses Dokument ist geschützt"
-    },
-    "allowedEditorsBadge": {
-      "en": "This document has allowed editors",
-      "de": "Dieses Dokument hat zugelassene Bearbeiter"
     }
   },
   "maintenanceMediaLibraryTab": {
@@ -1484,6 +1472,10 @@
     }
   },
   "admin": {
+    "pageSubtitle": {
+      "en": "Exclusive for administrator roles.",
+      "de": "Ausschließlich für Administrator-Rollen."
+    },
     "userAccountsTabTitle": {
       "en": "User accounts",
       "de": "Benutzerkonten"
@@ -1826,6 +1818,10 @@
     }
   },
   "maintenance": {
+    "pageSubtitle": {
+      "en": "Exclusive for maintainer roles.",
+      "de": "Ausschließlich für Maintainer-Rollen."
+    },
     "documentsTabTitle": {
       "en": "Documents",
       "de": "Dokumente"
@@ -1851,6 +1847,20 @@
     "updated": {
       "en": "Updated",
       "de": "Aktualisiert"
+    }
+  },
+  "recentContributions": {
+    "pageSubtitle": {
+      "en": "Public contributions made in the last 3 months.",
+      "de": "Öffentliche Beiträge in den letzten 3 Monaten."
+    },
+    "documentsTabTitle": {
+      "en": "Recent documents",
+      "de": "Neueste Dokumente"
+    },
+    "mediaLibraryTabTitle": {
+      "en": "Recent media",
+      "de": "Neueste Medien"
     }
   },
   "resetPassword": {
@@ -2497,6 +2507,16 @@
     "searchPlaceholder": {
       "en": "Search",
       "de": "Suchen"
+    }
+  },
+  "tagsExpander": {
+    "expand": {
+      "en": "+ {count} more",
+      "de": "+ {count} weitere"
+    },
+    "collapse": {
+      "en": "show less",
+      "de": "weniger anzeigen"
     }
   },
   "urlInput": {
@@ -4510,6 +4530,10 @@
       "en": "Settings",
       "de": "Einstellungen"
     },
+    "badges": {
+      "en": "Badges",
+      "de": "Kennzeichen"
+    },
     "role_user": {
       "en": "User",
       "de": "Benutzer"
@@ -4551,6 +4575,10 @@
     "userProfile": {
       "en": "Profile",
       "de": "Profil"
+    },
+    "recentContributions": {
+      "en": "Recent contributions",
+      "de": "Neueste Beiträge"
     }
   },
   "mailService": {

@@ -693,6 +693,9 @@ common:
   dashboardTab_settings:
     en: Settings
     de: Einstellungen
+  badges:
+    en: Badges
+    de: Kennzeichen
   role_user:
     en: User
     de: Benutzer

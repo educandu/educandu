@@ -3,26 +3,26 @@ import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
+import { Button, message, Table } from 'antd';
+import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
-import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
-import { useDateFormat } from '../locale-context.js';
-import ResourceInfoCell from '../resource-info-cell.js';
+import ResourceTypeCell from '../resource-type-cell.js';
+import { SORTING_DIRECTION, TAB } from './constants.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import { SORTING_DIRECTION, TABS } from './constants.js';
+import ResourceTitleCell from '../resource-title-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, message, Table, Tag, Tooltip } from 'antd';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
-import { getResourceIconByUrl, getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -37,7 +37,7 @@ const SORTING_VALUE = {
 };
 
 const getSanitizedQueryFromRequest = request => {
-  const query = request.query.tab === TABS.mediaLibrary ? request.query : {};
+  const query = request.query.tab === TAB.mediaLibrary ? request.query : {};
 
   const pageNumber = Number(query.page);
   const pageSizeNumber = Number(query.pageSize);
@@ -78,7 +78,6 @@ function filterRows(rows, filter) {
 
 function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
   const request = useRequest();
-  const { formatDate } = useDateFormat();
   const { t } = useTranslation('maintenanceMediaLibraryTab');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
@@ -107,7 +106,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TABS.mediaLibrary, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.mediaLibrary, queryParams));
   }, [filter, sorting, pagination]);
 
   useEffect(() => {
@@ -205,49 +204,26 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
     return {};
   };
 
-  const renderType = (_, row) => {
-    const Icon = getResourceIconByUrl({ url: row.url });
-
-    return (
-      <div className="u-cell-type-icon">
-        <Tooltip title={t(`common:resourceType_${row.resourceType}`)}>
-          <Icon />
-        </Tooltip>
-      </div>
-    );
-  };
+  const renderType = (_, row) => (
+    <ResourceTypeCell searchResourceType={row.resourceType} />
+  );
 
   const renderName = (_, row) => {
     return (
-      <ResourceInfoCell
-        url={routes.getMediaLibraryItemUrl(row._id)}
+      <ResourceTitleCell
         title={row.name}
         shortDescription={row.shortDescription}
-        subtext={
-          <div className="MaintenanceDocumentsTab-titleSubtext">
-            <div>
-              <span>{`${t('common:createdOnDateBy', { date: formatDate(row.createdOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(row.createdBy._id)}>{row.createdBy.displayName}</a>
-            </div>
-            <div>
-              <span>{`${t('common:updatedOnDateBy', { date: formatDate(row.updatedOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(row.updatedBy._id)}>{row.updatedBy.displayName}</a>
-            </div>
-          </div>
-        }
+        url={routes.getMediaLibraryItemUrl(row._id)}
+        createdOn={row.createdOn}
+        createdBy={row.createdBy}
+        updatedOn={row.updatedOn}
+        updatedBy={row.updatedBy}
         />
     );
   };
 
   const renderTagsOrLicenses = tagsOrLicenses => (
-    <div>
-      <ItemsExpander
-        className="MaintenanceMediaLibraryTab-cellTags"
-        expandLinkClassName="MaintenanceMediaLibraryTab-cellTagsExpandLink"
-        items={tagsOrLicenses}
-        renderItem={tagOrLicense => <Tag className="Tag" key={tagOrLicense}>{tagOrLicense}</Tag>}
-        />
-    </div>
+    <TagsExpander tags={tagsOrLicenses} />
   );
 
   const renderActions = (_actions, row) => {
@@ -296,7 +272,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
       key: 'tags',
       render: renderTagsOrLicenses,
       responsive: ['lg'],
-      width: '200px'
+      width: '300px'
     },
     {
       title: t('common:licenses'),

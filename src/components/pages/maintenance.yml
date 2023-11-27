@@ -1,4 +1,7 @@
 maintenance:
+  pageSubtitle:
+    en: Exclusive for maintainer roles.
+    de: Ausschließlich für Maintainer-Rollen.
   documentsTabTitle:
     en: Documents
     de: Dokumente

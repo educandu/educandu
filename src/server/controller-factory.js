@@ -22,6 +22,7 @@ import NotificationController from './notification-controller.js';
 import MediaLibraryController from './media-library-controller.js';
 import DocumentInputController from './document-input-controller.js';
 import DocumentCommentController from './document-comment-controller.js';
+import RecentContributionsController from './recent-contributions-controller.js';
 
 const setupControllers = [
   StaticController,
@@ -48,7 +49,8 @@ const pageAndApiControllers = [
   DocumentInputController,
   DocumentCommentController,
   MaintenanceController,
-  NotificationController
+  NotificationController,
+  RecentContributionsController
 ];
 
 const finalMiddlewareControllers = [ErrorController];
