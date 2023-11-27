@@ -53,7 +53,7 @@ function getDocumentRevisionComparisonUrl({ documentId, oldId, newId }) {
   return `${urlUtils.concatParts(comparisonPrefix, documentId)}?${queryString}`;
 }
 
-function getRecentContributionsUrl({ tab, page, pageSize }) {
+function getRecentContributionsUrl({ tab, page, pageSize } = {}) {
   const queryString = urlUtils.composeQueryString({ tab, page, pageSize });
   return queryString ? `${recentContributionsPath}?${queryString}` : recentContributionsPath;
 }

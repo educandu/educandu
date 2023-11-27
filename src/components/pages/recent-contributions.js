@@ -6,8 +6,10 @@ import { BankOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
-import { useDateFormat } from '../locale-context.js';
-import ResourceInfoCell from '../resource-info-cell.js';
+import ResourceTypeCell from '../resource-type-cell.js';
+import ResourceTitleCell from '../resource-title-cell.js';
+import DocumentBadgesCell from '../document-bagdes-cell.js';
+import { SEARCH_RESOURCE_TYPE } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import RecentContributionsApiClient from '../../api-clients/recent-contributions-api-client.js';
 
@@ -32,7 +34,6 @@ const getSanitizedQueryFromRequest = request => {
 
 function RecentContributions({ PageTemplate }) {
   const request = useRequest();
-  const { formatDate } = useDateFormat();
   const { t } = useTranslation('recentContributions');
   const recentContributionsApiClient = useSessionAwareApiClient(RecentContributionsApiClient);
 
@@ -42,7 +43,10 @@ function RecentContributions({ PageTemplate }) {
   const [tab, setTab] = useState(determineTab(request.query.tab));
   const [fetchingDocuments, setFetchingDocuments] = useState(false);
   const [documentsTotalCount, setDocumentsTotalCount] = useState(0);
-  const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
+  const [pagination, setPagination] = useState({
+    page: requestQuery.page,
+    pageSize: requestQuery.pageSize
+  });
 
   useEffect(() => {
     (async () => {
@@ -59,34 +63,46 @@ function RecentContributions({ PageTemplate }) {
     setPagination({ page: current, pageSize });
   };
 
-  const renderDocumentTitle = (_title, docRow) => {
-    return (
-      <ResourceInfoCell
-        title={docRow.title}
-        shortDescription={docRow.shortDescription}
-        subtext={
-          <div className="MaintenanceDocumentsTab-titleSubtext">
-            <div>
-              <span>{`${t('common:createdOnDateBy', { date: formatDate(docRow.createdOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(docRow.createdBy._id)}>{docRow.createdBy.displayName}</a>
-            </div>
-            <div>
-              <span>{`${t('common:updatedOnDateBy', { date: formatDate(docRow.updatedOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(docRow.updatedBy._id)}>{docRow.updatedBy.displayName}</a>
-            </div>
-          </div>
-        }
-        url={routes.getDocUrl({ id: docRow._id, slug: docRow.slug })}
-        />
-    );
-  };
+  const renderDocumentType = () => (
+    <ResourceTypeCell searchResourceType={SEARCH_RESOURCE_TYPE.document} />
+  );
+
+  const renderDocumentTitle = (_title, docRow) => (
+    <ResourceTitleCell
+      title={docRow.title}
+      shortDescription={docRow.shortDescription}
+      url={routes.getDocUrl({ id: docRow._id, slug: docRow.slug })}
+      createdOn={docRow.createdOn}
+      createdBy={docRow.createdBy}
+      updatedOn={docRow.updatedOn}
+      updatedBy={docRow.updatedBy}
+      />
+  );
+
+  const renderDocumentBadges = (_, docRow) => (
+    <DocumentBadgesCell publicContext={docRow.publicContext} />
+  );
 
   const documentTableColumns = [
+    {
+      title: t('common:type'),
+      key: 'type',
+      render: renderDocumentType,
+      width: '60px'
+    },
     {
       title: t('common:title'),
       dataIndex: 'title',
       key: 'title',
       render: renderDocumentTitle
+    },
+    {
+      title: t('common:badges'),
+      dataIndex: 'badges',
+      key: 'badges',
+      render: renderDocumentBadges,
+      responsive: ['md'],
+      width: '140px'
     }
   ];
 
@@ -96,20 +112,22 @@ function RecentContributions({ PageTemplate }) {
       label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <Table
-            rowKey="_id"
-            className="u-table-with-pagination"
-            dataSource={[...documents]}
-            columns={documentTableColumns}
-            pagination={{
-              current: pagination.page,
-              pageSize: pagination.pageSize,
-              total: documentsTotalCount,
-              showSizeChanger: true
-            }}
-            loading={fetchingDocuments}
-            onChange={handleTableChange}
-            />
+          {!!documentsTotalCount && (
+            <Table
+              rowKey="_id"
+              className="u-table-with-pagination"
+              dataSource={[...documents]}
+              columns={documentTableColumns}
+              pagination={{
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: documentsTotalCount,
+                showSizeChanger: true
+              }}
+              loading={fetchingDocuments}
+              onChange={handleTableChange}
+              />
+          )}
         </div>
       )
     },

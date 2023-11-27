@@ -1,26 +1,25 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import { Button, Table } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
-import ItemsExpander from '../items-expander.js';
-import { Button, Table, Tag, Tooltip } from 'antd';
+import TagsExpander from '../tags-expander.js';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
-import { useDateFormat } from '../locale-context.js';
-import ResourceInfoCell from '../resource-info-cell.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
+import ResourceTypeCell from '../resource-type-cell.js';
 import { replaceItem } from '../../utils/array-utils.js';
+import ResourceTitleCell from '../resource-title-cell.js';
+import DocumentBadgesCell from '../document-bagdes-cell.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import DocumentIcon from '../icons/general/document-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
-import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { DOC_VIEW_QUERY_PARAM, SEARCH_RESOURCE_TYPE } from '../../domain/constants.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { InboxOutlined, SafetyCertificateOutlined, TeamOutlined, KeyOutlined } from '@ant-design/icons';
 
 const SORTING_VALUE = {
   title: 'title',
@@ -95,7 +94,6 @@ const getSanitizedQueryFromRequest = request => {
 
 function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
   const request = useRequest();
-  const { formatDate } = useDateFormat();
   const { t } = useTranslation('maintenanceDocumentsTab');
 
   const requestQuery = getSanitizedQueryFromRequest(request);
@@ -238,15 +236,9 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
     return {};
   };
 
-  const renderType = () => {
-    return (
-      <div className="u-cell-type-icon">
-        <Tooltip title={t('common:searchResourceType_document')}>
-          <DocumentIcon />
-        </Tooltip>
-      </div>
-    );
-  };
+  const renderType = () => (
+    <ResourceTypeCell searchResourceType={SEARCH_RESOURCE_TYPE.document} />
+  );
 
   const renderDocumentTitle = (_title, row) => {
     const doc = documents.find(d => d._id === row.documentId);
@@ -255,35 +247,20 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
     }
 
     return (
-      <ResourceInfoCell
+      <ResourceTitleCell
         title={doc.title}
         shortDescription={doc.shortDescription}
-        subtext={
-          <div className="MaintenanceDocumentsTab-titleSubtext">
-            <div>
-              <span>{`${t('common:createdOnDateBy', { date: formatDate(doc.createdOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(doc.createdBy._id)}>{doc.createdBy.displayName}</a>
-            </div>
-            <div>
-              <span>{`${t('common:updatedOnDateBy', { date: formatDate(doc.updatedOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(doc.updatedBy._id)}>{doc.updatedBy.displayName}</a>
-            </div>
-          </div>
-        }
         url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
+        createdOn={doc.createdOn}
+        createdBy={doc.createdBy}
+        updatedOn={doc.updatedOn}
+        updatedBy={doc.updatedBy}
         />
     );
   };
 
   const renderCellTags = (_, row) => (
-    <div>
-      <ItemsExpander
-        className="MaintenanceDocumentsTab-tags"
-        expandLinkClassName="MaintenanceDocumentsTab-tagsExpandLink"
-        items={row.tags}
-        renderItem={tag => <Tag className="Tag" key={tag}>{tag}</Tag>}
-        />
-    </div>
+    <TagsExpander tags={row.tags} />
   );
 
   const renderDocumentActions = (_actions, row) => {
@@ -308,30 +285,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
   };
 
   const renderDocumentBadges = (_, row) => {
-    return (
-      <div className="MaintenanceDocumentsTab-badges">
-        {!!row.archived && (
-          <Tooltip title={t('archivedDocumentBadge')}>
-            <InboxOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
-        {!!row.verified && (
-          <Tooltip title={t('common:verifiedDocumentBadge')}>
-            <SafetyCertificateOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
-        {!!row.protected && (
-          <Tooltip title={t('protectedDocumentBadge')}>
-            <KeyOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
-        {!!row.allowedEditors.length && (
-          <Tooltip title={t('allowedEditorsBadge')}>
-            <TeamOutlined className="u-large-badge" />
-          </Tooltip>
-        )}
-      </div>
-    );
+    return <DocumentBadgesCell publicContext={row} />;
   };
 
   const columns = [
@@ -355,7 +309,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
       width: '300px'
     },
     {
-      title: t('badges'),
+      title: t('common:badges'),
       dataIndex: 'badges',
       key: 'badges',
       render: renderDocumentBadges,

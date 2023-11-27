@@ -137,7 +137,7 @@ class DocumentStore {
 
     return {
       documents: aggregatedArray[0]?.data || [],
-      totalCount: aggregatedArray[0]?.metadata.totalCount || 0
+      totalCount: aggregatedArray[0]?.metadata[0]?.totalCount || 0
     };
   }
 

@@ -1,24 +1,23 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import { Radio, Table, Tag } from 'antd';
 import SearchBar from '../search-bar.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import TagSelector from '../tag-selector.js';
+import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
-import ItemsExpander from '../items-expander.js';
-import { Radio, Table, Tag, Tooltip } from 'antd';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
+import ResourceTypeCell from '../resource-type-cell.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import DocumentIcon from '../icons/general/document-icon.js';
 import { SEARCH_RESOURCE_TYPE } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
-import { getResourceIconByResourceType } from '../../utils/resource-utils.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -155,23 +154,9 @@ function Search({ PageTemplate }) {
   const handleResultTableChange = ({ current, pageSize }) => setPagination({ page: current, pageSize });
   const handleSearcheResourceTypeChange = event => setSearchResourceType(event.target.value);
 
-  const renderType = (_, row) => {
-    const Icon = row.searchResourceType === SEARCH_RESOURCE_TYPE.document
-      ? DocumentIcon
-      : getResourceIconByResourceType({ resourceType: row.searchResourceType });
-
-    const tooltip = row.searchResourceType === SEARCH_RESOURCE_TYPE.document
-      ? t('common:searchResourceType_document')
-      : t(`common:resourceType_${row.searchResourceType}`);
-
-    return (
-      <div className="u-cell-type-icon">
-        <Tooltip title={tooltip}>
-          <Icon />
-        </Tooltip>
-      </div>
-    );
-  };
+  const renderType = (_, row) => (
+    <ResourceTypeCell searchResourceType={row.searchResourceType} />
+  );
 
   const renderTitle = (_, row) => {
     const subtext = [
@@ -194,14 +179,7 @@ function Search({ PageTemplate }) {
   };
 
   const renderCellTags = (_, row) => (
-    <div>
-      <ItemsExpander
-        className="SearchPage-cellTags"
-        expandLinkClassName="SearchPage-cellTagsExpandLink"
-        items={row.tags}
-        renderItem={tag => <Tag className="Tag" key={tag}>{tag}</Tag>}
-        />
-    </div>
+    <TagsExpander tags={row.tags} />
   );
 
   const renderSelectedTags = () => selectedTags.map(tag => (

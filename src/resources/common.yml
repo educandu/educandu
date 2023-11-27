@@ -693,3 +693,6 @@ common:
   dashboardTab_settings:
     en: Settings
     de: Einstellungen
+  badges:
+    en: Badges
+    de: Kennzeichen

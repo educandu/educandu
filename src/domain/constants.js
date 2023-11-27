@@ -105,6 +105,7 @@ export const MEDIA_SEARCH_RESOURCE_TYPE = {
   video: RESOURCE_TYPE.video,
   image: RESOURCE_TYPE.image,
   pdf: RESOURCE_TYPE.pdf,
+  unknown: RESOURCE_TYPE.unknown,
   any: 'any'
 };
 
