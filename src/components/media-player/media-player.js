@@ -7,6 +7,7 @@ import AudioIcon from '../icons/general/audio-icon.js';
 import HttpClient from '../../api-clients/http-client.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { remountOnPropChanges } from '../../ui/react-helper.js';
+import { useIsFullscreenSupported } from '../request-context.js';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
@@ -84,6 +85,8 @@ function MediaPlayer({
   const mediaPlayerInstanceId = useId();
   const httpClient = useService(HttpClient);
   const clientConfig = useService(ClientConfig);
+  const isFullscreenSupported = useIsFullscreenSupported();
+
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loopMedia, setLoopMedia] = useState(false);
@@ -229,7 +232,7 @@ function MediaPlayer({
 
   const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
   const noScreen = screenMode === MEDIA_SCREEN_MODE.none;
-  const canEnterFullscreen = screenMode !== MEDIA_SCREEN_MODE.none && allowFullscreen;
+  const canEnterFullscreen = isFullscreenSupported && allowFullscreen && screenMode !== MEDIA_SCREEN_MODE.none;
 
   const mainClasses = classNames(
     'MediaPlayer',
