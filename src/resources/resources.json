@@ -3111,8 +3111,12 @@
       "de": "Sie können eine CSV-Datei in diese Box ziehen, um Segmente zu importieren"
     },
     "startPlaybackFromHere": {
-      "en": "Play from this part",
-      "de": "Ab diesem Teil abspeilen"
+      "en": "Play from this segment",
+      "de": "Ab diesem Segment abspielen"
+    },
+    "chapterPointerTooltip": {
+      "en": "Display segment annotation",
+      "de": "Segment-Anmerkung anzeigen"
     }
   },
   "mediaSlideshow": {

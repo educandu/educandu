@@ -16,6 +16,8 @@ function MediaAnalysisDisplay({ content }) {
   const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [viewingChapterIndex, setViewingChapterIndex] = useState(0);
+  const [chapterIndexRequestedToView, setChapterIndexRequestedToView] = useState(-1);
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
@@ -50,7 +52,9 @@ function MediaAnalysisDisplay({ content }) {
     setAreTextsExpanded(prevValue => !prevValue);
   };
 
-  const handleChapterClick = chapterIndex => {
+  const handleChapterSegmentClick = chapterIndex => {
+    setChapterIndexRequestedToView(chapterIndex);
+
     if (isPlaying) {
       multitrackMediaPlayerRef.current.seekToPart(chapterIndex);
     } else {
@@ -59,27 +63,41 @@ function MediaAnalysisDisplay({ content }) {
     }
   };
 
-  const determineChapterWidthInPercentage = chapterIndex => {
+  const handlePlayingPartIndexChange = index => {
+    if (chapterIndexRequestedToView >= 0) {
+      // wait until parts border is crossed to desired part,
+      // as sometimes previous part index triggers the event right before the desired part does as well
+      if (chapterIndexRequestedToView === index) {
+        setViewingChapterIndex(chapterIndexRequestedToView);
+        setChapterIndexRequestedToView(-1);
+      }
+    } else if (index >= 0) {
+      setViewingChapterIndex(index);
+    }
+  };
+
+  const determineChapterSegmentWidthInPercentage = chapterIndex => {
     const startPosition = chapters[chapterIndex]?.startPosition || 0;
     const nextStartPosition = chapters[chapterIndex + 1]?.startPosition || 1;
     return (nextStartPosition - startPosition) * 100;
   };
 
-  const renderChapterTitle = (chapter, index) => {
-    const widthInPercentage = determineChapterWidthInPercentage(index);
+  const renderChapterSegment = (chapter, index) => {
+    const widthInPercentage = determineChapterSegmentWidthInPercentage(index);
+
     const title = (
       <div
         key={chapter.key}
-        className={classNames({
-          'MediaAnalysisDisplay-chapterTitle': true,
-          'MediaAnalysisDisplay-chapterTitle--interactive': canRenderMediaPlayer
-        })}
+        className={classNames(
+          'MediaAnalysisDisplay-chapterSegment',
+          { 'MediaAnalysisDisplay-chapterSegment--interactive': canRenderMediaPlayer }
+        )}
         style={{
           width: `${widthInPercentage}%`,
           backgroundColor: `${chapter.color}`,
           color: `${getContrastColor(chapter.color)}`
         }}
-        onClick={canRenderMediaPlayer ? () => handleChapterClick(index) : null}
+        onClick={canRenderMediaPlayer ? () => handleChapterSegmentClick(index) : null}
         >
         {chapter.title}
       </div>
@@ -89,35 +107,67 @@ function MediaAnalysisDisplay({ content }) {
       : title;
   };
 
-  const renderChapterText = (chapter, index) => {
-    const widthInPercentage = determineChapterWidthInPercentage(index);
+  const renderChapterPointerTop = (chapter, index) => {
+    const widthInPercentage = determineChapterSegmentWidthInPercentage(index);
+
+    return (
+      <Tooltip key={chapter.key} title={t('chapterPointerTooltip')} placement="bottom">
+        <div
+          style={{ width: `${widthInPercentage}%` }}
+          className={classNames('MediaAnalysisDisplay-chapterPointerTop', { 'is-visible': index === viewingChapterIndex })}
+          onClick={() => setViewingChapterIndex(index)}
+          />
+      </Tooltip>
+    );
+  };
+
+  const renderChapterPointerBottom = (chapter, index) => {
+    const widthInPercentage = determineChapterSegmentWidthInPercentage(index);
+
     return (
       <div
         key={chapter.key}
         style={{ width: `${widthInPercentage}%` }}
-        className="MediaAnalysisDisplay-chapterText"
-        >
-        <Markdown>{chapter.text}</Markdown>
-      </div>
+        className={classNames('MediaAnalysisDisplay-chapterPointerBottom', { 'is-visible': index === viewingChapterIndex })}
+        />
     );
   };
 
   const renderChapters = () => {
-    const chapterTextsAreSet = chapters.some(chapter => chapter.text);
-
     return (
       <div className="MediaAnalysisDisplay-chapters">
-        <div className="MediaAnalysisDisplay-chapterTitles">
-          {chapters.map(renderChapterTitle)}
+        <div className="MediaAnalysisDisplay-chapterSegments">
+          {chapters.map(renderChapterSegment)}
         </div>
-        {!!chapterTextsAreSet && (
+
+        {chapters.some(chapter => chapter.text) && (
           <Fragment>
-            <div className={classNames('MediaAnalysisDisplay-chapterTexts', { 'is-expanded': areTextsExpanded })}>
-              {chapters.map(renderChapterText)}
+            <div className="MediaAnalysisDisplay-chapterPointersTop">
+              {chapters.map(renderChapterPointerTop)}
             </div>
-            <a onClick={handleChaptersTextsToggleClick} className="MediaAnalysisDisplay-chaptersTextsToggle">
-              {areTextsExpanded ? t('common:less') : t('common:more')}
-            </a>
+            <div className="MediaAnalysisDisplay-viewedChapterInfoContainer">
+              <div className="MediaAnalysisDisplay-viewedChapterInfoContent">
+                {chapters.map((chapter, index) => (
+                  <div key={chapter.key} className={classNames('MediaAnalysisDisplay-viewedChapterInfo', { 'is-visible': index === viewingChapterIndex })}>
+                    <div className="MediaAnalysisDisplay-viewedChapterInfoTitle">
+                      {chapter.title}
+                    </div>
+                    <Markdown className={classNames('MediaAnalysisDisplay-viewedChapterInfoText', { 'is-expanded': areTextsExpanded })}>
+                      {chapter.text}
+                    </Markdown>
+                  </div>
+                ))}
+              </div>
+              <a
+                onClick={handleChaptersTextsToggleClick}
+                className="MediaAnalysisDisplay-viewedChapterInfoExpand"
+                >
+                {areTextsExpanded ? t('common:less') : t('common:more')}
+              </a>
+            </div>
+            <div className="MediaAnalysisDisplay-chapterPointersBottom">
+              {chapters.map(renderChapterPointerBottom)}
+            </div>
           </Fragment>
         )}
       </div>
@@ -144,6 +194,7 @@ function MediaAnalysisDisplay({ content }) {
               onEnded={handleEnded}
               onPause={handlePause}
               onPlay={handlePlay}
+              onPlayingPartIndexChange={handlePlayingPartIndexChange}
               />
             <CopyrightNotice value={combinedCopyrightNotice} />
           </Fragment>

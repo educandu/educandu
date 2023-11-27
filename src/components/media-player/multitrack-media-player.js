@@ -40,7 +40,8 @@ function MultitrackMediaPlayer({
   volumePresets,
   onEnded,
   onPause,
-  onPlay
+  onPlay,
+  onPlayingPartIndexChange
 }) {
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -317,6 +318,7 @@ function MultitrackMediaPlayer({
           onExitFullscreen={() => trackState.isMainTrack ? handleExitFullscreen() : null}
           onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
           onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
+          onPlayingPartIndexChange={partIndex => trackState.isMainTrack ? onPlayingPartIndexChange(partIndex) : null}
           onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
           onReady={() => handleReady(trackState.key)}
           onSeekEnd={() => trackState.isMainTrack ? handleMainTrackSeekEnd() : null}
@@ -355,7 +357,8 @@ MultitrackMediaPlayer.propTypes = {
   })).isRequired,
   onEnded: PropTypes.func,
   onPause: PropTypes.func,
-  onPlay: PropTypes.func
+  onPlay: PropTypes.func,
+  onPlayingPartIndexChange: PropTypes.func
 };
 
 MultitrackMediaPlayer.defaultProps = {
@@ -374,7 +377,8 @@ MultitrackMediaPlayer.defaultProps = {
   showVideo: true,
   onEnded: () => {},
   onPause: () => {},
-  onPlay: () => {}
+  onPlay: () => {},
+  onPlayingPartIndexChange: () => {}
 };
 
 export default MultitrackMediaPlayer;
