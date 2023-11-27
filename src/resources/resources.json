@@ -3102,11 +3102,11 @@
     },
     "startPlaybackFromHere": {
       "en": "Play from this segment",
-      "de": "Ab diesem Segment abspeilen"
+      "de": "Ab diesem Segment abspielen"
     },
     "chapterPointerTooltip": {
-      "en": "View segment text",
-      "de": "Segment-Text sehen"
+      "en": "Display segment annotation",
+      "de": "Segment-Anmerkung anzeigen"
     }
   },
   "mediaSlideshow": {
