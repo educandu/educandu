@@ -35,7 +35,8 @@ class AudioInfo {
       sourceUrl: '',
       copyrightNotice: '',
       playbackRange: [0, 1],
-      initialVolume: 1
+      initialVolume: 1,
+      width: 100
     };
   }
 
@@ -44,7 +45,8 @@ class AudioInfo {
       sourceUrl: joi.string().allow('').required(),
       copyrightNotice: joi.string().allow('').required(),
       playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
-      initialVolume: joi.number().min(0).max(1).required()
+      initialVolume: joi.number().min(0).max(1).required(),
+      width: joi.number().min(0).max(100).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

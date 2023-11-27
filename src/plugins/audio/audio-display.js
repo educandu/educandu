@@ -15,7 +15,7 @@ function AudioDisplay({ content }) {
 
   return (
     <div className="AudioDisplay">
-      <div className="AudioDisplay-content">
+      <div className={`AudioDisplay-content u-width-${content.width}`}>
         {!!url && (
           <MediaPlayer
             allowDownload={allowDownload}
