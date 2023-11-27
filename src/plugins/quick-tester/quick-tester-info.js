@@ -45,7 +45,8 @@ class QuickTesterInfo {
       title: '',
       teaser: '',
       tests: [this.getDefaultTest()],
-      testsOrder: TESTS_ORDER.given
+      testsOrder: TESTS_ORDER.given,
+      width: 100
     };
   }
 
@@ -58,7 +59,8 @@ class QuickTesterInfo {
         question: joi.string().allow('').required(),
         answer: joi.string().allow('').required()
       })).unique('key').required(),
-      testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required()
+      testsOrder: joi.string().valid(...Object.values(TESTS_ORDER)).required(),
+      width: joi.number().min(0).max(100).required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

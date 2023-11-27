@@ -974,7 +974,8 @@ describe('document-service', () => {
             sourceUrl: 'cdn://media-library/audio-1.mp3',
             copyrightNotice: 'Unmodified text',
             playbackRange: [0, 1],
-            initialVolume: 1
+            initialVolume: 1,
+            width: 100
           }
         };
 
@@ -986,7 +987,8 @@ describe('document-service', () => {
             sourceUrl: 'cdn://media-library/audio-2.mp3',
             copyrightNotice: 'Initial text',
             playbackRange: [0, 1],
-            initialVolume: 1
+            initialVolume: 1,
+            width: 100
           }
         };
 

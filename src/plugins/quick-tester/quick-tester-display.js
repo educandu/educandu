@@ -63,49 +63,51 @@ function QuickTesterDisplay({ content }) {
 
   return (
     <div className="QuickTesterDisplay">
-      <Collapsible
-        title={<Markdown inline>{content.teaser}</Markdown>}
-        isCollapsible
-        isCollapsed
-        icon={<QuickTesterIcon />}
-        >
-        <div className="QuickTesterDisplay-content">
-          <Markdown tag="div" inline>{content.title}</Markdown>
-          {testCards.length > 1 && (
-            <div className="QuickTesterDisplay-controlPanel">
-              <div className="QuickTesterDisplay-cards">
-                <CardSelector
-                  cards={testCards}
-                  selectedCardIndex={currentTestIndex}
-                  visitedCardIndices={viewedTestIndices}
-                  onCardSelected={handleTestCardSelected}
-                  treatSelectedCardAsVisited
+      <div className={`QuickTesterDisplay-content u-width-${content.width}`}>
+        <Collapsible
+          title={<Markdown inline>{content.teaser}</Markdown>}
+          isCollapsible
+          isCollapsed
+          icon={<QuickTesterIcon />}
+          >
+          <div className="QuickTesterDisplay-content">
+            <Markdown tag="div" inline>{content.title}</Markdown>
+            {testCards.length > 1 && (
+              <div className="QuickTesterDisplay-controlPanel">
+                <div className="QuickTesterDisplay-cards">
+                  <CardSelector
+                    cards={testCards}
+                    selectedCardIndex={currentTestIndex}
+                    visitedCardIndices={viewedTestIndices}
+                    onCardSelected={handleTestCardSelected}
+                    treatSelectedCardAsVisited
+                    />
+                  {content.testsOrder === TESTS_ORDER.random && (
+                    <Tooltip title={t('common:randomizedTests')}>
+                      <SwapOutlined className="QuickTesterDisplay-randomTestsIcon" />
+                    </Tooltip>
+                  )}
+                </div>
+                <IterationPanel
+                  itemCount={testCards.length}
+                  selectedItemIndex={currentTestIndex}
+                  onNextClick={handleNextTestClick}
+                  onPreviousClick={handlePreviousTestClick}
+                  onResetClick={handleResetTestsClick}
                   />
-                {content.testsOrder === TESTS_ORDER.random && (
-                  <Tooltip title={t('common:randomizedTests')}>
-                    <SwapOutlined className="QuickTesterDisplay-randomTestsIcon" />
-                  </Tooltip>
-                )}
               </div>
-              <IterationPanel
-                itemCount={testCards.length}
-                selectedItemIndex={currentTestIndex}
-                onNextClick={handleNextTestClick}
-                onPreviousClick={handlePreviousTestClick}
-                onResetClick={handleResetTestsClick}
-                />
+            )}
+            <div className="QuickTesterDisplay-test">
+              {!isCurrentTestAnswerVisible && <Markdown>{tests?.[currentTestIndex]?.question}</Markdown>}
+              {!!isCurrentTestAnswerVisible && <Markdown>{tests?.[currentTestIndex]?.answer}</Markdown>}
             </div>
-          )}
-          <div className="QuickTesterDisplay-test">
-            {!isCurrentTestAnswerVisible && <Markdown>{tests?.[currentTestIndex]?.question}</Markdown>}
-            {!!isCurrentTestAnswerVisible && <Markdown>{tests?.[currentTestIndex]?.answer}</Markdown>}
+            <RadioGroup className="QuickTesterDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
+              <RadioButton className="QuickTesterDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
+              <RadioButton className="QuickTesterDisplay-radioButton" value>{t('common:answer')}</RadioButton>
+            </RadioGroup>
           </div>
-          <RadioGroup className="QuickTesterDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
-            <RadioButton className="QuickTesterDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
-            <RadioButton className="QuickTesterDisplay-radioButton" value>{t('common:answer')}</RadioButton>
-          </RadioGroup>
-        </div>
-      </Collapsible>
+        </Collapsible>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { Form, Button, Radio } from 'antd';
+import Info from '../../components/info.js';
 import { TESTS_ORDER } from './constants.js';
 import React, { useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +10,7 @@ import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { swapItemsAt, removeItemAt, moveItem } from '../../utils/array-utils.js';
 
@@ -21,20 +23,24 @@ function QuickTesterEditor({ content, onContentChanged }) {
   const { t } = useTranslation('quickTester');
   const quickTesterInfo = useService(QuickTesterInfo);
 
-  const { tests, testsOrder, teaser, title } = content;
+  const { tests, testsOrder, teaser, title, width } = content;
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
   };
 
-  const handleTeaserValueChanged = event => {
+  const handleTeaserChanged = event => {
     const { value } = event.target;
     changeContent({ teaser: value });
   };
 
-  const handleTitleValueChanged = event => {
+  const handleTitleChanged = event => {
     const { value } = event.target;
     changeContent({ title: value });
+  };
+
+  const handleWidthChanged = newValue => {
+    changeContent({ width: newValue });
   };
 
   const handleInputQuestionChanged = (key, newValue) => {
@@ -121,16 +127,22 @@ function QuickTesterEditor({ content, onContentChanged }) {
     <div className="QuickTesterEditor">
       <Form layout="horizontal" labelAlign="left">
         <FormItem label={`${t('teaser')}:`} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput inline value={teaser} onChange={handleTeaserValueChanged} />
+          <MarkdownInput inline value={teaser} onChange={handleTeaserChanged} />
         </FormItem>
         <FormItem label={`${t('common:title')}:`} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput inline value={title} onChange={handleTitleValueChanged} />
+          <MarkdownInput inline value={title} onChange={handleTitleChanged} />
         </FormItem>
         <FormItem label={t('testsOrder')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={testsOrder} onChange={handleTestsOrderChanged}>
             <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
             <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
           </RadioGroup>
+        </FormItem>
+        <FormItem
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+          {...FORM_ITEM_LAYOUT}
+          >
+          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
       </Form>
       <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropPanelItems} onItemMove={handleMoveTest} />
