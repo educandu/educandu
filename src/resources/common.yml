@@ -696,3 +696,15 @@ common:
   badges:
     en: Badges
     de: Kennzeichen
+  role_user:
+    en: User
+    de: Benutzer
+  role_accredited-author:
+    en: Accred. author
+    de: Akkred. Autor
+  role_maintainer:
+    en: Maintainer
+    de: Maintainer
+  role_admin:
+    en: Administrator
+    de: Administrator

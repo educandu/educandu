@@ -26,6 +26,15 @@
   filter: grayscale(100%);
 }
 
+@keyframes spin {
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
+}
+
+.u-spin {
+  animation: spin 2s infinite linear;
+}
+
 .u-danger {
   color: @edu-error-color;
 }

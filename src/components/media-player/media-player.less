@@ -4,9 +4,7 @@
   position: relative;
 
   &.MediaPlayer--noScreen {
-    padding: 15px;
-    border-radius: @edu-border-radius-base;
-    background-color: @edu-background-color-light;
+    .m-media-player-no-screen;
   }
 
   &.MediaPlayer--hidden {
@@ -25,7 +23,7 @@
 .MediaPlayer-player {
   position: relative;
 
-  --plyr-video-background: @edu-white;
+  --plyr-video-background: transparent;
   cursor: pointer;
   margin: 0 auto;
 

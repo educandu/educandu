@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'antd';
+import { Checkbox, Form } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import AbcNotation from '../../components/abc-notation.js';
@@ -12,7 +12,7 @@ import { FORM_ITEM_LAYOUT, FORM_ITEM_LAYOUT_VERTICAL } from '../../domain/consta
 
 function AbcNotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('abcNotation');
-  const { abcCode, width, copyrightNotice } = content;
+  const { abcCode, playMidi, width, copyrightNotice } = content;
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -21,6 +21,11 @@ function AbcNotationEditor({ content, onContentChanged }) {
   const handleCurrentAbcCodeChanged = event => {
     const newValue = event.target.value;
     changeContent({ abcCode: newValue });
+  };
+
+  const handlePlayMidiChanged = event => {
+    const { checked } = event.target;
+    changeContent({ playMidi: checked });
   };
 
   const handleWidthChanged = newValue => {
@@ -40,6 +45,9 @@ function AbcNotationEditor({ content, onContentChanged }) {
             input={<NeverScrollingTextArea minRows={6} value={abcCode} onChange={handleCurrentAbcCodeChanged} />}
             preview={<AbcNotation abcCode={abcCode} />}
             />
+        </Form.Item>
+        <Form.Item label={t('playMidi')} {...FORM_ITEM_LAYOUT}>
+          <Checkbox checked={playMidi} onChange={handlePlayMidiChanged} />
         </Form.Item>
         <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput value={copyrightNotice} onChange={handleCurrentCopyrightNoticeChanged} />

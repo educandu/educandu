@@ -7,12 +7,12 @@ import EarTrainingInfo from './ear-training-info.js';
 import UrlInput from '../../components/url-input.js';
 import ItemPanel from '../../components/item-panel.js';
 import React, { Fragment, useId, useRef } from 'react';
-import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import AbcNotation from '../../components/abc-notation.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { SOUND_MODE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
@@ -27,7 +27,6 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-const DEFAULT_ABC_CODE = 'X:1';
 function EarTrainingEditor({ content, onContentChanged }) {
   const droppableIdRef = useRef(useId());
   const { t } = useTranslation('earTraining');
@@ -92,15 +91,51 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
   const handleTestModeChange = (event, index) => {
     const { value } = event.target;
+
+    const oldTest = tests[index];
+    const newTest = {
+      ...earTrainingInfo.getDefaultTest(),
+      key: oldTest.key,
+      testMode: value,
+      soundMode: oldTest.soundMode,
+      sourceSound: cloneDeep(oldTest.sourceSound),
+      abcMidiSound: cloneDeep(oldTest.abcMidiSound)
+    };
+
+    if (newTest.testMode !== TEST_MODE.abcCode && newTest.soundMode === SOUND_MODE.abcMidi) {
+      newTest.soundMode = SOUND_MODE.source;
+      newTest.sourceSound = earTrainingInfo.getDefaultSourceSound();
+      newTest.abcMidiSound = earTrainingInfo.getDefaultAbcMidiSound();
+    }
+
     const newTests = cloneDeep(tests);
+    newTests[index] = newTest;
+    changeContent({ tests: newTests });
+  };
 
-    newTests[index].mode = value;
-    newTests[index].sound = earTrainingInfo.getDefaultSound();
-    newTests[index].questionImage = earTrainingInfo.getDefaultImage();
-    newTests[index].answerImage = earTrainingInfo.getDefaultImage();
-    newTests[index].questionAbcCode = value === TEST_MODE.abcCode ? DEFAULT_ABC_CODE : '';
-    newTests[index].answerAbcCode = value === TEST_MODE.abcCode ? DEFAULT_ABC_CODE : '';
+  const handleSoundModeChange = (event, index) => {
+    const { value } = event.target;
 
+    const oldTest = tests[index];
+    const newTest = cloneDeep(oldTest);
+
+    switch (value) {
+      case SOUND_MODE.abcMidi:
+        newTest.soundMode = SOUND_MODE.abcMidi;
+        newTest.sourceSound = earTrainingInfo.getDefaultSourceSound();
+        newTest.abcMidiSound = { ...earTrainingInfo.getDefaultAbcMidiSound(), initialVolume: oldTest.sourceSound.initialVolume };
+        break;
+      case SOUND_MODE.source:
+        newTest.soundMode = SOUND_MODE.source;
+        newTest.sourceSound = { ...earTrainingInfo.getDefaultSourceSound(), initialVolume: oldTest.abcMidiSound.initialVolume };
+        newTest.abcMidiSound = earTrainingInfo.getDefaultAbcMidiSound();
+        break;
+      default:
+        throw new Error(`Invalid sound mode '${value}'`);
+    }
+
+    const newTests = cloneDeep(tests);
+    newTests[index] = newTest;
     changeContent({ tests: newTests });
   };
 
@@ -132,37 +167,43 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleSoundSourceUrlChange = (value, metadata, index) => {
+  const handleSourceSoundSourceUrlChange = (value, metadata, index) => {
     const newTests = cloneDeep(tests);
-    newTests[index].sound.sourceUrl = value;
-    newTests[index].sound.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
+    newTests[index].sourceSound.sourceUrl = value;
+    newTests[index].sourceSound.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
     changeContent({ tests: newTests });
   };
 
-  const handleSoundPlaybackRangeChange = (value, index) => {
+  const handleSourceSoundPlaybackRangeChange = (value, index) => {
     const newTests = cloneDeep(tests);
-    newTests[index].sound.playbackRange = value;
+    newTests[index].sourceSound.playbackRange = value;
     changeContent({ tests: newTests });
   };
 
-  const handleSoundCopyrightNoticeChange = (event, index) => {
+  const handleSourceSoundCopyrightNoticeChange = (event, index) => {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
-    newTests[index].sound.copyrightNotice = value;
+    newTests[index].sourceSound.copyrightNotice = value;
     changeContent({ tests: newTests });
   };
 
-  const handleSoundInitialVolumeChange = (value, index) => {
+  const handleSourceSoundInitialVolumeChange = (value, index) => {
     const newTests = cloneDeep(tests);
-    newTests[index].sound.initialVolume = value;
+    newTests[index].sourceSound.initialVolume = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleAbcMidiSoundInitialVolumeChange = (value, index) => {
+    const newTests = cloneDeep(tests);
+    newTests[index].abcMidiSound.initialVolume = value;
     changeContent({ tests: newTests });
   };
 
   const renderCopyrightNoticeInput = (index, value, handleValueChange) => {
     return (
-      <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
+      <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
         <MarkdownInput debounced value={value} onChange={event => handleValueChange(event, index)} />
-      </Form.Item>
+      </FormItem>
     );
   };
 
@@ -181,13 +222,13 @@ function EarTrainingEditor({ content, onContentChanged }) {
         onDelete={handleDeleteTest}
         >
         <FormItem label={t('testMode')} {...FORM_ITEM_LAYOUT}>
-          <RadioGroup value={test.mode} onChange={event => handleTestModeChange(event, index)}>
+          <RadioGroup value={test.testMode} onChange={event => handleTestModeChange(event, index)}>
             <RadioButton value={TEST_MODE.image}>{t('testModeImage')}</RadioButton>
             <RadioButton value={TEST_MODE.abcCode}>{t('testModeAbcCode')}</RadioButton>
           </RadioGroup>
         </FormItem>
 
-        {test.mode === TEST_MODE.image && (
+        {test.testMode === TEST_MODE.image && (
           <Fragment>
             <Divider plain>{t('testQuestion')}</Divider>
             <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
@@ -211,10 +252,10 @@ function EarTrainingEditor({ content, onContentChanged }) {
           </Fragment>
         )}
 
-        {test.mode === TEST_MODE.abcCode && (
+        {test.testMode === TEST_MODE.abcCode && (
           <Fragment>
             <Divider plain>{t('testQuestion')}</Divider>
-            <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
+            <FormItem label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
               <InputAndPreview
                 input={
                   <NeverScrollingTextArea
@@ -226,9 +267,9 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 }
                 preview={<AbcNotation abcCode={test.questionAbcCode} />}
                 />
-            </Form.Item>
+            </FormItem>
             <Divider plain>{t('testAnswer')}</Divider>
-            <Form.Item label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
+            <FormItem label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
               <InputAndPreview
                 input={
                   <NeverScrollingTextArea
@@ -240,32 +281,53 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 }
                 preview={<AbcNotation abcCode={test.answerAbcCode} />}
                 />
-            </Form.Item>
+            </FormItem>
           </Fragment>
         )}
 
         <Divider plain>{t('audio')}</Divider>
 
-        <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
-          <UrlInput value={test.sound.sourceUrl} onChange={(value, metadata) => handleSoundSourceUrlChange(value, metadata, index)} />
-        </FormItem>
-        <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
-          <div className="u-input-and-button">
-            <MediaRangeReadonlyInput sourceUrl={test.sound.sourceUrl} playbackRange={test.sound.playbackRange} />
-            <MediaRangeSelector sourceUrl={test.sound.sourceUrl} range={test.sound.playbackRange} onRangeChange={value => handleSoundPlaybackRangeChange(value, index)} />
-          </div>
+        <FormItem label={t('soundMode')} {...FORM_ITEM_LAYOUT}>
+          <RadioGroup value={test.soundMode} onChange={event => handleSoundModeChange(event, index)}>
+            <RadioButton value={SOUND_MODE.source}>{t('soundModeSource')}</RadioButton>
+            <RadioButton value={SOUND_MODE.abcMidi} disabled={test.testMode !== TEST_MODE.abcCode}>{t('soundModeAbcMidi')}</RadioButton>
+          </RadioGroup>
         </FormItem>
 
-        {renderCopyrightNoticeInput(index, test.sound.copyrightNotice, handleSoundCopyrightNoticeChange)}
+        {test.soundMode === SOUND_MODE.source && (
+          <Fragment>
+            <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
+              <UrlInput value={test.sourceSound.sourceUrl} onChange={(value, metadata) => handleSourceSoundSourceUrlChange(value, metadata, index)} />
+            </FormItem>
+            <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
+              <div className="u-input-and-button">
+                <MediaRangeReadonlyInput sourceUrl={test.sourceSound.sourceUrl} playbackRange={test.sourceSound.playbackRange} />
+                <MediaRangeSelector sourceUrl={test.sourceSound.sourceUrl} range={test.sourceSound.playbackRange} onRangeChange={value => handleSourceSoundPlaybackRangeChange(value, index)} />
+              </div>
+            </FormItem>
+            {renderCopyrightNoticeInput(index, test.sourceSound.copyrightNotice, handleSourceSoundCopyrightNoticeChange)}
+            <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+              <MediaVolumeSlider
+                value={test.sourceSound.initialVolume}
+                useValueLabel
+                useButton={false}
+                onChange={value => handleSourceSoundInitialVolumeChange(value, index)}
+                />
+            </FormItem>
+          </Fragment>
+        )}
 
-        <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
-          <MediaVolumeSlider
-            value={test.sound.initialVolume}
-            useValueLabel
-            useButton={false}
-            onChange={value => handleSoundInitialVolumeChange(value, index)}
-            />
-        </FormItem>
+        {test.soundMode === SOUND_MODE.abcMidi && (
+          <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
+            <MediaVolumeSlider
+              value={test.abcMidiSound.initialVolume}
+              useValueLabel
+              useButton={false}
+              onChange={value => handleAbcMidiSoundInitialVolumeChange(value, index)}
+              />
+          </FormItem>
+        )}
+
       </ItemPanel>
     );
   };
@@ -281,12 +343,12 @@ function EarTrainingEditor({ content, onContentChanged }) {
         <FormItem label={t('common:title')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={content.title} onChange={handleTitleChanged} />
         </FormItem>
-        <Form.Item
+        <FormItem
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={content.width} onChange={handleWidthChanged} />
-        </Form.Item>
+        </FormItem>
         <FormItem label={t('testsOrder')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={content.testsOrder} onChange={handleTestsOrderChange}>
             <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>

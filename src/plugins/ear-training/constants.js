@@ -7,3 +7,8 @@ export const TEST_MODE = {
   image: 'image',
   abcCode: 'abcCode'
 };
+
+export const SOUND_MODE = {
+  source: 'source',
+  abcMidi: 'abcMidi'
+};

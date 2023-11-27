@@ -1,6 +1,7 @@
 import abcjs from 'abcjs';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
+import { useStableCallback } from '../ui/hooks.js';
 
 const abcOptions = {
   paddingtop: 0,
@@ -11,12 +12,13 @@ const abcOptions = {
   responsive: 'resize'
 };
 
-function AbcNotation({ abcCode }) {
+function AbcNotation({ abcCode, onRender }) {
   const abcContainerRef = useRef();
+  const onRenderStable = useStableCallback(onRender);
 
   useEffect(() => {
-    abcjs.renderAbc(abcContainerRef.current, abcCode, abcOptions);
-  }, [abcContainerRef, abcCode]);
+    onRenderStable(abcjs.renderAbc(abcContainerRef.current, abcCode, abcOptions));
+  }, [abcCode, abcContainerRef, onRenderStable]);
 
   return (
     <div className="AbcNotation">
@@ -26,11 +28,13 @@ function AbcNotation({ abcCode }) {
 }
 
 AbcNotation.propTypes = {
-  abcCode: PropTypes.string
+  abcCode: PropTypes.string,
+  onRender: PropTypes.func
 };
 
 AbcNotation.defaultProps = {
-  abcCode: ''
+  abcCode: '',
+  onRender: () => {}
 };
 
 export default AbcNotation;

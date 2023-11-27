@@ -1,4 +1,7 @@
 dashboard:
+  rolePrefix:
+    en: "Your role:"
+    de: "Deine Rolle:"
   tabsHelpLinkText:
     en: Find out more?
     de: Mehr entdecken?

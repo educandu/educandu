@@ -3,7 +3,7 @@ import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
-import { TESTS_ORDER, TEST_MODE } from './constants.js';
+import { SOUND_MODE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
@@ -39,7 +39,7 @@ class EarTrainingInfo {
     };
   }
 
-  getDefaultSound() {
+  getDefaultSourceSound() {
     return {
       sourceUrl: '',
       copyrightNotice: '',
@@ -48,15 +48,23 @@ class EarTrainingInfo {
     };
   }
 
+  getDefaultAbcMidiSound() {
+    return {
+      initialVolume: 1
+    };
+  }
+
   getDefaultTest() {
     return {
       key: uniqueId.create(),
-      mode: TEST_MODE.image,
+      testMode: TEST_MODE.image,
       questionImage: this.getDefaultImage(),
       answerImage: this.getDefaultImage(),
       questionAbcCode: '',
       answerAbcCode: '',
-      sound: this.getDefaultSound()
+      soundMode: SOUND_MODE.source,
+      sourceSound: this.getDefaultSourceSound(),
+      abcMidiSound: this.getDefaultAbcMidiSound()
     };
   }
 
@@ -75,27 +83,25 @@ class EarTrainingInfo {
       width: joi.number().min(0).max(100).required(),
       tests: joi.array().items(joi.object({
         key: joi.string().required(),
-        mode: joi.string().valid(...Object.values(TEST_MODE)).required(),
-        questionImage: joi.alternatives().try(
-          joi.object({
-            sourceUrl: joi.string().allow('').required(),
-            copyrightNotice: joi.string().allow('').required()
-          }),
-          joi.any().valid(null)
-        ).required(),
-        answerImage: joi.alternatives().try(
-          joi.object({
-            sourceUrl: joi.string().allow('').required(),
-            copyrightNotice: joi.string().allow('').required()
-          }),
-          joi.any().valid(null)
-        ).required(),
+        testMode: joi.string().valid(...Object.values(TEST_MODE)).required(),
+        questionImage: joi.object({
+          sourceUrl: joi.string().allow('').required(),
+          copyrightNotice: joi.string().allow('').required()
+        }).required(),
+        answerImage: joi.object({
+          sourceUrl: joi.string().allow('').required(),
+          copyrightNotice: joi.string().allow('').required()
+        }).required(),
         questionAbcCode: joi.string().allow('').required(),
         answerAbcCode: joi.string().allow('').required(),
-        sound: joi.object({
+        soundMode: joi.string().valid(...Object.values(SOUND_MODE)).required(),
+        sourceSound: joi.object({
           sourceUrl: joi.string().allow('').required(),
           copyrightNotice: joi.string().allow('').required(),
           playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
+          initialVolume: joi.number().min(0).max(1).required()
+        }).required(),
+        abcMidiSound: joi.object({
           initialVolume: joi.number().min(0).max(1).required()
         }).required()
       })).required(),
@@ -118,27 +124,21 @@ class EarTrainingInfo {
     );
 
     for (const test of redactedContent.tests) {
-      if (test.sound) {
-        test.sound.copyrightNotice = this.gfm.redactCdnResources(
-          test.sound.copyrightNotice,
-          url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
-        );
-      }
-      if (test.questionImage) {
-        test.questionImage.copyrightNotice = this.gfm.redactCdnResources(
-          test.questionImage.copyrightNotice,
-          url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
-        );
-      }
-      if (test.answerImage) {
-        test.answerImage.copyrightNotice = this.gfm.redactCdnResources(
-          test.answerImage.copyrightNotice,
-          url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
-        );
-      }
+      test.sourceSound.copyrightNotice = this.gfm.redactCdnResources(
+        test.sourceSound.copyrightNotice,
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+      );
+      test.questionImage.copyrightNotice = this.gfm.redactCdnResources(
+        test.questionImage.copyrightNotice,
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+      );
+      test.answerImage.copyrightNotice = this.gfm.redactCdnResources(
+        test.answerImage.copyrightNotice,
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+      );
 
-      if (!couldAccessUrlFromRoom(test.sound.sourceUrl, targetRoomId)) {
-        test.sound.sourceUrl = '';
+      if (!couldAccessUrlFromRoom(test.sourceSound.sourceUrl, targetRoomId)) {
+        test.sourceSound.sourceUrl = '';
       }
       if (!couldAccessUrlFromRoom(test.questionImage.sourceUrl, targetRoomId)) {
         test.questionImage.sourceUrl = '';
@@ -157,12 +157,12 @@ class EarTrainingInfo {
     cdnResources.push(...this.gfm.extractCdnResources(content.title));
 
     for (const test of content.tests) {
-      cdnResources.push(...this.gfm.extractCdnResources(test.sound.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.sourceSound.copyrightNotice));
       cdnResources.push(...this.gfm.extractCdnResources(test.questionImage.copyrightNotice));
       cdnResources.push(...this.gfm.extractCdnResources(test.answerImage.copyrightNotice));
 
-      if (isInternalSourceType({ url: test.sound.sourceUrl })) {
-        cdnResources.push(test.sound.sourceUrl);
+      if (isInternalSourceType({ url: test.sourceSound.sourceUrl })) {
+        cdnResources.push(test.sourceSound.sourceUrl);
       }
       if (isInternalSourceType({ url: test.questionImage.sourceUrl })) {
         cdnResources.push(test.questionImage.sourceUrl);
