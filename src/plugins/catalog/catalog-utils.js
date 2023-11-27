@@ -57,7 +57,7 @@ export function validateContent(content) {
         documentId: joi.string().allow(null).required(),
         description: joi.string().allow('').max(maxDocumentCommentTextLength).required()
       }).required()
-    })).required(),
+    })).unique('key').required(),
     imageTilesConfig: joi.object({
       maxTilesPerRow: joi.number().min(1).required(),
       hoverEffect: joi.string().valid(...Object.values(TILES_HOVER_EFFECT)).required()

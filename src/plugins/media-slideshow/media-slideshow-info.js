@@ -78,7 +78,7 @@ class MediaSlideshowInfo {
           copyrightNotice: joi.string().allow('').required()
         }).required(),
         text: joi.string().allow('').required()
-      })).required()
+      })).unique('key').required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

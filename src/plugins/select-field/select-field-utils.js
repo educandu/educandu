@@ -29,7 +29,7 @@ export function validateContent(content) {
     items: joi.array().items(joi.object({
       key: joi.string().required(),
       text: joi.string().allow('').required()
-    })).required()
+    })).unique('key').required()
   });
 
   joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });

@@ -75,7 +75,7 @@ class InteractiveMediaInfo {
         text: joi.string().allow('').required(),
         answers: joi.array().items(joi.string().allow('')).required(),
         correctAnswerIndex: joi.number().min(-1).required()
-      })).required(),
+      })).unique('key').required(),
       posterImage: joi.object({
         sourceUrl: joi.string().allow('').required()
       }).required()
