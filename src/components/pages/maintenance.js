@@ -61,7 +61,8 @@ function Maintenance({ initialState, PageTemplate }) {
   return (
     <PageTemplate>
       <div className="MaintenancePage">
-        <h1 className="u-page-title">{t('pageNames:maintenance')}</h1>
+        <h1 className="u-page-title-with-subtitle">{t('pageNames:maintenance')}</h1>
+        <div className="u-page-subtitle">{t('pageSubtitle')}</div>
         <Tabs
           type="line"
           size="middle"

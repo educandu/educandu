@@ -1488,6 +1488,10 @@
     }
   },
   "admin": {
+    "pageSubtitle": {
+      "en": "Exclusive for administrator roles.",
+      "de": "Exclusive for administrator roles."
+    },
     "userAccountsTabTitle": {
       "en": "User accounts",
       "de": "Benutzerkonten"
@@ -1826,6 +1830,10 @@
     }
   },
   "maintenance": {
+    "pageSubtitle": {
+      "en": "Exclusive for maintainer roles.",
+      "de": "Exclusive for maintainer roles."
+    },
     "documentsTabTitle": {
       "en": "Documents",
       "de": "Dokumente"

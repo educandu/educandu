@@ -1,4 +1,7 @@
 admin:
+  pageSubtitle:
+    en: Exclusive for administrator roles.
+    de: Exclusive for administrator roles.
   userAccountsTabTitle:
     en: User accounts
     de: Benutzerkonten

@@ -218,7 +218,7 @@ function Search({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="SearchPage">
-        <h1 className="SearchPage-headline">{t('common:search')}</h1>
+        <h1 className="u-page-title">{t('common:search')}</h1>
 
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />

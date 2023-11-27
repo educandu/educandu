@@ -94,7 +94,8 @@ function Admin({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="AdminPage">
-        <h1 className="u-page-title">{t('pageNames:admin')}</h1>
+        <h1 className="u-page-title-with-subtitle">{t('pageNames:admin')}</h1>
+        <div className="u-page-subtitle">{t('pageSubtitle')}</div>
         <Restricted
           to={[
             permissions.MANAGE_USERS,

@@ -31,6 +31,17 @@ class RecentContributionsController {
     return res.send({ documents: mappedDocuments, documentsTotalCount: totalCount });
   }
 
+  async handleGetRecentMediaLibraryItems(req, res) {
+    const { user } = req;
+    const page = Number(req.query.page);
+    const pageSize = Number(req.query.pageSize);
+
+    const { mediaLibraryItems, totalCount } = await this.recentContributionsService.getRecentMediaLibraryItems({ page, pageSize });
+    const mappedMediaLibraryItems = await this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user);
+
+    return res.send({ mediaLibraryItems: mappedMediaLibraryItems, mediaLibraryItemsTotalCount: totalCount });
+  }
+
   registerPages(router) {
     router.get(
       '/recent-contributions',
@@ -42,8 +53,16 @@ class RecentContributionsController {
   registerApi(router) {
     router.get(
       '/api/v1/recent-contributions/documents',
+      needsPermission(permissions.CREATE_CONTENT),
       validateQuery(paginationSchema),
       (req, res) => this.handleGetRecentDocuments(req, res)
+    );
+
+    router.get(
+      '/api/v1/recent-contributions/media-library-items',
+      needsPermission(permissions.CREATE_CONTENT),
+      validateQuery(paginationSchema),
+      (req, res) => this.handleGetRecentMediaLibraryItems(req, res)
     );
   }
 }
