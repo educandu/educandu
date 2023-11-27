@@ -6,5 +6,5 @@ abcNotation:
     en: ABC code
     de: ABC-Code
   playMidi:
-    en: Play MIDI
-    de: MIDI abspielen
+    en: Audio player
+    de: Audio-Player

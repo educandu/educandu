@@ -45,8 +45,8 @@ earTraining:
     en: from source
     de: aus Quelle
   soundModeAbcMidi:
-    en: MIDI from ABC code (auto-generated)
-    de: MIDI aus ABC-Code (auto-generiert)
+    en: from ABC code (auto-generated)
+    de: aus ABC-Code (auto-generiert)
   audio:
     en: Audio
     de: Audio
