@@ -49,6 +49,7 @@ function expressReqToRequest(req) {
     originalUrl: req.originalUrl,
     query: cloneDeep(req.query),
     hostInfo: getHostInfo(req),
+    useragent: req.useragent,
     timestamp: new Date().toISOString()
   };
 }
