@@ -1474,7 +1474,7 @@
   "admin": {
     "pageSubtitle": {
       "en": "Exclusive for administrator roles.",
-      "de": "Exclusive for administrator roles."
+      "de": "Ausschließlich für Administrator-Rollen."
     },
     "userAccountsTabTitle": {
       "en": "User accounts",
@@ -1820,7 +1820,7 @@
   "maintenance": {
     "pageSubtitle": {
       "en": "Exclusive for maintainer roles.",
-      "de": "Exclusive for maintainer roles."
+      "de": "Ausschließlich für Maintainer-Rollen."
     },
     "documentsTabTitle": {
       "en": "Documents",
@@ -1851,8 +1851,8 @@
   },
   "recentContributions": {
     "pageSubtitle": {
-      "en": "Open contributions made in the last 3 months.",
-      "de": "Open contributions made in the last 3 months."
+      "en": "Public contributions made in the last 3 months.",
+      "de": "Öffentliche Beiträge in den letzten 3 Monaten."
     },
     "documentsTabTitle": {
       "en": "Recent documents",
