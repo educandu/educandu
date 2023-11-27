@@ -306,7 +306,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
       key: 'tags',
       render: renderCellTags,
       responsive: ['lg'],
-      width: '200px'
+      width: '300px'
     },
     {
       title: t('common:badges'),

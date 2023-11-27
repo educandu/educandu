@@ -272,7 +272,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
       key: 'tags',
       render: renderTagsOrLicenses,
       responsive: ['lg'],
-      width: '200px'
+      width: '300px'
     },
     {
       title: t('common:licenses'),
