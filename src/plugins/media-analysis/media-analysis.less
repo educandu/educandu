@@ -143,8 +143,14 @@
 
 .MediaAnalysisEditor {}
 
-.MediaAnalysisEditor-trackMixerPreview {
-  margin-bottom: 20px;
+.MediaAnalysisEditor-playerPreview {
+  .m-plugin-media-preview !important;
+  margin-top: 20px;
+  border-top: 1px solid @edu-border-color-base;
+}
+
+.MediaAnalysisEditor-playerPreviewLabel {
+  .m-plugin-media-preview-label;
 }
 
 .MediaAnalysisEditor-segmentsDropzone {
@@ -171,14 +177,6 @@
   position: absolute;
   right: 1em;
   bottom: 1.5em;
-}
-
-.MediaAnalysisEditor-trackMixerPreview {
-  .m-plugin-media-preview;
-}
-
-.MediaAnalysisEditor-trackMixerPreviewLabel {
-  .m-plugin-media-preview-label;
 }
 
 .MediaAnalysisEditor-segmentsActionButton {

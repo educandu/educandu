@@ -2,39 +2,33 @@ import { Tooltip } from 'antd';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
+import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getContrastColor } from '../../ui/color-helper.js';
-import { getAccessibleUrl } from '../../utils/source-utils.js';
-import React, { Fragment, useMemo, useRef, useState } from 'react';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import MediaPlayer from '../../components/media-player/media-player.js';
+import { getAccessibleUrl, isInternalSourceType } from '../../utils/source-utils.js';
 
 function MediaAnalysisDisplay({ content }) {
-  const multitrackMediaPlayerRef = useRef(null);
+  const mediaPlayerRef = useRef(null);
   const { t } = useTranslation('mediaAnalysis');
   const clientConfig = useService(ClientConfig);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [viewingChapterIndex, setViewingChapterIndex] = useState(0);
   const [chapterIndexRequestedToView, setChapterIndexRequestedToView] = useState(-1);
 
   const [areTextsExpanded, setAreTextsExpanded] = useState(false);
 
-  const { tracks, volumePresets, chapters, showVideo, aspectRatio, posterImage, width, initialVolume } = content;
+  const { playbackRange, copyrightNotice, chapters, showVideo, aspectRatio, posterImage, width, initialVolume } = content;
 
-  const sources = useMemo(() => {
-    return tracks.map(track => ({
-      ...track,
-      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    }));
-  }, [tracks, clientConfig]);
+  const sourceUrl = getAccessibleUrl({ url: content.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const canRenderMediaPlayer = !!sourceUrl;
 
   const playerParts = chapters.map(chapter => ({ startPosition: chapter.startPosition }));
-
-  const canRenderMediaPlayer = sources.every(track => track.sourceUrl);
-
-  const combinedCopyrightNotice = tracks.map(track => track.copyrightNotice).filter(text => !!text).join('\n\n');
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -56,10 +50,10 @@ function MediaAnalysisDisplay({ content }) {
     setChapterIndexRequestedToView(chapterIndex);
 
     if (isPlaying) {
-      multitrackMediaPlayerRef.current.seekToPart(chapterIndex);
+      mediaPlayerRef.current.seekToPart(chapterIndex);
     } else {
-      multitrackMediaPlayerRef.current.play();
-      setTimeout(() => multitrackMediaPlayerRef.current.seekToPart(chapterIndex), 0);
+      mediaPlayerRef.current.play();
+      setTimeout(() => mediaPlayerRef.current.seekToPart(chapterIndex), 0);
     }
   };
 
@@ -174,29 +168,31 @@ function MediaAnalysisDisplay({ content }) {
     );
   };
 
+  const allowDownload = isInternalSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+
   return (
     <div className="MediaAnalysisDisplay">
       <div className={`MediaAnalysisDisplay-content u-width-${width || 100}`}>
         {!!canRenderMediaPlayer && (
           <Fragment>
-            <MultitrackMediaPlayer
-              allowFullscreen
+            <MediaPlayer
+              allowDownload={allowDownload}
+              allowFullscreen={showVideo}
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               customUnderScreenContent={renderChapters()}
-              multitrackMediaPlayerRef={multitrackMediaPlayerRef}
+              mediaPlayerRef={mediaPlayerRef}
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               parts={playerParts}
-              showTrackMixer
-              showVideo={showVideo}
-              sources={sources}
-              volumePresets={volumePresets}
+              playbackRange={playbackRange}
+              screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+              sourceUrl={sourceUrl}
               onEnded={handleEnded}
               onPause={handlePause}
               onPlay={handlePlay}
               onPlayingPartIndexChange={handlePlayingPartIndexChange}
               />
-            <CopyrightNotice value={combinedCopyrightNotice} />
+            <CopyrightNotice value={copyrightNotice} />
           </Fragment>
         )}
         {!canRenderMediaPlayer && renderChapters()}

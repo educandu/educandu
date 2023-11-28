@@ -45,16 +45,14 @@ class MediaAnalysisInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    redactedContent.tracks.forEach(track => {
-      track.copyrightNotice = this.gfm.redactCdnResources(
-        track.copyrightNotice,
-        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
-      );
+    redactedContent.copyrightNotice = this.gfm.redactCdnResources(
+      redactedContent.copyrightNotice,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
 
-      if (!couldAccessUrlFromRoom(track.sourceUrl, targetRoomId)) {
-        track.sourceUrl = '';
-      }
-    });
+    if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
+      redactedContent.sourceUrl = '';
+    }
 
     if (!couldAccessUrlFromRoom(redactedContent.posterImage.sourceUrl, targetRoomId)) {
       redactedContent.posterImage.sourceUrl = '';
@@ -66,13 +64,11 @@ class MediaAnalysisInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    content.tracks.forEach(track => {
-      cdnResources.push(...this.gfm.extractCdnResources(track.copyrightNotice));
+    cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
 
-      if (isInternalSourceType({ url: track.sourceUrl })) {
-        cdnResources.push(track.sourceUrl);
-      }
-    });
+    if (isInternalSourceType({ url: content.sourceUrl })) {
+      cdnResources.push(content.sourceUrl);
+    }
 
     if (isInternalSourceType({ url: content.posterImage.sourceUrl })) {
       cdnResources.push(content.posterImage.sourceUrl);

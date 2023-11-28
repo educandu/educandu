@@ -12,7 +12,7 @@ export default class Educandu_2023_11_28_01_migrate_media_analysis_to_single_tra
 
     for (const doc of documents) {
       const sectionsToProcess = doc.sections
-        .filter(section => section.type === 'media-analysis' && section.content?.tracks.length > 1);
+        .filter(section => section.type === 'media-analysis' && !!section.content);
 
       if (sectionsToProcess.length) {
         count += 1;
@@ -32,7 +32,7 @@ export default class Educandu_2023_11_28_01_migrate_media_analysis_to_single_tra
       }
     }
 
-    console.log(`Updated ${count} ${collectionName}.`);
+    return count;
   }
 
   async collectionDown(collectionName) {
@@ -74,16 +74,22 @@ export default class Educandu_2023_11_28_01_migrate_media_analysis_to_single_tra
       }
     }
 
-    console.log(`Updated ${count} ${collectionName}.`);
+    return count;
   }
 
   async up() {
-    await this.collectionUp('documents');
-    await this.collectionUp('documentRevisions');
+    const updatedDocumentsCount = await this.collectionUp('documents');
+    console.log(`Updated ${updatedDocumentsCount} documents.`);
+
+    const updatedDocumentRevisionsCount = await this.collectionUp('documentRevisions');
+    console.log(`Updated ${updatedDocumentRevisionsCount} documentRevisions.`);
   }
 
   async down() {
-    await this.collectionDown('documents');
-    await this.collectionDown('documentRevisions');
+    const updatedDocumentsCount = await this.collectionDown('documents');
+    console.log(`Updated ${updatedDocumentsCount} documents.`);
+
+    const updatedDocumentRevisionsCount = await this.collectionDown('documentRevisions');
+    console.log(`Updated ${updatedDocumentRevisionsCount} documentRevisions.`);
   }
 }
