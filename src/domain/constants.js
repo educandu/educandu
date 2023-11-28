@@ -100,6 +100,12 @@ export const RESOURCE_TYPE = {
   pdf: 'pdf'
 };
 
+export const RESOURCE_USAGE = {
+  used: 'used',
+  unused: 'unused',
+  deprecated: 'deprecated'
+};
+
 export const MEDIA_SEARCH_RESOURCE_TYPE = {
   ...RESOURCE_TYPE,
   any: 'any'

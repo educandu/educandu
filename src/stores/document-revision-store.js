@@ -17,6 +17,10 @@ class DocumentRevisionStore {
     return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }
 
+  getAllCdnResourcesReferencedFromDocumentRevisions() {
+    return this.collection.distinct('cdnResources', {});
+  }
+
   saveDocumentRevision(documentRevision, { session } = {}) {
     validate(documentRevision, documentRevisionDBSchema);
     return this.collection.replaceOne({ _id: documentRevision._id }, documentRevision, { session, upsert: true });

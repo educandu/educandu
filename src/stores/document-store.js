@@ -156,6 +156,10 @@ class DocumentStore {
       : Promise.resolve([]);
   }
 
+  getAllCdnResourcesReferencedFromNonArchivedDocuments() {
+    return this.collection.distinct('cdnResources', { 'publicContext.archived': false });
+  }
+
   getLatestDocumentsMetadataCreatedByUser(createdBy, { session, limit } = {}) {
     return this.collection.find(
       { createdBy },

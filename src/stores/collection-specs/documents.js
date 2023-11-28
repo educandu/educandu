@@ -28,6 +28,10 @@ export default {
     {
       name: '_idx_contributors_',
       key: { contributors: 1 }
+    },
+    {
+      name: '_idx_cdnResources_',
+      key: { cdnResources: 1 }
     }
   ]
 };
