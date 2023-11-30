@@ -33,8 +33,7 @@ maintenanceMediaLibraryTab:
       **No longer used** media is not present in any current website content, but is referenced in documents history.\
       Archived documents are considered no longer used.
     de: |
-      **Never used** media is not present in any website content, including document history.
+      **Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\
 
-      **No longer used** media is not present in any current website content, but is present in documents history.\
-      Archived documents are considered no longer used.
-
+      **Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\
+      Archivierte Dokumente werden hierbei als nicht länger benutzt betrachtet.
