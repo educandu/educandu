@@ -17,6 +17,10 @@ class RoomStore {
     this.collection = db.rooms;
   }
 
+  getAllRoomIds({ session } = {}) {
+    return this.collection.distinct('_id', {}, { session });
+  }
+
   getRoomById(roomId, { session } = {}) {
     return this.collection.findOne({ _id: roomId }, { session });
   }

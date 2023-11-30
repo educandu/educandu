@@ -14,6 +14,10 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
+  getAllUserIds({ session } = {}) {
+    return this.collection.distinct('_id', {}, { session });
+  }
+
   getActiveUserBySearch(query, { session } = {}) {
     const searchRegexp = `.*${escapeStringRegexp(query)}.*`;
     const searchCriteria = [

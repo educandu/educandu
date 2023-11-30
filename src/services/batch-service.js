@@ -3,10 +3,12 @@ import uniqueId from '../utils/unique-id.js';
 import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
+import UserStore from '../stores/user-store.js';
 import BatchStore from '../stores/batch-store.js';
+import SettingStore from '../stores/setting-store.js';
 import DocumentStore from '../stores/document-store.js';
-import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TYPE, TASK_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -19,15 +21,17 @@ const mapBatchTypeToTaskType = batchType => {
 };
 
 class BatchService {
-  static dependencies = [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore];
+  static dependencies = [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore, UserStore, SettingStore];
 
-  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, roomStore) {
+  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, roomStore, userStore, settingStore) {
     this.transactionRunner = transactionRunner;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
     this.documentStore = documentStore;
     this.roomStore = roomStore;
+    this.userStore = userStore;
+    this.settingStore = settingStore;
   }
 
   async createBatch({ batchType, user }) {
@@ -81,10 +85,24 @@ class BatchService {
     switch (taskType) {
       case TASK_TYPE.documentRegeneration:
       case TASK_TYPE.documentValidation:
-      case TASK_TYPE.cdnResourcesConsolidation:
         return this.documentStore.getAllDocumentIds().then(allDocumentIds => {
           return allDocumentIds.map(documentId => ({ documentId }));
         });
+      case TASK_TYPE.cdnResourcesConsolidation:
+        return Promise.all([
+          this.documentStore.getAllDocumentIds().then(allDocumentIds => {
+            return allDocumentIds.map(entityId => ({ type: CDN_RESOURCES_CONSOLIDATION_TYPE.document, entityId }));
+          }),
+          this.roomStore.getAllRoomIds().then(allRoomIds => {
+            return allRoomIds.map(entityId => ({ type: CDN_RESOURCES_CONSOLIDATION_TYPE.room, entityId }));
+          }),
+          this.userStore.getAllUserIds().then(allUserIds => {
+            return allUserIds.map(entityId => ({ type: CDN_RESOURCES_CONSOLIDATION_TYPE.user, entityId }));
+          }),
+          this.settingStore.getAllSettingIds().then(allSettingIds => {
+            return allSettingIds.map(entityId => ({ type: CDN_RESOURCES_CONSOLIDATION_TYPE.setting, entityId }));
+          })
+        ]).then(taskParamGroups => taskParamGroups.flat());
       default:
         throw new BadRequest(`Invalid task type: '${taskType}'`);
     }

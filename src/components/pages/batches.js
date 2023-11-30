@@ -5,7 +5,7 @@ import { Table, List, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useIsMounted } from '../../ui/hooks.js';
 import { useDateFormat } from '../locale-context.js';
-import { BATCH_TYPE } from '../../domain/constants.js';
+import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TYPE } from '../../domain/constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -133,21 +133,6 @@ function Batches({ initialState, PageTemplate }) {
     setHideSuccessfullyCompletedTasks(event.target.checked);
   };
 
-  const renderTaskStatus = (_, taskItem) => {
-    switch (taskItem.status) {
-      case STATUS.pending:
-        return <span><SyncOutlined spin /> {taskItem.localizedStatus}</span>;
-      case STATUS.warning:
-        return <span><WarningOutlined className="BatchesPage-warningIcon" /> {taskItem.localizedStatus}</span>;
-      case STATUS.error:
-        return <span><ExclamationCircleOutlined className="BatchesPage-errorIcon" /> {taskItem.localizedStatus}</span>;
-      case STATUS.success:
-        return <span><CheckOutlined className="BatchesPage-successIcon" /> {taskItem.localizedStatus}</span>;
-      default:
-        throw new Error(`Invalid status '${taskItem.status}'`);
-    }
-  };
-
   const renderBatchType = batchType => {
     switch (batchType) {
 
@@ -197,17 +182,74 @@ function Batches({ initialState, PageTemplate }) {
 
   const renderDate = date => formatDate(date);
 
-  const renderDocumentEntityId = taskParams => (
-    <a target="_blank" href={routes.getDocUrl({ id: taskParams.documentId })} rel="noreferrer noopener">
-      {taskParams.documentId}
-    </a>
-  );
+  const renderEntityId = (_, taskItem) => {
+    const { taskParams } = taskItem;
 
-  const renderCdnResourcesConsolidationEntityId = taskParams => {
-    const url = routes.getDocUrl({ id: taskParams.documentId });
-    const text = taskParams.documentId;
+    if (batch.batchType !== BATCH_TYPE.cdnResourcesConsolidation) {
+      return (
+        <a target="_blank" href={routes.getDocUrl({ id: taskParams.documentId })} rel="noreferrer noopener">
+          {taskParams.documentId}
+        </a>
+      );
+    }
 
-    return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
+    let url;
+    switch (taskParams.type) {
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.document:
+        url = routes.getDocUrl({ id: taskParams.entityId });
+        break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.room:
+        url = null;
+        break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.user:
+        url = routes.getUserProfileUrl(taskParams.entityId);
+        break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.setting:
+        url = routes.getAdminUrl();
+        break;
+      default:
+        throw new Error(`Invalid CDN resources consolidation type '${taskParams.type}`);
+    }
+
+    return url
+      ? <a target="_blank" href={url} rel="noreferrer noopener">{taskParams.entityId}</a>
+      : <span>{taskParams.entityId}</span>;
+  };
+
+  const renderEntityType = (_, taskItem) => {
+    const { taskParams } = taskItem;
+
+    if (batch.batchType !== BATCH_TYPE.cdnResourcesConsolidation) {
+      return t('common:document');
+    }
+
+    switch (taskParams.type) {
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.document:
+        return t('common:document');
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.room:
+        return t('common:room');
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.user:
+        return t('common:user');
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.setting:
+        return t('common:setting');
+      default:
+        throw new Error(`Invalid CDN resources consolidation type '${taskParams.type}`);
+    }
+  };
+
+  const renderTaskStatus = (_, taskItem) => {
+    switch (taskItem.status) {
+      case STATUS.pending:
+        return <span><SyncOutlined spin /> {taskItem.localizedStatus}</span>;
+      case STATUS.warning:
+        return <span><WarningOutlined className="BatchesPage-warningIcon" /> {taskItem.localizedStatus}</span>;
+      case STATUS.error:
+        return <span><ExclamationCircleOutlined className="BatchesPage-errorIcon" /> {taskItem.localizedStatus}</span>;
+      case STATUS.success:
+        return <span><CheckOutlined className="BatchesPage-successIcon" /> {taskItem.localizedStatus}</span>;
+      default:
+        throw new Error(`Invalid status '${taskItem.status}'`);
+    }
   };
 
   const renderErrorCount = attempt => <span>{attempt.errors?.length || 0} {t('errors')}</span>;
@@ -239,41 +281,26 @@ function Batches({ initialState, PageTemplate }) {
       />
   );
 
-  const taskTableColumns = [];
-  switch (batch.batchType) {
-    case BATCH_TYPE.documentValidation:
-    case BATCH_TYPE.documentRegeneration:
-      taskTableColumns.push({
-        title: t('common:document'),
-        key: 'taskParamsTypeEntityId',
-        dataIndex: 'taskParams',
-        render: renderDocumentEntityId
-      });
-      break;
-    case BATCH_TYPE.cdnResourcesConsolidation:
-      taskTableColumns.push({
-        title: t('common:document'),
-        key: 'taskParamsTypeEntityId',
-        dataIndex: 'taskParams',
-        render: renderCdnResourcesConsolidationEntityId
-      });
-      taskTableColumns.push({
-        title: t('common:type'),
-        key: 'taskParamsType',
-        dataIndex: 'taskParams',
-        render: () => t('common:document')
-      });
-      break;
-    default:
-      throw new Error(`Invalid batch type '${batch.batchType}'`);
-  }
-
-  taskTableColumns.push({
-    title: t('taskStatus'),
-    dataIndex: 'localizedStatus',
-    render: renderTaskStatus,
-    sorter: (a, b) => a.localizedStatus.localeCompare(b.localizedStatus)
-  });
+  const taskTableColumns = [
+    {
+      title: t('common:id'),
+      key: 'entityId',
+      dataIndex: 'taskParams',
+      render: renderEntityId
+    },
+    {
+      title: t('common:type'),
+      key: 'entityType',
+      dataIndex: 'taskParams',
+      render: renderEntityType
+    },
+    {
+      title: t('taskStatus'),
+      dataIndex: 'localizedStatus',
+      render: renderTaskStatus,
+      sorter: (a, b) => a.localizedStatus.localeCompare(b.localizedStatus)
+    }
+  ];
 
   const batchInfos = [<span key="batch-type">{t('batchType')}: {renderBatchType(batch.batchType)}</span>];
 

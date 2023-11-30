@@ -33,6 +33,13 @@ export const TASK_TYPE = {
   cdnResourcesConsolidation: 'cdn-resources-consolidation'
 };
 
+export const CDN_RESOURCES_CONSOLIDATION_TYPE = {
+  document: 'document',
+  room: 'room',
+  user: 'user',
+  setting: 'setting'
+};
+
 export const FEATURE_TOGGLES = {
 };
 

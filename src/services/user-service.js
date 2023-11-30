@@ -130,7 +130,7 @@ class UserService {
   async updateUserProfile({ userId, displayName, organization, profileOverview, shortDescription }) {
     logger.info(`Updating profile for user with id ${userId}`);
     const user = await this.userStore.getUserById(userId);
-    const cdnResources = this.githubFlavoredMarkdown.extractCdnResources(profileOverview);
+    const cdnResources = this._extractCdnResources({ profileOverview });
     const updatedUser = { ...user, displayName, organization, profileOverview, shortDescription, cdnResources };
 
     await this.userStore.saveUser(updatedUser);
@@ -160,6 +160,23 @@ class UserService {
     user.accountLockedOn = accountLockedOn;
     await this.userStore.saveUser(user);
     return user;
+  }
+
+  async consolidateCdnResources(userId) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeUserLock(userId);
+      await this.transactionRunner.run(async session => {
+        const user = await this.userStore.getUserById(userId, { session });
+        const consolidatedUser = { ...user, cdnResources: this._extractCdnResources(user) };
+        await this.userStore.saveUser(consolidatedUser, { session });
+      });
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
+      }
+    }
   }
 
   async closeUserAccount(userId) {
@@ -594,6 +611,10 @@ class UserService {
       },
       cdnResources: []
     };
+  }
+
+  _extractCdnResources({ profileOverview }) {
+    return this.githubFlavoredMarkdown.extractCdnResources(profileOverview);
   }
 }
 

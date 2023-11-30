@@ -161,12 +161,11 @@ export default class RoomService {
 
   async updateRoomContent(roomId, { overview }) {
     const trimmedOverview = (overview || '').trim();
-    const cdnResources = this.githubFlavoredMarkdown.extractCdnResources(trimmedOverview);
     await this.roomStore.updateRoomContent(
       roomId,
       {
         overview: trimmedOverview,
-        cdnResources,
+        cdnResources: this._extractCdnResources({ overview: trimmedOverview }),
         updatedOn: new Date()
       }
     );
@@ -194,6 +193,23 @@ export default class RoomService {
 
     const updatedRoom = await this.roomStore.getRoomById(roomId);
     return updatedRoom;
+  }
+
+  async consolidateCdnResources(roomId) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeRoomLock(roomId);
+      await this.transactionRunner.run(async session => {
+        const room = await this.roomStore.getRoomById(roomId, { session });
+        const consolidatedRoom = { ...room, cdnResources: this._extractCdnResources(room) };
+        await this.roomStore.saveRoom(consolidatedRoom, { session });
+      });
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
+      }
+    }
   }
 
   async deleteRoom({ room, roomOwner }) {
@@ -534,5 +550,9 @@ export default class RoomService {
 
   async removeMembershipFromAllRoomsForUser(memberUserId) {
     await this.roomStore.deleteRoomsMemberById(memberUserId);
+  }
+
+  _extractCdnResources({ overview }) {
+    return this.githubFlavoredMarkdown.extractCdnResources(overview);
   }
 }
