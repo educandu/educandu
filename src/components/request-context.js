@@ -22,3 +22,10 @@ export function useIsFullscreenSupported() {
 
   return true;
 }
+
+export function useIsVolumeControlSupported() {
+  const context = useContext(requestContext);
+  const { isiPhone, isiPad } = context.useragent;
+
+  return !isiPhone && !isiPad;
+}
