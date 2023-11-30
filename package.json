@@ -111,7 +111,7 @@
     "unidiff": "^1.0.2"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "^9.0.0",
+    "@educandu/dev-tools": "10.0.0",
     "@educandu/eslint-config": "^2.2.1",
     "@educandu/node-jsx-loader": "^3.0.4",
     "@educandu/rooms-auth-lambda": "^6.0.1",
