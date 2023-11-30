@@ -1,6 +1,8 @@
 import by from 'thenby';
 import dayjs from 'dayjs';
+import Info from '../info.js';
 import PropTypes from 'prop-types';
+import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
@@ -92,7 +94,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   const { t } = useTranslation('maintenanceMediaLibraryTab');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
-  const requestQuery = getSanitizedQueryFromRequest(request);
+  const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
   const [usage, setUsage] = useState(requestQuery.usage);
   const [filter, setFilter] = useState(requestQuery.filter);
@@ -180,7 +182,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   };
 
   const handleCreatedBeforeFilterChange = dayjsValue => {
-    setCreatedBefore(dayjsValue?.toDate() || null);
+    setCreatedBefore(dayjsValue?.startOf('date').toDate() || null);
   };
 
   const handleUsageChange = event => {
@@ -188,8 +190,6 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   };
 
   const handlePreviewItemClick = row => {
-    event.preventDefault();
-    event.stopPropagation();
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
     setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
   };
@@ -386,13 +386,15 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
                   onChange={handleCreatedBeforeFilterChange}
                   />
                 <div>{t('and')}</div>
-                <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
-                  <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
-                  <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
-                </Radio.Group>
+                <Info tooltip={<Markdown>{t('usageInfoMarkdown')}</Markdown>} iconAfterContent>
+                  <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
+                    <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
+                    <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
+                  </Radio.Group>
+                </Info>
               </div>
               <div className="MaintenanceMediaLibraryTab-bulkDeletePanelButton">
-                <Button disabled={isBulkDeleteDisabled} danger onClick={handleBulkDeleteClick}>
+                <Button disabled={isBulkDeleteDisabled} danger type="primary" onClick={handleBulkDeleteClick}>
                   {!!isBulkDeleteDisabled && t('delete')}
                   {!isBulkDeleteDisabled && t('deleteCount', { count: displayedRows.length })}
                 </Button>

@@ -14,16 +14,27 @@ maintenanceMediaLibraryTab:
   and:
     en: and
     de: und
-  resourceUsage_unused:
-    en: unused
-    de: unbenutzt
-  resourceUsage_deprecated:
-    en: deprecated
-    de: abgelehnt
+  unused:
+    en: never used
+    de: nie benutzt
+  deprecated:
+    en: no longer used
+    de: nicht mehr benutzt
   delete:
     en: "Delete media items"
     de: "Medien löschen"
   deleteCount:
     en: "Delete {count, plural, =1 {# media item} other {# media items}}"
     de: "{count} Medien löschen"
+  usageInfoMarkdown:
+    en: |
+      **Never used** media is not present in any website content, including document history.
+
+      **No longer used** media is not present in any current website content, but is referenced in documents history.\
+      Archived documents are considered no longer used.
+    de: |
+      **Never used** media is not present in any website content, including document history.
+
+      **No longer used** media is not present in any current website content, but is present in documents history.\
+      Archived documents are considered no longer used.
 

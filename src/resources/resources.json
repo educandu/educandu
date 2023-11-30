@@ -1284,13 +1284,13 @@
       "en": "and",
       "de": "und"
     },
-    "resourceUsage_unused": {
-      "en": "unused",
-      "de": "unbenutzt"
+    "unused": {
+      "en": "never used",
+      "de": "nie benutzt"
     },
-    "resourceUsage_deprecated": {
-      "en": "deprecated",
-      "de": "abgelehnt"
+    "deprecated": {
+      "en": "no longer used",
+      "de": "nicht mehr benutzt"
     },
     "delete": {
       "en": "Delete media items",
@@ -1299,6 +1299,10 @@
     "deleteCount": {
       "en": "Delete {count, plural, =1 {# media item} other {# media items}}",
       "de": "{count} Medien löschen"
+    },
+    "usageInfoMarkdown": {
+      "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used.\n",
+      "de": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is present in documents history.\\\nArchived documents are considered no longer used.\n"
     }
   },
   "maintenanceTagsTab": {
