@@ -263,6 +263,33 @@ describe('user-service', () => {
     });
   });
 
+  describe('updateUserProfile', () => {
+    let updatedUser;
+
+    beforeEach(async () => {
+      updatedUser = await sut.updateUserProfile({
+        userId: user._id,
+        displayName: 'updated-display-name',
+        organization: 'updated-organization',
+        shortDescription: 'updated-short-description',
+        profileOverview: '# Lorem ipsum ![](cdn://media-library/some-image.jpg) dolores eos impedit.'
+      });
+    });
+
+    it('updates the user with the new profile values', () => {
+      expect(updatedUser).toMatchObject({
+        displayName: 'updated-display-name',
+        organization: 'updated-organization',
+        shortDescription: 'updated-short-description',
+        profileOverview: '# Lorem ipsum ![](cdn://media-library/some-image.jpg) dolores eos impedit.'
+      });
+    });
+
+    it('updates the cdnResources array', () => {
+      expect(updatedUser.cdnResources).toStrictEqual(['cdn://media-library/some-image.jpg']);
+    });
+  });
+
   describe('updateUserStoragePlan', () => {
     let storagePlan;
 
@@ -1004,7 +1031,8 @@ describe('user-service', () => {
           rooms: {
             hiddenRooms: []
           }
-        }
+        },
+        cdnResources: []
       });
     });
   });

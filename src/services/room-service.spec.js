@@ -437,7 +437,7 @@ describe('room-service', () => {
         updatedRoom = await sut.updateRoomContent(room._id, { overview });
       });
 
-      it('should update the cdnResources array', () => {
+      it('updates the cdnResources array', () => {
         expect(updatedRoom.cdnResources).toStrictEqual(['cdn://media-library/some-image.jpg']);
       });
     });

@@ -10,6 +10,7 @@ import RoomStore from '../stores/room-store.js';
 import DocumentStore from '../stores/document-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 import {
   ROLE,
@@ -33,9 +34,27 @@ const logger = new Logger(import.meta.url);
 const completionFunction = Symbol('completion');
 
 class UserService {
-  static dependencies = [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LockStore, TransactionRunner];
+  static dependencies = [
+    UserStore,
+    StoragePlanStore,
+    PasswordResetRequestStore,
+    DocumentStore,
+    RoomStore,
+    LockStore,
+    TransactionRunner,
+    GithubFlavoredMarkdown
+  ];
 
-  constructor(userStore, storagePlanStore, passwordResetRequestStore, documentStore, roomStore, lockStore, transactionRunner) {
+  constructor(
+    userStore,
+    storagePlanStore,
+    passwordResetRequestStore,
+    documentStore,
+    roomStore,
+    lockStore,
+    transactionRunner,
+    githubFlavoredMarkdown
+  ) {
     this.userStore = userStore;
     this.storagePlanStore = storagePlanStore;
     this.passwordResetRequestStore = passwordResetRequestStore;
@@ -43,6 +62,7 @@ class UserService {
     this.documentStore = documentStore;
     this.lockStore = lockStore;
     this.transactionRunner = transactionRunner;
+    this.githubFlavoredMarkdown = githubFlavoredMarkdown;
   }
 
   getAllUsers() {
@@ -110,7 +130,8 @@ class UserService {
   async updateUserProfile({ userId, displayName, organization, profileOverview, shortDescription }) {
     logger.info(`Updating profile for user with id ${userId}`);
     const user = await this.userStore.getUserById(userId);
-    const updatedUser = { ...user, displayName, organization, profileOverview, shortDescription };
+    const cdnResources = this.githubFlavoredMarkdown.extractCdnResources(profileOverview);
+    const updatedUser = { ...user, displayName, organization, profileOverview, shortDescription, cdnResources };
 
     await this.userStore.saveUser(updatedUser);
     return updatedUser;
@@ -570,7 +591,8 @@ class UserService {
         rooms: {
           hiddenRooms: []
         }
-      }
+      },
+      cdnResources: []
     };
   }
 }
