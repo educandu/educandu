@@ -101,6 +101,7 @@ function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePoster
           value={initialVolume}
           useValueLabel
           useButton={false}
+          showIOSWarning
           onChange={handleInitialVolumeChange}
           />
       </FormItem>

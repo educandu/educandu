@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Dropdown } from 'antd';
-import React, { Fragment, useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import React, { Fragment, useId } from 'react';
+import { useIsIOS } from '../request-context.js';
 import { CheckOutlined } from '@ant-design/icons';
 import { useNumberFormat } from '../locale-context.js';
 import MediaVolumeSlider from './media-volume-slider.js';
@@ -41,7 +42,9 @@ function MediaPlayerControls({
   onPlayClick,
   onVolumeChange
 }) {
+  const isIOS = useIsIOS();
   const componentInstanceId = useId();
+
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
 
@@ -120,9 +123,11 @@ function MediaPlayerControls({
     <div id={componentInstanceId} className={mainClasses}>
       <div className="MediaPlayerControls-controlsGroup">
         {primaryButton}
-        <div className="MediaPlayerControls-volumeControls">
-          <MediaVolumeSlider value={volume} disabled={disableSecondaryControls} onChange={onVolumeChange} />
-        </div>
+        {!isIOS && (
+          <div className="MediaPlayerControls-volumeControls">
+            <MediaVolumeSlider value={volume} disabled={disableSecondaryControls} onChange={onVolumeChange} />
+          </div>
+        )}
         <div className="MediaPlayerControls-timeDisplay">
           {renderTimeDisplay()}
         </div>

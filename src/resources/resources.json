@@ -1423,10 +1423,20 @@
       "de": "Bereich löschen"
     }
   },
+  "mediaVolumeSlider": {
+    "iOSWarning": {
+      "en": "This setting is ignored by iPhone and iPad devices.",
+      "de": "Diese Einstellung wird von iPhones und iPads ignoriert."
+    }
+  },
   "multitrackMediaPlayer": {
     "emptyStateSubtitle": {
       "en": "Make sure that a URL is provided for each track.",
       "de": "Stelle sicher, dass für jede Spur eine URL angegeben wurde."
+    },
+    "playerNotSupportedTitle": {
+      "en": "Multitrack media not supported",
+      "de": "Mehrspur-Medien nicht unterstützt"
     }
   },
   "timecodeFineTunningInput": {
@@ -4553,6 +4563,10 @@
     "role_admin": {
       "en": "Administrator",
       "de": "Administrator"
+    },
+    "playerNotSupportedOnIOS": {
+      "en": "Player not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.",
+      "de": "Da iPads und iPhones Einschränkungen in für diesen Player benötigten Funktionen haben, werden diese Geräte nicht unterstützt."
     }
   },
   "pageNames": {

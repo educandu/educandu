@@ -11,6 +11,7 @@ import { createDefaultTrack } from './multitrack-media-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
+import WarningIcon from '../../components/icons/general/warning-icon.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { removeItemAt, swapItemsAt, moveItem } from '../../utils/array-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
@@ -48,7 +49,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handeTrackContentChange = (index, value) => {
+  const handleTrackContentChange = (index, value) => {
     const newTracks = cloneDeep(tracks);
     newTracks[index] = value;
     changeContent({ tracks: newTracks });
@@ -140,7 +141,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             <TrackEditor
               content={track}
               usePlaybackRange={false}
-              onContentChange={value => handeTrackContentChange(trackIndex, value)}
+              onContentChange={value => handleTrackContentChange(trackIndex, value)}
               />
           </ItemPanel>
         );
@@ -151,6 +152,10 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   return (
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal" labelAlign="left">
+        <div className="MultitrackMediaEditor-warning">
+          <WarningIcon className="MultitrackMediaEditor-warningIcon" />
+          {t('common:playerNotSupportedOnIOS')}
+        </div>
         <ItemPanel
           collapsed
           key={tracks[0].key}
@@ -158,7 +163,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
           >
           <TrackEditor
             content={tracks[0]}
-            onContentChange={value => handeTrackContentChange(0, value)}
+            onContentChange={value => handleTrackContentChange(0, value)}
             />
         </ItemPanel>
         <DragAndDropContainer droppableId={droppableIdRef.current} items={dragAndDropSecondaryTracks} onItemMove={handleMoveSecondaryTrack} />

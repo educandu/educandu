@@ -311,6 +311,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 value={test.sourceSound.initialVolume}
                 useValueLabel
                 useButton={false}
+                showIOSWarning
                 onChange={value => handleSourceSoundInitialVolumeChange(value, index)}
                 />
             </FormItem>
@@ -323,6 +324,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
               value={test.abcMidiSound.initialVolume}
               useValueLabel
               useButton={false}
+              showIOSWarning
               onChange={value => handleAbcMidiSoundInitialVolumeChange(value, index)}
               />
           </FormItem>
