@@ -127,5 +127,6 @@ export const userDBSchema = joi.object({
     rooms: joi.object({
       hiddenRooms: joi.array().items(idOrKeySchema)
     })
-  })
+  }),
+  cdnResources: joi.array().items(joi.string()).required()
 });

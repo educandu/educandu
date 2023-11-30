@@ -21,6 +21,7 @@ import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
@@ -51,7 +52,8 @@ export default class RoomService {
     EventStore,
     LockStore,
     TransactionRunner,
-    DocumentInputMediaItemStore
+    DocumentInputMediaItemStore,
+    GithubFlavoredMarkdown
   ];
 
   constructor(
@@ -68,7 +70,8 @@ export default class RoomService {
     eventStore,
     lockStore,
     transactionRunner,
-    documentInputMediaItemStore
+    documentInputMediaItemStore,
+    githubFlavoredMarkdown
   ) {
     this.cdn = cdn;
     this.roomStore = roomStore;
@@ -83,6 +86,7 @@ export default class RoomService {
     this.roomInvitationStore = roomInvitationStore;
     this.documentCommentStore = documentCommentStore;
     this.documentRevisionStore = documentRevisionStore;
+    this.githubFlavoredMarkdown = githubFlavoredMarkdown;
     this.documentInputMediaItemStore = documentInputMediaItemStore;
   }
 
@@ -125,7 +129,8 @@ export default class RoomService {
       overview: '',
       members: [],
       messages: [],
-      documents: []
+      documents: [],
+      cdnResources: []
     };
 
     try {
@@ -155,10 +160,12 @@ export default class RoomService {
   }
 
   async updateRoomContent(roomId, { overview }) {
+    const trimmedOverview = (overview || '').trim();
     await this.roomStore.updateRoomContent(
       roomId,
       {
-        overview: (overview || '').trim(),
+        overview: trimmedOverview,
+        cdnResources: this._extractCdnResources({ overview: trimmedOverview }),
         updatedOn: new Date()
       }
     );
@@ -186,6 +193,23 @@ export default class RoomService {
 
     const updatedRoom = await this.roomStore.getRoomById(roomId);
     return updatedRoom;
+  }
+
+  async consolidateCdnResources(roomId) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeRoomLock(roomId);
+      await this.transactionRunner.run(async session => {
+        const room = await this.roomStore.getRoomById(roomId, { session });
+        const consolidatedRoom = { ...room, cdnResources: this._extractCdnResources(room) };
+        await this.roomStore.saveRoom(consolidatedRoom, { session });
+      });
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
+      }
+    }
   }
 
   async deleteRoom({ room, roomOwner }) {
@@ -526,5 +550,9 @@ export default class RoomService {
 
   async removeMembershipFromAllRoomsForUser(memberUserId) {
     await this.roomStore.deleteRoomsMemberById(memberUserId);
+  }
+
+  _extractCdnResources({ overview }) {
+    return this.githubFlavoredMarkdown.extractCdnResources(overview);
   }
 }

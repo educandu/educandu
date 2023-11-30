@@ -1,24 +1,49 @@
 import Logger from '../../../common/logger.js';
+import RoomService from '../../room-service.js';
+import UserService from '../../user-service.js';
+import SettingService from '../../setting-service.js';
 import DocumentService from '../../document-service.js';
+import { CDN_RESOURCES_CONSOLIDATION_TYPE } from '../../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
 class CdnResourcesConsolidationTaskProcessor {
-  static dependencies = [DocumentService];
+  static dependencies = [DocumentService, RoomService, UserService, SettingService];
 
-  constructor(documentService) {
+  constructor(documentService, roomService, userService, settingService) {
     this.documentService = documentService;
+    this.roomService = roomService;
+    this.userService = userService;
+    this.settingService = settingService;
   }
 
   async process(task, ctx) {
-    const { documentId } = task.taskParams;
+    const { type, entityId } = task.taskParams;
 
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');
     }
 
-    logger.info(`Consolidating CDN resources for document with id ${documentId}`);
-    await this.documentService.consolidateCdnResources(documentId);
+    switch (type) {
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.document:
+        logger.info(`Consolidating CDN resources for document with id ${entityId}`);
+        await this.documentService.consolidateCdnResources(entityId);
+        break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.room:
+        logger.info(`Consolidating CDN resources for room with id ${entityId}`);
+        await this.roomService.consolidateCdnResources(entityId);
+        break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.user:
+        logger.info(`Consolidating CDN resources for user with id ${entityId}`);
+        await this.userService.consolidateCdnResources(entityId);
+        break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.setting:
+        logger.info(`Consolidating CDN resources for setting with id ${entityId}`);
+        await this.settingService.consolidateCdnResources(entityId);
+        break;
+      default:
+        throw new Error(`Invalid CDN resources consolidation type '${type}'`);
+    }
   }
 }
 

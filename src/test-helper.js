@@ -9,6 +9,7 @@ import UserService from './services/user-service.js';
 import { getResourceType } from './utils/resource-utils.js';
 import DocumentService from './services/document-service.js';
 import DocumentInputService from './services/document-input-service.js';
+import GithubFlavoredMarkdown from './common/github-flavored-markdown.js';
 import DocumentCommentService from './services/document-comment-service.js';
 import { createDocumentInputUploadedFileName } from './utils/document-input-utils.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
@@ -160,6 +161,7 @@ export async function updateTestUser(container, user) {
 
 export async function createTestRoom(container, roomValues = {}) {
   const db = container.get(Database);
+  const gfm = container.get(GithubFlavoredMarkdown);
 
   const now = new Date();
   const creatorAndOwner = uniqueId.create();
@@ -175,6 +177,7 @@ export async function createTestRoom(container, roomValues = {}) {
     createdOn: roomValues.createdOn || now,
     updatedOn: roomValues.updatedOn || now,
     overview: roomValues.overview || '',
+    cdnResources: gfm.extractCdnResources(roomValues.overview || ''),
     members: roomValues.members || [],
     messages: roomValues.messages || [],
     documents: roomValues.documents || []

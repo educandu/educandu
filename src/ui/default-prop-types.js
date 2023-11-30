@@ -6,7 +6,8 @@ import {
   TASK_TYPE,
   USER_ACTIVITY_TYPE,
   RESOURCE_TYPE,
-  EVENT_TYPE
+  EVENT_TYPE,
+  CDN_RESOURCES_CONSOLIDATION_TYPE
 } from '../domain/constants.js';
 
 const File = isBrowser() ? window.File : class File {};
@@ -446,7 +447,8 @@ export const cdnResourcesConsolidationTaskShape = PropTypes.shape({
   ...commonTaskProps,
   taskType: PropTypes.oneOf([TASK_TYPE.cdnResourcesConsolidation]),
   taskParams: PropTypes.shape({
-    documentId: PropTypes.string.isRequired
+    type: PropTypes.oneOf(Object.values(CDN_RESOURCES_CONSOLIDATION_TYPE)).isRequired,
+    entityId: PropTypes.string.isRequired
   }).isRequired
 });
 
@@ -504,6 +506,11 @@ export const roomMetadataProps = {
   shortDescription: PropTypes.string
 };
 
+export const roomContentProps = {
+  overview: PropTypes.string.isRequired,
+  cdnResources: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
 export const roomMinimalMetadataShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -514,6 +521,7 @@ export const roomMetadataShape = PropTypes.shape(roomMetadataProps);
 
 export const roomShape = PropTypes.shape({
   ...roomMetadataProps,
+  ...roomContentProps,
   owner: roomOwnerShape.isRequired,
   members: PropTypes.arrayOf(roomMemberShape)
 });
