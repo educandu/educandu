@@ -68,6 +68,7 @@ function AudioEditor({ content, onContentChanged }) {
             value={initialVolume}
             useValueLabel
             useButton={false}
+            showIOSWarning
             onChange={handleInitialVolumeChange}
             />
         </FormItem>
