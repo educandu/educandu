@@ -93,5 +93,5 @@ confirmationDialogs:
     en: Do you really want to reset the whiteboard?
     de: Möchtest du das Whiteboard wirklich zurücksetzen?
   bulkDeleteMediaItemsConfirmation:
-    en: Do you really want to irreversibly delete {count, plural, =1 {# media item} other {# media items}}?
-    de: Möchtest du {count} Medien wirklich unwiderruflich löschen?
+    en: Do you really want to irreversibly delete {count, plural, =1 {# media resource} other {# media resources}}?
+    de: Möchtest du {count, plural, =1 {# Mediathek-Ressource} other {# Mediathek-Ressourcen}} wirklich unwiderruflich löschen?

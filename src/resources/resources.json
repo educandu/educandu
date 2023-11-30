@@ -487,8 +487,8 @@
       "de": "Möchtest du das Whiteboard wirklich zurücksetzen?"
     },
     "bulkDeleteMediaItemsConfirmation": {
-      "en": "Do you really want to irreversibly delete {count, plural, =1 {# media item} other {# media items}}?",
-      "de": "Möchtest du {count} Medien wirklich unwiderruflich löschen?"
+      "en": "Do you really want to irreversibly delete {count, plural, =1 {# media resource} other {# media resources}}?",
+      "de": "Möchtest du {count, plural, =1 {# Mediathek-Ressource} other {# Mediathek-Ressourcen}} wirklich unwiderruflich löschen?"
     }
   },
   "consentDialog": {
@@ -1269,8 +1269,8 @@
       "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
     },
     "bulkDeletePanelHeader": {
-      "en": "Bulk delete",
-      "de": "Bulk delete"
+      "en": "Bulk deletion",
+      "de": "Stapelweise löschen"
     },
     "createdBefore": {
       "en": "Created before",
@@ -1293,12 +1293,12 @@
       "de": "nicht mehr benutzt"
     },
     "delete": {
-      "en": "Delete media items",
-      "de": "Medien löschen"
+      "en": "Delete media resources",
+      "de": "Medien-Resourcen löschen"
     },
     "deleteCount": {
-      "en": "Delete {count, plural, =1 {# media item} other {# media items}}",
-      "de": "{count} Medien löschen"
+      "en": "Delete {count, plural, =1 {# media resource} other {# media resources}}",
+      "de": "{count, plural, =1 {# Medien-Resource} other {# Medien-Resourcen}} löschen"
     },
     "usageInfoMarkdown": {
       "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used.\n",
