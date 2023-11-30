@@ -12,7 +12,7 @@ export default class Educandu_2023_11_30_02_add_cdn_resources_to_rooms {
       const room = await cursor.next();
       const cdnResources = this.gfm.extractCdnResources(room.overview);
       await this.db.collection('rooms').updateOne({ _id: room._id }, { $set: { cdnResources } });
-      console.log(`Migrated room with ID ${room._id}`);
+      console.log(`Migrated room with ID '${room._id}'`);
     }
   }
 

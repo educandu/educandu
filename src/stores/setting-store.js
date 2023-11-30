@@ -1,4 +1,5 @@
 import Database from './database.js';
+
 class SettingStore {
   static dependencies = [Database];
 
@@ -11,9 +12,8 @@ class SettingStore {
   }
 
   saveSettings(settings, { session } = {}) {
-    return Promise.all(Object.keys(settings).map(key => {
-      const setting = { _id: key, value: settings[key] };
-      return this.collection.replaceOne({ _id: key }, setting, { session, upsert: true });
+    return Promise.all(settings.map(setting => {
+      return this.collection.replaceOne({ _id: setting._id }, setting, { session, upsert: true });
     }));
   }
 }
