@@ -504,6 +504,11 @@ export const roomMetadataProps = {
   shortDescription: PropTypes.string
 };
 
+export const roomContentProps = {
+  overview: PropTypes.string.isRequired,
+  cdnResources: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
 export const roomMinimalMetadataShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -514,6 +519,7 @@ export const roomMetadataShape = PropTypes.shape(roomMetadataProps);
 
 export const roomShape = PropTypes.shape({
   ...roomMetadataProps,
+  ...roomContentProps,
   owner: roomOwnerShape.isRequired,
   members: PropTypes.arrayOf(roomMemberShape)
 });

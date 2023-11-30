@@ -120,6 +120,7 @@ const roomMetadataDBProps = {
 
 const roomContentDBProps = {
   overview: joi.string().allow('').required(),
+  cdnResources: joi.array().items(joi.string()).required(),
   updatedOn: joi.date().required()
 };
 

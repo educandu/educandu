@@ -21,6 +21,7 @@ import RoomMediaItemStore from '../stores/room-media-item-store.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
@@ -51,7 +52,8 @@ export default class RoomService {
     EventStore,
     LockStore,
     TransactionRunner,
-    DocumentInputMediaItemStore
+    DocumentInputMediaItemStore,
+    GithubFlavoredMarkdown
   ];
 
   constructor(
@@ -68,7 +70,8 @@ export default class RoomService {
     eventStore,
     lockStore,
     transactionRunner,
-    documentInputMediaItemStore
+    documentInputMediaItemStore,
+    githubFlavoredMarkdown
   ) {
     this.cdn = cdn;
     this.roomStore = roomStore;
@@ -83,6 +86,7 @@ export default class RoomService {
     this.roomInvitationStore = roomInvitationStore;
     this.documentCommentStore = documentCommentStore;
     this.documentRevisionStore = documentRevisionStore;
+    this.githubFlavoredMarkdown = githubFlavoredMarkdown;
     this.documentInputMediaItemStore = documentInputMediaItemStore;
   }
 
@@ -125,7 +129,8 @@ export default class RoomService {
       overview: '',
       members: [],
       messages: [],
-      documents: []
+      documents: [],
+      cdnResources: []
     };
 
     try {
@@ -155,10 +160,13 @@ export default class RoomService {
   }
 
   async updateRoomContent(roomId, { overview }) {
+    const trimmedOverview = (overview || '').trim();
+    const cdnResources = this.githubFlavoredMarkdown.extractCdnResources(trimmedOverview);
     await this.roomStore.updateRoomContent(
       roomId,
       {
-        overview: (overview || '').trim(),
+        overview: trimmedOverview,
+        cdnResources,
         updatedOn: new Date()
       }
     );

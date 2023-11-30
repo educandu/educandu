@@ -117,6 +117,7 @@ describe('room-service', () => {
         createdBy: myUser._id,
         updatedOn: now,
         overview: '',
+        cdnResources: [],
         members: [],
         messages: [],
         documents: []
@@ -236,11 +237,7 @@ describe('room-service', () => {
     let room = null;
 
     beforeEach(async () => {
-      room = await sut.createRoom({
-        name: 'my room',
-        isCollaborative: false,
-        user: myUser
-      });
+      room = await createTestRoom(container, { name: 'my room', ownedBy: myUser._id, createdBy: myUser._id });
     });
 
     it('should create a new invitation for a room if it does not exist', async () => {
@@ -280,12 +277,7 @@ describe('room-service', () => {
     let invitation = null;
 
     beforeEach(async () => {
-      testRoom = await sut.createRoom({
-        name: 'room-name',
-        slug: 'room-slug',
-        isCollaborative: false,
-        user: myUser
-      });
+      testRoom = await createTestRoom(container, { name: 'my room', slug: 'room-slug', ownedBy: myUser._id, createdBy: myUser._id });
       const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], ownerUserId: myUser._id });
       invitation = invitations[0];
     });
@@ -329,11 +321,7 @@ describe('room-service', () => {
     let invitation = null;
 
     beforeEach(async () => {
-      testRoom = await sut.createRoom({
-        name: 'test-room',
-        isCollaborative: false,
-        user: myUser
-      });
+      testRoom = await createTestRoom(container, { name: 'my room', ownedBy: myUser._id, createdBy: myUser._id });
       const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], ownerUserId: myUser._id });
       invitation = invitations[0];
     });
@@ -420,11 +408,7 @@ describe('room-service', () => {
     let invitation = null;
 
     beforeEach(async () => {
-      testRoom = await sut.createRoom({
-        name: 'test-room',
-        isCollaborative: false,
-        user: myUser
-      });
+      testRoom = await createTestRoom(container, { name: 'my room', ownedBy: myUser._id, createdBy: myUser._id });
       const { invitations } = await sut.createOrUpdateInvitations({ roomId: testRoom._id, emails: [otherUser.email], ownerUserId: myUser._id });
       invitation = invitations[0];
     });
@@ -438,37 +422,41 @@ describe('room-service', () => {
     });
   });
 
+  describe('updateRoomContent', () => {
+    let room;
+    let overview;
+    let updatedRoom;
+
+    beforeEach(async () => {
+      room = await createTestRoom(container, { createdBy: myUser._id, ownedBy: myUser._id });
+      overview = '# Lorem ipsum ![](cdn://media-library/some-image.jpg) dolores eos impedit.';
+    });
+
+    describe('when the overview contains references to CDN resources', () => {
+      beforeEach(async () => {
+        updatedRoom = await sut.updateRoomContent(room._id, { overview });
+      });
+
+      it('should update the cdnResources array', () => {
+        expect(updatedRoom.cdnResources).toStrictEqual(['cdn://media-library/some-image.jpg']);
+      });
+    });
+  });
+
   describe('updateRoomDocumentsOrder', () => {
     let lock;
+    let room;
     let result;
-    let roomId;
     let document1;
     let document2;
     let document3;
 
     beforeEach(async () => {
       lock = { key: 'room' };
-      roomId = uniqueId.create();
-      const room = {
-        _id: roomId,
-        name: 'my room',
-        slug: 'my-slug',
-        shortDescription: '',
-        isCollaborative: false,
-        createdBy: myUser._id,
-        createdOn: new Date(),
-        updatedOn: new Date(),
-        ownedBy: myUser._id,
-        overview: '',
-        members: [],
-        messages: [],
-        documents: []
-      };
-
-      await roomStore.saveRoom(room);
-      document1 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false, inputSubmittingDisabled: false } });
-      document2 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: false, inputSubmittingDisabled: false } });
-      document3 = await createTestDocument(container, myUser, { roomId, roomContext: { draft: true, inputSubmittingDisabled: false } });
+      room = await createTestRoom(container, { createdBy: myUser._id, ownedBy: myUser._id });
+      document1 = await createTestDocument(container, myUser, { roomId: room._id, roomContext: { draft: false, inputSubmittingDisabled: false } });
+      document2 = await createTestDocument(container, myUser, { roomId: room._id, roomContext: { draft: false, inputSubmittingDisabled: false } });
+      document3 = await createTestDocument(container, myUser, { roomId: room._id, roomContext: { draft: true, inputSubmittingDisabled: false } });
       await roomStore.saveRoom({ ...room, documents: [document1._id, document2._id, document3._id] });
 
       lockStore.takeRoomLock.resolves(lock);
@@ -478,7 +466,7 @@ describe('room-service', () => {
     describe('when the provided document ids are different than the existing ones', () => {
       beforeEach(async () => {
         try {
-          await sut.updateRoomDocumentsOrder(roomId, [uniqueId.create()]);
+          await sut.updateRoomDocumentsOrder(room._id, [uniqueId.create()]);
         } catch (error) {
           result = error;
         }
@@ -489,7 +477,7 @@ describe('room-service', () => {
       });
 
       it('should take a lock on the room', () => {
-        assert.calledWith(lockStore.takeRoomLock, roomId);
+        assert.calledWith(lockStore.takeRoomLock, room._id);
       });
 
       it('should release the lock on the room', () => {
@@ -499,7 +487,7 @@ describe('room-service', () => {
 
     describe('when the provided document ids is a reordered list of the ids of the draft and non draft documents', () => {
       beforeEach(async () => {
-        result = await sut.updateRoomDocumentsOrder(roomId, [document3._id, document2._id, document1._id]);
+        result = await sut.updateRoomDocumentsOrder(room._id, [document3._id, document2._id, document1._id]);
       });
 
       it('should update the room documents order', () => {
@@ -507,7 +495,7 @@ describe('room-service', () => {
       });
 
       it('should take a lock on the room', () => {
-        assert.calledWith(lockStore.takeRoomLock, roomId);
+        assert.calledWith(lockStore.takeRoomLock, room._id);
       });
 
       it('should release the lock on the room', () => {
@@ -553,6 +541,7 @@ describe('room-service', () => {
         createdBy: myUser._id,
         updatedOn: now,
         overview: '',
+        cdnResources: [],
         members: [],
         messages: [
           {
@@ -609,6 +598,7 @@ describe('room-service', () => {
         createdBy: myUser._id,
         updatedOn: now,
         overview: '',
+        cdnResources: [],
         members: [],
         messages: [
           {
