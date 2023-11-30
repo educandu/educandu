@@ -1,11 +1,12 @@
 .MaintenanceMediaLibraryTab {}
 
-.MaintenanceMediaLibraryTab-controls {
+.MaintenanceMediaLibraryTab-filterControls {
   margin-bottom: 40px;
   display: grid;
   gap: 15px;
   grid-template-columns: 2fr 1fr auto;
   grid-template-rows: auto;
+  align-items: center;
 
   @media @edu-media-phone {
     grid-template-columns: 100%;
@@ -15,4 +16,44 @@
 
 .MaintenanceMediaLibraryTab-filter {
   width: 100%;
+}
+
+.MaintenanceMediaLibraryTab-cleanupPanel {
+  margin-bottom: 40px;
+}
+
+.MaintenanceMediaLibraryTab-cleanupPanelHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.MaintenanceMediaLibraryTab-cleanupPanelContent {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .m-fake-flex-gap(10px);
+
+  @media @edu-media-phone-portrait {
+    display: grid;
+    gap: 20px;
+    grid-auto-flow: row;
+    justify-content: stretch;
+  }
+}
+
+.MaintenanceMediaLibraryTab-cleanupPanelFilters {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 10px;
+  align-items: center;
+
+  @media @edu-media-phone-portrait {
+    grid-auto-flow: row;
+  }
+}
+
+.MaintenanceMediaLibraryTab-cleanupPanelButton {
+  display: grid;
+  grid-gap: 10px;
+  grid-auto-flow: column;
 }
