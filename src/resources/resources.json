@@ -1425,8 +1425,8 @@
   },
   "mediaVolumeSlider": {
     "iOSWarning": {
-      "en": "This setting is ignored on iPhone and iPad devices.",
-      "de": "This setting is ignored on iPhone and iPad devices."
+      "en": "This setting is ignored by iPhone and iPad devices.",
+      "de": "Diese Einstellung wird von iPhones und iPads ignoriert."
     }
   },
   "multitrackMediaPlayer": {
@@ -4562,7 +4562,7 @@
     },
     "playerNotSupportedOnIOS": {
       "en": "Player not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.",
-      "de": "Player not supported on iPad and iPhone devices due to iOS restrictions on essential functionality."
+      "de": "Da iPads und iPhones Einschränkungen in für diesen Player benötigten Funktionen haben, werden diese Geräte nicht unterstützt."
     }
   },
   "pageNames": {
