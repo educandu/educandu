@@ -1,4 +1,4 @@
-export default class Educandu_2023_11_28_01_migrate_media_analysis_to_single_track {
+export default class Educandu_2023_11_30_01_migrate_media_analysis_to_single_track {
   constructor(db) {
     this.db = db;
   }
