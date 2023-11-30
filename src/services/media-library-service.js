@@ -119,6 +119,12 @@ class MediaLibraryService {
     }
   }
 
+  async bulkDeleteMediaLibraryItems({ mediaLibraryItemIds }) {
+    for (const mediaLibraryItemId of mediaLibraryItemIds) {
+      await this.deleteMediaLibraryItem({ mediaLibraryItemId });
+    }
+  }
+
   async getMediaLibraryItemTagsMatchingText(searchString) {
     const sanitizedSearchString = escapeStringRegexp((searchString || '').trim());
     const result = await this.mediaLibraryItemStore.getMediaLibraryItemTagsMatchingText(sanitizedSearchString);

@@ -485,6 +485,10 @@
     "whiteboardResetConfirmation": {
       "en": "Do you really want to reset the whiteboard?",
       "de": "Möchtest du das Whiteboard wirklich zurücksetzen?"
+    },
+    "bulkDeleteMediaItemsConfirmation": {
+      "en": "Do you really want to irreversibly delete {count, plural, =1 {# media item} other {# media items}}?",
+      "de": "Möchtest du {count} Medien wirklich unwiderruflich löschen?"
     }
   },
   "consentDialog": {
@@ -1264,9 +1268,9 @@
       "en": "Filter by title, tag, license or user",
       "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
     },
-    "cleanupPanelHeader": {
-      "en": "Bulk cleanup",
-      "de": "Bulk cleanup"
+    "bulkDeletePanelHeader": {
+      "en": "Bulk delete",
+      "de": "Bulk delete"
     },
     "createdBefore": {
       "en": "Created before",
@@ -1280,11 +1284,11 @@
       "en": "and",
       "de": "und"
     },
-    "unused": {
+    "resourceUsage_unused": {
       "en": "unused",
       "de": "unbenutzt"
     },
-    "deprecated": {
+    "resourceUsage_deprecated": {
       "en": "deprecated",
       "de": "abgelehnt"
     },

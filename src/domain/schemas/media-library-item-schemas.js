@@ -50,3 +50,7 @@ export const mediaLibrarySearchQuerySchema = joi.object({
 export const mediaLibraryFindParamsSchema = joi.object({
   url: joi.string().required()
 });
+
+export const mediaLibraryBulkDeleteBodySchema = joi.object({
+  mediaLibraryItemIds: joi.array().items(idOrKeySchema).required()
+});

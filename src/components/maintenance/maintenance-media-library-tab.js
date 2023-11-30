@@ -20,12 +20,12 @@ import { RESOURCE_USAGE } from '../../domain/constants.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
-import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import { Button, Collapse, message, Table, Radio, DatePicker } from 'antd';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
+import { confirmBulkDeleteMediaItems, confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import { ensureAreExcluded, ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -151,12 +151,20 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   }), []);
 
   useEffect(() => {
-    const filteredRows = filterRows(allRows, filter);
+    let filteredRows = filterRows(allRows, filter);
+
+    if (createdBefore) {
+      filteredRows = filteredRows
+        .filter(row => row.usage === usage && new Date(row.createdOn) < createdBefore);
+    }
+
     const sorter = tableSorters[sorting.value];
     const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
+
     setRenderingRows(!!sortedRows.length);
     setDisplayedRows(sortedRows);
-  }, [allRows, filter, sorting, tableSorters]);
+
+  }, [allRows, filter, sorting, tableSorters, createdBefore, usage]);
 
   const handleTableChange = ({ current, pageSize }) => {
     setPagination({ page: current, pageSize });
@@ -230,6 +238,22 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
 
   const determineDisabledDate = dayjsValue => {
     return dayjsValue.isAfter(new Date());
+  };
+
+  const handleBulkDeleteClick = () => {
+    if (createdBefore && usage) {
+      confirmBulkDeleteMediaItems(t, displayedRows.length, async () => {
+        const mediaLibraryItemIds = displayedRows.map(row => row._id);
+        try {
+          await mediaLibraryApiClient.bulkDeleteMediaLibraryItems({ mediaLibraryItemIds });
+          const deletedMediaLibraryItems = mediaLibraryItems.filter(item => mediaLibraryItemIds.includes(item._id));
+          onMediaLibraryItemsChange(oldItems => ensureAreExcluded(oldItems, deletedMediaLibraryItems));
+          message.success(t('common:changesSavedSuccessfully'));
+        } catch (error) {
+          handleApiError({ error, logger, t });
+        }
+      });
+    }
   };
 
   const renderType = (_, row) => (
@@ -319,7 +343,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
     }
   ];
 
-  const isCleanupDeleteDisabled = !createdBefore || !displayedRows.length;
+  const isBulkDeleteDisabled = !createdBefore || !displayedRows.length;
 
   return (
     <div className="MaintenanceMediaLibraryTab">
@@ -341,17 +365,17 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
           {t('common:create')}
         </Button>
       </div>
-      <div className="MaintenanceMediaLibraryTab-cleanupPanel">
+      <div className="MaintenanceMediaLibraryTab-bulkDeletePanel">
         <Collapse size="small" expandIconPosition="end">
           <Collapse.Panel
             header={
-              <div className="MaintenanceMediaLibraryTab-cleanupPanelHeader">
-                {t('cleanupPanelHeader')}
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelHeader">
+                {t('bulkDeletePanelHeader')}
               </div>
             }
             >
-            <div className="MaintenanceMediaLibraryTab-cleanupPanelContent">
-              <div className="MaintenanceMediaLibraryTab-cleanupPanelFilters">
+            <div className="MaintenanceMediaLibraryTab-bulkDeletePanelContent">
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelFilters">
                 <div>{t('createdBefore')}</div>
                 <DatePicker
                   showTime={false}
@@ -367,10 +391,10 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
                   <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
                 </Radio.Group>
               </div>
-              <div className="MaintenanceMediaLibraryTab-cleanupPanelButton">
-                <Button disabled={isCleanupDeleteDisabled} danger>
-                  {!!isCleanupDeleteDisabled && t('delete')}
-                  {!isCleanupDeleteDisabled && t('deleteCount', { count: displayedRows.length })}
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelButton">
+                <Button disabled={isBulkDeleteDisabled} danger onClick={handleBulkDeleteClick}>
+                  {!!isBulkDeleteDisabled && t('delete')}
+                  {!isBulkDeleteDisabled && t('deleteCount', { count: displayedRows.length })}
                 </Button>
               </div>
             </div>
