@@ -386,7 +386,11 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
                   onChange={handleCreatedBeforeFilterChange}
                   />
                 <div>{t('and')}</div>
-                <Info tooltip={<Markdown>{t('usageInfoMarkdown')}</Markdown>} iconAfterContent>
+                <Info
+                  iconAfterContent
+                  tooltip={<Markdown>{t('usageInfoMarkdown')}</Markdown>}
+                  className="MaintenanceMediaLibraryTab-bulkDeletePanelRadios"
+                  >
                   <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
                     <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
                     <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
