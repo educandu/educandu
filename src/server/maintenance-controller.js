@@ -21,7 +21,7 @@ class MaintenanceController {
 
     const [documents, mediaLibraryItems] = await Promise.all([
       this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true }),
-      this.mediaLibraryService.getAllMediaLibraryItems()
+      this.mediaLibraryService.getAllMediaLibraryItemsWithUsage()
     ]);
 
     const [mappedDocuments, mappedMediaLibraryItems] = await Promise.all([

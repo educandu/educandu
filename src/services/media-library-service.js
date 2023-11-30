@@ -5,22 +5,35 @@ import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
 import { getCdnPath } from '../utils/source-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
+import DocumentStore from '../stores/document-store.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
-import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
+import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, RESOURCE_USAGE } from '../domain/constants.js';
 
 class MediaLibraryService {
-  static dependencies = [Cdn, MediaLibraryItemStore];
+  static dependencies = [Cdn, MediaLibraryItemStore, DocumentRevisionStore, DocumentStore];
 
-  constructor(cdn, mediaLibraryItemStore) {
+  constructor(cdn, mediaLibraryItemStore, documentRevisionStore, documentStore) {
     this.cdn = cdn;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
+    this.documentRevisionStore = documentRevisionStore;
+    this.documentStore = documentStore;
   }
 
-  getAllMediaLibraryItems() {
-    return this.mediaLibraryItemStore.getAllMediaLibraryItems();
+  async getAllMediaLibraryItemsWithUsage() {
+    const [items, docCdnResources, revCdnResources] = await Promise.all([
+      this.mediaLibraryItemStore.getAllMediaLibraryItems(),
+      this.documentStore.getAllCdnResourcesReferencedFromNonArchivedDocuments().then(x => new Set(x)),
+      this.documentRevisionStore.getAllCdnResourcesReferencedFromDocumentRevisions().then(x => new Set(x))
+    ]);
+
+    return items.map(item => ({
+      ...item,
+      usage: this._getResourceUsage(item, docCdnResources, revCdnResources)
+    }));
   }
 
   async getSearchableMediaLibraryItemsByTags(query) {
@@ -144,6 +157,18 @@ class MediaLibraryService {
         return { ...item, relevance };
       })
       .sort(by(item => item.relevance).thenBy(item => item.name));
+  }
+
+  _getResourceUsage(mediaLibraryItem, documentCdnResourcesSet, documentRevisionsCdnResourcesSet) {
+    if (documentCdnResourcesSet.has(mediaLibraryItem.url)) {
+      return RESOURCE_USAGE.used;
+    }
+
+    if (documentRevisionsCdnResourcesSet.has(mediaLibraryItem.url)) {
+      return RESOURCE_USAGE.deprecated;
+    }
+
+    return RESOURCE_USAGE.unused;
   }
 }
 

@@ -1,29 +1,38 @@
 import by from 'thenby';
 import { createSandbox } from 'sinon';
+import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
 import MediaLibraryService from './media-library-service.js';
+import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { getMediaLibraryPath } from '../utils/storage-utils.js';
-import { CDN_URL_PREFIX, RESOURCE_TYPE, ROLE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { CDN_URL_PREFIX, RESOURCE_TYPE, RESOURCE_USAGE, ROLE } from '../domain/constants.js';
 import {
   destroyTestEnvironment,
   pruneTestEnvironment,
   setupTestEnvironment,
   createTestUser,
-  createTestMediaLibraryItem
+  createTestMediaLibraryItem,
+  createTestDocument,
+  createTestSection,
+  updateTestDocument
 } from '../test-helper.js';
 
 describe('media-library-service', () => {
   const sandbox = createSandbox();
   const now = new Date();
 
+  let maintainerUser;
+  let markdownInfo;
   let container;
   let user;
   let sut;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
+    maintainerUser = await createTestUser(container, { email: 'maintaner@test.com', role: ROLE.maintainer });
     user = await createTestUser(container, { email: 'user@test.com', role: ROLE.user });
+    markdownInfo = container.get(MarkdownInfo);
     sut = container.get(MediaLibraryService);
   });
 
@@ -38,6 +47,98 @@ describe('media-library-service', () => {
   afterEach(async () => {
     await pruneTestEnvironment(container);
     sandbox.restore();
+  });
+
+  describe('getAllMediaLibraryItemsWithUsage', () => {
+    const itemUrl = `${CDN_URL_PREFIX}${urlUtils.concatParts(getMediaLibraryPath(), 'item1.txt')}`;
+    let result;
+    describe('when an item is referenced from an unarchived document', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        const section = createTestSection({
+          key: uniqueId.create(),
+          type: MarkdownInfo.typeName,
+          content: {
+            ...markdownInfo.getDefaultContent(),
+            text: `I [link this](${itemUrl})`
+          }
+        });
+        await createTestDocument(container, user, { sections: [section] });
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+      it('has usage `used`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.used);
+      });
+    });
+    describe('when an item is referenced from an archived document only', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        const section = createTestSection({
+          key: uniqueId.create(),
+          type: MarkdownInfo.typeName,
+          content: {
+            ...markdownInfo.getDefaultContent(),
+            text: `I [link this](${itemUrl})`
+          }
+        });
+        const doc = await createTestDocument(container, user, { sections: [section] });
+        await updateTestDocument({
+          container,
+          user: maintainerUser,
+          documentId: doc._id,
+          data: {
+            publicContext: { archived: true }
+          }
+        });
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+      it('has usage `deprecated`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.deprecated);
+      });
+    });
+    describe('when an item is referenced from an earlier document revision only', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        const section = createTestSection({
+          key: uniqueId.create(),
+          type: MarkdownInfo.typeName,
+          content: {
+            ...markdownInfo.getDefaultContent(),
+            text: `I [link this](${itemUrl})`
+          }
+        });
+        const doc = await createTestDocument(container, user, { sections: [section] });
+        await updateTestDocument({
+          container,
+          user: maintainerUser,
+          documentId: doc._id,
+          data: {
+            sections: [
+              {
+                ...doc.sections[0],
+                content: {
+                  ...doc.sections[0].content,
+                  text: 'I do not link it anymore!'
+                }
+              }
+            ]
+          }
+        });
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+      it('has usage `deprecated`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.deprecated);
+      });
+    });
+    describe('when an item is not referenced from a document at all', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+      it('has usage `unused`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.unused);
+      });
+    });
   });
 
   describe('getSearchableMediaLibraryItemsByTagsOrName', () => {

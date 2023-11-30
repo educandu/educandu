@@ -14,6 +14,10 @@ export default {
       name: '_idx_documentId_order_',
       key: { documentId: 1, order: 1 },
       unique: true
+    },
+    {
+      name: '_idx_cdnResources_',
+      key: { cdnResources: 1 }
     }
   ]
 };
