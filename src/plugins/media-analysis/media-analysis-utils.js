@@ -12,23 +12,6 @@ const chapterSchema = joi.object({
   text: joi.string().allow('').required()
 });
 
-export function createDefaultTrack() {
-  return {
-    key: uniqueId.create(),
-    name: '',
-    sourceUrl: '',
-    copyrightNotice: '',
-    playbackRange: [0, 1]
-  };
-}
-
-export function createDefaultVolumePreset(t, tracksCount) {
-  return {
-    name: t('common:defaultVolumePreset'),
-    tracks: Array.from({ length: tracksCount }, () => 1)
-  };
-}
-
 export function createDefaultChapter() {
   return {
     key: uniqueId.create(),
@@ -39,12 +22,11 @@ export function createDefaultChapter() {
   };
 }
 
-export function createDefaultContent(t) {
-  const tracks = [createDefaultTrack()];
-
+export function createDefaultContent() {
   return {
-    tracks,
-    volumePresets: [createDefaultVolumePreset(t, tracks.length)],
+    sourceUrl: '',
+    copyrightNotice: '',
+    playbackRange: [0, 1],
     chapters: [createDefaultChapter()],
     showVideo: false,
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -97,17 +79,9 @@ export async function importChaptersFromCsv(csvStringOrFile) {
 
 export function validateContent(content) {
   const schema = joi.object({
-    tracks: joi.array().items(joi.object({
-      key: joi.string().required(),
-      name: joi.string().allow('').required(),
-      sourceUrl: joi.string().allow('').required(),
-      copyrightNotice: joi.string().allow('').required(),
-      playbackRange: joi.array().items(joi.number().min(0).max(1)).required()
-    })).unique('key').min(1).required(),
-    volumePresets: joi.array().items(joi.object({
-      name: joi.string().required(),
-      tracks: joi.array().items(joi.number().min(0).max(1)).min(1).required()
-    })).min(1).required(),
+    sourceUrl: joi.string().allow('').required(),
+    copyrightNotice: joi.string().allow('').required(),
+    playbackRange: joi.array().items(joi.number().min(0).max(1)).required(),
     chapters: joi.array().items(chapterSchema).unique('key').required(),
     showVideo: joi.boolean().required(),
     aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),

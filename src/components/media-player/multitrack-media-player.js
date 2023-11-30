@@ -30,7 +30,6 @@ function MultitrackMediaPlayer({
   customUnderScreenContent,
   initialVolume,
   multitrackMediaPlayerRef,
-  parts,
   posterImageUrl,
   screenWidth,
   selectedVolumePresetIndex,
@@ -40,8 +39,7 @@ function MultitrackMediaPlayer({
   volumePresets,
   onEnded,
   onPause,
-  onPlay,
-  onPlayingPartIndexChange
+  onPlay
 }) {
   const [isSeeking, setIsSeeking] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -117,14 +115,6 @@ function MultitrackMediaPlayer({
   const triggerPlayMainTrack = () => {
     const mainTrack = trackStates.find(trackState => trackState.isMainTrack);
     getTrackRef(mainTrack.key).current.play();
-  };
-
-  const triggerSeekToPartAll = partIndex => {
-    const mainDuration = trackStates.find(ts => ts.isMainTrack).durationInMilliseconds;
-    const partStartTimecode = (parts[partIndex]?.startPosition || 0) * mainDuration;
-    trackStates.forEach(trackState => {
-      getTrackRef(trackState.key).current.seekToTimecode(partStartTimecode);
-    });
   };
 
   const triggerPlayAll = () => {
@@ -274,8 +264,7 @@ function MultitrackMediaPlayer({
   };
 
   multitrackMediaPlayerRef.current = {
-    play: triggerPlayMainTrack,
-    seekToPart: triggerSeekToPartAll
+    play: triggerPlayMainTrack
   };
 
   const allSourcesAreSet = trackStates.every(trackState => !!trackState.sourceUrl);
@@ -300,7 +289,6 @@ function MultitrackMediaPlayer({
           allowFullscreen={screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen}
           aspectRatio={aspectRatio}
           customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
-          parts={parts}
           playbackRange={trackState.playbackRange}
           playbackRate={playbackRate}
           posterImageUrl={posterImageUrl}
@@ -318,7 +306,6 @@ function MultitrackMediaPlayer({
           onExitFullscreen={() => trackState.isMainTrack ? handleExitFullscreen() : null}
           onPause={() => trackState.isMainTrack ? handleMainTrackPause() : null}
           onPlay={() => trackState.isMainTrack ? handleMainTrackPlay() : null}
-          onPlayingPartIndexChange={partIndex => trackState.isMainTrack ? onPlayingPartIndexChange(partIndex) : null}
           onProgress={value => trackState.isMainTrack ? handleMainTrackProgress(value) : null}
           onReady={() => handleReady(trackState.key)}
           onSeekEnd={() => trackState.isMainTrack ? handleMainTrackSeekEnd() : null}
@@ -337,9 +324,6 @@ MultitrackMediaPlayer.propTypes = {
   multitrackMediaPlayerRef: PropTypes.shape({
     current: PropTypes.any
   }),
-  parts: PropTypes.arrayOf(PropTypes.shape({
-    startPosition: PropTypes.number.isRequired
-  })),
   posterImageUrl: PropTypes.string,
   screenWidth: PropTypes.oneOf([...Array(101).keys()]),
   selectedVolumePresetIndex: PropTypes.number,
@@ -357,8 +341,7 @@ MultitrackMediaPlayer.propTypes = {
   })).isRequired,
   onEnded: PropTypes.func,
   onPause: PropTypes.func,
-  onPlay: PropTypes.func,
-  onPlayingPartIndexChange: PropTypes.func
+  onPlay: PropTypes.func
 };
 
 MultitrackMediaPlayer.defaultProps = {
@@ -369,7 +352,6 @@ MultitrackMediaPlayer.defaultProps = {
   multitrackMediaPlayerRef: {
     current: null
   },
-  parts: [],
   posterImageUrl: null,
   screenWidth: 100,
   selectedVolumePresetIndex: null,
@@ -377,8 +359,7 @@ MultitrackMediaPlayer.defaultProps = {
   showVideo: true,
   onEnded: () => {},
   onPause: () => {},
-  onPlay: () => {},
-  onPlayingPartIndexChange: () => {}
+  onPlay: () => {}
 };
 
 export default MultitrackMediaPlayer;
