@@ -5,11 +5,11 @@ import { Table, List, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useIsMounted } from '../../ui/hooks.js';
 import { useDateFormat } from '../locale-context.js';
-import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TYPE } from '../../domain/constants.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import BatchApiClient from '../../api-clients/batch-api-client.js';
+import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TYPE } from '../../domain/constants.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   documentValidationBatchDetailsShape,

@@ -209,16 +209,16 @@
       "de": "Führt eine Überprüfung aller Datenbankeinträge von Dokument-Revisionen und Dokumenten durch,\num zu verifizieren, dass die Daten strukturell korrekt sind und dem erwarteten Datenmodell der Anwendung entsprechen.\n"
     },
     "batchSectionHeader_cdn-resources-consolidation": {
-      "en": "Document resources inventory regeneration",
-      "de": "Inventar der Dokument-Ressourcen neu erstellen"
+      "en": "CDN resources inventory regeneration",
+      "de": "Inventar der CDN-Ressourcen neu erstellen"
     },
     "batchSectionInfo_cdn-resources-consolidation": {
       "en": "This tasks updates database data. As a result, some data might be corrected.",
       "de": "Dieser Task aktualisiert die Datenbank. Bei der Ausführung werden möglicherweise bestimmte Datensätze korrigiert."
     },
     "batchSectionDescription_cdn-resources-consolidation": {
-      "en": "Each document and document revision record contains a list of CDN resource links,\nas an inventory of all CDN resources referenced within the content of that document or document revision.\nBy running this task, all documents and document revisions are examined again and their CDN resources list is recreated, thus insuring a correct and consistent list.\nNote that this task does not verify that the collected links actually point to an existing CDN resource.\n",
-      "de": "Jeder Datenbankeintrag von Dokumenten und Dokument-Revisionen enthält eine Liste mit Links auf CDN-Ressources\nals Inventar aller CDN-Ressourcen, die im Inhalt dieses Dokuments oder dieser Dokument-Revision referenziert sind.\nBei der Ausführung wird jedes Dokument und jede Dokument-Revision analysiert und dabei jeweils die Konsistenz der Liste von CDN-Ressourcen sichergestellt.\nBitte beachte, dass dieser Task nicht verifiziert, dass die gesammelten Links tatsächlich auf eine existierende CDN-Ressource zeigen.\n"
+      "en": "CDN resources are referenced from varioues website content (e.g. documents, rooms, user profiles, etc.).\nBy running this task, these references are re-collected and consolidated in order to insure a correct and consistent list.\nNote that this task does not verify that the collected links actually point to an existing CDN resource.\n",
+      "de": "CDN-Ressourcen werden von diversen Website-Inhalten (z.B. Dokumenten, Räumen, Benutzerprofilen, etc.) aus refernziert.\nBei der Ausführung dieses Tasks werden diese Referenzen neu gesammelt und konsolidiert, um eine korrekte und konsistente Liste sicherzustellen.\nBitte beachte, dass dieser Task nicht verifiziert, dass die gesammelten Links tatsächlich auf eine existierende CDN-Ressource zeigen.\n"
     },
     "lastExecution": {
       "en": "Last execution",
