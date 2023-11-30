@@ -366,8 +366,13 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
         </Button>
       </div>
       <div className="MaintenanceMediaLibraryTab-bulkDeletePanel">
-        <Collapse size="small" expandIconPosition="end">
+        <Collapse
+          size="small"
+          expandIconPosition="end"
+          defaultActiveKey={createdBefore ? ['bulkDelete'] : []}
+          >
           <Collapse.Panel
+            key="bulkDelete"
             header={
               <div className="MaintenanceMediaLibraryTab-bulkDeletePanelHeader">
                 {t('bulkDeletePanelHeader')}
