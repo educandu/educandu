@@ -1,28 +1,33 @@
 import by from 'thenby';
+import dayjs from 'dayjs';
+import Info from '../info.js';
 import PropTypes from 'prop-types';
+import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
-import { Button, message, Table } from 'antd';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
+import { useDateFormat } from '../locale-context.js';
 import ResourceTypeCell from '../resource-type-cell.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
+import { RESOURCE_USAGE } from '../../domain/constants.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
-import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
+import { Button, Collapse, message, Table, Radio, DatePicker } from 'antd';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
-import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
+import { confirmBulkDeleteMediaItems, confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import { ensureAreExcluded, ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -36,16 +41,23 @@ const SORTING_VALUE = {
   type: 'type'
 };
 
+const DEFAULT_USAGE = RESOURCE_USAGE.unused;
+
 const getSanitizedQueryFromRequest = request => {
   const query = request.query.tab === TAB.mediaLibrary ? request.query : {};
 
   const pageNumber = Number(query.page);
   const pageSizeNumber = Number(query.pageSize);
+  const createdBeforeMilliseconds = parseInt((query.createdBefore || '').trim(), 10);
+  const createdBefore = !isNaN(createdBeforeMilliseconds) ? new Date(createdBeforeMilliseconds) : null;
+  const isValidUsage = query.usage === RESOURCE_USAGE.unused || query.usage === RESOURCE_USAGE.deprecated;
 
   return {
     filter: (query.filter || '').trim(),
     sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.updatedOn,
     direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
+    createdBefore,
+    usage: createdBefore && isValidUsage ? query.usage : DEFAULT_USAGE,
     page: !isNaN(pageNumber) ? pageNumber : 1,
     pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
   };
@@ -78,12 +90,15 @@ function filterRows(rows, filter) {
 
 function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
   const request = useRequest();
+  const { dateFormat } = useDateFormat();
   const { t } = useTranslation('maintenanceMediaLibraryTab');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
-  const requestQuery = getSanitizedQueryFromRequest(request);
+  const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
+  const [usage, setUsage] = useState(requestQuery.usage);
   const [filter, setFilter] = useState(requestQuery.filter);
+  const [createdBefore, setCreatedBefore] = useState(requestQuery.createdBefore);
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
   const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
 
@@ -91,7 +106,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   const [displayedRows, setDisplayedRows] = useState([]);
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
-  const [renderingRows, setRenderingRows] = useState(true);
+  const [renderingRows, setRenderingRows] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -100,14 +115,16 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   useEffect(() => {
     const queryParams = {
       filter,
-      page: pagination.page,
-      pageSize: pagination.pageSize,
       sorting: sorting.value,
-      direction: sorting.direction
+      direction: sorting.direction,
+      createdBefore: createdBefore?.getTime(),
+      usage: createdBefore ? usage : null,
+      page: pagination.page,
+      pageSize: pagination.pageSize
     };
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.mediaLibrary, queryParams));
-  }, [filter, sorting, pagination]);
+  }, [filter, sorting, createdBefore, usage, pagination]);
 
   useEffect(() => {
     setAllRows(createTableRows(mediaLibraryItems, t));
@@ -136,11 +153,20 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   }), []);
 
   useEffect(() => {
-    const filteredRows = filterRows(allRows, filter);
+    let filteredRows = filterRows(allRows, filter);
+
+    if (createdBefore) {
+      filteredRows = filteredRows
+        .filter(row => row.usage === usage && new Date(row.createdOn) < createdBefore);
+    }
+
     const sorter = tableSorters[sorting.value];
     const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
+
+    setRenderingRows(!!sortedRows.length);
     setDisplayedRows(sortedRows);
-  }, [allRows, filter, sorting, tableSorters]);
+
+  }, [allRows, filter, sorting, tableSorters, createdBefore, usage]);
 
   const handleTableChange = ({ current, pageSize }) => {
     setPagination({ page: current, pageSize });
@@ -155,9 +181,15 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
     setFilter(newFilter);
   };
 
+  const handleCreatedBeforeFilterChange = dayjsValue => {
+    setCreatedBefore(dayjsValue?.startOf('date').toDate() || null);
+  };
+
+  const handleUsageChange = event => {
+    setUsage(event.target.value);
+  };
+
   const handlePreviewItemClick = row => {
-    event.preventDefault();
-    event.stopPropagation();
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
     setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
   };
@@ -202,6 +234,26 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
       setTimeout(() => setRenderingRows(false), delayToAvoidRerenderingClash);
     }
     return {};
+  };
+
+  const determineDisabledDate = dayjsValue => {
+    return dayjsValue.isAfter(new Date());
+  };
+
+  const handleBulkDeleteClick = () => {
+    if (createdBefore && usage) {
+      confirmBulkDeleteMediaItems(t, displayedRows.length, async () => {
+        const mediaLibraryItemIds = displayedRows.map(row => row._id);
+        try {
+          await mediaLibraryApiClient.bulkDeleteMediaLibraryItems({ mediaLibraryItemIds });
+          const deletedMediaLibraryItems = mediaLibraryItems.filter(item => mediaLibraryItemIds.includes(item._id));
+          onMediaLibraryItemsChange(oldItems => ensureAreExcluded(oldItems, deletedMediaLibraryItems));
+          message.success(t('common:changesSavedSuccessfully'));
+        } catch (error) {
+          handleApiError({ error, logger, t });
+        }
+      });
+    }
   };
 
   const renderType = (_, row) => (
@@ -291,9 +343,11 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
     }
   ];
 
+  const isBulkDeleteDisabled = !createdBefore || !displayedRows.length;
+
   return (
     <div className="MaintenanceMediaLibraryTab">
-      <div className="MaintenanceMediaLibraryTab-controls">
+      <div className="MaintenanceMediaLibraryTab-filterControls">
         <FilterInput
           size="large"
           className="MaintenanceMediaLibraryTab-filter"
@@ -310,6 +364,53 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
         <Button type="primary" onClick={handleCreateItemClick}>
           {t('common:create')}
         </Button>
+      </div>
+      <div className="MaintenanceMediaLibraryTab-bulkDeletePanel">
+        <Collapse
+          size="small"
+          expandIconPosition="end"
+          defaultActiveKey={createdBefore ? ['bulkDelete'] : []}
+          >
+          <Collapse.Panel
+            key="bulkDelete"
+            header={
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelHeader">
+                {t('bulkDeletePanelHeader')}
+              </div>
+            }
+            >
+            <div className="MaintenanceMediaLibraryTab-bulkDeletePanelContent">
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelFilters">
+                <div>{t('createdBefore')}</div>
+                <DatePicker
+                  showTime={false}
+                  format={dateFormat}
+                  placeholder={t('datePlaceholder')}
+                  disabledDate={determineDisabledDate}
+                  value={createdBefore ? dayjs(createdBefore) : null}
+                  onChange={handleCreatedBeforeFilterChange}
+                  />
+                <div>{t('and')}</div>
+                <Info
+                  iconAfterContent
+                  tooltip={<Markdown>{t('usageInfoMarkdown')}</Markdown>}
+                  className="MaintenanceMediaLibraryTab-bulkDeletePanelRadios"
+                  >
+                  <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
+                    <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
+                    <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
+                  </Radio.Group>
+                </Info>
+              </div>
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelButton">
+                <Button disabled={isBulkDeleteDisabled} danger type="primary" onClick={handleBulkDeleteClick}>
+                  {!!isBulkDeleteDisabled && t('delete')}
+                  {!isBulkDeleteDisabled && t('deleteCount', { count: displayedRows.length })}
+                </Button>
+              </div>
+            </div>
+          </Collapse.Panel>
+        </Collapse>
       </div>
       <Table
         dataSource={[...displayedRows]}

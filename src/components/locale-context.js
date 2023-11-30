@@ -95,7 +95,8 @@ export function useDateFormat() {
   const { uiLocale } = useLocale();
 
   return useMemo(() => {
-    const dateTimeFormat = uiLocale === 'de-DE' ? 'DD.MM.YYYY, HH:mm' : 'MM/DD/YYYY, HH:mm';
+    const dateFormat = uiLocale === 'de-DE' ? 'DD.MM.YYYY' : 'MM/DD/YYYY';
+    const dateTimeFormat = `${dateFormat}, HH:mm`;
     const localePattern = 'L, LT';
     const numberFormat = new Intl.NumberFormat(uiLocale);
 
@@ -107,6 +108,7 @@ export function useDateFormat() {
       formatDate,
       formatNumber,
       formatDuration,
+      dateFormat,
       dateTimeFormat
     };
   }, [uiLocale]);

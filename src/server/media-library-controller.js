@@ -13,7 +13,8 @@ import {
   mediaLibraryItemIdParamsSchema,
   mediaLibrarySearchQuerySchema,
   mediaLibraryTagSearchQuerySchema,
-  mediaLibraryFindParamsSchema
+  mediaLibraryFindParamsSchema,
+  mediaLibraryBulkDeleteBodySchema
 } from '../domain/schemas/media-library-item-schemas.js';
 
 const jsonParser = express.json();
@@ -90,6 +91,14 @@ class MediaLibraryController {
     return res.status(204).end();
   }
 
+  async handleBulkDeleteMediaLibraryItems(req, res) {
+    const { mediaLibraryItemIds } = req.body;
+
+    await this.mediaLibraryService.bulkDeleteMediaLibraryItems({ mediaLibraryItemIds });
+
+    return res.status(204).end();
+  }
+
   async handleGetMediaLibraryTagSuggestions(req, res) {
     const { query } = req.query;
 
@@ -143,6 +152,14 @@ class MediaLibraryController {
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
       validateParams(mediaLibraryItemIdParamsSchema),
       (req, res) => this.handleDeleteMediaLibraryItem(req, res)
+    );
+
+    router.delete(
+      '/api/v1/media-library/items',
+      jsonParser,
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      validateBody(mediaLibraryBulkDeleteBodySchema),
+      (req, res) => this.handleBulkDeleteMediaLibraryItems(req, res)
     );
 
     router.get(

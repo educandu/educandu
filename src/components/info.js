@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
-function Info({ children, iconAfterContent, tooltip }) {
+function Info({ children, iconAfterContent, tooltip, className }) {
   return (
-    <span className="Info">
+    <span className={`Info ${className}`}>
       {!!iconAfterContent && children}
       {!!tooltip && (
         <Tooltip title={tooltip}>
@@ -28,12 +28,14 @@ function Info({ children, iconAfterContent, tooltip }) {
 }
 
 Info.propTypes = {
+  className: PropTypes.string,
   children: PropTypes.node,
   iconAfterContent: PropTypes.bool,
   tooltip: PropTypes.node
 };
 
 Info.defaultProps = {
+  className: '',
   children: null,
   iconAfterContent: false,
   tooltip: null

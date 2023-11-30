@@ -64,6 +64,18 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
+  bulkDeleteMediaLibraryItems({ mediaLibraryItemIds }) {
+    return this.httpClient
+      .delete(
+        '/api/v1/media-library/items',
+        {
+          data: { mediaLibraryItemIds },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
   getMediaLibraryTagSuggestions(query) {
     return this.httpClient
       .get(

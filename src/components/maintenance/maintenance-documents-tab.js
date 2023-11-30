@@ -106,7 +106,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
-  const [renderingRows, setRenderingRows] = useState(true);
+  const [renderingRows, setRenderingRows] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -159,6 +159,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
     const sorter = tableSorters[sorting.value];
     const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
 
+    setRenderingRows(!!sortedRows.length);
     setDisplayedRows(sortedRows);
   }, [allRows, filter, sorting, tableSorters]);
 
