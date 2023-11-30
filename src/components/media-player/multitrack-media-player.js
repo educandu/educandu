@@ -2,6 +2,7 @@ import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
+import { useIsIOS } from '../request-context.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import TrackMixerDisplay from './track-mixer-display.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../empty-state.js';
@@ -60,6 +61,7 @@ function MultitrackMediaPlayer({
     return !sources.length || trackStates.every(ts => ts.isReady);
   }, [sources, trackStates]);
 
+  const isIOS = useIsIOS();
   const trackRefs = useRef({});
   const { t } = useTranslation('multitrackMediaPlayer');
 
@@ -275,6 +277,18 @@ function MultitrackMediaPlayer({
         <EmptyState
           title={t('common:cannotPlayMediaEmptyStateTitle')}
           subtitle={t('emptyStateSubtitle')}
+          status={EMPTY_STATE_STATUS.error}
+          />
+      </div>
+    );
+  }
+
+  if (!isIOS) {
+    return (
+      <div className="MultitrackMediaPlayer">
+        <EmptyState
+          title={t('playerNotSupportedTitle')}
+          subtitle={t('common:playerNotSupportedOnIOS')}
           status={EMPTY_STATE_STATUS.error}
           />
       </div>

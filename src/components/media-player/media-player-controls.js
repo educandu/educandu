@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Dropdown } from 'antd';
-import React, { Fragment, useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import React, { Fragment, useId } from 'react';
+import { useIsIOS } from '../request-context.js';
 import { CheckOutlined } from '@ant-design/icons';
 import { useNumberFormat } from '../locale-context.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
-import { useIsVolumeControlSupported } from '../request-context.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
 import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon, SpinIcon } from '../icons/icons.js';
@@ -42,8 +42,8 @@ function MediaPlayerControls({
   onPlayClick,
   onVolumeChange
 }) {
+  const isIOS = useIsIOS();
   const componentInstanceId = useId();
-  const isVolumeControlSupported = useIsVolumeControlSupported();
 
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
@@ -123,7 +123,7 @@ function MediaPlayerControls({
     <div id={componentInstanceId} className={mainClasses}>
       <div className="MediaPlayerControls-controlsGroup">
         {primaryButton}
-        {!!isVolumeControlSupported && (
+        {!isIOS && (
           <div className="MediaPlayerControls-volumeControls">
             <MediaVolumeSlider value={volume} disabled={disableSecondaryControls} onChange={onVolumeChange} />
           </div>

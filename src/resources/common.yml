@@ -708,3 +708,6 @@ common:
   role_admin:
     en: Administrator
     de: Administrator
+  playerNotSupportedOnIOS:
+    en: Player not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.
+    de: Player not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.
