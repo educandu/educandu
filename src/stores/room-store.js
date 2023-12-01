@@ -29,6 +29,10 @@ class RoomStore {
     return this.collection.find({ _id: { $in: roomIds } }, { session }).toArray();
   }
 
+  getAllCdnResourcesReferencedFromRoomsMetadata() {
+    return this.collection.distinct('cdnResources');
+  }
+
   deleteRoomById(roomId, { session } = {}) {
     return this.collection.deleteOne({ _id: roomId }, { session });
   }

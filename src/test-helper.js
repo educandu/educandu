@@ -6,6 +6,7 @@ import uniqueId from './utils/unique-id.js';
 import urlUtils from './utils/url-utils.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
+import SettingService from './services/setting-service.js';
 import { getResourceType } from './utils/resource-utils.js';
 import DocumentService from './services/document-service.js';
 import DocumentInputService from './services/document-input-service.js';
@@ -133,6 +134,7 @@ export async function destroyTestEnvironment(container) {
 export async function createTestUser(container, { email, password, displayName, ...otherUserValues } = {}) {
   const userStore = container.get(UserStore);
   const userService = container.get(UserService);
+  const gfm = container.get(GithubFlavoredMarkdown);
 
   const { result, user } = await userService.createUser({
     email: email || 'test@test@com',
@@ -146,6 +148,7 @@ export async function createTestUser(container, { email, password, displayName, 
   }
 
   const updatedUser = { ...user, ...otherUserValues };
+  updatedUser.cdnResources = gfm.extractCdnResources(updatedUser.profileOverview || '');
 
   if (!deepEqual(updatedUser, user)) {
     await userStore.saveUser(updatedUser);
@@ -368,4 +371,13 @@ export function createTestSection(data = {}) {
     content: null,
     ...data
   };
+}
+
+export async function createTestSetting(container, { name, value }) {
+  const settingService = container.get(SettingService);
+
+  const settings = await settingService.getAllSettings();
+  settings[name] = value;
+
+  return settingService.saveSettings(settings);
 }

@@ -15,7 +15,9 @@ import {
   createTestMediaLibraryItem,
   createTestDocument,
   createTestSection,
-  updateTestDocument
+  updateTestDocument,
+  createTestRoom,
+  createTestSetting
 } from '../test-helper.js';
 
 describe('media-library-service', () => {
@@ -52,6 +54,7 @@ describe('media-library-service', () => {
   describe('getAllMediaLibraryItemsWithUsage', () => {
     const itemUrl = `${CDN_URL_PREFIX}${urlUtils.concatParts(getMediaLibraryPath(), 'item1.txt')}`;
     let result;
+
     describe('when an item is referenced from an unarchived document', () => {
       beforeEach(async () => {
         await createTestMediaLibraryItem(container, user, { url: itemUrl });
@@ -70,6 +73,7 @@ describe('media-library-service', () => {
         expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.used);
       });
     });
+
     describe('when an item is referenced from an archived document only', () => {
       beforeEach(async () => {
         await createTestMediaLibraryItem(container, user, { url: itemUrl });
@@ -96,6 +100,7 @@ describe('media-library-service', () => {
         expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.deprecated);
       });
     });
+
     describe('when an item is referenced from an earlier document revision only', () => {
       beforeEach(async () => {
         await createTestMediaLibraryItem(container, user, { url: itemUrl });
@@ -130,13 +135,93 @@ describe('media-library-service', () => {
         expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.deprecated);
       });
     });
-    describe('when an item is not referenced from a document at all', () => {
+
+    describe('when an item is not referenced from anywhere at all', () => {
       beforeEach(async () => {
         await createTestMediaLibraryItem(container, user, { url: itemUrl });
         result = await sut.getAllMediaLibraryItemsWithUsage();
       });
       it('has usage `unused`', () => {
         expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.unused);
+      });
+    });
+
+    describe('when an item is referenced from a user', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        await createTestUser(
+          container,
+          {
+            email: 'other-user@test.com',
+            role: ROLE.user,
+            profileOverview:  `I [link this](${itemUrl})`
+          });
+
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+
+      it('has usage `used`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.used);
+      });
+    });
+
+    describe('when an item is referenced from a room', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        await createTestRoom(
+          container,
+          {
+            ownedBy: user._id,
+            overview: `I [link this](${itemUrl})`
+          });
+
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+
+      it('has usage `used`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.used);
+      });
+    });
+
+    describe('when an item is referenced from a consentText setting', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        await createTestSetting(
+          container,
+          {
+            name: 'consentText',
+            value: {
+              en: `I [link this](${itemUrl})`
+            }
+          });
+
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+
+      it('has usage `used`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.used);
+      });
+    });
+
+    describe('when an item is referenced from a pluginsHelpTexts setting', () => {
+      beforeEach(async () => {
+        await createTestMediaLibraryItem(container, user, { url: itemUrl });
+        await createTestSetting(
+          container,
+          {
+            name: 'pluginsHelpTexts',
+            value: {
+              markdown: {
+                en: `I [link this](${itemUrl})`
+              }
+            }
+          });
+
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+
+      it('has usage `used`', () => {
+        expect(result.find(x => x.url === itemUrl).usage).toBe(RESOURCE_USAGE.used);
       });
     });
   });

@@ -32,6 +32,10 @@ class UserStore {
     return this.collection.find({ accountClosedOn: null }, { session });
   }
 
+  getAllCdnResourcesReferencedFromUsers() {
+    return this.collection.distinct('cdnResources');
+  }
+
   findUserByVerificationCode(verificationCode, { session } = {}) {
     return this.collection.findOne({ verificationCode }, { session });
   }
