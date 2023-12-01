@@ -19,6 +19,10 @@ class SettingStore {
     return this.collection.find({}).toArray();
   }
 
+  getAllCdnResourcesReferencedFromSettings() {
+    return this.collection.distinct('cdnResources');
+  }
+
   saveSetting(setting, { session } = {}) {
     return this.collection.replaceOne({ _id: setting._id }, setting, { session, upsert: true });
   }

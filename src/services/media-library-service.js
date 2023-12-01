@@ -3,6 +3,9 @@ import mime from 'mime';
 import Cdn from '../stores/cdn.js';
 import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
+import UserStore from '../stores/user-store.js';
+import RoomStore from '../stores/room-store.js';
+import SettingStore from '../stores/setting-store.js';
 import { getCdnPath } from '../utils/source-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
@@ -14,25 +17,62 @@ import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/stora
 import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, RESOURCE_USAGE } from '../domain/constants.js';
 
 class MediaLibraryService {
-  static dependencies = [Cdn, MediaLibraryItemStore, DocumentRevisionStore, DocumentStore];
+  static dependencies = [
+    Cdn,
+    MediaLibraryItemStore,
+    DocumentRevisionStore,
+    DocumentStore,
+    UserStore,
+    RoomStore,
+    SettingStore
+  ];
 
-  constructor(cdn, mediaLibraryItemStore, documentRevisionStore, documentStore) {
+  constructor(
+    cdn,
+    mediaLibraryItemStore,
+    documentRevisionStore,
+    documentStore,
+    userStore,
+    roomStore,
+    settingStore
+  ) {
     this.cdn = cdn;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
     this.documentRevisionStore = documentRevisionStore;
     this.documentStore = documentStore;
+    this.userStore = userStore;
+    this.roomStore = roomStore;
+    this.settingStore = settingStore;
   }
 
   async getAllMediaLibraryItemsWithUsage() {
-    const [items, docCdnResources, revCdnResources] = await Promise.all([
+    const [
+      items,
+      docCdnResources,
+      revCdnResources,
+      userCdnResources,
+      roomCdnResources,
+      settingCdnResources
+    ]
+    = await Promise.all([
       this.mediaLibraryItemStore.getAllMediaLibraryItems(),
       this.documentStore.getAllCdnResourcesReferencedFromNonArchivedDocuments().then(x => new Set(x)),
-      this.documentRevisionStore.getAllCdnResourcesReferencedFromDocumentRevisions().then(x => new Set(x))
+      this.documentRevisionStore.getAllCdnResourcesReferencedFromDocumentRevisions().then(x => new Set(x)),
+      this.userStore.getAllCdnResourcesReferencedFromUsers().then(x => new Set(x)),
+      this.roomStore.getAllCdnResourcesReferencedFromRoomsMetadata().then(x => new Set(x)),
+      this.settingStore.getAllCdnResourcesReferencedFromSettings().then(x => new Set(x)),
     ]);
 
     return items.map(item => ({
       ...item,
-      usage: this._getResourceUsage(item, docCdnResources, revCdnResources)
+      usage: this._getResourceUsage(
+        item,
+        docCdnResources,
+        revCdnResources,
+        userCdnResources,
+        roomCdnResources,
+        settingCdnResources
+      )
     }));
   }
 
@@ -165,8 +205,20 @@ class MediaLibraryService {
       .sort(by(item => item.relevance).thenBy(item => item.name));
   }
 
-  _getResourceUsage(mediaLibraryItem, documentCdnResourcesSet, documentRevisionsCdnResourcesSet) {
-    if (documentCdnResourcesSet.has(mediaLibraryItem.url)) {
+  _getResourceUsage(
+    mediaLibraryItem,
+    documentCdnResourcesSet,
+    documentRevisionsCdnResourcesSet,
+    userCdnResourcesSet,
+    roomCdnResourcesSet,
+    settingCdnResourcesSet
+  ) {
+    if (
+      documentCdnResourcesSet.has(mediaLibraryItem.url)
+      || userCdnResourcesSet.has(mediaLibraryItem.url)
+      || roomCdnResourcesSet.has(mediaLibraryItem.url)
+      || settingCdnResourcesSet.has(mediaLibraryItem.url)
+    ) {
       return RESOURCE_USAGE.used;
     }
 
