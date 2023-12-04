@@ -1,8 +1,7 @@
-import glob from 'glob';
 import by from 'thenby';
 import url from 'node:url';
+import { glob } from 'glob';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import Logger from '../common/logger.js';
 import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';
@@ -137,7 +136,7 @@ class Database {
 
   async _generateUmzug() {
     const migrationsDirectory = url.fileURLToPath(new URL('../../migrations', import.meta.url));
-    const allPossibleMigrationFiles = await promisify(glob)(path.resolve(migrationsDirectory, './*.js'));
+    const allPossibleMigrationFiles = await glob(path.resolve(migrationsDirectory, './*.js'));
 
     const migrationFileNames = allPossibleMigrationFiles
       .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))

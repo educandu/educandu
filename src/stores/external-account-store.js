@@ -33,7 +33,7 @@ class ExternalAccountStore {
 
     const options = { session, upsert: true, returnDocument: 'after' };
 
-    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+    const value = await this.collection.findOneAndUpdate(filter, update, options);
 
     validate(value, externalAccountDbSchema);
     return value;
@@ -44,7 +44,7 @@ class ExternalAccountStore {
     const update = { $set: { userId } };
     const options = { session, returnDocument: 'after' };
 
-    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+    const value = await this.collection.findOneAndUpdate(filter, update, options);
 
     validate(value, externalAccountDbSchema);
     return value;

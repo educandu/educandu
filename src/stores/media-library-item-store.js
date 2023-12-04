@@ -67,8 +67,8 @@ class MediaLibraryItemStore {
     const update = { $set: { ...metadata } };
     const options = { returnDocument: 'after', session };
 
-    const result = await this.collection.findOneAndUpdate(filter, update, options);
-    return result.value;
+    const value = await this.collection.findOneAndUpdate(filter, update, options);
+    return value;
   }
 
   async deleteMediaLibraryItem(mediaLibraryItemId, { session } = {}) {
