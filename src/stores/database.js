@@ -137,7 +137,7 @@ class Database {
 
   async _generateUmzug() {
     const migrationsDirectory = url.fileURLToPath(new URL('../../migrations', import.meta.url));
-    const allPossibleMigrationFiles = await promisify(glob)(path.resolve(migrationsDirectory, './*.js'));
+    const allPossibleMigrationFiles = await glob(path.resolve(migrationsDirectory, './*.js'));
 
     const migrationFileNames = allPossibleMigrationFiles
       .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
