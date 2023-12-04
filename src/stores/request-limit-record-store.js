@@ -38,7 +38,7 @@ class RequestLimitRecordStore {
       returnDocument: 'after'
     };
 
-    const { value } = await this.collection.findOneAndUpdate(filter, aggregationPipeline, options);
+    const value = await this.collection.findOneAndUpdate(filter, aggregationPipeline, options);
     return value;
   }
 }

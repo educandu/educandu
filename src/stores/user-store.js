@@ -80,7 +80,7 @@ class UserStore {
     const update = { $set: { lastLoggedInOn } };
     const options = { session, returnDocument: 'after' };
 
-    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+    const value = await this.collection.findOneAndUpdate(filter, update, options);
     return value;
   }
 
@@ -89,7 +89,7 @@ class UserStore {
     const update = { $set: { 'storage.usedBytes': usedBytes } };
     const options = { session, returnDocument: 'after' };
 
-    const { value } = await this.collection.findOneAndUpdate(filter, update, options);
+    const value = await this.collection.findOneAndUpdate(filter, update, options);
     return value;
   }
 
