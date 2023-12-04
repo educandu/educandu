@@ -2,7 +2,6 @@ import by from 'thenby';
 import url from 'node:url';
 import { glob } from 'glob';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import Logger from '../common/logger.js';
 import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';
