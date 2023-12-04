@@ -110,7 +110,7 @@
     "unidiff": "^1.0.4"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "^11.2.0",
+    "@educandu/dev-tools": "^11.3.0",
     "@educandu/node-jsx-loader": "^3.1.0",
     "@educandu/rooms-auth-lambda": "^6.1.0",
     "@vitest/coverage-v8": "^1.0.0",

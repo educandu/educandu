@@ -117,10 +117,10 @@
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.6.0.tgz#53fa5fe9c34faee89469e48f91d51a3766108bc8"
   integrity sha512-/Z3l6pXthq0JvMYdUFyX9j0MaCltlIn6mfh9jLyQwg5aPKxkyNa0PTHtU1AlFXLNk55ZuAeJRcpvq+tmLfKmaQ==
 
-"@educandu/dev-tools@^11.2.0":
-  version "11.2.0"
-  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-11.2.0.tgz#794109aa296d3ae122d84bb1643e58b96aef47ed"
-  integrity sha512-QUJw1bCYlpCiIrme/oopiJDK/RoNcIf/hG0l5ImwditNfKrLnb8xst3MKxVe6ps8Lh+pFQPYG3PDB2b9aZeA2w==
+"@educandu/dev-tools@^11.3.0":
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-11.3.0.tgz#5f45f4d7c7242d526f3caa313d2637a9d54159bb"
+  integrity sha512-zXqG5n/HMFwHgu3PXXmMQ2p28VyWoOWu4OnTmRqdHaxK/3LQGR6dGGk3Ma4ggM7U+9jArHfNoE2XRlQc0xvgZQ==
   dependencies:
     "@rauschma/stringio" "^1.4.0"
     axios "^1.6.2"
