@@ -111,22 +111,21 @@
     "unidiff": "^1.0.2"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "10.0.0",
-    "@educandu/eslint-config": "^2.2.1",
+    "@educandu/dev-tools": "^11.1.0",
     "@educandu/node-jsx-loader": "^3.0.4",
     "@educandu/rooms-auth-lambda": "^6.0.1",
-    "@vitest/coverage-c8": "^0.25.8",
+    "@vitest/coverage-v8": "^0.34.6",
     "del": "^7.0.0",
-    "eslint": "^8.36.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-react": "^7.32.2",
+    "eslint": "^8.55.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "gulp": "^4.0.2",
     "mkdirp": "^2.1.6",
     "node-mocks-http": "^1.12.2",
     "selfsigned": "^2.1.1",
     "sinon": "^15.0.3",
-    "vitest": "^0.29.8"
+    "vitest": "^0.34.6"
   },
   "resolutions": {
     "**/gl": "^6.0.2"
