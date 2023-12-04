@@ -123,11 +123,13 @@ class DocumentStore {
     const aggregatedArray = await this.collection
       .aggregate([
         {
+          $match: { $and: conditions }
+        }, {
+          $sort: { updatedOn: -1 }
+        }, {
           $facet: {
             metadata: [{ $count: 'totalCount' }],
             data: [
-              { $sort: { order: -1 } },
-              { $match: { $and: conditions } },
               { $skip: (page - 1) * pageSize }, { $limit: pageSize },
               { $project: documentExtendedMetadataProjection }
             ]
