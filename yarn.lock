@@ -1978,7 +1978,7 @@ ansi-wrap@0.1.0, ansi-wrap@^0.1.0:
   resolved "https://registry.yarnpkg.com/ansi-wrap/-/ansi-wrap-0.1.0.tgz#a82250ddb0015e9a27ca82e82ea603bbfa45efaf"
   integrity sha512-ZyznvL8k/FZeQHr2T6LzcJ/+vBApDnMNZvfVFy3At0knswWd6rJ3/0Hhmpu8oqa6C92npmozs890sX9Dl6q+Qw==
 
-antd@^5.4.0:
+antd@5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/antd/-/antd-5.4.0.tgz#e6e2b469b551a0bc58435f3a353e97372e98125c"
   integrity sha512-eWCNFUGMuuHu2wufbq7yzPzwSesO2Our0AnCjCkom646wHw2TOUhfS58FeUSlV/Hhjb+ZLEvdy/mC+vJUb+EXg==
