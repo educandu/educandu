@@ -21,7 +21,7 @@
     "url": "https://github.com/educandu/educandu"
   },
   "dependencies": {
-    "@ant-design/icons": "5.0.1",
+    "@ant-design/icons": "^5.0.1",
     "@node-saml/passport-saml": "^4.0.2",
     "@sindresorhus/slugify": "^2.2.0",
     "@tabler/icons-react": "^2.40.0",
