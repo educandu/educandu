@@ -25,6 +25,7 @@ class S3Client {
       })
       : new S3({
         endpoint,
+        region,
         credentials,
         s3ForcePathStyle: true,
         signatureVersion: 'v4'
