@@ -21,14 +21,14 @@
     "url": "https://github.com/educandu/educandu"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.0.1",
+    "@ant-design/icons": "5.2.6",
     "@node-saml/passport-saml": "^4.0.4",
     "@sindresorhus/slugify": "^2.2.1",
     "@tabler/icons-react": "^2.42.0",
     "@unly/iso3166-1": "^1.0.2",
     "abcjs": "^6.2.3",
     "accept-language-parser": "^1.5.0",
-    "antd": "5.4.0",
+    "antd": "5.12.1",
     "async": "^3.2.5",
     "aws-sdk": "^2.1510.0",
     "axios": "^1.6.2",
