@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { pdfjs, Document, Page } from 'react-pdf';
 import { ORIENTATION } from '../domain/constants.js';
 import DimensionsProvider from './dimensions-provider.js';
-import React, { useEffect, useRef, useState } from 'react';
 import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/api/v1/pdfjs-dist/build/pdf.worker.min.js';
 
@@ -74,15 +74,17 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
     );
   };
 
+  const documentOptions = useMemo(() => ({
+    cMapUrl: '/api/v1/pdfjs-dist/cmaps',
+    cMapPacked: true
+  }), []);
+
   return (
     <DimensionsProvider>
       {({ containerHeight, containerWidth }) => (
         <div className="PdfDocument" style={viewerStyle} ref={viewerRef}>
           <Document
-            options={{
-              cMapUrl: '/api/v1/pdfjs-dist/cmaps',
-              cMapPacked: true
-            }}
+            options={documentOptions}
             file={file}
             renderMode="canvas"
             loading={renderLoadingComponent}
