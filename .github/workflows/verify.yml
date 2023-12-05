@@ -9,15 +9,6 @@ jobs:
     env:
       NODE_ENV: development
     services:
-      minio:
-        image: bitnami/minio:2020.12.18
-        ports:
-          - 9000:9000
-        env:
-          MINIO_ACCESS_KEY: "UVDXF41PYEAX0PXD8826"
-          MINIO_SECRET_KEY: "SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx"
-          MINIO_BROWSER: "on"
-          MINIO_DOMAIN: "localhost"
       mongo:
         image: educandu/mongo:5.0.6-multiplatform.2
         ports:
@@ -28,10 +19,6 @@ jobs:
           MONGODB_REPLICA_SET_KEY: educandurs
           MONGODB_REPLICA_SET_NAME: educandurs
           MONGODB_REPLICA_SET_MODE: primary
-      maildev:
-        image: maildev/maildev:1.1.0
-        ports:
-          - 8000:8000
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.2.0

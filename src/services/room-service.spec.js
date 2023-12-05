@@ -81,6 +81,8 @@ describe('room-service', () => {
     sandbox.stub(lockStore, 'releaseLock');
     sandbox.stub(lockStore, 'takeUserLock');
     sandbox.stub(lockStore, 'takeRoomLock');
+    sandbox.stub(cdn, 'ensureDirectory').resolves();
+    sandbox.stub(cdn, 'deleteDirectory').resolves();
 
     sandbox.useFakeTimers(now);
 
@@ -160,7 +162,6 @@ describe('room-service', () => {
       sandbox.stub(roomStore, 'deleteRoomById').resolves();
       sandbox.stub(roomMediaItemStore, 'deleteRoomMediaItemsByRoomId').resolves();
       sandbox.stub(documentInputMediaItemStore, 'deleteDocumentInputMediaItemsByRoomId').resolves();
-      sandbox.stub(cdn, 'deleteDirectory').resolves();
       sandbox.stub(userStore, 'updateUserUsedBytes').resolves(cloneDeep(myUser));
 
       sandbox.stub(roomStore, 'getRoomsByOwnerUserId').resolves(remainingRooms);
@@ -998,8 +999,6 @@ describe('room-service', () => {
           documentId: documentInOtherRoom._id,
           roomId: otherRoomId
         });
-
-        sandbox.stub(cdn, 'deleteDirectory').resolves();
 
         await sut.removeRoomMember({ room: currentRoom, memberUserId: myUser._id });
       });
