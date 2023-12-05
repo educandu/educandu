@@ -199,7 +199,6 @@ function RecentContributions({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <Table
             rowKey="_id"
-            className="u-table-with-pagination"
             dataSource={[...documents]}
             columns={documentTableColumns}
             pagination={{
@@ -222,7 +221,6 @@ function RecentContributions({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <Table
             rowKey="_id"
-            className="u-table-with-pagination"
             dataSource={[...mediaLibraryItems]}
             columns={mediaLibraryItemsTableColumns}
             pagination={{
