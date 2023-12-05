@@ -30,6 +30,7 @@ const iframeStyle = {
   position: 'absolute',
   height: '100%',
   width: '100%',
+  border: 'none',
   top: 0,
   right: 0,
   bottom: 0,
@@ -142,14 +143,14 @@ function DiagramNetEditor({ content, onContentChanged }) {
         closable={false}
         open={!!iframeUrl}
         width={modalBodyStyle.width}
-        bodyStyle={modalBodyStyle}
+        style={{ body: modalBodyStyle }}
         destroyOnClose
         centered
         className="DiagramNetEditor-modal"
         >
         {!!iframeUrl && (
           <Fragment>
-            <iframe ref={iframeRef} src={iframeUrl} frameBorder={0} style={iframeStyle} />
+            <iframe ref={iframeRef} src={iframeUrl} style={iframeStyle} />
             {isEditorReady || <div style={iframeOverlayStyle}><Spin size="large" /></div>}
           </Fragment>
         )}

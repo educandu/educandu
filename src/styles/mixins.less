@@ -225,12 +225,12 @@
 }
 
 .m-fake-flex-gap(@gap) {
-  margin-top: -@gap;
-  margin-left: -@gap;
+  margin-top: -@gap !important;
+  margin-left: -@gap !important;
 
   & > * {
-    margin-top: @gap;
-    margin-left: @gap;
+    margin-top: @gap !important;
+    margin-left: @gap !important;
   }
 }
 
