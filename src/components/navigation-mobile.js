@@ -16,8 +16,6 @@ import { getCommonNavigationMenuItems } from './navigation-utils.js';
 import { CloseOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import LanguageDataProvider from '../localization/language-data-provider.js';
 
-const { Panel } = Collapse;
-
 function NavigationMobile() {
   const user = useUser();
   const settings = useSettings();
@@ -75,21 +73,35 @@ function NavigationMobile() {
     const renderExpandIcon = () => isLanguageMenuExpanded ? <UpOutlined /> : <DownOutlined />;
 
     return (
-      <Collapse ghost expandIconPosition="end" expandIcon={renderExpandIcon} onChange={handleLanguageCollapseChange} className="NavigationMobile-drawerLanguageItem">
-        <Panel header={<div className="NavigationMobile-drawerContentItem"><LanguageIcon />{t('common:language')}</div>}>
-          <div className="NavigationMobile-drawerContentItemChildren">
-            {languagesData.map(languageData => (
-              <div
-                key={languageData.code}
-                className={classNames('NavigationMobile-languageMenuItem', { 'is-selected': languageData.code === selectedLanguageCode })}
-                onClick={() => handleLanguageChange(languageData.code)}
-                >
-                {languageData.name}
-              </div>
-            ))}
-          </div>
-        </Panel>
-      </Collapse>
+      <Collapse
+        ghost
+        expandIconPosition="end"
+        expandIcon={renderExpandIcon}
+        onChange={handleLanguageCollapseChange}
+        className="NavigationMobile-drawerLanguageItem"
+        items={[{
+          key: 'language-panel',
+          label: (
+            <div className="NavigationMobile-drawerContentItem">
+              <LanguageIcon />
+              {t('common:language')}
+            </div>
+          ),
+          children: (
+            <div className="NavigationMobile-drawerContentItemChildren">
+              {languagesData.map(languageData => (
+                <div
+                  key={languageData.code}
+                  className={classNames('NavigationMobile-languageMenuItem', { 'is-selected': languageData.code === selectedLanguageCode })}
+                  onClick={() => handleLanguageChange(languageData.code)}
+                  >
+                  {languageData.name}
+                </div>
+              ))}
+            </div>
+          )
+        }]}
+        />
     );
   };
 
