@@ -5,6 +5,7 @@ import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
 import urlUtils from './utils/url-utils.js';
 import UserStore from './stores/user-store.js';
+import { DISPOSAL_PRIORITY } from './common/di.js';
 import UserService from './services/user-service.js';
 import SettingService from './services/setting-service.js';
 import { getResourceType } from './utils/resource-utils.js';
@@ -20,15 +21,6 @@ import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, SAVE_USER_RESULT } from './domain
 async function purgeDatabase(db) {
   const collections = await db._db.collections();
   await Promise.all(collections.map(col => col.deleteMany({})));
-}
-
-async function purgeBucket(cdn) {
-  await cdn.deleteDirectory({ directoryPath: '' });
-}
-
-async function removeBucket(cdn) {
-  await cdn.deleteDirectory({ directoryPath: '' });
-  await cdn.s3Client.deleteBucket(cdn.bucketName);
 }
 
 export async function setupTestEnvironment() {
@@ -88,46 +80,36 @@ export async function setupTestEnvironment() {
     ]
   });
 
+  // Fake the whole CDN for tests:
+  container.registerInstance(Cdn, {
+    uploadObject: () => Promise.resolve(),
+    moveObject: () => Promise.resolve(),
+    deleteObject: () => Promise.resolve(),
+    ensureDirectory: () => Promise.resolve(),
+    deleteDirectory: () => Promise.resolve(),
+    getDisposalInfo: () => ({
+      priority: DISPOSAL_PRIORITY.storage,
+      dispose: () => Promise.resolve()
+    })
+  });
+
   // Run the DB check in order to create all collections and indexes:
   const db = container.get(Database);
   await db.checkDb();
-
-  // Make bucket publicly accessible:
-  const cdn = container.get(Cdn);
-  const s3Client = cdn.s3Client;
-  await s3Client.createBucket(bucketName, region);
-  await s3Client.putBucketPolicy(bucketName, JSON.stringify({
-    Version: '2012-10-17',
-    Statement: [
-      {
-        Sid: 'PublicReadGetObject',
-        Effect: 'Allow',
-        Principal: '*',
-        Action: 's3:GetObject',
-        Resource: `arn:aws:s3:::${bucketName}/*`
-      }
-    ]
-  }));
 
   return container;
 }
 
 export async function pruneTestEnvironment(container) {
   return Promise.all([
-    await purgeBucket(container.get(Cdn)),
     await purgeDatabase(container.get(Database))
   ]);
 }
 
 export async function destroyTestEnvironment(container) {
-  const cdn = container.get(Cdn);
   const db = container.get(Database);
 
-  await Promise.all([
-    await removeBucket(cdn),
-    await db._db.dropDatabase()
-  ]);
-
+  await db._db.dropDatabase();
   await disposeContainer(container);
 }
 
