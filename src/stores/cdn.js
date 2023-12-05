@@ -1,12 +1,10 @@
-import by from 'thenby';
 import mime from 'mime';
 import fs from 'node:fs';
 import S3Client from './s3-client.js';
 import Logger from '../common/logger.js';
 import urlUtils from '../utils/url-utils.js';
-import { ensureIsUnique } from '../utils/array-utils.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
-import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { DEFAULT_CONTENT_TYPE, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -16,40 +14,6 @@ class Cdn {
     this.bucketName = bucketName;
     this.region = region;
     this.rootUrl = rootUrl;
-  }
-
-  async listObjects({ directoryPath }) {
-    const prefix = urlUtils.ensureTrailingSlash(directoryPath);
-    const objects = await this.s3Client.listObjects(this.bucketName, prefix, false);
-
-    const mappedObjects = ensureIsUnique(
-      objects
-        .map(obj => {
-          const path = obj.name || '';
-          const objectSegments = path.split('/').filter(seg => !!seg);
-          const lastSegment = objectSegments[objectSegments.length - 1];
-          const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
-
-          if (lastSegment === STORAGE_DIRECTORY_MARKER_NAME) {
-            return null;
-          }
-
-          return {
-            name: lastSegment,
-            parentPath: objectSegments.slice(0, -1).join('/'),
-            path: objectSegments.join('/'),
-            url: [this.rootUrl, ...encodedObjectSegments].join('/'),
-            portableUrl: `${CDN_URL_PREFIX}${encodedObjectSegments.join('/')}`,
-            createdOn: obj.lastModified,
-            updatedOn: obj.lastModified,
-            size: obj.size
-          };
-        })
-        .filter(obj => obj),
-      obj => obj.path
-    );
-
-    return mappedObjects.sort(by(obj => obj.path));
   }
 
   uploadObject(objectPath, filePath) {
@@ -78,7 +42,7 @@ class Cdn {
 
   async deleteDirectory({ directoryPath }) {
     const prefix = urlUtils.ensureTrailingSlash(directoryPath);
-    const objects = await this.s3Client.listObjects(this.bucketName, prefix, true);
+    const objects = await this.s3Client.listObjects(this.bucketName, prefix);
     await this.s3Client.deleteObjects(this.bucketName, objects.map(obj => obj.name));
   }
 
