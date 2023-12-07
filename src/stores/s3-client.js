@@ -1,7 +1,7 @@
 import PQueue from 'p-queue';
 import { EOL } from 'node:os';
+import { S3 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { S3Client as AwsS3Client } from '@aws-sdk/client-s3';
 import { ensureIsUnique, splitIntoChunks } from '../utils/array-utils.js';
 
 const MAX_CONCURRENCY = 250;
@@ -17,13 +17,13 @@ class S3Client {
 
     this.queue = new PQueue({ concurrency: MAX_CONCURRENCY });
     this.client = endpoint.includes('amazonaws')
-      ? new AwsS3Client({
+      ? new S3({
         apiVersion: '2006-03-01',
         endpoint,
         region,
         credentials
       })
-      : new AwsS3Client({
+      : new S3({
         endpoint,
         region,
         credentials,
