@@ -704,10 +704,10 @@
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz#b6c75a56a1947cc916ea058772d666a2c8932f31"
   integrity sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==
 
-"@educandu/dev-tools@^11.3.1":
-  version "11.3.1"
-  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-11.3.1.tgz#1880cd716473fa2521d1b6d60f6991c94d877645"
-  integrity sha512-NRw5ev6u5KLx23fHnx8MRXDhCtu3c+3G7RF3lSTh0nP2fiQKTes89YJv8D/K3iULrxDbnMYF3eDuQFMpffLf4Q==
+"@educandu/dev-tools@^11.5.0":
+  version "11.5.0"
+  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-11.5.0.tgz#4d6908c541b23f0282b13a676a635c66007d4917"
+  integrity sha512-PDrQqpQpvTVHkOSCbcld0vmw+uKV6Cc9+hjP0WIh36OM0LncGT4peiCfhH870NP3Q12Qb3YLTeim0DzQwxDScw==
   dependencies:
     "@rauschma/stringio" "^1.4.0"
     axios "^1.6.2"
@@ -4041,9 +4041,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.3.47:
-  version "1.4.603"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.603.tgz#446907c21d333b55d0beaba1cb5b48430775a8a7"
-  integrity sha512-Dvo5OGjnl7AZTU632dFJtWj0uJK835eeOVQIuRcmBmsFsTNn3cL05FqOyHAfGQDIoHfLhyJ1Tya3PJ0ceMz54g==
+  version "1.4.607"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.607.tgz#340cc229b504966413716c6eae67d0f3d3702ff0"
+  integrity sha512-YUlnPwE6eYxzwBnFmawA8LiLRfm70R2aJRIUv0n03uHt/cUzzYACOogmvk8M2+hVzt/kB80KJXx7d5f5JofPvQ==
 
 email-validator@^2.0.4:
   version "2.0.4"
