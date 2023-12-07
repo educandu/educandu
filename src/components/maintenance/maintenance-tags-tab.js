@@ -296,7 +296,6 @@ function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
           />
       </div>
       <Table
-        className="u-table-with-pagination"
         columns={tableColumns}
         dataSource={displayedRows}
         expandable={{ expandedRowRender: renderExpandedRow }}

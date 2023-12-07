@@ -210,9 +210,8 @@ function Dashboard({ PageTemplate }) {
 
     return {
       key: tabKey,
-      label: customLabel || (
-        <div>{icon}{t(`common:dashboardTab_${tabKey}`)}</div>
-      ),
+      icon,
+      label: customLabel || t(`common:dashboardTab_${tabKey}`),
       children: (
         <div>
           <div className="DashboardPage-tabHelp">
@@ -275,10 +274,11 @@ function Dashboard({ PageTemplate }) {
     }),
     createTabItem({
       tabKey: DASHBOARD_TAB_KEY.notifications,
+      icon: <BellOutlined />,
       customLabel: (
         <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
-          <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
-            <div><BellOutlined /> {t(`common:dashboardTab_${DASHBOARD_TAB_KEY.notifications}`)}</div>
+          <Badge dot offset={[5, 0]} count={notificationsCount}>
+            <div>{t(`common:dashboardTab_${DASHBOARD_TAB_KEY.notifications}`)}</div>
           </Badge>
         </Tooltip>
       ),

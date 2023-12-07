@@ -56,18 +56,16 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
     setSelectedSourceType(newSourceType);
   };
 
-  const renderTabLabel = sourceType => {
-    const label = t(`sourceType_${sourceType}`);
-
+  const renderTabIcon = sourceType => {
     switch (sourceType) {
       case SOURCE_TYPE.mediaLibrary:
-        return <div><BankOutlined />{label}</div>;
+        return <BankOutlined />;
       case SOURCE_TYPE.roomMedia:
-        return <div><PrivateIcon />{label}</div>;
+        return <PrivateIcon />;
       case SOURCE_TYPE.wikimedia:
-        return <div><WikimediaIcon />{label}</div>;
+        return <WikimediaIcon />;
       default:
-        return label;
+        return null;
     }
   };
 
@@ -95,7 +93,8 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
         destroyInactiveTabPane
         items={visibleSourceTypes.map(sourceType => ({
           key: sourceType,
-          label: renderTabLabel(sourceType),
+          icon: renderTabIcon(sourceType),
+          label: t(`sourceType_${sourceType}`),
           children: renderTabContent(sourceType)
         }))}
         />

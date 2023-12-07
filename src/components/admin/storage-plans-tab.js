@@ -5,13 +5,16 @@ import { Button, message, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { PlusOutlined } from '@ant-design/icons';
+import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import StoragePlanModal from '../storage-plan-modal.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { confirmStoragePlanDeletion } from '../confirmation-dialogs.js';
 import StoragePlanApiClient from '../../api-clients/storage-plan-api-client.js';
+import ActionButton, { ACTION_BUTTON_INTENT, ActionButtonGroup } from '../action-button.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -112,15 +115,22 @@ function StoragePlansTab() {
 
   const renderActions = (_actions, storagePlan) => {
     return (
-      <Fragment>
-        <span><a onClick={() => handleEditClick(storagePlan)}>{t('common:edit')}</a></span>
+      <ActionButtonGroup>
+        <ActionButton
+          title={t('common:edit')}
+          icon={<EditIcon />}
+          intent={ACTION_BUTTON_INTENT.default}
+          onClick={() => handleEditClick(storagePlan)}
+          />
         {!storagePlan.assignedUserCount && (
-          <Fragment>
-            &nbsp;&nbsp;&nbsp;
-            <span><a onClick={() => handleDeleteClick(storagePlan)}>{t('common:delete')}</a></span>
-          </Fragment>
+          <ActionButton
+            title={t('common:delete')}
+            icon={<DeleteIcon />}
+            intent={ACTION_BUTTON_INTENT.error}
+            onClick={() => handleDeleteClick(storagePlan)}
+            />
         )}
-      </Fragment>
+      </ActionButtonGroup>
     );
   };
 
@@ -165,6 +175,7 @@ function StoragePlansTab() {
       title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
+      width: '100px',
       render: renderActions
     }
   ];

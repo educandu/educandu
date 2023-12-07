@@ -249,7 +249,7 @@ function Search({ PageTemplate }) {
           key={searchText}
           columns={columns}
           loading={isSearching}
-          className="SearchPage-table u-table-with-pagination"
+          className="SearchPage-table"
           dataSource={[...displayedRows]}
           rowClassName={() => 'SearchPage-tableRow'}
           pagination={{

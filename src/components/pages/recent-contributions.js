@@ -193,12 +193,12 @@ function RecentContributions({ PageTemplate }) {
   const tabsItems = [
     {
       key: TAB.documents,
-      label: <div><FileIcon />{t('documentsTabTitle')}</div>,
+      icon: <FileIcon />,
+      label: t('documentsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <Table
             rowKey="_id"
-            className="u-table-with-pagination"
             dataSource={[...documents]}
             columns={documentTableColumns}
             pagination={{
@@ -215,12 +215,12 @@ function RecentContributions({ PageTemplate }) {
     },
     {
       key: TAB.mediaLibraryItems,
-      label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
+      icon: <BankOutlined />,
+      label: t('mediaLibraryTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <Table
             rowKey="_id"
-            className="u-table-with-pagination"
             dataSource={[...mediaLibraryItems]}
             columns={mediaLibraryItemsTableColumns}
             pagination={{

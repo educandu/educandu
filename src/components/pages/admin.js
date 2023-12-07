@@ -55,7 +55,8 @@ function Admin({ PageTemplate }) {
   const items = [
     {
       key: TABS.settings,
-      label: <div><SettingsIcon />{t('common:settings')}</div>,
+      icon: <SettingsIcon />,
+      label: t('common:settings'),
       children: (
         <div className="Tabs-tabPane">
           <AdminSettingsTab onDirtyStateChange={setIsCurrentTabDirty} />
@@ -64,7 +65,8 @@ function Admin({ PageTemplate }) {
     },
     {
       key: TABS.userAccounts,
-      label: <div><UsersIcon />{t('userAccountsTabTitle')}</div>,
+      icon: <UsersIcon />,
+      label: t('userAccountsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <UserAccountsTab />
@@ -73,7 +75,8 @@ function Admin({ PageTemplate }) {
     },
     {
       key: TABS.storagePlans,
-      label: <div><PrivateIcon />{t('storagePlansTabTitle')}</div>,
+      icon: <PrivateIcon />,
+      label: t('storagePlansTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <StoragePlansTab />
@@ -82,7 +85,8 @@ function Admin({ PageTemplate }) {
     },
     {
       key: TABS.technicalMaintenance,
-      label: <div><ToolOutlined />{t('technicalMaintenanceTabTitle')}</div>,
+      icon: <ToolOutlined />,
+      label: t('technicalMaintenanceTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <TechnicalMaintenanceTab />
