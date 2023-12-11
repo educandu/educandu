@@ -31,8 +31,7 @@ function Maintenance({ initialState, PageTemplate }) {
   const tabItems = [
     {
       key: TAB.documents,
-      icon: <FileIcon />,
-      label: t('documentsTabTitle'),
+      label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceDocumentsTab documents={documents} onDocumentsChange={setDocuments} />
@@ -41,8 +40,7 @@ function Maintenance({ initialState, PageTemplate }) {
     },
     {
       key: TAB.mediaLibrary,
-      icon: <BankOutlined />,
-      label: t('mediaLibraryTabTitle'),
+      label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceMediaLibraryTab mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
@@ -51,8 +49,7 @@ function Maintenance({ initialState, PageTemplate }) {
     },
     {
       key: TAB.tags,
-      icon: <TagOutlined />,
-      label: t('tagsTabTitle'),
+      label: <div><TagOutlined />{t('tagsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceTagsTab documents={documents} mediaLibraryItems={mediaLibraryItems} />
