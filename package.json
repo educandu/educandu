@@ -21,6 +21,7 @@
     "url": "https://github.com/educandu/educandu"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@aws-sdk/client-s3": "^3.465.0",
     "@aws-sdk/lib-storage": "^3.465.0",
     "@node-saml/passport-saml": "^4.0.4",
@@ -29,6 +30,7 @@
     "@unly/iso3166-1": "^1.0.2",
     "abcjs": "^6.2.3",
     "accept-language-parser": "^1.5.0",
+    "antd": "5.4.0",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "classnames": "^2.3.2",
@@ -108,12 +110,10 @@
     "unidiff": "^1.0.4"
   },
   "devDependencies": {
-    "@ant-design/icons": "5.1.0",
-    "@educandu/dev-tools": "^11.5.0",
+    "@educandu/dev-tools": "^11.3.1",
     "@educandu/node-jsx-loader": "^3.1.0",
     "@educandu/rooms-auth-lambda": "^6.1.0",
     "@vitest/coverage-v8": "^1.0.0",
-    "antd": "5.8.0",
     "del": "^7.1.0",
     "eslint": "^8.55.0",
     "eslint-plugin-import": "^2.29.0",
@@ -125,10 +125,6 @@
     "selfsigned": "^2.4.1",
     "sinon": "^17.0.1",
     "vitest": "^1.0.0"
-  },
-  "peerDependencies": {
-    "@ant-design/icons": "^5.1.0",
-    "antd": "^5.8.0"
   },
   "resolutions": {
     "**/gl": "^6.0.2"

@@ -249,9 +249,9 @@ function Search({ PageTemplate }) {
           key={searchText}
           columns={columns}
           loading={isSearching}
-          className="SearchPage-table"
           dataSource={[...displayedRows]}
           rowClassName={() => 'SearchPage-tableRow'}
+          className="SearchPage-table u-table-with-pagination"
           pagination={{
             current: pagination.page,
             pageSize: pagination.pageSize,

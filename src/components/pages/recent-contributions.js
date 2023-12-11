@@ -200,6 +200,7 @@ function RecentContributions({ PageTemplate }) {
             rowKey="_id"
             dataSource={[...documents]}
             columns={documentTableColumns}
+            className="u-table-with-pagination"
             pagination={{
               current: pagination.page,
               pageSize: pagination.pageSize,
@@ -221,6 +222,7 @@ function RecentContributions({ PageTemplate }) {
             rowKey="_id"
             dataSource={[...mediaLibraryItems]}
             columns={mediaLibraryItemsTableColumns}
+            className="u-table-with-pagination"
             pagination={{
               current: pagination.page,
               pageSize: pagination.pageSize,

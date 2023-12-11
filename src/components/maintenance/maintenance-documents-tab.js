@@ -349,6 +349,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
       <Table
         dataSource={[...displayedRows]}
         columns={columns}
+        className="u-table-with-pagination"
         pagination={{
           current: pagination.page,
           pageSize: pagination.pageSize,
