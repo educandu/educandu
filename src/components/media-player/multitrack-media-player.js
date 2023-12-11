@@ -271,24 +271,24 @@ function MultitrackMediaPlayer({
 
   const allSourcesAreSet = trackStates.every(trackState => !!trackState.sourceUrl);
 
-  if (!allSourcesAreSet) {
+  if (isIOS) {
     return (
       <div className="MultitrackMediaPlayer">
         <EmptyState
-          title={t('common:cannotPlayMediaEmptyStateTitle')}
-          subtitle={t('emptyStateSubtitle')}
+          title={t('playerNotSupportedTitle')}
+          subtitle={t('common:playerNotSupportedOnIOS')}
           status={EMPTY_STATE_STATUS.error}
           />
       </div>
     );
   }
 
-  if (!isIOS) {
+  if (!allSourcesAreSet) {
     return (
       <div className="MultitrackMediaPlayer">
         <EmptyState
-          title={t('playerNotSupportedTitle')}
-          subtitle={t('common:playerNotSupportedOnIOS')}
+          title={t('common:cannotPlayMediaEmptyStateTitle')}
+          subtitle={t('emptyStateSubtitle')}
           status={EMPTY_STATE_STATUS.error}
           />
       </div>
