@@ -35,9 +35,9 @@ export const postUserAccountBodySchema = joi.object({
 
 export const postUserProfileBodySchema = joi.object({
   displayName: displayNameSchema.required(),
-  organization: joi.string().allow(''),
-  profileOverview: joi.string().allow(''),
-  shortDescription: joi.string().allow('')
+  organization: joi.string().allow('').required(),
+  profileOverview: joi.string().allow('').required(),
+  shortDescription: joi.string().allow('').max(maxUserShortDescriptionLength)
 });
 
 export const postUserNotificationSettingsBodySchema = joi.object({
