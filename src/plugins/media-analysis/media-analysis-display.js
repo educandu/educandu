@@ -185,7 +185,7 @@ function MediaAnalysisDisplay({ content }) {
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
               parts={playerParts}
               playbackRange={playbackRange}
-              screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+              screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
               sourceUrl={sourceUrl}
               onEnded={handleEnded}
               onPause={handlePause}

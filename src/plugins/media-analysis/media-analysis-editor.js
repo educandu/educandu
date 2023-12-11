@@ -270,7 +270,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
                   playbackRange={playbackRange}
                   posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
                   screenWidth={50}
-                  screenMode={!disableVideo && showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+                  screenMode={!disableVideo && showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
                   sourceUrl={getAccessibleUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
                   volume={initialVolume}
                   />
