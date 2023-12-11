@@ -27,5 +27,5 @@ export function useIsIOS() {
   const context = useContext(requestContext);
   const { isiPhone, isiPad } = context.useragent;
 
-  return !isiPhone && !isiPad;
+  return isiPhone || isiPad;
 }
