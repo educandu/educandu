@@ -160,7 +160,12 @@ export default function Room({ PageTemplate, initialState }) {
       ? `${t('common:collaborators')} (${count})`
       : `${t('common:members')} (${count})`;
 
-    return text;
+    return (
+      <Fragment>
+        {room.isCollaborative ? <TeamOutlined /> : <UserOutlined />}
+        {text}
+      </Fragment>
+    );
   };
 
   return (
@@ -202,8 +207,7 @@ export default function Room({ PageTemplate, initialState }) {
               items={[
                 {
                   key: TAB_KEYS.view,
-                  icon: <RoomIcon />,
-                  label: t('roomViewTitle'),
+                  label: <div><RoomIcon />{t('roomViewTitle')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
                       {renderRoomView()}
@@ -212,8 +216,7 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: TAB_KEYS.documentInputs,
-                  icon: <InputsIcon />,
-                  label: t('roomDocumentInputsTitle'),
+                  label: <div><InputsIcon />{t('roomDocumentInputsTitle')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
                       <RoomDocumentInputs roomId={room._id} />
@@ -234,8 +237,7 @@ export default function Room({ PageTemplate, initialState }) {
               items={[
                 {
                   key: TAB_KEYS.view,
-                  icon: <RoomIcon />,
-                  label: t('roomViewTitle'),
+                  label: <div><RoomIcon />{t('roomViewTitle')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
                       {renderRoomView()}
@@ -244,8 +246,7 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: TAB_KEYS.documentInputs,
-                  icon: <InputsIcon />,
-                  label: t('roomDocumentInputsTitle'),
+                  label: <div><InputsIcon />{t('roomDocumentInputsTitle')}</div>,
                   children: (
                     <div className="Tabs-tabPane">
                       <RoomDocumentInputs roomId={room._id} />
@@ -254,8 +255,7 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: TAB_KEYS.members,
-                  icon: room.isCollaborative ? <TeamOutlined /> : <UserOutlined />,
-                  label: getMembersTabTitle(),
+                  label: <div>{getMembersTabTitle()}</div>,
                   children: (
                     <div className="Tabs-tabPane">
                       <RoomMembers
@@ -270,8 +270,7 @@ export default function Room({ PageTemplate, initialState }) {
                 },
                 {
                   key: TAB_KEYS.settings,
-                  icon: <SettingsIcon />,
-                  label: t('common:settings'),
+                  label: <div><SettingsIcon />{t('common:settings')}</div>,
                   children: (
                     <div className="Tabs-tabPane" >
                       <RoomSettings room={room} onChange={handleRoomSettingsChange} />

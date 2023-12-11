@@ -56,9 +56,9 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
     setShowEmptyState(!documentComments.length);
   }, [documentComments, isLoading]);
 
-  const handleCollapseChange = panelTopic => {
+  const handleCollapseChange = expandedPanelTopics => {
     setCurrentComment('');
-    setExpandedTopic(panelTopic);
+    setExpandedTopic(expandedPanelTopics[0] || null);
   };
 
   const handlePostCommentClick = async () => {
