@@ -499,6 +499,12 @@
       "de": "Als Titel benutzen"
     }
   },
+  "combinedMultitrackMedia": {
+    "name": {
+      "en": "Multitrack combo",
+      "de": "Mehrspur-Combo"
+    }
+  },
   "common": {
     "yes": {
       "en": "Yes",
