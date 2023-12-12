@@ -2,3 +2,6 @@ combinedMultitrackMedia:
   name:
     en: Multitrack combo
     de: Mehrspur-Combo
+  playerNumber:
+    en: Player {number}
+    de: Player {number}

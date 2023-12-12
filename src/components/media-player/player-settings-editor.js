@@ -15,7 +15,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePosterImage, disableVideo, onContentChange }) {
+function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePosterImage, useWidth, disableVideo, onContentChange }) {
   const { t } = useTranslation('playerSettingsEditor');
 
   const { showVideo, aspectRatio, posterImage, width, initialVolume } = content;
@@ -87,12 +87,14 @@ function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePoster
             />
         </FormItem>
       )}
-      <FormItem
-        label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-        {...FORM_ITEM_LAYOUT}
-        >
-        <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-      </FormItem>
+      {!!useWidth && (
+        <FormItem
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+          {...FORM_ITEM_LAYOUT}
+          >
+          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
+        </FormItem>
+      )}
       <FormItem
         label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
         {...FORM_ITEM_LAYOUT}
@@ -122,6 +124,7 @@ PlayerSettingsEditor.propTypes = {
   useShowVideo: PropTypes.bool,
   useAspectRatio: PropTypes.bool,
   usePosterImage: PropTypes.bool,
+  useWidth: PropTypes.bool,
   disableVideo: PropTypes.bool,
   onContentChange: PropTypes.func.isRequired
 };
@@ -130,6 +133,7 @@ PlayerSettingsEditor.defaultProps = {
   useShowVideo: true,
   useAspectRatio: true,
   usePosterImage: true,
+  useWidth: true,
   disableVideo: false
 };
 
