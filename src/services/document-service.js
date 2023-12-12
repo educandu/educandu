@@ -620,26 +620,24 @@ class DocumentService {
     try {
       lock = await this.lockStore.takeDocumentLock(documentId);
 
-      await this.transactionRunner.run(async session => {
-        const [existingDocumentRevisions, existingDocument] = await Promise.all([
-          this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session }),
-          this.documentStore.getDocumentById(documentId, { session })
+      const [existingDocumentRevisions, existingDocument] = await Promise.all([
+        this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId),
+        this.documentStore.getDocumentById(documentId)
+      ]);
+
+      const updatedDocumentRevisions = existingDocumentRevisions.map(revision => ({
+        ...revision,
+        cdnResources: extractCdnResources(revision.sections, this.pluginRegistry)
+      }));
+
+      const updatedDocument = this._buildDocumentFromRevisions(updatedDocumentRevisions);
+
+      if (!deepEqual(existingDocumentRevisions, updatedDocumentRevisions) || !deepEqual(existingDocument, updatedDocument)) {
+        await Promise.all([
+          this.documentRevisionStore.saveDocumentRevisions(updatedDocumentRevisions),
+          this.documentStore.saveDocument(updatedDocument)
         ]);
-
-        const updatedDocumentRevisions = existingDocumentRevisions.map(revision => ({
-          ...revision,
-          cdnResources: extractCdnResources(revision.sections, this.pluginRegistry)
-        }));
-
-        const updatedDocument = this._buildDocumentFromRevisions(updatedDocumentRevisions);
-
-        if (!deepEqual(existingDocumentRevisions, updatedDocumentRevisions) || !deepEqual(existingDocument, updatedDocument)) {
-          await Promise.all([
-            this.documentRevisionStore.saveDocumentRevisions(updatedDocumentRevisions, { session }),
-            this.documentStore.saveDocument(updatedDocument, { session })
-          ]);
-        }
-      });
+      }
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
