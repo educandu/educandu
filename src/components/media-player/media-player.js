@@ -313,6 +313,7 @@ function MediaPlayer({
             allowDownload={allowDownload}
             allowLoop={allowLoop}
             allowFullscreen={canEnterFullscreen}
+            allowPlaybackRate
             durationInMilliseconds={durationInMilliseconds}
             millisecondsLength={millisecondsLength}
             playedMilliseconds={playedMilliseconds}

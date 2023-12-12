@@ -25,6 +25,7 @@ function MediaPlayerControls({
   allowDownload,
   allowFullscreen,
   allowLoop,
+  allowPlaybackRate,
   durationInMilliseconds,
   millisecondsLength,
   playedMilliseconds,
@@ -134,21 +135,23 @@ function MediaPlayerControls({
       </div>
       <div className="MediaPlayerControls-controlsGroup">
         <div>
-          <Dropdown
-            placement="top"
-            trigger={['click']}
-            getPopupContainer={() => document.getElementById(componentInstanceId)}
-            disabled={disableSecondaryControls}
-            menu={{ items: getPlaybackRateMenuItems(), onClick: handlePlaybackRateMenuItemClick }}
-            >
-            <Button
-              type="link"
+          {!!allowPlaybackRate && (
+            <Dropdown
+              placement="top"
+              trigger={['click']}
+              getPopupContainer={() => document.getElementById(componentInstanceId)}
               disabled={disableSecondaryControls}
-              icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <PlaybackRateIcon /> : null}
+              menu={{ items: getPlaybackRateMenuItems(), onClick: handlePlaybackRateMenuItemClick }}
               >
-              {playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? null : renderMediaPlaybackRate()}
-            </Button>
-          </Dropdown>
+              <Button
+                type="link"
+                disabled={disableSecondaryControls}
+                icon={playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? <PlaybackRateIcon /> : null}
+                >
+                {playbackRate === DEFAULT_MEDIA_PLAYBACK_RATE ? null : renderMediaPlaybackRate()}
+              </Button>
+            </Dropdown>
+          )}
           {!!allowLoop && (
             <Button
               type="link"
@@ -181,6 +184,7 @@ MediaPlayerControls.propTypes = {
   allowDownload: PropTypes.bool,
   allowFullscreen: PropTypes.bool,
   allowLoop: PropTypes.bool,
+  allowPlaybackRate: PropTypes.bool,
   durationInMilliseconds: PropTypes.number,
   isFullscreen: PropTypes.bool,
   millisecondsLength: PropTypes.number,
@@ -203,6 +207,7 @@ MediaPlayerControls.defaultProps = {
   allowDownload: false,
   allowFullscreen: false,
   allowLoop: false,
+  allowPlaybackRate: false,
   durationInMilliseconds: 0,
   isFullscreen: false,
   millisecondsLength: 0,

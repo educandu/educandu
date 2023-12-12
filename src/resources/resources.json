@@ -508,9 +508,9 @@
       "en": "Player {number}",
       "de": "Player {number}"
     },
-    "playerNumberTrackNumber": {
-      "en": "Player {playerNumber} - track {trackNumber}",
-      "de": "Player {playerNumber} - Spur {trackNumber}"
+    "addPlayer2Track": {
+      "en": "Add track to player 2",
+      "de": "Spur zu Player 2 hinzufügen"
     }
   },
   "common": {

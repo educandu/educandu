@@ -103,6 +103,7 @@ function AbcPlayer({ renderResult, initialVolume }) {
           <MediaPlayerControls
             allowLoop
             allowDownload
+            allowPlaybackRate
             state={controlsState}
             volume={initialVolume}
             onPlayClick={handlePlayClick}

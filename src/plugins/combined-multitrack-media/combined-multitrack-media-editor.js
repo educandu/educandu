@@ -1,25 +1,40 @@
 import { Button, Form } from 'antd';
 import Info from '../../components/info.js';
-import React, { useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
+import React, { useId, useMemo, useRef, useState } from 'react';
+import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import WarningIcon from '../../components/icons/general/warning-icon.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { createDefaultPlayer2Track } from './combined-multitrack-media-utils.js';
+import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
+import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import { moveItem, removeItemAt, replaceItemAt, swapItemsAt } from '../../utils/array-utils.js';
 
 function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
   const droppableIdRef = useRef(useId());
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('combinedMultitrackMedia');
 
+  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
+
   const { player1, player2, width } = content;
+
+  const player2Sources = useMemo(() => {
+    return player2.tracks.map(track => ({
+      ...track,
+      sourceUrl: getAccessibleUrl({ url: track.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })
+    }));
+  }, [player2.tracks, clientConfig]);
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
@@ -87,9 +102,18 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
     changeContent({ player2: { ...player2, tracks: newTracks, volumePresets: newVolumePresets } });
   };
 
+  const handleSelectedVolumePresetChange = volumePresetIndex => {
+    setSelectedVolumePresetIndex(volumePresetIndex);
+  };
+
+  const handleVolumePresetsChange = updatedVolumePresets => {
+    changeContent({ player2: { ...player2, volumePresets: updatedVolumePresets } });
+  };
+
   const dragAndDropPlayer2Tracks = player2.tracks.map((track, index) => {
-    const headerPrefix = t('playerNumberTrackNumber', { playerNumber: 2, trackNumber: index + 1 });
-    const header = `${headerPrefix}${track.name ? ': ' : ''}${track.name}`;
+    const headerPrefix1 = t('playerNumber', { number: 2 });
+    const headerPrefix2 = t('common:secondaryTrack', { number: index + 1 });
+    const header = `${headerPrefix1} - ${headerPrefix2}${track.name ? ': ' : ''}${track.name}`;
 
     return {
       key: track.key,
@@ -121,10 +145,10 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
   });
 
   return (
-    <div className="MultitrackMediaEditor">
+    <div className="CombinedMultitrackMediaEditor">
       <Form layout="horizontal" labelAlign="left">
-        <div className="MultitrackMediaEditor-warning">
-          <WarningIcon className="MultitrackMediaEditor-warningIcon" />
+        <div className="CombinedMultitrackMediaEditor-warning">
+          <WarningIcon className="CombinedMultitrackMediaEditor-warningIcon" />
           {t('common:playerNotSupportedOnIOS')}
         </div>
 
@@ -148,12 +172,36 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
           />
 
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAddPlayer2TrackButtonClick}>
-          {t('common:addTrack')}
+          {t('addPlayer2Track')}
         </Button>
 
+        <ItemPanel header={`${t('playerNumber', { number: 2 } )} - ${t('common:trackMixer')}`}>
+          <div className="CombinedMultitrackMediaEditor-trackMixerPreview">
+            <div className="CombinedMultitrackMediaEditor-trackMixerPreviewLabel">
+              {t('common:preview')}
+            </div>
+            <MultitrackMediaPlayer
+              initialVolume={player2.initialVolume}
+              selectedVolumePresetIndex={selectedVolumePresetIndex}
+              showVideo={false}
+              showTrackMixer={false}
+              sources={player2Sources}
+              volumePresets={player2.volumePresets}
+              />
+          </div>
+          <TrackMixerEditor
+            tracks={player2Sources}
+            volumePresets={player2.volumePresets}
+            onVolumePresetsChange={handleVolumePresetsChange}
+            selectedVolumePresetIndex={selectedVolumePresetIndex}
+            onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
+            />
+        </ItemPanel>
+
         <Form.Item
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
+          className="CombinedMultitrackMediaEditor-width"
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>

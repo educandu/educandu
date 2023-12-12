@@ -27,6 +27,8 @@ const sourcesCanBeConsideredEqual = (sources1, sources2) => {
 
 function MultitrackMediaPlayer({
   allowFullscreen,
+  allowLoop,
+  allowPlaybackRate,
   aspectRatio,
   customUnderScreenContent,
   initialVolume,
@@ -227,8 +229,9 @@ function MultitrackMediaPlayer({
     return (
       <div>
         <MediaPlayerControls
-          allowLoop
+          allowLoop={allowLoop}
           allowFullscreen={canEnterFullscreen}
+          allowPlaybackRate={allowPlaybackRate}
           volume={mixVolume}
           loopMedia={loopMedia}
           isFullscreen={isFullscreen}
@@ -333,6 +336,8 @@ function MultitrackMediaPlayer({
 MultitrackMediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   allowFullscreen: PropTypes.bool,
+  allowLoop: PropTypes.bool,
+  allowPlaybackRate: PropTypes.bool,
   customUnderScreenContent: PropTypes.node,
   initialVolume: PropTypes.number,
   multitrackMediaPlayerRef: PropTypes.shape({
@@ -361,6 +366,8 @@ MultitrackMediaPlayer.propTypes = {
 MultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   allowFullscreen: false,
+  allowLoop: false,
+  allowPlaybackRate: false,
   customUnderScreenContent: null,
   initialVolume: 1,
   multitrackMediaPlayerRef: {
