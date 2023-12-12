@@ -7,12 +7,14 @@ import DeleteButton from './delete-button.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from './markdown-input.js';
+import React, { useEffect, useState } from 'react';
 import { useDateFormat } from './locale-context.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { documentInputSectionCommentShape } from '../ui/default-prop-types.js';
 import DocumentInputApiClient from '../api-clients/document-input-api-client.js';
 import { confirmDocumentInputSectionCommentDelete } from './confirmation-dialogs.js';
+
+const CollapsePanel = Collapse.Panel;
 
 function DocumentInputSectionComments({ documentInputId, sectionKey, initialComments }) {
   const user = useUser();
@@ -126,20 +128,12 @@ function DocumentInputSectionComments({ documentInputId, sectionKey, initialComm
 
   return (
     <div className="DocumentInputSectionComments">
-      <Collapse
-        items={
-          [{
-            key: '1',
-            label: renderCollapseHeader(),
-            children: (
-              <Fragment>
-                {comments.map(renderComment)}
-                {renderPostCommentSection()}
-              </Fragment>
-            )
-          }]
-        }
-        />
+      <Collapse>
+        <CollapsePanel header={renderCollapseHeader()}>
+          {comments.map(renderComment)}
+          {renderPostCommentSection()}
+        </CollapsePanel>
+      </Collapse>
     </div>
   );
 }

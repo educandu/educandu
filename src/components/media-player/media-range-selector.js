@@ -139,7 +139,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
         <div className="u-modal-body">
           {!!isRetrievingMediaInfo && (
             <div className="MediaRangeSelector-noMedia">
-              <Spin tip={t('loadingMessage')}>&nbsp;</Spin>
+              <Spin tip={t('loadingMessage')} />
             </div>
           )}
           {!isRetrievingMediaInfo && !currentMediaInfo && (

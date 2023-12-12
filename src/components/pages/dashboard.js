@@ -275,10 +275,9 @@ function Dashboard({ PageTemplate }) {
     }),
     createTabItem({
       tabKey: DASHBOARD_TAB_KEY.notifications,
-      icon: <BellOutlined />,
       customLabel: (
         <Tooltip title={notificationsCount ? t('common:notificationsTooltip', { count: notificationsCount }) : null}>
-          <Badge dot offset={[5, 0]} count={notificationsCount}>
+          <Badge dot title="" offset={[5, 0]} count={notificationsCount}>
             <div><BellOutlined /> {t(`common:dashboardTab_${DASHBOARD_TAB_KEY.notifications}`)}</div>
           </Badge>
         </Tooltip>

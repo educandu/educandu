@@ -100,32 +100,18 @@ function ItemPanel({
     );
   };
 
-  const classes = classNames(
-    'ItemPanel',
-    { 'is-dragged': isDragged },
-    { 'is-other-dragged': isOtherDragged }
-  );
-
   return (
-    <Collapse
-      collapsible="icon"
-      defaultActiveKey="panel"
-      className={classes}
-      items={[{
-        key: 'panel',
-        label: (
-          <div {...dragHandleProps} className="ItemPanel-header">
-            {header}
-          </div>
-        ),
-        extra: renderActionButtons(),
-        children: (
-          <div className="ItemPanel-contentWrapper">
-            {children}
-          </div>
-        )
-      }]}
-      />
+    <Collapse collapsible="icon" className={classNames('ItemPanel', { 'is-dragged': isDragged, 'is-other-dragged': isOtherDragged })} defaultActiveKey="panel">
+      <Collapse.Panel
+        key="panel"
+        header={<div {...dragHandleProps} className="ItemPanel-header">{header}</div>}
+        extra={renderActionButtons()}
+        >
+        <div className="ItemPanel-contentWrapper">
+          {children}
+        </div>
+      </Collapse.Panel>
+    </Collapse>
   );
 }
 

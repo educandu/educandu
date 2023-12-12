@@ -93,6 +93,7 @@ function NavigationDesktop() {
         <a href={routes.getDashboardUrl({ tab: 'notifications' })}>
           <Badge
             dot
+            title=""
             offset={[-2, 2]}
             count={notificationsCount}
             >

@@ -370,52 +370,51 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
           size="small"
           expandIconPosition="end"
           defaultActiveKey={createdBefore ? ['bulkDelete'] : []}
-          items={[{
-            key: 'bulkDelete',
-            label: (
+          >
+          <Collapse.Panel
+            key="bulkDelete"
+            header={
               <div className="MaintenanceMediaLibraryTab-bulkDeletePanelHeader">
                 {t('bulkDeletePanelHeader')}
               </div>
-            ),
-            children: (
-              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelContent">
-                <div className="MaintenanceMediaLibraryTab-bulkDeletePanelFilters">
-                  <div>{t('createdBefore')}</div>
-                  <DatePicker
-                    showTime={false}
-                    format={dateFormat}
-                    placeholder={t('datePlaceholder')}
-                    disabledDate={determineDisabledDate}
-                    value={createdBefore ? dayjs(createdBefore) : null}
-                    onChange={handleCreatedBeforeFilterChange}
-                    />
-                  <div>{t('and')}</div>
-                  <Info
-                    iconAfterContent
-                    tooltip={<Markdown>{t('usageInfoMarkdown')}</Markdown>}
-                    className="MaintenanceMediaLibraryTab-bulkDeletePanelRadios"
-                    >
-                    <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
-                      <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
-                      <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
-                    </Radio.Group>
-                  </Info>
-                </div>
-                <div className="MaintenanceMediaLibraryTab-bulkDeletePanelButton">
-                  <Button disabled={isBulkDeleteDisabled} danger type="primary" onClick={handleBulkDeleteClick}>
-                    {!!isBulkDeleteDisabled && t('delete')}
-                    {!isBulkDeleteDisabled && t('deleteCount', { count: displayedRows.length })}
-                  </Button>
-                </div>
+            }
+            >
+            <div className="MaintenanceMediaLibraryTab-bulkDeletePanelContent">
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelFilters">
+                <div>{t('createdBefore')}</div>
+                <DatePicker
+                  showTime={false}
+                  format={dateFormat}
+                  placeholder={t('datePlaceholder')}
+                  disabledDate={determineDisabledDate}
+                  value={createdBefore ? dayjs(createdBefore) : null}
+                  onChange={handleCreatedBeforeFilterChange}
+                  />
+                <div>{t('and')}</div>
+                <Info
+                  iconAfterContent
+                  tooltip={<Markdown>{t('usageInfoMarkdown')}</Markdown>}
+                  className="MaintenanceMediaLibraryTab-bulkDeletePanelRadios"
+                  >
+                  <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
+                    <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
+                    <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
+                  </Radio.Group>
+                </Info>
               </div>
-            )
-          }]}
-          />
+              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelButton">
+                <Button disabled={isBulkDeleteDisabled} danger type="primary" onClick={handleBulkDeleteClick}>
+                  {!!isBulkDeleteDisabled && t('delete')}
+                  {!isBulkDeleteDisabled && t('deleteCount', { count: displayedRows.length })}
+                </Button>
+              </div>
+            </div>
+          </Collapse.Panel>
+        </Collapse>
       </div>
       <Table
         dataSource={[...displayedRows]}
         columns={columns}
-        className="u-table-with-pagination"
         pagination={{
           current: pagination.page,
           pageSize: pagination.pageSize,
