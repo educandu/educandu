@@ -25,7 +25,7 @@ export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, help
       key: 'notifications',
       label: t('common:notifications'),
       icon: <div><BellOutlined /></div>,
-      badge: <div><Badge size="small" count={notificationsCount} /></div>,
+      badge: <div><Badge size="small" count={notificationsCount} title="" /></div>,
       onClick: () => { window.location = routes.getDashboardUrl({ tab: 'notifications' }); },
       showWhen: !!user
     },

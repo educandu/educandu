@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 function Spinner({ tip }) {
   return (
-    <Spin size="large" tip={tip} className="Spinner">&nbsp;</Spin>
+    <Spin size="large" tip={tip} className="Spinner" />
   );
 }
 

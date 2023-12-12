@@ -11,6 +11,8 @@ import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import { EyeOutlined, LinkOutlined, SwapOutlined, UndoOutlined } from '@ant-design/icons';
 
+const { Panel } = Collapse;
+
 function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, canRestore, onViewClick, onRestoreClick }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentVersionHistory');
@@ -154,12 +156,14 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
             ghost
             expandIconPosition="end"
             onChange={activeKeys => handleCollapseChange(documentRevision._id, !!activeKeys.length)}
-            items={[{
-              key: documentRevision._id,
-              label: renderTimelineItemHeader(documentRevision),
-              children: renderTimelineItemContent(documentRevision)
-            }]}
-            />
+            >
+            <Panel
+              key={documentRevision._id}
+              header={renderTimelineItemHeader(documentRevision)}
+              >
+              {renderTimelineItemContent(documentRevision)}
+            </Panel>
+          </Collapse>
         </div>
       )
     };

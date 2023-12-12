@@ -16,15 +16,9 @@
 }
 
 .m-icon-button {
-  &.ant-btn > span:not([class="ant-btn-icon"]) {
+  &.ant-btn > span:not([role="img"]) {
     @media @edu-media-phone {
       display: none;
-    }
-  }
-
-  @media @edu-media-phone {
-    .ant-btn-icon {
-      margin-inline-end: 0 !important;
     }
   }
 }

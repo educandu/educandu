@@ -21,6 +21,8 @@ import { getVersionedDocumentRevisions } from '../utils/document-utils.js';
 import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../domain/constants.js';
 import { documentInputShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
+const { Panel } = Collapse;
+
 const PENDING_ITEM_KEY = 'pending';
 
 function DocumentInputsPanel({
@@ -205,14 +207,16 @@ function DocumentInputsPanel({
             expandIconPosition="end"
             activeKey={expandedKeys}
             onChange={setExpandedKeys}
-            items={[{
-              key: entry.key,
-              label: renderTimelineItemHeader(entry),
-              showArrow: !entry.isPending,
-              collapsible: entry.isPending ? 'icon' : 'header',
-              children: renderTimelineItemContent(entry)
-            }]}
-            />
+            >
+            <Panel
+              key={entry.key}
+              showArrow={!entry.isPending}
+              collapsible={entry.isPending ? 'icon' : 'header'}
+              header={renderTimelineItemHeader(entry)}
+              >
+              {renderTimelineItemContent(entry)}
+            </Panel>
+          </Collapse>
         </div>
       )
     };

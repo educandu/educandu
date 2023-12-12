@@ -122,7 +122,7 @@ function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
-  const [renderingRows, setRenderingRows] = useState(true);
+  const [renderingRows, setRenderingRows] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -171,6 +171,7 @@ function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
     const sorter = tableSorters[sorting.value];
     const sortedRows = sorter(filteredRows, sorting.direction);
 
+    setRenderingRows(!!sortedRows.length);
     setDisplayedRows(sortedRows);
   }, [allRows, filter, sorting, tableSorters]);
 
