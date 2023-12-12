@@ -5,3 +5,6 @@ combinedMultitrackMedia:
   playerNumber:
     en: Player {number}
     de: Player {number}
+  playerNumberTrackNumber:
+    en: Player {playerNumber} - track {trackNumber}
+    de: Player {playerNumber} - Spur {trackNumber}
