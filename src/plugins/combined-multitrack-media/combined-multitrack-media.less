@@ -1,5 +1,32 @@
 .CombinedMultitrackMediaDisplay {}
 
+.CombinedMultitrackMediaDisplay-player1 {
+  .MediaPlayer-underPlayerContent {
+    .m-media-player-no-screen;
+    border-radius: 0
+  }
+
+  &.CombinedMultitrackMediaDisplay-player1--noScreen {
+    .MediaPlayer {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+.CombinedMultitrackMediaDisplay-note {
+  .m-media-player-no-screen;
+  border-radius: 0;
+  padding-bottom: 0;
+}
+
+.CombinedMultitrackMediaDisplay-player2 {
+  .MediaPlayer {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
 .CombinedMultitrackMediaDisplay-content {
   margin: 0 auto;
 }

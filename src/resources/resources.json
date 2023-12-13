@@ -517,8 +517,8 @@
       "de": "Hinweistext"
     },
     "noteInfo": {
-      "en": "Short instruction on when to use player 2",
-      "de": "Short instruction on when to use player 2"
+      "en": "Short instruction, for example on when to use player 2 to accompany player 1",
+      "de": "Short instruction, for example on when to use player 2 to accompany player 1"
     }
   },
   "common": {

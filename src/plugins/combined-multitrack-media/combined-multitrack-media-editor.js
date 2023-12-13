@@ -43,7 +43,11 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
   };
 
   const handleNoteChange = event => {
-    onContentChanged({ note: event.traget.value });
+    changeContent({ note: event.target.value });
+  };
+
+  const handleWidthChange = newValue => {
+    changeContent({ width: newValue });
   };
 
   const handlePlayer1TrackContentChange = newTrack => {
@@ -57,10 +61,6 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
 
   const handlePlayer1SettingsContentChange = newSettings => {
     changeContent({ player1: { ...player1, ...newSettings } });
-  };
-
-  const handleWidthChanged = newValue => {
-    changeContent({ width: newValue });
   };
 
   const handleMovePlayer2TrackUp = index => {
@@ -168,7 +168,7 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
           {...FORM_ITEM_LAYOUT}
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
 
         <ItemPanel header={t('playerNumber', { number: 1 })}>
