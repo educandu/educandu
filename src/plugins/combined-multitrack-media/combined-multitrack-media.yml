@@ -8,3 +8,9 @@ combinedMultitrackMedia:
   addPlayer2Track:
     en: Add track to player 2
     de: Spur zu Player 2 hinzufügen
+  note:
+    en: Hint
+    de: Hinweistext
+  noteInfo:
+    en: Short instruction, for example on when to use player 2 to accompany player 1
+    de: Short instruction, for example on when to use player 2 to accompany player 1

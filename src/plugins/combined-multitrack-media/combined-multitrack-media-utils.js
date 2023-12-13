@@ -33,7 +33,6 @@ export function createDefaultContent(t) {
 
   return {
     player1: {
-      title: '',
       track: player1Track,
       showVideo: false,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
@@ -41,11 +40,11 @@ export function createDefaultContent(t) {
       initialVolume: 1
     },
     player2: {
-      title: '',
       tracks: player2Tracks,
       volumePresets: [createDefaultVolumePreset(t, player2Tracks.length)],
       initialVolume: 1
     },
+    note: '',
     width: 100
   };
 }
@@ -53,7 +52,6 @@ export function createDefaultContent(t) {
 export function validateContent(content) {
   const schema = joi.object({
     player1: joi.object({
-      title: joi.string().allow('').required(),
       track: joi.object({
         sourceUrl: joi.string().allow('').required(),
         copyrightNotice: joi.string().allow('').required(),
@@ -67,7 +65,6 @@ export function validateContent(content) {
       initialVolume: joi.number().min(0).max(1).required()
     }).required(),
     player2: joi.object({
-      title: joi.string().allow('').required(),
       tracks: joi.array().items(joi.object({
         key: joi.string().required(),
         name: joi.string().allow('').required(),
@@ -81,6 +78,7 @@ export function validateContent(content) {
       })).min(1).required(),
       initialVolume: joi.number().min(0).max(1).required()
     }).required(),
+    note: joi.string().allow('').required(),
     width: joi.number().min(0).max(100).required()
   });
 

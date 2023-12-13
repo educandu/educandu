@@ -6,6 +6,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import React, { useId, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
@@ -27,7 +28,7 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
 
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
 
-  const { player1, player2, width } = content;
+  const { note, width, player1, player2 } = content;
 
   const player2Sources = useMemo(() => {
     return player2.tracks.map(track => ({
@@ -39,6 +40,10 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
     onContentChanged(newContent);
+  };
+
+  const handleNoteChange = event => {
+    onContentChanged({ note: event.traget.value });
   };
 
   const handlePlayer1TrackContentChange = newTrack => {
@@ -152,6 +157,20 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
           {t('common:playerNotSupportedOnIOS')}
         </div>
 
+        <Form.Item
+          {...FORM_ITEM_LAYOUT}
+          label={<Info tooltip={t('noteInfo')}>{t('note')}</Info>}
+          >
+          <MarkdownInput inline value={note} onChange={handleNoteChange} />
+        </Form.Item>
+
+        <Form.Item
+          {...FORM_ITEM_LAYOUT}
+          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
+          >
+          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
+        </Form.Item>
+
         <ItemPanel header={t('playerNumber', { number: 1 })}>
           <TrackEditor
             content={player1.track}
@@ -197,14 +216,6 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
             onSelectedVolumePresetIndexChange={handleSelectedVolumePresetChange}
             />
         </ItemPanel>
-
-        <Form.Item
-          {...FORM_ITEM_LAYOUT}
-          className="CombinedMultitrackMediaEditor-width"
-          label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
-          >
-          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
-        </Form.Item>
       </Form>
     </div>
   );
