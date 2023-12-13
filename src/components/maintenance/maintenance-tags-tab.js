@@ -122,7 +122,7 @@ function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
-  const [renderingRows, setRenderingRows] = useState(false);
+  const [renderingRows, setRenderingRows] = useState(!!documents.length);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });

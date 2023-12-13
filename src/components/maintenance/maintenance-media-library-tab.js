@@ -106,7 +106,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
   const [displayedRows, setDisplayedRows] = useState([]);
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
-  const [renderingRows, setRenderingRows] = useState(false);
+  const [renderingRows, setRenderingRows] = useState(!!mediaLibraryItems.length);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });

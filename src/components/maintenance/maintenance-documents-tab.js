@@ -106,7 +106,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
   const [displayedRows, setDisplayedRows] = useState([]);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
-  const [renderingRows, setRenderingRows] = useState(false);
+  const [renderingRows, setRenderingRows] = useState(!!documents.length);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
