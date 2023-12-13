@@ -16,6 +16,7 @@ function CombinedMultitrackMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
   const { note, width, player1, player2 } = content;
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [canRenderMediaPlayers, setCanRenderMediaPlayers] = useState(false);
   const [combinedCopyrightNotice, setCombinedCopyrightNotice] = useState('');
 
@@ -32,33 +33,57 @@ function CombinedMultitrackMediaDisplay({ content }) {
   }));
   const posterImageUrl = getAccessibleUrl({ url: player1.posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
 
+  const handleEnterFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const handleExitFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
+  const player1Classes = classNames(
+    'CombinedMultitrackMediaDisplay-player1',
+    { 'CombinedMultitrackMediaDisplay-player1--noScreen': !player1.showVideo },
+    { 'is-fullscreen': isFullscreen },
+  );
+
   return (
     <div className="CombinedMultitrackMediaDisplay">
       <div className={`CombinedMultitrackMediaDisplay-content u-width-${width || 100}`}>
         {!!canRenderMediaPlayers && !!isMounted && (
           <Fragment>
-            <div className={classNames('CombinedMultitrackMediaDisplay-player1', { 'CombinedMultitrackMediaDisplay-player1--noScreen': !player1.showVideo })}>
+            <div className={player1Classes}>
               <MediaPlayer
+                allowFullscreen
                 screenMode={player1.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
                 aspectRatio={player1.aspectRatio}
                 initialVolume={player1.initialVolume}
                 playbackRange={player1.playbackRange}
                 posterImageUrl={posterImageUrl}
                 sourceUrl={player1Source}
+                customUnderControlsContent={(
+                  <Fragment>
+                    {!!note && (
+                      <div className="CombinedMultitrackMediaDisplay-note">
+                        <Markdown inline>{note}</Markdown>
+                      </div>
+                    )}
+                    <div className="CombinedMultitrackMediaDisplay-player2">
+                      <MultitrackMediaPlayer
+                        initialVolume={player2.initialVolume}
+                        showTrackMixer
+                        showVideo={false}
+                        sources={player2Sources}
+                        volumePresets={player2.volumePresets}
+                        />
+                    </div>
+                  </Fragment>
+                )}
+                onEnterFullscreen={handleEnterFullscreen}
+                onExitFullscreen={handleExitFullscreen}
                 />
             </div>
-            <div className="CombinedMultitrackMediaDisplay-note">
-              <Markdown inline>{note}</Markdown>
-            </div>
-            <div className="CombinedMultitrackMediaDisplay-player2">
-              <MultitrackMediaPlayer
-                initialVolume={player2.initialVolume}
-                showTrackMixer
-                showVideo={false}
-                sources={player2Sources}
-                volumePresets={player2.volumePresets}
-                />
-            </div>
+
             <CopyrightNotice value={combinedCopyrightNotice} />
           </Fragment>
         )}

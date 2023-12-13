@@ -3,21 +3,30 @@
 .CombinedMultitrackMediaDisplay-player1 {
   .MediaPlayer-underPlayerContent {
     .m-media-player-no-screen;
-    border-radius: 0
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
   }
 
-  &.CombinedMultitrackMediaDisplay-player1--noScreen {
-    .MediaPlayer {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+  &.is-fullscreen {
+    .MediaPlayer-underPlayerContent {
+      border-radius: 0;
     }
   }
 }
 
+.CombinedMultitrackMediaDisplay-player2 {
+  .MediaPlayer-underPlayerContent {
+    padding: 0;
+  }
+
+  .MediaPlayer {
+    padding: 0;
+  }
+}
+
 .CombinedMultitrackMediaDisplay-note {
-  .m-media-player-no-screen;
-  border-radius: 0;
-  padding-bottom: 0;
+  padding-top: 25px;
+  padding-bottom: 10px;
 }
 
 .CombinedMultitrackMediaDisplay-player2 {
