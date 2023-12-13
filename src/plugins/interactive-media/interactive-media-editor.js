@@ -250,6 +250,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             {!!canRenderMediaPlayer && (
               <MediaPlayer
                 allowPartClick
+                allowPlaybackRate
                 aspectRatio={aspectRatio}
                 parts={playerParts}
                 playbackRange={playbackRange}

@@ -47,6 +47,7 @@ function MediaPlayer({
   allowFullscreen,
   allowLoop,
   allowPartClick,
+  allowPlaybackRate,
   aspectRatio,
   clickToPlay,
   customScreenOverlay,
@@ -313,7 +314,7 @@ function MediaPlayer({
             allowDownload={allowDownload}
             allowLoop={allowLoop}
             allowFullscreen={canEnterFullscreen}
-            allowPlaybackRate
+            allowPlaybackRate={allowPlaybackRate}
             durationInMilliseconds={durationInMilliseconds}
             millisecondsLength={millisecondsLength}
             playedMilliseconds={playedMilliseconds}
@@ -343,6 +344,7 @@ MediaPlayer.propTypes = {
   allowFullscreen: PropTypes.bool,
   allowLoop: PropTypes.bool,
   allowPartClick: PropTypes.bool,
+  allowPlaybackRate: PropTypes.bool,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   clickToPlay: PropTypes.bool,
   customScreenOverlay: PropTypes.node,
@@ -387,6 +389,7 @@ MediaPlayer.defaultProps = {
   allowFullscreen: false,
   allowLoop: true,
   allowPartClick: false,
+  allowPlaybackRate: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   clickToPlay: true,
   customScreenOverlay: null,

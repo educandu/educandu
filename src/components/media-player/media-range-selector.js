@@ -152,6 +152,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
               <div className="MediaRangeSelector-player">
                 <MediaPlayer
                   allowPartClick
+                  allowPlaybackRate
                   millisecondsLength={3}
                   parts={getCurrentRangeParts()}
                   screenMode={getScreenMode()}

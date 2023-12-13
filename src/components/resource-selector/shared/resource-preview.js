@@ -67,6 +67,7 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
       <div className={classes}>
         <MediaPlayer
           allowDownload
+          allowPlaybackRate
           sourceUrl={sourceUrl}
           screenMode={MEDIA_SCREEN_MODE.none}
           onDuration={handleMediaLoad}
@@ -79,6 +80,7 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
     <div className="ResourcePreview-mediaPlayer">
       <MediaPlayer
         allowDownload
+        allowPlaybackRate
         sourceUrl={sourceUrl}
         onDuration={handleMediaLoad}
         />

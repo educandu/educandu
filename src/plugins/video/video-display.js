@@ -20,6 +20,7 @@ function VideoDisplay({ content }) {
           <MediaPlayer
             allowFullscreen
             allowDownload={allowDownload}
+            allowPlaybackRate
             aspectRatio={content.aspectRatio}
             initialVolume={content.initialVolume}
             playbackRange={content.playbackRange}

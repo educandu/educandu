@@ -118,6 +118,7 @@ function AbcPlayer({ renderResult, initialVolume }) {
       <MediaPlayer
         allowLoop
         allowDownload
+        allowPlaybackRate
         sourceUrl={soundUrl}
         volume={initialVolume}
         mediaPlayerRef={mediaPlayerRef}
