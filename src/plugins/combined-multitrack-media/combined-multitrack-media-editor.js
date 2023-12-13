@@ -45,8 +45,6 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
     const shouldDisableVideoOnNewUrl = shouldDisableVideo(newContent.player1.track.sourceUrl);
     const shouldDisableVideoOnOldUrl = shouldDisableVideo(content.player1.track.sourceUrl);
 
-    console.log('shouldDisableVideoOnNewUrl', shouldDisableVideoOnNewUrl);
-    console.log('shouldDisableVideoOnOldUrl', shouldDisableVideoOnOldUrl);
     const autoEnableVideo = !!shouldDisableVideoOnOldUrl && !shouldDisableVideoOnNewUrl;
     const autoDisableVideo = !!shouldDisableVideoOnNewUrl;
     newContent.player1.showVideo = autoDisableVideo ? false : autoEnableVideo || newContent.player1.showVideo;
