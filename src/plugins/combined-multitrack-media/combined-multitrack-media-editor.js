@@ -8,6 +8,7 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
+import { shouldDisableVideo } from '../../utils/media-utils.js';
 import React, { useId, useMemo, useRef, useState } from 'react';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -26,9 +27,10 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('combinedMultitrackMedia');
 
-  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
-
   const { note, width, player1, player2 } = content;
+
+  const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
+  const [disableVideo, setDisableVideo] = useState(shouldDisableVideo(player1.track.sourceUrl));
 
   const player2Sources = useMemo(() => {
     return player2.tracks.map(track => ({
@@ -39,6 +41,18 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
+
+    const shouldDisableVideoOnNewUrl = shouldDisableVideo(newContent.player1.track.sourceUrl);
+    const shouldDisableVideoOnOldUrl = shouldDisableVideo(content.player1.track.sourceUrl);
+
+    console.log('shouldDisableVideoOnNewUrl', shouldDisableVideoOnNewUrl);
+    console.log('shouldDisableVideoOnOldUrl', shouldDisableVideoOnOldUrl);
+    const autoEnableVideo = !!shouldDisableVideoOnOldUrl && !shouldDisableVideoOnNewUrl;
+    const autoDisableVideo = !!shouldDisableVideoOnNewUrl;
+    newContent.player1.showVideo = autoDisableVideo ? false : autoEnableVideo || newContent.player1.showVideo;
+    newContent.player1.posterImage = autoDisableVideo ? { sourceUrl: '' } : newContent.player1.posterImage;
+
+    setDisableVideo(autoDisableVideo);
     onContentChanged(newContent);
   };
 
@@ -180,6 +194,7 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
           <PlayerSettingsEditor
             content={player1}
             useWidth={false}
+            disableVideo={disableVideo}
             onContentChange={handlePlayer1SettingsContentChange}
             />
         </ItemPanel>
