@@ -1,0 +1,61 @@
+.CombinedMultitrackMediaDisplay {}
+
+.CombinedMultitrackMediaDisplay-player1 {
+  .MediaPlayer-underPlayerContent {
+    .m-media-player-no-screen;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+  }
+
+  &.is-fullscreen {
+    .MediaPlayer-underPlayerContent {
+      border-radius: 0;
+    }
+  }
+}
+
+.CombinedMultitrackMediaDisplay-player2 {
+  .MediaPlayer-underPlayerContent {
+    padding: 0;
+  }
+
+  .MediaPlayer {
+    padding: 0;
+  }
+}
+
+.CombinedMultitrackMediaDisplay-note {
+  padding-top: 25px;
+  padding-bottom: 10px;
+}
+
+.CombinedMultitrackMediaDisplay-player2 {
+  .MediaPlayer {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+.CombinedMultitrackMediaDisplay-content {
+  margin: 0 auto;
+}
+
+.CombinedMultitrackMediaEditor {}
+
+.CombinedMultitrackMediaEditor-warning {
+  .m-multitrack-warning;
+  padding-bottom: 10px;
+  border-bottom: 1px solid @edu-border-color-base;
+}
+
+.CombinedMultitrackMediaEditor-warningIcon {
+  color: @edu-warning-color !important;
+}
+
+.CombinedMultitrackMediaEditor-trackMixerPreview {
+  .m-plugin-media-preview;
+}
+
+.CombinedMultitrackMediaEditor-trackMixerPreviewLabel {
+  .m-plugin-media-preview-label;
+}

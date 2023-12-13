@@ -186,6 +186,8 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               {t('common:preview')}
             </div>
             <MultitrackMediaPlayer
+              allowLoop
+              allowPlaybackRate
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}

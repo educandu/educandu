@@ -264,7 +264,9 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               )}
               {!!canRenderMediaPlayer && (
                 <MediaPlayer
+                  allowLoop
                   allowPartClick
+                  allowPlaybackRate
                   aspectRatio={aspectRatio}
                   parts={playerParts}
                   playbackRange={playbackRange}

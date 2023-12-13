@@ -29,6 +29,8 @@ function MultitrackMediaDisplay({ content }) {
           <Fragment>
             <MultitrackMediaPlayer
               allowFullscreen
+              allowLoop
+              allowPlaybackRate
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
               posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}

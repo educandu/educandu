@@ -85,6 +85,8 @@ function EarTrainingDisplay({ content }) {
           {!!url && (
             <MediaPlayer
               allowDownload={allowDownload}
+              allowLoop
+              allowPlaybackRate
               initialVolume={currentTest.sourceSound.initialVolume}
               playbackRange={currentTest.sourceSound.playbackRange}
               screenMode={MEDIA_SCREEN_MODE.none}

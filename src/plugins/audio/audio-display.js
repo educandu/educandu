@@ -19,6 +19,8 @@ function AudioDisplay({ content }) {
         {!!url && (
           <MediaPlayer
             allowDownload={allowDownload}
+            allowLoop
+            allowPlaybackRate
             initialVolume={content.initialVolume}
             playbackRange={content.playbackRange}
             screenMode={MEDIA_SCREEN_MODE.none}

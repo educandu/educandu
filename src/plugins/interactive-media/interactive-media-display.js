@@ -208,7 +208,7 @@ function InteractiveMediaDisplay({ content }) {
             <MediaPlayer
               allowDownload={allowDownload}
               allowFullscreen
-              allowLoop={false}
+              allowPlaybackRate
               aspectRatio={aspectRatio}
               customScreenOverlay={renderInteractionOverlay()}
               customUnderControlsContent={renderChaptersProgressBar()}

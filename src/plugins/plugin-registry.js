@@ -28,6 +28,7 @@ import FileUploadFieldInfo from './file-upload-field/file-upload-field-info.js';
 import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
 import MusicAccentuationInfo from './music-accentuation/music-accentuation-info.js';
 import MarkdownWithImageInfo from './markdown-with-image/markdown-with-image-info.js';
+import CombinedMultitrackMediaInfo from './combined-multitrack-media/combined-multitrack-media-info.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -59,7 +60,8 @@ const builtInPluginInfos = [
   MultitrackMediaInfo,
   InteractiveMediaInfo,
   MusicAccentuationInfo,
-  MarkdownWithImageInfo
+  MarkdownWithImageInfo,
+  CombinedMultitrackMediaInfo
 ];
 
 class PluginRegistry {

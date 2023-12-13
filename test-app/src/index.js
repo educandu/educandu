@@ -32,6 +32,7 @@ const plugins = [
   'media-slideshow',
   'interactive-media',
   'multitrack-media',
+  'combined-multitrack-media',
   'media-analysis',
   'custom-plugin/server-time',
   'text-field',
