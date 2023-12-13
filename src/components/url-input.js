@@ -45,18 +45,27 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
     }
   }, [sourceType, unsecureUrl]);
 
-  const handleInputValueChange = newValue => {
-    const accessibleUrl = getAccessibleUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl });
-    const { sanitizedUrl } = analyzeMediaUrl(accessibleUrl);
-    const portableUrl = getPortableUrl({ url: sanitizedUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const handleInputValueChange = (newValue, sanitize) => {
+    let url = getAccessibleUrl({ url: newValue, cdnRootUrl: clientConfig.cdnRootUrl });
 
-    const metadata = createMetadataForSource({ url: portableUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+    if (sanitize) {
+      const { sanitizedUrl } = analyzeMediaUrl(url);
+      url = sanitizedUrl;
+    }
 
-    onChange(portableUrl, metadata);
+    url = getPortableUrl({ url, cdnRootUrl: clientConfig.cdnRootUrl });
+
+    const metadata = createMetadataForSource({ url, cdnRootUrl: clientConfig.cdnRootUrl });
+
+    onChange(url, metadata);
   };
 
   const handleDebouncedInputValueChange = event => {
-    handleInputValueChange(event.target.value);
+    handleInputValueChange(event.target.value, false);
+  };
+
+  const handleInputBlur = event => {
+    handleInputValueChange(event.target.value, true);
   };
 
   const handleSelectButtonClick = () => {
@@ -64,7 +73,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   };
 
   const handleDialogSelect = newUrl => {
-    handleInputValueChange(newUrl);
+    handleInputValueChange(newUrl, true);
     setIsDialogOpen(false);
   };
 
@@ -100,6 +109,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
       <DebouncedInput
         value={value}
         disabled={disabled}
+        onBlur={handleInputBlur}
         addonBefore={renderInputPrefix()}
         onChange={handleDebouncedInputValueChange}
         />
