@@ -28,8 +28,8 @@ function MultitrackMediaDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             <MultitrackMediaPlayer
-              allowLoop
               allowFullscreen
+              allowLoop
               allowPlaybackRate
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}
