@@ -2,3 +2,9 @@ multitrackMedia:
   name:
     en: Multitrack media
     de: Mehrspur-Medien
+  warningsHeader:
+    en: "Please take into account:"
+    de: "Bitte beachte:"
+  internalSourcesRecommendedWarning:
+    en: Tracks might not play synchronously if external sources are used.
+    de: Bei Verwendung externer Quellen werden die Spuren eventuell nicht synchron abgespielt.

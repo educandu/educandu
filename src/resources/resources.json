@@ -518,7 +518,7 @@
     },
     "noteInfo": {
       "en": "Short instruction, for example on when to use player 2 to accompany player 1",
-      "de": "Short instruction, for example on when to use player 2 to accompany player 1"
+      "de": "Kurze Anweisung, zum Beispiel wann Player 2 nach Player 1 gestartet werden soll"
     }
   },
   "common": {
@@ -3223,6 +3223,14 @@
     "name": {
       "en": "Multitrack media",
       "de": "Mehrspur-Medien"
+    },
+    "warningsHeader": {
+      "en": "Please take into account:",
+      "de": "Bitte beachte:"
+    },
+    "internalSourcesRecommendedWarning": {
+      "en": "Tracks might not play synchronously if external sources are used.",
+      "de": "Bei Verwendung externer Quellen werden die Spuren eventuell nicht synchron abgespielt."
     }
   },
   "multitrackMediaPlayer": {
