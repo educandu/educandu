@@ -153,8 +153,16 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal" labelAlign="left">
         <div className="MultitrackMediaEditor-warning">
-          <WarningIcon className="MultitrackMediaEditor-warningIcon" />
-          {t('common:playerNotSupportedOnIOS')}
+          <div>
+            <WarningIcon className="MultitrackMediaEditor-warningIcon" />
+          </div>
+          <div>
+            <div>{t('warningsHeader')}</div>
+            <ul className="MultitrackMediaEditor-warningList">
+              <li>{t('internalSourcesRecommendedWarning')}</li>
+              <li>{t('common:playerNotSupportedOnIOS')}</li>
+            </ul>
+          </div>
         </div>
         <ItemPanel
           collapsed

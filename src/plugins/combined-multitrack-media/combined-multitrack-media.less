@@ -43,7 +43,14 @@
 .CombinedMultitrackMediaEditor {}
 
 .CombinedMultitrackMediaEditor-warning {
-  .m-multitrack-warning;
+  display: grid;
+  gap: 10px;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: start;
+  font-style: italic;
+  font-size: @edu-font-size-sm;
+  margin-bottom: 40px;
   padding-bottom: 10px;
   border-bottom: 1px solid @edu-border-color-base;
 }
