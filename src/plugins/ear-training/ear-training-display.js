@@ -26,8 +26,8 @@ function EarTrainingDisplay({ content }) {
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
-  const [lastRenderResult, setLastRenderResult] = useState(null);
   const [viewedTestIndices, setViewedTestIndices] = useState([0]);
+  const [renderResultForAnswer, setRenderResultForAnswer] = useState(null);
   const [isCurrentTestAnswerVisible, setIsCurrentTestAnswerVisible] = useState(false);
 
   const { title, width } = content;
@@ -47,7 +47,7 @@ function EarTrainingDisplay({ content }) {
       setCurrentTestIndex(testIndex);
       setViewedTestIndices(ensureIsIncluded(viewedTestIndices, testIndex));
       setIsCurrentTestAnswerVisible(false);
-      setLastRenderResult(null);
+      setRenderResultForAnswer(null);
     }
   };
 
@@ -56,7 +56,7 @@ function EarTrainingDisplay({ content }) {
     setCurrentTestIndex(previousTestIndex);
     setViewedTestIndices(ensureIsIncluded(viewedTestIndices, previousTestIndex));
     setIsCurrentTestAnswerVisible(false);
-    setLastRenderResult(null);
+    setRenderResultForAnswer(null);
   };
 
   const handleNextTestClick = () => {
@@ -64,14 +64,14 @@ function EarTrainingDisplay({ content }) {
     setCurrentTestIndex(nextTestIndex);
     setViewedTestIndices(ensureIsIncluded(viewedTestIndices, nextTestIndex));
     setIsCurrentTestAnswerVisible(false);
-    setLastRenderResult(null);
+    setRenderResultForAnswer(null);
   };
 
   const handleResetTestsClick = () => {
     setCurrentTestIndex(0);
     setViewedTestIndices([0]);
     setIsCurrentTestAnswerVisible(false);
-    setLastRenderResult(null);
+    setRenderResultForAnswer(null);
     setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   };
 
@@ -100,7 +100,7 @@ function EarTrainingDisplay({ content }) {
 
     return (
       <div className="EarTrainingDisplay-soundPlayer">
-        <AbcPlayer renderResult={lastRenderResult} initialVolume={currentTest.abcMidiSound.initialVolume} />
+        <AbcPlayer renderResult={renderResultForAnswer} initialVolume={currentTest.abcMidiSound.initialVolume} />
       </div>
     );
   };
@@ -143,10 +143,19 @@ function EarTrainingDisplay({ content }) {
               </Fragment>
             )}
             {currentTest.testMode === TEST_MODE.abcCode && (
-              <AbcNotation
-                abcCode={isCurrentTestAnswerVisible ? currentTest.answerAbcCode : currentTest.questionAbcCode}
-                onRender={setLastRenderResult}
-                />
+              <div className="EarTrainingDisplay-testAbcWrapper">
+                <div className={classNames('EarTrainingDisplay-testAbc',  { 'is-visible': !isCurrentTestAnswerVisible })}>
+                  <AbcNotation
+                    abcCode={currentTest.questionAbcCode}
+                    />
+                </div>
+                <div className={classNames('EarTrainingDisplay-testAbc',  { 'is-visible': !!isCurrentTestAnswerVisible })}>
+                  <AbcNotation
+                    abcCode={currentTest.answerAbcCode}
+                    onRender={setRenderResultForAnswer}
+                    />
+                </div>
+              </div>
             )}
             {renderSoundPlayer()}
             <RadioGroup className="EarTrainingDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>

@@ -67,3 +67,17 @@
   .m-horizontally-centered;
   margin-top: 20px;
 }
+
+.EarTrainingDisplay-testAbcWrapper {
+  display: grid;
+}
+
+.EarTrainingDisplay-testAbc {
+  visibility: hidden;
+  grid-row: 1;
+  grid-column: 1;
+
+  &.is-visible {
+    visibility: visible;
+  }
+}
