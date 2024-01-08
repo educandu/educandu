@@ -14,6 +14,7 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
   const isMounted = useRef(false);
   const { t } = useTranslation('pdfDocument');
   const [viewerStyle, setViewerStyle] = useState({});
+  const [resizeRenderKey, setResizeRenderKey] = useState(0);
   const [actualPageNumber, setActualPageNumber] = useState(pageNumber);
 
   const releaseViewerStyle = () => setTimeout(() => {
@@ -35,6 +36,16 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
       isMounted.current = false;
     };
   }, [pageNumber]);
+
+  useEffect(() => {
+    const handleResize = () => setResizeRenderKey(oldKey => oldKey + 1);
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handlePageRenderSuccess = () => {
     releaseViewerStyle();
@@ -82,7 +93,7 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
   return (
     <DimensionsProvider>
       {({ containerHeight, containerWidth }) => (
-        <div className="PdfDocument" style={viewerStyle} ref={viewerRef}>
+        <div key={resizeRenderKey} className="PdfDocument" style={viewerStyle} ref={viewerRef}>
           <Document
             options={documentOptions}
             file={file}
