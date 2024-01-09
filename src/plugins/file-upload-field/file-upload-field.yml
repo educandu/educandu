@@ -8,3 +8,9 @@ fileUploadField:
   maxCountInfo:
     en: Maximum number of files that can be uploaded
     de: Maximale Anzahl an Dateien, die hochgeladen werden können
+  allowDragAndDrop:
+    en: Drag and drop
+    de: Drag and drop
+  addFile:
+    en: Add file
+    de: Datei hinzufügen

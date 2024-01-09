@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { Form, Upload } from 'antd';
 import prettyBytes from 'pretty-bytes';
+import { Button, Form, Upload } from 'antd';
 import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import React, { useMemo, useRef } from 'react';
@@ -27,7 +27,7 @@ export default function FileUploadFieldDisplay({ context, content, input, canMod
 
   const { isPreview } = context;
   const { data, files } = input;
-  const { label, maxCount, width } = content;
+  const { label, maxCount, width, allowDragAndDrop } = content;
 
   const maximumAddableFiles = Math.max(0, maxCount - files.length);
   const canAcceptFiles = !isPreview && canModifyInput && maximumAddableFiles > 0;
@@ -59,8 +59,9 @@ export default function FileUploadFieldDisplay({ context, content, input, canMod
 
   const getDropzoneClasses = isDragActive => classNames(
     'FileUploadFieldDisplay-dropzone',
-    { 'is-dropping': isDragActive && canAcceptFiles },
-    { 'is-drop-rejected': isDragActive && !canAcceptFiles }
+    { 'is-hidden': !allowDragAndDrop },
+    { 'is-dropping': allowDragAndDrop && isDragActive && canAcceptFiles },
+    { 'is-drop-rejected': allowDragAndDrop && isDragActive && !canAcceptFiles }
   );
 
   return (
@@ -97,6 +98,12 @@ export default function FileUploadFieldDisplay({ context, content, input, canMod
             isImageUrl={isImageUrl}
             disabled={!canModifyInput}
             />
+          {!!canModifyInput && !allowDragAndDrop && (
+            <div className="FileUploadFieldDisplay-noDragAndDropControls">
+              <Button disabled={!canAcceptFiles} icon={<CloudUploadOutlined />} onClick={handleUploadButtonClick}>{t('addFile')}</Button>
+              <div className="FileUploadFieldDisplay-uploadLimitInfo">{t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES), maxFiles: maxCount })}</div>
+            </div>
+          )}
         </FormItem>
       </Form>
     </div>

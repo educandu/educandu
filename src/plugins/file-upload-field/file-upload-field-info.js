@@ -29,7 +29,8 @@ class FileUploadFieldInfo {
     return {
       label: '',
       maxCount: 1,
-      width: 100
+      width: 100,
+      allowDragAndDrop: true
     };
   }
 
@@ -37,7 +38,8 @@ class FileUploadFieldInfo {
     const schema = joi.object({
       label: joi.string().allow('').required(),
       maxCount: joi.number().integer().min(1).max(MAXIMUM_ALLOWED_UPLOAD_FILE_COUNT).required(),
-      width: joi.number().integer().min(0).max(100).required()
+      width: joi.number().integer().min(0).max(100).required(),
+      allowDragAndDrop: joi.boolean().required()
     });
 
     joi.attempt(content, schema, { abortEarly: false, convert: false, noDefaults: true });
