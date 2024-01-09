@@ -43,7 +43,7 @@
 
 // Mixin for Antd Slider component to increase the touch area and size of the handle:
 .m-antd-slider-mobile-enhancements {
-  @media @edu-media-not-desktop {
+  @media (pointer:coarse) {
     @ant-slider-handle-size: 10px; // This is the hard-coded Antd slider handle size
     @ant-slider-handle-touch-margin: 12px;
     @ant-slider-handle-touch-size: @ant-slider-handle-size + (2 * @ant-slider-handle-touch-margin);
