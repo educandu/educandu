@@ -49,7 +49,9 @@ function YoutubePlayer({
   const [sourceDurationInfo] = useMediaDurations([sourceUrl]);
 
   const [player, setPlayer] = useState(null);
+  const [wasPlayStartedOnce, setWasPlayStartedOnce] = useState(false);
   const [wasPlayTriggeredOnce, setWasPlayTriggeredOnce] = useState(false);
+  const [wasSeekingBeforeFirstPlay, setWasSeekingBeforeFirstPlay] = useState(false);
 
   const posterOrThumbnailImageUrl = useMemo(() => {
     if (posterImageUrl) {
@@ -90,12 +92,16 @@ function YoutubePlayer({
       const currentActualTimeInMs = startTimeInMs + seekedTimeWithinRangeInMs;
       player.currentTime = currentActualTimeInMs / 1000;
 
+      if (!wasPlayTriggeredOnce) {
+        setWasSeekingBeforeFirstPlay(true);
+      }
+
       if (!isPlaying) {
         const currentTimeWithinRangeInMs = currentActualTimeInMs - startTimeInMs;
         onProgress(currentTimeWithinRangeInMs);
       }
     }
-  }, [player, isPlaying, startTimeInS, onProgress]);
+  }, [player, isPlaying, startTimeInS, onProgress, wasPlayTriggeredOnce]);
 
   const triggerStop = useCallback(() => {
     player?.stop();
@@ -190,10 +196,10 @@ function YoutubePlayer({
   }, [player, playbackRate]);
 
   useEffect(() => {
-    if (player && wasPlayTriggeredOnce) {
+    if (player && wasPlayStartedOnce) {
       player.volume = volume;
     }
-  }, [player, volume, wasPlayTriggeredOnce]);
+  }, [player, volume, wasPlayStartedOnce]);
 
   const handleEnded = useCallback(() => {
     onEnded();
@@ -247,6 +253,7 @@ function YoutubePlayer({
   const handlePlaying = useCallback(() => {
     onPlay();
     setIsPlaying(true);
+    setWasPlayStartedOnce(true);
     setProgressInterval(() => handleProgress());
   }, [onPlay, handleProgress]);
 
@@ -255,6 +262,13 @@ function YoutubePlayer({
     setIsPlaying(false);
     setProgressInterval(null);
   }, [onPause]);
+
+  const handleBuffering = useCallback(() => {
+    if (wasPlayTriggeredOnce && !wasPlayStartedOnce && !wasSeekingBeforeFirstPlay) {
+      player.currentTime = startTimeInS;
+    }
+    setProgressInterval(null);
+  }, [player, wasPlayTriggeredOnce, wasPlayStartedOnce, wasSeekingBeforeFirstPlay, startTimeInS]);
 
   const handleYoutubeStateChange = useCallback(event => {
     // this call is essential for manual seeking, so that we have the latest progress reported on any state change
@@ -270,9 +284,9 @@ function YoutubePlayer({
       handleEnded();
     }
     if (event.detail.code === YOUTUBE_STATE.buffering) {
-      setProgressInterval(null);
+      handleBuffering();
     }
-  }, [handlePlaying, handlePause, handleEnded, handleProgress]);
+  }, [handlePlaying, handlePause, handleEnded, handleProgress, handleBuffering]);
 
   const handleEnterFullscreen = useCallback(() => {
     onEnterFullscreen();
