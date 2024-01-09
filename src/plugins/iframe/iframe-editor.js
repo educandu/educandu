@@ -53,7 +53,8 @@ function IframeEditor({ content, onContentChanged }) {
             min={100}
             step={10}
             max={1000}
-            labelsStep={100}
+            marksStep={100}
+            labelsStep={300}
             value={content.height}
             formatter={pxFormatter}
             onChange={handleHeightValueChanged}
