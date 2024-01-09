@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'antd';
+import { Checkbox, Form } from 'antd';
 import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import StepSlider from '../../components/step-slider.js';
@@ -9,11 +9,9 @@ import { MAXIMUM_ALLOWED_UPLOAD_FILE_COUNT } from './constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 
-const FormItem = Form.Item;
-
 export default function FileUploadFieldEditor({ content, onContentChanged }) {
   const { t } = useTranslation('fileUploadField');
-  const { label, maxCount, width } = content;
+  const { label, maxCount, width, allowDragAndDrop } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -31,13 +29,21 @@ export default function FileUploadFieldEditor({ content, onContentChanged }) {
     updateContent({ width: value });
   };
 
+  const handleAllowDragAndDropChange = event => {
+    const { checked } = event.target;
+    updateContent({ allowDragAndDrop: checked });
+  };
+
   return (
     <div>
       <Form labelAlign="left">
-        <FormItem label={t('common:label')} {...FORM_ITEM_LAYOUT}>
+        <Form.Item label={t('common:label')} {...FORM_ITEM_LAYOUT}>
           <MarkdownInput inline value={label} onChange={handleLabelChange} />
-        </FormItem>
-        <FormItem
+        </Form.Item>
+        <Form.Item label={t('allowDragAndDrop')} {...FORM_ITEM_LAYOUT}>
+          <Checkbox checked={allowDragAndDrop} onChange={handleAllowDragAndDropChange} />
+        </Form.Item>
+        <Form.Item
           label={<Info tooltip={t('maxCountInfo')}>{t('maxCount')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
@@ -50,13 +56,13 @@ export default function FileUploadFieldEditor({ content, onContentChanged }) {
             labelsStep={1}
             onChange={handleMaxSizeChange}
             />
-        </FormItem>
-        <FormItem
+        </Form.Item>
+        <Form.Item
           label={<Info tooltip={t('common:widthInfo')}>{t('common:width')}</Info>}
           {...FORM_ITEM_LAYOUT}
           >
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
-        </FormItem>
+        </Form.Item>
       </Form>
     </div>
   );
