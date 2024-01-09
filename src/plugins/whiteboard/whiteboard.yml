@@ -20,6 +20,9 @@ whiteboard:
   resetTooltip:
     en: Reset whiteboard
     de: Whiteboard zurücksetzen
+  exportImageTooltip:
+    en: Download as image
+    de: Als Bild herunterladen
   fontSizeTooltip:
     en: Font size
     de: Schriftgröße

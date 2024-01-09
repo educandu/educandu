@@ -2,21 +2,32 @@ import { fabric } from 'fabric';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import deepEqual from 'fast-deep-equal';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { cssUrl } from '../../utils/css-utils.js';
 import useDimensionsNs from 'react-cool-dimensions';
+import { handleError } from '../../ui/error-helper.js';
+import HttpClient from '../../api-clients/http-client.js';
 import React, { useEffect, useRef, useState } from 'react';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { drawImageToCanvas } from '../../utils/image-utils.js';
+import { useService } from '../../components/container-context.js';
+import { isInternalSourceType } from '../../utils/source-utils.js';
 import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
 import { DEFAULT_STROKE_COLOR, FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_COLOR, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
 const useDimensions = useDimensionsNs.default || useDimensionsNs;
+
+const logger = new Logger(import.meta.url);
 
 export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight, backgroundImageUrl, isBorderVisible, onChange }) {
   const parentRef = useRef();
   const canvasRef = useRef();
   const isLoadingData = useRef(false);
   const [canvas, setCanvas] = useState();
+  const httpClient = useService(HttpClient);
   const { t } = useTranslation('whiteboard');
+  const clientConfig = useService(ClientConfig);
   const [fontSize, setFontSize] = useState(FONT_SIZE.medium);
   const [toolbarMode, setToolbarMode] = useState(MODE.select);
   const [fillColor, setFillColor] = useState(TRANSPARENT_FILL_COLOR);
@@ -348,6 +359,36 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     });
   };
 
+  const handleExportImageClick = async () => {
+    let whiteboardContentImageUrl = null;
+    let mergedImagePngUrl = null;
+
+    try {
+      const targetCanvas = window.document.createElement('canvas');
+      targetCanvas.width = canvas.width;
+      targetCanvas.height = canvas.height;
+
+      const withCredentials = isInternalSourceType({ url: backgroundImageUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+      await drawImageToCanvas(backgroundImageUrl, targetCanvas, withCredentials);
+
+      whiteboardContentImageUrl = canvas.toDataURL({ format: 'png' });
+      await drawImageToCanvas(whiteboardContentImageUrl, targetCanvas);
+
+      mergedImagePngUrl = targetCanvas.toDataURL('image/png');
+
+      httpClient.download(mergedImagePngUrl, 'whiteboard.png');
+    } catch (error) {
+      handleError({ message: error.message, error, logger, t });
+    } finally {
+      if (whiteboardContentImageUrl) {
+        URL.revokeObjectURL(whiteboardContentImageUrl);
+      }
+      if (mergedImagePngUrl) {
+        URL.revokeObjectURL(mergedImagePngUrl);
+      }
+    }
+  };
+
   return (
     <div className="WhiteboardCanvas">
       <div
@@ -394,6 +435,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
           onFillColorChange={handleFillColorChange}
           onFillColorRemove={handleFillColorRemove}
           onResetClick={handleResetClick}
+          onExportImageClick={handleExportImageClick}
           />
       )}
     </div>
