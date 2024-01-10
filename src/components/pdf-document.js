@@ -2,20 +2,19 @@ import PropTypes from 'prop-types';
 import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { pdfjs, Document, Page } from 'react-pdf';
-import { ORIENTATION } from '../domain/constants.js';
 import DimensionsProvider from './dimensions-provider.js';
 import EmptyState, { EMPTY_STATE_STATUS } from './empty-state.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/api/v1/pdfjs-dist/build/pdf.worker.min.js';
 
-function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLoadSuccess }) {
+function PdfDocument({ file, pageNumber, showTextOverlay, onLoadSuccess }) {
   const viewerRef = useRef();
   const isMounted = useRef(false);
   const { t } = useTranslation('pdfDocument');
   const [viewerStyle, setViewerStyle] = useState({});
-  const [resizeRenderKey, setResizeRenderKey] = useState(0);
   const [actualPageNumber, setActualPageNumber] = useState(pageNumber);
+  const [viewerViewportPadding, setViewerViewportPadding] = useState(0);
 
   const releaseViewerStyle = () => setTimeout(() => {
     if (isMounted.current) {
@@ -30,6 +29,8 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
     // or any of the error components are rendered.
     const boundingClientRect = viewerRef.current.getBoundingClientRect();
     setViewerStyle({ height: boundingClientRect.height, width: boundingClientRect.width });
+    setViewerViewportPadding(window.innerWidth - boundingClientRect.width);
+
     setActualPageNumber(pageNumber);
 
     return () => {
@@ -38,14 +39,23 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
   }, [pageNumber]);
 
   useEffect(() => {
-    const handleResize = () => setResizeRenderKey(oldKey => oldKey + 1);
+    const handleResize = () => {
+      const viewerBoundingClientRect = viewerRef.current.getBoundingClientRect();
+      const currentViewerViewportPadding = window.innerWidth - viewerBoundingClientRect.width;
+
+      const viewerWidthOverflow = viewerViewportPadding - currentViewerViewportPadding;
+      if (viewerWidthOverflow > 0) {
+        const reducedWidth = viewerBoundingClientRect.width - viewerWidthOverflow;
+        setViewerStyle({ height: viewerBoundingClientRect.height, width: reducedWidth });
+      }
+    };
 
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [viewerViewportPadding]);
 
   const handlePageRenderSuccess = () => {
     releaseViewerStyle();
@@ -92,8 +102,8 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
 
   return (
     <DimensionsProvider>
-      {({ containerHeight, containerWidth }) => (
-        <div key={resizeRenderKey} className="PdfDocument" style={viewerStyle} ref={viewerRef}>
+      {({ containerWidth }) => (
+        <div className="PdfDocument" style={viewerStyle} ref={viewerRef}>
           <Document
             options={documentOptions}
             file={file}
@@ -106,8 +116,8 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
             <Page
               key={actualPageNumber}
               pageNumber={actualPageNumber}
-              height={stretchDirection === ORIENTATION.vertical ? containerHeight : null}
-              width={stretchDirection === ORIENTATION.horizontal ? containerWidth : null}
+              height={null}
+              width={containerWidth}
               error={renderPageErrorComponent}
               renderTextLayer={showTextOverlay}
               onRenderSuccess={handlePageRenderSuccess}
@@ -127,15 +137,13 @@ PdfDocument.propTypes = {
   onLoadSuccess: PropTypes.func,
   pageNumber: PropTypes.number,
   showTextOverlay: PropTypes.bool,
-  stretchDirection: PropTypes.oneOf(Object.values(ORIENTATION))
 };
 
 PdfDocument.defaultProps = {
   file: null,
   onLoadSuccess: () => {},
   pageNumber: 1,
-  showTextOverlay: false,
-  stretchDirection: ORIENTATION.horizontal
+  showTextOverlay: false
 };
 
 export default PdfDocument;

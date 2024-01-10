@@ -8,9 +8,9 @@ import ClientConfig from '../../../bootstrap/client-config.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { getResourceType } from '../../../utils/resource-utils.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
+import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../../../domain/constants.js';
 import FileUnknownFilledIcon from '../../icons/files/file-unknown-filled-icon.js';
 import { getAccessibleUrl, isInternalSourceType } from '../../../utils/source-utils.js';
-import { MEDIA_SCREEN_MODE, ORIENTATION, RESOURCE_TYPE } from '../../../domain/constants.js';
 
 function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
   const [pdf, setPdf] = useState(null);
@@ -100,7 +100,6 @@ function ResourcePreview({ urlOrFile, fullWidth, onResourceLoad }) {
       <PdfDocument
         file={pdfFile}
         pageNumber={pdfPageNumber}
-        stretchDirection={ORIENTATION.horizontal}
         onLoadSuccess={handlePdfLoad}
         />
       <MiniPager
