@@ -7,6 +7,7 @@ import { DEFAULT_COLOR_SWATCHES, DEFAULT_COLOR_PICKER_WIDTH } from '../../domain
 import {
   ArrowIcon,
   CircleIcon,
+  DownloadIcon,
   EraserIcon,
   FillColorIcon,
   FontSizeIcon,
@@ -135,7 +136,8 @@ export function WhiteboardToolbar({
   onStrokeColorChange,
   onFillColorChange,
   onFillColorRemove,
-  onResetClick
+  onResetClick,
+  onExportImageClick
 }) {
   const { t } = useTranslation('whiteboard');
 
@@ -231,6 +233,10 @@ export function WhiteboardToolbar({
 
         <Tooltip title={t('resetTooltip')} placement="bottom">
           <Button onClick={onResetClick} icon={<ResetIcon />} />
+        </Tooltip>
+
+        <Tooltip title={t('exportImageTooltip')} placement="bottom">
+          <Button onClick={onExportImageClick} icon={<DownloadIcon />} />
         </Tooltip>
       </div>
 
@@ -341,5 +347,6 @@ WhiteboardToolbar.propTypes = {
   onStrokeColorChange: PropTypes.func.isRequired,
   onFillColorChange: PropTypes.func.isRequired,
   onFillColorRemove: PropTypes.func.isRequired,
-  onResetClick: PropTypes.func.isRequired
+  onResetClick: PropTypes.func.isRequired,
+  onExportImageClick: PropTypes.func.isRequired,
 };
