@@ -58,7 +58,7 @@ function CombinedMultitrackMediaDisplay({ content }) {
                 screenMode={player1.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.none}
                 aspectRatio={player1.aspectRatio}
                 initialVolume={player1.initialVolume}
-                playbackRange={player1.playbackRange}
+                playbackRange={player1.track.playbackRange}
                 posterImageUrl={posterImageUrl}
                 sourceUrl={player1Source}
                 customUnderControlsContent={(
