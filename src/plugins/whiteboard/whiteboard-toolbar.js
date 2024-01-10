@@ -7,7 +7,7 @@ import { DEFAULT_COLOR_SWATCHES, DEFAULT_COLOR_PICKER_WIDTH } from '../../domain
 import {
   ArrowIcon,
   CircleIcon,
-  CloudDownloadIcon,
+  DownloadIcon,
   EraserIcon,
   FillColorIcon,
   FontSizeIcon,
@@ -236,7 +236,7 @@ export function WhiteboardToolbar({
         </Tooltip>
 
         <Tooltip title={t('exportImageTooltip')} placement="bottom">
-          <Button onClick={onExportImageClick} icon={<CloudDownloadIcon />} />
+          <Button onClick={onExportImageClick} icon={<DownloadIcon />} />
         </Tooltip>
       </div>
 

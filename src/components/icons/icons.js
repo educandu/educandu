@@ -28,8 +28,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconChevronLeftPipe,
-  IconZoomScan,
-  IconCloudDownload
+  IconZoomScan
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -76,5 +75,4 @@ export const ChevronLeftIcon = createIconFromTablerIconComponent(IconChevronLeft
 export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximize);
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
-export const CloudDownloadIcon = createIconFromTablerIconComponent(IconCloudDownload);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
