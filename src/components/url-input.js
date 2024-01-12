@@ -57,7 +57,9 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
 
     const metadata = createMetadataForSource({ url, cdnRootUrl: clientConfig.cdnRootUrl });
 
-    onChange(url, metadata);
+    if (value !== url) {
+      onChange(url, metadata);
+    }
   };
 
   const handleDebouncedInputValueChange = event => {
