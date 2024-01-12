@@ -22,9 +22,9 @@ import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../../components/empty-state.js';
+import { createCopyrightForSource, getAccessibleUrl } from '../../utils/source-utils.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
-import { createCopyrightForSourceMetadata, getAccessibleUrl } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -116,7 +116,13 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
   const handleChapterImageSourceUrlChange = (value, metadata) => {
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].image.sourceUrl = value;
-    newChapters[selectedChapterIndex].image.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
+    newChapters[selectedChapterIndex].image.copyrightNotice = createCopyrightForSource({
+      oldSourceUrl: chapters[selectedChapterIndex].image.sourceUrl,
+      oldCopyrightNotice: chapters[selectedChapterIndex].image.copyrightNotice,
+      sourceUrl: value,
+      metadata,
+      t
+    });
     changeContent({ chapters: newChapters });
   };
 

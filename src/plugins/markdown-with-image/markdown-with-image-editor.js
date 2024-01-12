@@ -8,10 +8,10 @@ import StepSlider from '../../components/step-slider.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import { useNumberWithUnitFormat } from '../../components/locale-context.js';
-import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -44,7 +44,13 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
     const newImage = {
       ...image,
       sourceUrl: value,
-      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+      copyrightNotice: createCopyrightForSource({
+        oldSourceUrl: image.sourceUrl,
+        oldCopyrightNotice: image.copyrightNotice,
+        sourceUrl: value,
+        metadata,
+        t
+      })
     };
     changeContent({ image: newImage });
   };

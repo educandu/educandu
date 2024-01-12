@@ -128,12 +128,21 @@ export function createMetadataForSource({ url, cdnRootUrl }) {
   return { sourceType, copyrightLink };
 }
 
-export function createCopyrightForSourceMetadata(metadata, t) {
+export function createCopyrightForSource({ oldSourceUrl, oldCopyrightNotice, sourceUrl, metadata, t }) {
+  if (oldSourceUrl === sourceUrl) {
+    return oldCopyrightNotice;
+  }
+
+  if (!sourceUrl) {
+    return '';
+  }
+
   if (metadata.sourceType === SOURCE_TYPE.youtube && metadata.copyrightLink) {
     return t('common:youtubeCopyrightNotice', { link: metadata.copyrightLink });
   }
   if (metadata.sourceType === SOURCE_TYPE.wikimedia && metadata.copyrightLink) {
     return t('common:wikimediaCopyrightNotice', { link: metadata.copyrightLink });
   }
+
   return '';
 }
