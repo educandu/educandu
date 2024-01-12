@@ -6,8 +6,8 @@ import UrlInput from '../../components/url-input.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
@@ -27,7 +27,13 @@ function AudioEditor({ content, onContentChanged }) {
     changeContent({
       sourceUrl: value,
       playbackRange: [0, 1],
-      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+      copyrightNotice: createCopyrightForSource({
+        oldSourceUrl: sourceUrl,
+        oldCopyrightNotice: copyrightNotice,
+        sourceUrl: value,
+        metadata,
+        t
+      })
     });
   };
 

@@ -12,7 +12,7 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { createCopyrightForSourceMetadata, getAccessibleUrl } from '../../utils/source-utils.js';
+import { createCopyrightForSource, getAccessibleUrl } from '../../utils/source-utils.js';
 import {
   createDefaultClipEffect,
   createDefaultHoverEffect,
@@ -78,7 +78,13 @@ function ImageEditor({ content, onContentChanged }) {
   const handleSourceUrlChange = (value, metadata) => {
     changeContent({
       sourceUrl: value,
-      copyrightNotice: createCopyrightForSourceMetadata(metadata, t),
+      copyrightNotice: createCopyrightForSource({
+        oldSourceUrl: sourceUrl,
+        oldCopyrightNotice: copyrightNotice,
+        sourceUrl: value,
+        metadata,
+        t
+      }),
       clipEffect: resetClipEffect(effectType)
     });
   };
@@ -106,7 +112,13 @@ function ImageEditor({ content, onContentChanged }) {
     const newHoverEffect = {
       ...hoverEffect,
       sourceUrl: value,
-      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+      copyrightNotice: createCopyrightForSource({
+        oldSourceUrl: hoverEffect.sourceUrl,
+        oldCopyrightNotice: hoverEffect.copyrightNotice,
+        sourceUrl: value,
+        metadata,
+        t
+      })
     };
     changeContent({ hoverEffect: newHoverEffect });
   };
@@ -121,7 +133,13 @@ function ImageEditor({ content, onContentChanged }) {
     const newRevealEffect = {
       ...revealEffect,
       sourceUrl: value,
-      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+      copyrightNotice: createCopyrightForSource({
+        oldSourceUrl: revealEffect.sourceUrl,
+        oldCopyrightNotice: revealEffect.copyrightNotice,
+        sourceUrl: value,
+        metadata,
+        t
+      })
     };
     changeContent({ revealEffect: newRevealEffect });
   };

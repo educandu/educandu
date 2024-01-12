@@ -7,7 +7,7 @@ import MarkdownInput from '../markdown-input.js';
 import MediaRangeSelector from './media-range-selector.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MediaRangeReadonlyInput from './media-range-readonly-input.js';
-import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
+import { createCopyrightForSource } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 
@@ -29,7 +29,13 @@ function TrackEditor({ content, onContentChange, useName, usePlaybackRange }) {
     const newContent = {
       sourceUrl: value,
       playbackRange: [0, 1],
-      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+      copyrightNotice: createCopyrightForSource({
+        oldSourceUrl: sourceUrl,
+        oldCopyrightNotice: copyrightNotice,
+        sourceUrl: value,
+        metadata,
+        t
+      })
     };
 
     changeContent(newContent);

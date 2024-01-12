@@ -13,9 +13,9 @@ import { useService } from '../../components/container-context.js';
 import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { SOUND_MODE, TESTS_ORDER, TEST_MODE } from './constants.js';
+import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
-import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
@@ -142,7 +142,13 @@ function EarTrainingEditor({ content, onContentChanged }) {
   const handleQuestionImageSourceUrlChange = (value, metadata, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].questionImage.sourceUrl = value;
-    newTests[index].questionImage.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
+    newTests[index].questionImage.copyrightNotice = createCopyrightForSource({
+      oldSourceUrl: tests[index].questionImage.sourceUrl,
+      oldCopyrightNotice: tests[index].questionImage.copyrightNotice,
+      sourceUrl: value,
+      metadata,
+      t
+    });
     changeContent({ tests: newTests });
   };
 
@@ -156,7 +162,13 @@ function EarTrainingEditor({ content, onContentChanged }) {
   const handleAnswerImageSourceUrlChange = (value, metadata, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].answerImage.sourceUrl = value;
-    newTests[index].answerImage.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
+    newTests[index].answerImage.copyrightNotice = createCopyrightForSource({
+      oldSourceUrl: tests[index].answerImage.sourceUrl,
+      oldCopyrightNotice: tests[index].answerImage.copyrightNotice,
+      sourceUrl: value,
+      metadata,
+      t
+    });
     changeContent({ tests: newTests });
   };
 
@@ -170,7 +182,13 @@ function EarTrainingEditor({ content, onContentChanged }) {
   const handleSourceSoundSourceUrlChange = (value, metadata, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].sourceSound.sourceUrl = value;
-    newTests[index].sourceSound.copyrightNotice = createCopyrightForSourceMetadata(metadata, t);
+    newTests[index].sourceSound.copyrightNotice = createCopyrightForSource({
+      oldSourceUrl: tests[index].sourceSound.sourceUrl,
+      oldCopyrightNotice: tests[index].sourceSound.copyrightNotice,
+      sourceUrl: value,
+      metadata,
+      t
+    });
     changeContent({ tests: newTests });
   };
 

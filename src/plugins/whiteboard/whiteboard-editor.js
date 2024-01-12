@@ -7,8 +7,8 @@ import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { OPTIMAL_VIEWPORT_WIDTH_FACTOR } from './constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { createCopyrightForSourceMetadata } from '../../utils/source-utils.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -46,8 +46,15 @@ export default function WhiteboardEditor({ content, onContentChanged }) {
     const newImage = {
       ...image,
       sourceUrl: value,
-      copyrightNotice: createCopyrightForSourceMetadata(metadata, t)
+      copyrightNotice: createCopyrightForSource({
+        oldSourceUrl: image.sourceUrl,
+        oldCopyrightNotice: image.copyrightNotice,
+        sourceUrl: value,
+        metadata,
+        t
+      })
     };
+
     updateContent({ image: newImage });
   };
 
