@@ -29,6 +29,8 @@ const createDownloadFileName = renderResult => {
     : 'generated-audio.wav';
 };
 
+const hasMusic = renderResult => !!renderResult?.[0].lines.length;
+
 function AbcPlayer({ renderResult, initialVolume }) {
   const { t } = useTranslation();
   const isMounted = useIsMounted();
@@ -50,7 +52,7 @@ function AbcPlayer({ renderResult, initialVolume }) {
   });
 
   useEffect(() => {
-    if (!renderResult || !runningAudioContext || !isMounted) {
+    if (!hasMusic(renderResult) || !runningAudioContext || !isMounted) {
       return;
     }
 
@@ -85,7 +87,7 @@ function AbcPlayer({ renderResult, initialVolume }) {
   };
 
   let controlsState;
-  if (!renderResult) {
+  if (!hasMusic(renderResult)) {
     controlsState = MEDIA_PLAYER_CONTROLS_STATE.disabled;
   } else if (!runningAudioContext) {
     controlsState = MEDIA_PLAYER_CONTROLS_STATE.waiting;
