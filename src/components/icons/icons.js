@@ -41,9 +41,9 @@ function createIconFromSvgComponent(SvgComponent) {
   return AntdIconWrapper;
 }
 
-function createIconFromTablerIconComponent(TablerIconComponent) {
+function createIconFromTablerIconComponent(TablerIconComponent, { filled } = {}) {
   function TablerIconWrapper() {
-    return <TablerIconComponent size="1em" stroke={1.5} />;
+    return <TablerIconComponent size="1em" stroke={1.5} fill={filled ? 'currentColor': 'none'} />;
   }
   return createIconFromSvgComponent(TablerIconWrapper);
 }
@@ -78,3 +78,4 @@ export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximiz
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
+export const FavoriteIconFilled = createIconFromTablerIconComponent(IconHeart, { filled: true });

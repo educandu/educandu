@@ -4,13 +4,13 @@ import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import { FavoriteIcon } from './icons/icons.js';
 import { useGetCurrentUrl } from '../ui/hooks.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import { FavoriteIcon, FavoriteIconFilled } from './icons/icons.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -62,7 +62,7 @@ function FavoriteToggle({ type, id, useTooltip, disabled, onToggle }) {
 
   const renderFavoriteIcon = () => (
     <div className={classes} onClick={handleClick}>
-      <FavoriteIcon fill={isSet ? 'currentColor' : 'none'} />
+      {isSet ? <FavoriteIconFilled /> : <FavoriteIcon />}
     </div>
   );
 
