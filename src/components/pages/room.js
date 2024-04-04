@@ -5,11 +5,11 @@ import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
-import FavoriteStar from '../favorite-star.js';
 import { InputsIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import RoomMembers from '../room/room-members.js';
 import { useRequest } from '../request-context.js';
+import FavoriteToggle from '../favorite-toggle.js';
 import MessageBoard from '../room/message-board.js';
 import RoomSettings from '../room/room-settings.js';
 import RoomIcon from '../icons/general/room-icon.js';
@@ -186,7 +186,7 @@ export default function Room({ PageTemplate, initialState }) {
           <div className="RoomPage-title">
             <div>{room.name}</div>
             <div className="RoomPage-titleStar">
-              <FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />
+              <FavoriteToggle type={FAVORITE_TYPE.room} id={room._id} />
             </div>
           </div>
 

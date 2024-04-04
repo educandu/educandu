@@ -28,7 +28,8 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconChevronLeftPipe,
-  IconZoomScan
+  IconZoomScan,
+  IconHeart
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -54,6 +55,7 @@ export const CircleIcon = createIconFromTablerIconComponent(IconCircle);
 export const EraserIcon = createIconFromTablerIconComponent(IconEraser);
 export const RepeatIcon = createIconFromTablerIconComponent(IconRepeat);
 export const SquareIcon = createIconFromTablerIconComponent(IconSquare);
+export const FavoriteIcon = createIconFromTablerIconComponent(IconHeart);
 export const TextIcon = createIconFromTablerIconComponent(IconTypography);
 export const ArrowIcon = createIconFromTablerIconComponent(IconArrowRight);
 export const FreeDrawIcon = createIconFromTablerIconComponent(IconBallpen);

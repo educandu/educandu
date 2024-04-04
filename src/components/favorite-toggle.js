@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { FavoriteIcon } from './icons/icons.js';
 import { useGetCurrentUrl } from '../ui/hooks.js';
-import StarIcon from './icons/general/star-icon.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { useSetUser, useUser } from './user-context.js';
 import React, { Fragment, useEffect, useState } from 'react';
@@ -18,11 +18,11 @@ function getIsSet(user, type, id) {
   return !!user?.favorites.find(x => x.type === type && x.id === id);
 }
 
-function FavoriteStar({ type, id, useTooltip, disabled, onToggle }) {
+function FavoriteToggle({ type, id, useTooltip, disabled, onToggle }) {
   const user = useUser();
   const setUser = useSetUser();
   const getCurrentUrl = useGetCurrentUrl();
-  const { t } = useTranslation('favoriteStar');
+  const { t } = useTranslation('favoriteToggle');
   const [isSet, setIsSet] = useState(getIsSet(user, type, id));
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
@@ -55,14 +55,14 @@ function FavoriteStar({ type, id, useTooltip, disabled, onToggle }) {
   };
 
   const classes = classNames(
-    'FavoriteStar',
-    { 'is-filled': isSet },
+    'FavoriteToggle',
+    { 'is-set': isSet },
     { 'is-disabled': disabled }
   );
 
-  const renderStar = () => (
+  const renderFavoriteIcon = () => (
     <div className={classes} onClick={handleClick}>
-      <StarIcon isFilled={isSet} />
+      <FavoriteIcon fill={isSet ? 'currentColor' : 'none'} />
     </div>
   );
 
@@ -70,15 +70,15 @@ function FavoriteStar({ type, id, useTooltip, disabled, onToggle }) {
     <Fragment>
       {!!useTooltip && (
         <Tooltip title={isSet ? t('common:removeFavorite') : t('common:addFavorite')}>
-          {renderStar()}
+          {renderFavoriteIcon()}
         </Tooltip>
       )}
-      {!useTooltip && renderStar()}
+      {!useTooltip && renderFavoriteIcon()}
     </Fragment>
   );
 }
 
-FavoriteStar.propTypes = {
+FavoriteToggle.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
@@ -86,10 +86,10 @@ FavoriteStar.propTypes = {
   onToggle: PropTypes.func
 };
 
-FavoriteStar.defaultProps = {
+FavoriteToggle.defaultProps = {
   disabled: false,
   useTooltip: true,
   onToggle: () => {}
 };
 
-export default FavoriteStar;
+export default FavoriteToggle;
