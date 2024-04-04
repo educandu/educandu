@@ -1,4 +1,12 @@
 import Database from './database.js';
+import uniqueId from '../utils/unique-id.js';
+
+const basicProjection = {
+  _id: 1,
+  documentId: 1,
+  userRatingsCount: 1,
+  averageRating: 1
+};
 
 class DocumentRatingStore {
   static dependencies = [Database];
@@ -7,22 +15,71 @@ class DocumentRatingStore {
     this.collection = db.documentRatings;
   }
 
-  getDocumentRatingByDocumentId(documentId, { session } = {}) {
-    return this.collection.findOne({ documentId }, { session });
+  getBasicDocumentRatingByDocumentId(documentId, { session } = {}) {
+    return this.collection.findOne({ documentId }, { projection: basicProjection, session });
   }
 
-  deleteDocumentRatingByDocumentId(documentId, { session } = {}) {
-    return this.collection.deleteOne({ documentId }, { session });
-  }
-
-  // eslint-disable-next-line no-unused-vars
   createOrUpdateUserDocumentRating({ documentId, userId, rating, timestamp }, { session } = {}) {
-    return Promise.resolve(null);
+    const initialDocumentRating = {
+      _id: uniqueId.create(),
+      documentId,
+      userRatings: [],
+      userRatingsCount: 0,
+      averageRating: 0
+    };
+
+    const upsertedUserRatingItem = {
+      userId,
+      rating,
+      timestamp
+    };
+
+    const updatePipeline = [
+      {
+        $set: {
+          _id: { $ifNull: ['$_id', initialDocumentRating._id] },
+          documentId: { $ifNull: ['$documentId', initialDocumentRating.documentId] },
+          userRatings: { $ifNull: ['$userRatings', initialDocumentRating.userRatings] },
+          averageRating: { $ifNull: ['$averageRating', initialDocumentRating.averageRating] }
+        }
+      },
+      {
+        $set: {
+          userRatings: { $filter: { input: '$userRatings', cond: { $ne: [ '$$this.userId', userId ] } } }
+        }
+      },
+      {
+        $set: {
+          userRatings: { $concatArrays: ['$userRatings', [upsertedUserRatingItem]] }
+        }
+      },
+      {
+        $set: {
+          userRatingsCount: { $size: '$userRatings' },
+          averageRating: { $avg: '$userRatings.rating' }
+        }
+      }
+    ];
+
+    return this.collection.updateOne({ documentId }, updatePipeline, { upsert: true, session });
   }
 
-  // eslint-disable-next-line no-unused-vars
   deleteUserDocumentRating({ documentId, userId }, { session } = {}) {
-    return Promise.resolve(null);
+    const updatePipeline = [
+      {
+        $set: {
+          userRatings: { $filter: { input: '$userRatings', cond: { $ne: [ '$$this.userId', userId ] } } }
+        }
+      },
+      {
+        $set: {
+          userRatingsCount: { $size: '$userRatings' },
+          averageRating: { $avg: '$userRatings.rating' }
+        }
+      }
+    ];
+
+    return this.collection.updateOne({ documentId, 'userRatings.userId': userId }, updatePipeline, { session });
   }
 }
 
