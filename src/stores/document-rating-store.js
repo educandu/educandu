@@ -25,7 +25,7 @@ class DocumentRatingStore {
       documentId,
       userRatings: [],
       userRatingsCount: 0,
-      averageRating: 0
+      averageRating: null
     };
 
     const upsertedUserRatingItem = {
