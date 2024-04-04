@@ -13,6 +13,7 @@ import DocumentService from '../services/document-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import DocumentRequestService from '../services/document-request-service.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -36,14 +37,31 @@ const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentController {
-  static dependencies = [DocumentService, RoomService, ClientDataMappingService, SettingService, PageRenderer, ServerConfig];
+  static dependencies = [
+    DocumentService,
+    RoomService,
+    DocumentRequestService,
+    ClientDataMappingService,
+    SettingService,
+    PageRenderer,
+    ServerConfig
+  ];
 
-  constructor(documentService, roomService, clientDataMappingService, settingService, pageRenderer, serverConfig) {
-    this.settingService = settingService;
-    this.roomService = roomService;
-    this.pageRenderer = pageRenderer;
+  constructor(
+    documentService,
+    roomService,
+    documentRequestService,
+    clientDataMappingService,
+    settingService,
+    pageRenderer,
+    serverConfig
+  ) {
     this.documentService = documentService;
+    this.roomService = roomService;
+    this.documentRequestService = documentRequestService;
     this.clientDataMappingService = clientDataMappingService;
+    this.settingService = settingService;
+    this.pageRenderer = pageRenderer;
     this.serverConfig = serverConfig;
   }
 
@@ -136,6 +154,9 @@ class DocumentController {
 
     const initialState = { doc: mappedDocument, templateSections, room: mappedRoom, roomMediaContext };
     const pageName = PAGE_NAME.document;
+
+    await this.documentRequestService.tryRegisterReadRequest({ document: doc, user });
+
     return this.pageRenderer.sendPage(req, res, pageName, initialState);
   }
 
@@ -191,6 +212,9 @@ class DocumentController {
 
     const newDocument = await this.documentService.createDocument({ data, user });
     const mappedNewDocument = await this.clientDataMappingService.mapDocOrRevision(newDocument, user);
+
+    await this.documentRequestService.tryRegisterWriteRequest({ document: newDocument, user });
+
     return res.status(201).send(mappedNewDocument);
   }
 
@@ -201,6 +225,9 @@ class DocumentController {
 
     const updatedDocument = await this.documentService.updateDocumentMetadata({ documentId, metadata, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
+
+    await this.documentRequestService.tryRegisterWriteRequest({ document: updatedDocument, user });
+
     return res.status(201).send(mappedUpdatedDocument);
   }
 
@@ -211,6 +238,9 @@ class DocumentController {
 
     const updatedDocument = await this.documentService.updateDocumentSections({ documentId, sections, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
+
+    await this.documentRequestService.tryRegisterWriteRequest({ document: updatedDocument, user });
+
     return res.status(201).send(mappedUpdatedDocument);
   }
 
@@ -254,6 +284,9 @@ class DocumentController {
     const { documentId, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
     const document = await this.documentService.hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
     const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(document, req.user);
+
+    await this.documentRequestService.tryRegisterWriteRequest({ document, user });
+
     return res.send({ document: mappedDocument });
   }
 
