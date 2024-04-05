@@ -19,7 +19,7 @@ class DocumentRatingStore {
     return this.collection.findOne({ documentId }, { projection: basicProjection, session });
   }
 
-  createOrUpdateUserDocumentRating({ documentId, userId, rating, timestamp }, { session } = {}) {
+  createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn }, { session } = {}) {
     const initialDocumentRating = {
       _id: uniqueId.create(),
       documentId,
@@ -31,7 +31,7 @@ class DocumentRatingStore {
     const upsertedUserRatingItem = {
       userId,
       rating,
-      timestamp
+      ratedOn
     };
 
     const updatePipeline = [

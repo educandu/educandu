@@ -30,7 +30,7 @@ class DocumentRatingService {
       documentId,
       userId: user._id,
       rating,
-      timestamp: new Date()
+      ratedOn: new Date()
     });
 
     return this.documentRatingStore.getBasicDocumentRatingByDocumentId(documentId);

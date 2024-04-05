@@ -36,11 +36,11 @@ describe('document-rating-store', () => {
     const documentId = '7qo6DoqGbbkGL45ckgyeWH';
     const userId = 'gEQXRGqNYBtEpo2c8uKcQp';
     const rating = 3;
-    const timestamp = new Date();
+    const ratedOn = new Date();
 
     describe('when there is no DB record for the specified document', () => {
       beforeEach(async () => {
-        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, timestamp });
+        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
@@ -48,7 +48,7 @@ describe('document-rating-store', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           _id: expect.any(String),
           documentId,
-          userRatings: [{ userId, rating, timestamp }],
+          userRatings: [{ userId, rating, ratedOn }],
           userRatingsCount: 1,
           averageRating: rating
         });
@@ -64,21 +64,21 @@ describe('document-rating-store', () => {
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
               rating: 5,
-              timestamp: new Date('2024-04-01T00:00:00.000Z')
+              ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
           userRatingsCount: 1,
           averageRating: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, timestamp });
+        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
       it('should add the new rating for the user and update the average rating to the correct value', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
-          userRatings: [...dbRecordBeforeUpdate.userRatings, { userId, rating, timestamp }],
+          userRatings: [...dbRecordBeforeUpdate.userRatings, { userId, rating, ratedOn }],
           userRatingsCount: 2,
           averageRating: 4
         });
@@ -94,25 +94,25 @@ describe('document-rating-store', () => {
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
               rating: 5,
-              timestamp: new Date('2024-04-01T00:00:00.000Z')
+              ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }, {
               userId,
               rating: 5,
-              timestamp: new Date('2024-04-01T00:00:00.000Z')
+              ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
           userRatingsCount: 2,
           averageRating: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, timestamp });
+        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
       it('should replace the old rating for the user with the new one and update the average rating to the correct value', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
-          userRatings: [...dbRecordBeforeUpdate.userRatings.filter(r => r.userId !== userId), { userId, rating, timestamp }],
+          userRatings: [...dbRecordBeforeUpdate.userRatings.filter(r => r.userId !== userId), { userId, rating, ratedOn }],
           averageRating: 4
         });
       });
@@ -145,7 +145,7 @@ describe('document-rating-store', () => {
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
               rating: 5,
-              timestamp: new Date('2024-04-01T00:00:00.000Z')
+              ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
           userRatingsCount: 1,
@@ -170,12 +170,12 @@ describe('document-rating-store', () => {
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
               rating: 5,
-              timestamp: new Date('2024-04-01T00:00:00.000Z')
+              ratedOn: new Date('2024-04-01T00:00:00.000Z')
             },
             {
               userId,
               rating: 3,
-              timestamp: new Date('2024-04-01T00:00:00.000Z')
+              ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
           userRatingsCount: 2,
