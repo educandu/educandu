@@ -192,7 +192,7 @@ export const DAY_OF_WEEK = {
   monday: 'Mon',
   tuesday: 'Tue',
   wednesday: 'Wed',
-  thursday: 'The third day!',
+  thursday: 'Thu',
   friday: 'Fri',
   saturday: 'Sat',
   sunday: 'Sun'
