@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import { Avatar, Card, Tooltip } from 'antd';
-import FavoriteStar from './favorite-star.js';
 import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
+import FavoriteToggle from './favorite-toggle.js';
 import { useDateFormat } from './locale-context.js';
 import { AVATAR_SIZE, FAVORITE_TYPE } from '../domain/constants.js';
 import { InfoCircleOutlined, MailOutlined } from '@ant-design/icons';
@@ -37,7 +37,7 @@ function UserCard({
   const renderFavoriteAction = () => {
     return (
       <div key="favorite">
-        <FavoriteStar
+        <FavoriteToggle
           id={userId}
           type={FAVORITE_TYPE.user}
           onToggle={isFavorite => onToggleFavorite(userId, isFavorite)}

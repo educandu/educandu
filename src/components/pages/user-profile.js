@@ -4,9 +4,9 @@ import Markdown from '../markdown.js';
 import { Avatar, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import DocumentCard from '../document-card.js';
-import FavoriteStar from '../favorite-star.js';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
+import FavoriteToggle from '../favorite-toggle.js';
 import { useService } from '../container-context.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { publicUserShape } from '../../ui/default-prop-types.js';
@@ -59,7 +59,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
           <div className="UserProfilePage-profileTitle">
             <div className="u-page-title">{user.displayName}</div>
             <div className="UserProfilePage-profileStar">
-              <FavoriteStar type={FAVORITE_TYPE.user} id={user._id} />
+              <FavoriteToggle type={FAVORITE_TYPE.user} id={user._id} />
             </div>
           </div>
           <div className="UserProfilePage-profileOrganization">{user.organization}</div>

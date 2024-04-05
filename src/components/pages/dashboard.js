@@ -2,7 +2,6 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import routes from '../../utils/routes.js';
 import { useUser } from '../user-context.js';
-import { InputsIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import UserRoleInfo from '../user-role-info.js';
 import urlUtils from '../../utils/url-utils.js';
@@ -12,7 +11,6 @@ import { BellOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { Avatar, Badge, Tabs, Tooltip } from 'antd';
 import RoomIcon from '../icons/general/room-icon.js';
-import StarIcon from '../icons/general/star-icon.js';
 import StorageTab from '../dashboard/storage-tab.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { useSettings } from '../settings-context.js';
@@ -22,6 +20,7 @@ import DocumentsTab from '../dashboard/documents-tab.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import PrivateIcon from '../icons/general/private-icon.js';
+import { FavoriteIcon, InputsIcon } from '../icons/icons.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -238,7 +237,7 @@ function Dashboard({ PageTemplate }) {
     }),
     createTabItem({
       tabKey: DASHBOARD_TAB_KEY.favorites,
-      icon: <StarIcon />,
+      icon: <FavoriteIcon />,
       content: (
         <FavoritesTab
           favoriteUsers={favoriteUsers}

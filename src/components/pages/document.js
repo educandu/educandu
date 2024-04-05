@@ -5,13 +5,13 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
-import FavoriteStar from '../favorite-star.js';
 import { InputsIcon } from '../icons/icons.js';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
+import FavoriteToggle from '../favorite-toggle.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SaveIcon from '../icons/general/save-icon.js';
 import { useService } from '../container-context.js';
@@ -1169,7 +1169,7 @@ function Document({ initialState, PageTemplate }) {
               <FloatButton
                 disabled={!user}
                 tooltip={favoriteActionTooltip}
-                icon={<FavoriteStar useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
+                icon={<FavoriteToggle useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
                 />
               <FloatButton
                 icon={<DuplicateIcon />}

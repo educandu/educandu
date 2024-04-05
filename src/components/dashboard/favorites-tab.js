@@ -5,8 +5,8 @@ import UserCard from '../user-card.js';
 import EmptyState from '../empty-state.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
+import { FavoriteIcon } from '../icons/icons.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import StarIcon from '../icons/general/star-icon.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { favoriteDocumentShape, favoriteRoomShape, favoriteUserShape } from '../../ui/default-prop-types.js';
 
@@ -82,7 +82,7 @@ function FavoritesTab({ favoriteUsers, favoriteRooms, favoriteDocuments, loading
     <div className="FavoritesTab">
       {!!loading && <Spinner />}
       {!loading && !!showEmptyState && (
-        <EmptyState icon={<StarIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
+        <EmptyState icon={<FavoriteIcon />} title={t('emptyStateTitle')} subtitle={t('emptyStateSubtitle')} />
       )}
       {!loading && !showEmptyState && (
         <Fragment>

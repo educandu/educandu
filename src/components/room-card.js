@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import Markdown from './markdown.js';
 import { Card, Tooltip } from 'antd';
 import routes from '../utils/routes.js';
-import FavoriteStar from './favorite-star.js';
 import { useTranslation } from 'react-i18next';
+import FavoriteToggle from './favorite-toggle.js';
 import { useDateFormat } from './locale-context.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
 import { useSetUser, useUser } from './user-context.js';
@@ -84,7 +84,7 @@ function RoomCard({ room, favoriteRoom, roomInvitation, onToggleFavorite, useHid
   if (userAccessibleRoom || isDeletedRoom) {
     actions.push((
       <div key="favorite">
-        <FavoriteStar
+        <FavoriteToggle
           id={roomId}
           type={FAVORITE_TYPE.room}
           onToggle={isFavorite => onToggleFavorite(roomId, isFavorite)}

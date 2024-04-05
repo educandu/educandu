@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Card, Tooltip } from 'antd';
 import routes from '../utils/routes.js';
-import FavoriteStar from './favorite-star.js';
 import { useTranslation } from 'react-i18next';
+import FavoriteToggle from './favorite-toggle.js';
 import { useDateFormat } from './locale-context.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
 import { InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
@@ -56,7 +56,7 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
 
   actions.push((
     <div key="favorite">
-      <FavoriteStar
+      <FavoriteToggle
         id={documentId}
         type={FAVORITE_TYPE.document}
         onToggle={isFavorite => onToggleFavorite(documentId, isFavorite)}
