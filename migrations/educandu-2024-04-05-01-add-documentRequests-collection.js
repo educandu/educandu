@@ -1,4 +1,4 @@
-export default class Educandu_2024_04_04_02_add_documentRequests_collection {
+export default class Educandu_2024_04_05_01_add_documentRequests_collection {
   constructor(db) {
     this.db = db;
   }
