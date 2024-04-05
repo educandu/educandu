@@ -659,6 +659,7 @@ class ClientDataMappingService {
             : value;
           break;
         case 'cdnResources':
+        case 'createdBecause':
           break;
         default:
           result[key] = value;
