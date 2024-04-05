@@ -21,6 +21,7 @@ import StoragePlanController from './storage-plan-controller.js';
 import NotificationController from './notification-controller.js';
 import MediaLibraryController from './media-library-controller.js';
 import DocumentInputController from './document-input-controller.js';
+import DocumentRatingController from './document-rating-controller.js';
 import DocumentCommentController from './document-comment-controller.js';
 import RecentContributionsController from './recent-contributions-controller.js';
 
@@ -47,6 +48,7 @@ const pageAndApiControllers = [
   AdminController,
   AmbController,
   DocumentInputController,
+  DocumentRatingController,
   DocumentCommentController,
   MaintenanceController,
   NotificationController,
