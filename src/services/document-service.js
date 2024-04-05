@@ -502,6 +502,7 @@ class DocumentService {
           documentId,
           createdOn: null,
           createdBy: user._id,
+          createdBecause: null,
           restoredFrom: revisionToRestore._id,
           sections: clonedRevision.sections.map(section => createSectionRevision({
             section,
@@ -677,6 +678,7 @@ class DocumentService {
       restoredFrom: data.restoredFrom || null,
       createdOn: data.createdOn ? new Date(data.createdOn) : new Date(),
       createdBy: data.createdBy || '',
+      createdBecause: data.createdBecause || '',
       title: data.title || '',
       shortDescription: data.shortDescription || '',
       slug: data.slug?.trim() || '',

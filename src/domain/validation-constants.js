@@ -2,6 +2,7 @@ export const minDocumentTagLength = 1;
 export const maxDocumentTagLength = 30;
 export const documentTagValidationPattern = /^\S{1,30}$/;
 export const maxDocumentShortDescriptionLength = 1000;
+export const maxDocumentCreatedBecauseLength = 200;
 export const maxDocumentCommentTopicLength = 200;
 export const maxDocumentCommentTextLength = 2000;
 
