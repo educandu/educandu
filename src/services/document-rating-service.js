@@ -33,7 +33,7 @@ class DocumentRatingService {
       ratedOn: new Date()
     });
 
-    return this.documentRatingStore.getBasicDocumentRatingByDocumentId(documentId);
+    return this.documentRatingStore.getDocumentRatingByDocumentId(documentId);
   }
 
   async deleteUserDocumentRating({ documentId, user }) {
@@ -51,7 +51,7 @@ class DocumentRatingService {
       userId: user._id
     });
 
-    return this.documentRatingStore.getBasicDocumentRatingByDocumentId(documentId);
+    return this.documentRatingStore.getDocumentRatingByDocumentId(documentId);
   }
 }
 

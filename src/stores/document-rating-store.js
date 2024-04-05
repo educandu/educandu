@@ -1,7 +1,7 @@
 import Database from './database.js';
 import uniqueId from '../utils/unique-id.js';
 
-const basicProjection = {
+const documentRatingProjection = {
   _id: 1,
   documentId: 1,
   userRatingsCount: 1,
@@ -15,8 +15,8 @@ class DocumentRatingStore {
     this.collection = db.documentRatings;
   }
 
-  getBasicDocumentRatingByDocumentId(documentId, { session } = {}) {
-    return this.collection.findOne({ documentId }, { projection: basicProjection, session });
+  getDocumentRatingByDocumentId(documentId, { session } = {}) {
+    return this.collection.findOne({ documentId }, { projection: documentRatingProjection, session });
   }
 
   createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn }, { session } = {}) {

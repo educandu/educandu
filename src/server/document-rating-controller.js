@@ -16,14 +16,14 @@ class DocumentRatingController {
   async handlePostDocumentRating(req, res) {
     const { rating } = req.body;
     const { documentId } = req.params;
-    const basicRating = await this.documentRatingService.saveUserDocumentRating({ documentId, user: req.user, rating });
-    return res.status(201).send(basicRating);
+    const documentRating = await this.documentRatingService.saveUserDocumentRating({ documentId, user: req.user, rating });
+    return res.status(201).send(documentRating);
   }
 
   async handleDeleteDocumentRating(req, res) {
     const { documentId } = req.params;
-    const basicRating = await this.documentRatingService.deleteUserDocumentRating({ documentId, user: req.user });
-    return res.send(basicRating);
+    const documentRating = await this.documentRatingService.deleteUserDocumentRating({ documentId, user: req.user });
+    return res.send(documentRating);
   }
 
   registerApi(router) {
