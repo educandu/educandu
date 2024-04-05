@@ -183,6 +183,21 @@ export const FILES_VIEWER_DISPLAY = {
   list: 'list'
 };
 
+export const DOCUMENT_REQUEST_TYPE = {
+  read: 'read',
+  write: 'write'
+};
+
+export const DAY_OF_WEEK = {
+  monday: 'Mon',
+  tuesday: 'Tue',
+  wednesday: 'Wed',
+  thursday: 'Thu',
+  friday: 'Fri',
+  saturday: 'Sat',
+  sunday: 'Sun'
+};
+
 export const FORM_ITEM_LAYOUT = {
   labelCol: {
     sm: { span: 6, offset: 0 },

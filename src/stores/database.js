@@ -23,6 +23,7 @@ import roomMediaItemsSpec from './collection-specs/room-media-items.js';
 import documentRatingsSpec from './collection-specs/document-ratings.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
 import documentCommentsSpec from './collection-specs/document-comments.js';
+import documentRequestsSpec from './collection-specs/document-requests.js';
 import externalAccountsSpec from './collection-specs/external-accounts.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
 import mediaLibraryItemsSpec from './collection-specs/media-library-items.js';
@@ -53,6 +54,7 @@ const collectionSpecs = [
   documentRatingsSpec,
   roomInvitationsSpec,
   documentCommentsSpec,
+  documentRequestsSpec,
   externalAccountsSpec,
   documentRevisionsSpec,
   mediaLibraryItemsSpec,

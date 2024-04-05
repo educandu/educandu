@@ -16,7 +16,7 @@ export default class Educandu_2024_04_04_01_initial_schema {
     };
 
     await createCollectionWithIndexes('batches', []);
-    await createCollectionWithIndexes('comments', [
+    await createCollectionWithIndexes('documentComments', [
       {
         name: '_idx_documentId_',
         key: { documentId: 1 }
@@ -282,7 +282,7 @@ export default class Educandu_2024_04_04_01_initial_schema {
 
   async down() {
     await this.db.dropCollection('batches');
-    await this.db.dropCollection('comments');
+    await this.db.dropCollection('documentComments');
     await this.db.dropCollection('documentOrders');
     await this.db.dropCollection('documentRevisions');
     await this.db.dropCollection('documents');
