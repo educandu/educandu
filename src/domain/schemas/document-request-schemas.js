@@ -7,8 +7,8 @@ export const documentRequestDBSchema = joi.object({
   documentId: idOrKeySchema.required(),
   documentRevisionId: idOrKeySchema.required(),
   type: joi.valid(...Object.values(DOCUMENT_REQUEST_TYPE)).required(),
-  loggedInUser: joi.boolean().required(),
-  createdOn: joi.date().required(),
-  createdOnDayOfWeek: joi.valid(...Object.values(DAY_OF_WEEK)).required()
+  isUserLoggedIn: joi.boolean().required(),
+  registeredOn: joi.date().required(),
+  registeredOnDayOfWeek: joi.valid(...Object.values(DAY_OF_WEEK)).required()
 });
 

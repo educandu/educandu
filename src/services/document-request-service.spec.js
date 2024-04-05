@@ -64,9 +64,9 @@ describe('document-request-service', () => {
             _id: expect.stringMatching(/\w+/),
             documentId: document._id,
             documentRevisionId: document.revision,
-            createdOn: now,
-            createdOnDayOfWeek: nowDayOfWeek,
-            loggedInUser: false,
+            registeredOn: now,
+            registeredOnDayOfWeek: nowDayOfWeek,
+            isUserLoggedIn: false,
             type: DOCUMENT_REQUEST_TYPE.read
           });
         });
@@ -88,9 +88,9 @@ describe('document-request-service', () => {
             _id: expect.stringMatching(/\w+/),
             documentId: document._id,
             documentRevisionId: document.revision,
-            createdOn: now,
-            createdOnDayOfWeek: nowDayOfWeek,
-            loggedInUser: true,
+            registeredOn: now,
+            registeredOnDayOfWeek: nowDayOfWeek,
+            isUserLoggedIn: true,
             type: DOCUMENT_REQUEST_TYPE.read
           });
         });
@@ -129,9 +129,9 @@ describe('document-request-service', () => {
             _id: expect.stringMatching(/\w+/),
             documentId: document._id,
             documentRevisionId: document.revision,
-            createdOn: now,
-            createdOnDayOfWeek: nowDayOfWeek,
-            loggedInUser: false,
+            registeredOn: now,
+            registeredOnDayOfWeek: nowDayOfWeek,
+            isUserLoggedIn: false,
             type: DOCUMENT_REQUEST_TYPE.write
           });
         });
@@ -153,9 +153,9 @@ describe('document-request-service', () => {
             _id: expect.stringMatching(/\w+/),
             documentId: document._id,
             documentRevisionId: document.revision,
-            createdOn: now,
-            createdOnDayOfWeek: nowDayOfWeek,
-            loggedInUser: true,
+            registeredOn: now,
+            registeredOnDayOfWeek: nowDayOfWeek,
+            isUserLoggedIn: true,
             type: DOCUMENT_REQUEST_TYPE.write
           });
         });

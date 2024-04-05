@@ -1,6 +1,7 @@
 import uniqueId from '../utils/unique-id.js';
+import { getDayOfWeek } from '../utils/date-utils.js';
+import { DOCUMENT_REQUEST_TYPE } from '../domain/constants.js';
 import DocumentRequestStore from '../stores/document-request-store.js';
-import { DOCUMENT_REQUEST_TYPE, DAY_OF_WEEK } from '../domain/constants.js';
 
 class DocumentRequestService {
   static dependencies = [DocumentRequestStore];
@@ -9,30 +10,8 @@ class DocumentRequestService {
     this.documentRequestStore = documentRequestStore;
   }
 
-  getDayOfWeek(date) {
-    const day = date.getDay();
-    switch (day) {
-      case 0:
-        return DAY_OF_WEEK.sunday;
-      case 1:
-        return DAY_OF_WEEK.monday;
-      case 2:
-        return DAY_OF_WEEK.tuesday;
-      case 3:
-        return DAY_OF_WEEK.wednesday;
-      case 4:
-        return DAY_OF_WEEK.thursday;
-      case 5:
-        return DAY_OF_WEEK.friday;
-      case 6:
-        return DAY_OF_WEEK.saturday;
-      default:
-        return null;
-    }
-  }
-
   async createDocumentRequest({ document, user, type }) {
-    const createdOn = new Date();
+    const registeredOn = new Date();
 
     if (document.roomId) {
       return null;
@@ -43,9 +22,9 @@ class DocumentRequestService {
       documentId: document._id,
       documentRevisionId: document.revision,
       type,
-      loggedInUser: !!user,
-      createdOn,
-      createdOnDayOfWeek: this.getDayOfWeek(createdOn),
+      isUserLoggedIn: !!user,
+      registeredOn,
+      registeredOnDayOfWeek: getDayOfWeek(registeredOn),
     };
 
     await this.documentRequestStore.saveDocumentRequest(newDocumentRequest);
