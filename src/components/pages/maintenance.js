@@ -2,12 +2,14 @@ import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TimelineIcon } from '../icons/icons.js';
 import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { BankOutlined, TagOutlined } from '@ant-design/icons';
 import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
 import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
+import MaintenanceStatisticsTab from '../maintenance/maintenance-statistics-tab.js';
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
 import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 
@@ -53,6 +55,15 @@ function Maintenance({ initialState, PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceTagsTab documents={documents} mediaLibraryItems={mediaLibraryItems} />
+        </div>
+      )
+    },
+    {
+      key: TAB.statistics,
+      label: <div><TimelineIcon />{t('statisticsTabTitle')}</div>,
+      children: (
+        <div className="Tabs-tabPane">
+          <MaintenanceStatisticsTab documents={documents} />
         </div>
       )
     }

@@ -2713,6 +2713,10 @@
     "tagsTabTitle": {
       "en": "Tags",
       "de": "Tags"
+    },
+    "statisticsTabTitle": {
+      "en": "Statistics",
+      "de": "Statistiken"
     }
   },
   "maintenanceDocumentsTab": {
