@@ -4165,6 +4165,12 @@
       "de": "Unbekannt"
     }
   },
+  "starRating": {
+    "totalCountText": {
+      "en": "{totalCount, plural, =0 {no star ratings yet} =1 {# star rating} other {# star ratings}}",
+      "de": "{totalCount, plural, =0 {noch keine Sternebewertungen} =1 {# Sternebewertung} other {# Sternebewertungen}}"
+    }
+  },
   "storagePlanModal": {
     "newStoragePlan": {
       "en": "New storage plan",
