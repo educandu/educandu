@@ -9,16 +9,15 @@ import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
-import ResourceTypeCell from '../resource-type-cell.js';
 import { replaceItem } from '../../utils/array-utils.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import DocumentBadgesCell from '../document-bagdes-cell.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
+import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
-import { DOC_VIEW_QUERY_PARAM, SEARCH_RESOURCE_TYPE } from '../../domain/constants.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
 const SORTING_VALUE = {
@@ -237,10 +236,6 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
     return {};
   };
 
-  const renderType = () => (
-    <ResourceTypeCell searchResourceType={SEARCH_RESOURCE_TYPE.document} />
-  );
-
   const renderDocumentTitle = (_title, row) => {
     const doc = documents.find(d => d._id === row.documentId);
     if (!doc) {
@@ -290,12 +285,6 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
   };
 
   const columns = [
-    {
-      title: t('common:type'),
-      key: 'type',
-      render: renderType,
-      width: '60px'
-    },
     {
       title: t('common:title'),
       dataIndex: 'title',
