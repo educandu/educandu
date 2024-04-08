@@ -197,6 +197,15 @@ class DocumentController {
     return res.send({ documents: mappedDocuments });
   }
 
+  async handleGetDocsForMaintenance(req, res) {
+    const { user } = req;
+
+    const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true });
+    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, user);
+
+    return res.send({ documents: mappedDocuments });
+  }
+
   async handleGetDocumentsByContributingUser(req, res) {
     const { userId } = req.params;
 
@@ -333,6 +342,12 @@ class DocumentController {
     router.get(
       '/api/v1/docs/homepage',
       (req, res) => this.handleGetDocsForHomepage(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/maintenance',
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      (req, res) => this.handleGetDocsForMaintenance(req, res)
     );
 
     router.get(

@@ -91,7 +91,7 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
+function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange }) {
   const request = useRequest();
   const { t } = useTranslation('maintenanceDocumentsTab');
 
@@ -344,7 +344,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={renderingRows}
+        loading={fetchingData || renderingRows}
         onRow={handleRowRendered}
         onChange={handleTableChange}
         />
@@ -358,6 +358,7 @@ function MaintenanceDocumentsTab({ documents, onDocumentsChange }) {
 }
 
 MaintenanceDocumentsTab.propTypes = {
+  fetchingData: PropTypes.bool.isRequired,
   documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
   onDocumentsChange: PropTypes.func.isRequired
 };
