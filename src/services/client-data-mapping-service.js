@@ -223,6 +223,25 @@ class ClientDataMappingService {
     return mappedAllRoomMediaOverview;
   }
 
+  async mapDocumentRequestCountersToDocuments({ documentRequestCounters, documents, user }) {
+    const mappedDocuments = await this.mapDocsOrRevisions(documents, user);
+
+    const mappedDocumentsWithRequestCounters = mappedDocuments.map(mappedDocument => {
+      const currentCounters = documentRequestCounters.find(counters => counters.documentId === mappedDocument._id);
+
+      return {
+        ...mappedDocument,
+        totalCount: currentCounters?.totalCount || 0,
+        readCount: currentCounters?.readCount || 0,
+        writeCount: currentCounters?.writeCount || 0,
+        anonymousCount: currentCounters?.anonymousCount || 0,
+        loggedInCount: currentCounters?.loggedInCount || 0
+      };
+    });
+
+    return mappedDocumentsWithRequestCounters;
+  }
+
   _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById, allowedDocumentInputsById) {
     switch (eventType) {
       case EVENT_TYPE.documentRevisionCreated:

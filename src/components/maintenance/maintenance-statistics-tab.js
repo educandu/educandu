@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
 import ResourceTitleCell from '../resource-title-cell.js';
-import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
+import { documentWithRequestCountersShape } from '../../ui/default-prop-types.js';
 
 function createTableRows(docs) {
   return docs.map(doc => ({
@@ -32,7 +32,7 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceStatisticsTab({ documents }) {
+function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }) {
   const request = useRequest();
   const { t } = useTranslation('maintenanceStatisticsTab');
 
@@ -43,7 +43,7 @@ function MaintenanceStatisticsTab({ documents }) {
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
 
-  const [renderingRows, setRenderingRows] = useState(!!documents.length);
+  const [renderingRows, setRenderingRows] = useState(!!documentsWithRequestCounters.length);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -59,8 +59,8 @@ function MaintenanceStatisticsTab({ documents }) {
   }, [pagination]);
 
   useEffect(() => {
-    setAllRows(createTableRows(documents));
-  }, [documents]);
+    setAllRows(createTableRows(documentsWithRequestCounters));
+  }, [documentsWithRequestCounters]);
 
   useEffect(() => {
     setRenderingRows(!!allRows.length);
@@ -82,7 +82,7 @@ function MaintenanceStatisticsTab({ documents }) {
   };
 
   const renderDocumentTitle = (_title, row) => {
-    const doc = documents.find(d => d._id === row.documentId);
+    const doc = documentsWithRequestCounters.find(d => d._id === row.documentId);
     if (!doc) {
       return null;
     }
@@ -120,7 +120,7 @@ function MaintenanceStatisticsTab({ documents }) {
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={renderingRows}
+        loading={fetchingData || renderingRows}
         onRow={handleRowRendered}
         onChange={handleTableChange}
         />
@@ -129,7 +129,8 @@ function MaintenanceStatisticsTab({ documents }) {
 }
 
 MaintenanceStatisticsTab.propTypes = {
-  documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+  fetchingData: PropTypes.bool.isRequired,
+  documentsWithRequestCounters: PropTypes.arrayOf(documentWithRequestCountersShape).isRequired,
 };
 
 export default MaintenanceStatisticsTab;
