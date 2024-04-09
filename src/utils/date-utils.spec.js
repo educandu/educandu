@@ -8,31 +8,31 @@ describe('date-utils', () => {
     const testCases = [
       {
         date: new Date('2024-04-01T16:00:00.000Z'),
-        expectedResult: 'Mon'
+        expectedResult: 1
       },
       {
         date: new Date('2024-04-02T16:00:00.000Z'),
-        expectedResult: 'Tue'
+        expectedResult: 2
       },
       {
         date: new Date('2024-04-03T16:00:00.000Z'),
-        expectedResult: 'Wed'
+        expectedResult: 3
       },
       {
         date: new Date('2024-04-04T16:00:00.000Z'),
-        expectedResult: 'Thu'
+        expectedResult: 4
       },
       {
         date: new Date('2024-04-05T16:00:00.000Z'),
-        expectedResult: 'Fri'
+        expectedResult: 5
       },
       {
         date: new Date('2024-04-06T16:00:00.000Z'),
-        expectedResult: 'Sat'
+        expectedResult: 6
       },
       {
         date: new Date('2024-04-07T16:00:00.000Z'),
-        expectedResult: 'Sun'
+        expectedResult: 7
       }
     ];
 

@@ -1,7 +1,7 @@
 import { createSandbox } from 'sinon';
 import Database from '../stores/database.js';
+import { DAY_OF_WEEK } from '../domain/constants.js';
 import DocumentRequestService from './document-request-service.js';
-import { DAY_OF_WEEK, DOCUMENT_REQUEST_TYPE } from '../domain/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, createTestUser, createTestDocument, createTestRoom } from '../test-helper.js';
 
@@ -66,8 +66,8 @@ describe('document-request-service', () => {
             documentRevisionId: document.revision,
             registeredOn: now,
             registeredOnDayOfWeek: nowDayOfWeek,
-            isUserLoggedIn: false,
-            type: DOCUMENT_REQUEST_TYPE.read
+            isLoggedInRequest: false,
+            isWriteRequest: false
           });
         });
 
@@ -90,8 +90,8 @@ describe('document-request-service', () => {
             documentRevisionId: document.revision,
             registeredOn: now,
             registeredOnDayOfWeek: nowDayOfWeek,
-            isUserLoggedIn: true,
-            type: DOCUMENT_REQUEST_TYPE.read
+            isLoggedInRequest: true,
+            isWriteRequest: false
           });
         });
 
@@ -131,8 +131,8 @@ describe('document-request-service', () => {
             documentRevisionId: document.revision,
             registeredOn: now,
             registeredOnDayOfWeek: nowDayOfWeek,
-            isUserLoggedIn: false,
-            type: DOCUMENT_REQUEST_TYPE.write
+            isLoggedInRequest: false,
+            isWriteRequest: true
           });
         });
 
@@ -155,8 +155,8 @@ describe('document-request-service', () => {
             documentRevisionId: document.revision,
             registeredOn: now,
             registeredOnDayOfWeek: nowDayOfWeek,
-            isUserLoggedIn: true,
-            type: DOCUMENT_REQUEST_TYPE.write
+            isLoggedInRequest: true,
+            isWriteRequest: true
           });
         });
 
