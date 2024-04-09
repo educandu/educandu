@@ -1355,7 +1355,9 @@ describe('client-data-mapping-service', () => {
           title: 'Document 1',
           shortDescription: 'This is Document 1',
           createdOn: now,
-          updatedOn: now
+          createdBy: user1._id,
+          updatedOn: now,
+          updatedBy: user1._id,
         },
         {
           _id: documentId2,
@@ -1364,7 +1366,9 @@ describe('client-data-mapping-service', () => {
           title: 'Document 2',
           shortDescription: 'This is Document 2',
           createdOn: now,
-          updatedOn: now
+          createdBy: user1._id,
+          updatedOn: now,
+          updatedBy: user1._id,
         }
       ];
       documentRequestCounters = [
@@ -1379,11 +1383,11 @@ describe('client-data-mapping-service', () => {
         }
       ];
 
-      result = await sut.mapDocumentRequestCountersToDocuments({ documents, documentRequestCounters });
+      result = await sut.mapDocumentRequestCountersToDocuments({ documents, documentRequestCounters, user: user1 });
     });
 
     it('should map the documentRequestCounters data onto the documents data', () => {
-      expect(result).toEqual([
+      expect(result).toStrictEqual([
         {
           _id: documentId1,
           tags: ['a', 'b'],
@@ -1391,7 +1395,15 @@ describe('client-data-mapping-service', () => {
           title: 'Document 1',
           shortDescription: 'This is Document 1',
           createdOn: now.toISOString(),
+          createdBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
           updatedOn: now.toISOString(),
+          updatedBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
           totalCount: 3,
           readCount: 2,
           writeCount: 1,
@@ -1405,7 +1417,15 @@ describe('client-data-mapping-service', () => {
           title: 'Document 2',
           shortDescription: 'This is Document 2',
           createdOn: now.toISOString(),
+          createdBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
           updatedOn: now.toISOString(),
+          updatedBy: {
+            _id: user1._id,
+            displayName: user1.displayName
+          },
           totalCount: 0,
           readCount: 0,
           writeCount: 0,
