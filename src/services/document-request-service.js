@@ -1,6 +1,5 @@
 import uniqueId from '../utils/unique-id.js';
 import { getDayOfWeek } from '../utils/date-utils.js';
-import { DOCUMENT_REQUEST_TYPE } from '../domain/constants.js';
 import DocumentRequestStore from '../stores/document-request-store.js';
 
 class DocumentRequestService {
@@ -10,7 +9,7 @@ class DocumentRequestService {
     this.documentRequestStore = documentRequestStore;
   }
 
-  async createDocumentRequest({ document, user, type }) {
+  async createDocumentRequest({ document, user, isWriteRequest }) {
     const registeredOn = new Date();
 
     if (document.roomId) {
@@ -21,8 +20,8 @@ class DocumentRequestService {
       _id: uniqueId.create(),
       documentId: document._id,
       documentRevisionId: document.revision,
-      type,
-      isUserLoggedIn: !!user,
+      isWriteRequest,
+      isLoggedInRequest: !!user,
       registeredOn,
       registeredOnDayOfWeek: getDayOfWeek(registeredOn),
     };
@@ -33,11 +32,11 @@ class DocumentRequestService {
   }
 
   tryRegisterReadRequest({ document, user }) {
-    return this.createDocumentRequest({ document, user, type: DOCUMENT_REQUEST_TYPE.read });
+    return this.createDocumentRequest({ document, user, isWriteRequest: false });
   }
 
   tryRegisterWriteRequest({ document, user }) {
-    return this.createDocumentRequest({ document, user, type: DOCUMENT_REQUEST_TYPE.write });
+    return this.createDocumentRequest({ document, user, isWriteRequest: true });
   }
 }
 

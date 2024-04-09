@@ -183,19 +183,14 @@ export const FILES_VIEWER_DISPLAY = {
   list: 'list'
 };
 
-export const DOCUMENT_REQUEST_TYPE = {
-  read: 'read',
-  write: 'write'
-};
-
 export const DAY_OF_WEEK = {
-  monday: 'Mon',
-  tuesday: 'Tue',
-  wednesday: 'Wed',
-  thursday: 'Thu',
-  friday: 'Fri',
-  saturday: 'Sat',
-  sunday: 'Sun'
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6,
+  sunday: 7
 };
 
 export const FORM_ITEM_LAYOUT = {
