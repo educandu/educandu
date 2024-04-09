@@ -80,7 +80,12 @@ describe('document-request-store', () => {
     });
 
     it('should return the aggregated requests', () => {
-      expect(result).toEqual([{
+      const document1 = result.find(r => r.documentId === documentId1);
+      const document2 = result.find(r => r.documentId === documentId2);
+
+      expect(result).toHaveLength(2);
+
+      expect(document1).toStrictEqual({
         _id: documentId1,
         documentId: documentId1,
         totalCount: 3,
@@ -88,7 +93,8 @@ describe('document-request-store', () => {
         writeCount: 1,
         anonymousCount: 1,
         loggedInCount: 2
-      },{
+      });
+      expect(document2).toStrictEqual({
         _id: documentId2,
         documentId: documentId2,
         totalCount: 1,
@@ -96,8 +102,7 @@ describe('document-request-store', () => {
         writeCount: 0,
         anonymousCount: 1,
         loggedInCount: 0
-      }
-      ]);
+      });
     });
   });
 });
