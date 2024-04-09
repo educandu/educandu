@@ -90,6 +90,15 @@ class DocumentService {
     if (includeArchived === false) {
       conditions.push({ 'publicContext.archived': false });
     }
+    const documentsMetadata = await this.documentStore.getDocumentsMetadataByConditions(conditions);
+    return documentsMetadata.sort(by(doc => doc.createdOn, 'desc'));
+  }
+
+  async getAllPublicDocumentsExtendedMetadata({ includeArchived } = {}) {
+    const conditions = [{ roomId: null }];
+    if (includeArchived === false) {
+      conditions.push({ 'publicContext.archived': false });
+    }
     const documentsMetadata = await this.documentStore.getDocumentsExtendedMetadataByConditions(conditions);
     return documentsMetadata.sort(by(doc => doc.updatedBy, 'desc'));
   }

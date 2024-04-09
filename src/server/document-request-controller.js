@@ -28,8 +28,10 @@ class DocumentController {
   async handleGetDocumentRequestsForMaintenance(req, res) {
     const { user } = req;
 
-    const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true });
-    const documentRequestCounters = await this.documentRequestService.getAllDocumentRequestCounters();
+    const [documents, documentRequestCounters] = await Promise.all([
+      this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true }),
+      this.documentRequestService.getAllDocumentRequestCounters()
+    ]);
 
     const mappedDocumentsWithRequestCounters = await this.clientDataMappingService.mapDocumentRequestCountersToDocuments({ documentRequestCounters, documents, user });
 

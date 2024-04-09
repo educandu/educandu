@@ -200,7 +200,7 @@ class DocumentController {
   async handleGetDocsForMaintenance(req, res) {
     const { user } = req;
 
-    const documents = await this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true });
+    const documents = await this.documentService.getAllPublicDocumentsExtendedMetadata({ includeArchived: true });
     const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, user);
 
     return res.send({ documents: mappedDocuments });
