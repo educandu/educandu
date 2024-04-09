@@ -61,9 +61,8 @@ function Tests({ PageTemplate, initialState }) {
   };
 
   // StarRating
-  const [starRatingValue, setStarRatingValue] = useState(null);
-  const [starRatingTotalCount, setStarRatingTotalCount] = useState(0);
-  const [starRatingReadOnly, setStarRatingReadOnly] = useState(false);
+  const [starRatingValue, setStarRatingValue] = useState(3.7);
+  const [starRatingTotalCount, setStarRatingTotalCount] = useState(15);
 
   // MediaLibraryMetadataForm
   const [mediaLibraryMetadataForm] = Form.useForm();
@@ -266,15 +265,9 @@ function Tests({ PageTemplate, initialState }) {
                       <Checkbox checked={starRatingValue === null} onChange={event => setStarRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
                       <div>TotalCount:</div>
                       <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setStarRatingTotalCount} />
-                      <Checkbox checked={starRatingReadOnly} onChange={event => setStarRatingReadOnly(event.target.checked)}>ReadOnly</Checkbox>
                     </div>
                     <div>
-                      <StarRating
-                        value={starRatingValue}
-                        totalCount={starRatingTotalCount}
-                        readOnly={starRatingReadOnly}
-                        onChange={setStarRatingValue}
-                        />
+                      <StarRating value={starRatingValue} totalCount={starRatingTotalCount} />
                     </div>
                   </div>
                 )

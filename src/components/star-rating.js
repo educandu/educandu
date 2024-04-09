@@ -5,7 +5,7 @@ import { StarIcon } from './icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import { useNumberFormat } from './locale-context.js';
 
-function StarRating({ value, totalCount, readOnly, onChange }) {
+function StarRating({ value, totalCount }) {
   const { t } = useTranslation('starRating');
   const formatNumber = useNumberFormat({ minDecimalPlaces: 1, maxDecimalPlaces: 1 });
 
@@ -21,10 +21,9 @@ function StarRating({ value, totalCount, readOnly, onChange }) {
       )}
       <div className="StarRating-rating">
         <Rate
+          disabled
           value={intValue}
           character={<StarIcon />}
-          disabled={readOnly}
-          onChange={onChange}
           />
       </div>
       <div className="StarRating-totalCount">
@@ -36,16 +35,12 @@ function StarRating({ value, totalCount, readOnly, onChange }) {
 
 StarRating.propTypes = {
   value: PropTypes.number,
-  totalCount: PropTypes.number,
-  readOnly: PropTypes.bool,
-  onChange: PropTypes.func
+  totalCount: PropTypes.number
 };
 
 StarRating.defaultProps = {
   value: null,
-  totalCount: 0,
-  readOnly: false,
-  onChange: () => {}
+  totalCount: 0
 };
 
 export default StarRating;
