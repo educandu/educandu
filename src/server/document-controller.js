@@ -155,7 +155,7 @@ class DocumentController {
     const initialState = { doc: mappedDocument, templateSections, room: mappedRoom, roomMediaContext };
     const pageName = PAGE_NAME.document;
 
-    await this.documentRequestService.tryRegisterReadRequest({ document: doc, user });
+    await this.documentRequestService.tryRegisterDocumentReadRequest({ document: doc, user });
 
     return this.pageRenderer.sendPage(req, res, pageName, initialState);
   }
@@ -213,7 +213,7 @@ class DocumentController {
     const newDocument = await this.documentService.createDocument({ data, user });
     const mappedNewDocument = await this.clientDataMappingService.mapDocOrRevision(newDocument, user);
 
-    await this.documentRequestService.tryRegisterWriteRequest({ document: newDocument, user });
+    await this.documentRequestService.tryRegisterDocumentWriteRequest({ document: newDocument, user });
 
     return res.status(201).send(mappedNewDocument);
   }
@@ -226,7 +226,7 @@ class DocumentController {
     const updatedDocument = await this.documentService.updateDocumentMetadata({ documentId, metadata, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
 
-    await this.documentRequestService.tryRegisterWriteRequest({ document: updatedDocument, user });
+    await this.documentRequestService.tryRegisterDocumentWriteRequest({ document: updatedDocument, user });
 
     return res.status(201).send(mappedUpdatedDocument);
   }
@@ -239,7 +239,7 @@ class DocumentController {
     const updatedDocument = await this.documentService.updateDocumentSections({ documentId, sections, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
 
-    await this.documentRequestService.tryRegisterWriteRequest({ document: updatedDocument, user });
+    await this.documentRequestService.tryRegisterDocumentWriteRequest({ document: updatedDocument, user });
 
     return res.status(201).send(mappedUpdatedDocument);
   }
@@ -285,7 +285,7 @@ class DocumentController {
     const document = await this.documentService.hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
     const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(document, req.user);
 
-    await this.documentRequestService.tryRegisterWriteRequest({ document, user });
+    await this.documentRequestService.tryRegisterDocumentWriteRequest({ document, user });
 
     return res.send({ document: mappedDocument });
   }

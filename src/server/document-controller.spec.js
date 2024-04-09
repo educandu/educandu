@@ -40,8 +40,8 @@ describe('document-controller', () => {
     };
 
     documentRequestService = {
-      tryRegisterReadRequest: sandbox.stub(),
-      tryRegisterWriteRequest: sandbox.stub()
+      tryRegisterDocumentReadRequest: sandbox.stub(),
+      tryRegisterDocumentWriteRequest: sandbox.stub()
     };
 
     clientDataMappingService = {
@@ -134,8 +134,8 @@ describe('document-controller', () => {
         sut.handleGetDocPage(req, res).catch(reject);
       }));
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should redirect to the correct document url', () => {
@@ -157,8 +157,8 @@ describe('document-controller', () => {
         documentService.getDocumentById.withArgs(req.query.templateDocumentId).resolves(null);
       });
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should throw NotFound', async () => {
@@ -186,8 +186,8 @@ describe('document-controller', () => {
         sut.handleGetDocPage(req, res).catch(reject);
       }));
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should redirect to the original document url', () => {
@@ -236,8 +236,8 @@ describe('document-controller', () => {
         assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -271,8 +271,8 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should throw Unauthorized', async () => {
@@ -306,8 +306,8 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should throw Forbidden', async () => {
@@ -349,8 +349,8 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -392,8 +392,8 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -432,8 +432,8 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should throw Unauthorized', async () => {
@@ -467,8 +467,8 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should throw Forbidden', async () => {
@@ -502,8 +502,8 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should throw Forbidden', async () => {
@@ -553,8 +553,8 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -604,8 +604,8 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -655,8 +655,8 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -704,8 +704,8 @@ describe('document-controller', () => {
         assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -734,8 +734,8 @@ describe('document-controller', () => {
         sut.handleGetDocPage(req, res).catch(reject);
       }));
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should redirect to the document url in display mode', () => {
@@ -761,8 +761,8 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should throw NotFound', async () => {
@@ -794,8 +794,8 @@ describe('document-controller', () => {
         sut.handleGetDocPage(req, res).catch(reject);
       }));
 
-      it('should not call documentRequestService.tryRegisterReadRequest', () => {
-        assert.notCalled(documentRequestService.tryRegisterReadRequest);
+      it('should not call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentReadRequest);
       });
 
       it('should redirect to the correct document url', () => {
@@ -841,12 +841,12 @@ describe('document-controller', () => {
         assert.notCalled(clientDataMappingService.createProposedSections);
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
-      it('should call documentRequestService.tryRegisterReadRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterReadRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentReadRequest, { document: doc, user });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -885,8 +885,8 @@ describe('document-controller', () => {
         assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
-      it('should call documentRequestService.tryRegisterWriteRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterWriteRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentWriteRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentWriteRequest, { document: doc, user });
       });
 
       it('should return the document', () => {
@@ -924,8 +924,8 @@ describe('document-controller', () => {
         assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
-      it('should call documentRequestService.tryRegisterWriteRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterWriteRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentWriteRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentWriteRequest, { document: doc, user });
       });
 
       it('should return the document', () => {
@@ -963,8 +963,8 @@ describe('document-controller', () => {
         assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
-      it('should call documentRequestService.tryRegisterWriteRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterWriteRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentWriteRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentWriteRequest, { document: doc, user });
       });
 
       it('should return the document', () => {
@@ -996,8 +996,8 @@ describe('document-controller', () => {
         assert.calledWith(documentService.createDocument, { data: doc, user });
       });
 
-      it('should call documentRequestService.tryRegisterWriteRequest', () => {
-        assert.calledWith(documentRequestService.tryRegisterWriteRequest, { document: doc, user });
+      it('should call documentRequestService.tryRegisterDocumentWriteRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentWriteRequest, { document: doc, user });
       });
 
       it('should return the document', () => {
