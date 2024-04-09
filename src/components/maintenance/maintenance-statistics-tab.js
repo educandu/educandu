@@ -6,7 +6,6 @@ import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
-import ResourceTitleCell from '../resource-title-cell.js';
 import { documentWithRequestCountersShape } from '../../ui/default-prop-types.js';
 
 function createTableRows(documentsWithCounters) {
@@ -93,16 +92,12 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
       return null;
     }
 
+    const documentUrl = routes.getDocUrl({ id: documentWithCounters._id, slug: documentWithCounters.slug });
+
     return (
-      <ResourceTitleCell
-        title={documentWithCounters.title}
-        shortDescription={documentWithCounters.shortDescription}
-        url={routes.getDocUrl({ id: documentWithCounters._id, slug: documentWithCounters.slug })}
-        createdOn={documentWithCounters.createdOn}
-        createdBy={documentWithCounters.createdBy}
-        updatedOn={documentWithCounters.updatedOn}
-        updatedBy={documentWithCounters.updatedBy}
-        />
+      <a href={documentUrl} className="MaintenanceStatisticsTab-titleCell">
+        {_title}
+      </a>
     );
   };
 
@@ -118,6 +113,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
       dataIndex: 'totalCount',
       key: 'totalCount',
       render: _totalCount => _totalCount,
+      align: 'center',
       width: '100px'
     },
     {

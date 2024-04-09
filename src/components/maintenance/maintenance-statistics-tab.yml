@@ -1,16 +1,16 @@
 maintenanceStatisticsTab:
   total:
-    en: Total requests
-    de: Gesamtanfragen
+    en: Requests
+    de: Anforderungen
   request:
-    en: Request
-    de: Anforderung
+    en: Access
+    de: Zugriff
   read:
     en: Read
     de: Lesen
   write:
     en: Write
-    de: Ändern
+    de: Schreiben
   user:
     en: User
     de: Benutzer
