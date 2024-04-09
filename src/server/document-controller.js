@@ -13,6 +13,7 @@ import DocumentService from '../services/document-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import DocumentRatingService from '../services/document-rating-service.js';
 import DocumentRequestService from '../services/document-request-service.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -40,6 +41,7 @@ class DocumentController {
   static dependencies = [
     DocumentService,
     RoomService,
+    DocumentRatingService,
     DocumentRequestService,
     ClientDataMappingService,
     SettingService,
@@ -50,6 +52,7 @@ class DocumentController {
   constructor(
     documentService,
     roomService,
+    documentRatingService,
     documentRequestService,
     clientDataMappingService,
     settingService,
@@ -58,6 +61,7 @@ class DocumentController {
   ) {
     this.documentService = documentService;
     this.roomService = roomService;
+    this.documentRatingService = documentRatingService;
     this.documentRequestService = documentRequestService;
     this.clientDataMappingService = clientDataMappingService;
     this.settingService = settingService;
@@ -148,11 +152,13 @@ class DocumentController {
       return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug }));
     }
 
+    const documentRating = !room ? await this.documentRatingService.getDocumentRatingByDocumentId(doc._id) : null;
+
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom({ room, viewingUser: user }) : null;
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
-    const initialState = { doc: mappedDocument, templateSections, room: mappedRoom, roomMediaContext };
+    const initialState = { doc: mappedDocument, documentRating, templateSections, room: mappedRoom, roomMediaContext };
     const pageName = PAGE_NAME.document;
 
     await this.documentRequestService.tryRegisterDocumentReadRequest({ document: doc, user });

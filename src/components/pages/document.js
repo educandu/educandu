@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
+import StarRating from '../star-rating.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
@@ -45,7 +46,7 @@ import DocumentCommentApiClient from '../../api-clients/document-comment-api-cli
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import { createDocumentInputUploadedFileName } from '../../utils/document-input-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
+import { documentRatingShape, documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
@@ -220,6 +221,10 @@ function Document({ initialState, PageTemplate }) {
   const [isCurrentInputSubmitted, setIsCurrentInputSubmitted] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
+  // `setDocumentRating` will be used when the user can give ratings:
+  // https://educandu.atlassian.net/browse/EDU-1533
+  // eslint-disable-next-line no-unused-vars
+  const [documentRating, setDocumentRating] = useState(initialState.documentRating);
   const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
   const [inputsSelectedDocumentRevision, setInputsSelectedDocumentRevision] = useState(null);
   const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
@@ -1073,7 +1078,14 @@ function Document({ initialState, PageTemplate }) {
                 ]}
                 />
             )}
-
+            {!!documentRating && view === VIEW.display && (
+              <div className="DocumentPage-starRating">
+                <StarRating
+                  value={documentRating.averageRating}
+                  totalCount={documentRating.userRatingsCount}
+                  />
+              </div>
+            )}
             <div>
               <SectionsDisplay
                 documentInput={selectedDocumentInput || pendingDocumentInput}
@@ -1222,6 +1234,7 @@ Document.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     doc: documentShape.isRequired,
+    documentRating: documentRatingShape,
     templateSections: PropTypes.arrayOf(sectionShape),
     room: roomShape,
     roomMediaContext: roomMediaContextShape

@@ -1,17 +1,21 @@
 .StarRating {
-  display: inline-block;
-  text-align: center;
-  background-color: @edu-background-color-light;
-  padding: @edu-content-padding;
-  border-radius: @edu-border-radius-base;
+  display: inline-grid;
+  align-items: baseline;
+  justify-items: center;
+  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(2, auto);
 }
 
 .StarRating-value {
+  grid-row: 1;
+  grid-column: 1;
   font-weight: bold;
-  color: @edu-black;
+  padding-right: @edu-control-spacing-base;
 }
 
 .StarRating-rating {
+  grid-row: 1;
+  grid-column: 2;
   line-height: 100%;
 
   .ant-rate-star:not(:last-child) {
@@ -20,6 +24,7 @@
 }
 
 .StarRating-totalCount {
+  grid-row: 2;
+  grid-column: 2;
   font-size: @edu-font-size-xs;
-  padding-top: @edu-control-spacing-base;
 }
