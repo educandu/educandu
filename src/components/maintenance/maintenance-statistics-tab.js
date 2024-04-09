@@ -1,3 +1,4 @@
+import by from 'thenby';
 import { Table } from 'antd';
 import PropTypes from 'prop-types';
 import { TAB } from './constants.js';
@@ -69,7 +70,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
 
   useEffect(() => {
     setRenderingRows(!!allRows.length);
-    setDisplayedRows(allRows);
+    setDisplayedRows(allRows.sort(by(row => row.createdOn, { direction: 'desc' })));
   }, [allRows]);
 
   const handleTableChange = ({ current, pageSize }) => {
