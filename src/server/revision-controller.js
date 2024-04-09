@@ -5,17 +5,19 @@ import RoomService from '../services/room-service.js';
 import DocumentService from '../services/document-service.js';
 import { isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import DocumentRequestService from '../services/document-request-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 const { NotFound, Forbidden } = httpErrors;
 
 class RevisionController {
-  static dependencies = [DocumentService, RoomService, ClientDataMappingService, PageRenderer];
+  static dependencies = [DocumentService, RoomService, DocumentRequestService, ClientDataMappingService, PageRenderer];
 
-  constructor(documentService, roomService, clientDataMappingService, pageRenderer) {
+  constructor(documentService, roomService, documentRequestService, clientDataMappingService, pageRenderer) {
     this.roomService = roomService;
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
+    this.documentRequestService = documentRequestService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
@@ -39,6 +41,9 @@ class RevisionController {
     }
 
     const mappedRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
+
+    await this.documentRequestService.tryRegisterDocumentRevisionReadRequest({ documentRevision: revision, user });
+
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.revision, { revision: mappedRevision });
   }
 

@@ -11,6 +11,7 @@ describe('revision-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
+  let documentRequestService;
   let documentService;
   let pageRenderer;
   let roomService;
@@ -27,6 +28,10 @@ describe('revision-controller', () => {
     documentService = {
       getDocumentById: sandbox.stub(),
       getDocumentRevisionById: sandbox.stub()
+    };
+
+    documentRequestService = {
+      tryRegisterDocumentRevisionReadRequest: sandbox.stub(),
     };
 
     roomService = {
@@ -47,7 +52,7 @@ describe('revision-controller', () => {
     document = { _id: uniqueId.create() };
     revision = { _id: uniqueId.create(), documentId: document._id, slug: '', sections: [] };
 
-    sut = new RevisionController(documentService, roomService, clientDataMappingService, pageRenderer);
+    sut = new RevisionController(documentService, roomService, documentRequestService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -68,6 +73,10 @@ describe('revision-controller', () => {
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(null);
       });
 
+      it('should not call documentRequestService.tryRegisterDocumentRevisionReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentRevisionReadRequest);
+      });
+
       it('should throw NotFound', async () => {
         await expect(() => sut.handleGetRevisionPage(req, res)).rejects.toThrow(NotFound);
       });
@@ -75,13 +84,17 @@ describe('revision-controller', () => {
 
     describe('when the revision is accessed anonymously', () => {
       beforeEach(() => {
-        req = { params: { 0: '', id: revision._id } };
+        req = { user: null, params: { 0: '', id: revision._id } };
 
         documentService.getDocumentById.withArgs(document._id).resolves(document);
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
         clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
 
         return sut.handleGetRevisionPage(req, {});
+      });
+
+      it('should call documentRequestService.tryRegisterDocumentRevisionReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentRevisionReadRequest, { documentRevision: revision, user: null });
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -100,6 +113,10 @@ describe('revision-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
         documentService.getDocumentById.withArgs(document._id).resolves(document);
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
+      });
+
+      it('should not call documentRequestService.tryRegisterDocumentRevisionReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentRevisionReadRequest);
       });
 
       it('should throw Forbidden', async () => {
@@ -123,6 +140,10 @@ describe('revision-controller', () => {
         return sut.handleGetRevisionPage(req, {});
       });
 
+      it('should call documentRequestService.tryRegisterDocumentRevisionReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentRevisionReadRequest, { documentRevision: revision, user });
+      });
+
       it('should call pageRenderer.sendPage', () => {
         assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
       });
@@ -144,6 +165,10 @@ describe('revision-controller', () => {
         return sut.handleGetRevisionPage(req, {});
       });
 
+      it('should call documentRequestService.tryRegisterDocumentRevisionReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentRevisionReadRequest, { documentRevision: revision, user });
+      });
+
       it('should call pageRenderer.sendPage', () => {
         assert.calledWith(pageRenderer.sendPage, req, res, 'revision', { revision: mappedRevision });
       });
@@ -160,6 +185,10 @@ describe('revision-controller', () => {
         documentService.getDocumentById.withArgs(document._id).resolves(document);
         documentService.getDocumentRevisionById.withArgs(revision._id).resolves(revision);
         clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
+      });
+
+      it('should not call documentRequestService.tryRegisterDocumentRevisionReadRequest', () => {
+        assert.notCalled(documentRequestService.tryRegisterDocumentRevisionReadRequest);
       });
 
       it('should throw NotFound', async () => {
@@ -180,6 +209,10 @@ describe('revision-controller', () => {
         clientDataMappingService.mapDocOrRevision.withArgs(revision).resolves(mappedRevision);
 
         return sut.handleGetRevisionPage(req, {});
+      });
+
+      it('should call documentRequestService.tryRegisterDocumentRevisionReadRequest', () => {
+        assert.calledWith(documentRequestService.tryRegisterDocumentRevisionReadRequest, { documentRevision: revision, user });
       });
 
       it('should call pageRenderer.sendPage', () => {

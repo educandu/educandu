@@ -31,12 +31,34 @@ class DocumentRequestService {
     return newDocumentRequest;
   }
 
-  tryRegisterReadRequest({ document, user }) {
+  tryRegisterDocumentReadRequest({ document, user }) {
     return this.createDocumentRequest({ document, user, isWriteRequest: false });
   }
 
-  tryRegisterWriteRequest({ document, user }) {
+  tryRegisterDocumentWriteRequest({ document, user }) {
     return this.createDocumentRequest({ document, user, isWriteRequest: true });
+  }
+
+  async tryRegisterDocumentRevisionReadRequest({ documentRevision, user }) {
+    const registeredOn = new Date();
+
+    if (documentRevision.roomId) {
+      return null;
+    }
+
+    const newDocumentRequest = {
+      _id: uniqueId.create(),
+      documentId: documentRevision.documentId,
+      documentRevisionId: documentRevision._id,
+      isWriteRequest: false,
+      isLoggedInRequest: !!user,
+      registeredOn,
+      registeredOnDayOfWeek: getDayOfWeek(registeredOn),
+    };
+
+    await this.documentRequestStore.saveDocumentRequest(newDocumentRequest);
+
+    return newDocumentRequest;
   }
 }
 
