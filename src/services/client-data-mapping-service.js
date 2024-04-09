@@ -223,14 +223,14 @@ class ClientDataMappingService {
     return mappedAllRoomMediaOverview;
   }
 
-  async mapDocumentRequestCountersToDocuments({ documentRequestCounters, documents, user }) {
-    const mappedDocuments = await this.mapDocsOrRevisions(documents, user);
-
-    const mappedDocumentsWithRequestCounters = mappedDocuments.map(mappedDocument => {
-      const currentCounters = documentRequestCounters.find(counters => counters.documentId === mappedDocument._id);
+  mapDocumentRequestCountersToDocuments({ documentRequestCounters, documents }) {
+    const mappedDocumentsWithRequestCounters = documents.map(document => {
+      const currentCounters = documentRequestCounters.find(counters => counters.documentId === document._id);
 
       return {
-        ...mappedDocument,
+        _id: document._id,
+        slug: document.slug,
+        title: document.title,
         totalCount: currentCounters?.totalCount || 0,
         readCount: currentCounters?.readCount || 0,
         writeCount: currentCounters?.writeCount || 0,

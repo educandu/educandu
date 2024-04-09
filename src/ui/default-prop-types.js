@@ -199,16 +199,12 @@ export const documentMetadataShape = PropTypes.shape({
   language: PropTypes.string.isRequired
 });
 
-export const documentExtendedMetadataProps = {
+export const documentExtendedMetadataShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
   _id: PropTypes.string.isRequired,
   revision: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   updatedBy: otherUserShape.isRequired
-};
-
-export const documentExtendedMetadataShape = PropTypes.shape({
-  ...documentExtendedMetadataProps
 });
 
 const contributedDocumentMetadataProps = {
@@ -608,7 +604,9 @@ export const notificationGroupShape = PropTypes.shape({
 });
 
 export const documentWithRequestCountersShape = PropTypes.shape({
-  ...documentExtendedMetadataProps,
+  _id: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  title: PropTypes.string.isRequired,
   totalCount: PropTypes.number.isRequired,
   readCount: PropTypes.number.isRequired,
   writeCount: PropTypes.number.isRequired,

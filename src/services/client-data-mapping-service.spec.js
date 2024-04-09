@@ -1383,27 +1383,15 @@ describe('client-data-mapping-service', () => {
         }
       ];
 
-      result = await sut.mapDocumentRequestCountersToDocuments({ documents, documentRequestCounters, user: user1 });
+      result = await sut.mapDocumentRequestCountersToDocuments({ documents, documentRequestCounters });
     });
 
     it('should map the documentRequestCounters data onto the documents data', () => {
       expect(result).toStrictEqual([
         {
           _id: documentId1,
-          tags: ['a', 'b'],
           slug: 'document-1',
           title: 'Document 1',
-          shortDescription: 'This is Document 1',
-          createdOn: now.toISOString(),
-          createdBy: {
-            _id: user1._id,
-            displayName: user1.displayName
-          },
-          updatedOn: now.toISOString(),
-          updatedBy: {
-            _id: user1._id,
-            displayName: user1.displayName
-          },
           totalCount: 3,
           readCount: 2,
           writeCount: 1,
@@ -1412,20 +1400,8 @@ describe('client-data-mapping-service', () => {
         },
         {
           _id: documentId2,
-          tags: ['b'],
           slug: 'document-2',
           title: 'Document 2',
-          shortDescription: 'This is Document 2',
-          createdOn: now.toISOString(),
-          createdBy: {
-            _id: user1._id,
-            displayName: user1.displayName
-          },
-          updatedOn: now.toISOString(),
-          updatedBy: {
-            _id: user1._id,
-            displayName: user1.displayName
-          },
           totalCount: 0,
           readCount: 0,
           writeCount: 0,
