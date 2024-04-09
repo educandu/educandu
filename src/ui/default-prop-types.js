@@ -266,6 +266,13 @@ export const documentRevisionShape = PropTypes.shape({
   roomContext: documentRoomContextShape
 });
 
+export const documentRatingShape = PropTypes.shape({
+  _id: PropTypes.string,
+  documentId: PropTypes.string.isRequired,
+  userRatingsCount: PropTypes.number.isRequired,
+  averageRating: PropTypes.number
+});
+
 export const documentInputSectionFileShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,

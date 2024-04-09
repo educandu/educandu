@@ -12,6 +12,16 @@ class DocumentRatingService {
     this.documentStore = documentStore;
   }
 
+  async getDocumentRatingByDocumentId(documentId) {
+    const dbRating = await this.documentRatingStore.getDocumentRatingByDocumentId(documentId);
+    return dbRating || {
+      _id: null,
+      documentId,
+      userRatingsCount: 0,
+      averageRating: null
+    };
+  }
+
   async saveUserDocumentRating({ documentId, user, rating }) {
     const document = await this.documentStore.getDocumentById(documentId);
     if (!document) {
