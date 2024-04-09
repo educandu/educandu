@@ -114,12 +114,16 @@ export function useDateFormat() {
   }, [uiLocale]);
 }
 
-export function useNumberFormat() {
+export function useNumberFormat({ minDecimalPlaces = 0, maxDecimalPlaces = 10 } = { minDecimalPlaces: 0, maxDecimalPlaces: 10 }) {
   const { uiLocale } = useLocale();
   return useMemo(() => {
-    const numberFormatter = new Intl.NumberFormat(uiLocale, { useGrouping: true });
+    const numberFormatter = new Intl.NumberFormat(uiLocale, {
+      useGrouping: true,
+      minimumFractionDigits: minDecimalPlaces,
+      maximumFractionDigits: maxDecimalPlaces
+    });
     return value => numberFormatter.format(value);
-  }, [uiLocale]);
+  }, [uiLocale, minDecimalPlaces, maxDecimalPlaces]);
 }
 
 export function useNumberWithUnitFormat({ unit, useGrouping = true }) {

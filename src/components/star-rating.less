@@ -1,0 +1,25 @@
+.StarRating {
+  display: inline-block;
+  text-align: center;
+  background-color: @edu-background-color-light;
+  padding: @edu-content-padding;
+  border-radius: @edu-border-radius-base;
+}
+
+.StarRating-value {
+  font-weight: bold;
+  color: @edu-black;
+}
+
+.StarRating-rating {
+  line-height: 100%;
+
+  .ant-rate-star:not(:last-child) {
+    margin-inline-end: 1px !important;
+  }
+}
+
+.StarRating-totalCount {
+  font-size: @edu-font-size-xs;
+  padding-top: @edu-control-spacing-base;
+}

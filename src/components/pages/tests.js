@@ -4,6 +4,7 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
 import TagSelect from '../tag-select.js';
+import StarRating from '../star-rating.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
 import LicenseSelect from '../license-select.js';
@@ -58,6 +59,10 @@ function Tests({ PageTemplate, initialState }) {
     await window.navigator.clipboard.writeText(clipboardText);
     message.success('Copied to clipboard');
   };
+
+  // StarRating
+  const [starRatingValue, setStarRatingValue] = useState(3.7);
+  const [starRatingTotalCount, setStarRatingTotalCount] = useState(15);
 
   // MediaLibraryMetadataForm
   const [mediaLibraryMetadataForm] = Form.useForm();
@@ -249,6 +254,24 @@ function Tests({ PageTemplate, initialState }) {
             onChange={handleTabChange}
             destroyInactiveTabPane
             items={[
+              {
+                key: 'StarRating',
+                label: 'StarRating',
+                children: (
+                  <div>
+                    <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                      <div>Value:</div>
+                      <InputNumber min={0} max={5} precision={3} step={0.1} value={starRatingValue ?? 0} onChange={setStarRatingValue} />
+                      <Checkbox checked={starRatingValue === null} onChange={event => setStarRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
+                      <div>TotalCount:</div>
+                      <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setStarRatingTotalCount} />
+                    </div>
+                    <div>
+                      <StarRating value={starRatingValue} totalCount={starRatingTotalCount} />
+                    </div>
+                  </div>
+                )
+              },
               {
                 key: 'MediaLibraryMetadataForm',
                 label: 'MediaLibraryMetadataForm',

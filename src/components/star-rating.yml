@@ -1,0 +1,4 @@
+starRating:
+  totalCountText:
+    en: "({totalCount, plural, =0 {no ratings} =1 {# rating} other {# ratings}})"
+    de: "({totalCount, plural, =0 {keine Bewertungen} =1 {# Bewertung} other {# Bewertungen}})"
