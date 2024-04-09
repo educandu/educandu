@@ -128,6 +128,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
           dataIndex: 'readCount',
           key: 'readCount',
           render: _readCount => _readCount,
+          align: 'center',
           width: '100px'
         },
         {
@@ -135,6 +136,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
           dataIndex: 'writeCount',
           key: 'writeCount',
           render: _writeCount => _writeCount,
+          align: 'center',
           width: '100px'
         }
       ]
@@ -148,6 +150,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
           dataIndex: 'anonymousCount',
           key: 'anonymousCount',
           render: _anonymousCount => _anonymousCount,
+          align: 'center',
           width: '100px'
         },
         {
@@ -155,6 +158,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
           dataIndex: 'loggedInCount',
           key: 'loggedInCount',
           render: _loggedInCount => _loggedInCount,
+          align: 'center',
           width: '100px'
         }
       ]
