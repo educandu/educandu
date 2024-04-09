@@ -48,7 +48,7 @@ describe('document-request-service', () => {
         result = await sut.tryRegisterDocumentReadRequest({ document, user });
       });
 
-      it('should now create a document request', () => {
+      it('should not create a document request', () => {
         expect(result).toEqual(null);
       });
     });
@@ -113,7 +113,7 @@ describe('document-request-service', () => {
         result = await sut.tryRegisterDocumentWriteRequest({ document, user });
       });
 
-      it('should now create a document request', () => {
+      it('should not create a document request', () => {
         expect(result).toEqual(null);
       });
     });
@@ -179,7 +179,7 @@ describe('document-request-service', () => {
         result = await sut.tryRegisterDocumentRevisionReadRequest({ documentRevision, user });
       });
 
-      it('should now create a document request', () => {
+      it('should not create a document request', () => {
         expect(result).toEqual(null);
       });
     });
