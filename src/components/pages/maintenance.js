@@ -1,32 +1,112 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TimelineIcon } from '../icons/icons.js';
 import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { BankOutlined, TagOutlined } from '@ant-design/icons';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
+import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
+import MaintenanceStatisticsTab from '../maintenance/maintenance-statistics-tab.js';
+import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
-import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 
-const determineTab = query => Object.values(TAB).find(val => val === query) || Object.keys(TAB)[0];
+const determineTab = query => Object.values(TAB)
+  .find(val => val === query) || Object.keys(TAB)[0];
 
-function Maintenance({ initialState, PageTemplate }) {
+function Maintenance({ PageTemplate }) {
   const request = useRequest();
-  const { t } = useTranslation('maintenance');
-  const [documents, setDocuments] = useState(initialState.documents);
-  const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
-  const [mediaLibraryItems, setMediaLibraryItems] = useState(initialState.mediaLibraryItems);
 
-  const changeTab = tab => {
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
+
+  const { t } = useTranslation('maintenance');
+  const [documents, setDocuments] = useState([]);
+  const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
+  const [fetchingTags, setFetchingTags] = useDebouncedFetchingState(true);
+  const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
+  const [fetchingDocuments, setFetchingDocuments] = useDebouncedFetchingState(true);
+  const [fetchingStatistics, setFetchingStatistics] = useDebouncedFetchingState(true);
+  const [documentsWithRequestCounters, setDocumentsWithRequestCounters] = useState([]);
+  const [fetchingMediaLibraryItems, setFetchingMediaLibraryItems] = useDebouncedFetchingState(true);
+
+  const handleTabChange = tab => {
     setCurrentTab(tab);
   };
 
-  const handleTabChange = newKey => {
-    changeTab(newKey);
-  };
+  const fetchDocuments = useCallback(async () => {
+    try {
+      setFetchingDocuments(true);
+      const apiClientResponse = await documentApiClient.getMaintenanceDocuments();
+      setDocuments(apiClientResponse.documents);
+    } finally {
+      setFetchingDocuments(false);
+    }
+  }, [setFetchingDocuments, documentApiClient]);
+
+  const fetchMediaLibraryItems = useCallback(async () => {
+    try {
+      setFetchingMediaLibraryItems(true);
+      const apiClientResponse = await mediaLibraryApiClient.getMaintenanceMediaLibraryItems();
+      setMediaLibraryItems(apiClientResponse.mediaLibraryItems);
+    } finally {
+      setFetchingMediaLibraryItems(false);
+    }
+  }, [setFetchingMediaLibraryItems, mediaLibraryApiClient]);
+
+  const fetchTags = useCallback(async () => {
+    try {
+      setFetchingTags(true);
+
+      const [documentApiResponse, mediaLibraryApiResponse] = await Promise.all([
+        documentApiClient.getMaintenanceDocuments(),
+        mediaLibraryApiClient.getMaintenanceMediaLibraryItems()
+      ]);
+
+      setDocuments(documentApiResponse.documents);
+      setMediaLibraryItems(mediaLibraryApiResponse.mediaLibraryItems);
+    } finally {
+      setFetchingTags(false);
+    }
+  }, [setFetchingTags, documentApiClient, mediaLibraryApiClient]);
+
+  const fetchStatistics = useCallback(async () => {
+    try {
+      setFetchingStatistics(true);
+      const apiClientResponse = await documentRequestApiClient.getMaintenanceDocumentRequests();
+      setDocumentsWithRequestCounters(apiClientResponse.documentsWithRequestCounters);
+    } finally {
+      setFetchingStatistics(false);
+    }
+  }, [setFetchingStatistics, documentRequestApiClient]);
+
+  useEffect(() => {
+    (async () => {
+      switch (currentTab) {
+        case TAB.documents:
+          await fetchDocuments();
+          break;
+        case TAB.mediaLibrary:
+          await fetchMediaLibraryItems();
+          break;
+        case TAB.tags:
+          await fetchTags();
+          break;
+        case TAB.statistics:
+          await fetchStatistics();
+          break;
+        default:
+          break;
+      }
+    })();
+  }, [currentTab, fetchDocuments, fetchMediaLibraryItems, fetchTags, fetchStatistics]);
 
   const tabItems = [
     {
@@ -34,7 +114,7 @@ function Maintenance({ initialState, PageTemplate }) {
       label: <div><FileIcon />{t('documentsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceDocumentsTab documents={documents} onDocumentsChange={setDocuments} />
+          <MaintenanceDocumentsTab fetchingData={fetchingDocuments} documents={documents} onDocumentsChange={setDocuments} />
         </div>
       )
     },
@@ -43,7 +123,7 @@ function Maintenance({ initialState, PageTemplate }) {
       label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceMediaLibraryTab mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
+          <MaintenanceMediaLibraryTab fetchingData={fetchingMediaLibraryItems} mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
         </div>
       )
     },
@@ -52,7 +132,16 @@ function Maintenance({ initialState, PageTemplate }) {
       label: <div><TagOutlined />{t('tagsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceTagsTab documents={documents} mediaLibraryItems={mediaLibraryItems} />
+          <MaintenanceTagsTab fetchingData={fetchingTags} documents={documents} mediaLibraryItems={mediaLibraryItems} />
+        </div>
+      )
+    },
+    {
+      key: TAB.statistics,
+      label: <div><TimelineIcon />{t('statisticsTabTitle')}</div>,
+      children: (
+        <div className="Tabs-tabPane">
+          <MaintenanceStatisticsTab fetchingData={fetchingStatistics} documentsWithRequestCounters={documentsWithRequestCounters} />
         </div>
       )
     }
@@ -78,11 +167,7 @@ function Maintenance({ initialState, PageTemplate }) {
 }
 
 Maintenance.propTypes = {
-  PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.shape({
-    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
-    mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired
-  }).isRequired
+  PageTemplate: PropTypes.func.isRequired
 };
 
 export default Maintenance;

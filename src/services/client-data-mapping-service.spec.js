@@ -1338,4 +1338,78 @@ describe('client-data-mapping-service', () => {
     });
   });
 
+  describe('mapDocumentRequestCountersToDocuments', () => {
+    let result;
+    let documents;
+    let documentRequestCounters;
+
+    const documentId1 = uniqueId.create();
+    const documentId2 = uniqueId.create();
+
+    beforeEach(async () => {
+      documents = [
+        {
+          _id: documentId1,
+          tags: ['a', 'b'],
+          slug: 'document-1',
+          title: 'Document 1',
+          shortDescription: 'This is Document 1',
+          createdOn: now,
+          createdBy: user1._id,
+          updatedOn: now,
+          updatedBy: user1._id,
+        },
+        {
+          _id: documentId2,
+          tags: ['b'],
+          slug: 'document-2',
+          title: 'Document 2',
+          shortDescription: 'This is Document 2',
+          createdOn: now,
+          createdBy: user1._id,
+          updatedOn: now,
+          updatedBy: user1._id,
+        }
+      ];
+      documentRequestCounters = [
+        {
+          _id: documentId1,
+          documentId: documentId1,
+          totalCount: 3,
+          readCount: 2,
+          writeCount: 1,
+          anonymousCount: 2,
+          loggedInCount: 1
+        }
+      ];
+
+      result = await sut.mapDocumentRequestCountersToDocuments({ documents, documentRequestCounters });
+    });
+
+    it('should map the documentRequestCounters data onto the documents data', () => {
+      expect(result).toStrictEqual([
+        {
+          _id: documentId1,
+          slug: 'document-1',
+          title: 'Document 1',
+          totalCount: 3,
+          readCount: 2,
+          writeCount: 1,
+          anonymousCount: 2,
+          loggedInCount: 1
+        },
+        {
+          _id: documentId2,
+          slug: 'document-2',
+          title: 'Document 2',
+          totalCount: 0,
+          readCount: 0,
+          writeCount: 0,
+          anonymousCount: 0,
+          loggedInCount: 0
+        }
+      ]);
+    });
+  });
+
 });

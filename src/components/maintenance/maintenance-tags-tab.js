@@ -107,7 +107,7 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
+function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
   const request = useRequest();
   const { t } = useTranslation('maintenanceTagsTab');
 
@@ -306,7 +306,7 @@ function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={renderingRows}
+        loading={fetchingData || renderingRows}
         onRow={handleRowRendered}
         onChange={handleTableChange}
         />
@@ -316,6 +316,7 @@ function MaintenanceTagsTab({ documents, mediaLibraryItems }) {
 }
 
 MaintenanceTagsTab.propTypes = {
+  fetchingData: PropTypes.bool.isRequired,
   documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
   mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired
 };

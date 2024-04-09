@@ -609,3 +609,14 @@ export const notificationGroupShape = PropTypes.shape({
   firstCreatedOn: PropTypes.string.isRequired,
   lastCreatedOn: PropTypes.string.isRequired
 });
+
+export const documentWithRequestCountersShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  totalCount: PropTypes.number.isRequired,
+  readCount: PropTypes.number.isRequired,
+  writeCount: PropTypes.number.isRequired,
+  anonymousCount: PropTypes.number.isRequired,
+  loggedInCount: PropTypes.number.isRequired
+});

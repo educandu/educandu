@@ -34,6 +34,15 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  getMaintenanceDocuments() {
+    return this.httpClient
+      .get(
+        '/api/v1/docs/maintenance',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getDocumentRevisions(documentId) {
     return this.httpClient
       .get(

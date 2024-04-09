@@ -88,7 +88,7 @@ function filterRows(rows, filter) {
   return lowerCasedFilter ? rows.filter(row => filterRow(row, lowerCasedFilter)) : rows;
 }
 
-function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChange }) {
+function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLibraryItemsChange }) {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
   const { t } = useTranslation('maintenanceMediaLibraryTab');
@@ -420,7 +420,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={renderingRows}
+        loading={fetchingData || renderingRows}
         onRow={handleRowRendered}
         onChange={handleTableChange}
         />
@@ -434,6 +434,7 @@ function MaintenanceMediaLibraryTab({ mediaLibraryItems, onMediaLibraryItemsChan
 }
 
 MaintenanceMediaLibraryTab.propTypes = {
+  fetchingData: PropTypes.bool.isRequired,
   mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired,
   onMediaLibraryItemsChange: PropTypes.func.isRequired
 };

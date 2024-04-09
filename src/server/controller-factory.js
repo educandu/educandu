@@ -23,6 +23,7 @@ import MediaLibraryController from './media-library-controller.js';
 import DocumentInputController from './document-input-controller.js';
 import DocumentRatingController from './document-rating-controller.js';
 import DocumentCommentController from './document-comment-controller.js';
+import DocumentRequestController from './document-request-controller.js';
 import RecentContributionsController from './recent-contributions-controller.js';
 
 const setupControllers = [
@@ -50,6 +51,7 @@ const pageAndApiControllers = [
   DocumentInputController,
   DocumentRatingController,
   DocumentCommentController,
+  DocumentRequestController,
   MaintenanceController,
   NotificationController,
   RecentContributionsController
