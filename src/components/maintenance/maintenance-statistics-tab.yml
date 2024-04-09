@@ -1,0 +1,22 @@
+maintenanceStatisticsTab:
+  total:
+    en: Total requests
+    de: Gesamtanfragen
+  request:
+    en: Request
+    de: Anforderung
+  read:
+    en: Read
+    de: Lesen
+  write:
+    en: Write
+    de: Ändern
+  user:
+    en: User
+    de: Benutzer
+  anonymous:
+    en: Anonymous
+    de: Anonym
+  loggedIn:
+    en: Logged in
+    de: Angemeldet

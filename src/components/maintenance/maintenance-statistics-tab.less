@@ -1,0 +1,20 @@
+.MaintenanceStatisticsTab {
+  .ant-table-thead th::before {
+    height: 80% !important;
+  }
+
+  .ant-table-thead th[colspan] {
+    border-bottom: 1px solid @edu-border-color-light !important;
+  }
+
+  .ant-table-thead th[colspan]:not(:last-child)::before {
+    position: absolute;
+    height: 80%;
+    top: 50%;
+    inset-inline-end: 0;
+    width: 1px;
+    background-color: @edu-border-color-light;
+    transform: translateY(-50%);
+    content: "";
+  }
+}

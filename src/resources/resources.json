@@ -2767,6 +2767,36 @@
       "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden hierbei als nicht länger benutzt betrachtet.\n"
     }
   },
+  "maintenanceStatisticsTab": {
+    "total": {
+      "en": "Total requests",
+      "de": "Gesamtanfragen"
+    },
+    "request": {
+      "en": "Request",
+      "de": "Anforderung"
+    },
+    "read": {
+      "en": "Read",
+      "de": "Lesen"
+    },
+    "write": {
+      "en": "Write",
+      "de": "Ändern"
+    },
+    "user": {
+      "en": "User",
+      "de": "Benutzer"
+    },
+    "anonymous": {
+      "en": "Anonymous",
+      "de": "Anonym"
+    },
+    "loggedIn": {
+      "en": "Logged in",
+      "de": "Angemeldet"
+    }
+  },
   "maintenanceTagsTab": {
     "filterPlaceholder": {
       "en": "Filter by name",

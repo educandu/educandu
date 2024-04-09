@@ -8,15 +8,20 @@ import React, { useEffect, useState } from 'react';
 import ResourceTitleCell from '../resource-title-cell.js';
 import { documentWithRequestCountersShape } from '../../ui/default-prop-types.js';
 
-function createTableRows(docs) {
-  return docs.map(doc => ({
-    key: doc._id,
-    _id: doc._id,
-    documentId: doc._id,
-    title: doc.title,
-    createdOn: doc.createdOn,
-    updatedOn: doc.updatedOn,
-    createdBy: doc.createdBy,
+function createTableRows(documentsWithCounters) {
+  return documentsWithCounters.map(documentWithCounters => ({
+    _id: documentWithCounters._id,
+    key: documentWithCounters._id,
+    documentId: documentWithCounters._id,
+    title: documentWithCounters.title,
+    createdOn: documentWithCounters.createdOn,
+    updatedOn: documentWithCounters.updatedOn,
+    createdBy: documentWithCounters.createdBy,
+    totalCount: documentWithCounters.totalCount,
+    readCount: documentWithCounters.readCount,
+    writeCount: documentWithCounters.writeCount,
+    anonymousCount: documentWithCounters.anonymousCount,
+    loggedInCount: documentWithCounters.loggedInCount,
   }));
 }
 
@@ -82,20 +87,20 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
   };
 
   const renderDocumentTitle = (_title, row) => {
-    const doc = documentsWithRequestCounters.find(d => d._id === row.documentId);
-    if (!doc) {
+    const documentWithCounters = documentsWithRequestCounters.find(d => d._id === row.documentId);
+    if (!documentWithCounters) {
       return null;
     }
 
     return (
       <ResourceTitleCell
-        title={doc.title}
-        shortDescription={doc.shortDescription}
-        url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
-        createdOn={doc.createdOn}
-        createdBy={doc.createdBy}
-        updatedOn={doc.updatedOn}
-        updatedBy={doc.updatedBy}
+        title={documentWithCounters.title}
+        shortDescription={documentWithCounters.shortDescription}
+        url={routes.getDocUrl({ id: documentWithCounters._id, slug: documentWithCounters.slug })}
+        createdOn={documentWithCounters.createdOn}
+        createdBy={documentWithCounters.createdBy}
+        updatedOn={documentWithCounters.updatedOn}
+        updatedBy={documentWithCounters.updatedBy}
         />
     );
   };
@@ -106,6 +111,53 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
       dataIndex: 'title',
       key: 'title',
       render: renderDocumentTitle
+    },
+    {
+      title: t('total'),
+      dataIndex: 'totalCount',
+      key: 'totalCount',
+      render: _totalCount => _totalCount,
+      width: '100px'
+    },
+    {
+      title: t('request'),
+      responsive: ['sm'],
+      children: [
+        {
+          title: t('read'),
+          dataIndex: 'readCount',
+          key: 'readCount',
+          render: _readCount => _readCount,
+          width: '100px'
+        },
+        {
+          title: t('write'),
+          dataIndex: 'writeCount',
+          key: 'writeCount',
+          render: _writeCount => _writeCount,
+          width: '100px'
+        }
+      ]
+    },
+    {
+      title: t('user'),
+      responsive: ['md'],
+      children: [
+        {
+          title: t('anonymous'),
+          dataIndex: 'anonymousCount',
+          key: 'anonymousCount',
+          render: _anonymousCount => _anonymousCount,
+          width: '100px'
+        },
+        {
+          title: t('loggedIn'),
+          dataIndex: 'loggedInCount',
+          key: 'loggedInCount',
+          render: _loggedInCount => _loggedInCount,
+          width: '100px'
+        }
+      ]
     }
   ];
 
