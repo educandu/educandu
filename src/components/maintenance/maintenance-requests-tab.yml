@@ -1,7 +1,7 @@
-maintenanceStatisticsTab:
+maintenanceRequestsTab:
   total:
     en: Requests
-    de: Anforderungen
+    de: Requests
   request:
     en: Access
     de: Zugriff

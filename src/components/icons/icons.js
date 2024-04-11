@@ -30,8 +30,7 @@ import {
   IconChevronLeftPipe,
   IconZoomScan,
   IconHeart,
-  IconStarFilled,
-  IconTimeline
+  IconStarFilled
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -51,6 +50,7 @@ function createIconFromTablerIconComponent(TablerIconComponent, { filled } = {})
 }
 
 export const LineIcon = createIconFromSvgComponent(LineIconComponent);
+export const ClickIcon = createIconFromTablerIconComponent(IconClick);
 export const SpinIcon = createIconFromTablerIconComponent(IconLoader2);
 export const SelectIcon = createIconFromTablerIconComponent(IconClick);
 export const CircleIcon = createIconFromTablerIconComponent(IconCircle);
@@ -68,7 +68,6 @@ export const ResetIcon = createIconFromTablerIconComponent(IconArrowBackUp);
 export const StopIcon = createIconFromTablerIconComponent(IconSquareFilled);
 export const StrokeColorIcon = createIconFromTablerIconComponent(IconBrush);
 export const TriangleIcon = createIconFromTablerIconComponent(IconTriangle);
-export const TimelineIcon = createIconFromTablerIconComponent(IconTimeline);
 export const InputsIcon = createIconFromTablerIconComponent(IconTextCaption);
 export const ShapeIcon = createIconFromTablerIconComponent(IconCircleSquare);
 export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);

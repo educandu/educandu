@@ -2714,9 +2714,9 @@
       "en": "Tags",
       "de": "Tags"
     },
-    "statisticsTabTitle": {
-      "en": "Statistics",
-      "de": "Statistiken"
+    "requestsTabTitle": {
+      "en": "Requests",
+      "de": "Requests"
     }
   },
   "maintenanceDocumentsTab": {
@@ -2767,10 +2767,10 @@
       "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden hierbei als nicht länger benutzt betrachtet.\n"
     }
   },
-  "maintenanceStatisticsTab": {
+  "maintenanceRequestsTab": {
     "total": {
       "en": "Requests",
-      "de": "Anforderungen"
+      "de": "Requests"
     },
     "request": {
       "en": "Access",

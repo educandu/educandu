@@ -26,7 +26,7 @@ function createTableRows(documentsWithCounters) {
 }
 
 const getSanitizedQueryFromRequest = request => {
-  const query = request.query.tab === TAB.statistics ? request.query : {};
+  const query = request.query.tab === TAB.requests ? request.query : {};
 
   const pageNumber = Number(query.page);
   const pageSizeNumber = Number(query.pageSize);
@@ -37,9 +37,9 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }) {
+function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) {
   const request = useRequest();
-  const { t } = useTranslation('maintenanceStatisticsTab');
+  const { t } = useTranslation('maintenanceRequestsTab');
 
   const requestQuery = getSanitizedQueryFromRequest(request);
 
@@ -60,7 +60,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
       pageSize: pagination.pageSize
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.statistics, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.requests, queryParams));
   }, [pagination]);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
     const documentUrl = routes.getDocUrl({ id: documentWithCounters._id, slug: documentWithCounters.slug });
 
     return (
-      <a href={documentUrl} className="MaintenanceStatisticsTab-titleCell">
+      <a href={documentUrl} className="MaintenanceRequestsTab-titleCell">
         {_title}
       </a>
     );
@@ -163,7 +163,7 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
   ];
 
   return (
-    <div className="MaintenanceStatisticsTab">
+    <div className="MaintenanceRequestsTab">
       <Table
         dataSource={[...displayedRows]}
         columns={columns}
@@ -181,9 +181,9 @@ function MaintenanceStatisticsTab({ fetchingData, documentsWithRequestCounters }
   );
 }
 
-MaintenanceStatisticsTab.propTypes = {
+MaintenanceRequestsTab.propTypes = {
   fetchingData: PropTypes.bool.isRequired,
   documentsWithRequestCounters: PropTypes.arrayOf(documentWithRequestCountersShape).isRequired,
 };
 
-export default MaintenanceStatisticsTab;
+export default MaintenanceRequestsTab;
