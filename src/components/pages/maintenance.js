@@ -1,7 +1,7 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
+import { ClickIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
-import { TimelineIcon } from '../icons/icons.js';
 import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
@@ -11,9 +11,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import MaintenanceRequestsTab from '../maintenance/maintenance-requests-tab.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
-import MaintenanceStatisticsTab from '../maintenance/maintenance-statistics-tab.js';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
 
@@ -32,8 +32,8 @@ function Maintenance({ PageTemplate }) {
   const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
   const [fetchingTags, setFetchingTags] = useDebouncedFetchingState(true);
   const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
+  const [fetchingRequests, setFetchingRequests] = useDebouncedFetchingState(true);
   const [fetchingDocuments, setFetchingDocuments] = useDebouncedFetchingState(true);
-  const [fetchingStatistics, setFetchingStatistics] = useDebouncedFetchingState(true);
   const [documentsWithRequestCounters, setDocumentsWithRequestCounters] = useState([]);
   const [fetchingMediaLibraryItems, setFetchingMediaLibraryItems] = useDebouncedFetchingState(true);
 
@@ -77,15 +77,15 @@ function Maintenance({ PageTemplate }) {
     }
   }, [setFetchingTags, documentApiClient, mediaLibraryApiClient]);
 
-  const fetchStatistics = useCallback(async () => {
+  const fetchRequests = useCallback(async () => {
     try {
-      setFetchingStatistics(true);
+      setFetchingRequests(true);
       const apiClientResponse = await documentRequestApiClient.getMaintenanceDocumentRequests();
       setDocumentsWithRequestCounters(apiClientResponse.documentsWithRequestCounters);
     } finally {
-      setFetchingStatistics(false);
+      setFetchingRequests(false);
     }
-  }, [setFetchingStatistics, documentRequestApiClient]);
+  }, [setFetchingRequests, documentRequestApiClient]);
 
   useEffect(() => {
     (async () => {
@@ -99,14 +99,14 @@ function Maintenance({ PageTemplate }) {
         case TAB.tags:
           await fetchTags();
           break;
-        case TAB.statistics:
-          await fetchStatistics();
+        case TAB.requests:
+          await fetchRequests();
           break;
         default:
           break;
       }
     })();
-  }, [currentTab, fetchDocuments, fetchMediaLibraryItems, fetchTags, fetchStatistics]);
+  }, [currentTab, fetchDocuments, fetchMediaLibraryItems, fetchTags, fetchRequests]);
 
   const tabItems = [
     {
@@ -137,11 +137,11 @@ function Maintenance({ PageTemplate }) {
       )
     },
     {
-      key: TAB.statistics,
-      label: <div><TimelineIcon />{t('statisticsTabTitle')}</div>,
+      key: TAB.requests,
+      label: <div><ClickIcon />{t('requestsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceStatisticsTab fetchingData={fetchingStatistics} documentsWithRequestCounters={documentsWithRequestCounters} />
+          <MaintenanceRequestsTab fetchingData={fetchingRequests} documentsWithRequestCounters={documentsWithRequestCounters} />
         </div>
       )
     }

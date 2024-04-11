@@ -11,6 +11,6 @@ maintenance:
   tagsTabTitle:
     en: Tags
     de: Tags
-  statisticsTabTitle:
-    en: Statistics
-    de: Statistiken
+  requestsTabTitle:
+    en: Requests
+    de: Requests
