@@ -14,7 +14,6 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import MaintenanceRequestsTab from '../maintenance/maintenance-requests-tab.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
-import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
 
 const determineTab = query => Object.values(TAB)
@@ -25,16 +24,13 @@ function Maintenance({ PageTemplate }) {
 
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
 
   const { t } = useTranslation('maintenance');
   const [documents, setDocuments] = useState([]);
   const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
   const [fetchingTags, setFetchingTags] = useDebouncedFetchingState(true);
   const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
-  const [fetchingRequests, setFetchingRequests] = useDebouncedFetchingState(true);
   const [fetchingDocuments, setFetchingDocuments] = useDebouncedFetchingState(true);
-  const [documentsWithRequestCounters, setDocumentsWithRequestCounters] = useState([]);
   const [fetchingMediaLibraryItems, setFetchingMediaLibraryItems] = useDebouncedFetchingState(true);
 
   const handleTabChange = tab => {
@@ -77,16 +73,6 @@ function Maintenance({ PageTemplate }) {
     }
   }, [setFetchingTags, documentApiClient, mediaLibraryApiClient]);
 
-  const fetchRequests = useCallback(async () => {
-    try {
-      setFetchingRequests(true);
-      const apiClientResponse = await documentRequestApiClient.getMaintenanceDocumentRequests();
-      setDocumentsWithRequestCounters(apiClientResponse.documentsWithRequestCounters);
-    } finally {
-      setFetchingRequests(false);
-    }
-  }, [setFetchingRequests, documentRequestApiClient]);
-
   useEffect(() => {
     (async () => {
       switch (currentTab) {
@@ -99,14 +85,11 @@ function Maintenance({ PageTemplate }) {
         case TAB.tags:
           await fetchTags();
           break;
-        case TAB.requests:
-          await fetchRequests();
-          break;
         default:
           break;
       }
     })();
-  }, [currentTab, fetchDocuments, fetchMediaLibraryItems, fetchTags, fetchRequests]);
+  }, [currentTab, fetchDocuments, fetchMediaLibraryItems, fetchTags]);
 
   const tabItems = [
     {
@@ -141,7 +124,7 @@ function Maintenance({ PageTemplate }) {
       label: <div><ClickIcon />{t('requestsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceRequestsTab fetchingData={fetchingRequests} documentsWithRequestCounters={documentsWithRequestCounters} />
+          <MaintenanceRequestsTab />
         </div>
       )
     }

@@ -13,8 +13,8 @@ describe('document-request-store', () => {
   let container;
   const sandbox = createSandbox();
 
-  const now = new Date('2024-04-04T16:00:00.000Z');
-  const nowDayOfWeek = DAY_OF_WEEK.thursday;
+  const today = new Date('2024-04-04T00:00:00.000Z');
+  const yesterday = new Date('2024-04-03T00:00:00.000Z');
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -27,7 +27,7 @@ describe('document-request-store', () => {
   });
 
   beforeEach(() => {
-    sandbox.useFakeTimers(now);
+    sandbox.useFakeTimers(today);
   });
 
   afterEach(async () => {
@@ -46,8 +46,8 @@ describe('document-request-store', () => {
         documentRevisionId: uniqueId.create(),
         isWriteRequest: false,
         isLoggedInRequest: false,
-        registeredOn: now,
-        registeredOnDayOfWeek: nowDayOfWeek
+        registeredOn: yesterday,
+        registeredOnDayOfWeek: DAY_OF_WEEK.monday
       });
       await db.documentRequests.insertOne({
         _id: uniqueId.create(),
@@ -55,8 +55,8 @@ describe('document-request-store', () => {
         documentRevisionId: uniqueId.create(),
         isWriteRequest: false,
         isLoggedInRequest: true,
-        registeredOn: now,
-        registeredOnDayOfWeek: nowDayOfWeek
+        registeredOn: yesterday,
+        registeredOnDayOfWeek: DAY_OF_WEEK.monday
       });
       await db.documentRequests.insertOne({
         _id: uniqueId.create(),
@@ -64,8 +64,8 @@ describe('document-request-store', () => {
         documentRevisionId: uniqueId.create(),
         isWriteRequest: true,
         isLoggedInRequest: true,
-        registeredOn: now,
-        registeredOnDayOfWeek: nowDayOfWeek
+        registeredOn: today,
+        registeredOnDayOfWeek: DAY_OF_WEEK.tuesday
       });
       await db.documentRequests.insertOne({
         _id: uniqueId.create(),
@@ -73,35 +73,113 @@ describe('document-request-store', () => {
         documentRevisionId: uniqueId.create(),
         isWriteRequest: false,
         isLoggedInRequest: false,
-        registeredOn: now,
-        registeredOnDayOfWeek: nowDayOfWeek
+        registeredOn: today,
+        registeredOnDayOfWeek: DAY_OF_WEEK.tuesday
       });
-      result = await sut.getAllDocumentRequestCounters();
     });
 
-    it('should return the aggregated requests', () => {
-      const document1 = result.find(r => r.documentId === documentId1);
-      const document2 = result.find(r => r.documentId === documentId2);
-
-      expect(result).toHaveLength(2);
-
-      expect(document1).toStrictEqual({
-        _id: documentId1,
-        documentId: documentId1,
-        totalCount: 3,
-        readCount: 2,
-        writeCount: 1,
-        anonymousCount: 1,
-        loggedInCount: 2
+    describe('called without filters', () => {
+      beforeEach(async () => {
+        result = await sut.getAllDocumentRequestCounters();
       });
-      expect(document2).toStrictEqual({
-        _id: documentId2,
-        documentId: documentId2,
-        totalCount: 1,
-        readCount: 1,
-        writeCount: 0,
-        anonymousCount: 1,
-        loggedInCount: 0
+
+      it('should return the aggregated requests', () => {
+        const document1 = result.find(r => r.documentId === documentId1);
+        const document2 = result.find(r => r.documentId === documentId2);
+
+        expect(result).toHaveLength(2);
+
+        expect(document1).toStrictEqual({
+          _id: documentId1,
+          documentId: documentId1,
+          totalCount: 3,
+          readCount: 2,
+          writeCount: 1,
+          anonymousCount: 1,
+          loggedInCount: 2
+        });
+        expect(document2).toStrictEqual({
+          _id: documentId2,
+          documentId: documentId2,
+          totalCount: 1,
+          readCount: 1,
+          writeCount: 0,
+          anonymousCount: 1,
+          loggedInCount: 0
+        });
+      });
+    });
+
+    describe('called with daysOfWeek filter', () => {
+      beforeEach(async () => {
+        result = await sut.getAllDocumentRequestCounters({ daysOfWeek: [DAY_OF_WEEK.monday] });
+      });
+
+      it('should return the requests that match the filters, aggregated', () => {
+        expect(result).toHaveLength(1);
+
+        expect(result).toStrictEqual([{
+          _id: documentId1,
+          documentId: documentId1,
+          totalCount: 2,
+          readCount: 2,
+          writeCount: 0,
+          anonymousCount: 1,
+          loggedInCount: 1
+        }]);
+      });
+    });
+
+    describe('called with registeredFrom filter', () => {
+      beforeEach(async () => {
+        result = await sut.getAllDocumentRequestCounters({ registeredFrom: yesterday });
+      });
+
+      it('should return the requests that match the filters, aggregated', () => {
+        const document1 = result.find(r => r.documentId === documentId1);
+        const document2 = result.find(r => r.documentId === documentId2);
+
+        expect(result).toHaveLength(2);
+
+        expect(document1).toStrictEqual({
+          _id: documentId1,
+          documentId: documentId1,
+          totalCount: 1,
+          readCount: 0,
+          writeCount: 1,
+          anonymousCount: 0,
+          loggedInCount: 1
+        });
+
+        expect(document2).toStrictEqual({
+          _id: documentId2,
+          documentId: documentId2,
+          totalCount: 1,
+          readCount: 1,
+          writeCount: 0,
+          anonymousCount: 1,
+          loggedInCount: 0
+        });
+      });
+    });
+
+    describe('called with registeredUntil filter', () => {
+      beforeEach(async () => {
+        result = await sut.getAllDocumentRequestCounters({ registeredUntil: today });
+      });
+
+      it('should return the requests that match the filters, aggregated', () => {
+        expect(result).toHaveLength(1);
+
+        expect(result).toStrictEqual([{
+          _id: documentId1,
+          documentId: documentId1,
+          totalCount: 2,
+          readCount: 2,
+          writeCount: 0,
+          anonymousCount: 1,
+          loggedInCount: 1
+        }]);
       });
     });
   });

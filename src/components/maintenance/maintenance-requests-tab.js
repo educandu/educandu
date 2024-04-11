@@ -1,16 +1,17 @@
 import by from 'thenby';
 import dayjs from 'dayjs';
-import PropTypes from 'prop-types';
 import { TAB } from './constants.js';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { Table, DatePicker, Checkbox } from 'antd';
 import { useRequest } from '../request-context.js';
-import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import { DAY_OF_WEEK } from '../../domain/constants.js';
-import { documentWithRequestCountersShape } from '../../ui/default-prop-types.js';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
 const { RangePicker } = DatePicker;
 
@@ -52,12 +53,12 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) {
+function MaintenanceRequestsTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
   const { t } = useTranslation('maintenanceRequestsTab');
+  const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
 
-  const requestQuery = getSanitizedQueryFromRequest(request);
   const daysOfWeekOptions = [
     { label: t('mondayCheckbox'), value: DAY_OF_WEEK.monday },
     { label: t('tuesdayCheckbox'), value: DAY_OF_WEEK.tuesday },
@@ -68,8 +69,11 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
     { label: t('sundayCheckbox'), value: DAY_OF_WEEK.sunday }
   ];
 
+  const requestQuery = getSanitizedQueryFromRequest(request);
+
   const [filter, setFilter] = useState(requestQuery.filter);
   const [daysOfWeek, setDaysOfWeek] = useState(requestQuery.daysOfWeek);
+  const [documentRequestCounters, setDocumentRequestCounters] = useState([]);
   const [registeredFrom, setRegisteredFrom] = useState(requestQuery.registeredFrom);
   const [registeredUntil, setRegisteredUntil] = useState(requestQuery.registeredUntil);
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
@@ -77,7 +81,17 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
 
-  const [renderingRows, setRenderingRows] = useState(!!documentsWithRequestCounters.length);
+  const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setFetchingData(true);
+      const apiClientResponse = await documentRequestApiClient.getMaintenanceDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek });
+      setDocumentRequestCounters(apiClientResponse.documentRequestCounters);
+    } finally {
+      setFetchingData(false);
+    }
+  }, [registeredFrom, registeredUntil, daysOfWeek, setFetchingData, documentRequestApiClient]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -97,8 +111,12 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
   }, [filter, registeredFrom, registeredUntil, daysOfWeek, pagination]);
 
   useEffect(() => {
-    setAllRows(createTableRows(documentsWithRequestCounters));
-  }, [documentsWithRequestCounters]);
+    (async () => await fetchData())();
+  }, [fetchData]);
+
+  useEffect(() => {
+    setAllRows(createTableRows(documentRequestCounters));
+  }, [documentRequestCounters]);
 
   useEffect(() => {
     const lowerCasedFilter = filter.toLowerCase().trim();
@@ -107,7 +125,6 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
       ? allRows.filter(row => row.title.toLowerCase().includes(lowerCasedFilter))
       : allRows;
 
-    setRenderingRows(!!filteredRows.length);
     setDisplayedRows(filteredRows.sort(by(row => row.createdOn, { direction: 'desc' })));
   }, [allRows, filter]);
 
@@ -120,9 +137,9 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
     setFilter(newFilter);
   };
 
-  const handleDateRangeChange = newDateRange=> {
+  const handleDateRangeChange = newDateRange => {
     setRegisteredFrom(newDateRange ? newDateRange[0].startOf('date').toDate() : null);
-    setRegisteredUntil(newDateRange ? newDateRange[1].startOf('date').toDate() : null);
+    setRegisteredUntil(newDateRange ? newDateRange[1].endOf('date').toDate() : null);
   };
 
   const handleDaysOfWeekChange = newCheckedValues => {
@@ -131,22 +148,12 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
     }
   };
 
-  const handleRowRendered = (record, rowIndex) => {
-    const indexOfLastRecordOnPage = Math.min(displayedRows.length - 1, pagination.pageSize - 1);
-
-    if (rowIndex === indexOfLastRecordOnPage) {
-      const delayToAvoidRerenderingClash = 100;
-      setTimeout(() => setRenderingRows(false), delayToAvoidRerenderingClash);
-    }
-    return {};
-  };
-
   const determineDisabledDate = dayjsValue => {
     return dayjsValue.isAfter(new Date());
   };
 
   const renderDocumentTitle = (_title, row) => {
-    const documentWithCounters = documentsWithRequestCounters.find(d => d._id === row.documentId);
+    const documentWithCounters = documentRequestCounters.find(d => d._id === row.documentId);
     if (!documentWithCounters) {
       return null;
     }
@@ -228,6 +235,7 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
           <FilterInput
             size="large"
             value={filter}
+            disabled={fetchingData}
             onChange={handleFilterChange}
             placeholder={t('titlePlaceholder')}
             />
@@ -235,8 +243,8 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
             <RangePicker
               allowClear
               format={dateFormat}
+              disabled={fetchingData}
               disabledDate={determineDisabledDate}
-              className='MaintenanceRequestsTab-controlsColumnFiltersDateRange'
               placeholder={[t('fromDatePlaceholder'), t('untilDatePlaceholder')]}
               value={[
                 registeredFrom ? dayjs(registeredFrom) : null,
@@ -246,15 +254,11 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
               />
             <Checkbox.Group
               value={daysOfWeek}
+              disabled={fetchingData}
               options={daysOfWeekOptions}
               onChange={handleDaysOfWeekChange}
               />
           </div>
-        </div>
-        <div className="MaintenanceRequestsTab-controlsColumn">
-          <div>[Sorting by 1]</div>
-          <div>[Sorting by 2]</div>
-          <div>[Sorting by 3]</div>
         </div>
       </div>
       <Table
@@ -266,17 +270,11 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={fetchingData || renderingRows}
-        onRow={handleRowRendered}
+        loading={fetchingData}
         onChange={handleTableChange}
         />
     </div>
   );
 }
-
-MaintenanceRequestsTab.propTypes = {
-  fetchingData: PropTypes.bool.isRequired,
-  documentsWithRequestCounters: PropTypes.arrayOf(documentWithRequestCountersShape).isRequired,
-};
 
 export default MaintenanceRequestsTab;

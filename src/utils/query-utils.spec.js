@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createTextSearchQuery, createTagsPipelineQuery } from './query-utils.js';
+import { createTextSearchQuery, createTagsPipelineQuery, parseNumberArrayFromCsv, parseDate } from './query-utils.js';
 
 describe('query-utils', () => {
 
@@ -173,6 +173,51 @@ describe('query-utils', () => {
               }
             } }
           ]
+        });
+      });
+    });
+  });
+
+  describe('parseNumberArrayFromCsv', () => {
+    let result;
+
+    const testCases = [
+      { value: '', expectedResult: [] },
+      { value: '1,2 ', expectedResult: [1,2] },
+      { value: '1,NaN', expectedResult: [1] },
+    ];
+
+    testCases.forEach(({ value, expectedResult }) => {
+      describe(`when the value is '${value}'`, () => {
+        beforeEach(() => {
+          result = parseNumberArrayFromCsv(value);
+        });
+
+        it(`should return [${expectedResult}]`, () => {
+          expect(result).toStrictEqual(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('parseDate', () => {
+    let result;
+
+    const testCases = [
+      { value: '', expectedResult: null },
+      { value: 0, expectedResult: null },
+      { value: 'invalid format', expectedResult: null },
+      { value: '2024-04-03T00:00:00.000Z', expectedResult: new Date('2024-04-03T00:00:00.000Z') }
+    ];
+
+    testCases.forEach(({ value, expectedResult }) => {
+      describe(`when the value is '${value}'`, () => {
+        beforeEach(() => {
+          result = parseDate(value);
+        });
+
+        it(`should return [${expectedResult}]`, () => {
+          expect(result).toStrictEqual(expectedResult);
         });
       });
     });
