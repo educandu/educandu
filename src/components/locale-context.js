@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+import 'dayjs/locale/de.js';
 import moment from 'moment';
 import 'moment/locale/de.js';
 import memoizee from 'memoizee';
@@ -13,6 +15,9 @@ import ResourceManager from '../resources/resource-manager.js';
 import { UI_LANGUAGE_COOKIE_NAME } from '../domain/constants.js';
 import React, { useState, useMemo, useEffect, useContext } from 'react';
 import { SUPPORTED_UI_LANGUAGES, UI_LANGUAGE_EN, UI_LANGUAGE_DE, getLocale } from '../resources/ui-language.js';
+
+// localization for AntD DatePicker components
+dayjs.locale('de');
 
 const antLocales = {
   enUS: enUSNs.default || enUSNs,
