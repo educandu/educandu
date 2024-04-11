@@ -9,14 +9,13 @@ import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
-import { replaceItem } from '../../utils/array-utils.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import DocumentBadgesCell from '../document-bagdes-cell.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
-import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
+import { maintenanceDocumentShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
@@ -27,7 +26,9 @@ const SORTING_VALUE = {
   creator: 'creator',
   archived: 'archived',
   protected: 'protected',
-  verified: 'verified'
+  verified: 'verified',
+  userRatingsCount: 'userRatingsCount',
+  averageRating: 'averageRating'
 };
 
 function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.create, document = null, isOpen = false }) {
@@ -72,7 +73,9 @@ function createTableRows(docs) {
     protected: doc.publicContext.protected,
     archived: doc.publicContext.archived,
     verified: doc.publicContext.verified,
-    tags: doc.tags
+    tags: doc.tags,
+    userRatingsCount: doc.rating.userRatingsCount,
+    averageRating: doc.rating.averageRating
   }));
 }
 
@@ -134,7 +137,9 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
     { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.creator },
     { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: SORTING_VALUE.archived },
     { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: SORTING_VALUE.protected },
-    { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: SORTING_VALUE.verified }
+    { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: SORTING_VALUE.verified },
+    { label: t('common:userRatingsCount'), appliedLabel: t('common:sortedByUserRatingsCount'), value: SORTING_VALUE.userRatingsCount },
+    { label: t('common:averageRating'), appliedLabel: t('common:sortedByAverageRating'), value: SORTING_VALUE.averageRating }
   ], [t]);
 
   const tableSorters = useMemo(() => ({
@@ -144,7 +149,9 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
     creator: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
     archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction)),
     protected: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.protected, direction)),
-    verified: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.verified, direction))
+    verified: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.verified, direction)),
+    userRatingsCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.userRatingsCount, direction)),
+    averageRating: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.averageRating, direction))
   }), []);
 
   useEffect(() => {
@@ -204,18 +211,26 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
 
   const handleDocumentMetadataModalSave = (savedDocuments, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+    const savedDocument = savedDocuments[0];
     switch (documentMetadataModalState.mode) {
       case DOCUMENT_METADATA_MODAL_MODE.create:
       case DOCUMENT_METADATA_MODAL_MODE.clone:
         window.location = routes.getDocUrl({
-          id: savedDocuments[0]._id,
-          slug: savedDocuments[0].slug,
+          id: savedDocument._id,
+          slug: savedDocument.slug,
           view: DOC_VIEW_QUERY_PARAM.edit,
           templateDocumentId
         });
         break;
       case DOCUMENT_METADATA_MODAL_MODE.update:
-        onDocumentsChange(savedDocuments.reduce((all, doc) => replaceItem(all, doc), documents));
+        onDocumentsChange(documents.map(document => {
+          return document._id === savedDocument._id
+            ? {
+              ...document,
+              ...savedDocument
+            }
+            : document;
+        }));
         break;
       default:
         throw new Error(`Invalid document metadata modal mode: '${documentMetadataModalState.mode}'`);
@@ -247,6 +262,7 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
         title={doc.title}
         shortDescription={doc.shortDescription}
         url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
+        rating={doc.rating}
         createdOn={doc.createdOn}
         createdBy={doc.createdBy}
         updatedOn={doc.updatedOn}
@@ -359,7 +375,7 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
 
 MaintenanceDocumentsTab.propTypes = {
   fetchingData: PropTypes.bool.isRequired,
-  documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+  documents: PropTypes.arrayOf(maintenanceDocumentShape).isRequired,
   onDocumentsChange: PropTypes.func.isRequired
 };
 

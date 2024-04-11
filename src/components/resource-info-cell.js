@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import StarRating from './star-rating.js';
 
-function ResourceInfoCell({ title, url, shortDescription, subtext, onTitleClick }) {
+function ResourceInfoCell({ title, url, shortDescription, subtext, rating, onTitleClick }) {
   return (
     <div className="ResourceInfoCell" >
       <div className="ResourceInfoCell-content">
@@ -9,6 +10,15 @@ function ResourceInfoCell({ title, url, shortDescription, subtext, onTitleClick 
           <a className="ResourceInfoCell-title" href={url} onClick={onTitleClick}>
             {title}
           </a>
+          {!!rating && (
+            <div className="ResourceInfoCell-rating">
+              <StarRating
+                compact
+                value={rating.averageRating}
+                totalCount={rating.userRatingsCount}
+                />
+            </div>
+          )}
           {!!shortDescription && <div className="ResourceInfoCell-description">{shortDescription}</div>}
           <div className="ResourceInfoCell-subtext">{subtext}</div>
         </div>
@@ -22,10 +32,15 @@ ResourceInfoCell.propTypes = {
   url: PropTypes.string.isRequired,
   shortDescription: PropTypes.string.isRequired,
   subtext: PropTypes.node.isRequired,
+  rating: PropTypes.shape({
+    userRatingsCount: PropTypes.number.isRequired,
+    averageRating: PropTypes.number
+  }),
   onTitleClick: PropTypes.func
 };
 
 ResourceInfoCell.defaultProps = {
+  rating: null,
   onTitleClick: null
 };
 

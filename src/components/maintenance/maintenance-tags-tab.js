@@ -8,7 +8,7 @@ import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { documentExtendedMetadataShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
+import { maintenanceDocumentShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const TAG_CATEGORY_FILTER = {
@@ -317,7 +317,7 @@ function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
 
 MaintenanceTagsTab.propTypes = {
   fetchingData: PropTypes.bool.isRequired,
-  documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+  documents: PropTypes.arrayOf(maintenanceDocumentShape).isRequired,
   mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired
 };
 

@@ -168,6 +168,13 @@ export const otherUserShape = PropTypes.shape({
   displayName: PropTypes.string.isRequired
 });
 
+export const documentRatingShape = PropTypes.shape({
+  _id: PropTypes.string,
+  documentId: PropTypes.string.isRequired,
+  userRatingsCount: PropTypes.number.isRequired,
+  averageRating: PropTypes.number
+});
+
 export const sectionShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   revision: PropTypes.string, // Not required because it's null for newly created sections
@@ -205,6 +212,15 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   revision: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   updatedBy: otherUserShape.isRequired
+});
+
+export const maintenanceDocumentShape = PropTypes.shape({
+  ...commonDocumentOrRevisionProps,
+  _id: PropTypes.string.isRequired,
+  revision: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: otherUserShape.isRequired,
+  rating: documentRatingShape.isRequired
 });
 
 const contributedDocumentMetadataProps = {
@@ -264,13 +280,6 @@ export const documentRevisionShape = PropTypes.shape({
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   publicContext: documentPublicContextShape,
   roomContext: documentRoomContextShape
-});
-
-export const documentRatingShape = PropTypes.shape({
-  _id: PropTypes.string,
-  documentId: PropTypes.string.isRequired,
-  userRatingsCount: PropTypes.number.isRequired,
-  averageRating: PropTypes.number
 });
 
 export const documentInputSectionFileShape = PropTypes.shape({
