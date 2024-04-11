@@ -1338,55 +1338,56 @@ describe('client-data-mapping-service', () => {
     });
   });
 
-  describe('mapDocumentRequestCountersToDocuments', () => {
+  describe('mapDocumentRequestCounters', () => {
     let result;
-    let documents;
     let documentRequestCounters;
 
     const documentId1 = uniqueId.create();
     const documentId2 = uniqueId.create();
 
     beforeEach(async () => {
-      documents = [
+      const documents = [
         {
           _id: documentId1,
-          tags: ['a', 'b'],
           slug: 'document-1',
-          title: 'Document 1',
-          shortDescription: 'This is Document 1',
-          createdOn: now,
-          createdBy: user1._id,
-          updatedOn: now,
-          updatedBy: user1._id,
+          title: 'Document 1'
         },
         {
           _id: documentId2,
-          tags: ['b'],
           slug: 'document-2',
-          title: 'Document 2',
-          shortDescription: 'This is Document 2',
-          createdOn: now,
-          createdBy: user1._id,
-          updatedOn: now,
-          updatedBy: user1._id,
+          title: 'Document 2'
         }
       ];
+
+      sandbox.stub(documentStore, 'getDocumentsMetadataByIds').resolves(documents);
+
       documentRequestCounters = [
         {
-          _id: documentId1,
           documentId: documentId1,
           totalCount: 3,
           readCount: 2,
           writeCount: 1,
           anonymousCount: 2,
           loggedInCount: 1
+        },
+        {
+          documentId: documentId2,
+          totalCount: 1,
+          readCount: 1,
+          writeCount: 0,
+          anonymousCount: 1,
+          loggedInCount: 0
         }
       ];
 
-      result = await sut.mapDocumentRequestCountersToDocuments({ documents, documentRequestCounters });
+      result = await sut.mapDocumentRequestCounters({ documentRequestCounters });
     });
 
-    it('should map the documentRequestCounters data onto the documents data', () => {
+    it('should call documentStore.getDocumentsMetadataByIds', () => {
+      assert.calledWith(documentStore.getDocumentsMetadataByIds, [documentId1, documentId2]);
+    });
+
+    it('should map the documentRequestCounters data', () => {
       expect(result).toStrictEqual([
         {
           _id: documentId1,
@@ -1402,10 +1403,10 @@ describe('client-data-mapping-service', () => {
           _id: documentId2,
           slug: 'document-2',
           title: 'Document 2',
-          totalCount: 0,
-          readCount: 0,
+          totalCount: 1,
+          readCount: 1,
           writeCount: 0,
-          anonymousCount: 0,
+          anonymousCount: 1,
           loggedInCount: 0
         }
       ]);

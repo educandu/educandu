@@ -26,16 +26,10 @@ class DocumentController {
   }
 
   async handleGetDocumentRequestsForMaintenance(req, res) {
-    const { user } = req;
+    const documentRequestCounters = await this.documentRequestService.getAllDocumentRequestCounters();
+    const mappedDocumentRequestCounters = await this.clientDataMappingService.mapDocumentRequestCounters({ documentRequestCounters });
 
-    const [documents, documentRequestCounters] = await Promise.all([
-      this.documentService.getAllPublicDocumentsMetadata({ includeArchived: true }),
-      this.documentRequestService.getAllDocumentRequestCounters()
-    ]);
-
-    const mappedDocumentsWithRequestCounters = await this.clientDataMappingService.mapDocumentRequestCountersToDocuments({ documentRequestCounters, documents, user });
-
-    return res.send({ documentsWithRequestCounters: mappedDocumentsWithRequestCounters });
+    return res.send({ documentRequestCounters: mappedDocumentRequestCounters });
   }
 
   registerApi(router) {
