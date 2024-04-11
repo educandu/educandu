@@ -29,6 +29,20 @@
   }
 }
 
+.MaintenanceRequestsTab-controls {
+  margin-bottom: 40px;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: 2fr 1fr auto;
+  grid-template-rows: auto;
+  align-items: center;
+
+  @media @edu-media-phone {
+    grid-template-columns: 100%;
+    grid-template-rows: repeat(3, auto);
+  }
+}
+
 .MaintenanceRequestsTab-titleCell {
   .m-line-clamp(1);
   text-decoration: none;

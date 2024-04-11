@@ -20,3 +20,7 @@ maintenanceRequestsTab:
   loggedIn:
     en: Logged in
     de: Angemeldet
+  filterPlaceholder:
+    en: Filter by document title
+    de: Nach Dokument-Titel filtern
+

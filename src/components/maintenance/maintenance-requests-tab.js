@@ -3,6 +3,7 @@ import { Table } from 'antd';
 import PropTypes from 'prop-types';
 import { TAB } from './constants.js';
 import routes from '../../utils/routes.js';
+import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
@@ -32,6 +33,7 @@ const getSanitizedQueryFromRequest = request => {
   const pageSizeNumber = Number(query.pageSize);
 
   return {
+    filter: (query.filter || '').trim(),
     page: !isNaN(pageNumber) ? pageNumber : 1,
     pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
   };
@@ -43,6 +45,7 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
 
   const requestQuery = getSanitizedQueryFromRequest(request);
 
+  const [filter, setFilter] = useState(requestQuery.filter);
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
 
   const [allRows, setAllRows] = useState([]);
@@ -56,24 +59,36 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
 
   useEffect(() => {
     const queryParams = {
+      filter,
       page: pagination.page,
       pageSize: pagination.pageSize
     };
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.requests, queryParams));
-  }, [pagination]);
+  }, [filter, pagination]);
 
   useEffect(() => {
     setAllRows(createTableRows(documentsWithRequestCounters));
   }, [documentsWithRequestCounters]);
 
   useEffect(() => {
-    setRenderingRows(!!allRows.length);
-    setDisplayedRows(allRows.sort(by(row => row.createdOn, { direction: 'desc' })));
-  }, [allRows]);
+    const lowerCasedFilter = filter.toLowerCase();
+
+    const filteredRows = lowerCasedFilter
+      ? allRows.filter(row => row.title.toLowerCase().includes(lowerCasedFilter))
+      : allRows;
+
+    setRenderingRows(!!filteredRows.length);
+    setDisplayedRows(filteredRows.sort(by(row => row.createdOn, { direction: 'desc' })));
+  }, [allRows, filter]);
 
   const handleTableChange = ({ current, pageSize }) => {
     setPagination({ page: current, pageSize });
+  };
+
+  const handleFilterChange = event => {
+    const newFilter = event.target.value;
+    setFilter(newFilter);
   };
 
   const handleRowRendered = (record, rowIndex) => {
@@ -164,6 +179,15 @@ function MaintenanceRequestsTab({ fetchingData, documentsWithRequestCounters }) 
 
   return (
     <div className="MaintenanceRequestsTab">
+      <div className="MaintenanceRequestsTab-controls">
+        <FilterInput
+          size="large"
+          className="MaintenanceRequestsTab-filter"
+          value={filter}
+          onChange={handleFilterChange}
+          placeholder={t('filterPlaceholder')}
+          />
+      </div>
       <Table
         dataSource={[...displayedRows]}
         columns={columns}
