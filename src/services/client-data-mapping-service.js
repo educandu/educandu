@@ -234,19 +234,22 @@ class ClientDataMappingService {
     return mappedAllRoomMediaOverview;
   }
 
-  mapDocumentRequestCountersToDocuments({ documentRequestCounters, documents }) {
-    const mappedDocumentsWithRequestCounters = documents.map(document => {
-      const currentCounters = documentRequestCounters.find(counters => counters.documentId === document._id);
+  async mapDocumentRequestCounters({ documentRequestCounters }) {
+    const documentIds = documentRequestCounters.map(counter => counter.documentId);
+    const documents = await this.documentStore.getDocumentsMetadataByIds(documentIds);
+
+    const mappedDocumentsWithRequestCounters = documentRequestCounters.map(counter => {
+      const document = documents.find(doc => doc._id === counter.documentId);
 
       return {
-        _id: document._id,
+        _id: counter.documentId,
         slug: document.slug,
         title: document.title,
-        totalCount: currentCounters?.totalCount || 0,
-        readCount: currentCounters?.readCount || 0,
-        writeCount: currentCounters?.writeCount || 0,
-        anonymousCount: currentCounters?.anonymousCount || 0,
-        loggedInCount: currentCounters?.loggedInCount || 0
+        totalCount: counter.totalCount,
+        readCount: counter.readCount,
+        writeCount: counter.writeCount,
+        anonymousCount: counter.anonymousCount,
+        loggedInCount: counter.loggedInCount
       };
     });
 

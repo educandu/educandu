@@ -29,6 +29,35 @@
   }
 }
 
+.MaintenanceRequestsTab-controls {
+  display: grid;
+  gap: 50px;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto;
+  align-items: start;
+  margin-bottom: 40px;
+
+  @media @edu-media-phone {
+    grid-template-columns: 100%;
+    grid-template-rows: repeat(2, auto);
+  }
+}
+
+.MaintenanceRequestsTab-controlsColumn {
+  display: grid;
+  gap: 15px;
+  grid-template-rows: auto;
+  align-items: start;
+}
+
+.MaintenanceRequestsTab-controlsColumnFilters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .m-fake-flex-gap(15px);
+  flex-wrap: wrap;
+}
+
 .MaintenanceRequestsTab-titleCell {
   .m-line-clamp(1);
   text-decoration: none;

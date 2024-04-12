@@ -1,22 +1,52 @@
 maintenanceRequestsTab:
-  total:
+  totalColumnHeader:
     en: Requests
     de: Requests
-  request:
+  requestColumnHeader:
     en: Access
     de: Zugriff
-  read:
+  readColumnHeader:
     en: Read
     de: Lesen
-  write:
+  writeColumnHeader:
     en: Write
     de: Schreiben
-  user:
+  userColumnHeader:
     en: User
     de: Benutzer
-  anonymous:
+  anonymousColumnHeader:
     en: Anonymous
     de: Anonym
-  loggedIn:
+  loggedInColumnHeader:
     en: Logged in
     de: Angemeldet
+  titlePlaceholder:
+    en: Filter by document title
+    de: Nach Dokument-Titel filtern
+  fromDatePlaceholder:
+    en: From date
+    de: Ab Datum
+  untilDatePlaceholder:
+    en: To date
+    de: Bis Datum
+  mondayCheckbox:
+    en: Mo
+    de: Mo
+  tuesdayCheckbox:
+    en: Tu
+    de: Di
+  wednesdayCheckbox:
+    en: We
+    de: Mi
+  thursdayCheckbox:
+    en: Th
+    de: Do
+  fridayCheckbox:
+    en: Fr
+    de: Fr
+  saturdayCheckbox:
+    en: Sa
+    de: Sa
+  sundayCheckbox:
+    en: Su
+    de: So

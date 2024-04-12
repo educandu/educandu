@@ -85,15 +85,6 @@ class DocumentService {
     this.eventStore = eventStore;
   }
 
-  async getAllPublicDocumentsMetadata({ includeArchived } = {}) {
-    const conditions = [{ roomId: null }];
-    if (includeArchived === false) {
-      conditions.push({ 'publicContext.archived': false });
-    }
-    const documentsMetadata = await this.documentStore.getDocumentsMetadataByConditions(conditions);
-    return documentsMetadata.sort(by(doc => doc.createdOn, 'desc'));
-  }
-
   async getAllPublicDocumentsExtendedMetadata({ includeArchived } = {}) {
     const conditions = [{ roomId: null }];
     if (includeArchived === false) {
