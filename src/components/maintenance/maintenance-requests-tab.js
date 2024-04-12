@@ -1,19 +1,28 @@
 import by from 'thenby';
 import dayjs from 'dayjs';
-import { TAB } from './constants.js';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { Table, DatePicker, Checkbox } from 'antd';
 import { useRequest } from '../request-context.js';
 import { useDateFormat } from '../locale-context.js';
+import SortingSelector from '../sorting-selector.js';
 import { DAY_OF_WEEK } from '../../domain/constants.js';
+import { SORTING_DIRECTION, TAB } from './constants.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
-import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
 const { RangePicker } = DatePicker;
+
+const SORTING_VALUE = {
+  totalCount: 'totalCount',
+  readCount: 'readCount',
+  writeCount: 'writeCount',
+  anonymousCount: 'anonymousCount',
+  loggedInCount: 'loggedInCount'
+};
 
 function createTableRows(documentsWithCounters) {
   return documentsWithCounters.map(documentWithCounters => ({
@@ -49,7 +58,9 @@ const getSanitizedQueryFromRequest = request => {
     registeredUntil,
     daysOfWeek,
     page: !isNaN(pageNumber) ? pageNumber : 1,
-    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
+    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10,
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.totalCount,
+    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
   };
 };
 
@@ -77,11 +88,28 @@ function MaintenanceRequestsTab() {
   const [registeredFrom, setRegisteredFrom] = useState(requestQuery.registeredFrom);
   const [registeredUntil, setRegisteredUntil] = useState(requestQuery.registeredUntil);
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
+  const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
 
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
+
+  const sortingOptions = useMemo(() => [
+    { label: t('totalCountColumnHeader'), appliedLabel: t('sortedByTotalCount'), value: SORTING_VALUE.totalCount },
+    { label: t('readCountColumnHeader'), appliedLabel: t('sortedByReadCount'), value: SORTING_VALUE.readCount },
+    { label: t('writeCountColumnHeader'), appliedLabel: t('sortedByWriteCount'), value: SORTING_VALUE.writeCount },
+    { label: t('anonymousCountColumnHeader'), appliedLabel: t('sortedByAnonymousCount'), value: SORTING_VALUE.anonymousCount },
+    { label: t('loggedInCountColumnHeader'), appliedLabel: t('sortedByLoggedInCount'), value: SORTING_VALUE.loggedInCount }
+  ], [t]);
+
+  const tableSorters = useMemo(() => ({
+    totalCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.totalCount, direction)),
+    readCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.readCount, direction)),
+    writeCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.writeCount, direction)),
+    anonymousCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.anonymousCount, direction)),
+    loggedInCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.loggedInCount, direction))
+  }), []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -104,11 +132,13 @@ function MaintenanceRequestsTab() {
       registeredUntil: registeredUntil?.getTime(),
       daysOfWeek,
       page: pagination.page,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      sorting: sorting.value,
+      direction: sorting.direction
     };
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.requests, queryParams));
-  }, [filter, registeredFrom, registeredUntil, daysOfWeek, pagination]);
+  }, [filter, sorting, registeredFrom, registeredUntil, daysOfWeek, pagination]);
 
   useEffect(() => {
     (async () => await fetchData())();
@@ -125,8 +155,11 @@ function MaintenanceRequestsTab() {
       ? allRows.filter(row => row.title.toLowerCase().includes(lowerCasedFilter))
       : allRows;
 
-    setDisplayedRows(filteredRows.sort(by(row => row.createdOn, { direction: 'desc' })));
-  }, [allRows, filter]);
+    const sorter = tableSorters[sorting.value];
+    const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
+
+    setDisplayedRows(sortedRows);
+  }, [allRows, filter, sorting, tableSorters]);
 
   const handleTableChange = ({ current, pageSize }) => {
     setPagination({ page: current, pageSize });
@@ -135,6 +168,10 @@ function MaintenanceRequestsTab() {
   const handleFilterChange = event => {
     const newFilter = event.target.value;
     setFilter(newFilter);
+  };
+
+  const handleSortingChange = ({ value, direction }) => {
+    setSorting({ value, direction });
   };
 
   const handleDateRangeChange = newDateRange => {
@@ -175,7 +212,7 @@ function MaintenanceRequestsTab() {
       render: renderDocumentTitle
     },
     {
-      title: t('totalColumnHeader'),
+      title: t('totalCountColumnHeader'),
       dataIndex: 'totalCount',
       key: 'totalCount',
       render: _totalCount => _totalCount,
@@ -187,7 +224,7 @@ function MaintenanceRequestsTab() {
       responsive: ['sm'],
       children: [
         {
-          title: t('readColumnHeader'),
+          title: t('readCountColumnHeader'),
           dataIndex: 'readCount',
           key: 'readCount',
           render: _readCount => _readCount,
@@ -195,7 +232,7 @@ function MaintenanceRequestsTab() {
           width: '100px'
         },
         {
-          title: t('writeColumnHeader'),
+          title: t('writeCountColumnHeader'),
           dataIndex: 'writeCount',
           key: 'writeCount',
           render: _writeCount => _writeCount,
@@ -209,7 +246,7 @@ function MaintenanceRequestsTab() {
       responsive: ['md'],
       children: [
         {
-          title: t('anonymousColumnHeader'),
+          title: t('anonymousCountColumnHeader'),
           dataIndex: 'anonymousCount',
           key: 'anonymousCount',
           render: _anonymousCount => _anonymousCount,
@@ -217,7 +254,7 @@ function MaintenanceRequestsTab() {
           width: '100px'
         },
         {
-          title: t('loggedInColumnHeader'),
+          title: t('loggedInCountColumnHeader'),
           dataIndex: 'loggedInCount',
           key: 'loggedInCount',
           render: _loggedInCount => _loggedInCount,
@@ -259,6 +296,14 @@ function MaintenanceRequestsTab() {
               onChange={handleDaysOfWeekChange}
               />
           </div>
+        </div>
+        <div>
+          <SortingSelector
+            size="large"
+            sorting={sorting}
+            options={sortingOptions}
+            onChange={handleSortingChange}
+            />
         </div>
       </div>
       <Table
