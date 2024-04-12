@@ -9,6 +9,7 @@ import { useDateFormat } from '../locale-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { DAY_OF_WEEK } from '../../domain/constants.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
+import { replaceItemAt } from '../../utils/array-utils.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -23,6 +24,8 @@ const SORTING_VALUE = {
   anonymousCount: 'anonymousCount',
   loggedInCount: 'loggedInCount'
 };
+
+const getDefaultSortingPair = () => [SORTING_VALUE.totalCount, SORTING_DIRECTION.desc];
 
 function createTableRows(documentsWithCounters) {
   return documentsWithCounters.map(documentWithCounters => ({
@@ -51,6 +54,10 @@ const getSanitizedQueryFromRequest = request => {
   const registeredUntilMilliseconds = parseInt((query.registeredUntil || '').trim(), 10);
   const registeredUntil = !isNaN(registeredUntilMilliseconds) ? new Date(registeredUntilMilliseconds) : null;
   const daysOfWeek = query.daysOfWeek ? query.daysOfWeek.trim().split(',').map(text => Number(text)) : Object.values(DAY_OF_WEEK);
+  const sortingPairTexts = query.sortingPairs ? query.sortingPairs.trim().split(',') : [];
+  const sortingPairs = sortingPairTexts
+    .map(pairText => pairText.split('_'))
+    .filter(pair => Object.values(SORTING_VALUE).includes(pair[0]) && Object.values(SORTING_DIRECTION).includes(pair[1]));
 
   return {
     filter: (query.filter || '').trim(),
@@ -59,8 +66,7 @@ const getSanitizedQueryFromRequest = request => {
     daysOfWeek,
     page: !isNaN(pageNumber) ? pageNumber : 1,
     pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10,
-    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.totalCount,
-    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
+    sortingPairs: sortingPairs.length ? sortingPairs : [getDefaultSortingPair()]
   };
 };
 
@@ -85,10 +91,10 @@ function MaintenanceRequestsTab() {
   const [filter, setFilter] = useState(requestQuery.filter);
   const [daysOfWeek, setDaysOfWeek] = useState(requestQuery.daysOfWeek);
   const [documentRequestCounters, setDocumentRequestCounters] = useState([]);
+  const [sortingPairs, setSortingPairs] = useState(requestQuery.sortingPairs);
   const [registeredFrom, setRegisteredFrom] = useState(requestQuery.registeredFrom);
   const [registeredUntil, setRegisteredUntil] = useState(requestQuery.registeredUntil);
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
-  const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
@@ -102,14 +108,6 @@ function MaintenanceRequestsTab() {
     { label: t('anonymousCountColumnHeader'), appliedLabel: t('sortedByAnonymousCount'), value: SORTING_VALUE.anonymousCount },
     { label: t('loggedInCountColumnHeader'), appliedLabel: t('sortedByLoggedInCount'), value: SORTING_VALUE.loggedInCount }
   ], [t]);
-
-  const tableSorters = useMemo(() => ({
-    totalCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.totalCount, direction)),
-    readCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.readCount, direction)),
-    writeCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.writeCount, direction)),
-    anonymousCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.anonymousCount, direction)),
-    loggedInCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.loggedInCount, direction))
-  }), []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -133,12 +131,11 @@ function MaintenanceRequestsTab() {
       daysOfWeek,
       page: pagination.page,
       pageSize: pagination.pageSize,
-      sorting: sorting.value,
-      direction: sorting.direction
+      sortingPairs: sortingPairs.map(pair => pair.join('_')).join(',')
     };
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.requests, queryParams));
-  }, [filter, sorting, registeredFrom, registeredUntil, daysOfWeek, pagination]);
+  }, [filter, sortingPairs, registeredFrom, registeredUntil, daysOfWeek, pagination]);
 
   useEffect(() => {
     (async () => await fetchData())();
@@ -155,11 +152,16 @@ function MaintenanceRequestsTab() {
       ? allRows.filter(row => row.title.toLowerCase().includes(lowerCasedFilter))
       : allRows;
 
-    const sorter = tableSorters[sorting.value];
-    const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
+    const sorters = sortingPairs.reduce((chain, sortingPair, sortingPairIndex) => {
+      return sortingPairIndex === 0
+        ? by(row => row[sortingPair[0]], sortingPair[1])
+        : chain.thenBy(row => row[sortingPair[0]], sortingPair[1]);
+    }, null);
+
+    const sortedRows = [...filteredRows].sort(sorters);
 
     setDisplayedRows(sortedRows);
-  }, [allRows, filter, sorting, tableSorters]);
+  }, [allRows, filter, sortingPairs]);
 
   const handleTableChange = ({ current, pageSize }) => {
     setPagination({ page: current, pageSize });
@@ -170,8 +172,13 @@ function MaintenanceRequestsTab() {
     setFilter(newFilter);
   };
 
-  const handleSortingChange = ({ value, direction }) => {
-    setSorting({ value, direction });
+  const handleSortingPairChange = (sortingPairIndex, { value, direction }) => {
+    const newSortingPairs = replaceItemAt(sortingPairs, [value, direction], sortingPairIndex);
+    setSortingPairs(newSortingPairs);
+  };
+
+  const handleAddSorterClick = () => {
+    setSortingPairs([...sortingPairs, getDefaultSortingPair()]);
   };
 
   const handleDateRangeChange = newDateRange => {
@@ -298,12 +305,17 @@ function MaintenanceRequestsTab() {
           </div>
         </div>
         <div>
-          <SortingSelector
-            size="large"
-            sorting={sorting}
-            options={sortingOptions}
-            onChange={handleSortingChange}
-            />
+          {sortingPairs.map((sortingPair, sortingPairIndex) => (
+            <SortingSelector
+              size="large"
+              key={sortingPairIndex}
+              sorting={{ value: sortingPair[0], direction: sortingPair[1] }}
+              options={sortingOptions}
+              onChange={data => handleSortingPairChange(sortingPairIndex, data)}
+              />
+          )
+          )}
+          <a className="MaintenanceRequestsTab-addSorterLink" onClick={handleAddSorterClick}>{t('addSorterLinkText')}</a>
         </div>
       </div>
       <Table

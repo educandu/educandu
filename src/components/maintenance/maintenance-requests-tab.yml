@@ -65,3 +65,6 @@ maintenanceRequestsTab:
   sundayCheckbox:
     en: Su
     de: So
+  addSorterLinkText:
+    en: + Add sorter
+    de: + Add sorter
