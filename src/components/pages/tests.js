@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import by from 'thenby';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
 import TagSelect from '../tag-select.js';
@@ -58,6 +59,17 @@ function Tests({ PageTemplate, initialState }) {
   const handleCopyToClipboard = async clipboardText => {
     await window.navigator.clipboard.writeText(clipboardText);
     message.success('Copied to clipboard');
+  };
+
+  // DocumentRequests
+  const [documentRequestsYear, setDocumentRequestsYear] = useState('2023');
+  const handleDocumentRequestsGoClick = () => {
+    const postUrl = `/api/v1/tests/create-document-requests/${encodeURIComponent(documentRequestsYear)}`;
+    axios.post(postUrl).catch(error => {
+      console.error(error);
+    });
+    // eslint-disable-next-line no-alert
+    window.alert('Started DocumentRequests creation, check your console!');
   };
 
   // StarRating
@@ -255,6 +267,23 @@ function Tests({ PageTemplate, initialState }) {
             onChange={handleTabChange}
             destroyInactiveTabPane
             items={[
+              {
+                key: 'DocumentRequests',
+                label: 'DocumentRequests',
+                children: (
+                  <div>
+                    Create 10.000 document requests per day in year:
+                    &nbsp;
+                    <Input
+                      style={{ width: '100px' }}
+                      value={documentRequestsYear}
+                      onChange={event => setDocumentRequestsYear(event.target.value)}
+                      />
+                    &nbsp;&nbsp;&nbsp;
+                    <Button type="primary" onClick={handleDocumentRequestsGoClick}>GO!</Button>
+                  </div>
+                )
+              },
               {
                 key: 'StarRating',
                 label: 'StarRating',
