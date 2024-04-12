@@ -1,9 +1,10 @@
 import joi from 'joi';
+import { ObjectId } from 'mongodb';
 import { DAY_OF_WEEK } from '../constants.js';
 import { idOrKeySchema } from './shared-schemas.js';
 
 export const documentRequestDBSchema = joi.object({
-  _id: idOrKeySchema.required(),
+  _id: joi.object().instance(ObjectId).required(),
   documentId: idOrKeySchema.required(),
   documentRevisionId: idOrKeySchema.required(),
   isWriteRequest: joi.boolean().required(),

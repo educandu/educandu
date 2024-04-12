@@ -1,6 +1,6 @@
 import moment from 'moment';
+import { ObjectId } from 'mongodb';
 import Database from '../stores/database.js';
-import uniqueId from '../utils/unique-id.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
@@ -74,7 +74,7 @@ class TestsController {
         const registeredOn = moment(eightOClock).add(offset, 'milliseconds').toDate();
         const registeredOnDayOfWeek = getDayOfWeek(registeredOn);
         recordsToInsert.push({
-          _id: uniqueId.create(),
+          _id: new ObjectId(),
           documentId: document._id,
           documentRevisionId: document.revision,
           isWriteRequest: getRandomInt(0, 5) === 5,

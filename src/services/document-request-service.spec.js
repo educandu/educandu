@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { createSandbox } from 'sinon';
 import Database from '../stores/database.js';
 import { DAY_OF_WEEK } from '../domain/constants.js';
@@ -62,7 +63,7 @@ describe('document-request-service', () => {
 
         it('should create a document request', () => {
           expect(result).toEqual({
-            _id: expect.stringMatching(/\w+/),
+            _id: expect.any(ObjectId),
             documentId: document._id,
             documentRevisionId: document.revision,
             registeredOn: now,
@@ -86,7 +87,7 @@ describe('document-request-service', () => {
 
         it('should create a document request', () => {
           expect(result).toEqual({
-            _id: expect.stringMatching(/\w+/),
+            _id: expect.any(ObjectId),
             documentId: document._id,
             documentRevisionId: document.revision,
             registeredOn: now,
@@ -127,7 +128,7 @@ describe('document-request-service', () => {
 
         it('should create a document request', () => {
           expect(result).toEqual({
-            _id: expect.stringMatching(/\w+/),
+            _id: expect.any(ObjectId),
             documentId: document._id,
             documentRevisionId: document.revision,
             registeredOn: now,
@@ -151,7 +152,7 @@ describe('document-request-service', () => {
 
         it('should create a document request', () => {
           expect(result).toEqual({
-            _id: expect.stringMatching(/\w+/),
+            _id: expect.any(ObjectId),
             documentId: document._id,
             documentRevisionId: document.revision,
             registeredOn: now,
@@ -194,7 +195,7 @@ describe('document-request-service', () => {
 
         it('should create a document request', () => {
           expect(result).toEqual({
-            _id: expect.stringMatching(/\w+/),
+            _id: expect.any(ObjectId),
             documentId: documentRevision.documentId,
             documentRevisionId: documentRevision._id,
             registeredOn: now,
@@ -219,7 +220,7 @@ describe('document-request-service', () => {
 
         it('should create a document request', () => {
           expect(result).toEqual({
-            _id: expect.stringMatching(/\w+/),
+            _id: expect.any(ObjectId),
             documentId: documentRevision.documentId,
             documentRevisionId: documentRevision._id,
             registeredOn: now,

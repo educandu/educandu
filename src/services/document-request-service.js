@@ -1,4 +1,4 @@
-import uniqueId from '../utils/unique-id.js';
+import { ObjectId } from 'mongodb';
 import { getDayOfWeek } from '../utils/date-utils.js';
 import DocumentRequestStore from '../stores/document-request-store.js';
 
@@ -21,7 +21,7 @@ class DocumentRequestService {
     }
 
     const newDocumentRequest = {
-      _id: uniqueId.create(),
+      _id: new ObjectId(),
       documentId: document._id,
       documentRevisionId: document.revision,
       isWriteRequest,
@@ -51,7 +51,7 @@ class DocumentRequestService {
     }
 
     const newDocumentRequest = {
-      _id: uniqueId.create(),
+      _id: new ObjectId(),
       documentId: documentRevision.documentId,
       documentRevisionId: documentRevision._id,
       isWriteRequest: false,
