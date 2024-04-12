@@ -12,14 +12,15 @@ class DocumentRatingService {
     this.documentStore = documentStore;
   }
 
+  async getDocumentRatingsByDocumentIds(documentIds) {
+    const existingRatings = await this.documentRatingStore.getAllDocumentRatings();
+    const existingRatingsByDocumentId = new Map(existingRatings.map(rating => [rating.documentId, rating]));
+    return documentIds.map(documentId => existingRatingsByDocumentId.get(documentId) || this._createNonPersistedDocumentRating(documentId));
+  }
+
   async getDocumentRatingByDocumentId(documentId) {
-    const dbRating = await this.documentRatingStore.getDocumentRatingByDocumentId(documentId);
-    return dbRating || {
-      _id: null,
-      documentId,
-      userRatingsCount: 0,
-      averageRating: null
-    };
+    const existingRating = await this.documentRatingStore.getDocumentRatingByDocumentId(documentId);
+    return existingRating || this._createNonPersistedDocumentRating(documentId);
   }
 
   async saveUserDocumentRating({ documentId, user, rating }) {
@@ -62,6 +63,26 @@ class DocumentRatingService {
     });
 
     return this.documentRatingStore.getDocumentRatingByDocumentId(documentId);
+  }
+
+  _createNonPersistedDocumentRating(documentId) {
+    const rating = {
+      _id: null,
+      documentId,
+      userRatingsCount: 0,
+      averageRating: null
+    };
+
+    // Randomization has to be deleted when the user can give ratings:
+    // https://educandu.atlassian.net/browse/EDU-1533
+    const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+    const getAverage = values => values.reduce((accu, val) => accu + val, 0) / values.length;
+    if (getRandomInt(1, 5) !== 1) {
+      rating.userRatingsCount = getRandomInt(1, 250);
+      rating.averageRating = getAverage(Array.from({ length: rating.userRatingsCount }, () => getRandomInt(1, 5)));
+    }
+
+    return rating;
   }
 }
 

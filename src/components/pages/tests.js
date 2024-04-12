@@ -62,6 +62,7 @@ function Tests({ PageTemplate, initialState }) {
 
   // StarRating
   const [starRatingValue, setStarRatingValue] = useState(3.7);
+  const [starRatingCompact, setStarRatingCompact] = useState(false);
   const [starRatingTotalCount, setStarRatingTotalCount] = useState(15);
 
   // MediaLibraryMetadataForm
@@ -260,6 +261,7 @@ function Tests({ PageTemplate, initialState }) {
                 children: (
                   <div>
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                      <Checkbox checked={starRatingCompact} onChange={event => setStarRatingCompact(event.target.checked)}>Compact</Checkbox>
                       <div>Value:</div>
                       <InputNumber min={0} max={5} precision={3} step={0.1} value={starRatingValue ?? 0} onChange={setStarRatingValue} />
                       <Checkbox checked={starRatingValue === null} onChange={event => setStarRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
@@ -267,7 +269,7 @@ function Tests({ PageTemplate, initialState }) {
                       <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setStarRatingTotalCount} />
                     </div>
                     <div>
-                      <StarRating value={starRatingValue} totalCount={starRatingTotalCount} />
+                      <StarRating value={starRatingValue} totalCount={starRatingTotalCount} compact={starRatingCompact} />
                     </div>
                   </div>
                 )

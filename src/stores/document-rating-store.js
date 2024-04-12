@@ -15,6 +15,10 @@ class DocumentRatingStore {
     this.collection = db.documentRatings;
   }
 
+  getAllDocumentRatings({ session } = {}) {
+    return this.collection.find({}, { projection: documentRatingProjection, session }).toArray();
+  }
+
   getDocumentRatingByDocumentId(documentId, { session } = {}) {
     return this.collection.findOne({ documentId }, { projection: documentRatingProjection, session });
   }

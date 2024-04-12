@@ -207,7 +207,9 @@ class DocumentController {
     const { user } = req;
 
     const documents = await this.documentService.getAllPublicDocumentsExtendedMetadata({ includeArchived: true });
-    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, user);
+    const documentRatings = await this.documentRatingService.getDocumentRatingsByDocumentIds(documents.map(document => document._id));
+
+    const mappedDocuments = await this.clientDataMappingService.mapMaintenanceDocuments(documents, documentRatings, user);
 
     return res.send({ documents: mappedDocuments });
   }
