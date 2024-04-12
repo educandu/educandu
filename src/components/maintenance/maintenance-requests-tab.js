@@ -2,17 +2,19 @@ import by from 'thenby';
 import dayjs from 'dayjs';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
+import { ResetIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
-import { Table, DatePicker, Checkbox } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { useDateFormat } from '../locale-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { DAY_OF_WEEK } from '../../domain/constants.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
+import { Table, DatePicker, Checkbox, Button } from 'antd';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
 const { RangePicker } = DatePicker;
@@ -181,6 +183,10 @@ function MaintenanceRequestsTab() {
     setSortingPairs([...sortingPairs, getDefaultSortingPair()]);
   };
 
+  const handleResetSortersClick = () => {
+    setSortingPairs([getDefaultSortingPair()]);
+  };
+
   const handleDateRangeChange = newDateRange => {
     setRegisteredFrom(newDateRange ? newDateRange[0].startOf('date').toDate() : null);
     setRegisteredUntil(newDateRange ? newDateRange[1].endOf('date').toDate() : null);
@@ -272,6 +278,8 @@ function MaintenanceRequestsTab() {
     }
   ];
 
+  const canAddSorter = sortingPairs.length < Object.values(SORTING_VALUE).length;
+
   return (
     <div className="MaintenanceRequestsTab">
       <div className="MaintenanceRequestsTab-controls">
@@ -300,22 +308,45 @@ function MaintenanceRequestsTab() {
               value={daysOfWeek}
               disabled={fetchingData}
               options={daysOfWeekOptions}
+              className='MaintenanceRequestsTab-controlsColumnCheckboxes'
               onChange={handleDaysOfWeekChange}
               />
           </div>
         </div>
         <div>
           {sortingPairs.map((sortingPair, sortingPairIndex) => (
-            <SortingSelector
-              size="large"
-              key={sortingPairIndex}
-              sorting={{ value: sortingPair[0], direction: sortingPair[1] }}
-              options={sortingOptions}
-              onChange={data => handleSortingPairChange(sortingPairIndex, data)}
-              />
+            <Fragment key={sortingPairIndex}>
+              {sortingPairIndex > 0 && (
+                <div className='MaintenanceRequestsTab-sortersSaparator'>
+                  {t('sortersJoiningText')}
+                </div>
+              )}
+              <SortingSelector
+                size="large"
+                sorting={{ value: sortingPair[0], direction: sortingPair[1] }}
+                options={sortingOptions}
+                onChange={data => handleSortingPairChange(sortingPairIndex, data)}
+                />
+            </Fragment>
           )
           )}
-          <a className="MaintenanceRequestsTab-addSorterLink" onClick={handleAddSorterClick}>{t('addSorterLinkText')}</a>
+          <div className="MaintenanceRequestsTab-sorterButtons">
+            <Button
+              size="small"
+              disabled={!canAddSorter}
+              icon={<PlusOutlined />}
+              onClick={handleAddSorterClick}
+              >
+              {t('addSorterButton')}
+            </Button>
+            <Button
+              size="small"
+              icon={<ResetIcon />}
+              onClick={handleResetSortersClick}
+              >
+              {t('resetSortersButton')}
+            </Button>
+          </div>
         </div>
       </div>
       <Table

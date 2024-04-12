@@ -65,6 +65,12 @@ maintenanceRequestsTab:
   sundayCheckbox:
     en: Su
     de: So
-  addSorterLinkText:
-    en: + Add sorter
-    de: + Add sorter
+  sortersJoiningText:
+    en: then
+    de: danach
+  addSorterButton:
+    en: Add sorter
+    de: Sortierer hinzufügen
+  resetSortersButton:
+    en: Reset sorters
+    de: Zurücksetzen
