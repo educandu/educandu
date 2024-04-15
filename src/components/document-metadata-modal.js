@@ -1,5 +1,6 @@
 import Info from './info.js';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import TagSelect from './tag-select.js';
 import Logger from '../common/logger.js';
 import UserSelect from './user-select.js';
@@ -7,6 +8,7 @@ import { useUser } from './user-context.js';
 import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
+import { SettingsIcon } from './icons/icons.js';
 import { useSettings } from './settings-context.js';
 import DocumentSelector from './document-selector.js';
 import { handleApiError } from '../ui/error-helper.js';
@@ -21,8 +23,8 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import { maxDocumentShortDescriptionLength } from '../domain/validation-constants.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio } from 'antd';
 import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
+import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio, Button, Tooltip } from 'antd';
 import {
   CLONING_STRATEGY,
   determineActualTemplateDocumentId,
@@ -91,6 +93,7 @@ function DocumentMetadataModal({
   const [shortDescription, setShortDescription] = useState('');
 
   const [sequenceCount, setSequenceCount] = useState(0);
+  const [showSaveSettings, setShowSaveSettings] = useState(false);
   const [generateSequence, setGenerateSequence] = useState(false);
   const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
   const [useTemplateDocument, setUseTemplateDocument] = useState(false);
@@ -141,6 +144,7 @@ function DocumentMetadataModal({
     setUseTemplateDocument(false);
     setCloningStrategy(CLONING_STRATEGY.cloneWithinArea);
     setCloningTargetRoomId('');
+    setShowSaveSettings(false);
   }, [initialDocumentMetadata, mode, t, uiLanguage]);
 
   const loadRooms = useCallback(async () => {
@@ -176,13 +180,23 @@ function DocumentMetadataModal({
     });
   };
 
-  const handleOk = () => {
+  const handleModalSave = () => {
     if (formRef.current) {
       formRef.current.submit();
     }
   };
 
-  const handleCancel = () => onClose();
+  const handleModalSaveSettings = () => {
+    setShowSaveSettings(true);
+  };
+
+  const handleModalBack = () => {
+    setShowSaveSettings(false);
+  };
+
+  const handleModalCancel = () => {
+    onClose();
+  };
 
   const handleUserSuggestionsNeeded = async searchText => {
     try {
@@ -368,19 +382,50 @@ function DocumentMetadataModal({
     <Modal
       title={getDialogTitle(mode, t)}
       open={isOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
       maskClosable={false}
-      okButtonProps={{ loading: isSaving }}
-      okText={getDialogOkButtonText(mode, t)}
+      onCancel={handleModalCancel}
+      footer={[
+        !!showSaveSettings && (
+          <Button key="back" onClick={handleModalBack}>
+            {t('common:back')}
+          </Button>
+        ),
+        !showSaveSettings && (
+          <Button key="cancel" onClick={handleModalCancel}>
+            {t('common:cancel')}
+          </Button>
+        ),
+        <Button
+          key="save"
+          loading={isSaving}
+          className={classNames(
+            'DocumentMetadataModal-saveButton',
+            { 'DocumentMetadataModal-saveButton--withSettingsButton': !showSaveSettings }
+          )}
+          onClick={handleModalSave}
+          >
+          {getDialogOkButtonText(mode, t)}
+        </Button>,
+        !showSaveSettings && (
+          <Tooltip title={t('saveSettingsTooltip')}>
+            <Button
+              key="saveSettings"
+              className='DocumentMetadataModal-saveSettingsButton'
+              icon={<SettingsIcon />}
+              onClick={handleModalSaveSettings}
+              />
+          </Tooltip>
+        )
+      ]}
       >
       <Form ref={formRef} layout="vertical" onFinish={handleFinish} className="u-modal-body">
-        {!!canSelectCloningStrategy && (
+        <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !!showSaveSettings })}>
+          {!!canSelectCloningStrategy && (
           <FormItem label={t('cloningStrategy')} >
             <Select value={cloningStrategy} options={cloningOptions.strategyOptions} onChange={handleCloningStrategyChange} />
           </FormItem>
-        )}
-        {!!canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
+          )}
+          {!!canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
           <FormItem label={t('common:room')} {...validationState.cloningTargetRoomId}>
             <Select
               value={cloningTargetRoomId}
@@ -390,48 +435,48 @@ function DocumentMetadataModal({
               notFoundContent={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noAvailableRooms')} />}
               />
           </FormItem>
-        )}
-        <FormItem label={t('common:title')} {...validationState.title}>
-          <Input value={title} onChange={handleTitleChange} />
-        </FormItem>
-        <FormItem
-          {...validationState.shortDescription}
-          label={
-            <Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>
-          }
-          >
-          <NeverScrollingTextArea
-            value={shortDescription}
-            maxLength={maxDocumentShortDescriptionLength}
-            onChange={handleShortDescriptionChange}
-            />
-        </FormItem>
-        <FormItem label={t('common:language')}>
-          <LanguageSelect value={language} onChange={handleLanguageChange} />
-        </FormItem>
-        <FormItem
-          {...validationState.slug}
-          label={
-            <Info tooltip={t('common:slugInfo')} iconAfterContent>{t('common:slug')}</Info>
-          }
-          >
-          <Input value={slug} onChange={handleSlugChange} />
-        </FormItem>
-        <FormItem
-          {...validationState.tags}
-          label={
-            <Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>
-          }
-          >
-          <TagSelect
-            value={tags}
-            placeholder={t('common:tagsPlaceholder')}
-            initialValue={initialDocumentMetadata.tags || []}
-            onChange={setTags}
-            onSuggestionsNeeded={handleTagSuggestionsNeeded}
-            />
-        </FormItem>
-        {!!canCreateSequence && (
+          )}
+          <FormItem label={t('common:title')} {...validationState.title}>
+            <Input value={title} onChange={handleTitleChange} />
+          </FormItem>
+          <FormItem
+            {...validationState.shortDescription}
+            label={
+              <Info tooltip={t('common:shortDescriptionInfo')} iconAfterContent>{t('common:shortDescription')}</Info>
+            }
+            >
+            <NeverScrollingTextArea
+              value={shortDescription}
+              maxLength={maxDocumentShortDescriptionLength}
+              onChange={handleShortDescriptionChange}
+              />
+          </FormItem>
+          <FormItem label={t('common:language')}>
+            <LanguageSelect value={language} onChange={handleLanguageChange} />
+          </FormItem>
+          <FormItem
+            {...validationState.slug}
+            label={
+              <Info tooltip={t('common:slugInfo')} iconAfterContent>{t('common:slug')}</Info>
+            }
+            >
+            <Input value={slug} onChange={handleSlugChange} />
+          </FormItem>
+          <FormItem
+            {...validationState.tags}
+            label={
+              <Info tooltip={t('tagsInfo')} iconAfterContent>{t('common:tags')}</Info>
+            }
+            >
+            <TagSelect
+              value={tags}
+              placeholder={t('common:tagsPlaceholder')}
+              initialValue={initialDocumentMetadata.tags || []}
+              onChange={setTags}
+              onSuggestionsNeeded={handleTagSuggestionsNeeded}
+              />
+          </FormItem>
+          {!!canCreateSequence && (
           <FormItem>
             <Checkbox checked={generateSequence} onChange={handleGenerateSequenceChange}>
               <Info tooltip={t('sequenceInfo')} iconAfterContent>
@@ -439,13 +484,13 @@ function DocumentMetadataModal({
               </Info>
             </Checkbox>
           </FormItem>
-        )}
-        {!!canCreateSequence && !!generateSequence && (
+          )}
+          {!!canCreateSequence && !!generateSequence && (
           <FormItem label={t('sequenceCount')} rules={[{ type: 'integer', min: 2, max: 100 }]}>
             <InputNumber value={sequenceCount} onChange={handleSequenceCountChange} className="DocumentMetadataModal-sequenceInput" min={2} max={100} />
           </FormItem>
-        )}
-        {!!canUseTemplateDocument && (
+          )}
+          {!!canUseTemplateDocument && (
           <FormItem
             label={
               <Info tooltip={t('contentInfo')} iconAfterContent>{t('content')}</Info>
@@ -456,8 +501,8 @@ function DocumentMetadataModal({
               <RadioButton value={Boolean('true')}>{t('contentFromTemplate')}</RadioButton>
             </RadioGroup>
           </FormItem>
-        )}
-        {!!isDocInPublicContext && (
+          )}
+          {!!isDocInPublicContext && (
           <Collapse>
             <CollapsePanel header={t('maintenanceSettingsHeader')}>
               {!!publicContextPermissions.canManagePublicContext && (
@@ -502,8 +547,8 @@ function DocumentMetadataModal({
               )}
             </CollapsePanel>
           </Collapse>
-        )}
-        {!!isDocInRoomContext && (
+          )}
+          {!!isDocInRoomContext && (
           <Fragment>
             {!!showDraftInput && (
               <FormItem>
@@ -520,7 +565,12 @@ function DocumentMetadataModal({
               </Checkbox>
             </FormItem>
           </Fragment>
-        )}
+          )}
+        </div>
+
+        <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !showSaveSettings })}>
+          Provide reason
+        </div>
       </Form>
     </Modal>
   );

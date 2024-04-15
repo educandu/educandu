@@ -2125,6 +2125,10 @@
     "archiveRedirectionInfo": {
       "en": "Users accessing this archive document will be redirected to the specified document. Maintainers will not be redirected.",
       "de": "Benutzer werden zum angegebenen Dokument weitergeleitet, wenn sie dieses Dokument aufrufen. Maintainer werden nicht weitergeleitet."
+    },
+    "saveSettingsTooltip": {
+      "en": "Save settings",
+      "de": "Speichern-Einstellungen"
     }
   },
   "documentSelector": {
