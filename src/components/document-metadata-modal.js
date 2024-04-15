@@ -91,13 +91,13 @@ function DocumentMetadataModal({
   const [roomContext, setRoomContext] = useState(null);
   const [publicContext, setPublicContext] = useState(null);
   const [shortDescription, setShortDescription] = useState('');
-  const [revisionCreatedBecauseSetting, setRevisionCreatedBecauseSetting] = useState('');
+  const [revisionCreatedBecause, setRevisionCreatedBecause] = useState('');
 
   const [sequenceCount, setSequenceCount] = useState(0);
   const [generateSequence, setGenerateSequence] = useState(false);
   const [cloningTargetRoomId, setCloningTargetRoomId] = useState('');
   const [useTemplateDocument, setUseTemplateDocument] = useState(false);
-  const [showSaveSettingsScreen, setShowSaveSettingsScreen] = useState(false);
+  const [showExtendedSaveScreen, setShowExtendedSaveScreen] = useState(false);
   const [cloningStrategy, setCloningStrategy] = useState(CLONING_STRATEGY.none);
 
   const documentRoomId = useMemo(() => determineDocumentRoomId({
@@ -120,7 +120,7 @@ function DocumentMetadataModal({
   const canUseTemplateDocument = mode === DOCUMENT_METADATA_MODAL_MODE.create && !!defaultTemplateDocumentId;
   const canCreateSequence = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
   const canSelectCloningStrategy = mode === DOCUMENT_METADATA_MODAL_MODE.clone && cloningOptions.strategyOptions.length > 1;
-  const canSaveThroughSettingsScreen = mode === DOCUMENT_METADATA_MODAL_MODE.update;
+  const canSaveThroughExtendedSaveScreen = mode === DOCUMENT_METADATA_MODAL_MODE.update;
 
   const validationState = useMemo(
     () => getValidationState({ t, title, shortDescription, slug, tags, cloningStrategy, cloningTargetRoomId }),
@@ -146,8 +146,8 @@ function DocumentMetadataModal({
     setUseTemplateDocument(false);
     setCloningStrategy(CLONING_STRATEGY.cloneWithinArea);
     setCloningTargetRoomId('');
-    setShowSaveSettingsScreen(false);
-    setRevisionCreatedBecauseSetting('');
+    setShowExtendedSaveScreen(false);
+    setRevisionCreatedBecause('');
   }, [initialDocumentMetadata, mode, t, uiLanguage]);
 
   const loadRooms = useCallback(async () => {
@@ -185,24 +185,24 @@ function DocumentMetadataModal({
     });
   };
 
-  const handleModalSave = () => {
+  const handleModalSaveClick = () => {
     if (formRef.current) {
       formRef.current.submit();
     }
   };
 
-  const handleModalSaveSettings = () => {
+  const handleModalExtendedSaveClick = () => {
     if (invalidFieldsExist()) {
       return;
     }
-    setShowSaveSettingsScreen(true);
+    setShowExtendedSaveScreen(true);
   };
 
-  const handleModalBack = () => {
-    setShowSaveSettingsScreen(false);
+  const handleModalBackClick = () => {
+    setShowExtendedSaveScreen(false);
   };
 
-  const handleModalCancel = () => {
+  const handleModalCancelClick = () => {
     onClose();
   };
 
@@ -320,7 +320,7 @@ function DocumentMetadataModal({
 
   const handleRevisionCreatedBecauseChange = event => {
     const { value } = event.target;
-    setRevisionCreatedBecauseSetting(value);
+    setRevisionCreatedBecause(value);
   };
 
   const handleFinish = async () => {
@@ -371,7 +371,7 @@ function DocumentMetadataModal({
           savedDocuments.push(await documentApiClient.updateDocumentMetadata({
             documentId: initialDocumentMetadata._id,
             metadata: mappedDocument,
-            revisionCreatedBecause: showSaveSettingsScreen ? revisionCreatedBecauseSetting.trim() : ''
+            revisionCreatedBecause: showExtendedSaveScreen ? revisionCreatedBecause.trim() : ''
           }));
           break;
         default:
@@ -396,15 +396,15 @@ function DocumentMetadataModal({
       title={getDialogTitle(mode, t)}
       open={isOpen}
       maskClosable={false}
-      onCancel={handleModalCancel}
+      onCancel={handleModalCancelClick}
       footer={[
-        !!showSaveSettingsScreen && (
-          <Button key="back" onClick={handleModalBack}>
+        !!showExtendedSaveScreen && (
+          <Button key="back" onClick={handleModalBackClick}>
             {t('common:back')}
           </Button>
         ),
-        !showSaveSettingsScreen && (
-          <Button key="cancel" onClick={handleModalCancel}>
+        !showExtendedSaveScreen && (
+          <Button key="cancel" onClick={handleModalCancelClick}>
             {t('common:cancel')}
           </Button>
         ),
@@ -414,26 +414,26 @@ function DocumentMetadataModal({
           loading={isSaving}
           className={classNames(
             'DocumentMetadataModal-saveButton',
-            { 'DocumentMetadataModal-saveButton--withSettingsButton': !!canSaveThroughSettingsScreen && !showSaveSettingsScreen }
+            { 'DocumentMetadataModal-saveButton--withExtension': !!canSaveThroughExtendedSaveScreen && !showExtendedSaveScreen }
           )}
-          onClick={handleModalSave}
+          onClick={handleModalSaveClick}
           >
           {getDialogOkButtonText(mode, t)}
         </Button>,
-        !!canSaveThroughSettingsScreen && !showSaveSettingsScreen && (
-          <Tooltip title={t('saveSettingsTooltip')} key="saveSettings">
+        !!canSaveThroughExtendedSaveScreen && !showExtendedSaveScreen && (
+          <Tooltip title={t('extendedSaveTooltip')} key="extendedSave">
             <Button
               type="primary"
               icon={<SettingsIcon />}
-              className='DocumentMetadataModal-saveSettingsButton'
-              onClick={handleModalSaveSettings}
+              className='DocumentMetadataModal-extendedSaveButton'
+              onClick={handleModalExtendedSaveClick}
               />
           </Tooltip>
         )
       ]}
       >
       <Form ref={formRef} layout="vertical" onFinish={handleFinish} className="u-modal-body">
-        <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !!showSaveSettingsScreen })}>
+        <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !!showExtendedSaveScreen })}>
           {!!canSelectCloningStrategy && (
             <FormItem label={t('cloningStrategy')} >
               <Select value={cloningStrategy} options={cloningOptions.strategyOptions} onChange={handleCloningStrategyChange} />
@@ -582,10 +582,10 @@ function DocumentMetadataModal({
           )}
         </div>
 
-        <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !showSaveSettingsScreen })}>
+        <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !showExtendedSaveScreen })}>
           <FormItem label={t('common:documentRevisionCreatedBecauseLabel')}>
             <NeverScrollingTextArea
-              value={revisionCreatedBecauseSetting}
+              value={revisionCreatedBecause}
               maxLength={maxDocumentRevisionCreatedBecauseLength}
               onChange={handleRevisionCreatedBecauseChange}
               />
