@@ -83,11 +83,11 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  updateDocumentMetadata({ documentId, metadata }) {
+  updateDocumentMetadata({ documentId, metadata, revisionCreatedBecause = '' }) {
     return this.httpClient
       .patch(
         `/api/v1/docs/${encodeURIComponent(documentId)}/metadata`,
-        metadata,
+        { metadata, revisionCreatedBecause },
         { responseType: 'json' }
       )
       .then(res => res.data);

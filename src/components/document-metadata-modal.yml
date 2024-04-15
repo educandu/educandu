@@ -113,3 +113,6 @@ documentMetadataModal:
   archiveRedirectionInfo:
     en: Users accessing this archive document will be redirected to the specified document. Maintainers will not be redirected.
     de: Benutzer werden zum angegebenen Dokument weitergeleitet, wenn sie dieses Dokument aufrufen. Maintainer werden nicht weitergeleitet.
+  extendedSaveTooltip:
+    en: Save (extended)
+    de: Speichern (erweitert)
