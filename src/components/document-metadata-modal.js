@@ -410,6 +410,7 @@ function DocumentMetadataModal({
         ),
         <Button
           key="save"
+          type="primary"
           loading={isSaving}
           className={classNames(
             'DocumentMetadataModal-saveButton',
@@ -422,8 +423,9 @@ function DocumentMetadataModal({
         !!canSaveThroughSettingsScreen && !showSaveSettingsScreen && (
           <Tooltip title={t('saveSettingsTooltip')} key="saveSettings">
             <Button
-              className='DocumentMetadataModal-saveSettingsButton'
+              type="primary"
               icon={<SettingsIcon />}
+              className='DocumentMetadataModal-saveSettingsButton'
               onClick={handleModalSaveSettings}
               />
           </Tooltip>
