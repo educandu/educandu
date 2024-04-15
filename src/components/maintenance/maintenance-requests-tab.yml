@@ -1,25 +1,40 @@
 maintenanceRequestsTab:
-  totalColumnHeader:
+  totalCountColumnHeader:
     en: Requests
     de: Requests
   requestColumnHeader:
     en: Access
     de: Zugriff
-  readColumnHeader:
+  readCountColumnHeader:
     en: Read
     de: Lesen
-  writeColumnHeader:
+  writeCountColumnHeader:
     en: Write
     de: Schreiben
   userColumnHeader:
     en: User
     de: Benutzer
-  anonymousColumnHeader:
+  anonymousCountColumnHeader:
     en: Anonymous
     de: Anonym
-  loggedInColumnHeader:
+  loggedInCountColumnHeader:
     en: Logged in
     de: Angemeldet
+  sortedByTotalCount:
+    en: Sorted by requests
+    de: Nach Requests sortiert
+  sortedByReadCount:
+    en: Sorted by read
+    de: Nach Lesen sortiert
+  sortedByWriteCount:
+    en: Sorted by write
+    de: Nach Schreiben sortiert
+  sortedByAnonymousCount:
+    en: Sorted by anonymous
+    de: Nach Anonym sortiert
+  sortedByLoggedInCount:
+    en: Sorted by logged in
+    de: Nach Angemeldet sortiert
   titlePlaceholder:
     en: Filter by document title
     de: Nach Dokument-Titel filtern
@@ -50,3 +65,12 @@ maintenanceRequestsTab:
   sundayCheckbox:
     en: Su
     de: So
+  sortersJoiningText:
+    en: then
+    de: danach
+  addSorterButton:
+    en: Add sorter
+    de: Sortierer hinzufügen
+  resetSortersButton:
+    en: Reset sorters
+    de: Zurücksetzen

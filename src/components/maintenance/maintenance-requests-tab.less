@@ -38,6 +38,7 @@
   margin-bottom: 40px;
 
   @media @edu-media-phone {
+    gap: 20px;
     grid-template-columns: 100%;
     grid-template-rows: repeat(2, auto);
   }
@@ -58,7 +59,29 @@
   flex-wrap: wrap;
 }
 
+.MaintenanceRequestsTab-controlsColumnCheckboxes {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .MaintenanceRequestsTab-titleCell {
   .m-line-clamp(1);
   text-decoration: none;
+}
+
+.MaintenanceRequestsTab-sortersSaparator {
+  padding-left: 15px;
+  font-size: @edu-font-size-xs;
+}
+
+.MaintenanceRequestsTab-sorterButtons {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+  padding: 5px 15px;
+  gap: 10px;
+
+  button {
+    font-size: @edu-font-size-xs !important;
+  }
 }

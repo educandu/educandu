@@ -1,19 +1,33 @@
 import by from 'thenby';
 import dayjs from 'dayjs';
-import { TAB } from './constants.js';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
+import { ResetIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
-import { Table, DatePicker, Checkbox } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { useDateFormat } from '../locale-context.js';
+import SortingSelector from '../sorting-selector.js';
 import { DAY_OF_WEEK } from '../../domain/constants.js';
+import { SORTING_DIRECTION, TAB } from './constants.js';
+import { replaceItemAt } from '../../utils/array-utils.js';
+import { Table, DatePicker, Checkbox, Button } from 'antd';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
-import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
 const { RangePicker } = DatePicker;
+
+const SORTING_VALUE = {
+  totalCount: 'totalCount',
+  readCount: 'readCount',
+  writeCount: 'writeCount',
+  anonymousCount: 'anonymousCount',
+  loggedInCount: 'loggedInCount'
+};
+
+const getDefaultSortingPair = () => [SORTING_VALUE.totalCount, SORTING_DIRECTION.desc];
 
 function createTableRows(documentsWithCounters) {
   return documentsWithCounters.map(documentWithCounters => ({
@@ -42,6 +56,10 @@ const getSanitizedQueryFromRequest = request => {
   const registeredUntilMilliseconds = parseInt((query.registeredUntil || '').trim(), 10);
   const registeredUntil = !isNaN(registeredUntilMilliseconds) ? new Date(registeredUntilMilliseconds) : null;
   const daysOfWeek = query.daysOfWeek ? query.daysOfWeek.trim().split(',').map(text => Number(text)) : Object.values(DAY_OF_WEEK);
+  const sortingPairTexts = query.sortingPairs ? query.sortingPairs.trim().split(',') : [];
+  const sortingPairs = sortingPairTexts
+    .map(pairText => pairText.split('_'))
+    .filter(pair => Object.values(SORTING_VALUE).includes(pair[0]) && Object.values(SORTING_DIRECTION).includes(pair[1]));
 
   return {
     filter: (query.filter || '').trim(),
@@ -49,7 +67,8 @@ const getSanitizedQueryFromRequest = request => {
     registeredUntil,
     daysOfWeek,
     page: !isNaN(pageNumber) ? pageNumber : 1,
-    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
+    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10,
+    sortingPairs: sortingPairs.length ? sortingPairs : [getDefaultSortingPair()]
   };
 };
 
@@ -74,6 +93,7 @@ function MaintenanceRequestsTab() {
   const [filter, setFilter] = useState(requestQuery.filter);
   const [daysOfWeek, setDaysOfWeek] = useState(requestQuery.daysOfWeek);
   const [documentRequestCounters, setDocumentRequestCounters] = useState([]);
+  const [sortingPairs, setSortingPairs] = useState(requestQuery.sortingPairs);
   const [registeredFrom, setRegisteredFrom] = useState(requestQuery.registeredFrom);
   const [registeredUntil, setRegisteredUntil] = useState(requestQuery.registeredUntil);
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
@@ -82,6 +102,14 @@ function MaintenanceRequestsTab() {
   const [displayedRows, setDisplayedRows] = useState([]);
 
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
+
+  const sortingOptions = useMemo(() => [
+    { label: t('totalCountColumnHeader'), appliedLabel: t('sortedByTotalCount'), value: SORTING_VALUE.totalCount },
+    { label: t('readCountColumnHeader'), appliedLabel: t('sortedByReadCount'), value: SORTING_VALUE.readCount },
+    { label: t('writeCountColumnHeader'), appliedLabel: t('sortedByWriteCount'), value: SORTING_VALUE.writeCount },
+    { label: t('anonymousCountColumnHeader'), appliedLabel: t('sortedByAnonymousCount'), value: SORTING_VALUE.anonymousCount },
+    { label: t('loggedInCountColumnHeader'), appliedLabel: t('sortedByLoggedInCount'), value: SORTING_VALUE.loggedInCount }
+  ], [t]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -104,11 +132,12 @@ function MaintenanceRequestsTab() {
       registeredUntil: registeredUntil?.getTime(),
       daysOfWeek,
       page: pagination.page,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
+      sortingPairs: sortingPairs.map(pair => pair.join('_')).join(',')
     };
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.requests, queryParams));
-  }, [filter, registeredFrom, registeredUntil, daysOfWeek, pagination]);
+  }, [filter, sortingPairs, registeredFrom, registeredUntil, daysOfWeek, pagination]);
 
   useEffect(() => {
     (async () => await fetchData())();
@@ -125,8 +154,16 @@ function MaintenanceRequestsTab() {
       ? allRows.filter(row => row.title.toLowerCase().includes(lowerCasedFilter))
       : allRows;
 
-    setDisplayedRows(filteredRows.sort(by(row => row.createdOn, { direction: 'desc' })));
-  }, [allRows, filter]);
+    const sorters = sortingPairs.reduce((chain, sortingPair, sortingPairIndex) => {
+      return sortingPairIndex === 0
+        ? by(row => row[sortingPair[0]], sortingPair[1])
+        : chain.thenBy(row => row[sortingPair[0]], sortingPair[1]);
+    }, null);
+
+    const sortedRows = [...filteredRows].sort(sorters);
+
+    setDisplayedRows(sortedRows);
+  }, [allRows, filter, sortingPairs]);
 
   const handleTableChange = ({ current, pageSize }) => {
     setPagination({ page: current, pageSize });
@@ -135,6 +172,19 @@ function MaintenanceRequestsTab() {
   const handleFilterChange = event => {
     const newFilter = event.target.value;
     setFilter(newFilter);
+  };
+
+  const handleSortingPairChange = (sortingPairIndex, { value, direction }) => {
+    const newSortingPairs = replaceItemAt(sortingPairs, [value, direction], sortingPairIndex);
+    setSortingPairs(newSortingPairs);
+  };
+
+  const handleAddSorterClick = () => {
+    setSortingPairs([...sortingPairs, getDefaultSortingPair()]);
+  };
+
+  const handleResetSortersClick = () => {
+    setSortingPairs([getDefaultSortingPair()]);
   };
 
   const handleDateRangeChange = newDateRange => {
@@ -175,7 +225,7 @@ function MaintenanceRequestsTab() {
       render: renderDocumentTitle
     },
     {
-      title: t('totalColumnHeader'),
+      title: t('totalCountColumnHeader'),
       dataIndex: 'totalCount',
       key: 'totalCount',
       render: _totalCount => _totalCount,
@@ -187,7 +237,7 @@ function MaintenanceRequestsTab() {
       responsive: ['sm'],
       children: [
         {
-          title: t('readColumnHeader'),
+          title: t('readCountColumnHeader'),
           dataIndex: 'readCount',
           key: 'readCount',
           render: _readCount => _readCount,
@@ -195,7 +245,7 @@ function MaintenanceRequestsTab() {
           width: '100px'
         },
         {
-          title: t('writeColumnHeader'),
+          title: t('writeCountColumnHeader'),
           dataIndex: 'writeCount',
           key: 'writeCount',
           render: _writeCount => _writeCount,
@@ -209,7 +259,7 @@ function MaintenanceRequestsTab() {
       responsive: ['md'],
       children: [
         {
-          title: t('anonymousColumnHeader'),
+          title: t('anonymousCountColumnHeader'),
           dataIndex: 'anonymousCount',
           key: 'anonymousCount',
           render: _anonymousCount => _anonymousCount,
@@ -217,7 +267,7 @@ function MaintenanceRequestsTab() {
           width: '100px'
         },
         {
-          title: t('loggedInColumnHeader'),
+          title: t('loggedInCountColumnHeader'),
           dataIndex: 'loggedInCount',
           key: 'loggedInCount',
           render: _loggedInCount => _loggedInCount,
@@ -227,6 +277,8 @@ function MaintenanceRequestsTab() {
       ]
     }
   ];
+
+  const canAddSorter = sortingPairs.length < Object.values(SORTING_VALUE).length;
 
   return (
     <div className="MaintenanceRequestsTab">
@@ -256,8 +308,44 @@ function MaintenanceRequestsTab() {
               value={daysOfWeek}
               disabled={fetchingData}
               options={daysOfWeekOptions}
+              className='MaintenanceRequestsTab-controlsColumnCheckboxes'
               onChange={handleDaysOfWeekChange}
               />
+          </div>
+        </div>
+        <div>
+          {sortingPairs.map((sortingPair, sortingPairIndex) => (
+            <Fragment key={sortingPairIndex}>
+              {sortingPairIndex > 0 && (
+                <div className='MaintenanceRequestsTab-sortersSaparator'>
+                  {t('sortersJoiningText')}
+                </div>
+              )}
+              <SortingSelector
+                size="large"
+                sorting={{ value: sortingPair[0], direction: sortingPair[1] }}
+                options={sortingOptions}
+                onChange={data => handleSortingPairChange(sortingPairIndex, data)}
+                />
+            </Fragment>
+          )
+          )}
+          <div className="MaintenanceRequestsTab-sorterButtons">
+            <Button
+              size="small"
+              disabled={!canAddSorter}
+              icon={<PlusOutlined />}
+              onClick={handleAddSorterClick}
+              >
+              {t('addSorterButton')}
+            </Button>
+            <Button
+              size="small"
+              icon={<ResetIcon />}
+              onClick={handleResetSortersClick}
+              >
+              {t('resetSortersButton')}
+            </Button>
           </div>
         </div>
       </div>
