@@ -66,23 +66,13 @@ class DocumentRatingService {
   }
 
   _createNonPersistedDocumentRating(documentId) {
-    const rating = {
+    return {
       _id: null,
       documentId,
       userRatingsCount: 0,
+      userRatingsCountByStars: [0, 0, 0, 0, 0],
       averageRating: null
     };
-
-    // Randomization has to be deleted when the user can give ratings:
-    // https://educandu.atlassian.net/browse/EDU-1533
-    const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
-    const getAverage = values => values.reduce((accu, val) => accu + val, 0) / values.length;
-    if (getRandomInt(1, 5) !== 1) {
-      rating.userRatingsCount = getRandomInt(1, 250);
-      rating.averageRating = getAverage(Array.from({ length: rating.userRatingsCount }, () => getRandomInt(1, 5)));
-    }
-
-    return rating;
   }
 }
 

@@ -50,6 +50,7 @@ describe('document-rating-store', () => {
           documentId,
           userRatings: [{ userId, rating, ratedOn }],
           userRatingsCount: 1,
+          userRatingsCountByStars: [0, 0, 1, 0, 0],
           averageRating: rating
         });
       });
@@ -68,6 +69,7 @@ describe('document-rating-store', () => {
             }
           ],
           userRatingsCount: 1,
+          userRatingsCountByStars: [0, 0, 0, 0, 1],
           averageRating: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
@@ -75,11 +77,12 @@ describe('document-rating-store', () => {
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
-      it('should add the new rating for the user and update the average rating to the correct value', () => {
+      it('should add the new rating for the user and update all calculated fields', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
           userRatings: [...dbRecordBeforeUpdate.userRatings, { userId, rating, ratedOn }],
           userRatingsCount: 2,
+          userRatingsCountByStars: [0, 0, 1, 0, 1],
           averageRating: 4
         });
       });
@@ -102,6 +105,7 @@ describe('document-rating-store', () => {
             }
           ],
           userRatingsCount: 2,
+          userRatingsCountByStars: [0, 0, 0, 0, 2],
           averageRating: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
@@ -109,10 +113,11 @@ describe('document-rating-store', () => {
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
-      it('should replace the old rating for the user with the new one and update the average rating to the correct value', () => {
+      it('should replace the old rating for the user with the new one and update all calculated fields', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
           userRatings: [...dbRecordBeforeUpdate.userRatings.filter(r => r.userId !== userId), { userId, rating, ratedOn }],
+          userRatingsCountByStars: [0, 0, 1, 0, 1],
           averageRating: 4
         });
       });
@@ -149,6 +154,7 @@ describe('document-rating-store', () => {
             }
           ],
           userRatingsCount: 1,
+          userRatingsCountByStars: [0, 0, 0, 0, 1],
           averageRating: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
@@ -179,6 +185,7 @@ describe('document-rating-store', () => {
             }
           ],
           userRatingsCount: 2,
+          userRatingsCountByStars: [0, 0, 1, 0, 1],
           averageRating: 4
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
@@ -186,11 +193,12 @@ describe('document-rating-store', () => {
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
-      it('should remove the old rating for the user and update the average rating to the correct value', () => {
+      it('should remove the old rating for the user and update all calculated fields', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
           userRatings: dbRecordBeforeUpdate.userRatings.filter(r => r.userId !== userId),
           userRatingsCount: 1,
+          userRatingsCountByStars: [0, 0, 0, 0, 1],
           averageRating: 5
         });
       });

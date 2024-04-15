@@ -76,6 +76,24 @@ function Tests({ PageTemplate, initialState }) {
   const [starRatingValue, setStarRatingValue] = useState(3.7);
   const [starRatingCompact, setStarRatingCompact] = useState(false);
   const [starRatingTotalCount, setStarRatingTotalCount] = useState(15);
+  const [starRatingUserRating, setStarRatingUserRating] = useState(1);
+  const [starRatingDocumentId, setStarRatingDocumentId] = useState('');
+  const handleUserRatingUpdateClick = () => {
+    const postUrl = `/api/v1/document-ratings/${encodeURIComponent(starRatingDocumentId)}`;
+    axios.post(postUrl, { rating: starRatingUserRating })
+      // eslint-disable-next-line no-alert
+      .then(() => { window.alert('User rating has been updated!'); })
+      // eslint-disable-next-line no-alert
+      .catch(error => { window.alert(error); });
+  };
+  const handleUserRatingDeleteClick = () => {
+    const deleteUrl = `/api/v1/document-ratings/${encodeURIComponent(starRatingDocumentId)}`;
+    axios.delete(deleteUrl)
+      // eslint-disable-next-line no-alert
+      .then(() => { window.alert('User rating has been deleted!'); })
+      // eslint-disable-next-line no-alert
+      .catch(error => { window.alert(error); });
+  };
 
   // MediaLibraryMetadataForm
   const [mediaLibraryMetadataForm] = Form.useForm();
@@ -297,8 +315,16 @@ function Tests({ PageTemplate, initialState }) {
                       <div>TotalCount:</div>
                       <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setStarRatingTotalCount} />
                     </div>
-                    <div>
+                    <div style={{ marginBottom: '50px' }}>
                       <StarRating value={starRatingValue} totalCount={starRatingTotalCount} compact={starRatingCompact} />
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <div>Update/delete current user rating for document ID</div>
+                      <Input style={{ width: '250px' }} value={starRatingDocumentId} onChange={event => setStarRatingDocumentId(event.target.value)} />
+                      <div>with value:</div>
+                      <InputNumber style={{ width: '65px' }} min={1} max={5} step={1} value={starRatingUserRating} onChange={setStarRatingUserRating} />
+                      <Button type="primary" onClick={handleUserRatingUpdateClick}>Update</Button>
+                      <Button type="primary" danger onClick={handleUserRatingDeleteClick}>Delete</Button>
                     </div>
                   </div>
                 )

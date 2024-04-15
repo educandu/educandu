@@ -172,6 +172,7 @@ export const documentRatingShape = PropTypes.shape({
   _id: PropTypes.string,
   documentId: PropTypes.string.isRequired,
   userRatingsCount: PropTypes.number.isRequired,
+  userRatingsCountByStars: PropTypes.arrayOf(PropTypes.number).isRequired,
   averageRating: PropTypes.number
 });
 
