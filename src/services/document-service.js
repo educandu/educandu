@@ -284,7 +284,7 @@ class DocumentService {
     }
   }
 
-  async updateDocument({ documentId, data, user, silentUpdate = false }) {
+  async updateDocument({ documentId, data, revisionCreatedBecause, user, silentUpdate = false }) {
     let documentLock;
 
     try {
@@ -306,6 +306,7 @@ class DocumentService {
           documentId,
           createdOn: null,
           createdBy: user._id,
+          createdBecause: revisionCreatedBecause || '',
           sections: data.sections?.map(section => createSectionRevision({
             section,
             ancestorSection: previousRevision.sections.find(s => s.key === section.key) || null,
@@ -340,8 +341,8 @@ class DocumentService {
     }
   }
 
-  updateDocumentMetadata({ documentId, metadata, user }) {
-    return this.updateDocument({ documentId, data: metadata, user });
+  updateDocumentMetadata({ documentId, metadata, revisionCreatedBecause, user }) {
+    return this.updateDocument({ documentId, data: metadata, revisionCreatedBecause, user });
   }
 
   updateDocumentSections({ documentId, sections, user }) {

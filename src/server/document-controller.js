@@ -237,10 +237,10 @@ class DocumentController {
 
   async handlePatchDocumentMetadata(req, res) {
     const { user } = req;
-    const metadata = req.body;
     const { documentId } = req.params;
+    const { metadata, revisionCreatedBecause } = req.body;
 
-    const updatedDocument = await this.documentService.updateDocumentMetadata({ documentId, metadata, user });
+    const updatedDocument = await this.documentService.updateDocumentMetadata({ documentId, metadata, revisionCreatedBecause, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
 
     await this.documentRequestService.tryRegisterDocumentWriteRequest({ document: updatedDocument, user });

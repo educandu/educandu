@@ -354,7 +354,13 @@ describe('document-service', () => {
 
       secondTick = new Date(sandbox.clock.tick(1000));
 
-      updatedDocument = await sut.updateDocument({ documentId: initialDocument._id, data: updatedData, user: secondUser, silentUpdate: true });
+      updatedDocument = await sut.updateDocument({
+        documentId: initialDocument._id,
+        data: updatedData,
+        revisionCreatedBecause: 'of reasons',
+        user: secondUser,
+        silentUpdate: true
+      });
       persistedSecondRevision = await db.documentRevisions.findOne({ _id: updatedDocument.revision });
     });
 
@@ -369,6 +375,7 @@ describe('document-service', () => {
     it('saves the second revision', () => {
       const expectedResult = {
         ...updatedData,
+        createdBecause: 'of reasons',
         sections: [
           {
             ...updatedData.sections[0],

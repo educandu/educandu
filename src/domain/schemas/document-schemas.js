@@ -73,13 +73,16 @@ export const createDocumentDataBodySchema = joi.object({
 });
 
 export const updateDocumentMetadataBodySchema = joi.object({
-  title: joi.string().required(),
-  shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
-  slug: slugSchema.required(),
-  language: joi.string().case('lower').required(),
-  tags: joi.array().items(joi.string()).required(),
-  publicContext: publicContextSchema.allow(null).required(),
-  roomContext: roomContextSchema.allow(null).required()
+  metadata: joi.object({
+    title: joi.string().required(),
+    shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
+    slug: slugSchema.required(),
+    language: joi.string().case('lower').required(),
+    tags: joi.array().items(joi.string()).required(),
+    publicContext: publicContextSchema.allow(null).required(),
+    roomContext: roomContextSchema.allow(null).required()
+  }),
+  revisionCreatedBecause: joi.string().allow('').max(maxDocumentRevisionCreatedBecauseLength).required()
 });
 
 export const restoreRevisionBodySchema = joi.object({
