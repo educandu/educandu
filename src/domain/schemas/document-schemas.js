@@ -1,7 +1,7 @@
 import joi from 'joi';
 import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { idOrKeySchema, slugSchema } from './shared-schemas.js';
-import { maxDocumentCreatedBecauseLength, maxDocumentShortDescriptionLength } from '../validation-constants.js';
+import { maxDocumentRevisionCreatedBecauseLength, maxDocumentShortDescriptionLength } from '../validation-constants.js';
 
 const sectionSchema = joi.object({
   key: idOrKeySchema.required(),
@@ -118,7 +118,7 @@ export const documentRevisionDBSchema = joi.object({
   order: joi.number().required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
-  createdBecause: joi.string().allow('').max(maxDocumentCreatedBecauseLength).required(),
+  createdBecause: joi.string().allow('').max(maxDocumentRevisionCreatedBecauseLength).required(),
   title: joi.string().required(),
   shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
   slug: slugSchema.required(),

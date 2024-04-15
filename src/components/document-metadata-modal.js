@@ -21,10 +21,10 @@ import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
-import { maxDocumentShortDescriptionLength } from '../domain/validation-constants.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { documentExtendedMetadataShape, documentMetadataEditShape } from '../ui/default-prop-types.js';
 import { Form, Input, Modal, Checkbox, Select, InputNumber, Empty, Collapse, Radio, Button, Tooltip } from 'antd';
+import { maxDocumentRevisionCreatedBecauseLength, maxDocumentShortDescriptionLength } from '../domain/validation-constants.js';
 import {
   CLONING_STRATEGY,
   determineActualTemplateDocumentId,
@@ -91,6 +91,7 @@ function DocumentMetadataModal({
   const [roomContext, setRoomContext] = useState(null);
   const [publicContext, setPublicContext] = useState(null);
   const [shortDescription, setShortDescription] = useState('');
+  const [revisionCreatedBecause, setRevisionCreatedBecause] = useState('');
 
   const [sequenceCount, setSequenceCount] = useState(0);
   const [showSaveSettings, setShowSaveSettings] = useState(false);
@@ -145,6 +146,7 @@ function DocumentMetadataModal({
     setCloningStrategy(CLONING_STRATEGY.cloneWithinArea);
     setCloningTargetRoomId('');
     setShowSaveSettings(false);
+    setRevisionCreatedBecause('');
   }, [initialDocumentMetadata, mode, t, uiLanguage]);
 
   const loadRooms = useCallback(async () => {
@@ -173,6 +175,8 @@ function DocumentMetadataModal({
     setRoomContext(getDefaultRoomContext());
   }, [cloningStrategy]);
 
+  const invalidFieldsExist = () => Object.values(validationState).some(field => field.validateStatus === 'error');
+
   const handleTagSuggestionsNeeded = searchText => {
     return documentApiClient.getDocumentTagSuggestions(searchText).catch(error => {
       handleApiError({ error, logger, t });
@@ -187,6 +191,9 @@ function DocumentMetadataModal({
   };
 
   const handleModalSaveSettings = () => {
+    if (invalidFieldsExist()) {
+      return;
+    }
     setShowSaveSettings(true);
   };
 
@@ -310,9 +317,13 @@ function DocumentMetadataModal({
     setRoomContext(prevState => ({ ...prevState, inputSubmittingDisabled: checked }));
   };
 
+  const handleRevisionCreatedBecauseChange = event => {
+    const { value } = event.target;
+    setRevisionCreatedBecause(value);
+  };
+
   const handleFinish = async () => {
-    const invalidFieldsExist = Object.values(validationState).some(field => field.validateStatus === 'error');
-    if (invalidFieldsExist) {
+    if (invalidFieldsExist()) {
       return;
     }
 
@@ -569,7 +580,13 @@ function DocumentMetadataModal({
         </div>
 
         <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !showSaveSettings })}>
-          Provide reason
+          <FormItem label={t('common:documentRevisionCreatedBecauseLabel')}>
+            <NeverScrollingTextArea
+              value={revisionCreatedBecause}
+              maxLength={maxDocumentRevisionCreatedBecauseLength}
+              onChange={handleRevisionCreatedBecauseChange}
+              />
+          </FormItem>
         </div>
       </Form>
     </Modal>
