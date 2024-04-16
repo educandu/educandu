@@ -93,11 +93,11 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  updateDocumentSections({ documentId, sections }) {
+  updateDocumentSections({ documentId, sections, revisionCreatedBecause = '' }) {
     return this.httpClient
       .patch(
         `/api/v1/docs/${encodeURIComponent(documentId)}/sections`,
-        { sections },
+        { sections, revisionCreatedBecause },
         { responseType: 'json' }
       )
       .then(res => res.data);

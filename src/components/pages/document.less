@@ -112,6 +112,23 @@
 
 .DocumentPage-focusHeaderButton {
   .m-icon-button;
+
+  &.DocumentPage-focusHeaderButton--leftOfGroup {
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+  }
+
+  &.DocumentPage-focusHeaderButton--rightOfGroup {
+    margin-left: 2px !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+
+    // covers the disabled button case only
+    button {
+      border-top-left-radius: 0px !important;
+      border-bottom-left-radius: 0px !important;
+    }
+  }
 }
 
 .DocumentPage-focusHeaderDirtyInfo {

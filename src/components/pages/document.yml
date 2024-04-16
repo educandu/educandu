@@ -32,6 +32,9 @@ document:
   saveChanges:
     en: Save changes
     de: Änderungen speichern
+  extendedSaveChanges:
+    en: Save changes (extended)
+    de: Änderungen speichern (erweitert)
   comments:
     en: Comments
     de: Kommentare

@@ -250,10 +250,10 @@ class DocumentController {
 
   async handlePatchDocumentSections(req, res) {
     const { user } = req;
-    const { sections } = req.body;
     const { documentId } = req.params;
+    const { sections, revisionCreatedBecause } = req.body;
 
-    const updatedDocument = await this.documentService.updateDocumentSections({ documentId, sections, user });
+    const updatedDocument = await this.documentService.updateDocumentSections({ documentId, sections, revisionCreatedBecause, user });
     const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
 
     await this.documentRequestService.tryRegisterDocumentWriteRequest({ document: updatedDocument, user });

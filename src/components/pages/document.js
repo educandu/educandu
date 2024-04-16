@@ -6,7 +6,6 @@ import StarRating from '../star-rating.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
-import { InputsIcon } from '../icons/icons.js';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
 import CreditsFooter from '../credits-footer.js';
@@ -23,6 +22,7 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
+import { InputsIcon, SettingsIcon } from '../icons/icons.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import DocumentInputsPanel from '../document-inputs-panel.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -33,7 +33,7 @@ import DocumentVersionHistory from '../document-version-history.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
-import { Breadcrumb, Button, message, Tooltip, FloatButton } from 'antd';
+import { Breadcrumb, Button, message, Tooltip, FloatButton, Modal, Form } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -72,6 +72,8 @@ import {
   getFavoriteActionTooltip,
   tryBringSectionIntoView
 } from '../../utils/document-utils.js';
+import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import { maxDocumentRevisionCreatedBecauseLength } from '../../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -181,6 +183,7 @@ function Document({ initialState, PageTemplate }) {
   const headerRef = useRef(null);
   const isMounted = useIsMounted();
   const commentsSectionRef = useRef(null);
+  const extendedSaveFormRef = useRef(null);
   const { t } = useTranslation('document');
   const pluginRegistry = useService(PluginRegistry);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
@@ -214,10 +217,12 @@ function Document({ initialState, PageTemplate }) {
   const [isSidePanelMinimized, setIsSidePanelMinimized] = useState(false);
   const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
   const [selectedDocumentInput, setSelectedDocumentInput] = useState(null);
+  const [revisionCreatedBecause, setRevisionCreatedBecause] = useState('');
   const [view, setView] = useState(determineInitialViewState(request).view);
   const [hasPendingInputChanges, setHasPendingInputChanges] = useState(false);
   const [currentDocumentRevisions, setCurrentDocumentRevisions] = useState([]);
   const [inputsPanelPositionInPx, setInputsPanelPositionInPx] = useState(null);
+  const [isExtendedSaveModelOpen, setIsExtendedSaveModalOpen] = useState(false);
   const [isCurrentInputSubmitted, setIsCurrentInputSubmitted] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
@@ -497,6 +502,21 @@ function Document({ initialState, PageTemplate }) {
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: false, isOpen: true }));
   };
 
+  const handleExtendedSaveModalOpen = () => {
+    setIsExtendedSaveModalOpen(true);
+  };
+
+  const handleExtendedSaveModalCancel = () => {
+    setIsExtendedSaveModalOpen(false);
+  };
+
+  const handleExtendedSaveModalSave = () => {
+    if (extendedSaveFormRef.current) {
+      extendedSaveFormRef.current.submit();
+      setIsExtendedSaveModalOpen(false);
+    }
+  };
+
   const handleDocumentCloneClick = () => {
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: true, isOpen: true }));
   };
@@ -534,7 +554,12 @@ function Document({ initialState, PageTemplate }) {
     switchView(VIEW.edit, cloneDeep(doc.sections));
   };
 
-  const handleEditSave = async () => {
+  const handleRevisionCreatedBecauseChange = event => {
+    const { value } = event.target;
+    setRevisionCreatedBecause(value);
+  };
+
+  const handleEditSave = async ({ isExtendedSave } = {})=> {
     try {
       setIsSaving(true);
       const updatedDoc = await documentApiClient.updateDocumentSections({
@@ -543,7 +568,8 @@ function Document({ initialState, PageTemplate }) {
           key: s.key,
           type: s.type,
           content: s.content
-        }))
+        })),
+        revisionCreatedBecause: isExtendedSave ? revisionCreatedBecause.trim() : ''
       });
 
       const currentSectionKeys = currentSections.map(s => s.key);
@@ -569,6 +595,7 @@ function Document({ initialState, PageTemplate }) {
       setHasPendingInputChanges(false);
       setPendingDocumentInput(createPendingDocumentInput(newCurrentSections));
       setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
+      setRevisionCreatedBecause('');
       message.success(t('common:changesSavedSuccessfully'));
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -583,6 +610,7 @@ function Document({ initialState, PageTemplate }) {
       switchView(VIEW.display, doc.sections);
       setEditedSectionKeys([]);
       setPendingTemplateSectionKeys([]);
+      setRevisionCreatedBecause('');
     };
 
     if (isDirty) {
@@ -973,16 +1001,27 @@ function Document({ initialState, PageTemplate }) {
         >
         {t('common:editMetadata')}
       </Button>
-      <Button
-        icon={<SaveIcon />}
-        type="primary"
-        loading={isSaving}
-        disabled={!isDirty}
-        className="DocumentPage-focusHeaderButton"
-        onClick={handleEditSave}
-        >
-        {t('saveChanges')}
-      </Button>
+      <div>
+        <Button
+          type="primary"
+          loading={isSaving}
+          disabled={!isDirty}
+          icon={<SaveIcon />}
+          className="DocumentPage-focusHeaderButton DocumentPage-focusHeaderButton--leftOfGroup"
+          onClick={handleEditSave}
+          >
+          {t('saveChanges')}
+        </Button>
+        <Tooltip title={t('extendedSaveChanges')}>
+          <Button
+            type="primary"
+            disabled={!isDirty}
+            icon={<SettingsIcon />}
+            className='DocumentPage-focusHeaderButton DocumentPage-focusHeaderButton--rightOfGroup'
+            onClick={handleExtendedSaveModalOpen}
+            />
+        </Tooltip>
+      </div>
     </FocusHeader>
   );
 
@@ -1220,6 +1259,26 @@ function Document({ initialState, PageTemplate }) {
           </div>
         </Fragment>
       )}
+
+      <Modal
+        maskClosable={false}
+        okText={t('common:save')}
+        canceText={t('common:cancel')}
+        open={isExtendedSaveModelOpen}
+        title={t('extendedSaveChanges')}
+        onOk={handleExtendedSaveModalSave}
+        onCancel={handleExtendedSaveModalCancel}
+        >
+        <Form ref={extendedSaveFormRef} layout="vertical" onFinish={() => handleEditSave({ isExtendedSave: true })} className="u-modal-body">
+          <Form.Item label={t('common:documentRevisionCreatedBecauseLabel')}>
+            <NeverScrollingTextArea
+              value={revisionCreatedBecause}
+              maxLength={maxDocumentRevisionCreatedBecauseLength}
+              onChange={handleRevisionCreatedBecauseChange}
+              />
+          </Form.Item>
+        </Form>
+      </Modal>
 
       <DocumentMetadataModal
         {...documentMetadataModalState}
