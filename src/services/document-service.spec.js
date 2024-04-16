@@ -357,7 +357,7 @@ describe('document-service', () => {
       updatedDocument = await sut.updateDocument({
         documentId: initialDocument._id,
         data: updatedData,
-        revisionCreatedBecause: 'of reasons',
+        revisionCreatedBecause: 'My reason',
         user: secondUser,
         silentUpdate: true
       });
@@ -375,7 +375,7 @@ describe('document-service', () => {
     it('saves the second revision', () => {
       const expectedResult = {
         ...updatedData,
-        createdBecause: 'of reasons',
+        createdBecause: 'My reason',
         sections: [
           {
             ...updatedData.sections[0],
@@ -764,7 +764,7 @@ describe('document-service', () => {
       });
 
       describe('and no section has been hard-deleted', () => {
-        describe('and the second document revision is restored', () => {
+        describe('and the second document revision is restored (without a provided reason)', () => {
           let result;
 
           beforeEach(async () => {
@@ -797,6 +797,10 @@ describe('document-service', () => {
 
           it('should set "restoredFrom" to the restored revision ID', () => {
             expect(result[3].restoredFrom).toBe(initialDocumentRevisions[1]._id);
+          });
+
+          it('should set "createdBecause" to empty string', () => {
+            expect(result[3].createdBecause).toBe('');
           });
 
           it('should preserve section keys', () => {
@@ -835,13 +839,14 @@ describe('document-service', () => {
           });
         });
 
-        describe('and the second document revision is restored', () => {
+        describe('and the second document revision is restored (with a provided reson)', () => {
           let result;
 
           beforeEach(async () => {
             result = await sut.restoreDocumentRevision({
               documentId: initialDocumentRevisions[1].documentId,
               revisionId: initialDocumentRevisions[1]._id,
+              revisionRestoredBecause: 'My reason',
               user: adminUser
             });
           });
@@ -868,6 +873,10 @@ describe('document-service', () => {
 
           it('should set "restoredFrom" to the restored revision ID', () => {
             expect(result[3].restoredFrom).toBe(initialDocumentRevisions[1]._id);
+          });
+
+          it('should set "createdBecause" to the provided reason', () => {
+            expect(result[3].createdBecause).toBe('My reason');
           });
 
           it('should preserve section keys', () => {

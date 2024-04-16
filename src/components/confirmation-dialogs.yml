@@ -50,6 +50,9 @@ confirmationDialogs:
   restoreDocumentVersionConfirmation:
     en: Do you really want to restore the content of version {id}?
     de: Möchtest du den Inhalt der Version {id} wirklich wiederherstellen?
+  restoreDocumentVersionInputLabel:
+    en: Please specify a reason (optional)
+    de: Bitte gib einen Grund an (freiwillig)
   confirmPassword:
     en: Password confirmation
     de: Kennwortbestätigung

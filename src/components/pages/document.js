@@ -845,11 +845,12 @@ function Document({ initialState, PageTemplate }) {
     confirmDocumentRevisionRestoration(
       t,
       historySelectedDocumentRevision,
-      async () => {
+      async ({ revisionRestoredBecause }) => {
         try {
           const { document: updatedDoc, documentRevisions } = await documentApiClient.restoreDocumentRevision({
             documentId,
-            revisionId: documentRevisionId
+            revisionId: documentRevisionId,
+            revisionRestoredBecause
           });
           const latestDocumentRevision = documentRevisions[documentRevisions.length - 1];
 

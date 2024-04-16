@@ -263,10 +263,10 @@ class DocumentController {
 
   async handlePatchDocumentRestoreRevision(req, res) {
     const { user } = req;
-    const { revisionId } = req.body;
     const { documentId } = req.params;
+    const { revisionId, revisionRestoredBecause } = req.body;
 
-    const documentRevisions = await this.documentService.restoreDocumentRevision({ documentId, revisionId, user });
+    const documentRevisions = await this.documentService.restoreDocumentRevision({ documentId, revisionId, revisionRestoredBecause, user });
     if (!documentRevisions.length) {
       throw new NotFound();
     }

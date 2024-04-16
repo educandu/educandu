@@ -87,7 +87,8 @@ export const updateDocumentMetadataBodySchema = joi.object({
 });
 
 export const restoreRevisionBodySchema = joi.object({
-  revisionId: idOrKeySchema.required()
+  revisionId: idOrKeySchema.required(),
+  revisionRestoredBecause: joi.string().allow('').max(maxDocumentRevisionCreatedBecauseLength).required()
 });
 
 export const hardDeleteSectionBodySchema = joi.object({
