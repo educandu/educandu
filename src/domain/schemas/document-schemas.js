@@ -25,7 +25,8 @@ export const documentIdParamsOrQuerySchema = joi.object({
 });
 
 export const patchDocSectionsBodySchema = joi.object({
-  sections: joi.array().items(sectionSchema)
+  sections: joi.array().items(sectionSchema),
+  revisionCreatedBecause: joi.string().allow('').max(maxDocumentRevisionCreatedBecauseLength).required()
 });
 
 export const publicContextSchema = joi.object({

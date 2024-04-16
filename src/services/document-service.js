@@ -345,9 +345,9 @@ class DocumentService {
     return this.updateDocument({ documentId, data: metadata, revisionCreatedBecause, user });
   }
 
-  updateDocumentSections({ documentId, sections, user }) {
+  updateDocumentSections({ documentId, sections, revisionCreatedBecause, user }) {
     const data = { sections };
-    return this.updateDocument({ documentId, data, user });
+    return this.updateDocument({ documentId, data, revisionCreatedBecause, user });
   }
 
   async hardDeletePrivateDocument({ documentId, user }) {
