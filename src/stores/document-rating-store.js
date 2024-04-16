@@ -26,7 +26,18 @@ class DocumentRatingStore {
     return this.collection.findOne({ documentId }, { projection: documentRatingProjection, session });
   }
 
-  createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn }, { session } = {}) {
+  async getUserDocumentRating({ documentId, userId }, { session } = {}) {
+    const foundUserRatings = await this.collection.aggregate([
+      { $match : { documentId, 'userRatings.userId': userId } },
+      { $unwind : '$userRatings' },
+      { $match : { 'userRatings.userId': userId } },
+      { $replaceRoot: { newRoot: '$userRatings' } }
+    ], { session }).toArray();
+
+    return foundUserRatings[0] || null;
+  }
+
+  saveUserDocumentRating({ documentId, userId, rating, ratedOn }, { session } = {}) {
     const initialDocumentRating = {
       _id: uniqueId.create(),
       documentId,

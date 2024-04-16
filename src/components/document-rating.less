@@ -1,0 +1,37 @@
+.DocumentRating {
+  display: inline-grid;
+  align-items: end;
+  justify-items: center;
+  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(2, auto);
+  grid-template-areas:
+    "value stars"
+    "empty totalCount";
+
+  &.DocumentRating--compact {
+    grid-template-rows: auto;
+    grid-template-columns: repeat(2, auto) @edu-control-spacing-base auto;
+    grid-template-areas:
+      "value stars empty totalCount";
+  }
+}
+
+.DocumentRating-value {
+  grid-area: value;
+  font-weight: bold;
+  padding-right: @edu-control-spacing-base;
+
+  &.DocumentRating-value--compact {
+    font-weight: normal;
+    font-size: @edu-font-size-sm;
+  }
+}
+
+.DocumentRating-stars {
+  grid-area: stars;
+}
+
+.DocumentRating-totalCount {
+  grid-area: totalCount;
+  font-size: @edu-font-size-xs;
+}

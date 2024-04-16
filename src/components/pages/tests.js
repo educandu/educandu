@@ -5,11 +5,11 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
 import TagSelect from '../tag-select.js';
-import StarRating from '../star-rating.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
 import LicenseSelect from '../license-select.js';
 import MarkdownInput from '../markdown-input.js';
+import DocumentRating from '../document-rating.js';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
@@ -72,12 +72,12 @@ function Tests({ PageTemplate, initialState }) {
     window.alert('Started DocumentRequests creation, check your console!');
   };
 
-  // StarRating
-  const [starRatingValue, setStarRatingValue] = useState(3.7);
-  const [starRatingCompact, setStarRatingCompact] = useState(false);
-  const [starRatingTotalCount, setStarRatingTotalCount] = useState(15);
-  const [starRatingUserRating, setStarRatingUserRating] = useState(1);
-  const [starRatingDocumentId, setStarRatingDocumentId] = useState('');
+  // DocumentRating
+  const [starRatingValue, setDocumentRatingValue] = useState(3.7);
+  const [starRatingCompact, setDocumentRatingCompact] = useState(false);
+  const [starRatingTotalCount, setDocumentRatingTotalCount] = useState(15);
+  const [starRatingUserRating, setDocumentRatingUserRating] = useState(1);
+  const [starRatingDocumentId, setDocumentRatingDocumentId] = useState('');
   const handleUserRatingUpdateClick = () => {
     const postUrl = `/api/v1/document-ratings/${encodeURIComponent(starRatingDocumentId)}`;
     axios.post(postUrl, { rating: starRatingUserRating })
@@ -303,26 +303,26 @@ function Tests({ PageTemplate, initialState }) {
                 )
               },
               {
-                key: 'StarRating',
-                label: 'StarRating',
+                key: 'DocumentRating',
+                label: 'DocumentRating',
                 children: (
                   <div>
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                      <Checkbox checked={starRatingCompact} onChange={event => setStarRatingCompact(event.target.checked)}>Compact</Checkbox>
+                      <Checkbox checked={starRatingCompact} onChange={event => setDocumentRatingCompact(event.target.checked)}>Compact</Checkbox>
                       <div>Value:</div>
-                      <InputNumber min={0} max={5} precision={3} step={0.1} value={starRatingValue ?? 0} onChange={setStarRatingValue} />
-                      <Checkbox checked={starRatingValue === null} onChange={event => setStarRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
+                      <InputNumber min={0} max={5} precision={3} step={0.1} value={starRatingValue ?? 0} onChange={setDocumentRatingValue} />
+                      <Checkbox checked={starRatingValue === null} onChange={event => setDocumentRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
                       <div>TotalCount:</div>
-                      <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setStarRatingTotalCount} />
+                      <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setDocumentRatingTotalCount} />
                     </div>
                     <div style={{ marginBottom: '50px' }}>
-                      <StarRating value={starRatingValue} totalCount={starRatingTotalCount} compact={starRatingCompact} />
+                      <DocumentRating value={starRatingValue} totalCount={starRatingTotalCount} compact={starRatingCompact} />
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <div>Update/delete current user rating for document ID</div>
-                      <Input style={{ width: '250px' }} value={starRatingDocumentId} onChange={event => setStarRatingDocumentId(event.target.value)} />
+                      <Input style={{ width: '250px' }} value={starRatingDocumentId} onChange={event => setDocumentRatingDocumentId(event.target.value)} />
                       <div>with value:</div>
-                      <InputNumber style={{ width: '65px' }} min={1} max={5} step={1} value={starRatingUserRating} onChange={setStarRatingUserRating} />
+                      <InputNumber style={{ width: '65px' }} min={1} max={5} step={1} value={starRatingUserRating} onChange={setDocumentRatingUserRating} />
                       <Button type="primary" onClick={handleUserRatingUpdateClick}>Update</Button>
                       <Button type="primary" danger onClick={handleUserRatingDeleteClick}>Delete</Button>
                     </div>

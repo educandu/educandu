@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
-import StarRating from '../star-rating.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
@@ -11,6 +10,7 @@ import { ALERT_TYPE } from '../custom-alert.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
+import DocumentRating from '../document-rating.js';
 import FavoriteToggle from '../favorite-toggle.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SaveIcon from '../icons/general/save-icon.js';
@@ -74,6 +74,7 @@ import {
   getFavoriteActionTooltip,
   tryBringSectionIntoView
 } from '../../utils/document-utils.js';
+import UserDocumentRatingDialog from '../user-document- rating-dialog.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -226,15 +227,13 @@ function Document({ initialState, PageTemplate }) {
   const [isCurrentInputSubmitted, setIsCurrentInputSubmitted] = useState(false);
   const [actionsPanelPositionInPx, setActionsPanelPositionInPx] = useState(null);
   const [verifiedBadgePositionInPx, setVerifiedBadgePositionInPx] = useState(null);
-  // `setDocumentRating` will be used when the user can give ratings:
-  // https://educandu.atlassian.net/browse/EDU-1533
-  // eslint-disable-next-line no-unused-vars
   const [documentRating, setDocumentRating] = useState(initialState.documentRating);
   const [initialDocumentInputsFetched, setInitialDocumentInputsFetched] = useState(false);
   const [inputsSelectedDocumentRevision, setInputsSelectedDocumentRevision] = useState(null);
   const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
+  const [isUserDocumentRatingDialogOpen, setIsUserDocumentRatingDialogOpen] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
   const [initialDocumentRevisionsFetched, setInitialDocumentRevisionsFetched] = useState(false);
   const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
@@ -548,6 +547,15 @@ function Document({ initialState, PageTemplate }) {
 
   const handleDocumentMetadataModalClose = () => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const handleDocumentRatingOk = updatedDocumentRating => {
+    setDocumentRating(updatedDocumentRating);
+    setIsUserDocumentRatingDialogOpen(false);
+  };
+
+  const handleDocumentRatingCancel = () => {
+    setIsUserDocumentRatingDialogOpen(false);
   };
 
   const handleEditOpen = () => {
@@ -989,6 +997,10 @@ function Document({ initialState, PageTemplate }) {
     setHasPendingInputChanges(false);
   };
 
+  const handleDocumentRatingClick = () => {
+    setIsUserDocumentRatingDialogOpen(true);
+  };
+
   const renderEditFocusHeader = () => (
     <FocusHeader title={t('editDocument')} onClose={handleEditClose}>
       <div className="DocumentPage-focusHeaderDirtyInfo">
@@ -1097,6 +1109,23 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
+  const renderDocumentRating = () => {
+    const starRating = (
+      <DocumentRating
+        value={documentRating.averageRating}
+        totalCount={documentRating.userRatingsCount}
+        />
+    );
+
+    return user
+      ? (
+        <Tooltip title={t('starRatingTooltip')}>
+          <a onClick={handleDocumentRatingClick}>{starRating}</a>
+        </Tooltip>
+      )
+      : starRating;
+  };
+
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} headerRef={headerRef} contentRef={pageRef}>
@@ -1119,11 +1148,10 @@ function Document({ initialState, PageTemplate }) {
                 />
             )}
             {!!documentRating && view === VIEW.display && (
-              <div className="DocumentPage-starRating">
-                <StarRating
-                  value={documentRating.averageRating}
-                  totalCount={documentRating.userRatingsCount}
-                  />
+              <div className="DocumentPage-ratingArea">
+                <div className="DocumentPage-rating">
+                  {renderDocumentRating()}
+                </div>
               </div>
             )}
             <div>
@@ -1285,6 +1313,12 @@ function Document({ initialState, PageTemplate }) {
         {...documentMetadataModalState}
         onSave={handleDocumentMetadataModalSave}
         onClose={handleDocumentMetadataModalClose}
+        />
+      <UserDocumentRatingDialog
+        documentRating={documentRating}
+        isOpen={isUserDocumentRatingDialogOpen}
+        onOk={handleDocumentRatingOk}
+        onCancel={handleDocumentRatingCancel}
         />
     </RoomMediaContextProvider>
   );

@@ -1,7 +1,7 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 
-export const postOrDeleteDocumentRatingParamsSchema = joi.object({
+export const userDocumentRatingParamsSchema = joi.object({
   documentId: idOrKeySchema.required()
 });
 

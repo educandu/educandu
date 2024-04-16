@@ -23,6 +23,10 @@ class DocumentRatingService {
     return existingRating || this._createNonPersistedDocumentRating(documentId);
   }
 
+  getUserDocumentRating({ documentId, user }) {
+    return this.documentRatingStore.getUserDocumentRating({ documentId, userId: user._id });
+  }
+
   async saveUserDocumentRating({ documentId, user, rating }) {
     const document = await this.documentStore.getDocumentById(documentId);
     if (!document) {
@@ -37,7 +41,7 @@ class DocumentRatingService {
       throw new BadRequest('Rating must be an integer between 1 and 5.');
     }
 
-    await this.documentRatingStore.createOrUpdateUserDocumentRating({
+    await this.documentRatingStore.saveUserDocumentRating({
       documentId,
       userId: user._id,
       rating,

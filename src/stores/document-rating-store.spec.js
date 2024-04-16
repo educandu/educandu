@@ -30,7 +30,7 @@ describe('document-rating-store', () => {
     sandbox.restore();
   });
 
-  describe('createOrUpdateUserDocumentRating', () => {
+  describe('saveUserDocumentRating', () => {
     let dbRecordBeforeUpdate;
     let dbRecordAfterUpdate;
     const documentId = '7qo6DoqGbbkGL45ckgyeWH';
@@ -40,7 +40,7 @@ describe('document-rating-store', () => {
 
     describe('when there is no DB record for the specified document', () => {
       beforeEach(async () => {
-        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn });
+        await sut.saveUserDocumentRating({ documentId, userId, rating, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
@@ -73,7 +73,7 @@ describe('document-rating-store', () => {
           averageRating: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn });
+        await sut.saveUserDocumentRating({ documentId, userId, rating, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
@@ -109,7 +109,7 @@ describe('document-rating-store', () => {
           averageRating: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.createOrUpdateUserDocumentRating({ documentId, userId, rating, ratedOn });
+        await sut.saveUserDocumentRating({ documentId, userId, rating, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
