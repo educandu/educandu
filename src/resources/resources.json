@@ -1602,7 +1602,7 @@
     },
     "restoreDocumentVersionInputLabel": {
       "en": "Please specify a reason (optional)",
-      "de": "Bitte gib einen Grund an (freiwillig)"
+      "de": "Bitte gib einen Grund an (optional)"
     },
     "confirmPassword": {
       "en": "Password confirmation",

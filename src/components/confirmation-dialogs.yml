@@ -52,7 +52,7 @@ confirmationDialogs:
     de: Möchtest du den Inhalt der Version {id} wirklich wiederherstellen?
   restoreDocumentVersionInputLabel:
     en: Please specify a reason (optional)
-    de: Bitte gib einen Grund an (freiwillig)
+    de: Bitte gib einen Grund an (optional)
   confirmPassword:
     en: Password confirmation
     de: Kennwortbestätigung
