@@ -34,14 +34,14 @@ class DocumentRatingController {
 
   registerApi(router) {
     router.get(
-      '/api/v1/user-document-ratings/:documentId',
+      '/api/v1/document-ratings/:documentId/user-ratings',
       needsAuthentication(),
       validateParams(userDocumentRatingParamsSchema),
       (req, res) => this.handleGetUserDocumentRating(req, res)
     );
 
     router.post(
-      '/api/v1/user-document-ratings/:documentId',
+      '/api/v1/document-ratings/:documentId/user-ratings',
       needsAuthentication(),
       jsonParser,
       validateParams(userDocumentRatingParamsSchema),
@@ -50,7 +50,7 @@ class DocumentRatingController {
     );
 
     router.delete(
-      '/api/v1/user-document-ratings/:documentId',
+      '/api/v1/document-ratings/:documentId/user-ratings',
       needsAuthentication(),
       validateParams(userDocumentRatingParamsSchema),
       (req, res) => this.handleDeleteUserDocumentRating(req, res)

@@ -1,4 +1,4 @@
-export default class Educandu_2024_04_15_02_clear_documentRatings_collection {
+export default class Educandu_2024_04_16_01_clear_documentRatings_collection {
   constructor(db) {
     this.db = db;
   }

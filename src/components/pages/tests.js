@@ -73,27 +73,9 @@ function Tests({ PageTemplate, initialState }) {
   };
 
   // DocumentRating
-  const [starRatingValue, setDocumentRatingValue] = useState(3.7);
-  const [starRatingCompact, setDocumentRatingCompact] = useState(false);
-  const [starRatingTotalCount, setDocumentRatingTotalCount] = useState(15);
-  const [starRatingUserRating, setDocumentRatingUserRating] = useState(1);
-  const [starRatingDocumentId, setDocumentRatingDocumentId] = useState('');
-  const handleUserRatingUpdateClick = () => {
-    const postUrl = `/api/v1/document-ratings/${encodeURIComponent(starRatingDocumentId)}`;
-    axios.post(postUrl, { rating: starRatingUserRating })
-      // eslint-disable-next-line no-alert
-      .then(() => { window.alert('User rating has been updated!'); })
-      // eslint-disable-next-line no-alert
-      .catch(error => { window.alert(error); });
-  };
-  const handleUserRatingDeleteClick = () => {
-    const deleteUrl = `/api/v1/document-ratings/${encodeURIComponent(starRatingDocumentId)}`;
-    axios.delete(deleteUrl)
-      // eslint-disable-next-line no-alert
-      .then(() => { window.alert('User rating has been deleted!'); })
-      // eslint-disable-next-line no-alert
-      .catch(error => { window.alert(error); });
-  };
+  const [documentRatingValue, setDocumentRatingValue] = useState(3.7);
+  const [documentRatingCompact, setDocumentRatingCompact] = useState(false);
+  const [documentRatingTotalCount, setDocumentRatingTotalCount] = useState(15);
 
   // MediaLibraryMetadataForm
   const [mediaLibraryMetadataForm] = Form.useForm();
@@ -308,23 +290,15 @@ function Tests({ PageTemplate, initialState }) {
                 children: (
                   <div>
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                      <Checkbox checked={starRatingCompact} onChange={event => setDocumentRatingCompact(event.target.checked)}>Compact</Checkbox>
+                      <Checkbox checked={documentRatingCompact} onChange={event => setDocumentRatingCompact(event.target.checked)}>Compact</Checkbox>
                       <div>Value:</div>
-                      <InputNumber min={0} max={5} precision={3} step={0.1} value={starRatingValue ?? 0} onChange={setDocumentRatingValue} />
-                      <Checkbox checked={starRatingValue === null} onChange={event => setDocumentRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
+                      <InputNumber min={0} max={5} precision={3} step={0.1} value={documentRatingValue ?? 0} onChange={setDocumentRatingValue} />
+                      <Checkbox checked={documentRatingValue === null} onChange={event => setDocumentRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
                       <div>TotalCount:</div>
-                      <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setDocumentRatingTotalCount} />
+                      <InputNumber min={0} step={1} value={documentRatingTotalCount} onChange={setDocumentRatingTotalCount} />
                     </div>
-                    <div style={{ marginBottom: '50px' }}>
-                      <DocumentRating value={starRatingValue} totalCount={starRatingTotalCount} compact={starRatingCompact} />
-                    </div>
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <div>Update/delete current user rating for document ID</div>
-                      <Input style={{ width: '250px' }} value={starRatingDocumentId} onChange={event => setDocumentRatingDocumentId(event.target.value)} />
-                      <div>with value:</div>
-                      <InputNumber style={{ width: '65px' }} min={1} max={5} step={1} value={starRatingUserRating} onChange={setDocumentRatingUserRating} />
-                      <Button type="primary" onClick={handleUserRatingUpdateClick}>Update</Button>
-                      <Button type="primary" danger onClick={handleUserRatingDeleteClick}>Delete</Button>
+                    <div>
+                      <DocumentRating value={documentRatingValue} totalCount={documentRatingTotalCount} compact={documentRatingCompact} />
                     </div>
                   </div>
                 )

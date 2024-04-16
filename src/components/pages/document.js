@@ -35,6 +35,7 @@ import { RoomMediaContextProvider } from '../room-media-context.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import UserDocumentRatingDialog from '../user-document-rating-dialog.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
@@ -74,7 +75,6 @@ import {
   getFavoriteActionTooltip,
   tryBringSectionIntoView
 } from '../../utils/document-utils.js';
-import UserDocumentRatingDialog from '../user-document- rating-dialog.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -549,12 +549,16 @@ function Document({ initialState, PageTemplate }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const handleDocumentRatingOk = updatedDocumentRating => {
+  const handleDocumentRatingClick = () => {
+    setIsUserDocumentRatingDialogOpen(true);
+  };
+
+  const handleUserDocumentRatingDialogOk = updatedDocumentRating => {
     setDocumentRating(updatedDocumentRating);
     setIsUserDocumentRatingDialogOpen(false);
   };
 
-  const handleDocumentRatingCancel = () => {
+  const handleUserDocumentRatingDialogCancel = () => {
     setIsUserDocumentRatingDialogOpen(false);
   };
 
@@ -997,10 +1001,6 @@ function Document({ initialState, PageTemplate }) {
     setHasPendingInputChanges(false);
   };
 
-  const handleDocumentRatingClick = () => {
-    setIsUserDocumentRatingDialogOpen(true);
-  };
-
   const renderEditFocusHeader = () => (
     <FocusHeader title={t('editDocument')} onClose={handleEditClose}>
       <div className="DocumentPage-focusHeaderDirtyInfo">
@@ -1317,8 +1317,8 @@ function Document({ initialState, PageTemplate }) {
       <UserDocumentRatingDialog
         documentRating={documentRating}
         isOpen={isUserDocumentRatingDialogOpen}
-        onOk={handleDocumentRatingOk}
-        onCancel={handleDocumentRatingCancel}
+        onOk={handleUserDocumentRatingDialogOk}
+        onCancel={handleUserDocumentRatingDialogCancel}
         />
     </RoomMediaContextProvider>
   );
