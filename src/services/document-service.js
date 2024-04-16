@@ -460,7 +460,7 @@ class DocumentService {
     }
   }
 
-  async restoreDocumentRevision({ documentId, revisionId, user }) {
+  async restoreDocumentRevision({ documentId, revisionId, revisionRestoredBecause, user }) {
     let lock;
 
     const document = await this.documentStore.getDocumentById(documentId);
@@ -503,7 +503,7 @@ class DocumentService {
           documentId,
           createdOn: null,
           createdBy: user._id,
-          createdBecause: null,
+          createdBecause: revisionRestoredBecause || '',
           restoredFrom: revisionToRestore._id,
           sections: clonedRevision.sections.map(section => createSectionRevision({
             section,

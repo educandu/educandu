@@ -2,6 +2,7 @@ import LoginForm from './login-form.js';
 import React, { createRef } from 'react';
 import { Modal, Checkbox, Form } from 'antd';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
+import { maxDocumentRevisionCreatedBecauseLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
@@ -224,32 +225,48 @@ export function confirmDocumentRevisionRestoration(
   onCancel = () => {}
 ) {
   let dialog = null;
-  let isRestoring = false;
   let createDialogProps = null;
+  const formRef = React.createRef();
 
-  const handleOkClick = async () => {
-    isRestoring = true;
-    dialog.update(createDialogProps());
-    try {
-      await onOk();
-    } finally {
-      isRestoring = false;
-      dialog.update(createDialogProps());
-    }
+  const handleOk = () => {
+    const revisionRestoredBecause = formRef.current.getFieldValue('revisionRestoredBecause');
+    onOk({ revisionRestoredBecause });
   };
 
-  createDialogProps = () => ({
-    title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:restoreDocumentVersionConfirmation', { id: revision._id }),
-    okText: t('common:yes'),
-    okType: 'danger',
-    cancelText: t('common:no'),
-    onOk: handleOkClick,
-    onCancel,
-    okButtonProps: {
-      loading: isRestoring
-    }
-  });
+  const updateDialog = () => {
+    dialog.update(createDialogProps());
+  };
+
+  function createContent() {
+    return  (
+      <div>
+        {t('confirmationDialogs:restoreDocumentVersionConfirmation', { id: revision._id })}
+        <br />
+        <br />
+        <Form ref={formRef} layout="vertical">
+          <FormItem
+            initialValue=""
+            name="revisionRestoredBecause"
+            label={`${t('confirmationDialogs:restoreDocumentVersionInputLabel')}:`}
+            >
+            <NeverScrollingTextArea onChange={updateDialog} maxLength={maxDocumentRevisionCreatedBecauseLength} />
+          </FormItem>
+        </Form>
+      </div>
+    );
+  }
+
+  createDialogProps = () => {
+    return {
+      title: t('confirmationDialogs:areYouSure'),
+      content: createContent(),
+      okText: t('common:yes'),
+      okType: 'danger',
+      cancelText: t('common:no'),
+      onOk: handleOk,
+      onCancel
+    };
+  };
 
   dialog = confirm(createDialogProps());
 }

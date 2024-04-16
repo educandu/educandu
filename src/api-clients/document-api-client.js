@@ -103,11 +103,11 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  restoreDocumentRevision({ documentId, revisionId }) {
+  restoreDocumentRevision({ documentId, revisionId, revisionRestoredBecause = '' }) {
     return this.httpClient
       .patch(
         `/api/v1/docs/${encodeURIComponent(documentId)}/restore`,
-        { revisionId },
+        { revisionId, revisionRestoredBecause },
         { responseType: 'json' }
       )
       .then(res => res.data);
