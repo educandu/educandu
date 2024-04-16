@@ -32,8 +32,8 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentVersionHistory from '../document-version-history.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
+import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
-import { Breadcrumb, Button, message, Tooltip, FloatButton, Modal, Form } from 'antd';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -42,10 +42,12 @@ import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureKeyIsExcluded, mapObjectValues } from '../../utils/object-utils.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
+import { Breadcrumb, Button, message, Tooltip, FloatButton, Modal, Form } from 'antd';
 import DocumentCommentApiClient from '../../api-clients/document-comment-api-client.js';
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import { createDocumentInputUploadedFileName } from '../../utils/document-input-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { maxDocumentRevisionCreatedBecauseLength } from '../../domain/validation-constants.js';
 import { documentRatingShape, documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
@@ -72,8 +74,6 @@ import {
   getFavoriteActionTooltip,
   tryBringSectionIntoView
 } from '../../utils/document-utils.js';
-import NeverScrollingTextArea from '../never-scrolling-text-area.js';
-import { maxDocumentRevisionCreatedBecauseLength } from '../../domain/validation-constants.js';
 
 const logger = new Logger(import.meta.url);
 
