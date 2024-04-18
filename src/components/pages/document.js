@@ -1110,7 +1110,7 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const renderDocumentRating = () => {
-    const starRating = (
+    const documentRatingComponent = (
       <DocumentRating
         value={documentRating.averageRating}
         totalCount={documentRating.userRatingsCount}
@@ -1120,10 +1120,10 @@ function Document({ initialState, PageTemplate }) {
     return user
       ? (
         <Tooltip title={t('starRatingTooltip')}>
-          <a onClick={handleDocumentRatingClick}>{starRating}</a>
+          <a onClick={handleDocumentRatingClick}>{documentRatingComponent}</a>
         </Tooltip>
       )
-      : starRating;
+      : documentRatingComponent;
   };
 
   return (

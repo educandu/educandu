@@ -4847,8 +4847,8 @@
       "de": "Dokument bewerten"
     },
     "noExistingRatingExplanationMarkdown": {
-      "en": "You have not yet submitted a rating for this document.\n\nYou can rate the document by clicking on the stars below.\n",
-      "de": "Du hast noch keine Bewertung für dieses Dokument abgegeben.\n\nBewerte das Dokument, indem du auf die Sterne unten klickst.\n"
+      "en": "You have not submitted a rating for this document.\n\nYou can rate the document by clicking on the stars below.\n",
+      "de": "Du hast keine Bewertung für dieses Dokument abgegeben.\n\nBewerte das Dokument, indem du auf die Sterne unten klickst.\n"
     },
     "existingRatingExplanationMarkdown": {
       "en": "You have rated this document on {ratingDate} with **{ratingValue, plural, =1 {# star} other {# stars}}**.\n\nYou can change or delete your rating by clicking on the stars or the delete icon below.\n",

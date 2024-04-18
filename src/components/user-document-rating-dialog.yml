@@ -4,11 +4,11 @@ userDocumentRatingDialog:
     de: Dokument bewerten
   noExistingRatingExplanationMarkdown:
     en: |
-      You have not yet submitted a rating for this document.
+      You have not submitted a rating for this document.
 
       You can rate the document by clicking on the stars below.
     de: |
-      Du hast noch keine Bewertung für dieses Dokument abgegeben.
+      Du hast keine Bewertung für dieses Dokument abgegeben.
 
       Bewerte das Dokument, indem du auf die Sterne unten klickst.
   existingRatingExplanationMarkdown:
