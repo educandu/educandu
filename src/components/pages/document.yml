@@ -89,3 +89,6 @@ document:
   unarchive:
     en: Unarchive
     de: Dearchivieren
+  starRatingTooltip:
+    en: Click here to rate this document
+    de: Klicke hier, um das Dokument zu bewerten

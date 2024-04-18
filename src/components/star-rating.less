@@ -1,48 +1,22 @@
 .StarRating {
-  display: inline-grid;
-  align-items: baseline;
-  justify-items: center;
-  grid-template-rows: repeat(2, auto);
-  grid-template-columns: repeat(2, auto);
-  grid-template-areas:
-    "value stars"
-    "empty totalCount";
+  line-height: 100%;
+  display: inline-block;
+
+  .ant-rate-star {
+    cursor: unset !important;
+
+    &:not(:last-child) {
+      margin-inline-end: 1px !important;
+    }
+  }
 
   &.StarRating--compact {
-    grid-template-rows: auto;
-    grid-template-columns: repeat(2, auto) @edu-control-spacing-base auto;
-    grid-template-areas:
-      "value stars empty totalCount";
-  }
-}
-
-.StarRating-value {
-  grid-area: value;
-  font-weight: bold;
-  padding-right: @edu-control-spacing-base;
-
-  &.StarRating-value--compact {
-    font-weight: normal;
-    font-size: @edu-font-size-sm;
-  }
-}
-
-.StarRating-stars {
-  grid-area: stars;
-  line-height: 100%;
-
-  &.StarRating-stars--compact {
     .ant-rate-star {
       font-size: @edu-font-size-base;
     }
   }
 
-  .ant-rate-star:not(:last-child) {
-    margin-inline-end: 1px !important;
+  &.StarRating--interactive {
+    cursor: pointer;
   }
-}
-
-.StarRating-totalCount {
-  grid-area: totalCount;
-  font-size: @edu-font-size-xs;
 }

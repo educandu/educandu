@@ -5,11 +5,11 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
 import TagSelect from '../tag-select.js';
-import StarRating from '../star-rating.js';
 import ColorPicker from '../color-picker.js';
 import ImageEditor from '../image-editor.js';
 import LicenseSelect from '../license-select.js';
 import MarkdownInput from '../markdown-input.js';
+import DocumentRating from '../document-rating.js';
 import Timeline from '../media-player/timeline.js';
 import { useRequest } from '../request-context.js';
 import DebouncedInput from '../debounced-input.js';
@@ -72,10 +72,10 @@ function Tests({ PageTemplate, initialState }) {
     window.alert('Started DocumentRequests creation, check your console!');
   };
 
-  // StarRating
-  const [starRatingValue, setStarRatingValue] = useState(3.7);
-  const [starRatingCompact, setStarRatingCompact] = useState(false);
-  const [starRatingTotalCount, setStarRatingTotalCount] = useState(15);
+  // DocumentRating
+  const [documentRatingValue, setDocumentRatingValue] = useState(3.7);
+  const [documentRatingCompact, setDocumentRatingCompact] = useState(false);
+  const [documentRatingTotalCount, setDocumentRatingTotalCount] = useState(15);
 
   // MediaLibraryMetadataForm
   const [mediaLibraryMetadataForm] = Form.useForm();
@@ -285,20 +285,20 @@ function Tests({ PageTemplate, initialState }) {
                 )
               },
               {
-                key: 'StarRating',
-                label: 'StarRating',
+                key: 'DocumentRating',
+                label: 'DocumentRating',
                 children: (
                   <div>
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                      <Checkbox checked={starRatingCompact} onChange={event => setStarRatingCompact(event.target.checked)}>Compact</Checkbox>
+                      <Checkbox checked={documentRatingCompact} onChange={event => setDocumentRatingCompact(event.target.checked)}>Compact</Checkbox>
                       <div>Value:</div>
-                      <InputNumber min={0} max={5} precision={3} step={0.1} value={starRatingValue ?? 0} onChange={setStarRatingValue} />
-                      <Checkbox checked={starRatingValue === null} onChange={event => setStarRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
+                      <InputNumber min={0} max={5} precision={3} step={0.1} value={documentRatingValue ?? 0} onChange={setDocumentRatingValue} />
+                      <Checkbox checked={documentRatingValue === null} onChange={event => setDocumentRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
                       <div>TotalCount:</div>
-                      <InputNumber min={0} step={1} value={starRatingTotalCount} onChange={setStarRatingTotalCount} />
+                      <InputNumber min={0} step={1} value={documentRatingTotalCount} onChange={setDocumentRatingTotalCount} />
                     </div>
                     <div>
-                      <StarRating value={starRatingValue} totalCount={starRatingTotalCount} compact={starRatingCompact} />
+                      <DocumentRating value={documentRatingValue} totalCount={documentRatingTotalCount} compact={documentRatingCompact} />
                     </div>
                   </div>
                 )

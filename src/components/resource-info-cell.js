@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import StarRating from './star-rating.js';
+import DocumentRating from './document-rating.js';
 
 function ResourceInfoCell({ title, url, shortDescription, subtext, rating, onTitleClick }) {
   return (
@@ -12,7 +12,7 @@ function ResourceInfoCell({ title, url, shortDescription, subtext, rating, onTit
           </a>
           {!!rating && (
             <div className="ResourceInfoCell-rating">
-              <StarRating
+              <DocumentRating
                 compact
                 value={rating.averageRating}
                 totalCount={rating.userRatingsCount}
