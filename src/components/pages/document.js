@@ -1314,12 +1314,14 @@ function Document({ initialState, PageTemplate }) {
         onSave={handleDocumentMetadataModalSave}
         onClose={handleDocumentMetadataModalClose}
         />
-      <RatingDialog
-        documentRating={documentRating}
-        isOpen={isRatingDialogOpen}
-        onOk={handleRatingDialogOk}
-        onCancel={handleRatingDialogCancel}
-        />
+      {!!documentRating && view === VIEW.display && (
+        <RatingDialog
+          documentRating={documentRating}
+          isOpen={isRatingDialogOpen}
+          onOk={handleRatingDialogOk}
+          onCancel={handleRatingDialogCancel}
+          />
+      )}
     </RoomMediaContextProvider>
   );
 }
