@@ -1,14 +1,14 @@
 import Database from './database.js';
 import uniqueId from '../utils/unique-id.js';
 
-const DOCUMENT_RATING_VALUES = [1, 2, 3, 4, 5];
+const RATING_VALUES = [1, 2, 3, 4, 5];
 
 const documentRatingProjection = {
   _id: 1,
   documentId: 1,
-  userRatingsCount: 1,
-  userRatingsCountByStars: 1,
-  averageRating: 1
+  ratingsCount: 1,
+  ratingsCountPerValue: 1,
+  averageRatingValue: 1
 };
 
 class DocumentRatingStore {
@@ -26,30 +26,30 @@ class DocumentRatingStore {
     return this.collection.findOne({ documentId }, { projection: documentRatingProjection, session });
   }
 
-  async getUserDocumentRating({ documentId, userId }, { session } = {}) {
-    const foundUserRatings = await this.collection.aggregate([
-      { $match : { documentId, 'userRatings.userId': userId } },
-      { $unwind : '$userRatings' },
-      { $match : { 'userRatings.userId': userId } },
-      { $replaceRoot: { newRoot: '$userRatings' } }
+  async getRating({ documentId, userId }, { session } = {}) {
+    const foundRatings = await this.collection.aggregate([
+      { $match : { documentId, 'ratings.userId': userId } },
+      { $unwind : '$ratings' },
+      { $match : { 'ratings.userId': userId } },
+      { $replaceRoot: { newRoot: '$ratings' } }
     ], { session }).toArray();
 
-    return foundUserRatings[0] || null;
+    return foundRatings[0] || null;
   }
 
-  saveUserDocumentRating({ documentId, userId, rating, ratedOn }, { session } = {}) {
+  saveRating({ documentId, userId, value, ratedOn }, { session } = {}) {
     const initialDocumentRating = {
       _id: uniqueId.create(),
       documentId,
-      userRatings: [],
-      userRatingsCount: 0,
-      userRatingsCountByStars: DOCUMENT_RATING_VALUES.map(() => 0),
-      averageRating: null
+      ratings: [],
+      ratingsCount: 0,
+      ratingsCountPerValue: RATING_VALUES.map(() => 0),
+      averageRatingValue: null
     };
 
-    const upsertedUserRatingItem = {
+    const upsertedRating = {
       userId,
-      rating,
+      value,
       ratedOn
     };
 
@@ -58,29 +58,29 @@ class DocumentRatingStore {
         $set: {
           _id: { $ifNull: ['$_id', initialDocumentRating._id] },
           documentId: { $ifNull: ['$documentId', initialDocumentRating.documentId] },
-          userRatings: { $ifNull: ['$userRatings', initialDocumentRating.userRatings] },
-          userRatingsCount: { $ifNull: ['$userRatingsCount', initialDocumentRating.userRatingsCount] },
-          userRatingsCountByStars: { $ifNull: ['$userRatingsCountByStars', initialDocumentRating.userRatingsCountByStars] },
-          averageRating: { $ifNull: ['$averageRating', initialDocumentRating.averageRating] }
+          ratings: { $ifNull: ['$ratings', initialDocumentRating.ratings] },
+          ratingsCount: { $ifNull: ['$ratingsCount', initialDocumentRating.ratingsCount] },
+          ratingsCountPerValue: { $ifNull: ['$ratingsCountPerValue', initialDocumentRating.ratingsCountPerValue] },
+          averageRatingValue: { $ifNull: ['$averageRatingValue', initialDocumentRating.averageRatingValue] }
         }
       },
       {
         $set: {
-          userRatings: { $filter: { input: '$userRatings', cond: { $ne: [ '$$this.userId', userId ] } } }
+          ratings: { $filter: { input: '$ratings', cond: { $ne: [ '$$this.userId', userId ] } } }
         }
       },
       {
         $set: {
-          userRatings: { $concatArrays: ['$userRatings', [upsertedUserRatingItem]] }
+          ratings: { $concatArrays: ['$ratings', [upsertedRating]] }
         }
       },
       {
         $set: {
-          userRatingsCount: { $size: '$userRatings' },
-          userRatingsCountByStars: DOCUMENT_RATING_VALUES.map(ratingValue => ({
-            $size: { $filter: { input: '$userRatings', cond: { $eq: ['$$this.rating', ratingValue] } } }
+          ratingsCount: { $size: '$ratings' },
+          ratingsCountPerValue: RATING_VALUES.map(ratingValue => ({
+            $size: { $filter: { input: '$ratings', cond: { $eq: ['$$this.value', ratingValue] } } }
           })),
-          averageRating: { $avg: '$userRatings.rating' }
+          averageRatingValue: { $avg: '$ratings.value' }
         }
       }
     ];
@@ -88,25 +88,25 @@ class DocumentRatingStore {
     return this.collection.updateOne({ documentId }, updatePipeline, { upsert: true, session });
   }
 
-  deleteUserDocumentRating({ documentId, userId }, { session } = {}) {
+  deleteRating({ documentId, userId }, { session } = {}) {
     const updatePipeline = [
       {
         $set: {
-          userRatings: { $filter: { input: '$userRatings', cond: { $ne: [ '$$this.userId', userId ] } } }
+          ratings: { $filter: { input: '$ratings', cond: { $ne: [ '$$this.userId', userId ] } } }
         }
       },
       {
         $set: {
-          userRatingsCount: { $size: '$userRatings' },
-          userRatingsCountByStars: DOCUMENT_RATING_VALUES.map(ratingValue => ({
-            $size: { $filter: { input: '$userRatings', cond: { $eq: ['$$this.rating', ratingValue] } } }
+          ratingsCount: { $size: '$ratings' },
+          ratingsCountPerValue: RATING_VALUES.map(ratingValue => ({
+            $size: { $filter: { input: '$ratings', cond: { $eq: ['$$this.value', ratingValue] } } }
           })),
-          averageRating: { $avg: '$userRatings.rating' }
+          averageRatingValue: { $avg: '$ratings.value' }
         }
       }
     ];
 
-    return this.collection.updateOne({ documentId, 'userRatings.userId': userId }, updatePipeline, { session });
+    return this.collection.updateOne({ documentId, 'ratings.userId': userId }, updatePipeline, { session });
   }
 }
 

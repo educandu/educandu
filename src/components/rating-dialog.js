@@ -14,23 +14,23 @@ import DocumentRatingApiClient from '../api-clients/document-ratings-api-client.
 
 const logger = new Logger(import.meta.url);
 
-function UserDocumentRatingDialog({ documentRating, isOpen, onCancel, onOk }) {
+function RatingDialog({ documentRating, isOpen, onCancel, onOk }) {
   const { formatDate } = useDateFormat();
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useTranslation('userDocumentRatingDialog');
-  const [existingUserRating, setExistingUserRating] = useState(null);
-  const [newUserRatingValue, setNewUserRatingValue] = useState(null);
+  const { t } = useTranslation('ratingDialog');
+  const [existingRating, setExistingRating] = useState(null);
+  const [newRatingValue, setNewRatingValue] = useState(null);
   const documentRatingApiClient = useSessionAwareApiClient(DocumentRatingApiClient);
 
   const { documentId } = documentRating;
 
-  const loadUserRating = useCallback(async () => {
+  const loadRating = useCallback(async () => {
     try {
       setIsLoading(true);
-      const userRating = await documentRatingApiClient.getUserDocumentRating({ documentId });
-      setExistingUserRating(userRating);
-      setNewUserRatingValue(userRating?.rating || null);
+      const userRating = await documentRatingApiClient.getRating({ documentId });
+      setExistingRating(userRating);
+      setNewRatingValue(userRating?.value || null);
       setIsLoading(false);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -39,16 +39,16 @@ function UserDocumentRatingDialog({ documentRating, isOpen, onCancel, onOk }) {
 
   useEffect(() => {
     if (isOpen) {
-      loadUserRating();
+      loadRating();
     }
-  }, [isOpen, loadUserRating]);
+  }, [isOpen, loadRating]);
 
   const handleOk = async () => {
     try {
       setIsSaving(true);
-      const response = newUserRatingValue !== null
-        ? await documentRatingApiClient.saveUserDocumentRating({ documentId, rating: newUserRatingValue })
-        : await documentRatingApiClient.deleteUserDocumentRating({ documentId });
+      const response = newRatingValue !== null
+        ? await documentRatingApiClient.saveRating({ documentId, value: newRatingValue })
+        : await documentRatingApiClient.deleteRating({ documentId });
       setIsSaving(false);
       onOk(response.documentRating);
     } catch (error) {
@@ -57,7 +57,7 @@ function UserDocumentRatingDialog({ documentRating, isOpen, onCancel, onOk }) {
   };
 
   const handleClearButtonClick = () => {
-    setNewUserRatingValue(null);
+    setNewRatingValue(null);
   };
 
   return (
@@ -75,31 +75,31 @@ function UserDocumentRatingDialog({ documentRating, isOpen, onCancel, onOk }) {
       >
       <div className="u-modal-body">
         <Spin spinning={isLoading}>
-          {!existingUserRating && (
-            <Markdown className="UserDocumentRatingDialog-explanation">
+          {!existingRating && (
+            <Markdown className="RatingDialog-explanation">
               {t('noExistingRatingExplanationMarkdown')}
             </Markdown>
           )}
-          {!!existingUserRating && (
-            <Markdown className="UserDocumentRatingDialog-explanation">
+          {!!existingRating && (
+            <Markdown className="RatingDialog-explanation">
               {t('existingRatingExplanationMarkdown', {
-                ratingDate: formatDate(existingUserRating.ratedOn, 'L'),
-                ratingValue: existingUserRating.rating
+                ratingDate: formatDate(existingRating.ratedOn, 'L'),
+                ratingValue: existingRating.value
               })}
             </Markdown>
           )}
-          <div className="UserDocumentRatingDialog-newRatingHeader">
+          <div className="RatingDialog-newRatingHeader">
             {t('newRatingHeader')}:
           </div>
-          <div className="UserDocumentRatingDialog-newRating">
+          <div className="RatingDialog-newRating">
             <div>
-              <StarRating value={newUserRatingValue} onChange={setNewUserRatingValue} />
+              <StarRating value={newRatingValue} onChange={setNewRatingValue} />
             </div>
-            <div className="UserDocumentRatingDialog-newRatingValue">
-              ({newUserRatingValue ? t('newRatingValue', { ratingValue: newUserRatingValue }) : t('noNewRating')})
+            <div className="RatingDialog-newRatingValue">
+              ({newRatingValue ? t('newRatingValue', { ratingValue: newRatingValue }) : t('noNewRating')})
             </div>
             <div>
-              <DeleteButton onClick={handleClearButtonClick} disabled={newUserRatingValue === null} />
+              <DeleteButton onClick={handleClearButtonClick} disabled={newRatingValue === null} />
             </div>
           </div>
         </Spin>
@@ -108,11 +108,11 @@ function UserDocumentRatingDialog({ documentRating, isOpen, onCancel, onOk }) {
   );
 }
 
-UserDocumentRatingDialog.propTypes = {
+RatingDialog.propTypes = {
   documentRating: documentRatingShape.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onOk: PropTypes.func.isRequired
 };
 
-export default UserDocumentRatingDialog;
+export default RatingDialog;

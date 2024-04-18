@@ -1,10 +1,10 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 
-export const userDocumentRatingParamsSchema = joi.object({
+export const ratingParamsSchema = joi.object({
   documentId: idOrKeySchema.required()
 });
 
-export const postDocumentRatingBodySchema = joi.object({
-  rating: joi.number().integer().min(1).max(5).required()
+export const postRatingBodySchema = joi.object({
+  value: joi.number().integer().min(1).max(5).required()
 });
