@@ -43,16 +43,22 @@
 
 .HistoryPanel-itemHeaderSubtext {
   color: @edu-text-color-secondary;
+  font-size: @edu-font-size-sm;
 }
 
 .HistoryPanel-itemContentRow {
   display: flex;
   flex-wrap: wrap;
+  font-size: @edu-font-size-sm;
 }
 
 .HistoryPanel-itemContentRowValue {
   margin-left: 5px;
   color: @edu-text-color-secondary;
+
+  &.HistoryPanel-itemContentRowValue--withoutLabel {
+    margin-left: 0;
+  }
 }
 
 .HistoryPanel-itemActions {

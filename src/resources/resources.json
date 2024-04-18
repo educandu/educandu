@@ -2171,6 +2171,14 @@
     "viewButtonTooltip": {
       "en": "View version",
       "de": "Version ansehen"
+    },
+    "reasonRowLabel": {
+      "en": "Change reason",
+      "de": "Änderungsgrund"
+    },
+    "reasonRowMissingValue": {
+      "en": "(not provided)",
+      "de": "(nicht angegeben)"
     }
   },
   "documentsTab": {

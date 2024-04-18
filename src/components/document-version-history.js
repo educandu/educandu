@@ -142,6 +142,10 @@ function DocumentVersionHistory({ documentRevisions, selectedDocumentRevision, c
           <div>{t('common:id')}:</div>
           <div className="HistoryPanel-itemContentRowValue">{documentRevision._id}</div>
         </div>
+        <div className="HistoryPanel-itemContentRow">
+          <div>{t('reasonRowLabel')}:</div>
+          <div className="HistoryPanel-itemContentRowValue">{documentRevision.createdBecause || t('reasonRowMissingValue')}</div>
+        </div>
         {renderTimelineItemActions(documentRevision)}
       </div>
     );
