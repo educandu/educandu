@@ -23,11 +23,11 @@ class DocumentRatingService {
     return existingRating || this._createNonPersistedDocumentRating(documentId);
   }
 
-  getUserDocumentRating({ documentId, user }) {
-    return this.documentRatingStore.getUserDocumentRating({ documentId, userId: user._id });
+  getRating({ documentId, user }) {
+    return this.documentRatingStore.getRating({ documentId, userId: user._id });
   }
 
-  async saveUserDocumentRating({ documentId, user, rating }) {
+  async saveRating({ documentId, user, value }) {
     const document = await this.documentStore.getDocumentById(documentId);
     if (!document) {
       throw new NotFound(`Document '${documentId}' not found.`);
@@ -37,21 +37,21 @@ class DocumentRatingService {
       throw new BadRequest('Document ratings for non-public documents are not supported.');
     }
 
-    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    if (!Number.isInteger(value) || value < 1 || value > 5) {
       throw new BadRequest('Rating must be an integer between 1 and 5.');
     }
 
-    await this.documentRatingStore.saveUserDocumentRating({
+    await this.documentRatingStore.saveRating({
       documentId,
       userId: user._id,
-      rating,
+      value,
       ratedOn: new Date()
     });
 
     return this.documentRatingStore.getDocumentRatingByDocumentId(documentId);
   }
 
-  async deleteUserDocumentRating({ documentId, user }) {
+  async deleteRating({ documentId, user }) {
     const document = await this.documentStore.getDocumentById(documentId);
     if (!document) {
       throw new NotFound(`Document '${documentId}' not found.`);
@@ -61,7 +61,7 @@ class DocumentRatingService {
       throw new BadRequest('Document ratings for non-public documents are not supported.');
     }
 
-    await this.documentRatingStore.deleteUserDocumentRating({
+    await this.documentRatingStore.deleteRating({
       documentId,
       userId: user._id
     });
@@ -73,9 +73,9 @@ class DocumentRatingService {
     return {
       _id: null,
       documentId,
-      userRatingsCount: 0,
-      userRatingsCountByStars: [0, 0, 0, 0, 0],
-      averageRating: null
+      ratingsCount: 0,
+      ratingsCountPerValue: [0, 0, 0, 0, 0],
+      averageRatingValue: null
     };
   }
 }

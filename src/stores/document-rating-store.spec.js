@@ -30,17 +30,17 @@ describe('document-rating-store', () => {
     sandbox.restore();
   });
 
-  describe('saveUserDocumentRating', () => {
+  describe('saveRating', () => {
     let dbRecordBeforeUpdate;
     let dbRecordAfterUpdate;
     const documentId = '7qo6DoqGbbkGL45ckgyeWH';
     const userId = 'gEQXRGqNYBtEpo2c8uKcQp';
-    const rating = 3;
+    const value = 3;
     const ratedOn = new Date();
 
     describe('when there is no DB record for the specified document', () => {
       beforeEach(async () => {
-        await sut.saveUserDocumentRating({ documentId, userId, rating, ratedOn });
+        await sut.saveRating({ documentId, userId, value, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
@@ -48,10 +48,10 @@ describe('document-rating-store', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           _id: expect.any(String),
           documentId,
-          userRatings: [{ userId, rating, ratedOn }],
-          userRatingsCount: 1,
-          userRatingsCountByStars: [0, 0, 1, 0, 0],
-          averageRating: rating
+          ratings: [{ userId, value, ratedOn }],
+          ratingsCount: 1,
+          ratingsCountPerValue: [0, 0, 1, 0, 0],
+          averageRatingValue: value
         });
       });
     });
@@ -61,29 +61,29 @@ describe('document-rating-store', () => {
         dbRecordBeforeUpdate = {
           _id: '6n8iHqpjvU4A6bcHjHCcE9',
           documentId,
-          userRatings: [
+          ratings: [
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
-              rating: 5,
+              value: 5,
               ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
-          userRatingsCount: 1,
-          userRatingsCountByStars: [0, 0, 0, 0, 1],
-          averageRating: 5
+          ratingsCount: 1,
+          ratingsCountPerValue: [0, 0, 0, 0, 1],
+          averageRatingValue: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.saveUserDocumentRating({ documentId, userId, rating, ratedOn });
+        await sut.saveRating({ documentId, userId, value, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
       it('should add the new rating for the user and update all calculated fields', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
-          userRatings: [...dbRecordBeforeUpdate.userRatings, { userId, rating, ratedOn }],
-          userRatingsCount: 2,
-          userRatingsCountByStars: [0, 0, 1, 0, 1],
-          averageRating: 4
+          ratings: [...dbRecordBeforeUpdate.ratings, { userId, value, ratedOn }],
+          ratingsCount: 2,
+          ratingsCountPerValue: [0, 0, 1, 0, 1],
+          averageRatingValue: 4
         });
       });
     });
@@ -93,38 +93,38 @@ describe('document-rating-store', () => {
         dbRecordBeforeUpdate = {
           _id: '6n8iHqpjvU4A6bcHjHCcE9',
           documentId,
-          userRatings: [
+          ratings: [
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
-              rating: 5,
+              value: 5,
               ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }, {
               userId,
-              rating: 5,
+              value: 5,
               ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
-          userRatingsCount: 2,
-          userRatingsCountByStars: [0, 0, 0, 0, 2],
-          averageRating: 5
+          ratingsCount: 2,
+          ratingsCountPerValue: [0, 0, 0, 0, 2],
+          averageRatingValue: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.saveUserDocumentRating({ documentId, userId, rating, ratedOn });
+        await sut.saveRating({ documentId, userId, value, ratedOn });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
       it('should replace the old rating for the user with the new one and update all calculated fields', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
-          userRatings: [...dbRecordBeforeUpdate.userRatings.filter(r => r.userId !== userId), { userId, rating, ratedOn }],
-          userRatingsCountByStars: [0, 0, 1, 0, 1],
-          averageRating: 4
+          ratings: [...dbRecordBeforeUpdate.ratings.filter(r => r.userId !== userId), { userId, value, ratedOn }],
+          ratingsCountPerValue: [0, 0, 1, 0, 1],
+          averageRatingValue: 4
         });
       });
     });
   });
 
-  describe('deleteUserDocumentRating', () => {
+  describe('deleteRating', () => {
     let dbRecordBeforeUpdate;
     let dbRecordAfterUpdate;
     const documentId = '7qo6DoqGbbkGL45ckgyeWH';
@@ -132,7 +132,7 @@ describe('document-rating-store', () => {
 
     describe('when there is no DB record for the specified document', () => {
       beforeEach(async () => {
-        await sut.deleteUserDocumentRating({ documentId, userId });
+        await sut.deleteRating({ documentId, userId });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
@@ -146,19 +146,19 @@ describe('document-rating-store', () => {
         dbRecordBeforeUpdate = {
           _id: '6n8iHqpjvU4A6bcHjHCcE9',
           documentId,
-          userRatings: [
+          ratings: [
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
-              rating: 5,
+              value: 5,
               ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
-          userRatingsCount: 1,
-          userRatingsCountByStars: [0, 0, 0, 0, 1],
-          averageRating: 5
+          ratingsCount: 1,
+          ratingsCountPerValue: [0, 0, 0, 0, 1],
+          averageRatingValue: 5
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.deleteUserDocumentRating({ documentId, userId });
+        await sut.deleteRating({ documentId, userId });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
@@ -172,34 +172,34 @@ describe('document-rating-store', () => {
         dbRecordBeforeUpdate = {
           _id: '6n8iHqpjvU4A6bcHjHCcE9',
           documentId,
-          userRatings: [
+          ratings: [
             {
               userId: 'RZXM5QxCyYPWzFT2HpzLqz',
-              rating: 5,
+              value: 5,
               ratedOn: new Date('2024-04-01T00:00:00.000Z')
             },
             {
               userId,
-              rating: 3,
+              value: 3,
               ratedOn: new Date('2024-04-01T00:00:00.000Z')
             }
           ],
-          userRatingsCount: 2,
-          userRatingsCountByStars: [0, 0, 1, 0, 1],
-          averageRating: 4
+          ratingsCount: 2,
+          ratingsCountPerValue: [0, 0, 1, 0, 1],
+          averageRatingValue: 4
         };
         await db.documentRatings.insertOne(dbRecordBeforeUpdate);
-        await sut.deleteUserDocumentRating({ documentId, userId });
+        await sut.deleteRating({ documentId, userId });
         dbRecordAfterUpdate = await db.documentRatings.findOne({ documentId });
       });
 
       it('should remove the old rating for the user and update all calculated fields', () => {
         expect(dbRecordAfterUpdate).toStrictEqual({
           ...dbRecordBeforeUpdate,
-          userRatings: dbRecordBeforeUpdate.userRatings.filter(r => r.userId !== userId),
-          userRatingsCount: 1,
-          userRatingsCountByStars: [0, 0, 0, 0, 1],
-          averageRating: 5
+          ratings: dbRecordBeforeUpdate.ratings.filter(r => r.userId !== userId),
+          ratingsCount: 1,
+          ratingsCountPerValue: [0, 0, 0, 0, 1],
+          averageRatingValue: 5
         });
       });
     });

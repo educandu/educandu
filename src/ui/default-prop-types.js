@@ -171,9 +171,9 @@ export const otherUserShape = PropTypes.shape({
 export const documentRatingShape = PropTypes.shape({
   _id: PropTypes.string,
   documentId: PropTypes.string.isRequired,
-  userRatingsCount: PropTypes.number.isRequired,
-  userRatingsCountByStars: PropTypes.arrayOf(PropTypes.number).isRequired,
-  averageRating: PropTypes.number
+  ratingsCount: PropTypes.number.isRequired,
+  ratingsCountPerValue: PropTypes.arrayOf(PropTypes.number).isRequired,
+  averageRatingValue: PropTypes.number
 });
 
 export const sectionShape = PropTypes.shape({

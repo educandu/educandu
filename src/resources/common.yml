@@ -310,10 +310,10 @@ common:
   sortedByVerified:
     en: Sorted by verified status
     de: Nach Überprüft-Status sortiert
-  sortedByUserRatingsCount:
+  sortedByRatingsCount:
     en: Sorted by rating count
     de: Nach Bewertungsanzahl sortiert
-  sortedByAverageRating:
+  sortedByAverageRatingValue:
     en: Sorted by average rating
     de: Nach Durchschnittsbewertung sortiert
   search:
@@ -708,10 +708,10 @@ common:
   badges:
     en: Badges
     de: Kennzeichen
-  userRatingsCount:
+  ratingsCount:
     en: Ratings count
     de: Bewertungsanzahl
-  averageRating:
+  averageRatingValue:
     en: Average rating
     de: Durchschnittsbewertung
   role_user:

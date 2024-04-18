@@ -27,8 +27,8 @@ const SORTING_VALUE = {
   archived: 'archived',
   protected: 'protected',
   verified: 'verified',
-  userRatingsCount: 'userRatingsCount',
-  averageRating: 'averageRating'
+  ratingsCount: 'ratingsCount',
+  averageRatingValue: 'averageRatingValue'
 };
 
 function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.create, document = null, isOpen = false }) {
@@ -74,8 +74,8 @@ function createTableRows(docs) {
     archived: doc.publicContext.archived,
     verified: doc.publicContext.verified,
     tags: doc.tags,
-    userRatingsCount: doc.rating.userRatingsCount,
-    averageRating: doc.rating.averageRating
+    ratingsCount: doc.rating.ratingsCount,
+    averageRatingValue: doc.rating.averageRatingValue
   }));
 }
 
@@ -138,8 +138,8 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
     { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: SORTING_VALUE.archived },
     { label: t('common:protected'), appliedLabel: t('common:sortedByProtected'), value: SORTING_VALUE.protected },
     { label: t('common:verified'), appliedLabel: t('common:sortedByVerified'), value: SORTING_VALUE.verified },
-    { label: t('common:userRatingsCount'), appliedLabel: t('common:sortedByUserRatingsCount'), value: SORTING_VALUE.userRatingsCount },
-    { label: t('common:averageRating'), appliedLabel: t('common:sortedByAverageRating'), value: SORTING_VALUE.averageRating }
+    { label: t('common:ratingsCount'), appliedLabel: t('common:sortedByRatingsCount'), value: SORTING_VALUE.ratingsCount },
+    { label: t('common:averageRatingValue'), appliedLabel: t('common:sortedByAverageRatingValue'), value: SORTING_VALUE.averageRatingValue }
   ], [t]);
 
   const tableSorters = useMemo(() => ({
@@ -150,8 +150,8 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
     archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction)),
     protected: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.protected, direction)),
     verified: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.verified, direction)),
-    userRatingsCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.userRatingsCount, direction)),
-    averageRating: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.averageRating, direction))
+    ratingsCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.ratingsCount, direction)),
+    averageRatingValue: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.averageRatingValue, direction))
   }), []);
 
   useEffect(() => {

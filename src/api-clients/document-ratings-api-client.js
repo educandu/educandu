@@ -7,29 +7,29 @@ class DocumentRatingApiClient {
     this.httpClient = httpClient;
   }
 
-  getUserDocumentRating({ documentId }) {
+  getRating({ documentId }) {
     return this.httpClient
       .get(
-        `/api/v1/document-ratings/${encodeURIComponent(documentId)}/user-ratings`,
+        `/api/v1/document-ratings/${encodeURIComponent(documentId)}/ratings`,
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  saveUserDocumentRating({ documentId, rating }) {
+  saveRating({ documentId, value }) {
     return this.httpClient
       .post(
-        `/api/v1/document-ratings/${encodeURIComponent(documentId)}/user-ratings`,
-        { rating },
+        `/api/v1/document-ratings/${encodeURIComponent(documentId)}/ratings`,
+        { value },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  deleteUserDocumentRating({ documentId }) {
+  deleteRating({ documentId }) {
     return this.httpClient
       .delete(
-        `/api/v1/document-ratings/${encodeURIComponent(documentId)}/user-ratings`,
+        `/api/v1/document-ratings/${encodeURIComponent(documentId)}/ratings`,
         { responseType: 'json' }
       )
       .then(res => res.data);

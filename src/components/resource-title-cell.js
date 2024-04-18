@@ -6,7 +6,7 @@ import { useDateFormat } from './locale-context.js';
 import ResourceInfoCell from './resource-info-cell.js';
 import { otherUserShape } from '../ui/default-prop-types.js';
 
-function ResourceTitleCell({ title, shortDescription, url, rating, createdOn, createdBy, updatedOn, updatedBy }) {
+function ResourceTitleCell({ title, shortDescription, url, documentRating, createdOn, createdBy, updatedOn, updatedBy }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('resourceTitleCell');
 
@@ -15,7 +15,7 @@ function ResourceTitleCell({ title, shortDescription, url, rating, createdOn, cr
       title={title}
       shortDescription={shortDescription}
       url={url}
-      rating={rating}
+      documentRating={documentRating}
       subtext={
         <div className="ResourceTitleCell">
           <div>
@@ -36,9 +36,9 @@ ResourceTitleCell.propTypes = {
   title: PropTypes.string.isRequired,
   shortDescription: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  rating: PropTypes.shape({
-    userRatingsCount: PropTypes.number.isRequired,
-    averageRating: PropTypes.number
+  documentRating: PropTypes.shape({
+    atingsCount: PropTypes.number.isRequired,
+    averageRatingValue: PropTypes.number
   }),
   createdOn: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
@@ -47,7 +47,7 @@ ResourceTitleCell.propTypes = {
 };
 
 ResourceTitleCell.defaultProps = {
-  rating: null
+  documentRating: null
 };
 
 export default ResourceTitleCell;

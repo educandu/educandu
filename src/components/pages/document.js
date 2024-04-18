@@ -5,6 +5,7 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FocusHeader from '../focus-header.js';
+import RatingDialog from '../rating-dialog.js';
 import uniqueId from '../../utils/unique-id.js';
 import { ALERT_TYPE } from '../custom-alert.js';
 import CreditsFooter from '../credits-footer.js';
@@ -35,7 +36,6 @@ import { RoomMediaContextProvider } from '../room-media-context.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import UserDocumentRatingDialog from '../user-document-rating-dialog.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
@@ -233,7 +233,7 @@ function Document({ initialState, PageTemplate }) {
   const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
-  const [isUserDocumentRatingDialogOpen, setIsUserDocumentRatingDialogOpen] = useState(false);
+  const [isRatingDialogOpen, setIsUserDocumentRatingDialogOpen] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
   const [initialDocumentRevisionsFetched, setInitialDocumentRevisionsFetched] = useState(false);
   const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
@@ -553,12 +553,12 @@ function Document({ initialState, PageTemplate }) {
     setIsUserDocumentRatingDialogOpen(true);
   };
 
-  const handleUserDocumentRatingDialogOk = updatedDocumentRating => {
+  const handleRatingDialogOk = updatedDocumentRating => {
     setDocumentRating(updatedDocumentRating);
     setIsUserDocumentRatingDialogOpen(false);
   };
 
-  const handleUserDocumentRatingDialogCancel = () => {
+  const handleRatingDialogCancel = () => {
     setIsUserDocumentRatingDialogOpen(false);
   };
 
@@ -1112,8 +1112,8 @@ function Document({ initialState, PageTemplate }) {
   const renderDocumentRating = () => {
     const documentRatingComponent = (
       <DocumentRating
-        value={documentRating.averageRating}
-        totalCount={documentRating.userRatingsCount}
+        value={documentRating.averageRatingValue}
+        totalCount={documentRating.ratingsCount}
         />
     );
 
@@ -1314,11 +1314,11 @@ function Document({ initialState, PageTemplate }) {
         onSave={handleDocumentMetadataModalSave}
         onClose={handleDocumentMetadataModalClose}
         />
-      <UserDocumentRatingDialog
+      <RatingDialog
         documentRating={documentRating}
-        isOpen={isUserDocumentRatingDialogOpen}
-        onOk={handleUserDocumentRatingDialogOk}
-        onCancel={handleUserDocumentRatingDialogCancel}
+        isOpen={isRatingDialogOpen}
+        onOk={handleRatingDialogOk}
+        onCancel={handleRatingDialogCancel}
         />
     </RoomMediaContextProvider>
   );

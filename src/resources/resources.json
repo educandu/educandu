@@ -926,11 +926,11 @@
       "en": "Sorted by verified status",
       "de": "Nach Überprüft-Status sortiert"
     },
-    "sortedByUserRatingsCount": {
+    "sortedByRatingsCount": {
       "en": "Sorted by rating count",
       "de": "Nach Bewertungsanzahl sortiert"
     },
-    "sortedByAverageRating": {
+    "sortedByAverageRatingValue": {
       "en": "Sorted by average rating",
       "de": "Nach Durchschnittsbewertung sortiert"
     },
@@ -1454,11 +1454,11 @@
       "en": "Badges",
       "de": "Kennzeichen"
     },
-    "userRatingsCount": {
+    "ratingsCount": {
       "en": "Ratings count",
       "de": "Bewertungsanzahl"
     },
-    "averageRating": {
+    "averageRatingValue": {
       "en": "Average rating",
       "de": "Durchschnittsbewertung"
     },
@@ -3657,6 +3657,32 @@
       "de": "Test hinzufügen"
     }
   },
+  "ratingDialog": {
+    "title": {
+      "en": "Rate document",
+      "de": "Dokument bewerten"
+    },
+    "noExistingRatingExplanationMarkdown": {
+      "en": "You have not submitted a rating for this document.\n\nYou can rate the document by clicking on the stars below.\n",
+      "de": "Du hast keine Bewertung für dieses Dokument abgegeben.\n\nBewerte das Dokument, indem du auf die Sterne unten klickst.\n"
+    },
+    "existingRatingExplanationMarkdown": {
+      "en": "You have rated this document on {ratingDate} with **{ratingValue, plural, =1 {# star} other {# stars}}**.\n\nYou can change or delete your rating by clicking on the stars or the delete icon below.\n",
+      "de": "Du hast dieses Dokument am {ratingDate} mit **{ratingValue, plural, =1 {# Stern} other {# Sternen}}** bewertet.\n\nDu kannst deine Bewertung ändern oder löschen, indem du auf die Sterne oder das Löschen-Symbol unten klickst.\n"
+    },
+    "newRatingHeader": {
+      "en": "Your rating",
+      "de": "Deine Bewertung"
+    },
+    "newRatingValue": {
+      "en": "{ratingValue, plural, =1 {# star} other {# stars}}",
+      "de": "{ratingValue, plural, =1 {# Stern} other {# Sterne}}"
+    },
+    "noNewRating": {
+      "en": "no rating",
+      "de": "keine Bewertung"
+    }
+  },
   "recentContributions": {
     "pageSubtitle": {
       "en": "Public contributions made in the last 3 months.",
@@ -4839,32 +4865,6 @@
     "removeMember": {
       "en": "Remove member",
       "de": "Mitglied entfernen"
-    }
-  },
-  "userDocumentRatingDialog": {
-    "title": {
-      "en": "Rate document",
-      "de": "Dokument bewerten"
-    },
-    "noExistingRatingExplanationMarkdown": {
-      "en": "You have not submitted a rating for this document.\n\nYou can rate the document by clicking on the stars below.\n",
-      "de": "Du hast keine Bewertung für dieses Dokument abgegeben.\n\nBewerte das Dokument, indem du auf die Sterne unten klickst.\n"
-    },
-    "existingRatingExplanationMarkdown": {
-      "en": "You have rated this document on {ratingDate} with **{ratingValue, plural, =1 {# star} other {# stars}}**.\n\nYou can change or delete your rating by clicking on the stars or the delete icon below.\n",
-      "de": "Du hast dieses Dokument am {ratingDate} mit **{ratingValue, plural, =1 {# Stern} other {# Sternen}}** bewertet.\n\nDu kannst deine Bewertung ändern oder löschen, indem du auf die Sterne oder das Löschen-Symbol unten klickst.\n"
-    },
-    "newRatingHeader": {
-      "en": "Your rating",
-      "de": "Deine Bewertung"
-    },
-    "newRatingValue": {
-      "en": "{ratingValue, plural, =1 {# star} other {# stars}}",
-      "de": "{ratingValue, plural, =1 {# Stern} other {# Sterne}}"
-    },
-    "noNewRating": {
-      "en": "no rating",
-      "de": "keine Bewertung"
     }
   },
   "userProfile": {

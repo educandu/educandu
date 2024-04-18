@@ -148,11 +148,11 @@ class ClientDataMappingService {
   async mapMaintenanceDocuments(documents, documentRatings, user) {
     const grantedPermissions = getUserPermissions(user);
     const userMap = await this._getUserMapForDocsOrRevisions(documents);
-    const ratingMap = new Map(documentRatings.map(rating => [rating.documentId, rating]));
+    const documentRatingMap = new Map(documentRatings.map(documentRating => [documentRating.documentId, documentRating]));
 
     return documents.map(document => ({
       ...this._mapDocOrRevision(document, userMap, grantedPermissions),
-      rating: ratingMap.get(document._id) || null
+      rating: documentRatingMap.get(document._id) || null
     }));
   }
 
