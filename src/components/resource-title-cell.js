@@ -37,7 +37,7 @@ ResourceTitleCell.propTypes = {
   shortDescription: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   documentRating: PropTypes.shape({
-    atingsCount: PropTypes.number.isRequired,
+    ratingsCount: PropTypes.number.isRequired,
     averageRatingValue: PropTypes.number
   }),
   createdOn: PropTypes.string.isRequired,
