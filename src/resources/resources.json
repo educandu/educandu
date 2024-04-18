@@ -2167,8 +2167,8 @@
       "de": "Änderungsgrund"
     },
     "reasonRowMissingValue": {
-      "en": "(not given)",
-      "de": "(nicht eingegeben)"
+      "en": "(not provided)",
+      "de": "(nicht angegeben)"
     }
   },
   "documentsTab": {

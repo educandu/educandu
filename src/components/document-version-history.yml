@@ -12,5 +12,5 @@ documentVersionHistory:
     en: Change reason
     de: Änderungsgrund
   reasonRowMissingValue:
-    en: (not given)
-    de: (nicht eingegeben)
+    en: (not provided)
+    de: (nicht angegeben)
