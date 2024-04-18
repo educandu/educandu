@@ -9,8 +9,8 @@ documentVersionHistory:
     en: View version
     de: Version ansehen
   reasonRowLabel:
-    en: Reason
-    de: Grund
+    en: Change reason
+    de: Änderungsgrund
   reasonRowMissingValue:
     en: (not given)
     de: (nicht eingegeben)
