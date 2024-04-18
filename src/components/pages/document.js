@@ -215,6 +215,7 @@ function Document({ initialState, PageTemplate }) {
   const [documentInputs, setDocumentInputs] = useState([]);
   const [documentComments, setDocumentComments] = useState([]);
   const [editedSectionKeys, setEditedSectionKeys] = useState([]);
+  const [isRatingDialogOpen, setIsRatingDialogOpen] = useState(false);
   const [isSidePanelMinimized, setIsSidePanelMinimized] = useState(false);
   const [sidePanelPositionInPx, setSidePanelPositionInPx] = useState(null);
   const [selectedDocumentInput, setSelectedDocumentInput] = useState(null);
@@ -233,7 +234,6 @@ function Document({ initialState, PageTemplate }) {
   const [fetchingDocumentInputs, setFetchingDocumentInputs] = useDebouncedFetchingState(true);
   const [preSetView, setPreSetView] = useState(determineInitialViewState(request).preSetView);
   const [initialDocumentCommentsFetched, setInitialDocumentCommentsFetched] = useState(false);
-  const [isRatingDialogOpen, setIsUserDocumentRatingDialogOpen] = useState(false);
   const [historySelectedDocumentRevision, setHistorySelectedDocumentRevision] = useState(null);
   const [initialDocumentRevisionsFetched, setInitialDocumentRevisionsFetched] = useState(false);
   const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
@@ -550,16 +550,16 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleDocumentRatingClick = () => {
-    setIsUserDocumentRatingDialogOpen(true);
+    setIsRatingDialogOpen(true);
   };
 
   const handleRatingDialogOk = updatedDocumentRating => {
     setDocumentRating(updatedDocumentRating);
-    setIsUserDocumentRatingDialogOpen(false);
+    setIsRatingDialogOpen(false);
   };
 
   const handleRatingDialogCancel = () => {
-    setIsUserDocumentRatingDialogOpen(false);
+    setIsRatingDialogOpen(false);
   };
 
   const handleEditOpen = () => {

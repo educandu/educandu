@@ -262,7 +262,7 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
         title={doc.title}
         shortDescription={doc.shortDescription}
         url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
-        rating={doc.rating}
+        documentRating={doc.rating}
         createdOn={doc.createdOn}
         createdBy={doc.createdBy}
         updatedOn={doc.updatedOn}

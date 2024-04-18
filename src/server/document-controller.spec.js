@@ -84,7 +84,7 @@ describe('document-controller', () => {
     documentRating = {
       _id: null,
       documentId: doc._id,
-      userRatingsCount: 0,
+      ratingsCount: 0,
       averageRating: null
     };
 

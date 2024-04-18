@@ -28,9 +28,9 @@ function RatingDialog({ documentRating, isOpen, onCancel, onOk }) {
   const loadRating = useCallback(async () => {
     try {
       setIsLoading(true);
-      const userRating = await documentRatingApiClient.getRating({ documentId });
-      setExistingRating(userRating);
-      setNewRatingValue(userRating?.value || null);
+      const rating = await documentRatingApiClient.getRating({ documentId });
+      setExistingRating(rating);
+      setNewRatingValue(rating?.value || null);
       setIsLoading(false);
     } catch (error) {
       handleApiError({ error, t, logger });
