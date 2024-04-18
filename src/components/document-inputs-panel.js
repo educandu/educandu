@@ -139,7 +139,7 @@ function DocumentInputsPanel({
         </div>
         {!!showUsers && (
           <div className="HistoryPanel-itemHeaderSubtext">
-            <a className="HistoryPanel-itemContentRowValue" href={userProfileUrl}>
+            <a className="HistoryPanel-itemContentRowValue HistoryPanel-itemContentRowValue--withoutLabel" href={userProfileUrl}>
               {entry.createdBy.displayName}
             </a>
           </div>
