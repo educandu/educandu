@@ -5,13 +5,14 @@ import { useTranslation } from 'react-i18next';
 import React, { useMemo, useState } from 'react';
 import DebouncedInput from './debounced-input.js';
 import { useService } from './container-context.js';
+import { MediaLibraryIcon } from './icons/icons.js';
 import { SOURCE_TYPE } from '../domain/constants.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
 import { analyzeMediaUrl } from '../utils/media-utils.js';
 import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
 import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
-import { BankOutlined, GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
+import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
 import { getSourceType, getPortableUrl, getAccessibleUrl, createMetadataForSource } from '../utils/source-utils.js';
 
 function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
@@ -35,7 +36,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
       case SOURCE_TYPE.wikimedia:
         return <WikimediaIcon />;
       case SOURCE_TYPE.mediaLibrary:
-        return <BankOutlined />;
+        return <MediaLibraryIcon />;
       case SOURCE_TYPE.roomMedia:
         return <PrivateIcon />;
       case SOURCE_TYPE.external:

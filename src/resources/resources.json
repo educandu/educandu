@@ -2763,6 +2763,20 @@
     "tagsTabTitle": {
       "en": "Tags",
       "de": "Tags"
+    },
+    "documentRequestsTabTitle": {
+      "en": "Document requests",
+      "de": "Dokument-Requests"
+    },
+    "documentCategoriesTabTitle": {
+      "en": "Document categories",
+      "de": "Dokument-Kategorien"
+    }
+  },
+  "maintenanceCategoriesTab": {
+    "something": {
+      "en": "dasds",
+      "de": "dwesdf"
     }
   },
   "maintenanceDocumentRequestsTab": {

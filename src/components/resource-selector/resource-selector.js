@@ -1,9 +1,9 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { BankOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
+import { MediaLibraryIcon } from '../icons/icons.js';
 import { SOURCE_TYPE } from '../../domain/constants.js';
 import PrivateIcon from '../icons/general/private-icon.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -61,7 +61,7 @@ function ResourceSelector({ allowedSourceTypes, initialUrl, onCancel, onSelect }
 
     switch (sourceType) {
       case SOURCE_TYPE.mediaLibrary:
-        return <div><BankOutlined />{label}</div>;
+        return <div><MediaLibraryIcon />{label}</div>;
       case SOURCE_TYPE.roomMedia:
         return <div><PrivateIcon />{label}</div>;
       case SOURCE_TYPE.wikimedia:

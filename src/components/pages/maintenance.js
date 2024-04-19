@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
-import { CategoryIcon, ClickIcon } from '../icons/icons.js';
-import { BankOutlined, TagOutlined } from '@ant-design/icons';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -13,6 +11,7 @@ import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
+import { CategoryIcon, ClickIcon, MediaLibraryIcon, TagIcon } from '../icons/icons.js';
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
 import MaintenanceDocumentRequestsTab from '../maintenance/maintenance-document-requests-tab.js';
 
@@ -103,7 +102,7 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.mediaLibrary,
-      label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
+      label: <div><MediaLibraryIcon />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceMediaLibraryTab fetchingData={fetchingMediaLibraryItems} mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
@@ -112,7 +111,7 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.tags,
-      label: <div><TagOutlined />{t('tagsTabTitle')}</div>,
+      label: <div><TagIcon />{t('tagsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceTagsTab fetchingData={fetchingTags} documents={documents} mediaLibraryItems={mediaLibraryItems} />

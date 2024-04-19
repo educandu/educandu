@@ -32,7 +32,9 @@ import {
   IconHeart,
   IconStarFilled,
   IconSettings,
-  IconCategory2
+  IconCategory2,
+  IconTag,
+  IconBuildingBank
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -51,6 +53,7 @@ function createIconFromTablerIconComponent(TablerIconComponent, { filled } = {})
   return createIconFromSvgComponent(TablerIconWrapper);
 }
 
+export const TagIcon = createIconFromTablerIconComponent(IconTag);
 export const LineIcon = createIconFromSvgComponent(LineIconComponent);
 export const ClickIcon = createIconFromTablerIconComponent(IconClick);
 export const SpinIcon = createIconFromTablerIconComponent(IconLoader2);
@@ -83,6 +86,7 @@ export const FillColorIcon = createIconFromTablerIconComponent(IconBucketDroplet
 export const ChevronLeftIcon = createIconFromTablerIconComponent(IconChevronLeft);
 export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximize);
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
+export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
 export const FavoriteIconFilled = createIconFromTablerIconComponent(IconHeart, { filled: true });

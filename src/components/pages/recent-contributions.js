@@ -3,10 +3,10 @@ import { Tabs, Table } from 'antd';
 import routes from '../../utils/routes.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
-import { BankOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
+import { MediaLibraryIcon } from '../icons/icons.js';
 import ResourceTypeCell from '../resource-type-cell.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import DocumentBadgesCell from '../document-bagdes-cell.js';
@@ -215,7 +215,7 @@ function RecentContributions({ PageTemplate }) {
     },
     {
       key: TAB.mediaLibraryItems,
-      label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
+      label: <div><MediaLibraryIcon />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <Table
