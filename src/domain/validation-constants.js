@@ -7,6 +7,8 @@ export const maxDocumentCommentTextLength = 2000;
 
 export const maxDocumentRevisionCreatedBecauseLength = 200;
 
+export const maxDocumentCategoryNameLength = 25;
+
 export const minUserDisplayNameLength = 6;
 export const maxUserDisplayNameLength = 30;
 export const maxUserOrganizationLength = 100;
