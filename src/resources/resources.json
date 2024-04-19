@@ -2773,10 +2773,10 @@
       "de": "Dokument-Kategorien"
     }
   },
-  "maintenanceCategoriesTab": {
+  "maintenanceDocumentCategoriesTab": {
     "something": {
-      "en": "dasds",
-      "de": "dwesdf"
+      "en": "something",
+      "de": "etwas"
     }
   },
   "maintenanceDocumentRequestsTab": {
