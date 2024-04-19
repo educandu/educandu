@@ -1895,6 +1895,10 @@
     "modalCreateTitle": {
       "en": "New document category",
       "de": "Neue Dokument-Kategorie"
+    },
+    "nameRequired": {
+      "en": "Please specify a document category name",
+      "de": "Bitte gib einen Dokument-Kategorien-Namen an"
     }
   },
   "documentCommentsPanel": {
