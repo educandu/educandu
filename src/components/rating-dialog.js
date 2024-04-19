@@ -10,7 +10,7 @@ import { handleApiError } from '../ui/error-helper.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { documentRatingShape } from '../ui/default-prop-types.js';
-import DocumentRatingApiClient from '../api-clients/document-ratings-api-client.js';
+import DocumentRatingApiClient from '../api-clients/document-rating-api-client.js';
 
 const logger = new Logger(import.meta.url);
 

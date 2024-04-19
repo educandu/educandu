@@ -4,7 +4,7 @@ import routes from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import ResourceInfoCell from './resource-info-cell.js';
-import { otherUserShape } from '../ui/default-prop-types.js';
+import { documentRatingShape, otherUserShape } from '../ui/default-prop-types.js';
 
 function ResourceTitleCell({ title, shortDescription, url, documentRating, createdOn, createdBy, updatedOn, updatedBy }) {
   const { formatDate } = useDateFormat();
@@ -36,10 +36,7 @@ ResourceTitleCell.propTypes = {
   title: PropTypes.string.isRequired,
   shortDescription: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  documentRating: PropTypes.shape({
-    ratingsCount: PropTypes.number.isRequired,
-    averageRatingValue: PropTypes.number
-  }),
+  documentRating: documentRatingShape,
   createdOn: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
   updatedOn: PropTypes.string.isRequired,

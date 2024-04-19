@@ -145,17 +145,6 @@ class ClientDataMappingService {
     });
   }
 
-  async mapMaintenanceDocuments(documents, documentRatings, user) {
-    const grantedPermissions = getUserPermissions(user);
-    const userMap = await this._getUserMapForDocsOrRevisions(documents);
-    const documentRatingMap = new Map(documentRatings.map(documentRating => [documentRating.documentId, documentRating]));
-
-    return documents.map(document => ({
-      ...this._mapDocOrRevision(document, userMap, grantedPermissions),
-      rating: documentRatingMap.get(document._id) || null
-    }));
-  }
-
   mapSearchableResults({ documents, mediaLibraryItems }) {
     const mappedDocuments = documents.map(document => ({
       _id: document._id,

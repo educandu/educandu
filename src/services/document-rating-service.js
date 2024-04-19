@@ -12,6 +12,10 @@ class DocumentRatingService {
     this.documentStore = documentStore;
   }
 
+  getAllDocumentRatings() {
+    return this.documentRatingStore.getAllDocumentRatings();
+  }
+
   async getDocumentRatingsByDocumentIds(documentIds) {
     const existingRatings = await this.documentRatingStore.getAllDocumentRatings();
     const existingRatingsByDocumentId = new Map(existingRatings.map(rating => [rating.documentId, rating]));

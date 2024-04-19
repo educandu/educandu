@@ -8,6 +8,7 @@ import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
+import { replaceItem } from '../../utils/array-utils.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import DocumentBadgesCell from '../document-bagdes-cell.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
@@ -18,6 +19,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import DocumentRatingApiClient from '../../api-clients/document-rating-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
 const SORTING_VALUE = {
@@ -60,23 +62,28 @@ function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.
   };
 }
 
-function createTableRows(docs) {
-  return docs.map(doc => ({
+function createTableRows(documents, documentRatings) {
+  const documentRatingsByDocumentId = new Map(documentRatings.map(r => [r.documentId, r]));
+  return documents.map(doc => ({
     key: doc._id,
     _id: doc._id,
     documentId: doc._id,
     title: doc.title,
+    shortDescription: doc.shortDescription,
+    slug: doc.slug,
     createdOn: doc.createdOn,
-    updatedOn: doc.updatedOn,
     createdBy: doc.createdBy,
+    updatedOn: doc.updatedOn,
+    updatedBy: doc.updatedBy,
     user: doc.user,
     allowedEditors: doc.publicContext.allowedEditors,
     protected: doc.publicContext.protected,
     archived: doc.publicContext.archived,
     verified: doc.publicContext.verified,
     tags: doc.tags,
-    ratingsCount: doc.rating.ratingsCount,
-    averageRatingValue: doc.rating.averageRatingValue
+    rating: documentRatingsByDocumentId.get(doc._id) ?? null,
+    ratingsCount: documentRatingsByDocumentId.get(doc._id)?.ratingsCount ?? 0,
+    averageRatingValue: documentRatingsByDocumentId.get(doc._id)?.averageRatingValue ?? null
   }));
 }
 
@@ -99,8 +106,10 @@ function MaintenanceDocumentsTab() {
   const request = useRequest();
   const [documents, setDocuments] = useState([]);
   const { t } = useTranslation('maintenanceDocumentsTab');
+  const [documentRatings, setDocumentRatings] = useState([]);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
+  const documentRatingApiClient = useSessionAwareApiClient(DocumentRatingApiClient);
   const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
@@ -115,20 +124,26 @@ function MaintenanceDocumentsTab() {
   const fetchData = useCallback(async () => {
     try {
       setFetchingData(true);
-      const apiClientResponse = await documentApiClient.getMaintenanceDocuments();
-      setDocuments(apiClientResponse.documents);
+
+      const [documentApiResponse, documentRatingApiResponse] = await Promise.all([
+        documentApiClient.getMaintenanceDocuments(),
+        documentRatingApiClient.getMaintenanceDocumentRatings()
+      ]);
+
+      setDocuments(documentApiResponse.documents);
+      setDocumentRatings(documentRatingApiResponse.documentRatings);
     } finally {
       setFetchingData(false);
     }
-  }, [setFetchingData, documentApiClient]);
+  }, [setFetchingData, documentApiClient, documentRatingApiClient]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   useEffect(() => {
-    setAllRows(createTableRows(documents));
-  }, [documents]);
+    setAllRows(createTableRows(documents, documentRatings));
+  }, [documents, documentRatings]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -226,26 +241,20 @@ function MaintenanceDocumentsTab() {
 
   const handleDocumentMetadataModalSave = (savedDocuments, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
-    const savedDocument = savedDocuments[0];
     switch (documentMetadataModalState.mode) {
       case DOCUMENT_METADATA_MODAL_MODE.create:
       case DOCUMENT_METADATA_MODAL_MODE.clone:
         window.location = routes.getDocUrl({
-          id: savedDocument._id,
-          slug: savedDocument.slug,
+          id: savedDocuments[0]._id,
+          slug: savedDocuments[0].slug,
           view: DOC_VIEW_QUERY_PARAM.edit,
           templateDocumentId
         });
         break;
       case DOCUMENT_METADATA_MODAL_MODE.update:
-        setDocuments(documents.map(document => {
-          return document._id === savedDocument._id
-            ? {
-              ...document,
-              ...savedDocument
-            }
-            : document;
-        }));
+        setDocuments(oldDocuments => {
+          return savedDocuments.reduce((all, doc) => replaceItem(all, doc), oldDocuments);
+        });
         break;
       default:
         throw new Error(`Invalid document metadata modal mode: '${documentMetadataModalState.mode}'`);
@@ -256,22 +265,17 @@ function MaintenanceDocumentsTab() {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const renderDocumentTitle = (_title, row) => {
-    const doc = documents.find(d => d._id === row.documentId);
-    if (!doc) {
-      return null;
-    }
-
+  const renderDocumentTitle = (_, row) => {
     return (
       <ResourceTitleCell
-        title={doc.title}
-        shortDescription={doc.shortDescription}
-        url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
-        documentRating={doc.rating}
-        createdOn={doc.createdOn}
-        createdBy={doc.createdBy}
-        updatedOn={doc.updatedOn}
-        updatedBy={doc.updatedBy}
+        title={row.title}
+        shortDescription={row.shortDescription}
+        url={routes.getDocUrl({ id: row._id, slug: row.slug })}
+        documentRating={row.rating}
+        createdOn={row.createdOn}
+        createdBy={row.createdBy}
+        updatedOn={row.updatedOn}
+        updatedBy={row.updatedBy}
         />
     );
   };
