@@ -14,3 +14,6 @@ maintenance:
   documentRequestsTabTitle:
     en: Document requests
     de: Dokument-Requests
+  documentCategoriesTabTitle:
+    en: Document categories
+    de: Dokument-Kategorien

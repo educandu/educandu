@@ -1,9 +1,10 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
+import { maxDocumentCategoryNameLength } from '../validation-constants.js';
 
 export const documentCategoryDbSchema = joi.object({
   _id: idOrKeySchema.required(),
-  name: joi.string().required(),
+  name: joi.string().max(maxDocumentCategoryNameLength).required(),
   iconUrl: joi.string().allow('').required(),
   description: joi.string().allow('').required(),
   createdOn: joi.date().required(),

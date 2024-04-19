@@ -1887,6 +1887,16 @@
       "de": "Geändert am {date} von {user}."
     }
   },
+  "documentCategoryMetadataModal": {
+    "modalEditTitle": {
+      "en": "Edit document category",
+      "de": "Dokument-Kategorie bearbeiten"
+    },
+    "modalCreateTitle": {
+      "en": "New document category",
+      "de": "Neue Dokument-Kategorie"
+    }
+  },
   "documentCommentsPanel": {
     "emptyStateTitle": {
       "en": "This document has no comments",
@@ -2767,6 +2777,10 @@
     "documentRequestsTabTitle": {
       "en": "Document requests",
       "de": "Dokument-Requests"
+    },
+    "documentCategoriesTabTitle": {
+      "en": "Document categories",
+      "de": "Dokument-Kategorien"
     }
   },
   "maintenanceDocumentRequestsTab": {

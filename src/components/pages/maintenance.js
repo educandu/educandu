@@ -1,11 +1,9 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import { ClickIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
-import { BankOutlined, TagOutlined } from '@ant-design/icons';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -13,8 +11,10 @@ import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
+import { CategoryIcon, ClickIcon, MediaLibraryIcon, TagIcon } from '../icons/icons.js';
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
 import MaintenanceDocumentRequestsTab from '../maintenance/maintenance-document-requests-tab.js';
+import MaintenanceDocumentCategoriesTab from '../maintenance/maintenance-document-categories-tab.js';
 
 const determineTab = query => Object.values(TAB)
   .find(val => val === query) || Object.keys(TAB)[0];
@@ -103,7 +103,7 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.mediaLibrary,
-      label: <div><BankOutlined />{t('mediaLibraryTabTitle')}</div>,
+      label: <div><MediaLibraryIcon />{t('mediaLibraryTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceMediaLibraryTab fetchingData={fetchingMediaLibraryItems} mediaLibraryItems={mediaLibraryItems} onMediaLibraryItemsChange={setMediaLibraryItems} />
@@ -112,7 +112,7 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.tags,
-      label: <div><TagOutlined />{t('tagsTabTitle')}</div>,
+      label: <div><TagIcon />{t('tagsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceTagsTab fetchingData={fetchingTags} documents={documents} mediaLibraryItems={mediaLibraryItems} />
@@ -125,6 +125,15 @@ function Maintenance({ PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceDocumentRequestsTab />
+        </div>
+      )
+    },
+    {
+      key: TAB.documentCategories,
+      label: <div><CategoryIcon />{t('documentCategoriesTabTitle')}</div>,
+      children: (
+        <div className="Tabs-tabPane">
+          <MaintenanceDocumentCategoriesTab />
         </div>
       )
     }

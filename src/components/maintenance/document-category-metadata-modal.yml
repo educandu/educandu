@@ -1,0 +1,7 @@
+documentCategoryMetadataModal:
+  modalEditTitle:
+    en: Edit document category
+    de: Dokument-Kategorie bearbeiten
+  modalCreateTitle:
+    en: New document category
+    de: Neue Dokument-Kategorie
