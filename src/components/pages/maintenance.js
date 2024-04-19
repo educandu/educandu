@@ -129,7 +129,7 @@ function Maintenance({ PageTemplate }) {
       )
     },
     {
-      key: TAB.categories,
+      key: TAB.documentCategories,
       label: <div><CategoryIcon />{t('documentCategoriesTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
