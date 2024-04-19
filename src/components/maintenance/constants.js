@@ -2,7 +2,7 @@ export const TAB = {
   documents: 'documents',
   mediaLibrary: 'media-library',
   tags: 'tags',
-  requests: 'requests'
+  documentRequests: 'document-requests'
 };
 
 export const SORTING_DIRECTION = {

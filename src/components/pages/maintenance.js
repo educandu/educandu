@@ -11,10 +11,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import MaintenanceRequestsTab from '../maintenance/maintenance-requests-tab.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
 import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
+import MaintenanceDocumentRequestsTab from '../maintenance/maintenance-document-requests-tab.js';
 
 const determineTab = query => Object.values(TAB)
   .find(val => val === query) || Object.keys(TAB)[0];
@@ -120,11 +120,11 @@ function Maintenance({ PageTemplate }) {
       )
     },
     {
-      key: TAB.requests,
-      label: <div><ClickIcon />{t('requestsTabTitle')}</div>,
+      key: TAB.documentRequests,
+      label: <div><ClickIcon />{t('documentRequestsTabTitle')}</div>,
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceRequestsTab />
+          <MaintenanceDocumentRequestsTab />
         </div>
       )
     }
