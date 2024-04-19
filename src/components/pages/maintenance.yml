@@ -11,6 +11,6 @@ maintenance:
   tagsTabTitle:
     en: Tags
     de: Tags
-  requestsTabTitle:
-    en: Requests
-    de: Requests
+  documentRequestsTabTitle:
+    en: Document requests
+    de: Dokument-Requests

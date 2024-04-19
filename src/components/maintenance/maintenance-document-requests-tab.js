@@ -47,7 +47,7 @@ function createTableRows(documentsWithCounters) {
 }
 
 const getSanitizedQueryFromRequest = request => {
-  const query = request.query.tab === TAB.requests ? request.query : {};
+  const query = request.query.tab === TAB.documentRequests ? request.query : {};
 
   const pageNumber = Number(query.page);
   const pageSizeNumber = Number(query.pageSize);
@@ -72,10 +72,10 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceRequestsTab() {
+function MaintenanceDocumentRequestsTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
-  const { t } = useTranslation('maintenanceRequestsTab');
+  const { t } = useTranslation('maintenanceDocumentRequestsTab');
   const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
 
   const daysOfWeekOptions = [
@@ -136,7 +136,7 @@ function MaintenanceRequestsTab() {
       sortingPairs: sortingPairs.map(pair => pair.join('_')).join(',')
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.requests, queryParams));
+    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documentRequests, queryParams));
   }, [filter, sortingPairs, registeredFrom, registeredUntil, daysOfWeek, pagination]);
 
   useEffect(() => {
@@ -281,9 +281,9 @@ function MaintenanceRequestsTab() {
   const canAddSorter = sortingPairs.length < Object.values(SORTING_VALUE).length;
 
   return (
-    <div className="MaintenanceRequestsTab">
-      <div className="MaintenanceRequestsTab-controls">
-        <div className="MaintenanceRequestsTab-controlsColumn">
+    <div className="MaintenanceDocumentRequestsTab">
+      <div className="MaintenanceDocumentRequestsTab-controls">
+        <div className="MaintenanceDocumentRequestsTab-controlsColumn">
           <FilterInput
             size="large"
             value={filter}
@@ -291,7 +291,7 @@ function MaintenanceRequestsTab() {
             onChange={handleFilterChange}
             placeholder={t('titlePlaceholder')}
             />
-          <div className="MaintenanceRequestsTab-controlsColumnFilters">
+          <div className="MaintenanceDocumentRequestsTab-controlsColumnFilters">
             <RangePicker
               allowClear
               format={dateFormat}
@@ -308,7 +308,7 @@ function MaintenanceRequestsTab() {
               value={daysOfWeek}
               disabled={fetchingData}
               options={daysOfWeekOptions}
-              className='MaintenanceRequestsTab-controlsColumnCheckboxes'
+              className='MaintenanceDocumentRequestsTab-controlsColumnCheckboxes'
               onChange={handleDaysOfWeekChange}
               />
           </div>
@@ -317,7 +317,7 @@ function MaintenanceRequestsTab() {
           {sortingPairs.map((sortingPair, sortingPairIndex) => (
             <Fragment key={sortingPairIndex}>
               {sortingPairIndex > 0 && (
-                <div className='MaintenanceRequestsTab-sortersSaparator'>
+                <div className='MaintenanceDocumentRequestsTab-sortersSaparator'>
                   {t('sortersJoiningText')}
                 </div>
               )}
@@ -330,7 +330,7 @@ function MaintenanceRequestsTab() {
             </Fragment>
           )
           )}
-          <div className="MaintenanceRequestsTab-sorterButtons">
+          <div className="MaintenanceDocumentRequestsTab-sorterButtons">
             <Button
               size="small"
               disabled={!canAddSorter}
@@ -365,4 +365,4 @@ function MaintenanceRequestsTab() {
   );
 }
 
-export default MaintenanceRequestsTab;
+export default MaintenanceDocumentRequestsTab;
