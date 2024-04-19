@@ -215,15 +215,6 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   updatedBy: otherUserShape.isRequired
 });
 
-export const maintenanceDocumentShape = PropTypes.shape({
-  ...commonDocumentOrRevisionProps,
-  _id: PropTypes.string.isRequired,
-  revision: PropTypes.string.isRequired,
-  updatedOn: PropTypes.string.isRequired,
-  updatedBy: otherUserShape.isRequired,
-  rating: documentRatingShape.isRequired
-});
-
 const contributedDocumentMetadataProps = {
   _id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,

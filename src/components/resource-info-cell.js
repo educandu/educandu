@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentRating from './document-rating.js';
+import { documentRatingShape } from '../ui/default-prop-types.js';
 
 function ResourceInfoCell({ title, url, shortDescription, subtext, documentRating, onTitleClick }) {
   return (
@@ -32,10 +33,7 @@ ResourceInfoCell.propTypes = {
   url: PropTypes.string.isRequired,
   shortDescription: PropTypes.string.isRequired,
   subtext: PropTypes.node.isRequired,
-  documentRating: PropTypes.shape({
-    ratingsCount: PropTypes.number.isRequired,
-    averageRatingValue: PropTypes.number
-  }),
+  documentRating: documentRatingShape,
   onTitleClick: PropTypes.func
 };
 

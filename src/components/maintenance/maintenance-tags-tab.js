@@ -1,5 +1,4 @@
 import by from 'thenby';
-import PropTypes from 'prop-types';
 import { Select, Table, Tag } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
@@ -7,8 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { maintenanceDocumentShape, mediaLibraryItemShape } from '../../ui/default-prop-types.js';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
+import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const TAG_CATEGORY_FILTER = {
@@ -107,11 +109,17 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
+function MaintenanceTagsTab() {
   const request = useRequest();
+  const [documents, setDocuments] = useState([]);
   const { t } = useTranslation('maintenanceTagsTab');
+  const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
-  const requestQuery = getSanitizedQueryFromRequest(request);
+  const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
   const [filter, setFilter] = useState(requestQuery.filter);
   const [tagCategoryFilter, setTagCategoryFilter] = useState(requestQuery.tagCategoryFilter);
@@ -120,9 +128,30 @@ function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
-  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
-  const [renderingRows, setRenderingRows] = useState(!!documents.length);
+  const fetchData = useCallback(async () => {
+    try {
+      setFetchingData(true);
+
+      const [documentApiResponse, mediaLibraryApiResponse] = await Promise.all([
+        documentApiClient.getMaintenanceDocuments(),
+        mediaLibraryApiClient.getMaintenanceMediaLibraryItems()
+      ]);
+
+      setDocuments(documentApiResponse.documents);
+      setMediaLibraryItems(mediaLibraryApiResponse.mediaLibraryItems);
+    } finally {
+      setFetchingData(false);
+    }
+  }, [setFetchingData, documentApiClient, mediaLibraryApiClient]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    setAllRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
+  }, [documents, mediaLibraryItems, tagCategoryFilter]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -140,10 +169,6 @@ function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.tags, queryParams));
   }, [filter, tagCategoryFilter, sorting, pagination]);
-
-  useEffect(() => {
-    setAllRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
-  }, [documents, mediaLibraryItems, tagCategoryFilter]);
 
   const tagCategoryFilterOptions = useMemo(() => {
     return Object.values(TAG_CATEGORY_FILTER).map(value => ({ value, label: t(`tagCategoryFilter_${value}`) }));
@@ -171,7 +196,6 @@ function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
     const sorter = tableSorters[sorting.value];
     const sortedRows = sorter(filteredRows, sorting.direction);
 
-    setRenderingRows(!!sortedRows.length);
     setDisplayedRows(sortedRows);
   }, [allRows, filter, sorting, tableSorters]);
 
@@ -199,16 +223,6 @@ function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
 
   const handleMediaLibraryItemModalClose = () => {
     setMediaLibraryItemModalState(getMediaLibraryItemModalState({}));
-  };
-
-  const handleRowRendered = (record, rowIndex) => {
-    const indexOfLastRecordOnPage = Math.min(displayedRows.length - 1, pagination.pageSize - 1);
-
-    if (rowIndex === indexOfLastRecordOnPage) {
-      const delayToAvoidRerenderingClash = 100;
-      setTimeout(() => setRenderingRows(false), delayToAvoidRerenderingClash);
-    }
-    return {};
   };
 
   const renderExpandedRow = row => {
@@ -306,19 +320,12 @@ function MaintenanceTagsTab({ fetchingData, documents, mediaLibraryItems }) {
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={fetchingData || renderingRows}
-        onRow={handleRowRendered}
+        loading={fetchingData}
         onChange={handleTableChange}
         />
       <MediaLibaryItemModal {...mediaLibraryItemModalState} onClose={handleMediaLibraryItemModalClose} />
     </div>
   );
 }
-
-MaintenanceTagsTab.propTypes = {
-  fetchingData: PropTypes.bool.isRequired,
-  documents: PropTypes.arrayOf(maintenanceDocumentShape).isRequired,
-  mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired
-};
 
 export default MaintenanceTagsTab;

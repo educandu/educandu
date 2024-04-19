@@ -1,4 +1,6 @@
 import express from 'express';
+import permissions from '../domain/permissions.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentRatingService from '../services/document-rating-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
@@ -11,6 +13,11 @@ class DocumentRatingController {
 
   constructor(documentRatingService) {
     this.documentRatingService = documentRatingService;
+  }
+
+  async handleGetRatingsForMaintenance(_req, res) {
+    const documentRatings = await this.documentRatingService.getAllDocumentRatings();
+    return res.status(200).send({ documentRatings });
   }
 
   async handleGetRating(req, res) {
@@ -33,6 +40,12 @@ class DocumentRatingController {
   }
 
   registerApi(router) {
+    router.get(
+      '/api/v1/document-ratings/maintenance',
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      (req, res) => this.handleGetRatingsForMaintenance(req, res)
+    );
+
     router.get(
       '/api/v1/document-ratings/:documentId/ratings',
       needsAuthentication(),

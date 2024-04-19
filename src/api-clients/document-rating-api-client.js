@@ -34,6 +34,15 @@ class DocumentRatingApiClient {
       )
       .then(res => res.data);
   }
+
+  getMaintenanceDocumentRatings() {
+    return this.httpClient
+      .get(
+        '/api/v1/document-ratings/maintenance',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default DocumentRatingApiClient;

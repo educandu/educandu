@@ -1,7 +1,6 @@
 import by from 'thenby';
 import dayjs from 'dayjs';
 import Info from '../info.js';
-import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -19,9 +18,9 @@ import ResourceTitleCell from '../resource-title-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import { RESOURCE_USAGE } from '../../domain/constants.js';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import { Button, Collapse, message, Table, Radio, DatePicker } from 'antd';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
@@ -88,11 +87,14 @@ function filterRows(rows, filter) {
   return lowerCasedFilter ? rows.filter(row => filterRow(row, lowerCasedFilter)) : rows;
 }
 
-function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLibraryItemsChange }) {
+function MaintenanceMediaLibraryTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
   const { t } = useTranslation('maintenanceMediaLibraryTab');
+  const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
+  const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
@@ -104,9 +106,24 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
-  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
-  const [renderingRows, setRenderingRows] = useState(!!mediaLibraryItems.length);
+  const fetchData = useCallback(async () => {
+    try {
+      setFetchingData(true);
+      const apiClientResponse = await mediaLibraryApiClient.getMaintenanceMediaLibraryItems();
+      setMediaLibraryItems(apiClientResponse.mediaLibraryItems);
+    } finally {
+      setFetchingData(false);
+    }
+  }, [setFetchingData, mediaLibraryApiClient]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    setAllRows(createTableRows(mediaLibraryItems, t));
+  }, [mediaLibraryItems, t]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -125,10 +142,6 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.mediaLibrary, queryParams));
   }, [filter, sorting, createdBefore, usage, pagination]);
-
-  useEffect(() => {
-    setAllRows(createTableRows(mediaLibraryItems, t));
-  }, [mediaLibraryItems, t]);
 
   const sortingOptions = useMemo(() => {
     const options = [
@@ -163,7 +176,6 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
     const sorter = tableSorters[sorting.value];
     const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
 
-    setRenderingRows(!!sortedRows.length);
     setDisplayedRows(sortedRows);
 
   }, [allRows, filter, sorting, tableSorters, createdBefore, usage]);
@@ -208,7 +220,7 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
     confirmMediaFileHardDelete(t, mediaLibraryItem.name, async () => {
       try {
         await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: mediaLibraryItem._id });
-        onMediaLibraryItemsChange(oldItems => ensureIsExcluded(oldItems, mediaLibraryItem));
+        setMediaLibraryItems(oldItems => ensureIsExcluded(oldItems, mediaLibraryItem));
         message.success(t('common:changesSavedSuccessfully'));
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -219,21 +231,11 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
   const handleMediaLibraryItemModalSave = savedItem => {
     const isNewItem = mediaLibraryItemModalState.mode === MEDIA_LIBRARY_ITEM_MODAL_MODE.create;
     setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
-    onMediaLibraryItemsChange(oldItems => isNewItem ? ensureIsIncluded(oldItems, savedItem) : replaceItem(oldItems, savedItem));
+    setMediaLibraryItems(oldItems => isNewItem ? ensureIsIncluded(oldItems, savedItem) : replaceItem(oldItems, savedItem));
   };
 
   const handleMediaLibraryItemModalClose = () => {
     setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
-  };
-
-  const handleRowRendered = (record, rowIndex) => {
-    const indexOfLastRecordOnPage = Math.min(displayedRows.length - 1, pagination.pageSize - 1);
-
-    if (rowIndex === indexOfLastRecordOnPage) {
-      const delayToAvoidRerenderingClash = 100;
-      setTimeout(() => setRenderingRows(false), delayToAvoidRerenderingClash);
-    }
-    return {};
   };
 
   const determineDisabledDate = dayjsValue => {
@@ -247,7 +249,7 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
         try {
           await mediaLibraryApiClient.bulkDeleteMediaLibraryItems({ mediaLibraryItemIds });
           const deletedMediaLibraryItems = mediaLibraryItems.filter(item => mediaLibraryItemIds.includes(item._id));
-          onMediaLibraryItemsChange(oldItems => ensureAreExcluded(oldItems, deletedMediaLibraryItems));
+          setMediaLibraryItems(oldItems => ensureAreExcluded(oldItems, deletedMediaLibraryItems));
           message.success(t('common:changesSavedSuccessfully'));
         } catch (error) {
           handleApiError({ error, logger, t });
@@ -415,13 +417,13 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
       <Table
         dataSource={[...displayedRows]}
         columns={columns}
+        className="u-table-with-pagination"
         pagination={{
           current: pagination.page,
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={fetchingData || renderingRows}
-        onRow={handleRowRendered}
+        loading={fetchingData}
         onChange={handleTableChange}
         />
       <MediaLibaryItemModal
@@ -432,11 +434,5 @@ function MaintenanceMediaLibraryTab({ fetchingData, mediaLibraryItems, onMediaLi
     </div>
   );
 }
-
-MaintenanceMediaLibraryTab.propTypes = {
-  fetchingData: PropTypes.bool.isRequired,
-  mediaLibraryItems: PropTypes.arrayOf(mediaLibraryItemShape).isRequired,
-  onMediaLibraryItemsChange: PropTypes.func.isRequired
-};
 
 export default MaintenanceMediaLibraryTab;

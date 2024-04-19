@@ -88,10 +88,11 @@ function MaintenanceDocumentRequestsTab() {
     { label: t('sundayCheckbox'), value: DAY_OF_WEEK.sunday }
   ];
 
-  const requestQuery = getSanitizedQueryFromRequest(request);
+  const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
   const [filter, setFilter] = useState(requestQuery.filter);
   const [daysOfWeek, setDaysOfWeek] = useState(requestQuery.daysOfWeek);
+  const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const [documentRequestCounters, setDocumentRequestCounters] = useState([]);
   const [sortingPairs, setSortingPairs] = useState(requestQuery.sortingPairs);
   const [registeredFrom, setRegisteredFrom] = useState(requestQuery.registeredFrom);
@@ -100,8 +101,6 @@ function MaintenanceDocumentRequestsTab() {
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
-
-  const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
 
   const sortingOptions = useMemo(() => [
     { label: t('totalCountColumnHeader'), appliedLabel: t('sortedByTotalCount'), value: SORTING_VALUE.totalCount },

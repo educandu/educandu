@@ -1,5 +1,4 @@
 import by from 'thenby';
-import PropTypes from 'prop-types';
 import { Button, Table } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
@@ -9,14 +8,18 @@ import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
+import { replaceItem } from '../../utils/array-utils.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import DocumentBadgesCell from '../document-bagdes-cell.js';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
-import { maintenanceDocumentShape } from '../../ui/default-prop-types.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import DocumentRatingApiClient from '../../api-clients/document-rating-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 
 const SORTING_VALUE = {
@@ -59,23 +62,28 @@ function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.
   };
 }
 
-function createTableRows(docs) {
-  return docs.map(doc => ({
+function createTableRows(documents, documentRatings) {
+  const documentRatingsByDocumentId = new Map(documentRatings.map(r => [r.documentId, r]));
+  return documents.map(doc => ({
     key: doc._id,
     _id: doc._id,
     documentId: doc._id,
     title: doc.title,
+    shortDescription: doc.shortDescription,
+    slug: doc.slug,
     createdOn: doc.createdOn,
-    updatedOn: doc.updatedOn,
     createdBy: doc.createdBy,
+    updatedOn: doc.updatedOn,
+    updatedBy: doc.updatedBy,
     user: doc.user,
     allowedEditors: doc.publicContext.allowedEditors,
     protected: doc.publicContext.protected,
     archived: doc.publicContext.archived,
     verified: doc.publicContext.verified,
     tags: doc.tags,
-    ratingsCount: doc.rating.ratingsCount,
-    averageRatingValue: doc.rating.averageRatingValue
+    rating: documentRatingsByDocumentId.get(doc._id) ?? null,
+    ratingsCount: documentRatingsByDocumentId.get(doc._id)?.ratingsCount ?? 0,
+    averageRatingValue: documentRatingsByDocumentId.get(doc._id)?.averageRatingValue ?? null
   }));
 }
 
@@ -94,11 +102,17 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange }) {
+function MaintenanceDocumentsTab() {
   const request = useRequest();
+  const [documents, setDocuments] = useState([]);
   const { t } = useTranslation('maintenanceDocumentsTab');
+  const [documentRatings, setDocumentRatings] = useState([]);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
+  const documentRatingApiClient = useSessionAwareApiClient(DocumentRatingApiClient);
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
-  const requestQuery = getSanitizedQueryFromRequest(request);
+  const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
   const [filter, setFilter] = useState(requestQuery.filter);
   const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
@@ -106,9 +120,30 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
-  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
 
-  const [renderingRows, setRenderingRows] = useState(!!documents.length);
+  const fetchData = useCallback(async () => {
+    try {
+      setFetchingData(true);
+
+      const [documentApiResponse, documentRatingApiResponse] = await Promise.all([
+        documentApiClient.getMaintenanceDocuments(),
+        documentRatingApiClient.getMaintenanceDocumentRatings()
+      ]);
+
+      setDocuments(documentApiResponse.documents);
+      setDocumentRatings(documentRatingApiResponse.documentRatings);
+    } finally {
+      setFetchingData(false);
+    }
+  }, [setFetchingData, documentApiClient, documentRatingApiClient]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    setAllRows(createTableRows(documents, documentRatings));
+  }, [documents, documentRatings]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -125,10 +160,6 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
 
     history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documents, queryParams));
   }, [filter, sorting, pagination]);
-
-  useEffect(() => {
-    setAllRows(createTableRows(documents));
-  }, [documents]);
 
   const sortingOptions = useMemo(() => [
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: SORTING_VALUE.title },
@@ -165,7 +196,6 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
     const sorter = tableSorters[sorting.value];
     const sortedRows = sorter ? sorter(filteredRows, sorting.direction) : filteredRows;
 
-    setRenderingRows(!!sortedRows.length);
     setDisplayedRows(sortedRows);
   }, [allRows, filter, sorting, tableSorters]);
 
@@ -211,26 +241,20 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
 
   const handleDocumentMetadataModalSave = (savedDocuments, templateDocumentId) => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
-    const savedDocument = savedDocuments[0];
     switch (documentMetadataModalState.mode) {
       case DOCUMENT_METADATA_MODAL_MODE.create:
       case DOCUMENT_METADATA_MODAL_MODE.clone:
         window.location = routes.getDocUrl({
-          id: savedDocument._id,
-          slug: savedDocument.slug,
+          id: savedDocuments[0]._id,
+          slug: savedDocuments[0].slug,
           view: DOC_VIEW_QUERY_PARAM.edit,
           templateDocumentId
         });
         break;
       case DOCUMENT_METADATA_MODAL_MODE.update:
-        onDocumentsChange(documents.map(document => {
-          return document._id === savedDocument._id
-            ? {
-              ...document,
-              ...savedDocument
-            }
-            : document;
-        }));
+        setDocuments(oldDocuments => {
+          return savedDocuments.reduce((all, doc) => replaceItem(all, doc), oldDocuments);
+        });
         break;
       default:
         throw new Error(`Invalid document metadata modal mode: '${documentMetadataModalState.mode}'`);
@@ -241,32 +265,17 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const handleRowRendered = (record, rowIndex) => {
-    const indexOfLastRecordOnPage = Math.min(displayedRows.length - 1, pagination.pageSize - 1);
-
-    if (rowIndex === indexOfLastRecordOnPage) {
-      const delayToAvoidRerenderingClash = 100;
-      setTimeout(() => setRenderingRows(false), delayToAvoidRerenderingClash);
-    }
-    return {};
-  };
-
-  const renderDocumentTitle = (_title, row) => {
-    const doc = documents.find(d => d._id === row.documentId);
-    if (!doc) {
-      return null;
-    }
-
+  const renderDocumentTitle = (_, row) => {
     return (
       <ResourceTitleCell
-        title={doc.title}
-        shortDescription={doc.shortDescription}
-        url={routes.getDocUrl({ id: doc._id, slug: doc.slug })}
-        documentRating={doc.rating}
-        createdOn={doc.createdOn}
-        createdBy={doc.createdBy}
-        updatedOn={doc.updatedOn}
-        updatedBy={doc.updatedBy}
+        title={row.title}
+        shortDescription={row.shortDescription}
+        url={routes.getDocUrl({ id: row._id, slug: row.slug })}
+        documentRating={row.rating}
+        createdOn={row.createdOn}
+        createdBy={row.createdBy}
+        updatedOn={row.updatedOn}
+        updatedBy={row.updatedBy}
         />
     );
   };
@@ -360,8 +369,7 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
           pageSize: pagination.pageSize,
           showSizeChanger: true
         }}
-        loading={fetchingData || renderingRows}
-        onRow={handleRowRendered}
+        loading={fetchingData}
         onChange={handleTableChange}
         />
       <DocumentMetadataModal
@@ -372,11 +380,5 @@ function MaintenanceDocumentsTab({ fetchingData, documents, onDocumentsChange })
     </div>
   );
 }
-
-MaintenanceDocumentsTab.propTypes = {
-  fetchingData: PropTypes.bool.isRequired,
-  documents: PropTypes.arrayOf(maintenanceDocumentShape).isRequired,
-  onDocumentsChange: PropTypes.func.isRequired
-};
 
 export default MaintenanceDocumentsTab;
