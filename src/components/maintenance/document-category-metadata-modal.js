@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { Form, Input, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
+import MarkdownInput from '../markdown-input.js';
 import React, { useMemo, useRef, useState } from 'react';
 import { maxDocumentCategoryNameLength } from '../../domain/validation-constants.js';
 
@@ -21,6 +22,7 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
   const { t } = useTranslation('documentCategoryMetadataModal');
 
   const [name, setName] = useState(initialDocumentCategory.name);
+  const [description, setDescription] = useState(initialDocumentCategory.description);
 
   const validationState = useMemo(
     () => getValidationState({ t, name }),
@@ -52,6 +54,11 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
     setName(value);
   };
 
+  const handleDescriptionChange = event => {
+    const { value } = event.target;
+    setDescription(value);
+  };
+
   const renderModalFormNameInputCount = ({ count, maxLength }) => {
     return (
       <div className="u-input-count">{`${count} / ${maxLength}`}</div>
@@ -60,21 +67,35 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
 
   return (
     <Modal
-      maskClosable={false}
+      width="80%"
       open={isOpen}
+      maskClosable={false}
       okText={t('common:create')}
       cancelText={t('common:cancel')}
       title={isEditing ? t('modalEditTitle') : t('modalCreateTitle')}
       onOk={handleOk}
       onCancel={handleCancel}
       >
-      <Form ref={formRef} layout="vertical" onFinish={handleModalFormFinish} className="u-modal-body">
+      <Form
+        ref={formRef}
+        layout="vertical"
+        className="u-modal-body"
+        onFinish={handleModalFormFinish}
+        >
         <Form.Item label={t('common:name')} {...validationState.name}>
           <Input
             value={name}
             maxLength={maxDocumentCategoryNameLength}
             showCount={{ formatter: renderModalFormNameInputCount }}
             onChange={handleNameChange}
+            />
+        </Form.Item>
+        <Form.Item label={t('common:description')} {...validationState.description}>
+          <MarkdownInput
+            preview
+            minRows={5}
+            value={description}
+            onChange={handleDescriptionChange}
             />
         </Form.Item>
       </Form>
