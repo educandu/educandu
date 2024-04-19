@@ -1,10 +1,10 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import { ClickIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
+import { CategoryIcon, ClickIcon } from '../icons/icons.js';
 import { BankOutlined, TagOutlined } from '@ant-design/icons';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -126,6 +126,13 @@ function Maintenance({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <MaintenanceDocumentRequestsTab />
         </div>
+      )
+    },
+    {
+      key: TAB.categories,
+      label: <div><CategoryIcon />{t('documentCategoriesTabTitle')}</div>,
+      children: (
+        <div className="Tabs-tabPane" />
       )
     }
   ];

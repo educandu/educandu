@@ -31,7 +31,8 @@ import {
   IconZoomScan,
   IconHeart,
   IconStarFilled,
-  IconSettings
+  IconSettings,
+  IconCategory2
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -72,6 +73,7 @@ export const TriangleIcon = createIconFromTablerIconComponent(IconTriangle);
 export const SettingsIcon = createIconFromTablerIconComponent(IconSettings);
 export const InputsIcon = createIconFromTablerIconComponent(IconTextCaption);
 export const ShapeIcon = createIconFromTablerIconComponent(IconCircleSquare);
+export const CategoryIcon = createIconFromTablerIconComponent(IconCategory2);
 export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);
 export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);

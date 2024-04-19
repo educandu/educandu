@@ -2763,10 +2763,6 @@
     "tagsTabTitle": {
       "en": "Tags",
       "de": "Tags"
-    },
-    "documentRequestsTabTitle": {
-      "en": "Document requests",
-      "de": "Dokument-Requests"
     }
   },
   "maintenanceDocumentRequestsTab": {
