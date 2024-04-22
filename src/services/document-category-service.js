@@ -12,13 +12,13 @@ class DocumentCategoryService {
     this.documentCategoryStore = documentCategoryStore;
   }
 
-  async createDocumentCategory({ name, description, user }) {
+  async createDocumentCategory({ name, iconUrl, description, user }) {
     const existingDocumentCategoryName = await this.documentCategoryStore.findDocumentCategoryByName(name);
     if (existingDocumentCategoryName) {
       return { result: SAVE_DOCUMENT_CATEGORY_RESULT.duplicateName, documentCategory: null };
     }
 
-    const documentCategory = this._buildDocumentCategory({ name,description, iconUrl: '', user });
+    const documentCategory = this._buildDocumentCategory({ name,description, iconUrl, user });
 
     logger.info(`Creating new document category with _id ${documentCategory._id} `);
 

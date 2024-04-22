@@ -14,9 +14,9 @@ class DocumentCategoryController {
 
   async handlePostCategoryCreationRequest(req, res) {
     const { user } = req;
-    const { name, description } = req.body;
+    const { name, iconUrl, description } = req.body;
 
-    const { result, documentCategory } = await this.documentCategoryService.createDocumentCategory({ name, description, user });
+    const { result, documentCategory } = await this.documentCategoryService.createDocumentCategory({ name, iconUrl, description, user });
 
     res.status(201).send({ result, documentCategory });
   }

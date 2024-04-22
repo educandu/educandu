@@ -17,5 +17,6 @@ export const documentCategoryDbSchema = joi.object({
 
 export const postCategoryCreationRequestBodySchema = joi.object({
   name: joi.string().required(),
+  iconUrl: joi.string().allow('').required(),
   description: joi.string().allow('').required()
 });

@@ -1903,6 +1903,10 @@
     "nameIsInUse": {
       "en": "The category name is already used",
       "de": "Die Kategoriename ist bereits verwendet"
+    },
+    "iconUrlLabel": {
+      "en": "Icon URL",
+      "de": "Icon-URL"
     }
   },
   "documentCommentsPanel": {

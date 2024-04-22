@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
+import UrlInput from '../url-input.js';
 import React, { useState } from 'react';
 import { Form, Input, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import { useService } from '../container-context.js';
-import { SAVE_DOCUMENT_CATEGORY_RESULT } from '../../domain/constants.js';
 import { maxDocumentCategoryNameLength } from '../../domain/validation-constants.js';
+import { SAVE_DOCUMENT_CATEGORY_RESULT, SOURCE_TYPE } from '../../domain/constants.js';
 import DocumentCategoryApiClient from '../../api-clients/document-category-api-client.js';
 
 function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCategory, onSave, onClose }) {
@@ -15,18 +16,19 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
 
   const [namesInUse, setNamesInUse] = useState([]);
 
-  const nameValidationRules = [{
-    required: true,
-    message: t('nameRequired'),
-    whitespace: true
-  },
-  {
-    validator: (_rule, value) => {
-      return value && namesInUse.includes(value.trim())
-        ? Promise.reject(new Error(t('nameIsInUse')))
-        : Promise.resolve();
+  const nameValidationRules = [
+    {
+      required: true,
+      message: t('nameRequired'),
+      whitespace: true
+    },
+    {
+      validator: (_rule, value) => {
+        return value && namesInUse.includes(value.trim())
+          ? Promise.reject(new Error(t('nameIsInUse')))
+          : Promise.resolve();
+      }
     }
-  }
   ];
 
   const handleOk = () => {
@@ -37,10 +39,10 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
     onClose();
   };
 
-  const handleModalFormFinish = async ({ name, description }) => {
-
+  const handleModalFormFinish = async ({ name, iconUrl, description }) => {
     const { result, documentCategory } = await documentCategoryApiClient.requestCreation({
       name: name.trim(),
+      iconUrl,
       description: description.trim()
     });
 
@@ -79,7 +81,7 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
         form={form}
         layout="vertical"
         className="u-modal-body"
-        validateTrigger="onSubmit"
+        validateTrigger={['onSubmit', 'onChange']}
         onFinish={handleModalFormFinish}
         >
         <Form.Item
@@ -92,6 +94,13 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
             maxLength={maxDocumentCategoryNameLength}
             showCount={{ formatter: renderModalFormNameInputCount }}
             />
+        </Form.Item>
+        <Form.Item
+          name="iconUrl"
+          label={t('iconUrlLabel')}
+          initialValue={initialDocumentCategory.iconUrl}
+          >
+          <UrlInput allowedSourceTypes={[SOURCE_TYPE.mediaLibrary, SOURCE_TYPE.wikimedia]} />
         </Form.Item>
         <Form.Item
           name="description"
@@ -110,6 +119,7 @@ DocumentCategoryMetadataModal.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   initialDocumentCategory: PropTypes.shape({
     name: PropTypes.string.isRequired,
+    iconUrl: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
   }).isRequired,
   onClose: PropTypes.func.isRequired,
