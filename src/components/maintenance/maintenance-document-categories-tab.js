@@ -1,14 +1,17 @@
+import by from 'thenby';
 import { TAB } from './constants.js';
 import { Button, Table } from 'antd';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import slugify from '@sindresorhus/slugify';
+import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
+import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentCategoryMetadataModal from './document-category-metadata-modal.js';
 import ActionButton, { ACTION_BUTTON_INTENT, ActionButtonGroup } from '../action-button.js';
 
@@ -78,29 +81,56 @@ function getDefaultMetadataModalState() {
   };
 }
 
+const getSanitizedQueryFromRequest = request => {
+  const query = request.query.tab === TAB.documentCategories ? request.query : {};
+  return { filter: (query.filter || '').trim() };
+};
+
 function MaintenanceDocumentCategoriesTab() {
+  const request = useRequest();
   const { t } = useTranslation('maintenanceDocumentCategoriesTab');
-  const [documentCategories, setDocumentCategories] = useState([]);
+  const [allDocumentCategories, setAllDocumentCategories] = useState([]);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
+  const [displayedDocumentCategories, setDisplayedDocumentCategories] = useState([]);
   const [metadataModalState, setMetadataModalState] = useState(getDefaultMetadataModalState());
+
+  const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
+
+  const [filter, setFilter] = useState(requestQuery.filter);
 
   const fetchData = useCallback(async () => {
     try {
       setFetchingData(true);
       const documentCategoryApiResponse = await fetchDummyCategories();
-      setDocumentCategories(documentCategoryApiResponse.documentCategories);
+      setAllDocumentCategories(documentCategoryApiResponse.documentCategories);
     } finally {
       setFetchingData(false);
     }
   }, [setFetchingData]);
 
   useEffect(() => {
+    const queryParams = { filter };
+    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documentCategories, queryParams));
+  }, [filter]);
+
+  useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   useEffect(() => {
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documentCategories));
-  }, []);
+    const sanitizedFilter = filter.trim().toLowerCase();
+
+    const filteredAndSortedCategories = allDocumentCategories
+      .filter(category => !sanitizedFilter || category.name.toLowerCase().includes(sanitizedFilter))
+      .sort(by(category => category.createdOn));
+
+    setDisplayedDocumentCategories(filteredAndSortedCategories);
+  }, [allDocumentCategories, filter]);
+
+  const handleFilterChange = event => {
+    const newFilter = event.target.value;
+    setFilter(newFilter);
+  };
 
   const handleCreateDocumentCategoryClick = () => {
     setMetadataModalState({ ...getDefaultMetadataModalState(), isOpen: true });
@@ -190,6 +220,13 @@ function MaintenanceDocumentCategoriesTab() {
   return (
     <div className="MaintenanceDocumentCategoriesTab">
       <div className="MaintenanceDocumentCategoriesTab-controls">
+        <FilterInput
+          size="large"
+          className="MaintenanceDocumentCategoriesTab-filter"
+          value={filter}
+          onChange={handleFilterChange}
+          placeholder={t('filterPlaceholder')}
+          />
         <div />
         <Button type="primary" onClick={handleCreateDocumentCategoryClick}>
           {t('common:create')}
@@ -200,7 +237,7 @@ function MaintenanceDocumentCategoriesTab() {
         columns={columns}
         pagination={false}
         loading={fetchingData}
-        dataSource={documentCategories}
+        dataSource={displayedDocumentCategories}
         />
       <DocumentCategoryMetadataModal
         {...metadataModalState}
