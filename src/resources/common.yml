@@ -729,3 +729,6 @@ common:
   playerNotSupportedOnIOS:
     en: Player not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.
     de: Da iPads und iPhones Einschränkungen in für diesen Player benötigten Funktionen haben, werden diese Geräte nicht unterstützt.
+  icon:
+    en: Icon
+    de: Icon

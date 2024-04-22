@@ -23,6 +23,7 @@ const userProfilePrefix = '/user-profile/';
 const documentInputPrefix = '/doc-inputs/';
 const mediaLibraryPrefix = '/media-library/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
+const documentCategoriesPrefix = '/doc-categories/';
 const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
@@ -42,6 +43,10 @@ function getDocUrl({ id, slug, view, templateDocumentId }) {
 
 function getDocumentInputUrl(documentInputId) {
   return urlUtils.concatParts(documentInputPrefix, documentInputId);
+}
+
+function getDocumentCategoryUrl({ id, slug }) {
+  return urlUtils.concatParts(documentCategoriesPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
 }
 
 function getDocumentRevisionUrl(revisionId) {
@@ -169,6 +174,7 @@ export default {
   getMaintenanceUrl,
   getDocUrl,
   getDocumentInputUrl,
+  getDocumentCategoryUrl,
   getDocumentRevisionUrl,
   getDocumentRevisionComparisonUrl,
   getRoomUrl,

@@ -31,7 +31,7 @@ function ResourceInfoCell({ title, url, shortDescription, subtext, documentRatin
 ResourceInfoCell.propTypes = {
   title: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  shortDescription: PropTypes.string.isRequired,
+  shortDescription: PropTypes.node.isRequired,
   subtext: PropTypes.node.isRequired,
   documentRating: documentRatingShape,
   onTitleClick: PropTypes.func

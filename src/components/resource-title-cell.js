@@ -34,7 +34,7 @@ function ResourceTitleCell({ title, shortDescription, url, documentRating, creat
 
 ResourceTitleCell.propTypes = {
   title: PropTypes.string.isRequired,
-  shortDescription: PropTypes.string.isRequired,
+  shortDescription: PropTypes.node.isRequired,
   url: PropTypes.string.isRequired,
   documentRating: documentRatingShape,
   createdOn: PropTypes.string.isRequired,
