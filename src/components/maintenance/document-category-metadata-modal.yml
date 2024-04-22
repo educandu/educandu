@@ -7,10 +7,10 @@ documentCategoryMetadataModal:
     de: Neue Dokument-Kategorie
   nameRequired:
     en: Please specify a document category name
-    de: Bitte gib einen Dokument-Kategorien-Namen an
+    de: Bitte gib einen Dokument-Kategorie-Namen an
   nameIsInUse:
     en: The category name is already used
-    de: Die Kategoriename ist bereits verwendet
+    de: Der Kategoriename ist bereits in Verwendung
   iconUrlLabel:
     en: Icon URL
     de: Icon-URL
