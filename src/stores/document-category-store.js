@@ -9,6 +9,10 @@ class CategoryStore {
     this.collection = db.documentCategories;
   }
 
+  findDocumentCategoryByName(name, { session } = {}) {
+    return this.collection.findOne({ name }, { session });
+  }
+
   getAllDocumentCategories({ session } = {}) {
     return this.collection.find({}, { session }).toArray();
   }

@@ -1,19 +1,33 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { Form, Input, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
+import { useService } from '../container-context.js';
+import { SAVE_DOCUMENT_CATEGORY_RESULT } from '../../domain/constants.js';
 import { maxDocumentCategoryNameLength } from '../../domain/validation-constants.js';
+import DocumentCategoryApiClient from '../../api-clients/document-category-api-client.js';
 
 function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCategory, onSave, onClose }) {
   const [form] = Form.useForm();
   const { t } = useTranslation('documentCategoryMetadataModal');
+  const documentCategoryApiClient = useService(DocumentCategoryApiClient);
+
+  const [namesInUse, setNamesInUse] = useState([]);
 
   const nameValidationRules = [{
     required: true,
     message: t('nameRequired'),
     whitespace: true
-  }];
+  },
+  {
+    validator: (_rule, value) => {
+      return value && namesInUse.includes(value.trim())
+        ? Promise.reject(new Error(t('nameIsInUse')))
+        : Promise.resolve();
+    }
+  }
+  ];
 
   const handleOk = () => {
     form.submit();
@@ -24,9 +38,24 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
   };
 
   const handleModalFormFinish = async ({ name, description }) => {
-    console.log('finish', name.trim(), description.trim());
-    await onSave();
-    form.resetFields();
+
+    const { result, documentCategory } = await documentCategoryApiClient.requestCreation({
+      name: name.trim(),
+      description: description.trim()
+    });
+
+    switch (result) {
+      case SAVE_DOCUMENT_CATEGORY_RESULT.success:
+        onSave(documentCategory);
+        form.resetFields();
+        return true;
+      case SAVE_DOCUMENT_CATEGORY_RESULT.duplicateName:
+        setNamesInUse(prevState => [...prevState, name.trim()]);
+        setTimeout(() => form.validateFields(['name'], { force: true }), 0);
+        return false;
+      default:
+        throw new Error(`Unknown result: ${result}`);
+    }
   };
 
   const renderModalFormNameInputCount = ({ count, maxLength }) => {
