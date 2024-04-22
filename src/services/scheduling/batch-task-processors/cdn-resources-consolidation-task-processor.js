@@ -3,15 +3,17 @@ import RoomService from '../../room-service.js';
 import UserService from '../../user-service.js';
 import SettingService from '../../setting-service.js';
 import DocumentService from '../../document-service.js';
+import DocumentCategoryService from '../../document-category-service.js';
 import { CDN_RESOURCES_CONSOLIDATION_TYPE } from '../../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
 class CdnResourcesConsolidationTaskProcessor {
-  static dependencies = [DocumentService, RoomService, UserService, SettingService];
+  static dependencies = [DocumentService, DocumentCategoryService, RoomService, UserService, SettingService];
 
-  constructor(documentService, roomService, userService, settingService) {
+  constructor(documentService, documentCategoryService, roomService, userService, settingService) {
     this.documentService = documentService;
+    this.documentCategoryService = documentCategoryService;
     this.roomService = roomService;
     this.userService = userService;
     this.settingService = settingService;
@@ -28,6 +30,10 @@ class CdnResourcesConsolidationTaskProcessor {
       case CDN_RESOURCES_CONSOLIDATION_TYPE.document:
         logger.info(`Consolidating CDN resources for document with id ${entityId}`);
         await this.documentService.consolidateCdnResources(entityId);
+        break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.documentCategory:
+        logger.info(`Consolidating CDN resources for document category with id ${entityId}`);
+        await this.documentCategoryService.consolidateCdnResources(entityId);
         break;
       case CDN_RESOURCES_CONSOLIDATION_TYPE.room:
         logger.info(`Consolidating CDN resources for room with id ${entityId}`);

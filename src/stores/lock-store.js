@@ -10,7 +10,8 @@ const LOCK_TYPE = {
   event: 'event',
   document: 'document',
   storagePlan: 'storage-plan',
-  maintenance: 'maintenance'
+  maintenance: 'maintenance',
+  documentCategory: 'document-category',
 };
 
 class LockStore {
@@ -50,6 +51,10 @@ class LockStore {
 
   takeMaintenanceLock(key) {
     return this._takeLock({ type: LOCK_TYPE.maintenance, key, expirationTimeInMinutes: 30 });
+  }
+
+  takeDocumentCategoryLock(key) {
+    return this._takeLock({ type: LOCK_TYPE.documentCategory, key, expirationTimeInMinutes: 1 });
   }
 
   async releaseLock(lock) {

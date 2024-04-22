@@ -4,6 +4,7 @@ import UserService from '../../user-service.js';
 import uniqueId from '../../../utils/unique-id.js';
 import SettingService from '../../setting-service.js';
 import DocumentService from '../../document-service.js';
+import DocumentCategoryService from '../../document-category-service.js';
 import { CDN_RESOURCES_CONSOLIDATION_TYPE } from '../../../domain/constants.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../../../test-helper.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -15,6 +16,7 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
   let userService;
   let settingService;
   let documentService;
+  let documentCategoryService;
   const sandbox = createSandbox();
 
   let sut;
@@ -25,6 +27,7 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
     userService = container.get(UserService);
     settingService = container.get(SettingService);
     documentService = container.get(DocumentService);
+    documentCategoryService = container.get(DocumentCategoryService);
     sut = container.get(CdnResourcesConsolidationTaskProcessor);
   });
 
@@ -37,6 +40,7 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
     sandbox.stub(userService, 'consolidateCdnResources');
     sandbox.stub(settingService, 'consolidateCdnResources');
     sandbox.stub(documentService, 'consolidateCdnResources');
+    sandbox.stub(documentCategoryService, 'consolidateCdnResources');
   });
 
   afterEach(() => {
@@ -50,6 +54,14 @@ describe('CdnResourcesConsolidationTaskProcessor', () => {
         const entityId = uniqueId.create();
         await sut.process({ taskParams: { type: CDN_RESOURCES_CONSOLIDATION_TYPE.document, entityId } }, {});
         assert.calledWith(documentService.consolidateCdnResources, entityId);
+      });
+    });
+
+    describe('when the entity type is document-category', () => {
+      it('should call consolidateCdnResources on documentCategoryService', async () => {
+        const entityId = uniqueId.create();
+        await sut.process({ taskParams: { type: CDN_RESOURCES_CONSOLIDATION_TYPE.documentCategory, entityId } }, {});
+        assert.calledWith(documentCategoryService.consolidateCdnResources, entityId);
       });
     });
 
