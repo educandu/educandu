@@ -24,6 +24,7 @@ import DocumentInputController from './document-input-controller.js';
 import DocumentRatingController from './document-rating-controller.js';
 import DocumentCommentController from './document-comment-controller.js';
 import DocumentRequestController from './document-request-controller.js';
+import DocumentCategoryController from './document-category-controller.js';
 import RecentContributionsController from './recent-contributions-controller.js';
 
 const setupControllers = [
@@ -52,6 +53,7 @@ const pageAndApiControllers = [
   DocumentRatingController,
   DocumentCommentController,
   DocumentRequestController,
+  DocumentCategoryController,
   MaintenanceController,
   NotificationController,
   RecentContributionsController

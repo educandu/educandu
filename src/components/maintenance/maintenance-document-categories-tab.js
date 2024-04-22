@@ -11,6 +11,7 @@ function getDefaultMetadataModalState() {
     isEditing: false,
     initialDocumentCategory: {
       name: '',
+      iconUrl: '',
       description: ''
     }
   };

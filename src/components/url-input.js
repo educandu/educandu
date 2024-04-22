@@ -140,13 +140,14 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
 UrlInput.propTypes = {
   allowedSourceTypes: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SOURCE_TYPE))),
   disabled: PropTypes.bool,
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
   value: PropTypes.string
 };
 
 UrlInput.defaultProps = {
   allowedSourceTypes: Object.values(SOURCE_TYPE),
   disabled: false,
+  onChange: () => {},
   value: ''
 };
 

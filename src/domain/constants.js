@@ -183,6 +183,11 @@ export const FILES_VIEWER_DISPLAY = {
   list: 'list'
 };
 
+export const SAVE_DOCUMENT_CATEGORY_RESULT = {
+  success: 'success',
+  duplicateName: 'duplicate-name'
+};
+
 export const DAY_OF_WEEK = {
   monday: 1,
   tuesday: 2,
