@@ -35,6 +35,7 @@ export const TASK_TYPE = {
 
 export const CDN_RESOURCES_CONSOLIDATION_TYPE = {
   document: 'document',
+  documentCategory: 'document-category',
   room: 'room',
   user: 'user',
   setting: 'setting'

@@ -17,8 +17,16 @@ class CategoryStore {
     return this.collection.find({}, { session }).toArray();
   }
 
+  getAllDocumentCategoryIds({ session } = {}) {
+    return this.collection.distinct('_id', {}, { session });
+  }
+
   getDocumentCategoriesByDocumentId(documentId, { session } = {}) {
     return this.collection.find({ documentIds: documentId }, { session }).toArray();
+  }
+
+  getDocumentCategoryById(documentCategoryId, { session } = {}) {
+    return this.collection.findOne({ _id: documentCategoryId }, { session });
   }
 
   saveDocumentCategory(documentCategory, { session } = {}) {

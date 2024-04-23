@@ -198,6 +198,9 @@ function Batches({ initialState, PageTemplate }) {
       case CDN_RESOURCES_CONSOLIDATION_TYPE.document:
         url = routes.getDocUrl({ id: taskParams.entityId });
         break;
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.documentCategory:
+        url = null;
+        break;
       case CDN_RESOURCES_CONSOLIDATION_TYPE.room:
         url = null;
         break;
@@ -226,6 +229,8 @@ function Batches({ initialState, PageTemplate }) {
     switch (taskParams.type) {
       case CDN_RESOURCES_CONSOLIDATION_TYPE.document:
         return t('common:document');
+      case CDN_RESOURCES_CONSOLIDATION_TYPE.documentCategory:
+        return t('documentCategory');
       case CDN_RESOURCES_CONSOLIDATION_TYPE.room:
         return t('common:room');
       case CDN_RESOURCES_CONSOLIDATION_TYPE.user:

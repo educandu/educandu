@@ -56,3 +56,6 @@ batches:
   hideSuccessfullyCompletedTasks:
     en: Hide successfully completed tasks
     de: Erfolgreich abgeschlossene Tasks ausblenden
+  documentCategory:
+    en: Document category
+    de: Dokument-Kategorie

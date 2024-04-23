@@ -8,6 +8,7 @@ import BatchStore from '../stores/batch-store.js';
 import SettingStore from '../stores/setting-store.js';
 import DocumentStore from '../stores/document-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import DocumentCategoryStore from '../stores/document-category-store.js';
 import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TYPE, TASK_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -21,14 +22,15 @@ const mapBatchTypeToTaskType = batchType => {
 };
 
 class BatchService {
-  static dependencies = [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, RoomStore, UserStore, SettingStore];
+  static dependencies = [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, DocumentCategoryStore, RoomStore, UserStore, SettingStore];
 
-  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, roomStore, userStore, settingStore) {
+  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, documentCategoryStore, roomStore, userStore, settingStore) {
     this.transactionRunner = transactionRunner;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
     this.documentStore = documentStore;
+    this.documentCategoryStore = documentCategoryStore;
     this.roomStore = roomStore;
     this.userStore = userStore;
     this.settingStore = settingStore;
@@ -92,6 +94,9 @@ class BatchService {
         return Promise.all([
           this.documentStore.getAllDocumentIds().then(allDocumentIds => {
             return allDocumentIds.map(entityId => ({ type: CDN_RESOURCES_CONSOLIDATION_TYPE.document, entityId }));
+          }),
+          this.documentCategoryStore.getAllDocumentCategoryIds().then(allDocumentCategoryIds => {
+            return allDocumentCategoryIds.map(entityId => ({ type: CDN_RESOURCES_CONSOLIDATION_TYPE.documentCategory, entityId }));
           }),
           this.roomStore.getAllRoomIds().then(allRoomIds => {
             return allRoomIds.map(entityId => ({ type: CDN_RESOURCES_CONSOLIDATION_TYPE.room, entityId }));
