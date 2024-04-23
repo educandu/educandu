@@ -16,6 +16,7 @@ export const PAGE_NAME = {
   userProfile: 'user-profile',
   documentInput: 'document-input',
   resetPassword: 'reset-password',
+  documentCategory: 'document-category',
   mediaLibraryItem: 'media-library-item',
   recentContributions: 'recent-contributions',
   browserNotSupported: 'browser-not-supported',

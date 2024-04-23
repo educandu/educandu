@@ -2,6 +2,10 @@ import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 import { maxDocumentCategoryNameLength } from '../validation-constants.js';
 
+export const getDocumentCategoryPageParamsSchema = joi.object({
+  documentCategoryId: idOrKeySchema.required()
+}).unknown(true);
+
 export const documentCategoryDbSchema = joi.object({
   _id: idOrKeySchema.required(),
   name: joi.string().max(maxDocumentCategoryNameLength).required(),

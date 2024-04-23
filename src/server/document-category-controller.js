@@ -1,12 +1,18 @@
 import express from 'express';
 import httpErrors from 'http-errors';
+import routes from '../utils/routes.js';
+import slugify from '@sindresorhus/slugify';
+import urlUtils from '../utils/url-utils.js';
+import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentCategoryService from '../services/document-category-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   documentCategoryIdParamsSchema,
+  getDocumentCategoryPageParamsSchema,
   patchDocumentCategoryDocumentsBodySchema,
   postDocumentCategoryBodySchema
 } from '../domain/schemas/document-category-schemas.js';
@@ -15,11 +21,36 @@ const { NotFound } = httpErrors;
 const jsonParser = express.json();
 
 class DocumentCategoryController {
-  static dependencies = [DocumentCategoryService, ClientDataMappingService];
+  static dependencies = [DocumentCategoryService, ClientDataMappingService, PageRenderer];
 
-  constructor(documentCategoryService, clientDataMappingService) {
+  constructor(documentCategoryService, clientDataMappingService, pageRenderer) {
     this.documentCategoryService = documentCategoryService;
     this.clientDataMappingService = clientDataMappingService;
+    this.pageRenderer = pageRenderer;
+  }
+
+  async handleGetDocumentCategoryPage(req, res) {
+    // const { user } = req;
+    const { documentCategoryId } = req.params;
+    const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params[0]);
+
+    const documentCategory = await this.documentCategoryService.getDocumentCategoryById(documentCategoryId);
+    if (!documentCategory) {
+      throw new NotFound();
+    }
+
+    const canonicalSlug = slugify(documentCategory.name);
+
+    if (routeWildcardValue !== canonicalSlug) {
+      return res.redirect(301, routes.getDocumentCategoryUrl({ id: documentCategoryId, slug: canonicalSlug }));
+    }
+
+    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(documentCategory);
+
+    const initialState = { documentCategory: mappedDocumentCategory };
+    const pageName = PAGE_NAME.documentCategory;
+
+    return this.pageRenderer.sendPage(req, res, pageName, initialState);
   }
 
   async handleGetDocumentCategories(req, res) {
@@ -85,6 +116,14 @@ class DocumentCategoryController {
     await this.documentCategoryService.deleteDocumentCategory(documentCategoryId);
 
     return res.send({});
+  }
+
+  registerPages(router) {
+    router.get(
+      '/document-categories/:documentCategoryId*',
+      validateParams(getDocumentCategoryPageParamsSchema),
+      (req, res) => this.handleGetDocumentCategoryPage(req, res)
+    );
   }
 
   registerApi(router) {
