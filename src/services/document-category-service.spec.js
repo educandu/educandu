@@ -9,6 +9,7 @@ import {
   pruneTestEnvironment,
   createTestUser
 } from '../test-helper.js';
+import uniqueId from '../utils/unique-id.js';
 
 describe('document-category-service', () => {
   let db;
@@ -226,6 +227,38 @@ describe('document-category-service', () => {
             updatedBy: user2._id
           }
         });
+      });
+    });
+  });
+
+  describe('updateDocumentCategoryDocuments', () => {
+    let documentIds;
+    let oldDocumentCategory;
+
+    beforeEach(async () => {
+      documentIds = [uniqueId.create(), uniqueId.create()];
+
+      const creationResult = await sut.createDocumentCategory({
+        name: 'category1',
+        iconUrl: 'cdn://media-library/new-icon.svg',
+        description: '[Click here](cdn://media-library/new-file.png)',
+        user: user1
+      });
+      oldDocumentCategory = creationResult.documentCategory;
+
+      result = await sut.updateDocumentCategoryDocuments({
+        documentCategoryId: oldDocumentCategory._id,
+        documentIds,
+        user: user2
+      });
+    });
+
+    it('returns the updated document category', () => {
+      expect(result).toStrictEqual({
+        ...oldDocumentCategory,
+        documentIds,
+        updatedOn: now,
+        updatedBy: user2._id
       });
     });
   });

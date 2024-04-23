@@ -26,6 +26,25 @@ class DocumentCategoryApiClient {
       )
       .then(res => res.data);
   }
+
+  updateDocumentCategoryDocuments({ documentCategoryId, documentIds }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/document-categories/${encodeURIComponent(documentCategoryId)}/documents`,
+        { documentIds },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteDocumentCategory({ documentCategoryId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/document-categories/${encodeURIComponent(documentCategoryId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default DocumentCategoryApiClient;

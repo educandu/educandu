@@ -19,6 +19,10 @@ class DocumentCategoryService {
     this.githubFlavoredMarkdown = githubFlavoredMarkdown;
   }
 
+  getDocumentCategoryById(documentCategoryId) {
+    return this.documentCategoryStore.getDocumentCategoryById(documentCategoryId);
+  }
+
   async createDocumentCategory({ name, iconUrl, description, user }) {
     const existingDocumentCategoryName = await this.documentCategoryStore.findDocumentCategoryByName(name);
     if (existingDocumentCategoryName) {
@@ -59,6 +63,27 @@ class DocumentCategoryService {
     const updatedDocumentCategory = await this.documentCategoryStore.getDocumentCategoryById(documentCategoryId);
 
     return { result: SAVE_DOCUMENT_CATEGORY_RESULT.success, documentCategory: updatedDocumentCategory };
+  }
+
+  async updateDocumentCategoryDocuments({ documentCategoryId, documentIds, user }) {
+    const documentCategory = await this.documentCategoryStore.getDocumentCategoryById(documentCategoryId);
+
+    logger.info(`Updating documentIds of document category with _id ${documentCategory._id} `);
+
+    await this.documentCategoryStore.saveDocumentCategory({
+      ...documentCategory,
+      documentIds,
+      updatedOn: new Date(),
+      updatedBy: user._id
+    });
+
+    const updatedDocumentCategory = await this.documentCategoryStore.getDocumentCategoryById(documentCategoryId);
+
+    return updatedDocumentCategory;
+  }
+
+  async deleteDocumentCategory(documentCategoryId) {
+    await this.documentCategoryStore.deleteDocumentCategoryById(documentCategoryId);
   }
 
   async consolidateCdnResources(documentCategoryId) {
