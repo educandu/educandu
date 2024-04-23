@@ -34,6 +34,33 @@ class DocumentCategoryService {
     return { result: SAVE_DOCUMENT_CATEGORY_RESULT.success, documentCategory };
   }
 
+  async updateDocumentCategory({ documentCategoryId, name, iconUrl, description, user }) {
+    const documentCategory = await this.documentCategoryStore.getDocumentCategoryById(documentCategoryId);
+
+    const existingDocumentCategoryWithName = await this.documentCategoryStore.findDocumentCategoryByName(name);
+    if (existingDocumentCategoryWithName && existingDocumentCategoryWithName._id !== documentCategoryId) {
+      return { result: SAVE_DOCUMENT_CATEGORY_RESULT.duplicateName, documentCategory };
+    }
+
+    logger.info(`Updating document category with _id ${documentCategory._id} `);
+
+    const cdnResources = this._extractCdnResources({ iconUrl, description });
+
+    await this.documentCategoryStore.saveDocumentCategory({
+      ...documentCategory,
+      name,
+      iconUrl,
+      description,
+      cdnResources,
+      updatedOn: new Date(),
+      updatedBy: user._id
+    });
+
+    const updatedDocumentCategory = await this.documentCategoryStore.getDocumentCategoryById(documentCategoryId);
+
+    return { result: SAVE_DOCUMENT_CATEGORY_RESULT.success, documentCategory: updatedDocumentCategory };
+  }
+
   async consolidateCdnResources(documentCategoryId) {
     let lock;
 

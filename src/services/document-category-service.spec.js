@@ -13,7 +13,8 @@ import {
 describe('document-category-service', () => {
   let db;
   let sut;
-  let user;
+  let user1;
+  let user2;
   let result;
   let container;
 
@@ -34,7 +35,8 @@ describe('document-category-service', () => {
   beforeEach(async () => {
     sandbox.useFakeTimers(now);
 
-    user = await createTestUser(container, { email: 'john-doe@test.com', password: 'john-doe-12345$$$', displayName: 'John Doe' });
+    user1 = await createTestUser(container, { email: 'john-doe@test.com', password: 'john-doe-12345$$$', displayName: 'John Doe' });
+    user2 = await createTestUser(container, { email: 'jane-doe@test.com', password: 'jane-doe-12345$$$', displayName: 'Jane Doe' });
   });
 
   afterEach(async () => {
@@ -47,17 +49,17 @@ describe('document-category-service', () => {
     describe('when the name is not unique', () => {
       beforeEach(async () => {
         await sut.createDocumentCategory({
-          name: 'existing name',
+          name: 'category1',
           iconUrl: '',
           description: '',
-          user
+          user: user1
         });
 
         result = await sut.createDocumentCategory({
-          name: 'existing name',
+          name: 'category1',
           iconUrl: '',
           description: '',
-          user
+          user: user1
         });
       });
 
@@ -72,10 +74,10 @@ describe('document-category-service', () => {
     describe('when the name is unique', () => {
       beforeEach(async () => {
         result = await sut.createDocumentCategory({
-          name: 'name',
+          name: 'category1',
           iconUrl: 'cdn://media-library/icon.svg',
-          description: '[Click here](cdn://media-library/file-1.png)',
-          user
+          description: '[Click here](cdn://media-library/file.png)',
+          user: user1
         });
       });
 
@@ -84,15 +86,144 @@ describe('document-category-service', () => {
           result: SAVE_DOCUMENT_CATEGORY_RESULT.success,
           documentCategory: {
             _id: expect.stringMatching(/\w+/),
-            name: 'name',
+            name: 'category1',
             iconUrl: 'cdn://media-library/icon.svg',
-            description: '[Click here](cdn://media-library/file-1.png)',
+            description: '[Click here](cdn://media-library/file.png)',
             documentIds: [],
-            cdnResources: ['cdn://media-library/file-1.png', 'cdn://media-library/icon.svg'],
+            cdnResources: ['cdn://media-library/file.png', 'cdn://media-library/icon.svg'],
             createdOn: now,
-            createdBy: user._id,
+            createdBy: user1._id,
             updatedOn: now,
-            updatedBy: user._id
+            updatedBy: user1._id
+          }
+        });
+      });
+    });
+  });
+
+  describe('updateDocumentCategory', () => {
+    let oldDocumentCategory;
+
+    describe('when the updated name is not unique', () => {
+      beforeEach(async () => {
+        await sut.createDocumentCategory({
+          name: 'category1',
+          iconUrl: '',
+          description: '',
+          user: user1
+        });
+
+        const creationResult = await sut.createDocumentCategory({
+          name: 'category2',
+          iconUrl: 'cdn://media-library/old-icon.svg',
+          description: '[Click here](cdn://media-library/old-file.png)',
+          user: user1
+        });
+
+        oldDocumentCategory = creationResult.documentCategory;
+
+        result = await sut.updateDocumentCategory({
+          documentCategoryId: oldDocumentCategory._id,
+          name: 'category1',
+          iconUrl: 'cdn://media-library/new-icon.svg',
+          description: '[Click here](cdn://media-library/new-file.png)',
+          user: user2
+        });
+      });
+
+      it('returns the duplicateName result with the old documentCategory data', () => {
+        expect(result).toStrictEqual({
+          result: SAVE_DOCUMENT_CATEGORY_RESULT.duplicateName,
+          documentCategory: {
+            ...oldDocumentCategory
+          }
+        });
+      });
+    });
+
+    describe('when the updated name is unique', () => {
+      beforeEach(async () => {
+        await sut.createDocumentCategory({
+          name: 'category1',
+          iconUrl: '',
+          description: '',
+          user: user1
+        });
+
+        const creationResult = await sut.createDocumentCategory({
+          name: 'category2',
+          iconUrl: 'cdn://media-library/old-icon.svg',
+          description: '[Click here](cdn://media-library/old-file.png)',
+          user: user1
+        });
+
+        oldDocumentCategory = creationResult.documentCategory;
+
+        result = await sut.updateDocumentCategory({
+          documentCategoryId: oldDocumentCategory._id,
+          name: 'category3',
+          iconUrl: 'cdn://media-library/new-icon.svg',
+          description: '[Click here](cdn://media-library/new-file.png)',
+          user: user2
+        });
+      });
+
+      it('returns the success result containing the updated document category', () => {
+        expect(result).toStrictEqual({
+          result: SAVE_DOCUMENT_CATEGORY_RESULT.success,
+          documentCategory: {
+            ...oldDocumentCategory,
+            name: 'category3',
+            iconUrl: 'cdn://media-library/new-icon.svg',
+            description: '[Click here](cdn://media-library/new-file.png)',
+            documentIds: [],
+            cdnResources: ['cdn://media-library/new-file.png', 'cdn://media-library/new-icon.svg'],
+            updatedOn: now,
+            updatedBy: user2._id
+          }
+        });
+      });
+    });
+
+    describe('when the name hasn\'t changed', () => {
+      beforeEach(async () => {
+        await sut.createDocumentCategory({
+          name: 'category1',
+          iconUrl: '',
+          description: '',
+          user: user1
+        });
+
+        const creationResult = await sut.createDocumentCategory({
+          name: 'category2',
+          iconUrl: 'cdn://media-library/old-icon.svg',
+          description: '[Click here](cdn://media-library/old-file.png)',
+          user: user1
+        });
+
+        oldDocumentCategory = creationResult.documentCategory;
+
+        result = await sut.updateDocumentCategory({
+          documentCategoryId: oldDocumentCategory._id,
+          name: 'category2',
+          iconUrl: 'cdn://media-library/new-icon.svg',
+          description: '[Click here](cdn://media-library/new-file.png)',
+          user: user2
+        });
+      });
+
+      it('returns the success result containing the updated document category', () => {
+        expect(result).toStrictEqual({
+          result: SAVE_DOCUMENT_CATEGORY_RESULT.success,
+          documentCategory: {
+            ...oldDocumentCategory,
+            name: 'category2',
+            iconUrl: 'cdn://media-library/new-icon.svg',
+            description: '[Click here](cdn://media-library/new-file.png)',
+            documentIds: [],
+            cdnResources: ['cdn://media-library/new-file.png', 'cdn://media-library/new-icon.svg'],
+            updatedOn: now,
+            updatedBy: user2._id
           }
         });
       });
@@ -107,7 +238,7 @@ describe('document-category-service', () => {
         name: 'name',
         iconUrl: '',
         description: '',
-        user
+        user: user1
       });
       const documentCategoryId = creationResult.documentCategory._id;
 

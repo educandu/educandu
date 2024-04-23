@@ -7,10 +7,20 @@ class DocumentCategoryApiClient {
     this.httpClient = httpClient;
   }
 
-  requestCreation({ name, iconUrl, description }) {
+  requestDocumentCategoryCreation({ name, iconUrl, description }) {
     return this.httpClient
       .post(
         '/api/v1/document-categories/request-creation',
+        { name, iconUrl, description },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  updateDocumentCategory({ documentCategoryId, name, iconUrl, description }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/document-categories/${encodeURIComponent(documentCategoryId)}`,
         { name, iconUrl, description },
         { responseType: 'json' }
       )
