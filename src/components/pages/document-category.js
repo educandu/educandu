@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
-import { useTranslation } from 'react-i18next';
-import { documentCategoryShape } from '../../ui/default-prop-types.js';
+import React, { Fragment } from 'react';
 import routes from '../../utils/routes.js';
 import slugify from '@sindresorhus/slugify';
+import { useTranslation } from 'react-i18next';
+import { documentCategoryShape } from '../../ui/default-prop-types.js';
 
 function DocumentCategory({ initialState, PageTemplate }) {
   const { t } = useTranslation('documentCategory');
