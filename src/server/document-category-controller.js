@@ -30,24 +30,32 @@ class DocumentCategoryController {
   }
 
   async handleGetDocumentCategoryPage(req, res) {
-    // const { user } = req;
     const { documentCategoryId } = req.params;
     const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params[0]);
 
-    const documentCategory = await this.documentCategoryService.getDocumentCategoryById(documentCategoryId);
-    if (!documentCategory) {
+    const allDocumentCategories = await this.documentCategoryService.getAllDocumentCategories();
+    const currentDocumentCategory = allDocumentCategories.find(documentCategory => documentCategory._id === documentCategoryId);
+    const otherDocumentCategories = allDocumentCategories.filter(documentCategory => documentCategory._id !== documentCategoryId);
+
+    if (!currentDocumentCategory) {
       throw new NotFound();
     }
 
-    const canonicalSlug = slugify(documentCategory.name);
-
+    const canonicalSlug = slugify(currentDocumentCategory.name);
     if (routeWildcardValue !== canonicalSlug) {
       return res.redirect(301, routes.getDocumentCategoryUrl({ id: documentCategoryId, slug: canonicalSlug }));
     }
 
-    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(documentCategory);
+    const [mappedCurrentDocumentCategory, mappedOtherDocumentCategories] = await Promise.all([
+      this.clientDataMappingService.mapDocumentCategory(currentDocumentCategory),
+      this.clientDataMappingService.mapDocumentCategories(otherDocumentCategories)
+    ]);
 
-    const initialState = { documentCategory: mappedDocumentCategory };
+    const initialState = {
+      currentDocumentCategory: mappedCurrentDocumentCategory,
+      otherDocumentCategories: mappedOtherDocumentCategories
+    };
+
     const pageName = PAGE_NAME.documentCategory;
 
     return this.pageRenderer.sendPage(req, res, pageName, initialState);

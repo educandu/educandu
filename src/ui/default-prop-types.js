@@ -168,6 +168,11 @@ export const otherUserShape = PropTypes.shape({
   displayName: PropTypes.string.isRequired
 });
 
+export const otherUserDisplayNameOnlyShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired
+});
+
 export const documentRatingShape = PropTypes.shape({
   _id: PropTypes.string,
   documentId: PropTypes.string.isRequired,
@@ -285,15 +290,9 @@ export const documentInputSectionFileShape = PropTypes.shape({
 export const documentInputSectionCommentShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
-  createdBy: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired
-  }),
+  createdBy: otherUserDisplayNameOnlyShape.isRequired,
   deletedOn: PropTypes.string,
-  deletedBy: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired
-  }),
+  deletedBy: otherUserDisplayNameOnlyShape,
   text: PropTypes.string.isRequired
 });
 
@@ -570,15 +569,9 @@ export const documentCommentShape = PropTypes.shape({
   topic: PropTypes.string.isRequired,
   text: PropTypes.string,
   createdOn: PropTypes.string.isRequired,
-  createdBy: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired
-  }).isRequired,
+  createdBy: otherUserDisplayNameOnlyShape.isRequired,
   deletedOn: PropTypes.string,
-  deletedBy: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired
-  })
+  deletedBy: otherUserDisplayNameOnlyShape
 });
 
 export const favoriteUserShape = publicUserShape;
@@ -609,4 +602,16 @@ export const notificationGroupShape = PropTypes.shape({
   eventParams: PropTypes.oneOfType([commonDocumentEventParamsShape]).isRequired,
   firstCreatedOn: PropTypes.string.isRequired,
   lastCreatedOn: PropTypes.string.isRequired
+});
+
+export const documentCategoryShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  iconUrl: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  documentIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  createdOn: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  createdBy: otherUserDisplayNameOnlyShape.isRequired,
+  updatedBy: otherUserDisplayNameOnlyShape.isRequired
 });
