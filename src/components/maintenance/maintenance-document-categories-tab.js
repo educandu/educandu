@@ -242,7 +242,7 @@ function MaintenanceDocumentCategoriesTab() {
         </Button>
       </div>
       <Spin spinning={fetchingData}>
-        <div>
+        <div className="MaintenanceDocumentCategoriesTab-categories">
           {displayedDocumentCategories.map(renderDocumentCategory)}
         </div>
       </Spin>
