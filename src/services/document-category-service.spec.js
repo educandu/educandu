@@ -43,30 +43,58 @@ describe('document-category-service', () => {
   });
 
   describe('createDocumentCategory', () => {
-    beforeEach(async () => {
-      result = await sut.createDocumentCategory({
-        name: 'name',
-        iconUrl: 'cdn://media-library/icon.svg',
-        description: '[Click here](cdn://media-library/file-1.png)',
-        user
+
+    describe('when the name is not unique', () => {
+      beforeEach(async () => {
+        await sut.createDocumentCategory({
+          name: 'existing name',
+          iconUrl: '',
+          description: '',
+          user
+        });
+
+        result = await sut.createDocumentCategory({
+          name: 'existing name',
+          iconUrl: '',
+          description: '',
+          user
+        });
+      });
+
+      it('returns the duplicateName result without a created documentCategory', () => {
+        expect(result).toStrictEqual({
+          result: SAVE_DOCUMENT_CATEGORY_RESULT.duplicateName,
+          documentCategory: null
+        });
       });
     });
 
-    it('returns the success result containing the created document category', () => {
-      expect(result).toStrictEqual({
-        result: SAVE_DOCUMENT_CATEGORY_RESULT.success,
-        documentCategory: {
-          _id: expect.stringMatching(/\w+/),
+    describe('when the name is unique', () => {
+      beforeEach(async () => {
+        result = await sut.createDocumentCategory({
           name: 'name',
           iconUrl: 'cdn://media-library/icon.svg',
           description: '[Click here](cdn://media-library/file-1.png)',
-          documentIds: [],
-          cdnResources: ['cdn://media-library/file-1.png', 'cdn://media-library/icon.svg'],
-          createdOn: now,
-          createdBy: user._id,
-          updatedOn: now,
-          updatedBy: user._id
-        }
+          user
+        });
+      });
+
+      it('returns the success result containing the created document category', () => {
+        expect(result).toStrictEqual({
+          result: SAVE_DOCUMENT_CATEGORY_RESULT.success,
+          documentCategory: {
+            _id: expect.stringMatching(/\w+/),
+            name: 'name',
+            iconUrl: 'cdn://media-library/icon.svg',
+            description: '[Click here](cdn://media-library/file-1.png)',
+            documentIds: [],
+            cdnResources: ['cdn://media-library/file-1.png', 'cdn://media-library/icon.svg'],
+            createdOn: now,
+            createdBy: user._id,
+            updatedOn: now,
+            updatedBy: user._id
+          }
+        });
       });
     });
   });
