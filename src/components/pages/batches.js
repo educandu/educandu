@@ -199,7 +199,7 @@ function Batches({ initialState, PageTemplate }) {
         url = routes.getDocUrl({ id: taskParams.entityId });
         break;
       case CDN_RESOURCES_CONSOLIDATION_TYPE.documentCategory:
-        url = null;
+        url = routes.getDocumentCategoryUrl({ id: taskParams.entityId });
         break;
       case CDN_RESOURCES_CONSOLIDATION_TYPE.room:
         url = null;
