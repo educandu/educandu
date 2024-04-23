@@ -22,9 +22,15 @@
   min-height: 50px;
 }
 
-.MaintenanceDocumentCategoriesTab-categoryPanel {
+.MaintenanceDocumentCategoriesTab-categoryCollapse {
   &:not(:first-child) {
     margin-top: @edu-control-spacing-wide;
+  }
+}
+
+.MaintenanceDocumentCategoriesTab-categoryPanel {
+  .ant-collapse-header {
+    align-items: center !important;
   }
 }
 
@@ -52,6 +58,10 @@
   &:not(:first-child) {
     margin-top: 2 * @edu-content-padding;
   }
+}
+
+.MaintenanceDocumentCategoriesTab-categoryPageLink {
+  margin-top: 2 * @edu-content-padding;
 }
 
 .MaintenanceDocumentCategoriesTab-categoryDetailsFooter {

@@ -190,8 +190,9 @@ function MaintenanceDocumentCategoriesTab() {
     );
 
     return (
-      <Collapse className="MaintenanceDocumentCategoriesTab-categoryPanel" key={category._id}>
+      <Collapse className="MaintenanceDocumentCategoriesTab-categoryCollapse" key={category._id}>
         <Panel
+          className="MaintenanceDocumentCategoriesTab-categoryPanel"
           key={category._id}
           header={header}
           extra={extra}
@@ -209,16 +210,20 @@ function MaintenanceDocumentCategoriesTab() {
             <div>
               Documents come here
             </div>
-            <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
-              <span>{`${t('common:createdOnDateBy', { date: formatDate(category.createdOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(category.createdBy._id)}>{category.createdBy.displayName}</a>
-              <span> | </span>
-              <span>{`${t('common:updatedOnDateBy', { date: formatDate(category.updatedOn) })} `}</span>
-              <a href={routes.getUserProfileUrl(category.updatedBy._id)}>{category.updatedBy.displayName}</a>
-              <span> | </span>
+            <div className="MaintenanceDocumentCategoriesTab-categoryPageLink">
               <a href={routes.getDocumentCategoryUrl({ id: category._id, slug: slugify(category.name) })}>
                 {t('navigateToCategoryPage')}
               </a>
+            </div>
+            <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
+              <div>
+                <span>{`${t('common:createdOnDateBy', { date: formatDate(category.createdOn) })} `}</span>
+                <a href={routes.getUserProfileUrl(category.createdBy._id)}>{category.createdBy.displayName}</a>
+              </div>
+              <div>
+                <span>{`${t('common:updatedOnDateBy', { date: formatDate(category.updatedOn) })} `}</span>
+                <a href={routes.getUserProfileUrl(category.updatedBy._id)}>{category.updatedBy.displayName}</a>
+              </div>
             </div>
           </div>
         </Panel>
