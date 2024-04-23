@@ -55,6 +55,18 @@ export function confirmDocumentInputDelete(t, timestamp, onOk, onCancel = () => 
   });
 }
 
+export function confirmDocumentCategoryDelete(t, documentCategoryName, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteDocumentCategoryConfirmation', { name: documentCategoryName }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmAllOwnedRoomsDelete(t, ownerName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
