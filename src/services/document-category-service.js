@@ -53,7 +53,7 @@ class DocumentCategoryService {
 
   _buildDocumentCategory({ name, description, iconUrl, user }) {
     const now = new Date();
-    const cdnResources = this._extractCdnResources({ description });
+    const cdnResources = this._extractCdnResources({ iconUrl, description });
 
     return {
       _id: uniqueId.create(),
