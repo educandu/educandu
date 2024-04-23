@@ -510,7 +510,7 @@ class ClientDataMappingService {
       createdBy,
       updatedBy,
       createdOn: mappedDocumentCategory.createdOn.toISOString(),
-      updatedOn: mappedDocumentCategory.updatedOn && mappedDocumentCategory.updatedOn.toISOString()
+      updatedOn: mappedDocumentCategory.updatedOn.toISOString()
     };
   }
 
