@@ -22,7 +22,14 @@ class DocumentCategoryController {
     this.clientDataMappingService = clientDataMappingService;
   }
 
-  async handlePostDocumentCategoryCreationRequest(req, res) {
+  async handleGetDocumentCategories(req, res) {
+    const documentCategories = await this.documentCategoryService.getAllDocumentCategories();
+    const mappedDocumentCategories = await this.clientDataMappingService.mapDocumentCategories(documentCategories);
+
+    res.status(200).send({ documentCategories: mappedDocumentCategories });
+  }
+
+  async handlePostDocumentCategory(req, res) {
     const { user } = req;
     const { name, iconUrl, description } = req.body;
 
@@ -81,12 +88,18 @@ class DocumentCategoryController {
   }
 
   registerApi(router) {
+    router.get(
+      '/api/v1/document-categories',
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      (req, res) => this.handleGetDocumentCategories(req, res)
+    );
+
     router.post(
-      '/api/v1/document-categories/request-creation',
+      '/api/v1/document-categories',
       jsonParser,
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
       validateBody(postDocumentCategoryBodySchema),
-      (req, res) => this.handlePostDocumentCategoryCreationRequest(req, res)
+      (req, res) => this.handlePostDocumentCategory(req, res)
     );
 
     router.patch(

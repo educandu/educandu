@@ -23,6 +23,10 @@ class DocumentCategoryService {
     return this.documentCategoryStore.getDocumentCategoryById(documentCategoryId);
   }
 
+  getAllDocumentCategories() {
+    return this.documentCategoryStore.getAllDocumentCategories();
+  }
+
   async createDocumentCategory({ name, iconUrl, description, user }) {
     const existingDocumentCategoryName = await this.documentCategoryStore.findDocumentCategoryByName(name);
     if (existingDocumentCategoryName) {

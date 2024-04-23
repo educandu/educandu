@@ -48,11 +48,21 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
   };
 
   const handleModalFormFinish = async ({ name, iconUrl, description }) => {
-    const { result, documentCategory } = await documentCategoryApiClient.requestDocumentCategoryCreation({
-      name: name.trim(),
-      iconUrl,
-      description: description.trim()
-    });
+    const trimmedName = name.trim();
+    const trimmedDescription = description.trim();
+
+    const { result, documentCategory } = isEditing
+      ? await documentCategoryApiClient.updateDocumentCategory({
+        documentCategoryId: initialDocumentCategory._id,
+        name: trimmedName,
+        iconUrl,
+        description: trimmedDescription
+      })
+      :await documentCategoryApiClient.createDocumentCategory({
+        name: trimmedName,
+        iconUrl,
+        description: trimmedDescription
+      });
 
     switch (result) {
       case SAVE_DOCUMENT_CATEGORY_RESULT.success:
@@ -80,7 +90,7 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
       forceRender
       open={isOpen}
       maskClosable={false}
-      okText={t('common:create')}
+      okText={isEditing ? t('common:save') : t('common:create')}
       cancelText={t('common:cancel')}
       title={isEditing ? t('modalEditTitle') : t('modalCreateTitle')}
       onOk={handleOk}
@@ -127,6 +137,7 @@ DocumentCategoryMetadataModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   isEditing: PropTypes.bool.isRequired,
   initialDocumentCategory: PropTypes.shape({
+    _id: PropTypes.string,
     name: PropTypes.string.isRequired,
     iconUrl: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
