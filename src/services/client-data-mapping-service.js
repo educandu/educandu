@@ -436,6 +436,16 @@ class ClientDataMappingService {
     return comments.map(comment => this._mapDocumentComment(comment, userMap));
   }
 
+  async mapDocumentCategory(documentCategory) {
+    const userMap = await this._getUserMapForDocumentCategories([documentCategory]);
+    return this._mapDocumentCategory(documentCategory, userMap);
+  }
+
+  async mapDocumentCategories(documentCategories) {
+    const userMap = await this._getUserMapForDocumentCategories(documentCategories);
+    return documentCategories.map(documentCategory => this._mapDocumentCategory(documentCategory, userMap));
+  }
+
   async mapDocumentInput({ documentInput, document }) {
     const userMap = await this._getUserMapForDocumentInputs([documentInput]);
     return this._mapDocumentInput({ documentInput, document, userMap });
@@ -487,6 +497,20 @@ class ClientDataMappingService {
       deletedBy,
       createdOn: mappedComment.createdOn.toISOString(),
       deletedOn: mappedComment.deletedOn && mappedComment.deletedOn.toISOString()
+    };
+  }
+
+  _mapDocumentCategory(documentCategory, userMap) {
+    const mappedDocumentCategory = cloneDeep(documentCategory);
+    const createdBy = this._mapOtherUser({ user: userMap.get(documentCategory.createdBy) });
+    const updatedBy = this._mapOtherUser({ user: userMap.get(documentCategory.updatedBy) });
+
+    return {
+      ...mappedDocumentCategory,
+      createdBy,
+      updatedBy,
+      createdOn: mappedDocumentCategory.createdOn.toISOString(),
+      updatedOn: mappedDocumentCategory.updatedOn.toISOString()
     };
   }
 
@@ -775,6 +799,20 @@ class ClientDataMappingService {
     const commentsDeletedByUserIds = commentsData.map(commentData => commentData.deletedBy).filter(x => x);
 
     const userIds = [...new Set([...createdByUserIds, ...updatedByUserIds, ...commentsCreatedByUserIds, ...commentsDeletedByUserIds])];
+    const users = await this.userStore.getUsersByIds(userIds);
+
+    if (users.length !== userIds.length) {
+      throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
+    }
+
+    return new Map(users.map(u => [u._id, u]));
+  }
+
+  async _getUserMapForDocumentCategories(documentCategories) {
+    const createdByUserIds = documentCategories.map(documentCategory => documentCategory.createdBy);
+    const updatedByUserIds = documentCategories.map(documentCategory => documentCategory.updatedBy);
+
+    const userIds = [...new Set([...createdByUserIds, ...updatedByUserIds])];
     const users = await this.userStore.getUsersByIds(userIds);
 
     if (users.length !== userIds.length) {

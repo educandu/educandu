@@ -48,7 +48,7 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
   };
 
   const handleModalFormFinish = async ({ name, iconUrl, description }) => {
-    const { result, documentCategory } = await documentCategoryApiClient.requestCreation({
+    const { result, documentCategory } = await documentCategoryApiClient.requestDocumentCategoryCreation({
       name: name.trim(),
       iconUrl,
       description: description.trim()

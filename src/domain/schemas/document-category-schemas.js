@@ -15,8 +15,16 @@ export const documentCategoryDbSchema = joi.object({
   cdnResources: joi.array().items(joi.string()).required()
 });
 
-export const postCategoryCreationRequestBodySchema = joi.object({
+export const documentCategoryIdParamsSchema = joi.object({
+  documentCategoryId: idOrKeySchema.required()
+});
+
+export const postDocumentCategoryBodySchema = joi.object({
   name: joi.string().required(),
   iconUrl: joi.string().allow('').required(),
   description: joi.string().allow('').required()
+});
+
+export const patchDocumentCategoryDocumentsBodySchema = joi.object({
+  documentIds: joi.array().items(idOrKeySchema).required()
 });
