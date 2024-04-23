@@ -2817,12 +2817,12 @@
       "de": "Zur Kateorie-Seite navigieren"
     },
     "emptyStateTitle": {
-      "en": "There are no document categories",
-      "de": "Es gibt keine Dokument-Kategorien"
+      "en": "No document categories have been created",
+      "de": "Es wurden keine Dokument-Kategorien erstellt"
     },
     "emptyStateSubtitle": {
       "en": "Through categories, documents can be grouped together by certain custom criteria.",
-      "de": "Mit Hilfe von Kategorien, Dokumente können nach bestimmten spezifischen Kriterien gruppiert werden."
+      "de": "Mit Hilfe von Kategorien können Dokumente nach benutzerdefinierten Kriterien gruppiert werden."
     },
     "emptyStateButton": {
       "en": "Create document category",
