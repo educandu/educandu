@@ -15,10 +15,11 @@ import EditIcon from '../icons/general/edit-icon.js';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import { replaceItem } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
+import { ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
+import { confirmDocumentCategoryDelete } from '../confirmation-dialogs.js';
 import DocumentCategoryMetadataModal from './document-category-metadata-modal.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentCategoryApiClient from '../../api-clients/document-category-api-client.js';
@@ -119,9 +120,14 @@ function MaintenanceDocumentCategoriesTab() {
     }));
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleDocumentCategoryDeleteClick = (event, documentCategory) => {
     event.stopPropagation();
+
+    confirmDocumentCategoryDelete(t, documentCategory.name, async () => {
+      await documentCategoryApiClient.deleteDocumentCategory({ documentCategoryId: documentCategory._id });
+      const newDocumentCategories = ensureIsExcluded(allDocumentCategories, documentCategory);
+      setAllDocumentCategories(newDocumentCategories);
+    });
   };
 
   const renderDocumentCategory = documentCategory => {

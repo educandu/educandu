@@ -1564,6 +1564,10 @@
       "en": "Do you really want to delete document input from {timestamp}?",
       "de": "Möchtest du die Dokumenteingabe von {timestamp} wirklich löschen?"
     },
+    "deleteDocumentCategoryConfirmation": {
+      "en": "Do you really want to delete document category \"{name}\"?",
+      "de": "Möchtest du die Dokument-Kategorie \"{name}\" wirklich löschen?"
+    },
     "deleteAllOwnedRoomsConfirmation": {
       "en": "Do you really want to delete all rooms owned by user \"{ownerName}\"?",
       "de": "Möchtest du wirklich alle Räume von Benutzer \"{ownerName}\" löschen?"
