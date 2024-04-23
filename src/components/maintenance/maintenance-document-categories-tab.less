@@ -18,7 +18,40 @@
   width: 100%;
 }
 
+.MaintenanceDocumentCategoriesTab-categoryPanel {
+  &:not(:first-child) {
+    margin-top: @edu-control-spacing-wide;
+  }
+}
+
 .MaintenanceDocumentCategoriesTab-categoryIcon {
-  max-width: 28px;
-  max-height: 28px;
+  max-width: @edu-control-height-sm;
+  max-height: @edu-control-height-sm;
+}
+
+.MaintenanceDocumentCategoriesTab-categoryHeader {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+  grid-template-columns: @edu-control-height-sm 1fr;
+}
+
+.MaintenanceDocumentCategoriesTab-categoryPanelButtonsGroup {
+  .m-control-group();
+}
+
+.MaintenanceDocumentCategoriesTab-categoryDetailsHeader {
+  font-weight: bold;
+  margin-bottom: @edu-content-padding;
+
+  &:not(:first-child) {
+    margin-top: 2 * @edu-content-padding;
+  }
+}
+
+.MaintenanceDocumentCategoriesTab-categoryDetailsFooter {
+  margin-top: 2 * @edu-content-padding;
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
 }

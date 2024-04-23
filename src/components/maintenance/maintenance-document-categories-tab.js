@@ -1,19 +1,20 @@
 import by from 'thenby';
 import { TAB } from './constants.js';
-import { Button, Table } from 'antd';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import slugify from '@sindresorhus/slugify';
 import FilterInput from '../filter-input.js';
+import { Button, Collapse, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
+import { useDateFormat } from '../locale-context.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import ResourceTitleCell from '../resource-title-cell.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentCategoryMetadataModal from './document-category-metadata-modal.js';
-import ActionButton, { ACTION_BUTTON_INTENT, ActionButtonGroup } from '../action-button.js';
+
+const { Panel } = Collapse;
 
 function fetchDummyCategories() {
   const user1 = {
@@ -42,7 +43,7 @@ function fetchDummyCategories() {
     },
     {
       _id: '9fsqGVnBNXN7k6HW2yVYdo',
-      name: 'Lessenswert',
+      name: 'Lesenswert',
       iconUrl: 'https://cdn.openmusic.academy/media-library/triangel-EGAqmYDvLo4SXSxFR96bzp.svg',
       description: '',
       documentIds: [],
@@ -88,6 +89,7 @@ const getSanitizedQueryFromRequest = request => {
 
 function MaintenanceDocumentCategoriesTab() {
   const request = useRequest();
+  const { formatDate } = useDateFormat();
   const { t } = useTranslation('maintenanceDocumentCategoriesTab');
   const [allDocumentCategories, setAllDocumentCategories] = useState([]);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
@@ -144,7 +146,8 @@ function MaintenanceDocumentCategoriesTab() {
     setMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const handleDocumentCategoryEditClick = category => {
+  const handleDocumentCategoryEditClick = (event, category) => {
+    event.stopPropagation();
     setMetadataModalState(prev => ({
       ...prev,
       initialDocumentCategory: category,
@@ -154,68 +157,74 @@ function MaintenanceDocumentCategoriesTab() {
   };
 
   // eslint-disable-next-line no-unused-vars
-  const handleDocumentCategoryDeleteClick = category => {};
-
-  const renderDocumentCategoryIcon = (_, category) => {
-    return category.iconUrl
-      ? <img src={category.iconUrl} className="MaintenanceDocumentCategoriesTab-categoryIcon" />
-      : null;
+  const handleDocumentCategoryDeleteClick = (event, category) => {
+    event.stopPropagation();
   };
 
-  const renderDocumentCategoryTitle = (_, category) => {
-    return (
-      <ResourceTitleCell
-        title={category.name}
-        shortDescription={<Markdown>{category.description}</Markdown>}
-        url={routes.getDocumentCategoryUrl({ id: category._id, slug: slugify(category.name) })}
-        createdOn={category.createdOn}
-        createdBy={category.createdBy}
-        updatedOn={category.updatedOn}
-        updatedBy={category.updatedBy}
-        />
-    );
-  };
-
-  const renderDocumentCategoryActions = (_, category) => {
-    return (
-      <div>
-        <ActionButtonGroup>
-          <ActionButton
-            title={t('common:edit')}
-            icon={<EditIcon />}
-            intent={ACTION_BUTTON_INTENT.default}
-            onClick={() => handleDocumentCategoryEditClick(category)}
-            />
-          <ActionButton
-            title={t('common:delete')}
-            icon={<DeleteIcon />}
-            intent={ACTION_BUTTON_INTENT.error}
-            onClick={() => handleDocumentCategoryDeleteClick(category)}
-            />
-        </ActionButtonGroup>
+  const renderDocumentCategory = category => {
+    const header = (
+      <div className="MaintenanceDocumentCategoriesTab-categoryHeader">
+        <div>
+          {!!category.iconUrl && <img src={category.iconUrl} className="MaintenanceDocumentCategoriesTab-categoryIcon" />}
+        </div>
+        <div>
+          {category.name}
+        </div>
       </div>
     );
-  };
 
-  const columns = [
-    {
-      title: t('common:icon'),
-      key: 'icon',
-      render: renderDocumentCategoryIcon,
-      width: '60px'
-    },
-    {
-      title: `${t('common:name')} / ${t('common:description')}`,
-      key: 'title',
-      render: renderDocumentCategoryTitle
-    },
-    {
-      title: t('common:actions'),
-      key: 'actions',
-      render: renderDocumentCategoryActions,
-      width: '100px'
-    }
-  ];
+    const extra = (
+      <div className="MaintenanceDocumentCategoriesTab-categoryPanelButtonsGroup">
+        <Button
+          icon={<EditIcon />}
+          title={t('common:edit')}
+          onClick={event => handleDocumentCategoryEditClick(event, category)}
+          />
+        <Button
+          danger
+          icon={<DeleteIcon />}
+          title={t('common:delete')}
+          onClick={event => handleDocumentCategoryDeleteClick(event, category)}
+          />
+      </div>
+    );
+
+    return (
+      <Collapse className="MaintenanceDocumentCategoriesTab-categoryPanel" key={category._id}>
+        <Panel
+          key={category._id}
+          header={header}
+          extra={extra}
+          >
+          <div className="MaintenanceDocumentCategoriesTab-categoryDetails">
+            <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
+              {t('common:description')}
+            </div>
+            <Markdown className="MaintenanceDocumentCategoriesTab-categoryDescription">
+              {category.description}
+            </Markdown>
+            <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
+              {t('documentsInCategory')}
+            </div>
+            <div>
+              Documents come here
+            </div>
+            <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
+              <span>{`${t('common:createdOnDateBy', { date: formatDate(category.createdOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(category.createdBy._id)}>{category.createdBy.displayName}</a>
+              <span> | </span>
+              <span>{`${t('common:updatedOnDateBy', { date: formatDate(category.updatedOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(category.updatedBy._id)}>{category.updatedBy.displayName}</a>
+              <span> | </span>
+              <a href={routes.getDocumentCategoryUrl({ id: category._id, slug: slugify(category.name) })}>
+                {t('navigateToCategoryPage')}
+              </a>
+            </div>
+          </div>
+        </Panel>
+      </Collapse>
+    );
+  };
 
   return (
     <div className="MaintenanceDocumentCategoriesTab">
@@ -232,13 +241,11 @@ function MaintenanceDocumentCategoriesTab() {
           {t('common:create')}
         </Button>
       </div>
-      <Table
-        rowKey="_id"
-        columns={columns}
-        pagination={false}
-        loading={fetchingData}
-        dataSource={displayedDocumentCategories}
-        />
+      <Spin spinning={fetchingData}>
+        <div>
+          {displayedDocumentCategories.map(renderDocumentCategory)}
+        </div>
+      </Spin>
       <DocumentCategoryMetadataModal
         {...metadataModalState}
         onSave={handleMetadataModalSave}
