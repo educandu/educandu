@@ -4,7 +4,7 @@
   margin-bottom: 40px;
   display: grid;
   gap: 15px;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 2fr 1fr auto;
   grid-template-rows: auto;
   align-items: center;
 
@@ -12,4 +12,60 @@
     grid-template-columns: 100%;
     grid-template-rows: repeat(1, auto);
   }
+}
+
+.MaintenanceDocumentCategoriesTab-filter {
+  width: 100%;
+}
+
+.MaintenanceDocumentCategoriesTab-categories {
+  min-height: 50px;
+}
+
+.MaintenanceDocumentCategoriesTab-categoryCollapse {
+  &:not(:first-child) {
+    margin-top: @edu-control-spacing-wide;
+  }
+}
+
+.MaintenanceDocumentCategoriesTab-categoryPanel {
+  .ant-collapse-header {
+    align-items: center !important;
+  }
+}
+
+.MaintenanceDocumentCategoriesTab-categoryIcon {
+  max-width: @edu-control-height-sm;
+  max-height: @edu-control-height-sm;
+}
+
+.MaintenanceDocumentCategoriesTab-categoryHeader {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  gap: @edu-control-spacing-wide;
+  grid-template-columns: @edu-control-height-sm 1fr;
+}
+
+.MaintenanceDocumentCategoriesTab-categoryPanelButtonsGroup {
+  .m-control-group();
+}
+
+.MaintenanceDocumentCategoriesTab-categoryDetailsHeader {
+  font-weight: bold;
+  margin-bottom: @edu-content-padding;
+
+  &:not(:first-child) {
+    margin-top: 2 * @edu-content-padding;
+  }
+}
+
+.MaintenanceDocumentCategoriesTab-categoryPageLink {
+  margin-top: 2 * @edu-content-padding;
+}
+
+.MaintenanceDocumentCategoriesTab-categoryDetailsFooter {
+  margin-top: 2 * @edu-content-padding;
+  font-size: @edu-font-size-sm;
+  color: @edu-text-color-secondary;
 }

@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
-import React, { useState } from 'react';
 import { Form, Input, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
+import { useIsMounted } from '../../ui/hooks.js';
+import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { maxDocumentCategoryNameLength } from '../../domain/validation-constants.js';
 import { SAVE_DOCUMENT_CATEGORY_RESULT, SOURCE_TYPE } from '../../domain/constants.js';
@@ -11,10 +12,17 @@ import DocumentCategoryApiClient from '../../api-clients/document-category-api-c
 
 function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCategory, onSave, onClose }) {
   const [form] = Form.useForm();
+  const isMounted = useIsMounted();
   const { t } = useTranslation('documentCategoryMetadataModal');
   const documentCategoryApiClient = useService(DocumentCategoryApiClient);
 
   const [namesInUse, setNamesInUse] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      form.resetFields();
+    }
+  }, [form, isOpen]);
 
   const nameValidationRules = [
     {
@@ -66,9 +74,10 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
     );
   };
 
-  return (
+  return !!isMounted.current && (
     <Modal
       width="80%"
+      forceRender
       open={isOpen}
       maskClosable={false}
       okText={t('common:create')}

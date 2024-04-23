@@ -1,0 +1,10 @@
+maintenanceDocumentCategoriesTab:
+  filterPlaceholder:
+    en: Filter by name
+    de: Nach Name filtern
+  documentsInCategory:
+    en: Documents in this category
+    de: Dokumente in dieser Kategorie
+  navigateToCategoryPage:
+    en: Go to the category page
+    de: Zur Kateorie-Seite navigieren
