@@ -23,7 +23,7 @@ const userProfilePrefix = '/user-profile/';
 const documentInputPrefix = '/doc-inputs/';
 const mediaLibraryPrefix = '/media-library/';
 const samlAuthLoginPrefix = '/saml-auth/login/';
-const documentCategoriesPrefix = '/doc-categories/';
+const documentCategoriesPrefix = '/document-categories/';
 const samlAuthLoginCallbackPrefix = '/saml-auth/login-callback/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
