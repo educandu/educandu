@@ -10,7 +10,7 @@ import ClientConfig from '../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../utils/source-utils.js';
 import { documentCategoryShape } from '../ui/default-prop-types.js';
 
-function DocumentCategoryHeader({ documentCategory, bordered, detailed }) {
+function DocumentCategoryDisplay({ documentCategory, bordered, detailed }) {
   const { t } = useTranslation();
   const clientConfig = useService(ClientConfig);
 
@@ -19,19 +19,19 @@ function DocumentCategoryHeader({ documentCategory, bordered, detailed }) {
     : null;
 
   const rootClasses = classNames({
-    'DocumentCategoryHeader': true,
-    'DocumentCategoryHeader--bordered': bordered,
-    'DocumentCategoryHeader--detailed': detailed
+    'DocumentCategoryDisplay': true,
+    'DocumentCategoryDisplay--bordered': bordered,
+    'DocumentCategoryDisplay--detailed': detailed
   });
 
   const iconClasses = classNames({
-    'DocumentCategoryHeader-icon': true,
-    'DocumentCategoryHeader-icon--detailed': detailed
+    'DocumentCategoryDisplay-icon': true,
+    'DocumentCategoryDisplay-icon--detailed': detailed
   });
 
   const nameClasses = classNames({
-    'DocumentCategoryHeader-name': true,
-    'DocumentCategoryHeader-name--detailed': detailed
+    'DocumentCategoryDisplay-name': true,
+    'DocumentCategoryDisplay-name--detailed': detailed
   });
 
   return (
@@ -42,12 +42,12 @@ function DocumentCategoryHeader({ documentCategory, bordered, detailed }) {
       <div>
         <div className={nameClasses}>{documentCategory.name}</div>
         {!!detailed && !!documentCategory.description && (
-          <Markdown className="DocumentCategoryHeader-description">
+          <Markdown className="DocumentCategoryDisplay-description">
             {documentCategory.description}
           </Markdown>
         )}
         {!!detailed && (
-          <div className="DocumentCategoryHeader-documentCategoryPageLink">
+          <div className="DocumentCategoryDisplay-documentCategoryPageLink">
             <a href={routes.getDocumentCategoryUrl({ id: documentCategory._id, slug: slugify(documentCategory.name) })}>
               {t('common:navigateToDocumentCategoryPage', { documentCategoryName: documentCategory.name })}
             </a>
@@ -58,15 +58,15 @@ function DocumentCategoryHeader({ documentCategory, bordered, detailed }) {
   );
 }
 
-DocumentCategoryHeader.propTypes = {
+DocumentCategoryDisplay.propTypes = {
   documentCategory: documentCategoryShape.isRequired,
   bordered: PropTypes.bool,
   detailed: PropTypes.bool
 };
 
-DocumentCategoryHeader.defaultProps = {
+DocumentCategoryDisplay.defaultProps = {
   bordered: false,
   detailed: false
 };
 
-export default DocumentCategoryHeader;
+export default DocumentCategoryDisplay;

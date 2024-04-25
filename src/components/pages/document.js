@@ -30,11 +30,10 @@ import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import DocumentCategoryHeader from '../document-category-header.js';
 import DocumentVersionHistory from '../document-version-history.js';
-import { supportsClipboardPaste, tryBringElementIntoView } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import DocumentCategoryDisplay from '../document-category-display.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
@@ -49,10 +48,11 @@ import DocumentCommentApiClient from '../../api-clients/document-comment-api-cli
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import { createDocumentInputUploadedFileName } from '../../utils/document-input-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { supportsClipboardPaste, tryBringElementIntoView } from '../../ui/browser-helper.js';
 import { maxDocumentRevisionCreatedBecauseLength } from '../../domain/validation-constants.js';
-import { documentCategoryShape, documentRatingShape, documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
+import { documentCategoryShape, documentRatingShape, documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
@@ -552,7 +552,7 @@ function Document({ initialState, PageTemplate }) {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
   };
 
-  const handleDocumentCategoryHeaderLinkClick = documentCategory => {
+  const handleDocumentCategoryClick = documentCategory => {
     tryBringElementIntoView(`[${DATA_ATTRIBUTE_DOCUMENT_CATEGORY_ID}="${documentCategory._id}"]`);
   };
 
@@ -1141,14 +1141,17 @@ function Document({ initialState, PageTemplate }) {
     return (
       <div className="DocumentPage-documentCategoryAndRatingArea">
         {!!documentCategories.length && (
-          <div className="DocumentPage-documentCategoryHeaderLinks">
+          <div className="DocumentPage-documentCategoryLinks">
             {documentCategories.map(documentCategory => (
-              <Tooltip key={documentCategory._id} title={t('documentCategoryTooltip', { documentCategoryName: documentCategory.name })}>
+              <Tooltip
+                key={documentCategory._id}
+                title={t('documentCategoryTooltip', { documentCategoryName: documentCategory.name })}
+                >
                 <a
-                  className="DocumentPage-documentCategoryHeaderLink"
-                  onClick={() => handleDocumentCategoryHeaderLinkClick(documentCategory)}
+                  className="DocumentPage-documentCategoryLink"
+                  onClick={() => handleDocumentCategoryClick(documentCategory)}
                   >
-                  <DocumentCategoryHeader documentCategory={documentCategory} bordered />
+                  <DocumentCategoryDisplay documentCategory={documentCategory} bordered />
                 </a>
               </Tooltip>
             ))}
@@ -1163,16 +1166,16 @@ function Document({ initialState, PageTemplate }) {
     );
   };
 
-  const renderCategoryBottomArea = () => {
+  const renderDetailedDocumentCategoryArea = () => {
     if (!documentCategories.length) {
       return null;
     }
 
     return (
-      <div className="DocumentPage-documentCategoryFooterArea">
+      <div className="DocumentPage-detailedDocumentCategoryArea">
         {documentCategories.map(documentCategory => (
           <div key={documentCategory._id} {...{ [DATA_ATTRIBUTE_DOCUMENT_CATEGORY_ID]: documentCategory._id }}>
-            <DocumentCategoryHeader documentCategory={documentCategory} bordered detailed />
+            <DocumentCategoryDisplay documentCategory={documentCategory} bordered detailed />
           </div>
         ))}
       </div>
@@ -1227,7 +1230,7 @@ function Document({ initialState, PageTemplate }) {
                 />
             </div>
             <CreditsFooter doc={documentToShow} revision={revisionToShow} />
-            {view === VIEW.display && renderCategoryBottomArea()}
+            {view === VIEW.display && renderDetailedDocumentCategoryArea()}
 
             {view === VIEW.comments && !!isMounted.current && (
               <section ref={commentsSectionRef} className="DocumentPage-commentsSection">

@@ -17,7 +17,7 @@ import { useDateFormat } from '../locale-context.js';
 import DocumentSelector from '../document-selector.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
-import DocumentCategoryHeader from '../document-category-header.js';
+import DocumentCategoryDisplay from '../document-category-display.js';
 import { confirmDocumentCategoryDelete } from '../confirmation-dialogs.js';
 import DocumentCategoryMetadataModal from './document-category-metadata-modal.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
@@ -186,7 +186,7 @@ function MaintenanceDocumentCategoriesTab() {
 
   const renderDocumentCategory = documentCategory => {
     const header = (
-      <DocumentCategoryHeader documentCategory={documentCategory} />
+      <DocumentCategoryDisplay documentCategory={documentCategory} />
     );
 
     const extra = (
