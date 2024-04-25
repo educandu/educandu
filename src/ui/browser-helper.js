@@ -55,3 +55,15 @@ export function getViewportMeasurementsForElement(element) {
 
   return { elementCoverage, viewportCoverage, elementTopIsInViewport };
 }
+
+export function tryBringElementIntoView(selector) {
+  const element = window.document.querySelector(selector);
+  if (!element) {
+    return;
+  }
+
+  const measurement = getViewportMeasurementsForElement(element);
+  if (!measurement.elementTopIsInViewport) {
+    element.scrollIntoView({ behavior: 'smooth' });
+  }
+}

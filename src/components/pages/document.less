@@ -9,10 +9,32 @@
   }
 }
 
-.DocumentPage-ratingArea {
-  display: flex;
-  justify-content: flex-end;
+.DocumentPage-documentCategoryAndRatingArea {
+  gap: 10px;
+  display: grid;
+  align-items: start;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr auto;
   padding: 0 @edu-content-padding;
+}
+
+.DocumentPage-documentCategoryHeaderLinks {
+  grid-row: 1;
+  grid-column: 1;
+  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.DocumentPage-documentCategoryHeaderLink {
+  text-decoration: none;
+}
+
+.DocumentPage-documentCategoryFooterArea {
+  gap: 10px;
+  display: grid;
+  grid-auto-flow: row;
 }
 
 .DocumentPage-sidePanel {

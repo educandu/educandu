@@ -15,6 +15,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import DocumentRatingService from '../services/document-rating-service.js';
 import DocumentRequestService from '../services/document-request-service.js';
+import DocumentCategoryService from '../services/document-category-service.js';
 import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -43,6 +44,7 @@ class DocumentController {
     RoomService,
     DocumentRatingService,
     DocumentRequestService,
+    DocumentCategoryService,
     ClientDataMappingService,
     SettingService,
     PageRenderer,
@@ -54,6 +56,7 @@ class DocumentController {
     roomService,
     documentRatingService,
     documentRequestService,
+    documentCategoryService,
     clientDataMappingService,
     settingService,
     pageRenderer,
@@ -63,6 +66,7 @@ class DocumentController {
     this.roomService = roomService;
     this.documentRatingService = documentRatingService;
     this.documentRequestService = documentRequestService;
+    this.documentCategoryService = documentCategoryService;
     this.clientDataMappingService = clientDataMappingService;
     this.settingService = settingService;
     this.pageRenderer = pageRenderer;
@@ -152,13 +156,32 @@ class DocumentController {
       return res.redirect(routes.getDocUrl({ id: doc._id, slug: doc.slug }));
     }
 
-    const documentRating = !room ? await this.documentRatingService.getDocumentRatingByDocumentId(doc._id) : null;
+    let documentRating;
+    let documentCategories;
+    let mappedDocumentCategories;
+    if (!room) {
+      documentRating = await this.documentRatingService.getDocumentRatingByDocumentId(doc._id);
+      documentCategories = await this.documentCategoryService.getDocumentCategoriesByDocumentId(doc._id);
+      mappedDocumentCategories = await this.clientDataMappingService.mapDocumentCategories(documentCategories);
+    } else {
+      documentRating = null;
+      documentCategories = [];
+      mappedDocumentCategories = [];
+    }
 
     const mappedRoom = room ? await this.clientDataMappingService.mapRoom({ room, viewingUser: user }) : null;
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument, doc.roomId) : [];
 
-    const initialState = { doc: mappedDocument, documentRating, templateSections, room: mappedRoom, roomMediaContext };
+    const initialState = {
+      doc: mappedDocument,
+      documentCategories: mappedDocumentCategories,
+      documentRating,
+      templateSections,
+      room: mappedRoom,
+      roomMediaContext
+    };
+
     const pageName = PAGE_NAME.document;
 
     await this.documentRequestService.tryRegisterDocumentReadRequest({ document: doc, user });

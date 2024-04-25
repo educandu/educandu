@@ -1489,10 +1489,6 @@
     "icon": {
       "en": "Icon",
       "de": "Icon"
-    },
-    "documentCategoryDocumentListHeader": {
-      "en": "Documents in this category",
-      "de": "Dokumente in dieser Kategorie"
     }
   },
   "comparison": {
@@ -1877,6 +1873,10 @@
     "starRatingTooltip": {
       "en": "Click here to rate this document",
       "de": "Klicke hier, um das Dokument zu bewerten"
+    },
+    "documentCategoryTooltip": {
+      "en": "This document is in category \"{documentCategoryName}\". Click here to learn more.",
+      "de": "Dieses Dokument ist in der Kategorie \"{documentCategoryName}\". Klicke hier, um mehr zu erfahren."
     }
   },
   "documentBadgesCell": {
@@ -2829,10 +2829,6 @@
     "filterPlaceholder": {
       "en": "Filter by name",
       "de": "Nach Name filtern"
-    },
-    "navigateToCategoryPage": {
-      "en": "Go to the category page",
-      "de": "Zur Kateorie-Seite navigieren"
     },
     "emptyStateTitle": {
       "en": "No document categories have been created",

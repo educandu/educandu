@@ -16,9 +16,8 @@ import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
 import DocumentSelector from '../document-selector.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
-import { getAccessibleUrl } from '../../utils/source-utils.js';
+import DocumentCategoryHeader from '../document-category-header.js';
 import { confirmDocumentCategoryDelete } from '../confirmation-dialogs.js';
 import DocumentCategoryMetadataModal from './document-category-metadata-modal.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
@@ -47,7 +46,6 @@ const getSanitizedQueryFromRequest = request => {
 function MaintenanceDocumentCategoriesTab() {
   const request = useRequest();
   const { formatDate } = useDateFormat();
-  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('maintenanceDocumentCategoriesTab');
   const documentCategoryApiClient = useService(DocumentCategoryApiClient);
 
@@ -187,19 +185,8 @@ function MaintenanceDocumentCategoriesTab() {
   };
 
   const renderDocumentCategory = documentCategory => {
-    const iconUrl = documentCategory.iconUrl
-      ? getAccessibleUrl({ url: documentCategory.iconUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-      : null;
-
     const header = (
-      <div className="MaintenanceDocumentCategoriesTab-categoryHeader">
-        <div>
-          {!!iconUrl && <img src={iconUrl} className="MaintenanceDocumentCategoriesTab-categoryIcon" />}
-        </div>
-        <div>
-          {documentCategory.name}
-        </div>
-      </div>
+      <DocumentCategoryHeader documentCategory={documentCategory} />
     );
 
     const extra = (
@@ -245,7 +232,7 @@ function MaintenanceDocumentCategoriesTab() {
 
             <div className="MaintenanceDocumentCategoriesTab-categoryPageLink">
               <a href={routes.getDocumentCategoryUrl({ id: documentCategory._id, slug: slugify(documentCategory.name) })}>
-                {t('navigateToCategoryPage')}
+                {t('common:navigateToDocumentCategoryPage', { documentCategoryName: documentCategory.name })}
               </a>
             </div>
             <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
