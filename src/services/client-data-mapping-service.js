@@ -501,16 +501,16 @@ class ClientDataMappingService {
   }
 
   _mapDocumentCategory(documentCategory, userMap) {
-    const mappedDocumentCategory = cloneDeep(documentCategory);
-    const createdBy = this._mapOtherUser({ user: userMap.get(documentCategory.createdBy) });
-    const updatedBy = this._mapOtherUser({ user: userMap.get(documentCategory.updatedBy) });
-
     return {
-      ...mappedDocumentCategory,
-      createdBy,
-      updatedBy,
-      createdOn: mappedDocumentCategory.createdOn.toISOString(),
-      updatedOn: mappedDocumentCategory.updatedOn.toISOString()
+      _id: documentCategory._id,
+      name: documentCategory.name,
+      iconUrl: documentCategory.iconUrl,
+      description: documentCategory.description,
+      documentIds: [...documentCategory.documentIds],
+      createdOn: documentCategory.createdOn.toISOString(),
+      updatedOn: documentCategory.updatedOn.toISOString(),
+      createdBy: this._mapOtherUser({ user: userMap.get(documentCategory.createdBy) }),
+      updatedBy: this._mapOtherUser({ user: userMap.get(documentCategory.updatedBy) })
     };
   }
 

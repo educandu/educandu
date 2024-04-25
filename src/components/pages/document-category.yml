@@ -1,0 +1,7 @@
+documentCategory:
+  documentCategoryNamePrefix:
+    en: Document category
+    de: Dokument-Kategorie
+  otherDocumentCategories:
+    en: Other document categories
+    de: Weitere Dokument-Kategorien

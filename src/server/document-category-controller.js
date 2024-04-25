@@ -1,12 +1,18 @@
 import express from 'express';
 import httpErrors from 'http-errors';
+import routes from '../utils/routes.js';
+import slugify from '@sindresorhus/slugify';
+import urlUtils from '../utils/url-utils.js';
+import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import DocumentCategoryService from '../services/document-category-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   documentCategoryIdParamsSchema,
+  getDocumentCategoryPageParamsSchema,
   patchDocumentCategoryDocumentsBodySchema,
   postDocumentCategoryBodySchema
 } from '../domain/schemas/document-category-schemas.js';
@@ -15,11 +21,44 @@ const { NotFound } = httpErrors;
 const jsonParser = express.json();
 
 class DocumentCategoryController {
-  static dependencies = [DocumentCategoryService, ClientDataMappingService];
+  static dependencies = [DocumentCategoryService, ClientDataMappingService, PageRenderer];
 
-  constructor(documentCategoryService, clientDataMappingService) {
+  constructor(documentCategoryService, clientDataMappingService, pageRenderer) {
     this.documentCategoryService = documentCategoryService;
     this.clientDataMappingService = clientDataMappingService;
+    this.pageRenderer = pageRenderer;
+  }
+
+  async handleGetDocumentCategoryPage(req, res) {
+    const { documentCategoryId } = req.params;
+    const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params[0]);
+
+    const allDocumentCategories = await this.documentCategoryService.getAllDocumentCategories();
+    const currentDocumentCategory = allDocumentCategories.find(documentCategory => documentCategory._id === documentCategoryId);
+    const otherDocumentCategories = allDocumentCategories.filter(documentCategory => documentCategory._id !== documentCategoryId);
+
+    if (!currentDocumentCategory) {
+      throw new NotFound();
+    }
+
+    const canonicalSlug = slugify(currentDocumentCategory.name);
+    if (routeWildcardValue !== canonicalSlug) {
+      return res.redirect(301, routes.getDocumentCategoryUrl({ id: documentCategoryId, slug: canonicalSlug }));
+    }
+
+    const [mappedCurrentDocumentCategory, mappedOtherDocumentCategories] = await Promise.all([
+      this.clientDataMappingService.mapDocumentCategory(currentDocumentCategory),
+      this.clientDataMappingService.mapDocumentCategories(otherDocumentCategories)
+    ]);
+
+    const initialState = {
+      currentDocumentCategory: mappedCurrentDocumentCategory,
+      otherDocumentCategories: mappedOtherDocumentCategories
+    };
+
+    const pageName = PAGE_NAME.documentCategory;
+
+    return this.pageRenderer.sendPage(req, res, pageName, initialState);
   }
 
   async handleGetDocumentCategories(req, res) {
@@ -85,6 +124,14 @@ class DocumentCategoryController {
     await this.documentCategoryService.deleteDocumentCategory(documentCategoryId);
 
     return res.send({});
+  }
+
+  registerPages(router) {
+    router.get(
+      '/document-categories/:documentCategoryId*',
+      validateParams(getDocumentCategoryPageParamsSchema),
+      (req, res) => this.handleGetDocumentCategoryPage(req, res)
+    );
   }
 
   registerApi(router) {

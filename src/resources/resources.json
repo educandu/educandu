@@ -1899,6 +1899,16 @@
       "de": "Geändert am {date} von {user}."
     }
   },
+  "documentCategory": {
+    "documentCategoryNamePrefix": {
+      "en": "Document category",
+      "de": "Dokument-Kategorie"
+    },
+    "otherDocumentCategories": {
+      "en": "Other document categories",
+      "de": "Weitere Dokument-Kategorien"
+    }
+  },
   "documentCategoryMetadataModal": {
     "modalEditTitle": {
       "en": "Edit document category",

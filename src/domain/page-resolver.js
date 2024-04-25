@@ -20,6 +20,7 @@ const pageImporters = {
   [PAGE_NAME.userProfile]: async () => (await import('../components/pages/user-profile.js')).default,
   [PAGE_NAME.documentInput]: async () => (await import('../components/pages/document-input.js')).default,
   [PAGE_NAME.resetPassword]: async () => (await import('../components/pages/reset-password.js')).default,
+  [PAGE_NAME.documentCategory]: async () => (await import('../components/pages/document-category.js')).default,
   [PAGE_NAME.mediaLibraryItem]: async () => (await import('../components/pages/media-library-item.js')).default,
   [PAGE_NAME.recentContributions]: async () => (await import('../components/pages/recent-contributions.js')).default,
   [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default,
