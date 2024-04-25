@@ -2,7 +2,6 @@ import by from 'thenby';
 import Spinner from '../spinner.js';
 import { TAB } from './constants.js';
 import Markdown from '../markdown.js';
-import { Button, Collapse } from 'antd';
 import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
 import slugify from '@sindresorhus/slugify';
@@ -10,19 +9,21 @@ import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { CategoryIcon } from '../icons/icons.js';
 import { PlusOutlined } from '@ant-design/icons';
+import { Button, Collapse, Tooltip } from 'antd';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
+import DocumentSelector from '../document-selector.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
-import { ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
 import { confirmDocumentCategoryDelete } from '../confirmation-dialogs.js';
 import DocumentCategoryMetadataModal from './document-category-metadata-modal.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentCategoryApiClient from '../../api-clients/document-category-api-client.js';
+import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
 
 const { Panel } = Collapse;
 
@@ -130,6 +131,61 @@ function MaintenanceDocumentCategoriesTab() {
     });
   };
 
+  const handleDocumentSelectorButtonClick = async (documentCategory, documentId) => {
+    const apiResponse = await documentCategoryApiClient.updateDocumentCategoryDocuments({
+      documentCategoryId: documentCategory._id,
+      documentIds: ensureIsIncluded([...documentCategory.documentIds], documentId)
+    });
+
+    const newDocumentCategories = replaceItem(allDocumentCategories, apiResponse.documentCategory);
+    setAllDocumentCategories(newDocumentCategories);
+  };
+
+  const handleRemoveDocumentClick = async (documentCategory, documentId) => {
+    const apiResponse = await documentCategoryApiClient.updateDocumentCategoryDocuments({
+      documentCategoryId: documentCategory._id,
+      documentIds: ensureIsExcluded([...documentCategory.documentIds], documentId)
+    });
+
+    const newDocumentCategories = replaceItem(allDocumentCategories, apiResponse.documentCategory);
+    setAllDocumentCategories(newDocumentCategories);
+  };
+
+  const renderDocument = (documentCategory, doc) => {
+    const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
+    return (
+      <div key={doc._id} className="MaintenanceDocumentCategoriesTab-categoryDocument">
+        <div key={doc._id} className="MaintenanceDocumentCategoriesTab-categoryDocumentTitle">
+          <a href={url}>{doc.title}</a>
+        </div>
+        <Tooltip title={t('removeDocumentTooltip', { name: documentCategory.name })}>
+          <Button
+            type='text'
+            size="small"
+            icon={<DeleteIcon />}
+            className='u-action-button u-danger-action-button'
+            onClick={() => handleRemoveDocumentClick(documentCategory, doc._id)}
+            />
+        </Tooltip>
+      </div>
+    );
+  };
+
+  const renderDocuments = documentCategory => {
+    return (
+      <div>
+        {documentCategory.documents.map(doc => renderDocument(documentCategory, doc))}
+        <div className="MaintenanceDocumentCategoriesTab-categoryDocumentSelector">
+          <DocumentSelector
+            useSelectButton
+            selectButtonText={t('common:addDocument')}
+            onSelectButtonClick={documentId => handleDocumentSelectorButtonClick(documentCategory, documentId)}
+            />
+        </div>
+      </div>
+    );
+  };
+
   const renderDocumentCategory = documentCategory => {
     const iconUrl = documentCategory.iconUrl
       ? getAccessibleUrl({ url: documentCategory.iconUrl, cdnRootUrl: clientConfig.cdnRootUrl })
@@ -176,17 +232,17 @@ function MaintenanceDocumentCategoriesTab() {
                 <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
                   {t('common:description')}
                 </div>
-                <Markdown className="MaintenanceDocumentCategoriesTab-categoryDescription">
+                <Markdown>
                   {documentCategory.description}
                 </Markdown>
               </Fragment>
             )}
+
             <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
               {t('documentsInCategory')}
             </div>
-            <div>
-              Documents come here
-            </div>
+            {renderDocuments(documentCategory)}
+
             <div className="MaintenanceDocumentCategoriesTab-categoryPageLink">
               <a href={routes.getDocumentCategoryUrl({ id: documentCategory._id, slug: slugify(documentCategory.name) })}>
                 {t('navigateToCategoryPage')}

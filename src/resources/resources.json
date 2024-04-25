@@ -2841,6 +2841,10 @@
     "emptyStateButton": {
       "en": "Create document category",
       "de": "Dokument-Kategorie erstellen"
+    },
+    "removeDocumentTooltip": {
+      "en": "Remove document from category \"{name}\"",
+      "de": "Dokument aus Kategorie \"{name}\" entfernen"
     }
   },
   "maintenanceDocumentRequestsTab": {

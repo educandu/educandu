@@ -5,6 +5,7 @@ import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
@@ -436,14 +437,16 @@ class ClientDataMappingService {
     return comments.map(comment => this._mapDocumentComment(comment, userMap));
   }
 
-  async mapDocumentCategory(documentCategory) {
+  async mapDocumentCategory(documentCategory, { includeMappedDocuments } = {}) {
     const userMap = await this._getUserMapForDocumentCategories([documentCategory]);
-    return this._mapDocumentCategory(documentCategory, userMap);
+    const documentMap = includeMappedDocuments ? await this._getDocumentMapForDocumentCategories([documentCategory]) : null;
+    return this._mapDocumentCategory({ documentCategory, userMap, documentMap });
   }
 
-  async mapDocumentCategories(documentCategories) {
+  async mapDocumentCategories(documentCategories, { includeMappedDocuments } = {}) {
     const userMap = await this._getUserMapForDocumentCategories(documentCategories);
-    return documentCategories.map(documentCategory => this._mapDocumentCategory(documentCategory, userMap));
+    const documentMap = includeMappedDocuments ? await this._getDocumentMapForDocumentCategories(documentCategories) : null;
+    return documentCategories.map(documentCategory => this._mapDocumentCategory({ documentCategory, userMap, documentMap }));
   }
 
   async mapDocumentInput({ documentInput, document }) {
@@ -500,8 +503,8 @@ class ClientDataMappingService {
     };
   }
 
-  _mapDocumentCategory(documentCategory, userMap) {
-    return {
+  _mapDocumentCategory({ documentCategory, userMap, documentMap }) {
+    const mappedDocumentCategory = {
       _id: documentCategory._id,
       name: documentCategory.name,
       iconUrl: documentCategory.iconUrl,
@@ -512,6 +515,19 @@ class ClientDataMappingService {
       createdBy: this._mapOtherUser({ user: userMap.get(documentCategory.createdBy) }),
       updatedBy: this._mapOtherUser({ user: userMap.get(documentCategory.updatedBy) })
     };
+
+    if (documentMap) {
+      mappedDocumentCategory.documents = documentCategory.documentIds.map(documentId => {
+        const document = documentMap.get(documentId).title;
+        return {
+          _id: documentId,
+          slug: document.slug,
+          title: documentMap.get(documentId).title
+        };
+      });
+    }
+
+    return mappedDocumentCategory;
   }
 
   _mapOtherUser({ user, grantedPermissions = [] }) {
@@ -820,6 +836,17 @@ class ClientDataMappingService {
     }
 
     return new Map(users.map(u => [u._id, u]));
+  }
+
+  async _getDocumentMapForDocumentCategories(documentCategories) {
+    const documentIds = ensureIsUnique(documentCategories.flatMap(documentCategory => documentCategory.documentIds));
+    const documents = await this.documentStore.getDocumentsMetadataByIds(documentIds);
+
+    if (documents.length !== documentIds.length) {
+      throw new Error(`Was searching for ${documentIds.length} documents, but found ${documents.length}`);
+    }
+
+    return new Map(documents.map(d => [d._id, d]));
   }
 }
 
