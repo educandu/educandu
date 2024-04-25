@@ -1,7 +1,10 @@
 documentCategory:
-  documentCategoryNamePrefix:
-    en: Document category
-    de: Dokument-Kategorie
   otherDocumentCategories:
     en: Other document categories
     de: Weitere Dokument-Kategorien
+  documentsSectionmptyStateTitle:
+    en: None yet ...
+    de: Noch keine ...
+  documentsSectionmptyStateSubtitle:
+    en: There are no documents in this category at the moment.
+    de: Zur Zeit sind in dieser Kategorie keine Dokumente vorhanden.
