@@ -1,0 +1,58 @@
+@document-category-header-gap: 5px;
+@document-category-header-gap-detailed: 10px;
+@document-category-header-icon-size: 20px;
+@document-category-header-icon-size-detailed: 40px;
+
+.DocumentCategoryHeader {
+  gap: @document-category-header-gap;
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-template-columns: @document-category-header-icon-size 1fr;
+
+  &.DocumentCategoryHeader--bordered {
+    padding: 10px 20px;
+    color: @edu-primary-color-dark;
+    border-radius: @edu-border-radius-base;
+    border: 1px solid @edu-primary-color-dark;
+    background-color: fade(@edu-primary-color-dark, 10%);
+  }
+
+  &.DocumentCategoryHeader--detailed {
+    align-items: start;
+    gap: @document-category-header-gap-detailed;
+    grid-template-columns: @document-category-header-icon-size-detailed 1fr;
+
+    &.DocumentCategoryHeader--bordered {
+      padding: 15px 20px;
+    }
+  }
+}
+
+.DocumentCategoryHeader-icon {
+  max-width: @document-category-header-icon-size;
+  max-height: @document-category-header-icon-size;
+
+  &.DocumentCategoryHeader-icon--detailed {
+    max-width: @document-category-header-icon-size-detailed;
+    max-height: @document-category-header-icon-size-detailed;
+  }
+}
+
+.DocumentCategoryHeader-name {
+
+  &.DocumentCategoryHeader-name--detailed {
+    font-size: @edu-font-size-lg;
+    font-weight: bold;
+  }
+}
+
+.DocumentCategoryHeader-description {
+  margin-top: 20px;
+}
+
+.DocumentCategoryHeader-documentCategoryPageLink {
+  font-size: @edu-font-size-sm;
+  text-align: right;
+  margin-top: 20px;
+}

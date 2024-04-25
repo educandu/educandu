@@ -30,6 +30,7 @@ import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import DocumentCategoryHeader from '../document-category-header.js';
 import DocumentVersionHistory from '../document-version-history.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
