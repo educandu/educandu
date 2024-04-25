@@ -47,7 +47,7 @@ class DocumentCategoryController {
     }
 
     const [mappedCurrentDocumentCategory, mappedOtherDocumentCategories] = await Promise.all([
-      this.clientDataMappingService.mapDocumentCategory(currentDocumentCategory),
+      this.clientDataMappingService.mapDocumentCategory(currentDocumentCategory, { includeMappedDocuments: true }),
       this.clientDataMappingService.mapDocumentCategories(otherDocumentCategories)
     ]);
 
@@ -63,7 +63,7 @@ class DocumentCategoryController {
 
   async handleGetDocumentCategories(req, res) {
     const documentCategories = await this.documentCategoryService.getAllDocumentCategories();
-    const mappedDocumentCategories = await this.clientDataMappingService.mapDocumentCategories(documentCategories);
+    const mappedDocumentCategories = await this.clientDataMappingService.mapDocumentCategories(documentCategories, { includeMappedDocuments: true });
 
     res.status(200).send({ documentCategories: mappedDocumentCategories });
   }
@@ -73,7 +73,7 @@ class DocumentCategoryController {
     const { name, iconUrl, description } = req.body;
 
     const { result, documentCategory } = await this.documentCategoryService.createDocumentCategory({ name, iconUrl, description, user });
-    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(documentCategory);
+    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(documentCategory, { includeMappedDocuments: true });
 
     res.status(201).send({ result, documentCategory: mappedDocumentCategory });
   }
@@ -90,7 +90,7 @@ class DocumentCategoryController {
     }
 
     const serviceResponse = await this.documentCategoryService.updateDocumentCategory({ documentCategoryId, name, iconUrl, description, user });
-    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(serviceResponse.documentCategory);
+    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(serviceResponse.documentCategory, { includeMappedDocuments: true });
 
     return res.status(201).send({ result: serviceResponse.result, documentCategory: mappedDocumentCategory });
   }
@@ -107,7 +107,7 @@ class DocumentCategoryController {
     }
 
     const updatedDocumentCategory = await this.documentCategoryService.updateDocumentCategoryDocuments({ documentCategoryId, documentIds, user });
-    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(updatedDocumentCategory);
+    const mappedDocumentCategory = await this.clientDataMappingService.mapDocumentCategory(updatedDocumentCategory, { includeMappedDocuments: true });
 
     return res.status(201).send({ documentCategory: mappedDocumentCategory });
   }

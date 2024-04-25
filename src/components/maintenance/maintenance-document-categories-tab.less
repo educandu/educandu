@@ -69,3 +69,25 @@
   font-size: @edu-font-size-sm;
   color: @edu-text-color-secondary;
 }
+
+.MaintenanceDocumentCategoriesTab-categoryDocument {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  gap: @edu-control-spacing-wide;
+  padding: 10px;
+
+  &:hover {
+    background-color: @edu-background-color-light;
+    border-radius: @edu-border-radius-base;
+  }
+}
+
+.MaintenanceDocumentCategoriesTab-categoryDocumentSelector {
+  padding: 10px;
+}
+
+.MaintenanceDocumentCategoriesTab-categoryDocumentTitle {
+  .m-overflow-ellipsis;
+  padding-right: 10px;
+}
