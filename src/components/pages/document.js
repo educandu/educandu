@@ -1151,7 +1151,7 @@ function Document({ initialState, PageTemplate }) {
                   className="DocumentPage-documentCategoryLink"
                   onClick={() => handleDocumentCategoryClick(documentCategory)}
                   >
-                  <DocumentCategoryDisplay documentCategory={documentCategory} bordered />
+                  <DocumentCategoryDisplay documentCategory={documentCategory} bordered minimizable />
                 </a>
               </Tooltip>
             ))}

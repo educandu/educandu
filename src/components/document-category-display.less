@@ -29,6 +29,12 @@
   }
 }
 
+.DocumentCategoryDisplay-iconContainer {
+  display: grid;
+  align-items: center;
+  min-height: @document-category-display-icon-size;
+}
+
 .DocumentCategoryDisplay-icon {
   display: block;
   max-width: @document-category-display-icon-size;
@@ -41,6 +47,11 @@
 }
 
 .DocumentCategoryDisplay-name {
+  &.DocumentCategoryDisplay-name--minimizable {
+    @media @edu-media-phone {
+      display: none;
+    }
+  }
 
   &.DocumentCategoryDisplay-name--detailed {
     font-weight: bold;
