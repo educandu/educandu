@@ -239,7 +239,7 @@ function MaintenanceDocumentCategoriesTab() {
             )}
 
             <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
-              {t('documentsInCategory')}
+              {t('common:documentCategoryDocumentListHeader')}
             </div>
             {renderDocuments(documentCategory)}
 

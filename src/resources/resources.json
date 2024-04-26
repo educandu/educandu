@@ -1489,6 +1489,10 @@
     "icon": {
       "en": "Icon",
       "de": "Icon"
+    },
+    "documentCategoryDocumentListHeader": {
+      "en": "Documents in this category",
+      "de": "Dokumente in dieser Kategorie"
     }
   },
   "comparison": {
@@ -1900,13 +1904,17 @@
     }
   },
   "documentCategory": {
-    "documentCategoryNamePrefix": {
-      "en": "Document category",
-      "de": "Dokument-Kategorie"
-    },
     "otherDocumentCategories": {
       "en": "Other document categories",
       "de": "Weitere Dokument-Kategorien"
+    },
+    "documentsSectionmptyStateTitle": {
+      "en": "None yet ...",
+      "de": "Noch keine ..."
+    },
+    "documentsSectionmptyStateSubtitle": {
+      "en": "There are no documents in this category at the moment.",
+      "de": "Zur Zeit sind in dieser Kategorie keine Dokumente vorhanden."
     }
   },
   "documentCategoryMetadataModal": {
@@ -2821,10 +2829,6 @@
     "filterPlaceholder": {
       "en": "Filter by name",
       "de": "Nach Name filtern"
-    },
-    "documentsInCategory": {
-      "en": "Documents in this category",
-      "de": "Dokumente in dieser Kategorie"
     },
     "navigateToCategoryPage": {
       "en": "Go to the category page",
