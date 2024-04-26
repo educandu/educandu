@@ -10,7 +10,7 @@ import ClientConfig from '../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../utils/source-utils.js';
 import { documentCategoryShape } from '../ui/default-prop-types.js';
 
-function DocumentCategoryDisplay({ documentCategory, bordered, detailed, asLink }) {
+function DocumentCategoryDisplay({ documentCategory, bordered, detailed, asLink, minimizable }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('documentCategoryDisplay');
 
@@ -33,13 +33,14 @@ function DocumentCategoryDisplay({ documentCategory, bordered, detailed, asLink 
 
   const nameClasses = classNames({
     'DocumentCategoryDisplay-name': true,
-    'DocumentCategoryDisplay-name--detailed': detailed
+    'DocumentCategoryDisplay-name--detailed': detailed,
+    'DocumentCategoryDisplay-name--minimizable': minimizable
   });
 
   const renderContent = () => {
     return (
       <Fragment>
-        <div>
+        <div className='DocumentCategoryDisplay-iconContainer'>
           {!!iconUrl && <img src={iconUrl} className={iconClasses} />}
         </div>
         <div>
@@ -78,15 +79,17 @@ function DocumentCategoryDisplay({ documentCategory, bordered, detailed, asLink 
 
 DocumentCategoryDisplay.propTypes = {
   documentCategory: documentCategoryShape.isRequired,
+  asLink: PropTypes.bool,
   bordered: PropTypes.bool,
   detailed: PropTypes.bool,
-  asLink: PropTypes.bool
+  minimizable: PropTypes.bool
 };
 
 DocumentCategoryDisplay.defaultProps = {
+  asLink: false,
   bordered: false,
   detailed: false,
-  asLink: false
+  minimizable: false
 };
 
 export default DocumentCategoryDisplay;
