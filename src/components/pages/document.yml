@@ -92,3 +92,6 @@ document:
   starRatingTooltip:
     en: Click here to rate this document
     de: Klicke hier, um das Dokument zu bewerten
+  documentCategoryTooltip:
+    en: This document is in category "{documentCategoryName}". Click here to learn more.
+    de: Dieses Dokument ist in der Kategorie "{documentCategoryName}". Klicke hier, um mehr zu erfahren.

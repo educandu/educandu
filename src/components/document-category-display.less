@@ -1,0 +1,59 @@
+@document-category-display-gap: 5px;
+@document-category-display-gap-detailed: 10px;
+@document-category-display-icon-size: 20px;
+@document-category-display-icon-size-detailed: 40px;
+
+.DocumentCategoryDisplay {
+  gap: @document-category-display-gap;
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-template-columns: @document-category-display-icon-size 1fr;
+
+  &.DocumentCategoryDisplay--bordered {
+    padding: 10px 20px;
+    color: @edu-primary-color-dark;
+    border-radius: @edu-border-radius-base;
+    border: 1px solid @edu-primary-color-dark;
+    background-color: fade(@edu-primary-color-dark, 10%);
+  }
+
+  &.DocumentCategoryDisplay--detailed {
+    align-items: start;
+    gap: @document-category-display-gap-detailed;
+    grid-template-columns: @document-category-display-icon-size-detailed 1fr;
+
+    &.DocumentCategoryDisplay--bordered {
+      padding: 15px 20px;
+    }
+  }
+}
+
+.DocumentCategoryDisplay-icon {
+  display: block;
+  max-width: @document-category-display-icon-size;
+  max-height: @document-category-display-icon-size;
+
+  &.DocumentCategoryDisplay-icon--detailed {
+    max-width: @document-category-display-icon-size-detailed;
+    max-height: @document-category-display-icon-size-detailed;
+  }
+}
+
+.DocumentCategoryDisplay-name {
+
+  &.DocumentCategoryDisplay-name--detailed {
+    font-size: @edu-font-size-lg;
+    font-weight: bold;
+  }
+}
+
+.DocumentCategoryDisplay-description {
+  margin-top: 20px;
+}
+
+.DocumentCategoryDisplay-documentCategoryPageLink {
+  font-size: @edu-font-size-sm;
+  text-align: right;
+  margin-top: 20px;
+}

@@ -1,7 +1,7 @@
 import by from 'thenby';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { getViewportMeasurementsForElement } from '../ui/browser-helper.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
+import { getViewportMeasurementsForElement, tryBringElementIntoView } from '../ui/browser-helper.js';
 
 const DATA_ATTRIBUTE_SECTION_KEY = 'data-section-key';
 const DATA_ATTRIBUTE_SECTION_TYPE = 'data-section-type';
@@ -143,15 +143,7 @@ export function findCurrentlyWorkedOnSectionKey() {
 }
 
 export function tryBringSectionIntoView(sectionKey) {
-  const element = window.document.querySelector(`[${DATA_ATTRIBUTE_SECTION_KEY}="${sectionKey}"]`);
-  if (!element) {
-    return;
-  }
-
-  const measurement = getViewportMeasurementsForElement(element);
-  if (!measurement.elementTopIsInViewport) {
-    element.scrollIntoView({ behavior: 'smooth' });
-  }
+  tryBringElementIntoView(`[${DATA_ATTRIBUTE_SECTION_KEY}="${sectionKey}"]`);
 }
 
 export function getSectionElementDataAttributes(section) {

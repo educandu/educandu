@@ -2,9 +2,6 @@ maintenanceDocumentCategoriesTab:
   filterPlaceholder:
     en: Filter by name
     de: Nach Name filtern
-  navigateToCategoryPage:
-    en: Go to the category page
-    de: Zur Kateorie-Seite navigieren
   emptyStateTitle:
     en: No document categories have been created
     de: Es wurden keine Dokument-Kategorien erstellt

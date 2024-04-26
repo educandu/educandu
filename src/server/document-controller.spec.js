@@ -13,6 +13,7 @@ describe('document-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
+  let documentCategoryService;
   let documentRequestService;
   let documentRatingService;
   let documentService;
@@ -21,6 +22,7 @@ describe('document-controller', () => {
   let pageRenderer;
   let roomService;
 
+  let documentCategories;
   let documentRating;
   let user;
   let room;
@@ -50,10 +52,15 @@ describe('document-controller', () => {
       tryRegisterDocumentWriteRequest: sandbox.stub()
     };
 
+    documentCategoryService = {
+      getDocumentCategoriesByDocumentId: sandbox.stub()
+    };
+
     clientDataMappingService = {
       mapRoom: sandbox.stub(),
       mapDocOrRevision: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
+      mapDocumentCategories: sandbox.stub(),
       createProposedSections: sandbox.stub(),
       mapSingleRoomMediaOverview: sandbox.stub()
     };
@@ -81,6 +88,12 @@ describe('document-controller', () => {
         protected: false
       }
     };
+    documentCategories = [{
+      _id: uniqueId.create(),
+      name: 'Worth reading',
+      iconUrl: 'cdn://some-place/some-icon.svg',
+      description: 'Lorem ipsum'
+    }];
     documentRating = {
       _id: null,
       documentId: doc._id,
@@ -88,6 +101,8 @@ describe('document-controller', () => {
       averageRating: null
     };
 
+    documentCategoryService.getDocumentCategoriesByDocumentId.withArgs(doc._id).resolves(documentCategories);
+    clientDataMappingService.mapDocumentCategories.withArgs(documentCategories).resolves(documentCategories);
     documentRatingService.getDocumentRatingByDocumentId.withArgs(doc._id).resolves(documentRating);
 
     sut = new DocumentController(
@@ -95,6 +110,7 @@ describe('document-controller', () => {
       roomService,
       documentRatingService,
       documentRequestService,
+      documentCategoryService,
       clientDataMappingService,
       settingService,
       pageRenderer,
@@ -251,6 +267,10 @@ describe('document-controller', () => {
         assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
+      it('should call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.calledWith(documentCategoryService.getDocumentCategoriesByDocumentId, doc._id);
+      });
+
       it('should call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.calledWith(documentRatingService.getDocumentRatingByDocumentId, doc._id);
       });
@@ -260,7 +280,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating, room: null, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories, documentRating, room: null, templateSections, roomMediaContext });
       });
     });
 
@@ -288,6 +308,10 @@ describe('document-controller', () => {
         clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
 
         pageRenderer.sendPage.resolves();
+      });
+
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
       });
 
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
@@ -327,6 +351,10 @@ describe('document-controller', () => {
         clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedRoomMediaOverview);
 
         pageRenderer.sendPage.resolves();
+      });
+
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
       });
 
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
@@ -376,6 +404,10 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
+      it('should call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.calledWith(documentCategoryService.getDocumentCategoriesByDocumentId, doc._id);
+      });
+
       it('should call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.calledWith(documentRatingService.getDocumentRatingByDocumentId, doc._id);
       });
@@ -385,7 +417,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating, room: null, templateSections, roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories, documentRating, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -423,6 +455,10 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
+      it('should call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.calledWith(documentCategoryService.getDocumentCategoriesByDocumentId, doc._id);
+      });
+
       it('should call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.calledWith(documentRatingService.getDocumentRatingByDocumentId, doc._id);
       });
@@ -432,7 +468,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating, room: null, templateSections, roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories, documentRating, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -465,6 +501,10 @@ describe('document-controller', () => {
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
         clientDataMappingService.createProposedSections.returns(templateSections);
         pageRenderer.sendPage.resolves();
+      });
+
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
       });
 
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
@@ -506,6 +546,10 @@ describe('document-controller', () => {
         pageRenderer.sendPage.resolves();
       });
 
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
+      });
+
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.notCalled(documentRatingService.getDocumentRatingByDocumentId);
       });
@@ -543,6 +587,10 @@ describe('document-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument]);
         pageRenderer.sendPage.resolves();
+      });
+
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
       });
 
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
@@ -600,6 +648,10 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
+      });
+
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.notCalled(documentRatingService.getDocumentRatingByDocumentId);
       });
@@ -609,7 +661,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating: null, room: mappedRoom, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories: [], documentRating: null, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -655,6 +707,10 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
+      });
+
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.notCalled(documentRatingService.getDocumentRatingByDocumentId);
       });
@@ -664,7 +720,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating: null, room: mappedRoom, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories: [], documentRating: null, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -710,6 +766,10 @@ describe('document-controller', () => {
         return sut.handleGetDocPage(req, res);
       });
 
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
+      });
+
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.notCalled(documentRatingService.getDocumentRatingByDocumentId);
       });
@@ -719,7 +779,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating: null, room: mappedRoom, templateSections, roomMediaContext });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories: [], documentRating: null, room: mappedRoom, templateSections, roomMediaContext });
       });
     });
 
@@ -763,6 +823,10 @@ describe('document-controller', () => {
         assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument, null);
       });
 
+      it('should call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.calledWith(documentCategoryService.getDocumentCategoriesByDocumentId, doc._id);
+      });
+
       it('should call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.calledWith(documentRatingService.getDocumentRatingByDocumentId, doc._id);
       });
@@ -772,7 +836,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating, room: null, templateSections, roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories, documentRating, room: null, templateSections, roomMediaContext: null });
       });
     });
 
@@ -796,6 +860,10 @@ describe('document-controller', () => {
 
         sut.handleGetDocPage(req, res).catch(reject);
       }));
+
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
+      });
 
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.notCalled(documentRatingService.getDocumentRatingByDocumentId);
@@ -826,6 +894,10 @@ describe('document-controller', () => {
         documentService.getDocumentById.withArgs(doc._id).resolves(doc);
 
         pageRenderer.sendPage.resolves();
+      });
+
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
       });
 
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
@@ -864,6 +936,10 @@ describe('document-controller', () => {
 
         sut.handleGetDocPage(req, res).catch(reject);
       }));
+
+      it('should not call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.notCalled(documentCategoryService.getDocumentCategoriesByDocumentId);
+      });
 
       it('should not call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.notCalled(documentRatingService.getDocumentRatingByDocumentId);
@@ -916,6 +992,10 @@ describe('document-controller', () => {
         assert.notCalled(clientDataMappingService.createProposedSections);
       });
 
+      it('should call documentCategoryService.getDocumentCategoriesByDocumentId', () => {
+        assert.calledWith(documentCategoryService.getDocumentCategoriesByDocumentId, doc._id);
+      });
+
       it('should call documentRatingService.getDocumentRatingByDocumentId', () => {
         assert.calledWith(documentRatingService.getDocumentRatingByDocumentId, doc._id);
       });
@@ -925,7 +1005,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentRating, room: null, templateSections: [], roomMediaContext: null });
+        assert.calledWith(pageRenderer.sendPage, req, res, 'document', { doc: mappedDocument, documentCategories, documentRating, room: null, templateSections: [], roomMediaContext: null });
       });
     });
   });

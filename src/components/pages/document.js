@@ -31,9 +31,9 @@ import DocumentCommentsPanel from '../document-comments-panel.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentVersionHistory from '../document-version-history.js';
-import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import DocumentCategoryDisplay from '../document-category-display.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
@@ -48,10 +48,11 @@ import DocumentCommentApiClient from '../../api-clients/document-comment-api-cli
 import { ensurePluginComponentAreLoadedForSections } from '../../utils/plugin-utils.js';
 import { createDocumentInputUploadedFileName } from '../../utils/document-input-utils.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { supportsClipboardPaste, tryBringElementIntoView } from '../../ui/browser-helper.js';
 import { maxDocumentRevisionCreatedBecauseLength } from '../../domain/validation-constants.js';
-import { documentRatingShape, documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
+import { documentCategoryShape, documentRatingShape, documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
@@ -85,6 +86,8 @@ const VIEW = {
   history: DOC_VIEW_QUERY_PARAM.history,
   comments: DOC_VIEW_QUERY_PARAM.comments
 };
+
+const DATA_ATTRIBUTE_DOCUMENT_CATEGORY_ID = 'data-document-category-id';
 
 const createPendingSectionInput = () => ({ data: null, files: [], comments: [] });
 
@@ -191,7 +194,7 @@ function Document({ initialState, PageTemplate }) {
   const documentInputApiClient = useSessionAwareApiClient(DocumentInputApiClient);
   const documentCommentApiClient = useSessionAwareApiClient(DocumentCommentApiClient);
 
-  const { room } = initialState;
+  const { documentCategories, room } = initialState;
 
   const getInitialSections = () => initialState.templateSections?.length
     ? initialState.templateSections
@@ -547,6 +550,10 @@ function Document({ initialState, PageTemplate }) {
 
   const handleDocumentMetadataModalClose = () => {
     setDocumentMetadataModalState(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const handleDocumentCategoryClick = documentCategory => {
+    tryBringElementIntoView(`[${DATA_ATTRIBUTE_DOCUMENT_CATEGORY_ID}="${documentCategory._id}"]`);
   };
 
   const handleDocumentRatingClick = () => {
@@ -1126,6 +1133,55 @@ function Document({ initialState, PageTemplate }) {
       : documentRatingComponent;
   };
 
+  const renderCategoryAndRatingTopArea = () => {
+    if (!documentCategories.length && !documentRating) {
+      return null;
+    }
+
+    return (
+      <div className="DocumentPage-documentCategoryAndRatingArea">
+        {!!documentCategories.length && (
+          <div className="DocumentPage-documentCategoryLinks">
+            {documentCategories.map(documentCategory => (
+              <Tooltip
+                key={documentCategory._id}
+                title={t('documentCategoryTooltip', { documentCategoryName: documentCategory.name })}
+                >
+                <a
+                  className="DocumentPage-documentCategoryLink"
+                  onClick={() => handleDocumentCategoryClick(documentCategory)}
+                  >
+                  <DocumentCategoryDisplay documentCategory={documentCategory} bordered />
+                </a>
+              </Tooltip>
+            ))}
+          </div>
+        )}
+        {!!documentRating && (
+          <div className="DocumentPage-documentRating">
+            {renderDocumentRating()}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderDetailedDocumentCategoryArea = () => {
+    if (!documentCategories.length) {
+      return null;
+    }
+
+    return (
+      <div className="DocumentPage-detailedDocumentCategoryArea">
+        {documentCategories.map(documentCategory => (
+          <div key={documentCategory._id} {...{ [DATA_ATTRIBUTE_DOCUMENT_CATEGORY_ID]: documentCategory._id }}>
+            <DocumentCategoryDisplay documentCategory={documentCategory} bordered detailed />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate alerts={alerts} focusHeader={renderFocusHeader()} headerRef={headerRef} contentRef={pageRef}>
@@ -1147,13 +1203,7 @@ function Document({ initialState, PageTemplate }) {
                 ]}
                 />
             )}
-            {!!documentRating && view === VIEW.display && (
-              <div className="DocumentPage-ratingArea">
-                <div className="DocumentPage-rating">
-                  {renderDocumentRating()}
-                </div>
-              </div>
-            )}
+            {view === VIEW.display && renderCategoryAndRatingTopArea()}
             <div>
               <SectionsDisplay
                 documentInput={selectedDocumentInput || pendingDocumentInput}
@@ -1180,6 +1230,7 @@ function Document({ initialState, PageTemplate }) {
                 />
             </div>
             <CreditsFooter doc={documentToShow} revision={revisionToShow} />
+            {view === VIEW.display && renderDetailedDocumentCategoryArea()}
 
             {view === VIEW.comments && !!isMounted.current && (
               <section ref={commentsSectionRef} className="DocumentPage-commentsSection">
@@ -1330,6 +1381,7 @@ Document.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     doc: documentShape.isRequired,
+    documentCategories: PropTypes.arrayOf(documentCategoryShape),
     documentRating: documentRatingShape,
     templateSections: PropTypes.arrayOf(sectionShape),
     room: roomShape,
