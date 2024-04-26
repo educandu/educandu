@@ -11,8 +11,8 @@ import { getAccessibleUrl } from '../utils/source-utils.js';
 import { documentCategoryShape } from '../ui/default-prop-types.js';
 
 function DocumentCategoryDisplay({ documentCategory, bordered, detailed, asLink }) {
-  const { t } = useTranslation();
   const clientConfig = useService(ClientConfig);
+  const { t } = useTranslation('documentCategoryDisplay');
 
   const iconUrl = documentCategory.iconUrl
     ? getAccessibleUrl({ url: documentCategory.iconUrl, cdnRootUrl: clientConfig.cdnRootUrl })
@@ -52,7 +52,7 @@ function DocumentCategoryDisplay({ documentCategory, bordered, detailed, asLink 
           {!!detailed && (
           <div className="DocumentCategoryDisplay-documentCategoryPageLink">
             <a href={getDocumentCategoryUrl()}>
-              {t('common:navigateToDocumentCategoryPage', { documentCategoryName: documentCategory.name })}
+              {t('navigateToDocumentCategoryPage', { documentCategoryName: documentCategory.name })}
             </a>
           </div>
           )}

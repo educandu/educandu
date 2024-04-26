@@ -1493,10 +1493,6 @@
     "documentCategoryDocumentListHeader": {
       "en": "Documents in this category",
       "de": "Dokumente in dieser Kategorie"
-    },
-    "navigateToDocumentCategoryPage": {
-      "en": "Go to the document category page \"{documentCategoryName}\"",
-      "de": "Zur Dokument-Kategorie-Seite \"{documentCategoryName}\" navigieren"
     }
   },
   "comparison": {
@@ -1923,6 +1919,12 @@
     "documentsSectionmptyStateSubtitle": {
       "en": "There are no documents in this category at the moment.",
       "de": "Zur Zeit sind in dieser Kategorie keine Dokumente vorhanden."
+    }
+  },
+  "documentCategoryDisplay": {
+    "navigateToDocumentCategoryPage": {
+      "en": "Go to the document category page \"{documentCategoryName}\"",
+      "de": "Zur Dokument-Kategorie-Seite \"{documentCategoryName}\" navigieren"
     }
   },
   "documentCategoryMetadataModal": {

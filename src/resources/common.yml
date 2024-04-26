@@ -735,6 +735,3 @@ common:
   documentCategoryDocumentListHeader:
     en: Documents in this category
     de: Dokumente in dieser Kategorie
-  navigateToDocumentCategoryPage:
-    en: Go to the document category page "{documentCategoryName}"
-    de: Zur Dokument-Kategorie-Seite "{documentCategoryName}" navigieren
