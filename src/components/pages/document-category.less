@@ -1,25 +1,8 @@
 .DocumentCategoryPage {}
 
-.DocumentCategoryPage-temporaryBadge {
-  color: @edu-primary-color-dark;
-  border: 1px solid @edu-primary-color-dark;
-  background-color: lighten(@edu-primary-color-light, 30%);
-  border-radius: 5px;
-  padding: 20px;
-  width: fit-content;
+.DocumentCategoryPage-header {
   margin: 0 auto;
-  display: grid;
-  gap: 10px;
-  grid-auto-flow: column;
-
-  &.DocumentCategoryPage-temporaryBadge--small {
-    padding: 10px;
-  }
-}
-
-.MaintenanceDocumentCategoriesTab-temporaryBadgeIcon {
-  max-width: @edu-control-height-sm;
-  max-height: @edu-control-height-sm;
+  width: fit-content;
 }
 
 .DocumentCategoryPage-content {
@@ -44,8 +27,4 @@
   display: flex;
   justify-content: center;
   .m-fake-flex-gap(10px);
-}
-
-.DocumentCategoryPage-otherCategoryLink {
-  .m-link;
 }

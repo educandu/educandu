@@ -4,7 +4,6 @@ import { TAB } from './constants.js';
 import Markdown from '../markdown.js';
 import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
-import slugify from '@sindresorhus/slugify';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { CategoryIcon } from '../icons/icons.js';
@@ -215,14 +214,11 @@ function MaintenanceDocumentCategoriesTab() {
           >
           <div className="MaintenanceDocumentCategoriesTab-categoryDetails">
             {!!documentCategory.description && (
-              <Fragment>
-                <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
-                  {t('common:description')}
-                </div>
+              <div className="MaintenanceDocumentCategoriesTab-categoryDescription">
                 <Markdown>
                   {documentCategory.description}
                 </Markdown>
-              </Fragment>
+              </div>
             )}
 
             <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
@@ -230,20 +226,18 @@ function MaintenanceDocumentCategoriesTab() {
             </div>
             {renderDocuments(documentCategory)}
 
-            <div className="MaintenanceDocumentCategoriesTab-categoryPageLink">
-              <a href={routes.getDocumentCategoryUrl({ id: documentCategory._id, slug: slugify(documentCategory.name) })}>
-                {t('common:navigateToDocumentCategoryPage', { documentCategoryName: documentCategory.name })}
-              </a>
-            </div>
             <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
               <div>
-                <span>{`${t('common:createdOnDateBy', { date: formatDate(documentCategory.createdOn) })} `}</span>
-                <a href={routes.getUserProfileUrl(documentCategory.createdBy._id)}>{documentCategory.createdBy.displayName}</a>
+                <div>
+                  <span>{`${t('common:createdOnDateBy', { date: formatDate(documentCategory.createdOn) })} `}</span>
+                  <a href={routes.getUserProfileUrl(documentCategory.createdBy._id)}>{documentCategory.createdBy.displayName}</a>
+                </div>
+                <div>
+                  <span>{`${t('common:updatedOnDateBy', { date: formatDate(documentCategory.updatedOn) })} `}</span>
+                  <a href={routes.getUserProfileUrl(documentCategory.updatedBy._id)}>{documentCategory.updatedBy.displayName}</a>
+                </div>
               </div>
-              <div>
-                <span>{`${t('common:updatedOnDateBy', { date: formatDate(documentCategory.updatedOn) })} `}</span>
-                <a href={routes.getUserProfileUrl(documentCategory.updatedBy._id)}>{documentCategory.updatedBy.displayName}</a>
-              </div>
+              <DocumentCategoryDisplay bordered asLink documentCategory={documentCategory} />
             </div>
           </div>
         </Panel>

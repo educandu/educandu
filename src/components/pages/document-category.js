@@ -3,23 +3,15 @@ import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import EmptyState from '../empty-state.js';
-import slugify from '@sindresorhus/slugify';
 import { useTranslation } from 'react-i18next';
-import { useService } from '../container-context.js';
-import ClientConfig from '../../bootstrap/client-config.js';
 import DocumentIcon from '../icons/general/document-icon.js';
-import { getAccessibleUrl } from '../../utils/source-utils.js';
+import DocumentCategoryDisplay from '../document-category-display.js';
 import { documentCategoryShape } from '../../ui/default-prop-types.js';
 
 function DocumentCategory({ initialState, PageTemplate }) {
-  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('documentCategory');
 
   const { currentDocumentCategory, otherDocumentCategories } = initialState;
-
-  const currentDocumentCategoryIconUrl = currentDocumentCategory.iconUrl
-    ? getAccessibleUrl({ url: currentDocumentCategory.iconUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-    : null;
 
   const renderDocument = doc => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
@@ -32,29 +24,16 @@ function DocumentCategory({ initialState, PageTemplate }) {
   };
 
   const renderOtherDocumentCategory = documentCategory => {
-    const url = routes.getDocumentCategoryUrl({ id: documentCategory._id, slug: slugify(documentCategory.name) });
-    const iconUrl = documentCategory.iconUrl
-      ? getAccessibleUrl({ url: documentCategory.iconUrl, cdnRootUrl: clientConfig.cdnRootUrl })
-      : null;
-
     return (
-      <a href={url} key={documentCategory._id} className='DocumentCategoryPage-otherCategoryLink'>
-        <div className="DocumentCategoryPage-temporaryBadge DocumentCategoryPage-temporaryBadge--small">
-          {!!iconUrl && <img src={iconUrl} className="MaintenanceDocumentCategoriesTab-categoryIcon" />}
-          {documentCategory.name}
-        </div>
-      </a>
+      <DocumentCategoryDisplay key={documentCategory._id} bordered asLink documentCategory={documentCategory} />
     );
   };
 
   return (
     <PageTemplate>
       <div className="DocumentCategoryPage">
-        <div className="DocumentCategoryPage-temporaryBadge">
-          {!!currentDocumentCategoryIconUrl && (
-            <img src={currentDocumentCategoryIconUrl} className="MaintenanceDocumentCategoriesTab-categoryIcon" />
-          )}
-          {currentDocumentCategory.name}
+        <div className="DocumentCategoryPage-header">
+          <DocumentCategoryDisplay bordered documentCategory={currentDocumentCategory} />
         </div>
 
         <div className="DocumentCategoryPage-content">

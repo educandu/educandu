@@ -38,13 +38,13 @@
   .m-control-group();
 }
 
+.MaintenanceDocumentCategoriesTab-categoryDescription {
+  margin-bottom: 2 * @edu-content-padding;
+}
+
 .MaintenanceDocumentCategoriesTab-categoryDetailsHeader {
   font-weight: bold;
   margin-bottom: @edu-content-padding;
-
-  &:not(:first-child) {
-    margin-top: 2 * @edu-content-padding;
-  }
 }
 
 .MaintenanceDocumentCategoriesTab-categoryPageLink {
@@ -52,9 +52,11 @@
 }
 
 .MaintenanceDocumentCategoriesTab-categoryDetailsFooter {
-  margin-top: 2 * @edu-content-padding;
   font-size: @edu-font-size-sm;
   color: @edu-text-color-secondary;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3 * @edu-content-padding;
 }
 
 .MaintenanceDocumentCategoriesTab-categoryDocument {
