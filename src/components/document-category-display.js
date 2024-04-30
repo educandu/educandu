@@ -23,7 +23,8 @@ function DocumentCategoryDisplay({ documentCategory, bordered, detailed, asLink,
   const rootClasses = classNames({
     'DocumentCategoryDisplay': true,
     'DocumentCategoryDisplay--bordered': bordered,
-    'DocumentCategoryDisplay--detailed': detailed
+    'DocumentCategoryDisplay--detailed': detailed,
+    'DocumentCategoryDisplay--minimizable': minimizable
   });
 
   const iconClasses = classNames({
