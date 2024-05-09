@@ -74,3 +74,6 @@ maintenanceDocumentRequestsTab:
   resetSortersButton:
     en: Reset sorters
     de: Zurücksetzen
+  exportAsCsv:
+    en: Export as CSV file
+    de: Als CSV-Datei exportieren

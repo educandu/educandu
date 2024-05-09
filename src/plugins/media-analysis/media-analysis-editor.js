@@ -28,7 +28,7 @@ import { useMediaDurations } from '../../components/media-player/media-hooks.js'
 import { formatMediaPosition, shouldDisableVideo } from '../../utils/media-utils.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
-import { createDefaultChapter, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
+import { createDefaultChapter, exportChaptersToCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
 
@@ -132,7 +132,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   });
 
   const startCsvExport = async () => {
-    const csv = exportChaptersAsCsv(chapters);
+    const csv = exportChaptersToCsv(chapters);
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
     await httpClient.download(url, 'segments.csv');
     URL.revokeObjectURL(url);
