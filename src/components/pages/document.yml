@@ -52,7 +52,7 @@ document:
     de: Version {version}
   latestHistoryVersion:
     en: Latest version
-    de: Letzte version
+    de: Letzte Version
   input:
     en: Input {count} by <0>{userDisplayName}</0>
     de: Eingabe {count} von <0>{userDisplayName}</0>
