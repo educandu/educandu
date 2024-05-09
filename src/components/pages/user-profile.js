@@ -27,10 +27,9 @@ export default function UserProfile({ PageTemplate, initialState }) {
   useEffect(() => {
     (async () => {
       setFetchingDocuments(true);
-      const documentApiClientResponse = await documentApiClient.getPublicNonArchivedDocumentsByContributingUser(user._id);
-      const ownDocuments = documentApiClientResponse.documents.filter(doc => doc.createdBy._id === user._id);
+      const documentApiClientResponse = await documentApiClient.getPublicNonArchivedDocumentsByContributingUser({ userId: user._id, createdOnly: true });
       setFetchingDocuments(false);
-      setDocuments(ownDocuments);
+      setDocuments(documentApiClientResponse.documents);
     })();
   }, [user, setFetchingDocuments, documentApiClient]);
 

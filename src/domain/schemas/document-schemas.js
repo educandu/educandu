@@ -20,6 +20,10 @@ export const getPublicNonArchivedDocumentsByContributingUserParams = joi.object(
   userId: idOrKeySchema.required()
 });
 
+export const getPublicNonArchivedDocumentsByContributingUserQuery = joi.object({
+  createdOnly: joi.string().valid(false.toString(), true.toString()).optional()
+});
+
 export const documentIdParamsOrQuerySchema = joi.object({
   documentId: idOrKeySchema.required()
 });

@@ -64,10 +64,10 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  getPublicNonArchivedDocumentsByContributingUser(userId) {
+  getPublicNonArchivedDocumentsByContributingUser({ userId, createdOnly = false }) {
     return this.httpClient
       .get(
-        `/api/v1/docs/users/${encodeURIComponent(userId)}`,
+        `/api/v1/docs/users/${encodeURIComponent(userId)}?createdOnly=${encodeURIComponent(createdOnly)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

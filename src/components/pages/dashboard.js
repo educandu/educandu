@@ -107,7 +107,7 @@ function Dashboard({ PageTemplate }) {
   const fetchDocuments = useCallback(async () => {
     try {
       setFetchingDocuments(true);
-      const documentApiClientResponse = await documentApiClient.getPublicNonArchivedDocumentsByContributingUser(user._id);
+      const documentApiClientResponse = await documentApiClient.getPublicNonArchivedDocumentsByContributingUser({ userId: user._id, createdOnly: false });
       setDocuments(documentApiClientResponse.documents);
     } finally {
       setFetchingDocuments(false);
