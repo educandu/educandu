@@ -60,15 +60,17 @@ function MediaLibaryItemModal({
       return;
     }
 
-    if (mode !== MEDIA_LIBRARY_ITEM_MODAL_MODE.preview) {
-      form.resetFields();
-    }
-
     setIsEditingImage(false);
     setIsVisibleToUser(true);
     setIsEditedImageDirty(false);
     setFileInfo(createFileInfo(null));
   }, [isOpen, mode, form]);
+
+  useEffect(() => {
+    if (isOpen && isVisibleToUser && mode !== MEDIA_LIBRARY_ITEM_MODAL_MODE.preview) {
+      form.resetFields();
+    }
+  }, [isOpen, isVisibleToUser, mode, form]);
 
   const handleEditImageClick = () => {
     setIsEditingImage(true);
