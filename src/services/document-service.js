@@ -152,6 +152,11 @@ class DocumentService {
     return sortedDocumentsMetadata;
   }
 
+  async getPublicNonArchivedDocumentsByCreatingUser(creatingUserId) {
+    const documentsMetadata = await this.documentStore.getPublicNonArchivedDocumentsByCreatingUser(creatingUserId);
+    return documentsMetadata.sort(by(doc => doc.updatedOn, 'desc'));
+  }
+
   async getSearchableDocumentsMetadataByTags(searchQuery) {
     const textQuery = createTextSearchQuery(searchQuery, ['tags']);
     if (!textQuery.isValid) {

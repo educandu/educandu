@@ -93,6 +93,17 @@ class DocumentStore {
     ).toArray();
   }
 
+  getPublicNonArchivedDocumentsByCreatingUser(creatingUserId, { session } = {}) {
+    return this.collection.find(
+      {
+        'roomId': null,
+        'publicContext.archived': false,
+        'createdBy': creatingUserId
+      },
+      { projection: contributedDocumentMetadataProjection, session }
+    ).toArray();
+  }
+
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
     return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }

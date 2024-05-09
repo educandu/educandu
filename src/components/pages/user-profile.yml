@@ -1,7 +1,7 @@
 userProfile:
   documentsHeadline:
-    en: Recent contributions
-    de: Letzte Beiträge
+    en: Created documents
+    de: Erstellte Dokumente
   moreButton:
     en: Show {count} more
     de: "{count, plural, =1 {# weiteren} other {# weitere}} anzeigen"

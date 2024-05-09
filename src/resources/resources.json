@@ -4965,8 +4965,8 @@
   },
   "userProfile": {
     "documentsHeadline": {
-      "en": "Recent contributions",
-      "de": "Letzte Beiträge"
+      "en": "Created documents",
+      "de": "Erstellte Dokumente"
     },
     "moreButton": {
       "en": "Show {count} more",
