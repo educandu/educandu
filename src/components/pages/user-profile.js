@@ -28,8 +28,9 @@ export default function UserProfile({ PageTemplate, initialState }) {
     (async () => {
       setFetchingDocuments(true);
       const documentApiClientResponse = await documentApiClient.getPublicNonArchivedDocumentsByContributingUser(user._id);
+      const ownDocuments = documentApiClientResponse.documents.filter(doc => doc.createdBy._id === user._id);
       setFetchingDocuments(false);
-      setDocuments(documentApiClientResponse.documents);
+      setDocuments(ownDocuments);
     })();
   }, [user, setFetchingDocuments, documentApiClient]);
 
