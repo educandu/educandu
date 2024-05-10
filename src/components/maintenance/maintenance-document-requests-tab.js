@@ -2,8 +2,8 @@ import by from 'thenby';
 import dayjs from 'dayjs';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
-import { ResetIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
@@ -13,10 +13,10 @@ import { objectsToCsv } from '../../utils/csv-utils.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
 import HttpClient from '../../api-clients/http-client.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
-import { Table, DatePicker, Checkbox, Button } from 'antd';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
-import { ExportOutlined, PlusOutlined } from '@ant-design/icons';
+import { ResetIcon, TableExportIcon } from '../icons/icons.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { Table, DatePicker, Checkbox, Button, Tooltip } from 'antd';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
@@ -360,12 +360,12 @@ function MaintenanceDocumentRequestsTab() {
         </div>
       </div>
       <div className="MaintenanceDocumentRequestsTab-csvExportButton">
-        <Button
-          icon={<ExportOutlined />}
-          onClick={handleExportToCsvButtonClick}
-          >
-          {t('exportAsCsv')}
-        </Button>
+        <Tooltip title={t('exportAsCsv')}>
+          <Button
+            icon={<TableExportIcon />}
+            onClick={handleExportToCsvButtonClick}
+            />
+        </Tooltip>
       </div>
       <Table
         dataSource={[...displayedRows]}

@@ -34,7 +34,9 @@ import {
   IconSettings,
   IconCategory2,
   IconTag,
-  IconBuildingBank
+  IconBuildingBank,
+  IconTableImport,
+  IconTableDown
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -81,9 +83,11 @@ export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);
 export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);
 export const MaintenanceIcon = createIconFromTablerIconComponent(IconZoomScan);
+export const TableExportIcon = createIconFromTablerIconComponent(IconTableDown);
 export const ExitFullscreenIcon = createIconFromTablerIconComponent(IconMinimize);
 export const FillColorIcon = createIconFromTablerIconComponent(IconBucketDroplet);
 export const ChevronLeftIcon = createIconFromTablerIconComponent(IconChevronLeft);
+export const TableImportIcon = createIconFromTablerIconComponent(IconTableImport);
 export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximize);
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
