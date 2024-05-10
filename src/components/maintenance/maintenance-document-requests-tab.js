@@ -101,6 +101,7 @@ function MaintenanceDocumentRequestsTab() {
 
   const [allRows, setAllRows] = useState([]);
   const [displayedRows, setDisplayedRows] = useState([]);
+  const [displayedRowsSum, setDisplayedRowsSum] = useState();
 
   const sortingOptions = useMemo(() => [
     { label: t('totalCountColumnHeader'), appliedLabel: t('sortedByTotalCount'), value: SORTING_VALUE.totalCount },
@@ -161,7 +162,16 @@ function MaintenanceDocumentRequestsTab() {
 
     const sortedRows = [...filteredRows].sort(sorters);
 
+    const newDisplayedRowsSum = filteredRows.reduce((accu, currentRow) => ({
+      totalCount: accu.totalCount + currentRow.totalCount,
+      readCount: accu.readCount + currentRow.readCount,
+      writeCount: accu.writeCount + currentRow.writeCount,
+      anonymousCount: accu.anonymousCount + currentRow.anonymousCount,
+      loggedInCount: accu.loggedInCount + currentRow.loggedInCount
+    }), { totalCount: 0, readCount: 0, writeCount: 0, anonymousCount: 0, loggedInCount: 0 });
+
     setDisplayedRows(sortedRows);
+    setDisplayedRowsSum(newDisplayedRowsSum);
   }, [allRows, filter, sortingPairs]);
 
   const handleTableChange = ({ current, pageSize }) => {
@@ -210,9 +220,22 @@ function MaintenanceDocumentRequestsTab() {
     const documentUrl = routes.getDocUrl({ id: documentWithCounters._id, slug: documentWithCounters.slug });
 
     return (
-      <a href={documentUrl} className="MaintenanceRequestsTab-titleCell">
+      <a href={documentUrl} className="MaintenanceDocumentRequestsTab-documentTitleCell">
         {_title}
       </a>
+    );
+  };
+
+  const renderColumnTitleWithCountSubtitle = ({ title, count = 0 }) => {
+    return (
+      <div className="MaintenanceDocumentRequestsTab-titleCell">
+        <div>
+          {title}
+        </div>
+        <div className='MaintenanceDocumentRequestsTab-titleCellSubtitle'>
+          ({count})
+        </div>
+      </div>
     );
   };
 
@@ -224,7 +247,10 @@ function MaintenanceDocumentRequestsTab() {
       render: renderDocumentTitle
     },
     {
-      title: t('totalCountColumnHeader'),
+      title: () => renderColumnTitleWithCountSubtitle({
+        title: t('totalCountColumnHeader'),
+        count: displayedRowsSum?.totalCount
+      }),
       dataIndex: 'totalCount',
       key: 'totalCount',
       render: _totalCount => _totalCount,
@@ -236,7 +262,10 @@ function MaintenanceDocumentRequestsTab() {
       responsive: ['sm'],
       children: [
         {
-          title: t('readCountColumnHeader'),
+          title: () => renderColumnTitleWithCountSubtitle({
+            title: t('readCountColumnHeader'),
+            count: displayedRowsSum?.readCount
+          }),
           dataIndex: 'readCount',
           key: 'readCount',
           render: _readCount => _readCount,
@@ -244,7 +273,10 @@ function MaintenanceDocumentRequestsTab() {
           width: '100px'
         },
         {
-          title: t('writeCountColumnHeader'),
+          title: () => renderColumnTitleWithCountSubtitle({
+            title: t('writeCountColumnHeader'),
+            count: displayedRowsSum?.writeCount
+          }),
           dataIndex: 'writeCount',
           key: 'writeCount',
           render: _writeCount => _writeCount,
@@ -258,7 +290,10 @@ function MaintenanceDocumentRequestsTab() {
       responsive: ['md'],
       children: [
         {
-          title: t('anonymousCountColumnHeader'),
+          title: () => renderColumnTitleWithCountSubtitle({
+            title: t('anonymousCountColumnHeader'),
+            count: displayedRowsSum?.anonymousCount
+          }),
           dataIndex: 'anonymousCount',
           key: 'anonymousCount',
           render: _anonymousCount => _anonymousCount,
@@ -266,7 +301,10 @@ function MaintenanceDocumentRequestsTab() {
           width: '100px'
         },
         {
-          title: t('loggedInCountColumnHeader'),
+          title: () => renderColumnTitleWithCountSubtitle({
+            title: t('loggedInCountColumnHeader'),
+            count: displayedRowsSum?.loggedInCount
+          }),
           dataIndex: 'loggedInCount',
           key: 'loggedInCount',
           render: _loggedInCount => _loggedInCount,

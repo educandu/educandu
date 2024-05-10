@@ -32,7 +32,7 @@
 .MaintenanceDocumentRequestsTab-controls {
   display: grid;
   gap: 50px;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 3fr 1fr;
   grid-template-rows: auto;
   align-items: start;
   margin-bottom: 40px;
@@ -64,7 +64,14 @@
   flex-wrap: wrap;
 }
 
-.MaintenanceDocumentRequestsTab-titleCell {
+.MaintenanceDocumentRequestsTab-titleCell {}
+
+.MaintenanceDocumentRequestsTab-titleCellSubtitle {
+  font-size: @edu-font-size-xs;
+  color: @edu-text-color-secondary;
+}
+
+.MaintenanceDocumentRequestsTab-documentTitleCell {
   .m-line-clamp(1);
   text-decoration: none;
 }
