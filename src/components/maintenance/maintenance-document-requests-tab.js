@@ -2,18 +2,21 @@ import by from 'thenby';
 import dayjs from 'dayjs';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
-import { ResetIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
+import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { DAY_OF_WEEK } from '../../domain/constants.js';
+import { objectsToCsv } from '../../utils/csv-utils.js';
 import { SORTING_DIRECTION, TAB } from './constants.js';
+import HttpClient from '../../api-clients/http-client.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
-import { Table, DatePicker, Checkbox, Button } from 'antd';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
+import { ResetIcon, TableExportIcon } from '../icons/icons.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { Table, DatePicker, Checkbox, Button, Tooltip } from 'antd';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
@@ -75,6 +78,7 @@ const getSanitizedQueryFromRequest = request => {
 function MaintenanceDocumentRequestsTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
+  const httpClient = useService(HttpClient);
   const { t } = useTranslation('maintenanceDocumentRequestsTab');
   const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
 
@@ -205,6 +209,13 @@ function MaintenanceDocumentRequestsTab() {
     if (newCheckedValues.length >= 1) {
       setDaysOfWeek(newCheckedValues);
     }
+  };
+
+  const handleExportToCsvButtonClick = async () => {
+    const csv = objectsToCsv(displayedRows, ['documentId', 'title', 'totalCount', 'readCount', 'writeCount', 'anonymousCount', 'loggedInCount']);
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    await httpClient.download(url, 'document-requests.csv');
+    URL.revokeObjectURL(url);
   };
 
   const determineDisabledDate = dayjsValue => {
@@ -354,7 +365,7 @@ function MaintenanceDocumentRequestsTab() {
           {sortingPairs.map((sortingPair, sortingPairIndex) => (
             <Fragment key={sortingPairIndex}>
               {sortingPairIndex > 0 && (
-                <div className='MaintenanceDocumentRequestsTab-sortersSaparator'>
+                <div className='MaintenanceDocumentRequestsTab-sortersSeparator'>
                   {t('sortersJoiningText')}
                 </div>
               )}
@@ -385,6 +396,14 @@ function MaintenanceDocumentRequestsTab() {
             </Button>
           </div>
         </div>
+      </div>
+      <div className="MaintenanceDocumentRequestsTab-csvExportButton">
+        <Tooltip title={t('exportAsCsv')}>
+          <Button
+            icon={<TableExportIcon />}
+            onClick={handleExportToCsvButtonClick}
+            />
+        </Tooltip>
       </div>
       <Table
         dataSource={[...displayedRows]}

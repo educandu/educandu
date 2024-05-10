@@ -15,7 +15,6 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
-import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
@@ -25,10 +24,11 @@ import { usePercentageFormat } from '../../components/locale-context.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../../components/empty-state.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
+import { TableExportIcon, TableImportIcon } from '../../components/icons/icons.js';
 import { formatMediaPosition, shouldDisableVideo } from '../../utils/media-utils.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import TimecodeFineTunningInput from '../../components/media-player/timecode-fine-tunning-input.js';
-import { createDefaultChapter, exportChaptersToCsv as exportChaptersAsCsv, importChaptersFromCsv } from './media-analysis-utils.js';
+import { createDefaultChapter, exportChaptersToCsv, importChaptersFromCsv } from './media-analysis-utils.js';
 
 const useDropzone = reactDropzoneNs.default?.useDropzone || reactDropzoneNs.useDropzone;
 
@@ -132,7 +132,7 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
   });
 
   const startCsvExport = async () => {
-    const csv = exportChaptersAsCsv(chapters);
+    const csv = exportChaptersToCsv(chapters);
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
     await httpClient.download(url, 'segments.csv');
     URL.revokeObjectURL(url);
@@ -243,12 +243,12 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
               {
                 key: 'export-as-csv',
                 title: t('exportAsCsv'),
-                icon: <div className="MediaAnalysisEditor-segmentsActionButton"><ExportOutlined /></div>
+                icon: <div className="MediaAnalysisEditor-segmentsActionButton"><TableExportIcon /></div>
               },
               {
                 key: 'import-from-csv',
                 title: t('importFromCsv'),
-                icon: <div className="MediaAnalysisEditor-segmentsActionButton"><ImportOutlined /></div>
+                icon: <div className="MediaAnalysisEditor-segmentsActionButton"><TableImportIcon /></div>
               }
             ]}
             onExtraActionButtonClick={handleExtraActionButtonClick}
