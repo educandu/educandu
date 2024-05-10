@@ -163,12 +163,12 @@ function MaintenanceDocumentRequestsTab() {
     const sortedRows = [...filteredRows].sort(sorters);
 
     const newDisplayedRowsSum = filteredRows.reduce((accu, currentRow) => ({
-      totalCount: (accu.totalCount || 0) + currentRow.totalCount,
-      readCount: (accu.readCount || 0) + currentRow.readCount,
-      writeCount: (accu.writeCount || 0) + currentRow.writeCount,
-      anonymousCount: (accu.anonymousCount || 0) + currentRow.anonymousCount,
-      loggedInCount: (accu.loggedInCount || 0) + currentRow.loggedInCount
-    }), {});
+      totalCount: accu.totalCount + currentRow.totalCount,
+      readCount: accu.readCount + currentRow.readCount,
+      writeCount: accu.writeCount + currentRow.writeCount,
+      anonymousCount: accu.anonymousCount + currentRow.anonymousCount,
+      loggedInCount: accu.loggedInCount + currentRow.loggedInCount
+    }), { totalCount: 0, readCount: 0, writeCount: 0, anonymousCount: 0, loggedInCount: 0 });
 
     setDisplayedRows(sortedRows);
     setDisplayedRowsSum(newDisplayedRowsSum);
