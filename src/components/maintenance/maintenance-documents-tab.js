@@ -64,27 +64,36 @@ function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.
 
 function createTableRows(documents, documentRatings) {
   const documentRatingsByDocumentId = new Map(documentRatings.map(r => [r.documentId, r]));
-  return documents.map(doc => ({
-    key: doc._id,
-    _id: doc._id,
-    documentId: doc._id,
-    title: doc.title,
-    shortDescription: doc.shortDescription,
-    slug: doc.slug,
-    createdOn: doc.createdOn,
-    createdBy: doc.createdBy,
-    updatedOn: doc.updatedOn,
-    updatedBy: doc.updatedBy,
-    user: doc.user,
-    allowedEditors: doc.publicContext.allowedEditors,
-    protected: doc.publicContext.protected,
-    archived: doc.publicContext.archived,
-    verified: doc.publicContext.verified,
-    tags: doc.tags,
-    rating: documentRatingsByDocumentId.get(doc._id) ?? null,
-    ratingsCount: documentRatingsByDocumentId.get(doc._id)?.ratingsCount ?? 0,
-    averageRatingValue: documentRatingsByDocumentId.get(doc._id)?.averageRatingValue ?? null
-  }));
+  return documents.map(doc => {
+    const documentRating = documentRatingsByDocumentId.get(doc._id) || {
+      _id: null,
+      documentId: doc._id,
+      ratingsCount: 0,
+      ratingsCountPerValue: [0, 0, 0, 0, 0],
+      averageRatingValue: null
+    };
+    return {
+      key: doc._id,
+      _id: doc._id,
+      documentId: doc._id,
+      title: doc.title,
+      shortDescription: doc.shortDescription,
+      slug: doc.slug,
+      createdOn: doc.createdOn,
+      createdBy: doc.createdBy,
+      updatedOn: doc.updatedOn,
+      updatedBy: doc.updatedBy,
+      user: doc.user,
+      allowedEditors: doc.publicContext.allowedEditors,
+      protected: doc.publicContext.protected,
+      archived: doc.publicContext.archived,
+      verified: doc.publicContext.verified,
+      tags: doc.tags,
+      rating: documentRating,
+      ratingsCount: documentRating.ratingsCount,
+      averageRatingValue: documentRating.averageRatingValue
+    };
+  });
 }
 
 const getSanitizedQueryFromRequest = request => {
