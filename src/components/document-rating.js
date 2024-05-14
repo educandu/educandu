@@ -5,19 +5,19 @@ import StarRating from './star-rating.js';
 import { useTranslation } from 'react-i18next';
 import { useNumberFormat } from './locale-context.js';
 
-function DocumentRating({ value, totalCount, compact }) {
+function DocumentRating({ value, totalCount, oneLine, small }) {
   const { t } = useTranslation('documentRating');
   const formatNumber = useNumberFormat({ minDecimalPlaces: 1, maxDecimalPlaces: 1 });
 
   return (
-    <div className={classNames('DocumentRating', { 'DocumentRating--compact': compact })}>
+    <div className={classNames('DocumentRating', { 'DocumentRating--oneLine': oneLine })}>
       {value !== null && (
-        <div className={classNames('DocumentRating-value', { 'DocumentRating-value--compact': compact })}>
+        <div className={classNames('DocumentRating-value', { 'DocumentRating-value--small': small })}>
           {formatNumber(value)}
         </div>
       )}
       <div className="DocumentRating-stars">
-        <StarRating value={value} compact={compact} allowHalf />
+        <StarRating value={value} small={small} allowHalf />
       </div>
       <div className="DocumentRating-totalCount">
         {t('totalCountText', { totalCount })}
@@ -29,13 +29,15 @@ function DocumentRating({ value, totalCount, compact }) {
 DocumentRating.propTypes = {
   value: PropTypes.number,
   totalCount: PropTypes.number,
-  compact: PropTypes.bool
+  oneLine: PropTypes.bool,
+  small: PropTypes.bool
 };
 
 DocumentRating.defaultProps = {
   value: null,
   totalCount: 0,
-  compact: false
+  oneLine: false,
+  small: false
 };
 
 export default DocumentRating;

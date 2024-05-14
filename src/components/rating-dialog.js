@@ -1,26 +1,27 @@
 import PropTypes from 'prop-types';
-import { Modal, Spin } from 'antd';
-import Markdown from './markdown.js';
 import Logger from '../common/logger.js';
 import StarRating from './star-rating.js';
+import { useUser } from './user-context.js';
 import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
-import { useDateFormat } from './locale-context.js';
+import DocumentRating from './document-rating.js';
+import { Divider, Modal, Progress, Spin } from 'antd';
 import { handleApiError } from '../ui/error-helper.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import React, { useCallback, useEffect, useState } from 'react';
 import { documentRatingShape } from '../ui/default-prop-types.js';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import DocumentRatingApiClient from '../api-clients/document-rating-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
-function RatingDialog({ documentRating, isOpen, onCancel, onOk }) {
-  const { formatDate } = useDateFormat();
+const STAR_STROKE_COLOR = 'rgb(250, 219, 20)';
+
+function RatingDialog({ documentRating, isOpen, onDocumentRatingChange, onClose }) {
+  const user = useUser();
+  const { t } = useTranslation('ratingDialog');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useTranslation('ratingDialog');
-  const [existingRating, setExistingRating] = useState(null);
-  const [newRatingValue, setNewRatingValue] = useState(null);
+  const [userRatingValue, setUserRatingValue] = useState(null);
   const documentRatingApiClient = useSessionAwareApiClient(DocumentRatingApiClient);
 
   const { documentId } = documentRating;
@@ -29,8 +30,7 @@ function RatingDialog({ documentRating, isOpen, onCancel, onOk }) {
     try {
       setIsLoading(true);
       const rating = await documentRatingApiClient.getRating({ documentId });
-      setExistingRating(rating);
-      setNewRatingValue(rating?.value || null);
+      setUserRatingValue(rating?.value || null);
       setIsLoading(false);
     } catch (error) {
       handleApiError({ error, t, logger });
@@ -38,70 +38,93 @@ function RatingDialog({ documentRating, isOpen, onCancel, onOk }) {
   }, [documentId, documentRatingApiClient, t]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && user) {
       loadRating();
     }
-  }, [isOpen, loadRating]);
+  }, [isOpen, user, loadRating]);
 
-  const handleOk = async () => {
+  const handleUserRatingValueChange = async val => {
     try {
       setIsSaving(true);
-      const response = newRatingValue !== null
-        ? await documentRatingApiClient.saveRating({ documentId, value: newRatingValue })
-        : await documentRatingApiClient.deleteRating({ documentId });
+      setUserRatingValue(val);
+      const response = await documentRatingApiClient.saveRating({ documentId, value: val });
       setIsSaving(false);
-      onOk(response.documentRating);
+      onDocumentRatingChange(response.documentRating);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
   };
 
-  const handleClearButtonClick = () => {
-    setNewRatingValue(null);
+  const handleClearButtonClick = async () => {
+    try {
+      setIsSaving(true);
+      setUserRatingValue(null);
+      const response = await documentRatingApiClient.deleteRating({ documentId });
+      setIsSaving(false);
+      onDocumentRatingChange(response.documentRating);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
   };
 
   return (
     <Modal
       open={isOpen}
+      footer={null}
       destroyOnClose
-      closable={false}
       title={t('title')}
-      maskClosable={false}
-      okText={t('common:apply')}
-      cancelButtonProps={{ disabled: isSaving }}
-      okButtonProps={{ disabled: isLoading, loading: isSaving }}
-      onOk={handleOk}
-      onCancel={onCancel}
+      onCancel={onClose}
       >
       <div className="u-modal-body">
-        <Spin spinning={isLoading}>
-          {!existingRating && (
-            <Markdown className="RatingDialog-explanation">
-              {t('noExistingRatingExplanationMarkdown')}
-            </Markdown>
-          )}
-          {!!existingRating && (
-            <Markdown className="RatingDialog-explanation">
-              {t('existingRatingExplanationMarkdown', {
-                ratingDate: formatDate(existingRating.ratedOn, 'L'),
-                ratingValue: existingRating.value
-              })}
-            </Markdown>
-          )}
-          <div className="RatingDialog-newRatingHeader">
-            {t('newRatingHeader')}:
+        <Spin spinning={isLoading || isSaving}>
+          <div className="RatingDialog-header">
+            {t('totalRatingHeader')}
           </div>
-          <div className="RatingDialog-newRating">
-            <div>
-              <StarRating value={newRatingValue} onChange={setNewRatingValue} />
-            </div>
-            <div className="RatingDialog-newRatingValue">
-              ({newRatingValue ? t('newRatingValue', { ratingValue: newRatingValue }) : t('noNewRating')})
-            </div>
-            <div>
-              <DeleteButton onClick={handleClearButtonClick} disabled={newRatingValue === null} />
-            </div>
+          <div className="RatingDialog-documentRatingAverage">
+            <DocumentRating
+              oneLine
+              value={documentRating.averageRatingValue}
+              totalCount={documentRating.ratingsCount}
+              />
           </div>
+          <div className="RatingDialog-documentRatingDrillDown">
+            {documentRating.ratingsCountPerValue.map((value, index) => (
+              <Fragment key={index}>
+                <div>{t('stars', { starCount: index + 1 })}</div>
+                <div>
+                  <Progress
+                    size="small"
+                    showInfo={false}
+                    strokeColor={STAR_STROKE_COLOR}
+                    percent={documentRating.ratingsCount ? (value / documentRating.ratingsCount) * 100 : 0}
+                    />
+                </div>
+                <div>{value}</div>
+              </Fragment>
+            ))}
+          </div>
+          {!!user && (
+            <Fragment>
+              <Divider />
+              <div className="RatingDialog-header">
+                {t('userRatingHeader')}
+              </div>
+              <div className="RatingDialog-userRatingExplanation">
+                {t('userRatingExplanation')}
+              </div>
+              <div className="RatingDialog-userRating">
+                <div>
+                  <StarRating value={userRatingValue} onChange={handleUserRatingValueChange} />
+                </div>
+                <div className="RatingDialog-userRatingValue">
+                  ({userRatingValue ? t('stars', { starCount: userRatingValue }) : t('noUserRating')})
+                </div>
+                <div>
+                  <DeleteButton onClick={handleClearButtonClick} disabled={userRatingValue === null} />
+                </div>
+              </div>
+            </Fragment>
+          )}
         </Spin>
       </div>
     </Modal>
@@ -111,8 +134,8 @@ function RatingDialog({ documentRating, isOpen, onCancel, onOk }) {
 RatingDialog.propTypes = {
   documentRating: documentRatingShape.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  onOk: PropTypes.func.isRequired
+  onDocumentRatingChange: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default RatingDialog;

@@ -560,12 +560,11 @@ function Document({ initialState, PageTemplate }) {
     setIsRatingDialogOpen(true);
   };
 
-  const handleRatingDialogOk = updatedDocumentRating => {
+  const handleDocumentRatingChange = updatedDocumentRating => {
     setDocumentRating(updatedDocumentRating);
-    setIsRatingDialogOpen(false);
   };
 
-  const handleRatingDialogCancel = () => {
+  const handleRatingDialogClose = () => {
     setIsRatingDialogOpen(false);
   };
 
@@ -1116,23 +1115,6 @@ function Document({ initialState, PageTemplate }) {
     }
   };
 
-  const renderDocumentRating = () => {
-    const documentRatingComponent = (
-      <DocumentRating
-        value={documentRating.averageRatingValue}
-        totalCount={documentRating.ratingsCount}
-        />
-    );
-
-    return user
-      ? (
-        <Tooltip title={t('starRatingTooltip')}>
-          <a onClick={handleDocumentRatingClick}>{documentRatingComponent}</a>
-        </Tooltip>
-      )
-      : documentRatingComponent;
-  };
-
   const renderCategoryAndRatingTopArea = () => {
     if (!documentCategories.length && !documentRating) {
       return null;
@@ -1159,7 +1141,14 @@ function Document({ initialState, PageTemplate }) {
         )}
         {!!documentRating && (
           <div className="DocumentPage-documentRating">
-            {renderDocumentRating()}
+            <Tooltip title={user ? t('starRatingTooltipLoggedIn') : t('starRatingTooltipAnonymous')}>
+              <a onClick={handleDocumentRatingClick}>
+                <DocumentRating
+                  value={documentRating.averageRatingValue}
+                  totalCount={documentRating.ratingsCount}
+                  />
+              </a>
+            </Tooltip>
           </div>
         )}
       </div>
@@ -1369,8 +1358,8 @@ function Document({ initialState, PageTemplate }) {
         <RatingDialog
           documentRating={documentRating}
           isOpen={isRatingDialogOpen}
-          onOk={handleRatingDialogOk}
-          onCancel={handleRatingDialogCancel}
+          onDocumentRatingChange={handleDocumentRatingChange}
+          onClose={handleRatingDialogClose}
           />
       )}
     </RoomMediaContextProvider>

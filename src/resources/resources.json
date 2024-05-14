@@ -1874,9 +1874,13 @@
       "en": "Unarchive",
       "de": "Dearchivieren"
     },
-    "starRatingTooltip": {
-      "en": "Click here to rate this document",
-      "de": "Klicke hier, um das Dokument zu bewerten"
+    "starRatingTooltipAnonymous": {
+      "en": "Click here to see the rating details",
+      "de": "Klicke hier, um Bewertungsdetails zu sehen"
+    },
+    "starRatingTooltipLoggedIn": {
+      "en": "Click here to see the rating details or to rate this document",
+      "de": "Klicke hier, um Bewertungsdetails zu sehen oder um das Dokument zu bewerten"
     },
     "documentCategoryTooltip": {
       "en": "This document is in category \"{documentCategoryName}\". Click here to learn more.",
@@ -3759,26 +3763,26 @@
   },
   "ratingDialog": {
     "title": {
-      "en": "Rate document",
-      "de": "Dokument bewerten"
+      "en": "Rating details",
+      "de": "Bewertungsdetails"
     },
-    "noExistingRatingExplanationMarkdown": {
-      "en": "You have not submitted a rating for this document.\n\nYou can rate the document by clicking on the stars below.\n",
-      "de": "Du hast keine Bewertung für dieses Dokument abgegeben.\n\nBewerte das Dokument, indem du auf die Sterne unten klickst.\n"
+    "stars": {
+      "en": "{starCount, plural, =1 {# star} other {# stars}}",
+      "de": "{starCount, plural, =1 {# Stern} other {# Sterne}}"
     },
-    "existingRatingExplanationMarkdown": {
-      "en": "You have rated this document on {ratingDate} with **{ratingValue, plural, =1 {# star} other {# stars}}**.\n\nYou can change or delete your rating by clicking on the stars or the delete icon below.\n",
-      "de": "Du hast dieses Dokument am {ratingDate} mit **{ratingValue, plural, =1 {# Stern} other {# Sternen}}** bewertet.\n\nDu kannst deine Bewertung ändern oder löschen, indem du auf die Sterne oder das Löschen-Symbol unten klickst.\n"
+    "totalRatingHeader": {
+      "en": "Total rating",
+      "de": "Gesamtbewertung"
     },
-    "newRatingHeader": {
+    "userRatingHeader": {
       "en": "Your rating",
       "de": "Deine Bewertung"
     },
-    "newRatingValue": {
-      "en": "{ratingValue, plural, =1 {# star} other {# stars}}",
-      "de": "{ratingValue, plural, =1 {# Stern} other {# Sterne}}"
+    "userRatingExplanation": {
+      "en": "Here you can give or delete your own rating.",
+      "de": "Hier kannst du deine eigene Bewertung abgeben bzw. löschen."
     },
-    "noNewRating": {
+    "noUserRating": {
       "en": "no rating",
       "de": "keine Bewertung"
     }
