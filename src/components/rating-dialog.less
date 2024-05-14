@@ -1,25 +1,37 @@
 .RatingDialog {}
 
-.RatingDialog-explanation {
-  margin-bottom: 25px;
+.RatingDialog-documentRatingAverage {
+  margin-bottom: 20px;
 }
 
-.RatingDialog-newRatingHeader {
+.RatingDialog-documentRatingDrillDown {
+  gap: 0 10px;
+  display: grid;
+  grid-auto-flow: row;
+  font-size: @edu-font-size-sm;
+  grid-template-rows: repeat(5, auto);
+  grid-template-columns: auto 1fr auto;
+}
+
+.RatingDialog-header {
   margin-bottom: 8px;
   font-weight: bold;
 }
 
-.RatingDialog-newRating {
+.RatingDialog-userRatingExplanation {
+  margin-bottom: 25px;
+}
+
+.RatingDialog-userRating {
   gap: 10px;
   display: grid;
   align-items: end;
-  margin-bottom: 40px;
   grid-auto-flow: column;
   justify-content: start;
   grid-template-rows: auto;
   grid-template-columns: repeat(3, auto);
 }
 
-.RatingDialog-newRatingValue {
+.RatingDialog-userRatingValue {
   font-size: @edu-font-size-sm;
 }

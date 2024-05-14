@@ -14,7 +14,8 @@ function ResourceInfoCell({ title, url, shortDescription, subtext, documentRatin
           {!!documentRating && (
             <div className="ResourceInfoCell-documentRating">
               <DocumentRating
-                compact
+                small
+                oneLine
                 value={documentRating.averageRatingValue}
                 totalCount={documentRating.ratingsCount}
                 />

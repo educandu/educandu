@@ -74,7 +74,8 @@ function Tests({ PageTemplate, initialState }) {
 
   // DocumentRating
   const [documentRatingValue, setDocumentRatingValue] = useState(3.7);
-  const [documentRatingCompact, setDocumentRatingCompact] = useState(false);
+  const [documentRatingSmall, setDocumentRatingSmall] = useState(false);
+  const [documentRatingOneLine, setDocumentRatingOneLine] = useState(false);
   const [documentRatingTotalCount, setDocumentRatingTotalCount] = useState(15);
 
   // MediaLibraryMetadataForm
@@ -290,7 +291,8 @@ function Tests({ PageTemplate, initialState }) {
                 children: (
                   <div>
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                      <Checkbox checked={documentRatingCompact} onChange={event => setDocumentRatingCompact(event.target.checked)}>Compact</Checkbox>
+                      <Checkbox checked={documentRatingSmall} onChange={event => setDocumentRatingSmall(event.target.checked)}>Small</Checkbox>
+                      <Checkbox checked={documentRatingOneLine} onChange={event => setDocumentRatingOneLine(event.target.checked)}>OneLine</Checkbox>
                       <div>Value:</div>
                       <InputNumber min={0} max={5} precision={3} step={0.1} value={documentRatingValue ?? 0} onChange={setDocumentRatingValue} />
                       <Checkbox checked={documentRatingValue === null} onChange={event => setDocumentRatingValue(event.target.checked ? null : 0)}>null</Checkbox>
@@ -298,7 +300,7 @@ function Tests({ PageTemplate, initialState }) {
                       <InputNumber min={0} step={1} value={documentRatingTotalCount} onChange={setDocumentRatingTotalCount} />
                     </div>
                     <div>
-                      <DocumentRating value={documentRatingValue} totalCount={documentRatingTotalCount} compact={documentRatingCompact} />
+                      <DocumentRating value={documentRatingValue} totalCount={documentRatingTotalCount} oneLine={documentRatingOneLine} small={documentRatingSmall} />
                     </div>
                   </div>
                 )

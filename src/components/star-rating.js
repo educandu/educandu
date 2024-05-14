@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { StarIcon } from './icons/icons.js';
 
-function StarRating({ value, compact, allowHalf, onChange }) {
+function StarRating({ value, small, allowHalf, onChange }) {
   const classes = classNames({
     'StarRating': true,
-    'StarRating--compact': compact,
+    'StarRating--small': small,
     'StarRating--interactive': !!onChange
   });
   return (
@@ -26,14 +26,14 @@ function StarRating({ value, compact, allowHalf, onChange }) {
 
 StarRating.propTypes = {
   value: PropTypes.number,
-  compact: PropTypes.bool,
+  small: PropTypes.bool,
   allowHalf: PropTypes.bool,
   onChange: PropTypes.func
 };
 
 StarRating.defaultProps = {
   value: null,
-  compact: false,
+  small: false,
   allowHalf: false,
   onChange: null
 };
