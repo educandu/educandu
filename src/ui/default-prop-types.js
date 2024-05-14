@@ -85,6 +85,7 @@ const announcementProps = {
 export const announcementShape = PropTypes.shape(announcementProps);
 
 export const settingsShape = PropTypes.shape({
+  documentCategoriesPage: settingsDocumentShape,
   helpPage: settingsDocumentShape,
   termsPage: settingsDocumentShape,
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),

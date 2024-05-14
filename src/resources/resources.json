@@ -122,13 +122,21 @@
       "en": "The logos of the trusted institutions are displayed in an extra footer on the homepage. Please provide SVGs with transparent background and links to the home pages of each institution.",
       "de": "Die Vertrauens-Logos werden in einem Extra-Footer auf der Homepage angezeigt. Bitte gib hier SVGs mit transparentem Hintergrund und Links zur Startseite der jeweiligen Institution an."
     },
+    "documentCategoriesPageHeader": {
+      "en": "Global: Document categories page",
+      "de": "Global: Dokument-Kategorien-Seite"
+    },
+    "documentCategoriesPageInfo": {
+      "en": "The selected document is included in the website navigation menu under the given name and with a dedicated icon.",
+      "de": "Das ausgewählte Dokument wird im Website-Navigationsmenu unter dem angegebenen Namen und mit einem speziellen Icon erscheinen."
+    },
     "helpPageHeader": {
       "en": "Global: Help page",
       "de": "Global: Hilfe-Seite"
     },
     "helpPageInfo": {
-      "en": "The selected document is included in the website navigation menu under the given name.",
-      "de": "Das ausgewählte Dokument wird im Website-Navigationsmenu unter dem angegebenen Namen erscheinen."
+      "en": "The selected document is included in the website navigation menu under the given name and with a dedicated icon.",
+      "de": "Das ausgewählte Dokument wird im Website-Navigationsmenu unter dem angegebenen Namen und mit einem speziellen Icon erscheinen."
     },
     "termsPageHeader": {
       "en": "Global: Terms and conditions page",
