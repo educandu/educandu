@@ -2,16 +2,16 @@ import React from 'react';
 import { Badge } from 'antd';
 import routes from '../utils/routes.js';
 import { BellOutlined } from '@ant-design/icons';
-import { MaintenanceIcon } from './icons/icons.js';
 import HelpIcon from './icons/main-menu/help-icon.js';
 import UsersIcon from './icons/main-menu/users-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
 import DashboardIcon from './icons/main-menu/dashboard-icon.js';
+import { MaintenanceIcon, CategoryIcon } from './icons/icons.js';
 import AdministrationIcon from './icons/main-menu/administration-icon.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import RecentContributionsIcon from './icons/main-menu/recent-contributions-icon.js';
 
-export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, helpPage }) => {
+export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, helpPage, documentCategoriesPage }) => {
   return [
     {
       key: 'dashboard',
@@ -52,6 +52,14 @@ export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, help
       badge: null,
       onClick: () => { window.location = routes.getRecentContributionsUrl(); },
       showWhen: !!user
+    },
+    {
+      key: 'documentCategories',
+      label: documentCategoriesPage?.linkTitle,
+      icon: <div><CategoryIcon /></div>,
+      badge: null,
+      onClick: () => { window.location = documentCategoriesPage ? routes.getDocUrl({ id: documentCategoriesPage.documentId }) : ''; },
+      showWhen: !!documentCategoriesPage?.documentId
     },
     {
       key: 'maintenance',

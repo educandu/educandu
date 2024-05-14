@@ -28,6 +28,8 @@ function NavigationMobile() {
   const languageDataProvider = useService(LanguageDataProvider);
 
   const helpPage = settings?.helpPage?.[uiLanguage];
+  const documentCategoriesPage = settings?.documentCategoriesPage?.[uiLanguage];
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLanguageMenuExpanded, setIsLanguageMenuExpanded] = useState(false);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState(uiLanguage);
@@ -94,7 +96,7 @@ function NavigationMobile() {
   };
 
   const renderDrawerItems = () => {
-    const items = getCommonNavigationMenuItems({ t, user, notificationsCount, helpPage })
+    const items = getCommonNavigationMenuItems({ t, user, notificationsCount, helpPage, documentCategoriesPage })
       .filter(item => item.showWhen)
       .map(({ key, label, icon, badge, onClick }) => {
         return (

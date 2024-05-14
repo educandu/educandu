@@ -26,6 +26,8 @@ function NavigationDesktop() {
   const languageDataProvider = useService(LanguageDataProvider);
 
   const helpPage = settings?.helpPage?.[uiLanguage];
+  const documentCategoriesPage = settings?.documentCategoriesPage?.[uiLanguage];
+
   const notificationsCount = useNotificationsCount();
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
   const [isSearchBarActive, setIsSearchBarActive] = useState(false);
@@ -137,7 +139,7 @@ function NavigationDesktop() {
     const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
 
     const actionableMenuItems = [
-      ...getCommonNavigationMenuItems({ t, user, notificationsCount, helpPage }).filter(item => item.showWhen),
+      ...getCommonNavigationMenuItems({ t, user, notificationsCount, helpPage, documentCategoriesPage }).filter(item => item.showWhen),
       {
         key: 'logout',
         label: t('common:logOut'),

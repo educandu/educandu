@@ -85,6 +85,10 @@ function AdminSettingsTab({ onDirtyStateChange }) {
     handleChange('templateDocument', { documentId });
   }, [handleChange]);
 
+  const handleDocumentCategoriesPageChange = useCallback(value => {
+    handleChange('documentCategoriesPage', value);
+  }, [handleChange]);
+
   const handleHelpPageChange = useCallback(value => {
     handleChange('helpPage', value);
   }, [handleChange]);
@@ -163,6 +167,15 @@ function AdminSettingsTab({ onDirtyStateChange }) {
             <MarkdownSettingInSupportedLanguages
               settingValue={settings.consentText}
               onChange={handleConsentTextChange}
+              />
+          </Collapse.Panel>
+        </Collapse>
+        <Collapse className="AdminSettingsTab-collapse">
+          <Collapse.Panel header={t('documentCategoriesPageHeader')} key="documentCategories">
+            <div className="AdminSettingsTab-collapseInfo">{t('documentCategoriesPageInfo')}</div>
+            <SpecialPageSettings
+              settings={settings.documentCategoriesPage}
+              onChange={handleDocumentCategoriesPageChange}
               />
           </Collapse.Panel>
         </Collapse>
