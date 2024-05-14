@@ -3771,8 +3771,8 @@
       "de": "{starCount, plural, =1 {# Stern} other {# Sterne}}"
     },
     "totalRatingHeader": {
-      "en": "Total rating",
-      "de": "Gesamtbewertung"
+      "en": "Average rating",
+      "de": "Durchschnittliche Bewertung"
     },
     "userRatingHeader": {
       "en": "Your rating",
