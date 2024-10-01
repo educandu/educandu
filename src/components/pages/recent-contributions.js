@@ -193,7 +193,8 @@ function RecentContributions({ PageTemplate }) {
   const tabsItems = [
     {
       key: TAB.documents,
-      label: <div><FileIcon />{t('documentsTabTitle')}</div>,
+      icon: <FileIcon />,
+      label: t('documentsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <Table
@@ -215,7 +216,8 @@ function RecentContributions({ PageTemplate }) {
     },
     {
       key: TAB.mediaLibraryItems,
-      label: <div><MediaLibraryIcon />{t('mediaLibraryTabTitle')}</div>,
+      icon: <MediaLibraryIcon />,
+      label: t('mediaLibraryTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <Table

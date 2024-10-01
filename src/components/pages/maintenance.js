@@ -23,7 +23,8 @@ function Maintenance({ PageTemplate }) {
   const tabItems = useMemo(() => [
     {
       key: TAB.documents,
-      label: <div><FileIcon />{t('documentsTabTitle')}</div>,
+      icon: <FileIcon />,
+      label: t('documentsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceDocumentsTab />
@@ -32,7 +33,8 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.mediaLibrary,
-      label: <div><MediaLibraryIcon />{t('mediaLibraryTabTitle')}</div>,
+      icon: <MediaLibraryIcon />,
+      label: t('mediaLibraryTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceMediaLibraryTab />
@@ -41,7 +43,8 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.tags,
-      label: <div><TagIcon />{t('tagsTabTitle')}</div>,
+      icon: <TagIcon />,
+      label: t('tagsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceTagsTab />
@@ -50,7 +53,8 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.documentRequests,
-      label: <div><ClickIcon />{t('documentRequestsTabTitle')}</div>,
+      icon: <ClickIcon />,
+      label: t('documentRequestsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceDocumentRequestsTab />
@@ -59,7 +63,8 @@ function Maintenance({ PageTemplate }) {
     },
     {
       key: TAB.documentCategories,
-      label: <div><CategoryIcon />{t('documentCategoriesTabTitle')}</div>,
+      icon: <CategoryIcon />,
+      label: t('documentCategoriesTabTitle'),
       children: (
         <div className="Tabs-tabPane">
           <MaintenanceDocumentCategoriesTab />

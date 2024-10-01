@@ -40,7 +40,6 @@ import {
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const CollapsePanel = Collapse.Panel;
 
 const logger = new Logger(import.meta.url);
 
@@ -517,50 +516,56 @@ function DocumentMetadataModal({
             </FormItem>
           )}
           {!!isDocInPublicContext && (
-            <Collapse>
-              <CollapsePanel header={t('maintenanceSettingsHeader')}>
-                {!!publicContextPermissions.canManagePublicContext && (
-                  <FormItem label={<Info tooltip={t('allowedEditorsInfo')} iconAfterContent>{t('allowedEditors')}</Info>}>
-                    <UserSelect value={publicContext.allowedEditors} onChange={handleAllowedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
-                  </FormItem>
-                )}
-                {(!!publicContextPermissions.canManagePublicContext || !!publicContextPermissions.canProtectOwnDocWhenCreating) && (
-                  <FormItem>
-                    <Checkbox
-                      checked={publicContext.protected}
-                      onChange={handleProtectedChange}
-                      disabled={
-                        !publicContextPermissions.canManagePublicContext && mode === DOCUMENT_METADATA_MODAL_MODE.update
-                      }
-                      >
-                      <Info tooltip={t('protectedInfo')} iconAfterContent><span className="u-label">{t('common:protected')}</span></Info>
-                    </Checkbox>
-                  </FormItem>
-                )}
-                {!!publicContextPermissions.canManagePublicContext && (
+            <Collapse
+              items={[{
+                key: 'maintenanceSettingsHeader',
+                label: t('maintenanceSettingsHeader'),
+                children: (
                   <Fragment>
+                    {!!publicContextPermissions.canManagePublicContext && (
+                    <FormItem label={<Info tooltip={t('allowedEditorsInfo')} iconAfterContent>{t('allowedEditors')}</Info>}>
+                      <UserSelect value={publicContext.allowedEditors} onChange={handleAllowedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
+                    </FormItem>
+                    )}
+                    {(!!publicContextPermissions.canManagePublicContext || !!publicContextPermissions.canProtectOwnDocWhenCreating) && (
                     <FormItem>
-                      <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
-                        <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
+                      <Checkbox
+                        checked={publicContext.protected}
+                        onChange={handleProtectedChange}
+                        disabled={
+                          !publicContextPermissions.canManagePublicContext && mode === DOCUMENT_METADATA_MODAL_MODE.update
+                        }
+                        >
+                        <Info tooltip={t('protectedInfo')} iconAfterContent><span className="u-label">{t('common:protected')}</span></Info>
                       </Checkbox>
                     </FormItem>
-                    {!!publicContext.archived && (
+                    )}
+                    {!!publicContextPermissions.canManagePublicContext && (
+                    <Fragment>
+                      <FormItem>
+                        <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>
+                          <Info tooltip={t('archivedInfo')} iconAfterContent><span className="u-label">{t('common:archived')}</span></Info>
+                        </Checkbox>
+                      </FormItem>
+                      {!!publicContext.archived && (
                       <FormItem label={<Info tooltip={t('archiveRedirectionInfo')} iconAfterContent>{t('archiveRedirectionLabel')}</Info>}>
                         <DocumentSelector documentId={publicContext.archiveRedirectionDocumentId} onChange={handleArchiveRedirectionDocumentIdChange} />
                       </FormItem>
+                      )}
+                      <FormItem>
+                        <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
+                          <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
+                        </Checkbox>
+                      </FormItem>
+                      <FormItem label={<Info tooltip={t('reviewInfo')} iconAfterContent>{t('review')}</Info>}>
+                        <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
+                      </FormItem>
+                    </Fragment>
                     )}
-                    <FormItem>
-                      <Checkbox checked={publicContext.verified} onChange={handleVerifiedChange}>
-                        <Info tooltip={t('verifiedInfo')} iconAfterContent><span className="u-label">{t('verified')}</span></Info>
-                      </Checkbox>
-                    </FormItem>
-                    <FormItem label={<Info tooltip={t('reviewInfo')} iconAfterContent>{t('review')}</Info>}>
-                      <NeverScrollingTextArea value={publicContext.review} onChange={handleReviewChange} />
-                    </FormItem>
                   </Fragment>
-                )}
-              </CollapsePanel>
-            </Collapse>
+                )
+              }]}
+              />
           )}
           {!!isDocInRoomContext && (
             <Fragment>

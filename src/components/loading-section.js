@@ -7,7 +7,7 @@ function LoadingSection() {
 
   return (
     <div className="LoadingSection">
-      <Spin tip={t('messageTitle')} size="large" />
+      <Spin tip={t('messageTitle')} size="large">&nbsp;</Spin>
     </div>
   );
 }

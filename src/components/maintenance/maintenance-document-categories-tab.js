@@ -23,8 +23,6 @@ import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'reac
 import DocumentCategoryApiClient from '../../api-clients/document-category-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
 
-const { Panel } = Collapse;
-
 function getDefaultMetadataModalState() {
   return {
     isOpen: false,
@@ -184,7 +182,7 @@ function MaintenanceDocumentCategoriesTab() {
   };
 
   const renderDocumentCategory = documentCategory => {
-    const header = (
+    const label = (
       <DocumentCategoryDisplay documentCategory={documentCategory} />
     );
 
@@ -205,43 +203,46 @@ function MaintenanceDocumentCategoriesTab() {
     );
 
     return (
-      <Collapse className="MaintenanceDocumentCategoriesTab-categoryCollapse" key={documentCategory._id}>
-        <Panel
-          className="MaintenanceDocumentCategoriesTab-categoryPanel"
-          key={documentCategory._id}
-          header={header}
-          extra={extra}
-          >
-          <div className="MaintenanceDocumentCategoriesTab-categoryDetails">
-            {!!documentCategory.description && (
+      <Collapse
+        key={documentCategory._id}
+        className="MaintenanceDocumentCategoriesTab-categoryCollapse"
+        items={[{
+          label,
+          extra,
+          key: documentCategory._id,
+          className: 'MaintenanceDocumentCategoriesTab-categoryPanel',
+          children: (
+            <div className="MaintenanceDocumentCategoriesTab-categoryDetails">
+              {!!documentCategory.description && (
               <div className="MaintenanceDocumentCategoriesTab-categoryDescription">
                 <Markdown>
                   {documentCategory.description}
                 </Markdown>
               </div>
-            )}
+              )}
 
-            <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
-              {t('common:documentCategoryDocumentListHeader')}
-            </div>
-            {renderDocuments(documentCategory)}
-
-            <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
-              <div>
-                <div>
-                  <span>{`${t('common:createdOnDateBy', { date: formatDate(documentCategory.createdOn) })} `}</span>
-                  <a href={routes.getUserProfileUrl(documentCategory.createdBy._id)}>{documentCategory.createdBy.displayName}</a>
-                </div>
-                <div>
-                  <span>{`${t('common:updatedOnDateBy', { date: formatDate(documentCategory.updatedOn) })} `}</span>
-                  <a href={routes.getUserProfileUrl(documentCategory.updatedBy._id)}>{documentCategory.updatedBy.displayName}</a>
-                </div>
+              <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
+                {t('common:documentCategoryDocumentListHeader')}
               </div>
-              <DocumentCategoryDisplay bordered asLink documentCategory={documentCategory} />
+              {renderDocuments(documentCategory)}
+
+              <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
+                <div>
+                  <div>
+                    <span>{`${t('common:createdOnDateBy', { date: formatDate(documentCategory.createdOn) })} `}</span>
+                    <a href={routes.getUserProfileUrl(documentCategory.createdBy._id)}>{documentCategory.createdBy.displayName}</a>
+                  </div>
+                  <div>
+                    <span>{`${t('common:updatedOnDateBy', { date: formatDate(documentCategory.updatedOn) })} `}</span>
+                    <a href={routes.getUserProfileUrl(documentCategory.updatedBy._id)}>{documentCategory.updatedBy.displayName}</a>
+                  </div>
+                </div>
+                <DocumentCategoryDisplay bordered asLink documentCategory={documentCategory} />
+              </div>
             </div>
-          </div>
-        </Panel>
-      </Collapse>
+          )
+        }]}
+        />
     );
   };
 
