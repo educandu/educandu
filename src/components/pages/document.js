@@ -1020,7 +1020,7 @@ function Document({ initialState, PageTemplate }) {
         >
         {t('common:editMetadata')}
       </Button>
-      <div>
+      <div className='DocumentPage-focusHeaderButtonGroup'>
         <Button
           type="primary"
           loading={isSaving}
