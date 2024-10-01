@@ -13,10 +13,10 @@ import PluginRegistry from '../../plugins/plugin-registry.js';
 import AnnouncementSettings from './announcement-settings.js';
 import { DASHBOARD_TAB_KEY } from '../../domain/constants.js';
 import HomepageTagsSettings from './homepage-tags-settings.js';
-import React, { useState, useCallback, useEffect } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
 import HomepageDocumentsSettings from './homepage-documents-settings.js';
+import React, { useState, useCallback, useEffect, Fragment } from 'react';
 import DashboardHelpLinksSettings from './dashboard-help-links-settings.js';
 import HomepageTrustLogosSettings from './homepage-trust-logos-settings.js';
 import HomepagePresentationSettings from './homepage-presentation-settings.js';
@@ -152,155 +152,253 @@ function AdminSettingsTab({ onDirtyStateChange }) {
   return (
     <div className="AdminSettingsTab">
       <Spin size="large" spinning={isLoading} delay={500}>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('announcementHeader')} key="panel">
-            <div className="AdminSettingsTab-collapseInfo">{t('announcementInfo')}</div>
-            <AnnouncementSettings
-              announcement={settings.announcement}
-              onChange={handleAnnouncementChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('consentHeader')} key="consent">
-            <div className="AdminSettingsTab-collapseInfo">{t('consentInfo')}</div>
-            <MarkdownSettingInSupportedLanguages
-              settingValue={settings.consentText}
-              onChange={handleConsentTextChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('documentCategoriesPageHeader')} key="documentCategories">
-            <div className="AdminSettingsTab-collapseInfo">{t('documentCategoriesPageInfo')}</div>
-            <SpecialPageSettings
-              settings={settings.documentCategoriesPage}
-              onChange={handleDocumentCategoriesPageChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('helpPageHeader')} key="helpPage">
-            <div className="AdminSettingsTab-collapseInfo">{t('helpPageInfo')}</div>
-            <SpecialPageSettings
-              settings={settings.helpPage}
-              onChange={handleHelpPageChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('termsPageHeader')} key="termsPage">
-            <div className="AdminSettingsTab-collapseInfo">{t('termsPageInfo')}</div>
-            <SpecialPageSettings
-              settings={settings.termsPage}
-              onChange={handleTermsPageChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('footerLinksHeader')} key="footerLinks">
-            <div className="AdminSettingsTab-collapseInfo">{t('footerLinksInfo')}</div>
-            <FooterLinksSettings
-              footerLinks={settings.footerLinks}
-              onChange={handleFooterLinksChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('homepageTagsHeader')} key="homepageTags">
-            <div className="AdminSettingsTab-collapseInfo">{t('homepageTagsInfo')}</div>
-            <HomepageTagsSettings
-              tags={settings.homepageTags}
-              onChange={handleHomepageTagsChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('homepageDocumentsHeader')} key="homepageDocuments">
-            <div className="AdminSettingsTab-collapseInfo">{t('homepageDocumentsInfo')}</div>
-            <HomepageDocumentsSettings
-              documentIds={settings.homepageDocuments}
-              onChange={handleHomepageDocumentsChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('homepagePresentationHeader')} key="homepagePresentation">
-            <div className="AdminSettingsTab-collapseInfo">{t('homepagePresentationInfo')}</div>
-            <HomepagePresentationSettings
-              settings={settings.homepagePresentation}
-              onChange={handleHomepagePresentationChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('homepageTrustLogosHeader')} key="homepageTrustLogos">
-            <div className="AdminSettingsTab-collapseInfo">{t('homepageTrustLogosInfo')}</div>
-            <HomepageTrustLogosSettings
-              settings={settings.homepageTrustLogos}
-              onChange={handleHomepageTrustLogosChange}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('dashboardHelpLinksHeader')} key="dashboardHelpLinks">
-            <div className="AdminSettingsTab-collapseInfo">{t('dashboardHelpLinksInfo')}</div>
-            <Tabs
-              type="line"
-              size="small"
-              items={Object.values(DASHBOARD_TAB_KEY).map(tabKey => ({
-                key: tabKey,
-                label: t(`common:dashboardTab_${tabKey}`),
-                children: (
-                  <div className="AdminSettingsTab-collapseTabPane">
-                    <DashboardHelpLinksSettings
-                      settings={settings.dashboardHelpLinks?.[tabKey]}
-                      onChange={value => handleDashboardHelpLinksChange(tabKey, value)}
-                      />
-                  </div>
-                )
-              }))}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('templateDocumentHeader')} key="templateDocument">
-            <div className="AdminSettingsTab-collapseInfo">{t('templateDocumentInfo')}</div>
-            <div className="AdminSettingsTab-templateDocument" >
-              <DocumentSelector
-                documentId={settings.templateDocument?.documentId}
-                onChange={handleTemplateDocumentChange}
-                />
-            </div>
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('pluginsHelpTextsHeader')} key="plugisHelpTexts">
-            <div className="AdminSettingsTab-collapseInfo">{t('pluginsHelpTextsInfo')}</div>
-            <Tabs
-              type="line"
-              size="small"
-              items={pluginRegistry.getAllRegisteredPlugins().map(plugin => ({
-                key: plugin.name,
-                label: plugin.info.getDisplayName(t),
-                children: (
-                  <div className="AdminSettingsTab-collapseTabPane">
-                    <MarkdownSettingInSupportedLanguages
-                      settingValue={settings.pluginsHelpTexts?.[plugin.name]}
-                      onChange={value => handlePluginHelpTextChange(plugin.name, value)}
-                      />
-                  </div>
-                )
-              }))}
-              />
-          </Collapse.Panel>
-        </Collapse>
-        <Collapse className="AdminSettingsTab-collapse">
-          <Collapse.Panel header={t('licenseHeader')} key="license">
-            <div className="AdminSettingsTab-collapseInfo">{t('licenseInfo')}</div>
-            <LicenseSettings license={settings.license} onChange={handleLicenseChange} />
-          </Collapse.Panel>
-        </Collapse>
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'panel',
+            label: t('announcementHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('announcementInfo')}</div>
+                <AnnouncementSettings
+                  announcement={settings.announcement}
+                  onChange={handleAnnouncementChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'consent',
+            label: t('consentHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('consentInfo')}</div>
+                <MarkdownSettingInSupportedLanguages
+                  settingValue={settings.consentText}
+                  onChange={handleConsentTextChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'documentCategories',
+            label: t('documentCategoriesPageHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('documentCategoriesPageInfo')}</div>
+                <SpecialPageSettings
+                  settings={settings.documentCategoriesPage}
+                  onChange={handleDocumentCategoriesPageChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'helpPage',
+            label: t('helpPageHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('helpPageInfo')}</div>
+                <SpecialPageSettings
+                  settings={settings.helpPage}
+                  onChange={handleHelpPageChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'termsPage',
+            label: t('termsPageHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('termsPageInfo')}</div>
+                <SpecialPageSettings
+                  settings={settings.termsPage}
+                  onChange={handleTermsPageChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'footerLinks',
+            label: t('footerLinksHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('footerLinksInfo')}</div>
+                <FooterLinksSettings
+                  footerLinks={settings.footerLinks}
+                  onChange={handleFooterLinksChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'homepageTags',
+            label: t('homepageTagsHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('homepageTagsInfo')}</div>
+                <HomepageTagsSettings
+                  tags={settings.homepageTags}
+                  onChange={handleHomepageTagsChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'homepageDocuments',
+            label: t('homepageDocumentsHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('homepageDocumentsInfo')}</div>
+                <HomepageDocumentsSettings
+                  documentIds={settings.homepageDocuments}
+                  onChange={handleHomepageDocumentsChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'homepagePresentation',
+            label: t('homepagePresentationHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('homepagePresentationInfo')}</div>
+                <HomepagePresentationSettings
+                  settings={settings.homepagePresentation}
+                  onChange={handleHomepagePresentationChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'homepageTrustLogos',
+            label: t('homepageTrustLogosHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('homepageTrustLogosInfo')}</div>
+                <HomepageTrustLogosSettings
+                  settings={settings.homepageTrustLogos}
+                  onChange={handleHomepageTrustLogosChange}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'dashboardHelpLinks',
+            label: t('dashboardHelpLinksHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('dashboardHelpLinksInfo')}</div>
+                <Tabs
+                  type="line"
+                  size="small"
+                  items={Object.values(DASHBOARD_TAB_KEY).map(tabKey => ({
+                    key: tabKey,
+                    label: t(`common:dashboardTab_${tabKey}`),
+                    children: (
+                      <div className="AdminSettingsTab-collapseTabPane">
+                        <DashboardHelpLinksSettings
+                          settings={settings.dashboardHelpLinks?.[tabKey]}
+                          onChange={value => handleDashboardHelpLinksChange(tabKey, value)}
+                          />
+                      </div>
+                    )
+                  }))}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'templateDocument',
+            label: t('templateDocumentHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('templateDocumentInfo')}</div>
+                <div className="AdminSettingsTab-templateDocument" >
+                  <DocumentSelector
+                    documentId={settings.templateDocument?.documentId}
+                    onChange={handleTemplateDocumentChange}
+                    />
+                </div>
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'plugisHelpTexts',
+            label: t('pluginsHelpTextsHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('pluginsHelpTextsInfo')}</div>
+                <Tabs
+                  type="line"
+                  size="small"
+                  items={pluginRegistry.getAllRegisteredPlugins().map(plugin => ({
+                    key: plugin.name,
+                    label: plugin.info.getDisplayName(t),
+                    children: (
+                      <div className="AdminSettingsTab-collapseTabPane">
+                        <MarkdownSettingInSupportedLanguages
+                          settingValue={settings.pluginsHelpTexts?.[plugin.name]}
+                          onChange={value => handlePluginHelpTextChange(plugin.name, value)}
+                          />
+                      </div>
+                    )
+                  }))}
+                  />
+              </Fragment>
+            )
+          }]}
+          />
+        <Collapse
+          className="AdminSettingsTab-collapse"
+          items={[{
+            key: 'license',
+            label: t('licenseHeader'),
+            children: (
+              <Fragment>
+                <div className="AdminSettingsTab-collapseInfo">{t('licenseInfo')}</div>
+                <LicenseSettings license={settings.license} onChange={handleLicenseChange} />
+              </Fragment>
+            )
+          }]}
+          />
         <Button
           type="primary"
           loading={isSaving}

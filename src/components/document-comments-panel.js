@@ -21,8 +21,6 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { groupDocumentCommentsByTopic } from '../utils/document-comment-utils.js';
 import { maxDocumentCommentTextLength, maxDocumentCommentTopicLength } from '../domain/validation-constants.js';
 
-const { Panel } = Collapse;
-
 const NEW_TOPIC_PANEL_KEY = '__NEW_TOPIC__';
 
 function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentPostClick, onTopicChangeClick, onDocumentCommentDeleteClick }) {
@@ -58,9 +56,9 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
     setShowEmptyState(!documentComments.length);
   }, [documentComments, isLoading]);
 
-  const handleCollapseChange = expandedPanelTopics => {
+  const handleCollapseChange = panelTopic => {
     setCurrentComment('');
-    setExpandedTopic(expandedPanelTopics[0] || null);
+    setExpandedTopic(panelTopic);
   };
 
   const handlePostCommentClick = async () => {
@@ -255,55 +253,47 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
     );
   };
 
-  const renderTopicPanel = topic => {
-    return (
-      <Panel
-        key={topic}
-        className="DocumentCommentsPanel-topicPanel"
-        header={renderTopicHeader(topic)}
-        extra={renderEditTopicButton(topic)}
-        >
-        {commentGroups[topic].map(renderComment)}
-        {renderNewCommentSection(topic)}
-      </Panel>
-    );
-  };
-
-  const renderNewTopicPanel = () => {
-    if (!hasUserPermission(user, permissions.CREATE_CONTENT)) {
-      return null;
-    }
-    const isPostingDisabled = currentComment.trim().length === 0 || newTopic.trim().length === 0;
-    const showAsLoading = !isPostingDisabled && isSavingComment;
-    return (
-      <Panel
-        key={NEW_TOPIC_PANEL_KEY}
-        className="DocumentCommentsPanel-topicPanel"
-        header={
-          <div className="DocumentCommentsPanel-topicHeader">
-            <div className="DocumentCommentsPanel-topicInputPrefix">{t('newTopicHeaderPrefix')}:</div>
-            <div className="DocumentCommentsPanel-topicInput" onClick={handleTopicInputClick}>
-              <MarkdownInput
-                inline
-                autoFocus
-                value={newTopic}
-                readOnly={showAsLoading}
-                onChange={handleNewTopicChange}
-                maxLength={maxDocumentCommentTopicLength}
-                placeholder={t('newTopicPlaceholder')}
-                />
-            </div>
-          </div>
-        }
-        >
-        {renderNewCommentSection(NEW_TOPIC_PANEL_KEY)}
-      </Panel>
-    );
-  };
-
   const topics = Object.keys(commentGroups);
   const shouldShowNewTopicPanel = expandedTopic === NEW_TOPIC_PANEL_KEY;
   const userCanWriteComments = hasUserPermission(user, permissions.CREATE_CONTENT);
+
+  const collapseItems =  topics.map(topic => ({
+    key: topic,
+    label: renderTopicHeader(topic),
+    extra: renderEditTopicButton(topic),
+    children: (
+      <Fragment>
+        {commentGroups[topic].map(renderComment)}
+        {renderNewCommentSection(topic)}
+      </Fragment>
+    )
+  }));
+
+  if (!!userCanWriteComments && !!shouldShowNewTopicPanel && !!hasUserPermission(user, permissions.CREATE_CONTENT)) {
+    const isPostingDisabled = currentComment.trim().length === 0 || newTopic.trim().length === 0;
+    const showAsLoading = !isPostingDisabled && isSavingComment;
+
+    collapseItems.push({
+      key: NEW_TOPIC_PANEL_KEY,
+      label: (
+        <div className="DocumentCommentsPanel-topicHeader">
+          <div className="DocumentCommentsPanel-topicInputPrefix">{t('newTopicHeaderPrefix')}:</div>
+          <div className="DocumentCommentsPanel-topicInput" onClick={handleTopicInputClick}>
+            <MarkdownInput
+              inline
+              autoFocus
+              value={newTopic}
+              readOnly={showAsLoading}
+              onChange={handleNewTopicChange}
+              maxLength={maxDocumentCommentTopicLength}
+              placeholder={t('newTopicPlaceholder')}
+              />
+          </div>
+        </div>
+      ),
+      children: renderNewCommentSection(NEW_TOPIC_PANEL_KEY)
+    });
+  }
 
   return (
     <div className="DocumentCommentsPanel">
@@ -326,10 +316,13 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
 
       {!isLoading && !showEmptyState && (
         <Fragment>
-          <Collapse accordion onChange={handleCollapseChange} className="DocumentCommentsPanel" activeKey={expandedTopic}>
-            {topics.map(renderTopicPanel)}
-            {!!userCanWriteComments && !!shouldShowNewTopicPanel && renderNewTopicPanel()}
-          </Collapse>
+          <Collapse
+            accordion
+            onChange={handleCollapseChange}
+            className="DocumentCommentsPanel"
+            activeKey={expandedTopic}
+            items={collapseItems}
+            />
           {!!userCanWriteComments && !shouldShowNewTopicPanel && (
             <Button
               type="primary"
