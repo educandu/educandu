@@ -8,7 +8,7 @@
     "./*": "./dist/*"
   },
   "engines": {
-    "node": "^18.0.0"
+    "node": "^20.0.0"
   },
   "keywords": [
     "educandu"
@@ -113,10 +113,9 @@
     "unidiff": "^1.0.4"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "^13.0.0",
-    "@educandu/eslint-config": "^2.2.1",
-    "@educandu/node-jsx-loader": "^3.2.0",
-    "@educandu/rooms-auth-lambda": "^6.2.0",
+    "@educandu/dev-tools": "^14.0.0",
+    "@educandu/node-jsx-loader": "^4.0.0",
+    "@educandu/rooms-auth-lambda": "^6.2.1",
     "@vitest/coverage-v8": "^1.0.4",
     "del": "^7.1.0",
     "eslint": "^8.55.0",
@@ -131,6 +130,6 @@
     "vitest": "^1.0.4"
   },
   "resolutions": {
-    "**/gl": "^6.0.2"
+    "**/gl": "8.0.2"
   }
 }

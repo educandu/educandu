@@ -19,7 +19,7 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v3.5.1
         with:
-          node-version: "18.12.1"
+          node-version: "20.17.0"
           cache: "yarn"
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
