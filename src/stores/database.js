@@ -74,7 +74,7 @@ class Database {
 
   async connect() {
     logger.info('Trying to connect to MongoDB');
-    const mongoOptions = { useUnifiedTopology: true, serverApi: ServerApiVersion.v1 };
+    const mongoOptions = { serverApi: ServerApiVersion.v1 };
     this._mongoClient = await MongoClient.connect(this._connectionString, mongoOptions);
     logger.info('Successfully connected to MongoDB');
     this._db = this._mongoClient.db();
