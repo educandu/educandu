@@ -31,6 +31,8 @@ let isInWatchMode = false;
 let currentCdnProxy = null;
 let currentAppBuildContext = null;
 
+process.env.NODE_ENV ||= 'development';
+
 const testAppEnv = {
   TEST_APP_APP_ROOT_URL: 'http://localhost:3000',
   TEST_APP_WEB_CONNECTION_STRING: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
@@ -134,6 +136,7 @@ export async function buildTestAppJs() {
       outdir: './test-app/dist',
       minify: !!cliArgs.optimize,
       incremental: isInWatchMode,
+      environment: 'development',
       inject: ['./test-app/src/polyfills.js'],
       metaFilePath: './test-app/dist/meta.json'
     });
@@ -233,7 +236,7 @@ export async function startServer() {
   }
 
   const finalTestAppEnv = {
-    NODE_ENV: 'development',
+    NODE_ENV: process.env.NODE_ENV,
     ...testAppEnv,
     TEST_APP_ENABLE_SAML_AUTH: (!!tunnel).toString(),
     TEST_APP_SAML_AUTH_DECRYPTION: tunnel ? tunnelWebsiteSamlAuthDecryption : String(null),
@@ -244,7 +247,7 @@ export async function startServer() {
   currentCdnProxy = new NodeProcess({
     script: 'node_modules/@educandu/rooms-auth-lambda/src/dev-server/run.js',
     env: {
-      NODE_ENV: 'development',
+      NODE_ENV: process.env.NODE_ENV,
       PORT: 10000,
       WEBSITE_BASE_URL: tunnel ? `https://${tunnelWebsiteDomain}` : 'http://localhost:3000',
       CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn',
