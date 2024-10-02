@@ -21,7 +21,7 @@
     "url": "https://github.com/educandu/educandu"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.5.1",
+    "@ant-design/icons": "5.5.1",
     "@aws-sdk/client-s3": "^3.470.0",
     "@aws-sdk/lib-storage": "^3.470.0",
     "@node-saml/passport-saml": "^4.0.4",
@@ -30,7 +30,7 @@
     "@unly/iso3166-1": "^1.0.2",
     "abcjs": "^6.2.3",
     "accept-language-parser": "^1.5.0",
-    "antd": "^5.21.2",
+    "antd": "5.21.2",
     "async": "^3.2.4",
     "aws-sdk": "^2.1345.0",
     "axios": "^1.6.2",
@@ -87,7 +87,7 @@
     "plyr": "^3.7.8",
     "pretty-bytes": "^6.1.1",
     "prop-types": "^15.8.1",
-    "react": "^18.2.0",
+    "react": "~18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-beforeunload": "^2.6.0",
     "react-color": "^2.19.3",
