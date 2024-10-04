@@ -407,7 +407,7 @@ class DocumentService {
   async hardDeleteSection({ documentId, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
     let lock;
 
-    if (!hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
+    if (!hasUserPermission(user, permissions.DELETE_PUBLIC_CONTENT)) {
       throw new Forbidden('User is not allowed to delete document sections');
     }
 

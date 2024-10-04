@@ -342,6 +342,7 @@ function ContentManagementDocumentRequestsTab() {
           <div className="ContentManagementDocumentRequestsTab-controlsColumnFilters">
             <RangePicker
               allowClear
+              allowEmpty
               format={dateFormat}
               disabled={fetchingData}
               disabledDate={determineDisabledDate}

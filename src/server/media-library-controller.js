@@ -164,7 +164,7 @@ class MediaLibraryController {
 
     router.delete(
       '/api/v1/media-library/items/:mediaLibraryItemId',
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.DELETE_PUBLIC_CONTENT),
       validateParams(mediaLibraryItemIdParamsSchema),
       (req, res) => this.handleDeleteMediaLibraryItem(req, res)
     );
@@ -172,7 +172,7 @@ class MediaLibraryController {
     router.delete(
       '/api/v1/media-library/items',
       jsonParser,
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.DELETE_PUBLIC_CONTENT),
       validateBody(mediaLibraryBulkDeleteBodySchema),
       (req, res) => this.handleBulkDeleteMediaLibraryItems(req, res)
     );

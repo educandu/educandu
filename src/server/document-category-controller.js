@@ -137,14 +137,14 @@ class DocumentCategoryController {
   registerApi(router) {
     router.get(
       '/api/v1/document-categories',
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.MANAGE_DOCUMENT_CATEGORIES),
       (req, res) => this.handleGetDocumentCategories(req, res)
     );
 
     router.post(
       '/api/v1/document-categories',
       jsonParser,
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.MANAGE_DOCUMENT_CATEGORIES),
       validateBody(postDocumentCategoryBodySchema),
       (req, res) => this.handlePostDocumentCategory(req, res)
     );
@@ -152,7 +152,7 @@ class DocumentCategoryController {
     router.patch(
       '/api/v1/document-categories/:documentCategoryId',
       jsonParser,
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.MANAGE_DOCUMENT_CATEGORIES),
       validateParams(documentCategoryIdParamsSchema),
       validateBody(postDocumentCategoryBodySchema),
       (req, res) => this.handlePatchDocumentCategory(req, res)
@@ -161,7 +161,7 @@ class DocumentCategoryController {
     router.patch(
       '/api/v1/document-categories/:documentCategoryId/documents',
       jsonParser,
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.MANAGE_DOCUMENT_CATEGORIES),
       validateParams(documentCategoryIdParamsSchema),
       validateBody(patchDocumentCategoryDocumentsBodySchema),
       (req, res) => this.handlePatchDocumentCategoryDocuments(req, res)
@@ -169,7 +169,7 @@ class DocumentCategoryController {
 
     router.delete(
       '/api/v1/document-categories/:documentCategoryId',
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.MANAGE_DOCUMENT_CATEGORIES),
       validateParams(documentCategoryIdParamsSchema),
       (req, res) => this.handleDeleteDocumentCategory(req, res)
     );

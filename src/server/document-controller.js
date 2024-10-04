@@ -440,7 +440,7 @@ class DocumentController {
     router.delete(
       '/api/v1/docs/sections',
       jsonParser,
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.DELETE_PUBLIC_CONTENT),
       validateBody(hardDeleteSectionBodySchema),
       (req, res) => this.handleDeleteDocSection(req, res)
     );
