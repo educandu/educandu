@@ -1,10 +1,12 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
+import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import React, { useMemo, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { TAB } from '../content-management/constants.js';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { CategoryIcon, ClickIcon, MediaLibraryIcon, TagIcon } from '../icons/icons.js';
 import ContentManagementTagsTab from '../content-management/content-management-tags-tab.js';
 import ContentManagementDocumentsTab from '../content-management/content-management-documents-tab.js';
@@ -16,6 +18,7 @@ const determineTab = query => Object.values(TAB)
   .find(val => val === query) || Object.keys(TAB)[0];
 
 function ContentManagement({ PageTemplate }) {
+  const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('contentManagement');
   const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
@@ -29,7 +32,8 @@ function ContentManagement({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <ContentManagementDocumentsTab />
         </div>
-      )
+      ),
+      showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
     },
     {
       key: TAB.mediaLibrary,
@@ -39,7 +43,8 @@ function ContentManagement({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <ContentManagementMediaLibraryTab />
         </div>
-      )
+      ),
+      showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
     },
     {
       key: TAB.tags,
@@ -49,7 +54,8 @@ function ContentManagement({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <ContentManagementTagsTab />
         </div>
-      )
+      ),
+      showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
     },
     {
       key: TAB.documentRequests,
@@ -59,7 +65,8 @@ function ContentManagement({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <ContentManagementDocumentRequestsTab />
         </div>
-      )
+      ),
+      showWhen: hasUserPermission(user, permissions.VIEW_STATISTICS)
     },
     {
       key: TAB.documentCategories,
@@ -69,9 +76,10 @@ function ContentManagement({ PageTemplate }) {
         <div className="Tabs-tabPane">
           <ContentManagementDocumentCategoriesTab />
         </div>
-      )
+      ),
+      showWhen: hasUserPermission(user, permissions.MANAGE_DOCUMENT_CATEGORIES)
     }
-  ], [t]);
+  ].filter(tabItem => tabItem.showWhen), [t, user]);
 
   return (
     <PageTemplate>

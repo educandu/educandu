@@ -33,13 +33,7 @@ const editorPermissions = [
     ...userPermissions,
     ...accreditedAuthorPermissions,
     VIEW_USERS,
-    VIEW_STATISTICS,
-    MANAGE_PUBLIC_CONTENT,
-    DELETE_PUBLIC_CONTENT,
-    MANAGE_ASSIGNED_EDITORS,
-    MANAGE_PROTECTED_CONTENT,
-    MANAGE_DOCUMENT_CATEGORIES,
-    UPLOAD_WITHOUT_SIZE_RESTRICTION
+    MANAGE_PUBLIC_CONTENT
   ])
 ];
 
@@ -47,7 +41,13 @@ const maintainerPermissions = [
   ...new Set([
     ...userPermissions,
     ...accreditedAuthorPermissions,
-    ...editorPermissions
+    ...editorPermissions,
+    VIEW_STATISTICS,
+    DELETE_PUBLIC_CONTENT,
+    MANAGE_ASSIGNED_EDITORS,
+    MANAGE_PROTECTED_CONTENT,
+    MANAGE_DOCUMENT_CATEGORIES,
+    UPLOAD_WITHOUT_SIZE_RESTRICTION
   ])
 ];
 
