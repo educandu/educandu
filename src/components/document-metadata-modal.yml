@@ -69,8 +69,8 @@ documentMetadataModal:
     en: Protected documents can only be edited by a maintainer or allowed editor.
     de: Geschützte Dokumente können nur von einem Maintainer oder zugelassenem Bearbeiter bearbeitet werden.
   archivedInfo:
-    en: Archived documents cannot be discovered through search or accessed by normal users. Maintainers can still access archived documents.
-    de: Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar.
+    en: Archived documents cannot be discovered through search or accessed by normal users. Editors can still access archived documents.
+    de: Archivierte Dokumente können nicht von normalen Benutzern gesucht oder aufgerufen werden. Redakteure können archivierte Dokumente nach wie vor aufrufen.
   verifiedInfo:
     en: You can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.
     de: Du kannst bestätigen, dass das Dokument den Qualitätsanforderungen entspricht. Überprüfte Dokumente haben eine höhere Relevanz auf der Suchseite.
@@ -98,9 +98,9 @@ documentMetadataModal:
   noAvailableRooms:
     en: No available rooms
     de: Keine Räume verfügbar
-  maintainerSettingsHeader:
-    en: Maintainer settings
-    de: Maintainer-Einstellungen
+  extendedSettingsHeader:
+    en: Extended settings
+    de: Erweiterte Einstellungen
   draft:
     en: Mark as draft
     de: Als Entwurf markieren

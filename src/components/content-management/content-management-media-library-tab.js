@@ -5,6 +5,7 @@ import Markdown from '../markdown.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
+import { useUser } from '../user-context.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
@@ -23,6 +24,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import { Button, Collapse, message, Table, Radio, DatePicker } from 'antd';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { confirmBulkDeleteMediaItems, confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
@@ -88,6 +90,7 @@ function filterRows(rows, filter) {
 }
 
 function ContentManagementMediaLibraryTab() {
+  const user = useUser();
   const request = useRequest();
   const { dateFormat } = useDateFormat();
   const { t } = useTranslation('contentManagementMediaLibraryTab');
@@ -296,12 +299,14 @@ function ContentManagementMediaLibraryTab() {
             intent={ACTION_BUTTON_INTENT.default}
             onClick={() => handleEditItemClick(row)}
             />
-          <ActionButton
-            title={t('common:delete')}
-            icon={<DeleteIcon />}
-            intent={ACTION_BUTTON_INTENT.error}
-            onClick={() => handleDeleteItemClick(row)}
-            />
+          {hasUserPermission(user, permissions.DELETE_PUBLIC_CONTENT) && (
+            <ActionButton
+              title={t('common:delete')}
+              icon={<DeleteIcon />}
+              intent={ACTION_BUTTON_INTENT.error}
+              onClick={() => handleDeleteItemClick(row)}
+              />
+          )}
         </ActionButtonGroup>
       </div>
     );

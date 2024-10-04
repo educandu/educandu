@@ -1735,8 +1735,8 @@
   },
   "contentManagement": {
     "pageSubtitle": {
-      "en": "Exclusive for maintainer roles.",
-      "de": "Ausschließlich für Maintainer-Rollen."
+      "en": "Exclusive for editor and maintainer roles.",
+      "de": "Ausschließlich für Redakteur- und Maintainer-Rollen."
     },
     "documentsTabTitle": {
       "en": "Documents",
@@ -2413,8 +2413,8 @@
       "de": "Geschützte Dokumente können nur von einem Maintainer oder zugelassenem Bearbeiter bearbeitet werden."
     },
     "archivedInfo": {
-      "en": "Archived documents cannot be discovered through search or accessed by normal users. Maintainers can still access archived documents.",
-      "de": "Archivierte Dokumente können nicht bearbeitet werden und sind nicht suchbar."
+      "en": "Archived documents cannot be discovered through search or accessed by normal users. Editors can still access archived documents.",
+      "de": "Archivierte Dokumente können nicht von normalen Benutzern gesucht oder aufgerufen werden. Redakteure können archivierte Dokumente nach wie vor aufrufen."
     },
     "verifiedInfo": {
       "en": "You can confirm that the document meets the quality requirements. Verified documents have higher relevance in the search results.",
@@ -2452,9 +2452,9 @@
       "en": "No available rooms",
       "de": "Keine Räume verfügbar"
     },
-    "maintainerSettingsHeader": {
-      "en": "Maintainer settings",
-      "de": "Maintainer-Einstellungen"
+    "extendedSettingsHeader": {
+      "en": "Extended settings",
+      "de": "Erweiterte Einstellungen"
     },
     "draft": {
       "en": "Mark as draft",
@@ -4999,8 +4999,8 @@
       "de": "Rollen in {appName}"
     },
     "modalContentMarkdown": {
-      "en": "# User\n\nUsers can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.\n\n# Accredited Author\n\nAccredited authors can create protected public documents with exclusive editing permissions.\n\n# Editor\n\nsee: Maintainer\n\n# Maintainer\n\nMaintainers have extended content management permissions over public content and can curate documents and the media center resources.\\\nThese permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media center resources.\n\n# Administrator\n\nAdministrators can configure global settings, manage user accounts including storage plans, as well as execute technical maintenance tasks.\n\n***\n\n*Roles in {appName} are cumulative, meaning that each consecutive role in this list has all the permissions of the previous role and adds more permissions on top.*\n",
-      "de": "# Benutzer\n\nBenutzer können zu den Inhalten der Plattform beitragen (mit Ausnahme von geschützten oder archivierten Dokumenten), aber sie können lediglich ihre eigenen privaten Inhalte löschen.\n\n# Akkreditierter Autor\n\nAkkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.\n\n# Redakteur\n\nsiehe: Maintainer\n\n# Maintainer\n\nMaintainer haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen.\\\nDiese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Mediathek.\n\n# Administrator\n\nAdministratoren können globale Einstellungen konfigurieren, Benutzerkonten inklusive Speicherpläne verwalten, sowie technische Instandhaltungstasks ausführen.\n\n***\n\n*Rollen in {appName} sind kumulativ, d.h. dass jede aufeinander folgende Rolle in dieser Liste jeweils sowohl alle Berechtigungen der\nvorhergehenden Rolle als auch darüber hinausgehende eigene Berechtigungen beinhaltet.*\n"
+      "en": "# User\n\nUsers can contribute to the platform's content, with the restriction of protected or archived documents. They can only delete own private content.\n\n# Accredited Author\n\nAccredited authors can create protected public documents with exclusive editing permissions.\n\n# Editor\n\nEditors have extended content management permissions over public content and can curate documents and the media center resources. These permissions include reviewing, approving and archiving of public documents.\n\n# Maintainer\n\nMaintainers have additional content management permissions over public content extending to protecting documents and assigning exclusive document editors. They can also execute irreversible operations like deleting document sections, comments as well as media center resources.\n\n# Administrator\n\nAdministrators can configure global settings, manage user accounts including storage plans, as well as execute technical maintenance tasks.\n\n***\n\n*Roles in {appName} are cumulative, meaning that each consecutive role in this list has all the permissions of the previous role and adds more permissions on top.*\n",
+      "de": "# Benutzer\n\nBenutzer können zu den Inhalten der Plattform beitragen (mit Ausnahme von geschützten oder archivierten Dokumenten), aber sie können lediglich ihre eigenen privaten Inhalte löschen.\n\n# Akkreditierter Autor\n\nAkkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.\n\n# Redakteur\n\nRedakteure haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen. Diese Berechtigungen beinhalten das Reviewing, Bestätigen und Archivieren von öffentlichen Dokumenten.\n\n# Maintainer\n\nMaintainer haben zusätzliche Berechtigungen in der Verwaltung öffentlicher Inhalte wie das Schützen von Dokumenten und die Zuweisung zugelassener Dokument-Bearbeiter. Sie können auch unwiderrufliche Operationen wie das Löschen von Dokument-Abschnitten, Kommentaren oder Mediathek-Ressourcen durchführen.\n\n# Administrator\n\nAdministratoren können globale Einstellungen konfigurieren, Benutzerkonten inklusive Speicherpläne verwalten, sowie technische Instandhaltungstasks ausführen.\n\n***\n\n*Rollen in {appName} sind kumulativ, d.h. dass jede aufeinander folgende Rolle in dieser Liste jeweils sowohl alle Berechtigungen der\nvorhergehenden Rolle als auch darüber hinausgehende eigene Berechtigungen beinhaltet.*\n"
     }
   },
   "userStepsForm": {

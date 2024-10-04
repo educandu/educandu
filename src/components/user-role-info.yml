@@ -14,12 +14,11 @@ userRoleInfo:
 
       # Editor
 
-      see: Maintainer
+      Editors have extended content management permissions over public content and can curate documents and the media center resources. These permissions include reviewing, approving and archiving of public documents.
 
       # Maintainer
 
-      Maintainers have extended content management permissions over public content and can curate documents and the media center resources.\
-      These permissions include reviewing, approving, protecting, archiving or hard-deleting sections of public documents, as well as deleting media center resources.
+      Maintainers have additional content management permissions over public content extending to protecting documents and assigning exclusive document editors. They can also execute irreversible operations like deleting document sections, comments as well as media center resources.
 
       # Administrator
 
@@ -39,12 +38,11 @@ userRoleInfo:
 
       # Redakteur
 
-      siehe: Maintainer
+      Redakteure haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen. Diese Berechtigungen beinhalten das Reviewing, Bestätigen und Archivieren von öffentlichen Dokumenten.
 
       # Maintainer
 
-      Maintainer haben erweiterte Berechtigungen in der Verwaltung öffentlicher Inhalte und können Dokumente und Ressourcen in der Mediathek pflegen.\
-      Diese Berechtigungen beinhalten das Reviewing, Bestätigen, Schützen, Archivieren oder das unwiderrufliche Löschen von Abschnitten von öffentlichen Dokumenten, sowie das Löschen von Ressourcen in der Mediathek.
+      Maintainer haben zusätzliche Berechtigungen in der Verwaltung öffentlicher Inhalte wie das Schützen von Dokumenten und die Zuweisung zugelassener Dokument-Bearbeiter. Sie können auch unwiderrufliche Operationen wie das Löschen von Dokument-Abschnitten, Kommentaren oder Mediathek-Ressourcen durchführen.
 
       # Administrator
 
