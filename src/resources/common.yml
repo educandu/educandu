@@ -720,6 +720,9 @@ common:
   role_accredited-author:
     en: Accred. author
     de: Akkred. Autor
+  role_editor:
+    en: Editor
+    de: Redakteur
   role_maintainer:
     en: Maintainer
     de: Maintainer

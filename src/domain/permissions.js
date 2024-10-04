@@ -23,7 +23,7 @@ const accreditedAuthorPermissions = [
   PROTECT_OWN_PUBLIC_CONTENT
 ];
 
-const maintainerPermissions = [
+const editorPermissions = [
   ...new Set([
     ...userPermissions,
     ...accreditedAuthorPermissions,
@@ -33,10 +33,19 @@ const maintainerPermissions = [
   ])
 ];
 
+const maintainerPermissions = [
+  ...new Set([
+    ...userPermissions,
+    ...accreditedAuthorPermissions,
+    ...editorPermissions
+  ])
+];
+
 const adminPermissions = [
   ...new Set([
     ...userPermissions,
     ...accreditedAuthorPermissions,
+    ...editorPermissions,
     ...maintainerPermissions,
     MANAGE_USERS,
     MANAGE_SETUP,
@@ -48,6 +57,7 @@ const adminPermissions = [
 const permissionsPerRole = {
   [ROLE.user]: userPermissions,
   [ROLE.accreditedAuthor]: accreditedAuthorPermissions,
+  [ROLE.editor]: editorPermissions,
   [ROLE.maintainer]: maintainerPermissions,
   [ROLE.admin]: adminPermissions
 };

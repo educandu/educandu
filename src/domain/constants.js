@@ -1,6 +1,7 @@
 export const ROLE = {
   user: 'user',
   accreditedAuthor: 'accredited-author',
+  editor: 'editor',
   maintainer: 'maintainer',
   admin: 'admin'
 };
