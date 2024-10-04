@@ -40,10 +40,10 @@ const getSanitizedQueryFromRequest = request => {
   return { filter: (query.filter || '').trim() };
 };
 
-function MaintenanceDocumentCategoriesTab() {
+function ContentManagementDocumentCategoriesTab() {
   const request = useRequest();
   const { formatDate } = useDateFormat();
-  const { t } = useTranslation('maintenanceDocumentCategoriesTab');
+  const { t } = useTranslation('contentManagementDocumentCategoriesTab');
   const documentCategoryApiClient = useService(DocumentCategoryApiClient);
 
   const [allDocumentCategories, setAllDocumentCategories] = useState([]);
@@ -67,7 +67,7 @@ function MaintenanceDocumentCategoriesTab() {
 
   useEffect(() => {
     const queryParams = { filter };
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documentCategories, queryParams));
+    history.replaceState(null, '', routes.getContentManagementUrl(TAB.documentCategories, queryParams));
   }, [filter]);
 
   useEffect(() => {
@@ -149,8 +149,8 @@ function MaintenanceDocumentCategoriesTab() {
   const renderDocument = (documentCategory, doc) => {
     const url = routes.getDocUrl({ id: doc._id, slug: doc.slug });
     return (
-      <div key={doc._id} className="MaintenanceDocumentCategoriesTab-categoryDocument">
-        <div key={doc._id} className="MaintenanceDocumentCategoriesTab-categoryDocumentTitle">
+      <div key={doc._id} className="ContentManagementDocumentCategoriesTab-categoryDocument">
+        <div key={doc._id} className="ContentManagementDocumentCategoriesTab-categoryDocumentTitle">
           <a href={url}>{doc.title}</a>
         </div>
         <Tooltip title={t('removeDocumentTooltip', { name: documentCategory.name })}>
@@ -170,7 +170,7 @@ function MaintenanceDocumentCategoriesTab() {
     return (
       <div>
         {documentCategory.documents.map(doc => renderDocument(documentCategory, doc))}
-        <div className="MaintenanceDocumentCategoriesTab-categoryDocumentSelector">
+        <div className="ContentManagementDocumentCategoriesTab-categoryDocumentSelector">
           <DocumentSelector
             useSelectButton
             selectButtonText={t('common:addDocument')}
@@ -187,7 +187,7 @@ function MaintenanceDocumentCategoriesTab() {
     );
 
     const extra = (
-      <div className="MaintenanceDocumentCategoriesTab-categoryPanelButtonsGroup">
+      <div className="ContentManagementDocumentCategoriesTab-categoryPanelButtonsGroup">
         <Button
           icon={<EditIcon />}
           title={t('common:edit')}
@@ -205,28 +205,28 @@ function MaintenanceDocumentCategoriesTab() {
     return (
       <Collapse
         key={documentCategory._id}
-        className="MaintenanceDocumentCategoriesTab-categoryCollapse"
+        className="ContentManagementDocumentCategoriesTab-categoryCollapse"
         items={[{
           label,
           extra,
           key: documentCategory._id,
-          className: 'MaintenanceDocumentCategoriesTab-categoryPanel',
+          className: 'ContentManagementDocumentCategoriesTab-categoryPanel',
           children: (
-            <div className="MaintenanceDocumentCategoriesTab-categoryDetails">
+            <div className="ContentManagementDocumentCategoriesTab-categoryDetails">
               {!!documentCategory.description && (
-              <div className="MaintenanceDocumentCategoriesTab-categoryDescription">
+              <div className="ContentManagementDocumentCategoriesTab-categoryDescription">
                 <Markdown>
                   {documentCategory.description}
                 </Markdown>
               </div>
               )}
 
-              <div className="MaintenanceDocumentCategoriesTab-categoryDetailsHeader">
+              <div className="ContentManagementDocumentCategoriesTab-categoryDetailsHeader">
                 {t('common:documentCategoryDocumentListHeader')}
               </div>
               {renderDocuments(documentCategory)}
 
-              <div className="MaintenanceDocumentCategoriesTab-categoryDetailsFooter">
+              <div className="ContentManagementDocumentCategoriesTab-categoryDetailsFooter">
                 <div>
                   <div>
                     <span>{`${t('common:createdOnDateBy', { date: formatDate(documentCategory.createdOn) })} `}</span>
@@ -249,7 +249,7 @@ function MaintenanceDocumentCategoriesTab() {
   const showEmptyState = !allDocumentCategories.length;
 
   return (
-    <div className="MaintenanceDocumentCategoriesTab">
+    <div className="ContentManagementDocumentCategoriesTab">
       {!!fetchingData && <Spinner /> }
 
       {!fetchingData && !!showEmptyState && (
@@ -267,10 +267,10 @@ function MaintenanceDocumentCategoriesTab() {
 
       {!fetchingData && !showEmptyState && (
         <Fragment>
-          <div className="MaintenanceDocumentCategoriesTab-controls">
+          <div className="ContentManagementDocumentCategoriesTab-controls">
             <FilterInput
               size="large"
-              className="MaintenanceDocumentCategoriesTab-filter"
+              className="ContentManagementDocumentCategoriesTab-filter"
               value={filter}
               onChange={handleFilterChange}
               placeholder={t('filterPlaceholder')}
@@ -280,7 +280,7 @@ function MaintenanceDocumentCategoriesTab() {
               {t('common:create')}
             </Button>
           </div>
-          <div className="MaintenanceDocumentCategoriesTab-categories">
+          <div className="ContentManagementDocumentCategoriesTab-categories">
             {displayedDocumentCategories.map(renderDocumentCategory)}
           </div>
         </Fragment>
@@ -295,4 +295,4 @@ function MaintenanceDocumentCategoriesTab() {
   );
 }
 
-export default MaintenanceDocumentCategoriesTab;
+export default ContentManagementDocumentCategoriesTab;

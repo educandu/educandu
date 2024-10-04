@@ -85,10 +85,10 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
-  getMaintenanceMediaLibraryItems() {
+  getContentManagementMediaLibraryItems() {
     return this.httpClient
       .get(
-        '/api/v1/media-library/items/maintenance',
+        '/api/v1/media-library/items/content-management',
         { responseType: 'json' }
       )
       .then(res => res.data);

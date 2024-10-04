@@ -11,9 +11,9 @@ pageNames:
   batches:
     en: Batch details
     de: Chargen-Details
-  maintenance:
-    en: Maintenance
-    de: Maintenance
+  contentManagement:
+    en: Content management
+    de: Content Management
   userProfile:
     en: Profile
     de: Profil

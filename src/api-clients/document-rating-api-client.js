@@ -35,10 +35,10 @@ class DocumentRatingApiClient {
       .then(res => res.data);
   }
 
-  getMaintenanceDocumentRatings() {
+  getContentManagementDocumentRatings() {
     return this.httpClient
       .get(
-        '/api/v1/document-ratings/maintenance',
+        '/api/v1/document-ratings/content-management',
         { responseType: 'json' }
       )
       .then(res => res.data);

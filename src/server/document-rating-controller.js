@@ -15,7 +15,7 @@ class DocumentRatingController {
     this.documentRatingService = documentRatingService;
   }
 
-  async handleGetRatingsForMaintenance(_req, res) {
+  async handleGetRatingsForContentManagement(_req, res) {
     const documentRatings = await this.documentRatingService.getAllDocumentRatings();
     return res.status(200).send({ documentRatings });
   }
@@ -41,9 +41,9 @@ class DocumentRatingController {
 
   registerApi(router) {
     router.get(
-      '/api/v1/document-ratings/maintenance',
+      '/api/v1/document-ratings/content-management',
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
-      (req, res) => this.handleGetRatingsForMaintenance(req, res)
+      (req, res) => this.handleGetRatingsForContentManagement(req, res)
     );
 
     router.get(

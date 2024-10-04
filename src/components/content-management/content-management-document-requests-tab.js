@@ -75,11 +75,11 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceDocumentRequestsTab() {
+function ContentManagementDocumentRequestsTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
   const httpClient = useService(HttpClient);
-  const { t } = useTranslation('maintenanceDocumentRequestsTab');
+  const { t } = useTranslation('contentManagementDocumentRequestsTab');
   const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
 
   const daysOfWeekOptions = [
@@ -118,7 +118,7 @@ function MaintenanceDocumentRequestsTab() {
   const fetchData = useCallback(async () => {
     try {
       setFetchingData(true);
-      const apiClientResponse = await documentRequestApiClient.getMaintenanceDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek });
+      const apiClientResponse = await documentRequestApiClient.getContentManagementDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek });
       setDocumentRequestCounters(apiClientResponse.documentRequestCounters);
     } finally {
       setFetchingData(false);
@@ -140,7 +140,7 @@ function MaintenanceDocumentRequestsTab() {
       sortingPairs: sortingPairs.map(pair => pair.join('_')).join(',')
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documentRequests, queryParams));
+    history.replaceState(null, '', routes.getContentManagementUrl(TAB.documentRequests, queryParams));
   }, [filter, sortingPairs, registeredFrom, registeredUntil, daysOfWeek, pagination]);
 
   useEffect(() => {
@@ -231,7 +231,7 @@ function MaintenanceDocumentRequestsTab() {
     const documentUrl = routes.getDocUrl({ id: documentWithCounters._id, slug: documentWithCounters.slug });
 
     return (
-      <a href={documentUrl} className="MaintenanceDocumentRequestsTab-documentTitleCell">
+      <a href={documentUrl} className="ContentManagementDocumentRequestsTab-documentTitleCell">
         {_title}
       </a>
     );
@@ -239,11 +239,11 @@ function MaintenanceDocumentRequestsTab() {
 
   const renderColumnTitleWithCountSubtitle = ({ title, count = 0 }) => {
     return (
-      <div className="MaintenanceDocumentRequestsTab-titleCell">
+      <div className="ContentManagementDocumentRequestsTab-titleCell">
         <div>
           {title}
         </div>
-        <div className='MaintenanceDocumentRequestsTab-titleCellSubtitle'>
+        <div className='ContentManagementDocumentRequestsTab-titleCellSubtitle'>
           ({count})
         </div>
       </div>
@@ -329,9 +329,9 @@ function MaintenanceDocumentRequestsTab() {
   const canAddSorter = sortingPairs.length < Object.values(SORTING_VALUE).length;
 
   return (
-    <div className="MaintenanceDocumentRequestsTab">
-      <div className="MaintenanceDocumentRequestsTab-controls">
-        <div className="MaintenanceDocumentRequestsTab-controlsColumn">
+    <div className="ContentManagementDocumentRequestsTab">
+      <div className="ContentManagementDocumentRequestsTab-controls">
+        <div className="ContentManagementDocumentRequestsTab-controlsColumn">
           <FilterInput
             size="large"
             value={filter}
@@ -339,7 +339,7 @@ function MaintenanceDocumentRequestsTab() {
             onChange={handleFilterChange}
             placeholder={t('titlePlaceholder')}
             />
-          <div className="MaintenanceDocumentRequestsTab-controlsColumnFilters">
+          <div className="ContentManagementDocumentRequestsTab-controlsColumnFilters">
             <RangePicker
               allowClear
               format={dateFormat}
@@ -356,7 +356,7 @@ function MaintenanceDocumentRequestsTab() {
               value={daysOfWeek}
               disabled={fetchingData}
               options={daysOfWeekOptions}
-              className='MaintenanceDocumentRequestsTab-controlsColumnCheckboxes'
+              className='ContentManagementDocumentRequestsTab-controlsColumnCheckboxes'
               onChange={handleDaysOfWeekChange}
               />
           </div>
@@ -365,7 +365,7 @@ function MaintenanceDocumentRequestsTab() {
           {sortingPairs.map((sortingPair, sortingPairIndex) => (
             <Fragment key={sortingPairIndex}>
               {sortingPairIndex > 0 && (
-                <div className='MaintenanceDocumentRequestsTab-sortersSeparator'>
+                <div className='ContentManagementDocumentRequestsTab-sortersSeparator'>
                   {t('sortersJoiningText')}
                 </div>
               )}
@@ -378,7 +378,7 @@ function MaintenanceDocumentRequestsTab() {
             </Fragment>
           )
           )}
-          <div className="MaintenanceDocumentRequestsTab-sorterButtons">
+          <div className="ContentManagementDocumentRequestsTab-sorterButtons">
             <Button
               size="small"
               disabled={!canAddSorter}
@@ -397,7 +397,7 @@ function MaintenanceDocumentRequestsTab() {
           </div>
         </div>
       </div>
-      <div className="MaintenanceDocumentRequestsTab-csvExportButton">
+      <div className="ContentManagementDocumentRequestsTab-csvExportButton">
         <Tooltip title={t('exportAsCsv')}>
           <Button
             icon={<TableExportIcon />}
@@ -421,4 +421,4 @@ function MaintenanceDocumentRequestsTab() {
   );
 }
 
-export default MaintenanceDocumentRequestsTab;
+export default ContentManagementDocumentRequestsTab;

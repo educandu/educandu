@@ -518,8 +518,8 @@ function DocumentMetadataModal({
           {!!isDocInPublicContext && (
             <Collapse
               items={[{
-                key: 'maintenanceSettingsHeader',
-                label: t('maintenanceSettingsHeader'),
+                key: 'maintainerSettingsHeader',
+                label: t('maintainerSettingsHeader'),
                 children: (
                   <Fragment>
                     {!!publicContextPermissions.canManagePublicContext && (

@@ -2,22 +2,22 @@ import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import React, { useMemo, useState } from 'react';
-import { TAB } from '../maintenance/constants.js';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
-import MaintenanceTagsTab from '../maintenance/maintenance-tags-tab.js';
-import MaintenanceDocumentsTab from '../maintenance/maintenance-documents-tab.js';
+import { TAB } from '../content-management/constants.js';
 import { CategoryIcon, ClickIcon, MediaLibraryIcon, TagIcon } from '../icons/icons.js';
-import MaintenanceMediaLibraryTab from '../maintenance/maintenance-media-library-tab.js';
-import MaintenanceDocumentRequestsTab from '../maintenance/maintenance-document-requests-tab.js';
-import MaintenanceDocumentCategoriesTab from '../maintenance/maintenance-document-categories-tab.js';
+import ContentManagementTagsTab from '../content-management/content-management-tags-tab.js';
+import ContentManagementDocumentsTab from '../content-management/content-management-documents-tab.js';
+import ContentManagementMediaLibraryTab from '../content-management/content-management-media-library-tab.js';
+import ContentManagementDocumentRequestsTab from '../content-management/content-management-document-requests-tab.js';
+import ContentManagementDocumentCategoriesTab from '../content-management/content-management-document-categories-tab.js';
 
 const determineTab = query => Object.values(TAB)
   .find(val => val === query) || Object.keys(TAB)[0];
 
-function Maintenance({ PageTemplate }) {
+function ContentManagement({ PageTemplate }) {
   const request = useRequest();
-  const { t } = useTranslation('maintenance');
+  const { t } = useTranslation('contentManagement');
   const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
 
   const tabItems = useMemo(() => [
@@ -27,7 +27,7 @@ function Maintenance({ PageTemplate }) {
       label: t('documentsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceDocumentsTab />
+          <ContentManagementDocumentsTab />
         </div>
       )
     },
@@ -37,7 +37,7 @@ function Maintenance({ PageTemplate }) {
       label: t('mediaLibraryTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceMediaLibraryTab />
+          <ContentManagementMediaLibraryTab />
         </div>
       )
     },
@@ -47,7 +47,7 @@ function Maintenance({ PageTemplate }) {
       label: t('tagsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceTagsTab />
+          <ContentManagementTagsTab />
         </div>
       )
     },
@@ -57,7 +57,7 @@ function Maintenance({ PageTemplate }) {
       label: t('documentRequestsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceDocumentRequestsTab />
+          <ContentManagementDocumentRequestsTab />
         </div>
       )
     },
@@ -67,7 +67,7 @@ function Maintenance({ PageTemplate }) {
       label: t('documentCategoriesTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <MaintenanceDocumentCategoriesTab />
+          <ContentManagementDocumentCategoriesTab />
         </div>
       )
     }
@@ -75,8 +75,8 @@ function Maintenance({ PageTemplate }) {
 
   return (
     <PageTemplate>
-      <div className="MaintenancePage">
-        <h1 className="u-page-title-with-subtitle">{t('pageNames:maintenance')}</h1>
+      <div className="ContentManagementPage">
+        <h1 className="u-page-title-with-subtitle">{t('pageNames:contentManagement')}</h1>
         <div className="u-page-subtitle">{t('pageSubtitle')}</div>
         <Tabs
           type="line"
@@ -92,8 +92,8 @@ function Maintenance({ PageTemplate }) {
   );
 }
 
-Maintenance.propTypes = {
+ContentManagement.propTypes = {
   PageTemplate: PropTypes.func.isRequired
 };
 
-export default Maintenance;
+export default ContentManagement;

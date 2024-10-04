@@ -109,10 +109,10 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceTagsTab() {
+function ContentManagementTagsTab() {
   const request = useRequest();
   const [documents, setDocuments] = useState([]);
-  const { t } = useTranslation('maintenanceTagsTab');
+  const { t } = useTranslation('contentManagementTagsTab');
   const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
@@ -134,8 +134,8 @@ function MaintenanceTagsTab() {
       setFetchingData(true);
 
       const [documentApiResponse, mediaLibraryApiResponse] = await Promise.all([
-        documentApiClient.getMaintenanceDocuments(),
-        mediaLibraryApiClient.getMaintenanceMediaLibraryItems()
+        documentApiClient.getContentManagementDocuments(),
+        mediaLibraryApiClient.getContentManagementMediaLibraryItems()
       ]);
 
       setDocuments(documentApiResponse.documents);
@@ -167,7 +167,7 @@ function MaintenanceTagsTab() {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.tags, queryParams));
+    history.replaceState(null, '', routes.getContentManagementUrl(TAB.tags, queryParams));
   }, [filter, tagCategoryFilter, sorting, pagination]);
 
   const tagCategoryFilterOptions = useMemo(() => {
@@ -227,11 +227,11 @@ function MaintenanceTagsTab() {
 
   const renderExpandedRow = row => {
     return (
-      <div className="MaintenanceTagsTab-expandedRow">
+      <div className="ContentManagementTagsTab-expandedRow">
         {!!row.documents.length && (
           <Fragment>
-            <div className="MaintenanceTagsTab-expandedRowHeader">{t('documents')}:</div>
-            <ul className="MaintenanceTagsTab-documentList">
+            <div className="ContentManagementTagsTab-expandedRowHeader">{t('documents')}:</div>
+            <ul className="ContentManagementTagsTab-documentList">
               {row.documents.map(doc => (
                 <li key={doc._id}>
                   <a href={routes.getDocUrl({ id: doc._id, slug: doc.slug })}>{doc.title}</a>
@@ -242,8 +242,8 @@ function MaintenanceTagsTab() {
         )}
         {!!row.mediaLibraryItems.length && (
           <Fragment>
-            <div className="MaintenanceTagsTab-expandedRowHeader">{t('mediaLibraryItems')}:</div>
-            <ul className="MaintenanceTagsTab-documentList">
+            <div className="ContentManagementTagsTab-expandedRowHeader">{t('mediaLibraryItems')}:</div>
+            <ul className="ContentManagementTagsTab-documentList">
               {row.mediaLibraryItems.map(item => (
                 <li key={item._id}>
                   <a href={item.url} onClick={event => handleMediaLibraryItemPreviewClick(item, event)}>{item.name}</a>
@@ -254,12 +254,12 @@ function MaintenanceTagsTab() {
         )}
         {!!row.companionTags.length && (
           <Fragment>
-            <div className="MaintenanceTagsTab-expandedRowHeader">{t('companionTags')}:</div>
-            <div className="MaintenanceTagsTab-companionTags">
+            <div className="ContentManagementTagsTab-expandedRowHeader">{t('companionTags')}:</div>
+            <div className="ContentManagementTagsTab-companionTags">
               {row.companionTags.map(ctag => (
-                <span key={ctag.name} className="MaintenanceTagsTab-companionTag">
+                <span key={ctag.name} className="ContentManagementTagsTab-companionTag">
                   <Tag>{ctag.name}</Tag>
-                  <span className="MaintenanceTagsTab-companionTagFrequency">({ctag.frequency})</span>
+                  <span className="ContentManagementTagsTab-companionTagFrequency">({ctag.frequency})</span>
                 </span>
               ))}
             </div>
@@ -288,11 +288,11 @@ function MaintenanceTagsTab() {
   ];
 
   return (
-    <div className="MaintenanceTagsTab">
-      <div className="MaintenanceTagsTab-controls">
+    <div className="ContentManagementTagsTab">
+      <div className="ContentManagementTagsTab-controls">
         <FilterInput
           size="large"
-          className="MaintenanceTagsTab-textFilter"
+          className="ContentManagementTagsTab-textFilter"
           value={filter}
           onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
@@ -306,7 +306,7 @@ function MaintenanceTagsTab() {
         <Select
           value={tagCategoryFilter}
           options={tagCategoryFilterOptions}
-          className="MaintenanceTagsTab-tagCategoryFilter"
+          className="ContentManagementTagsTab-tagCategoryFilter"
           onChange={setTagCategoryFilter}
           />
       </div>
@@ -328,4 +328,4 @@ function MaintenanceTagsTab() {
   );
 }
 
-export default MaintenanceTagsTab;
+export default ContentManagementTagsTab;

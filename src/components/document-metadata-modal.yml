@@ -98,9 +98,9 @@ documentMetadataModal:
   noAvailableRooms:
     en: No available rooms
     de: Keine Räume verfügbar
-  maintenanceSettingsHeader:
-    en: Maintenance settings
-    de: Maintenance-Einstellungen
+  maintainerSettingsHeader:
+    en: Maintainer settings
+    de: Maintainer-Einstellungen
   draft:
     en: Mark as draft
     de: Als Entwurf markieren
