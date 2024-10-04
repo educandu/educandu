@@ -1733,6 +1733,258 @@
       "de": "Akzeptieren"
     }
   },
+  "contentManagement": {
+    "pageSubtitle": {
+      "en": "Exclusive for maintainer roles.",
+      "de": "Ausschließlich für Maintainer-Rollen."
+    },
+    "documentsTabTitle": {
+      "en": "Documents",
+      "de": "Dokumente"
+    },
+    "mediaLibraryTabTitle": {
+      "en": "Media center",
+      "de": "Mediathek"
+    },
+    "tagsTabTitle": {
+      "en": "Tags",
+      "de": "Tags"
+    },
+    "documentRequestsTabTitle": {
+      "en": "Document requests",
+      "de": "Dokument-Requests"
+    },
+    "documentCategoriesTabTitle": {
+      "en": "Document categories",
+      "de": "Dokument-Kategorien"
+    }
+  },
+  "contentManagementDocumentCategoriesTab": {
+    "filterPlaceholder": {
+      "en": "Filter by name",
+      "de": "Nach Name filtern"
+    },
+    "emptyStateTitle": {
+      "en": "No document categories have been created",
+      "de": "Es wurden keine Dokument-Kategorien erstellt"
+    },
+    "emptyStateSubtitle": {
+      "en": "Through categories, documents can be grouped together by certain custom criteria.",
+      "de": "Mit Hilfe von Kategorien können Dokumente nach benutzerdefinierten Kriterien gruppiert werden."
+    },
+    "emptyStateButton": {
+      "en": "Create document category",
+      "de": "Dokument-Kategorie erstellen"
+    },
+    "removeDocumentTooltip": {
+      "en": "Remove document from category \"{name}\"",
+      "de": "Dokument aus Kategorie \"{name}\" entfernen"
+    }
+  },
+  "contentManagementDocumentRequestsTab": {
+    "totalCountColumnHeader": {
+      "en": "Requests",
+      "de": "Requests"
+    },
+    "requestColumnHeader": {
+      "en": "Access",
+      "de": "Zugriff"
+    },
+    "readCountColumnHeader": {
+      "en": "Read",
+      "de": "Lesen"
+    },
+    "writeCountColumnHeader": {
+      "en": "Write",
+      "de": "Schreiben"
+    },
+    "userColumnHeader": {
+      "en": "User",
+      "de": "Benutzer"
+    },
+    "anonymousCountColumnHeader": {
+      "en": "Anonymous",
+      "de": "Anonym"
+    },
+    "loggedInCountColumnHeader": {
+      "en": "Logged in",
+      "de": "Angemeldet"
+    },
+    "sortedByTotalCount": {
+      "en": "Sorted by requests",
+      "de": "Nach Requests sortiert"
+    },
+    "sortedByReadCount": {
+      "en": "Sorted by read",
+      "de": "Nach Lesen sortiert"
+    },
+    "sortedByWriteCount": {
+      "en": "Sorted by write",
+      "de": "Nach Schreiben sortiert"
+    },
+    "sortedByAnonymousCount": {
+      "en": "Sorted by anonymous",
+      "de": "Nach Anonym sortiert"
+    },
+    "sortedByLoggedInCount": {
+      "en": "Sorted by logged in",
+      "de": "Nach Angemeldet sortiert"
+    },
+    "titlePlaceholder": {
+      "en": "Filter by document title",
+      "de": "Nach Dokument-Titel filtern"
+    },
+    "fromDatePlaceholder": {
+      "en": "From date",
+      "de": "Ab Datum"
+    },
+    "untilDatePlaceholder": {
+      "en": "To date",
+      "de": "Bis Datum"
+    },
+    "mondayCheckbox": {
+      "en": "Mo",
+      "de": "Mo"
+    },
+    "tuesdayCheckbox": {
+      "en": "Tu",
+      "de": "Di"
+    },
+    "wednesdayCheckbox": {
+      "en": "We",
+      "de": "Mi"
+    },
+    "thursdayCheckbox": {
+      "en": "Th",
+      "de": "Do"
+    },
+    "fridayCheckbox": {
+      "en": "Fr",
+      "de": "Fr"
+    },
+    "saturdayCheckbox": {
+      "en": "Sa",
+      "de": "Sa"
+    },
+    "sundayCheckbox": {
+      "en": "Su",
+      "de": "So"
+    },
+    "sortersJoiningText": {
+      "en": "then",
+      "de": "danach"
+    },
+    "addSorterButton": {
+      "en": "Add sorter",
+      "de": "Sortierer hinzufügen"
+    },
+    "resetSortersButton": {
+      "en": "Reset sorters",
+      "de": "Zurücksetzen"
+    },
+    "exportAsCsv": {
+      "en": "Export as CSV file",
+      "de": "Als CSV-Datei exportieren"
+    }
+  },
+  "contentManagementDocumentsTab": {
+    "filterPlaceholder": {
+      "en": "Filter by title or creator",
+      "de": "Nach Titel oder Ersteller filtern"
+    }
+  },
+  "contentManagementMediaLibraryTab": {
+    "filterPlaceholder": {
+      "en": "Filter by title, tag, license or user",
+      "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
+    },
+    "bulkDeletePanelHeader": {
+      "en": "Bulk deletion",
+      "de": "Stapelweise löschen"
+    },
+    "createdBefore": {
+      "en": "Created before",
+      "de": "Erstellt vor"
+    },
+    "datePlaceholder": {
+      "en": "Date",
+      "de": "Datum"
+    },
+    "and": {
+      "en": "and",
+      "de": "und"
+    },
+    "unused": {
+      "en": "never used",
+      "de": "nie benutzt"
+    },
+    "deprecated": {
+      "en": "no longer used",
+      "de": "nicht mehr benutzt"
+    },
+    "delete": {
+      "en": "Delete media resources",
+      "de": "Medien-Resourcen löschen"
+    },
+    "deleteCount": {
+      "en": "Delete {count, plural, =1 {# media resource} other {# media resources}}",
+      "de": "{count, plural, =1 {# Medien-Resource} other {# Medien-Resourcen}} löschen"
+    },
+    "usageInfoMarkdown": {
+      "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used.\n",
+      "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden hierbei als nicht länger benutzt betrachtet.\n"
+    }
+  },
+  "contentManagementTagsTab": {
+    "filterPlaceholder": {
+      "en": "Filter by name",
+      "de": "Nach Name filtern"
+    },
+    "sortedByTag": {
+      "en": "Sorted by tag",
+      "de": "Nach Tag sortiert"
+    },
+    "frequency": {
+      "en": "Frequency",
+      "de": "Häufigkeit"
+    },
+    "sortedByFrequency": {
+      "en": "Sorted by frequency",
+      "de": "Nach Häufigkeit sortiert"
+    },
+    "companionTagCount": {
+      "en": "Companion tags count",
+      "de": "Anzahl von Begleit-Tags"
+    },
+    "sortedByCompanionTagCount": {
+      "en": "Sorted by companion tags count",
+      "de": "Nach Anzahl von Begleit-Tags sortiert"
+    },
+    "documents": {
+      "en": "Documents",
+      "de": "Dokumente"
+    },
+    "mediaLibraryItems": {
+      "en": "Media center entries",
+      "de": "Mediathek-Einträge"
+    },
+    "companionTags": {
+      "en": "Companion tags",
+      "de": "Begleit-Tags"
+    },
+    "tagCategoryFilter_documentsAndMedia": {
+      "en": "Documents and media",
+      "de": "Dokumente und Medien"
+    },
+    "tagCategoryFilter_documentsOnly": {
+      "en": "Documents only",
+      "de": "Nur Dokumente"
+    },
+    "tagCategoryFilter_mediaOnly": {
+      "en": "Media only",
+      "de": "Nur Medien"
+    }
+  },
   "creditsFooter": {
     "citation": {
       "en": "Article “{title}”",
@@ -2200,9 +2452,9 @@
       "en": "No available rooms",
       "de": "Keine Räume verfügbar"
     },
-    "maintenanceSettingsHeader": {
-      "en": "Maintenance settings",
-      "de": "Maintenance-Einstellungen"
+    "maintainerSettingsHeader": {
+      "en": "Maintainer settings",
+      "de": "Maintainer-Einstellungen"
     },
     "draft": {
       "en": "Mark as draft",
@@ -2825,258 +3077,6 @@
       "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht wurde in diesem {appName}-Raum gepostet: [{roomName}]({roomLink}).\n"
     }
   },
-  "maintenance": {
-    "pageSubtitle": {
-      "en": "Exclusive for maintainer roles.",
-      "de": "Ausschließlich für Maintainer-Rollen."
-    },
-    "documentsTabTitle": {
-      "en": "Documents",
-      "de": "Dokumente"
-    },
-    "mediaLibraryTabTitle": {
-      "en": "Media center",
-      "de": "Mediathek"
-    },
-    "tagsTabTitle": {
-      "en": "Tags",
-      "de": "Tags"
-    },
-    "documentRequestsTabTitle": {
-      "en": "Document requests",
-      "de": "Dokument-Requests"
-    },
-    "documentCategoriesTabTitle": {
-      "en": "Document categories",
-      "de": "Dokument-Kategorien"
-    }
-  },
-  "maintenanceDocumentCategoriesTab": {
-    "filterPlaceholder": {
-      "en": "Filter by name",
-      "de": "Nach Name filtern"
-    },
-    "emptyStateTitle": {
-      "en": "No document categories have been created",
-      "de": "Es wurden keine Dokument-Kategorien erstellt"
-    },
-    "emptyStateSubtitle": {
-      "en": "Through categories, documents can be grouped together by certain custom criteria.",
-      "de": "Mit Hilfe von Kategorien können Dokumente nach benutzerdefinierten Kriterien gruppiert werden."
-    },
-    "emptyStateButton": {
-      "en": "Create document category",
-      "de": "Dokument-Kategorie erstellen"
-    },
-    "removeDocumentTooltip": {
-      "en": "Remove document from category \"{name}\"",
-      "de": "Dokument aus Kategorie \"{name}\" entfernen"
-    }
-  },
-  "maintenanceDocumentRequestsTab": {
-    "totalCountColumnHeader": {
-      "en": "Requests",
-      "de": "Requests"
-    },
-    "requestColumnHeader": {
-      "en": "Access",
-      "de": "Zugriff"
-    },
-    "readCountColumnHeader": {
-      "en": "Read",
-      "de": "Lesen"
-    },
-    "writeCountColumnHeader": {
-      "en": "Write",
-      "de": "Schreiben"
-    },
-    "userColumnHeader": {
-      "en": "User",
-      "de": "Benutzer"
-    },
-    "anonymousCountColumnHeader": {
-      "en": "Anonymous",
-      "de": "Anonym"
-    },
-    "loggedInCountColumnHeader": {
-      "en": "Logged in",
-      "de": "Angemeldet"
-    },
-    "sortedByTotalCount": {
-      "en": "Sorted by requests",
-      "de": "Nach Requests sortiert"
-    },
-    "sortedByReadCount": {
-      "en": "Sorted by read",
-      "de": "Nach Lesen sortiert"
-    },
-    "sortedByWriteCount": {
-      "en": "Sorted by write",
-      "de": "Nach Schreiben sortiert"
-    },
-    "sortedByAnonymousCount": {
-      "en": "Sorted by anonymous",
-      "de": "Nach Anonym sortiert"
-    },
-    "sortedByLoggedInCount": {
-      "en": "Sorted by logged in",
-      "de": "Nach Angemeldet sortiert"
-    },
-    "titlePlaceholder": {
-      "en": "Filter by document title",
-      "de": "Nach Dokument-Titel filtern"
-    },
-    "fromDatePlaceholder": {
-      "en": "From date",
-      "de": "Ab Datum"
-    },
-    "untilDatePlaceholder": {
-      "en": "To date",
-      "de": "Bis Datum"
-    },
-    "mondayCheckbox": {
-      "en": "Mo",
-      "de": "Mo"
-    },
-    "tuesdayCheckbox": {
-      "en": "Tu",
-      "de": "Di"
-    },
-    "wednesdayCheckbox": {
-      "en": "We",
-      "de": "Mi"
-    },
-    "thursdayCheckbox": {
-      "en": "Th",
-      "de": "Do"
-    },
-    "fridayCheckbox": {
-      "en": "Fr",
-      "de": "Fr"
-    },
-    "saturdayCheckbox": {
-      "en": "Sa",
-      "de": "Sa"
-    },
-    "sundayCheckbox": {
-      "en": "Su",
-      "de": "So"
-    },
-    "sortersJoiningText": {
-      "en": "then",
-      "de": "danach"
-    },
-    "addSorterButton": {
-      "en": "Add sorter",
-      "de": "Sortierer hinzufügen"
-    },
-    "resetSortersButton": {
-      "en": "Reset sorters",
-      "de": "Zurücksetzen"
-    },
-    "exportAsCsv": {
-      "en": "Export as CSV file",
-      "de": "Als CSV-Datei exportieren"
-    }
-  },
-  "maintenanceDocumentsTab": {
-    "filterPlaceholder": {
-      "en": "Filter by title or creator",
-      "de": "Nach Titel oder Ersteller filtern"
-    }
-  },
-  "maintenanceMediaLibraryTab": {
-    "filterPlaceholder": {
-      "en": "Filter by title, tag, license or user",
-      "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
-    },
-    "bulkDeletePanelHeader": {
-      "en": "Bulk deletion",
-      "de": "Stapelweise löschen"
-    },
-    "createdBefore": {
-      "en": "Created before",
-      "de": "Erstellt vor"
-    },
-    "datePlaceholder": {
-      "en": "Date",
-      "de": "Datum"
-    },
-    "and": {
-      "en": "and",
-      "de": "und"
-    },
-    "unused": {
-      "en": "never used",
-      "de": "nie benutzt"
-    },
-    "deprecated": {
-      "en": "no longer used",
-      "de": "nicht mehr benutzt"
-    },
-    "delete": {
-      "en": "Delete media resources",
-      "de": "Medien-Resourcen löschen"
-    },
-    "deleteCount": {
-      "en": "Delete {count, plural, =1 {# media resource} other {# media resources}}",
-      "de": "{count, plural, =1 {# Medien-Resource} other {# Medien-Resourcen}} löschen"
-    },
-    "usageInfoMarkdown": {
-      "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used.\n",
-      "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden hierbei als nicht länger benutzt betrachtet.\n"
-    }
-  },
-  "maintenanceTagsTab": {
-    "filterPlaceholder": {
-      "en": "Filter by name",
-      "de": "Nach Name filtern"
-    },
-    "sortedByTag": {
-      "en": "Sorted by tag",
-      "de": "Nach Tag sortiert"
-    },
-    "frequency": {
-      "en": "Frequency",
-      "de": "Häufigkeit"
-    },
-    "sortedByFrequency": {
-      "en": "Sorted by frequency",
-      "de": "Nach Häufigkeit sortiert"
-    },
-    "companionTagCount": {
-      "en": "Companion tags count",
-      "de": "Anzahl von Begleit-Tags"
-    },
-    "sortedByCompanionTagCount": {
-      "en": "Sorted by companion tags count",
-      "de": "Nach Anzahl von Begleit-Tags sortiert"
-    },
-    "documents": {
-      "en": "Documents",
-      "de": "Dokumente"
-    },
-    "mediaLibraryItems": {
-      "en": "Media center entries",
-      "de": "Mediathek-Einträge"
-    },
-    "companionTags": {
-      "en": "Companion tags",
-      "de": "Begleit-Tags"
-    },
-    "tagCategoryFilter_documentsAndMedia": {
-      "en": "Documents and media",
-      "de": "Dokumente und Medien"
-    },
-    "tagCategoryFilter_documentsOnly": {
-      "en": "Documents only",
-      "de": "Nur Dokumente"
-    },
-    "tagCategoryFilter_mediaOnly": {
-      "en": "Media only",
-      "de": "Nur Medien"
-    }
-  },
   "markdown": {
     "name": {
       "en": "Markdown",
@@ -3670,9 +3670,9 @@
       "en": "Batch details",
       "de": "Chargen-Details"
     },
-    "maintenance": {
-      "en": "Maintenance",
-      "de": "Maintenance"
+    "contentManagement": {
+      "en": "Content management",
+      "de": "Content Management"
     },
     "userProfile": {
       "en": "Profile",

@@ -87,10 +87,10 @@ function filterRows(rows, filter) {
   return lowerCasedFilter ? rows.filter(row => filterRow(row, lowerCasedFilter)) : rows;
 }
 
-function MaintenanceMediaLibraryTab() {
+function ContentManagementMediaLibraryTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
-  const { t } = useTranslation('maintenanceMediaLibraryTab');
+  const { t } = useTranslation('contentManagementMediaLibraryTab');
   const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
@@ -110,7 +110,7 @@ function MaintenanceMediaLibraryTab() {
   const fetchData = useCallback(async () => {
     try {
       setFetchingData(true);
-      const apiClientResponse = await mediaLibraryApiClient.getMaintenanceMediaLibraryItems();
+      const apiClientResponse = await mediaLibraryApiClient.getContentManagementMediaLibraryItems();
       setMediaLibraryItems(apiClientResponse.mediaLibraryItems);
     } finally {
       setFetchingData(false);
@@ -140,7 +140,7 @@ function MaintenanceMediaLibraryTab() {
       pageSize: pagination.pageSize
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.mediaLibrary, queryParams));
+    history.replaceState(null, '', routes.getContentManagementUrl(TAB.mediaLibrary, queryParams));
   }, [filter, sorting, createdBefore, usage, pagination]);
 
   const sortingOptions = useMemo(() => {
@@ -348,11 +348,11 @@ function MaintenanceMediaLibraryTab() {
   const isBulkDeleteDisabled = !createdBefore || !displayedRows.length;
 
   return (
-    <div className="MaintenanceMediaLibraryTab">
-      <div className="MaintenanceMediaLibraryTab-filterControls">
+    <div className="ContentManagementMediaLibraryTab">
+      <div className="ContentManagementMediaLibraryTab-filterControls">
         <FilterInput
           size="large"
-          className="MaintenanceMediaLibraryTab-filter"
+          className="ContentManagementMediaLibraryTab-filter"
           value={filter}
           onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
@@ -367,7 +367,7 @@ function MaintenanceMediaLibraryTab() {
           {t('common:create')}
         </Button>
       </div>
-      <div className="MaintenanceMediaLibraryTab-bulkDeletePanel">
+      <div className="ContentManagementMediaLibraryTab-bulkDeletePanel">
         <Collapse
           size="small"
           expandIconPosition="end"
@@ -375,13 +375,13 @@ function MaintenanceMediaLibraryTab() {
           items={[{
             key: 'bulkDelete',
             label: (
-              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelHeader">
+              <div className="ContentManagementMediaLibraryTab-bulkDeletePanelHeader">
                 {t('bulkDeletePanelHeader')}
               </div>
             ),
             children: (
-              <div className="MaintenanceMediaLibraryTab-bulkDeletePanelContent">
-                <div className="MaintenanceMediaLibraryTab-bulkDeletePanelFilters">
+              <div className="ContentManagementMediaLibraryTab-bulkDeletePanelContent">
+                <div className="ContentManagementMediaLibraryTab-bulkDeletePanelFilters">
                   <div>{t('createdBefore')}</div>
                   <DatePicker
                     showTime={false}
@@ -395,7 +395,7 @@ function MaintenanceMediaLibraryTab() {
                   <Info
                     iconAfterContent
                     tooltip={<Markdown>{t('usageInfoMarkdown')}</Markdown>}
-                    className="MaintenanceMediaLibraryTab-bulkDeletePanelRadios"
+                    className="ContentManagementMediaLibraryTab-bulkDeletePanelRadios"
                     >
                     <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
                       <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
@@ -403,7 +403,7 @@ function MaintenanceMediaLibraryTab() {
                     </Radio.Group>
                   </Info>
                 </div>
-                <div className="MaintenanceMediaLibraryTab-bulkDeletePanelButton">
+                <div className="ContentManagementMediaLibraryTab-bulkDeletePanelButton">
                   <Button disabled={isBulkDeleteDisabled} danger type="primary" onClick={handleBulkDeleteClick}>
                     {!!isBulkDeleteDisabled && t('delete')}
                     {!isBulkDeleteDisabled && t('deleteCount', { count: displayedRows.length })}
@@ -435,4 +435,4 @@ function MaintenanceMediaLibraryTab() {
   );
 }
 
-export default MaintenanceMediaLibraryTab;
+export default ContentManagementMediaLibraryTab;

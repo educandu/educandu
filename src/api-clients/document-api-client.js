@@ -34,10 +34,10 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  getMaintenanceDocuments() {
+  getContentManagementDocuments() {
     return this.httpClient
       .get(
-        '/api/v1/docs/maintenance',
+        '/api/v1/docs/content-management',
         { responseType: 'json' }
       )
       .then(res => res.data);

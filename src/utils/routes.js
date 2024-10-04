@@ -9,8 +9,8 @@ const searchPath = '/search';
 const batchesPath = '/batches';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
-const maintenancePath = '/maintenance';
 const resetPasswordPath = '/reset-password';
+const contentManagementPath = '/content-management';
 const recentContributionsPath = '/recent-contributions';
 const connectExternalAccountPath = '/connect-external-account';
 
@@ -63,9 +63,9 @@ function getRecentContributionsUrl({ tab, page, pageSize } = {}) {
   return queryString ? `${recentContributionsPath}?${queryString}` : recentContributionsPath;
 }
 
-function getMaintenanceUrl(tab, params) {
+function getContentManagementUrl(tab, params) {
   const queryString = urlUtils.composeQueryString({ tab, ...params });
-  return queryString ? `${maintenancePath}?${queryString}` : maintenancePath;
+  return queryString ? `${contentManagementPath}?${queryString}` : contentManagementPath;
 }
 
 function getAdminUrl({ tab } = {}) {
@@ -171,7 +171,7 @@ function isConnectExternalAccountPath(path) {
 
 export default {
   getUserProfileUrl,
-  getMaintenanceUrl,
+  getContentManagementUrl,
   getDocUrl,
   getDocumentInputUrl,
   getDocumentCategoryUrl,

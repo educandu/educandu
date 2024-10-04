@@ -52,7 +52,7 @@ class MediaLibraryController {
     return res.send(mappedMediaLibraryItems);
   }
 
-  async handleGetMediaLibraryItemsForMaintenance(req, res) {
+  async handleGetMediaLibraryItemsForContentManagement(req, res) {
     const { user } = req;
 
     const mediaLibraryItems = await this.mediaLibraryService.getAllMediaLibraryItemsWithUsage();
@@ -133,9 +133,9 @@ class MediaLibraryController {
     );
 
     router.get(
-      '/api/v1/media-library/items/maintenance',
+      '/api/v1/media-library/items/content-management',
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
-      (req, res) => this.handleGetMediaLibraryItemsForMaintenance(req, res)
+      (req, res) => this.handleGetMediaLibraryItemsForContentManagement(req, res)
     );
 
     router.get(

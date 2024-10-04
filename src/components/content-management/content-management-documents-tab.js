@@ -111,10 +111,10 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function MaintenanceDocumentsTab() {
+function ContentManagementDocumentsTab() {
   const request = useRequest();
   const [documents, setDocuments] = useState([]);
-  const { t } = useTranslation('maintenanceDocumentsTab');
+  const { t } = useTranslation('contentManagementDocumentsTab');
   const [documentRatings, setDocumentRatings] = useState([]);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
@@ -135,8 +135,8 @@ function MaintenanceDocumentsTab() {
       setFetchingData(true);
 
       const [documentApiResponse, documentRatingApiResponse] = await Promise.all([
-        documentApiClient.getMaintenanceDocuments(),
-        documentRatingApiClient.getMaintenanceDocumentRatings()
+        documentApiClient.getContentManagementDocuments(),
+        documentRatingApiClient.getContentManagementDocumentRatings()
       ]);
 
       setDocuments(documentApiResponse.documents);
@@ -167,7 +167,7 @@ function MaintenanceDocumentsTab() {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getMaintenanceUrl(TAB.documents, queryParams));
+    history.replaceState(null, '', routes.getContentManagementUrl(TAB.documents, queryParams));
   }, [filter, sorting, pagination]);
 
   const sortingOptions = useMemo(() => [
@@ -350,11 +350,11 @@ function MaintenanceDocumentsTab() {
   ];
 
   return (
-    <div className="MaintenanceDocumentsTab">
-      <div className="MaintenanceDocumentsTab-controls">
+    <div className="ContentManagementDocumentsTab">
+      <div className="ContentManagementDocumentsTab-controls">
         <FilterInput
           size="large"
-          className="MaintenanceDocumentsTab-filter"
+          className="ContentManagementDocumentsTab-filter"
           value={filter}
           onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
@@ -390,4 +390,4 @@ function MaintenanceDocumentsTab() {
   );
 }
 
-export default MaintenanceDocumentsTab;
+export default ContentManagementDocumentsTab;
