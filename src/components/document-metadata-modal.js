@@ -108,7 +108,9 @@ function DocumentMetadataModal({
   }), [mode, initialDocumentMetadata, documentToClone, cloningStrategy, cloningTargetRoomId]);
 
   const publicContextPermissions = {
-    canManagePublicContext: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT),
+    canManagePublicContent: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT),
+    canManageAssignedEditors: hasUserPermission(user, permissions.MANAGE_ASSIGNED_EDITORS),
+    canManageProtectedContent: hasUserPermission(user, permissions.MANAGE_PROTECTED_CONTENT),
     canProtectOwnDocWhenCreating: hasUserPermission(user, permissions.PROTECT_OWN_PUBLIC_CONTENT)
   };
   const hasPublicContextPermissions = Object.values(publicContextPermissions).some(value => value);
@@ -266,7 +268,7 @@ function DocumentMetadataModal({
       const newProtected = event.target.checked;
 
       let newAllowedEditors = prevState.allowedEditors;
-      if (!publicContextPermissions.canManagePublicContext
+      if (!publicContextPermissions.canManageAssignedEditors
         && publicContextPermissions.canProtectOwnDocWhenCreating
         && mode !== DOCUMENT_METADATA_MODAL_MODE.update
       ) {
@@ -522,25 +524,25 @@ function DocumentMetadataModal({
                 label: t('maintainerSettingsHeader'),
                 children: (
                   <Fragment>
-                    {!!publicContextPermissions.canManagePublicContext && (
+                    {!!publicContextPermissions.canManageAssignedEditors && (
                     <FormItem label={<Info tooltip={t('allowedEditorsInfo')} iconAfterContent>{t('allowedEditors')}</Info>}>
                       <UserSelect value={publicContext.allowedEditors} onChange={handleAllowedEditorsChange} onSuggestionsNeeded={handleUserSuggestionsNeeded} />
                     </FormItem>
                     )}
-                    {(!!publicContextPermissions.canManagePublicContext || !!publicContextPermissions.canProtectOwnDocWhenCreating) && (
+                    {(!!publicContextPermissions.canManageProtectedContent || !!publicContextPermissions.canProtectOwnDocWhenCreating) && (
                     <FormItem>
                       <Checkbox
                         checked={publicContext.protected}
                         onChange={handleProtectedChange}
                         disabled={
-                          !publicContextPermissions.canManagePublicContext && mode === DOCUMENT_METADATA_MODAL_MODE.update
+                          !publicContextPermissions.canManageProtectedContent && mode === DOCUMENT_METADATA_MODAL_MODE.update
                         }
                         >
                         <Info tooltip={t('protectedInfo')} iconAfterContent><span className="u-label">{t('common:protected')}</span></Info>
                       </Checkbox>
                     </FormItem>
                     )}
-                    {!!publicContextPermissions.canManagePublicContext && (
+                    {!!publicContextPermissions.canManagePublicContent && (
                     <Fragment>
                       <FormItem>
                         <Checkbox checked={publicContext.archived} onChange={handleArchivedChange}>

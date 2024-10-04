@@ -50,7 +50,7 @@ class DocumentController {
     router.get(
       '/api/v1/document-requests/content-management',
       validateQuery(getDocumentRequestsForContentManagementQuerySchema),
-      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      needsPermission(permissions.VIEW_STATISTICS),
       (req, res) => this.handleGetDocumentRequestsForContentManagement(req, res)
     );
   }

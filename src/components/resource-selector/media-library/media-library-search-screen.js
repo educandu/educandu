@@ -137,7 +137,7 @@ function MediaLibrarySearchScreen({
                       searchTerm={searchParams.searchTerm}
                       selectedFileUrl={highlightedFile?.portableUrl}
                       canEdit
-                      canDelete={hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)}
+                      canDelete={hasUserPermission(user, permissions.DELETE_PUBLIC_CONTENT)}
                       onFileClick={onFileClick}
                       onFileDoubleClick={onFileDoubleClick}
                       onDeleteFileClick={onDeleteFileClick}

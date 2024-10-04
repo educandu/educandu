@@ -202,7 +202,7 @@ function Document({ initialState, PageTemplate }) {
 
   const userCanEdit = hasUserPermission(user, permissions.CREATE_CONTENT);
   const userCanEditDocument = canEditDocument({ user, doc: initialState.doc, room });
-  const userCanHardDelete = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+  const userCanHardDelete = hasUserPermission(user, permissions.DELETE_PUBLIC_CONTENT);
   const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
 
   const userCanManageInputs = !!room;

@@ -90,7 +90,7 @@ class DocumentCommentController {
 
     router.delete(
       '/api/v1/document-comments/:documentCommentId',
-      [needsPermission(permissions.MANAGE_PUBLIC_CONTENT), jsonParser, validateParams(documentCommentIdParamsOrQuerySchema)],
+      [needsPermission(permissions.DELETE_PUBLIC_CONTENT), jsonParser, validateParams(documentCommentIdParamsOrQuerySchema)],
       (req, res) => this.handleDeleteDocumentComment(req, res)
     );
 

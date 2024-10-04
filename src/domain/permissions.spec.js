@@ -77,7 +77,12 @@ describe('permissions', () => {
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
           permissions.VIEW_USERS,
+          permissions.VIEW_STATISTICS,
           permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.DELETE_PUBLIC_CONTENT,
+          permissions.MANAGE_ASSIGNED_EDITORS,
+          permissions.MANAGE_PROTECTED_CONTENT,
+          permissions.MANAGE_DOCUMENT_CATEGORIES,
           permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION
         ]);
       });
@@ -96,7 +101,12 @@ describe('permissions', () => {
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
           permissions.VIEW_USERS,
+          permissions.VIEW_STATISTICS,
           permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.DELETE_PUBLIC_CONTENT,
+          permissions.MANAGE_ASSIGNED_EDITORS,
+          permissions.MANAGE_PROTECTED_CONTENT,
+          permissions.MANAGE_DOCUMENT_CATEGORIES,
           permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION
         ]);
       });
@@ -115,7 +125,12 @@ describe('permissions', () => {
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
           permissions.VIEW_USERS,
+          permissions.VIEW_STATISTICS,
           permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.DELETE_PUBLIC_CONTENT,
+          permissions.MANAGE_ASSIGNED_EDITORS,
+          permissions.MANAGE_PROTECTED_CONTENT,
+          permissions.MANAGE_DOCUMENT_CATEGORIES,
           permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION,
           permissions.MANAGE_USERS,
           permissions.MANAGE_SETUP,

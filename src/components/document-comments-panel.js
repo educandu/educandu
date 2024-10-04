@@ -155,7 +155,7 @@ function DocumentCommentsPanel({ documentComments, isLoading, onDocumentCommentP
             {t('commentDeleted')}
           </div>
         )}
-        <Restricted to={permissions.MANAGE_PUBLIC_CONTENT}>
+        <Restricted to={permissions.DELETE_PUBLIC_CONTENT}>
           <div className="DocumentCommentsPanel-commentDeleteButton">
             <DeleteButton onClick={() => handleDeleteCommentClick(comment)} disabled={comment.deletedOn} />
           </div>

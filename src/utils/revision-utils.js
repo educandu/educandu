@@ -24,34 +24,36 @@ export function checkRevisionOnDocumentCreation({ newRevision, room, user }) {
 
   if (!room) {
     const { allowedEditors } = publicContext;
-    const userCanManagePublicContext = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanManagePublicContent = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanManageAssignedEditors = hasUserPermission(user, permissions.MANAGE_ASSIGNED_EDITORS);
+    const userCanManageProtectedContent = hasUserPermission(user, permissions.MANAGE_PROTECTED_CONTENT);
     const userCanProtectOwnDocWhenCreating = hasUserPermission(user, permissions.PROTECT_OWN_PUBLIC_CONTENT);
 
     if (allowedEditors.length) {
       const userIsOnlyAllowedEditor = allowedEditors.length === 1 && allowedEditors[0] === user._id;
 
-      if (!userIsOnlyAllowedEditor && !userCanManagePublicContext) {
+      if (!userIsOnlyAllowedEditor && !userCanManageAssignedEditors) {
         throw new Error('User is not allowed to assign allowed editors');
       }
 
-      if (userIsOnlyAllowedEditor && !userCanManagePublicContext && !userCanProtectOwnDocWhenCreating) {
+      if (userIsOnlyAllowedEditor && !userCanManageAssignedEditors && !userCanProtectOwnDocWhenCreating) {
         throw new Error('User is not allowed to assign themselves as allowed editor');
       }
     }
 
-    if (publicContext.protected && !userCanManagePublicContext && !userCanProtectOwnDocWhenCreating) {
+    if (publicContext.protected && !userCanManageProtectedContent && !userCanProtectOwnDocWhenCreating) {
       throw new Error('User is not allowed to create a protected document');
     }
 
-    if (publicContext.archived && !userCanManagePublicContext) {
+    if (publicContext.archived && !userCanManagePublicContent) {
       throw new Error('User is not allowed to create an archived document');
     }
 
-    if (publicContext.verified && !userCanManagePublicContext) {
+    if (publicContext.verified && !userCanManagePublicContent) {
       throw new Error('User is not allowed to create a verified document');
     }
 
-    if (publicContext.review && !userCanManagePublicContext) {
+    if (publicContext.review && !userCanManagePublicContent) {
       throw new Error('User is not allowed to create a document with review');
     }
   }
@@ -83,33 +85,35 @@ export function checkRevisionOnDocumentUpdate({ previousRevision, newRevision, r
   }
 
   if (!room) {
-    const userCanManagePublicContext = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanManagePublicContent = hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT);
+    const userCanManageAssignedEditors = hasUserPermission(user, permissions.MANAGE_ASSIGNED_EDITORS);
+    const userCanManageProtectedContent = hasUserPermission(user, permissions.MANAGE_PROTECTED_CONTENT);
     const userIsAllowedEditorForThisDocument = previousPublicContext.allowedEditors.includes(user._id);
 
-    if (previousPublicContext.protected && !userCanManagePublicContext && !userIsAllowedEditorForThisDocument) {
+    if (previousPublicContext.protected && !userCanManageProtectedContent && !userIsAllowedEditorForThisDocument) {
       throw new Error('User is not allowed to update a protected document');
     }
 
     const { allowedEditors: previousAllowedEditors } = previousPublicContext;
     const { allowedEditors: newAllowedEditors } = newPublicContext;
 
-    if (!deepEqual(previousAllowedEditors, newAllowedEditors) && !userCanManagePublicContext) {
+    if (!deepEqual(previousAllowedEditors, newAllowedEditors) && !userCanManageAssignedEditors) {
       throw new Error('User is not allowed to update allowed editors');
     }
 
-    if (previousPublicContext.protected !== newPublicContext.protected && !userCanManagePublicContext) {
+    if (previousPublicContext.protected !== newPublicContext.protected && !userCanManageProtectedContent) {
       throw new Error('User is not allowed to change the protected state of a document');
     }
 
-    if (previousPublicContext.archived !== newPublicContext.archived && !userCanManagePublicContext) {
+    if (previousPublicContext.archived !== newPublicContext.archived && !userCanManagePublicContent) {
       throw new Error('User is not allowed to change the archived state of a document');
     }
 
-    if (previousPublicContext.verified !== newPublicContext.verified && !userCanManagePublicContext) {
+    if (previousPublicContext.verified !== newPublicContext.verified && !userCanManagePublicContent) {
       throw new Error('User is not allowed to change the verified state of a document');
     }
 
-    if (previousPublicContext.review !== newPublicContext.review && !userCanManagePublicContext) {
+    if (previousPublicContext.review !== newPublicContext.review && !userCanManagePublicContent) {
       throw new Error('User is not allowed to update the review of a document');
     }
   }
