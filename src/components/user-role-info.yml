@@ -12,6 +12,10 @@ userRoleInfo:
 
       Accredited authors can create protected public documents with exclusive editing permissions.
 
+      # Editor
+
+      see: Maintainer
+
       # Maintainer
 
       Maintainers have extended content management permissions over public content and can curate documents and the media center resources.\
@@ -32,6 +36,10 @@ userRoleInfo:
       # Akkreditierter Autor
 
       Akkreditierte Autoren können geschützte öffentliche Dokumente mit exklusiven Bearbeitungsberechtigungen erstellen.
+
+      # Redakteur
+
+      siehe: Maintainer
 
       # Maintainer
 

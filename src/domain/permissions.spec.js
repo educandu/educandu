@@ -64,6 +64,25 @@ describe('permissions', () => {
       });
     });
 
+    describe('when user has role \'editor\'', () => {
+      beforeEach(() => {
+        const user = { role: ROLE.editor };
+        result = getUserPermissions(user);
+      });
+
+      it('should return all editor permissions', () => {
+        expect(result).toEqual([
+          permissions.CREATE_CONTENT,
+          permissions.BROWSE_STORAGE,
+          permissions.DELETE_OWN_PRIVATE_CONTENT,
+          permissions.PROTECT_OWN_PUBLIC_CONTENT,
+          permissions.VIEW_USERS,
+          permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION
+        ]);
+      });
+    });
+
     describe('when user has role \'maintainer\'', () => {
       beforeEach(() => {
         const user = { role: ROLE.maintainer };
