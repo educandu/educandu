@@ -44,10 +44,12 @@ export default class MaintenanceService {
       logger.info('Finished database checks successfully');
 
       logger.info('Creating basic CDN directories');
-      await this.cdn.ensureDirectory({ directoryPath: getTemporaryUploadsPath() });
-      await this.cdn.ensureDirectory({ directoryPath: getMediaLibraryPath() });
-      await this.cdn.ensureDirectory({ directoryPath: getRoomMediaRootPath() });
-      await this.cdn.ensureDirectory({ directoryPath: getDocumentInputMediaRootPath() });
+      await Promise.all([
+        this.cdn.ensureDirectory({ directoryPath: getTemporaryUploadsPath() }),
+        this.cdn.ensureDirectory({ directoryPath: getMediaLibraryPath() }),
+        this.cdn.ensureDirectory({ directoryPath: getRoomMediaRootPath() }),
+        this.cdn.ensureDirectory({ directoryPath: getDocumentInputMediaRootPath() })
+      ]);
       logger.info('Finished creating basic CDN directories successfully');
     } finally {
       await this.lockStore.releaseLock(lock);
