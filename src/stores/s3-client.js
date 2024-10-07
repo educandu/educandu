@@ -113,7 +113,7 @@ class S3Client {
     }));
   }
 
-  async upload(bucketName, objectName, body, contentType, metadata = {}) {
+  async upload(bucketName, objectName, body, contentType, metadata = {}, preventOverride = false) {
     const data = await this.queue.add(() => new Upload({
       client: this.client,
       params: {
@@ -121,7 +121,8 @@ class S3Client {
         Key: objectName,
         Body: body,
         ContentType: contentType,
-        Metadata: metadata
+        Metadata: metadata,
+        IfNoneMatch: preventOverride ? '*' : null
       },
       queueSize: 1,
       partSize: 10 * 1024 * 1024,

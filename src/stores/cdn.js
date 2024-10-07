@@ -35,9 +35,10 @@ class Cdn {
   }
 
   async ensureDirectory({ directoryPath }) {
+    const preventOverride = true;
     const metadata = this._getDefaultMetadata();
     const directoryMarkerPath = urlUtils.concatParts(directoryPath, STORAGE_DIRECTORY_MARKER_NAME);
-    await this.s3Client.upload(this.bucketName, directoryMarkerPath, '', DEFAULT_CONTENT_TYPE, metadata);
+    await this.s3Client.upload(this.bucketName, directoryMarkerPath, '', DEFAULT_CONTENT_TYPE, metadata, preventOverride);
   }
 
   async deleteDirectory({ directoryPath }) {
