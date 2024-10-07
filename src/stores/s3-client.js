@@ -5,6 +5,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { ensureIsUnique, splitIntoChunks } from '../utils/array-utils.js';
 
 const MAX_CONCURRENCY = 250;
+const HTTP_STATUS_PRECONDITION_FAILED = 412;
 
 // Wraps an AWS S3 client limiting concurrency.
 // Assumes usage of MinIO in case the endpoint is not on AWS.
@@ -114,23 +115,35 @@ class S3Client {
   }
 
   async upload(bucketName, objectName, body, contentType, metadata = {}, preventOverride = false) {
-    const data = await this.queue.add(() => new Upload({
-      client: this.client,
-      params: {
-        Bucket: bucketName,
-        Key: objectName,
-        Body: body,
-        ContentType: contentType,
-        Metadata: metadata,
-        IfNoneMatch: preventOverride ? '*' : null
-      },
-      queueSize: 1,
-      partSize: 10 * 1024 * 1024,
-      leavePartsOnError: false
-    }).done());
+    const data = await this.queue.add(async () => {
+      try {
+        const result = await new Upload({
+          client: this.client,
+          params: {
+            Bucket: bucketName,
+            Key: objectName,
+            Body: body,
+            ContentType: contentType,
+            Metadata: metadata,
+            IfNoneMatch: preventOverride ? '*' : null
+          },
+          queueSize: 1,
+          partSize: 10 * 1024 * 1024,
+          leavePartsOnError: false
+        }).done();
+
+        return result;
+      } catch (error) {
+        const overridePrevented = preventOverride && error.$metadata.httpStatusCode === HTTP_STATUS_PRECONDITION_FAILED;
+        if (overridePrevented) {
+          return null;
+        }
+        throw error;
+      }
+    });
 
     return {
-      name: data.Key
+      name: data?.Key || objectName
     };
   }
 
