@@ -5,7 +5,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { ensureIsUnique, splitIntoChunks } from '../utils/array-utils.js';
 
 const MAX_CONCURRENCY = 250;
-const HTTP_STATUS_PRECONDITION_FAILED = 412;
+const HTTP_STATUS_NOT_FOUND = 404;
 
 // Wraps an AWS S3 client limiting concurrency.
 // Assumes usage of MinIO in case the endpoint is not on AWS.
@@ -47,6 +47,22 @@ class S3Client {
       Bucket: bucketName,
       Policy: bucketPolicy
     }));
+  }
+
+  async checkObjectExists(bucketName, objectKey) {
+    try {
+      await this.queue.add(() => this.client.headObject({
+        Bucket: bucketName,
+        Key: objectKey
+      }));
+
+      return true;
+    } catch (error) {
+      if (error.$metadata.httpStatusCode === HTTP_STATUS_NOT_FOUND) {
+        return false;
+      }
+      throw error;
+    }
   }
 
   async listObjects(bucketName, prefix) {
@@ -114,36 +130,23 @@ class S3Client {
     }));
   }
 
-  async upload(bucketName, objectName, body, contentType, metadata = {}, preventOverride = false) {
-    const data = await this.queue.add(async () => {
-      try {
-        const result = await new Upload({
-          client: this.client,
-          params: {
-            Bucket: bucketName,
-            Key: objectName,
-            Body: body,
-            ContentType: contentType,
-            Metadata: metadata,
-            IfNoneMatch: preventOverride ? '*' : null
-          },
-          queueSize: 1,
-          partSize: 10 * 1024 * 1024,
-          leavePartsOnError: false
-        }).done();
-
-        return result;
-      } catch (error) {
-        const overridePrevented = preventOverride && error.$metadata.httpStatusCode === HTTP_STATUS_PRECONDITION_FAILED;
-        if (overridePrevented) {
-          return null;
-        }
-        throw error;
-      }
-    });
+  async upload(bucketName, objectName, body, contentType, metadata = {}) {
+    const data = await this.queue.add(() => new Upload({
+      client: this.client,
+      params: {
+        Bucket: bucketName,
+        Key: objectName,
+        Body: body,
+        ContentType: contentType,
+        Metadata: metadata
+      },
+      queueSize: 1,
+      partSize: 10 * 1024 * 1024,
+      leavePartsOnError: false
+    }).done());
 
     return {
-      name: data?.Key || objectName
+      name: data.Key
     };
   }
 
