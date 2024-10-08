@@ -13,11 +13,11 @@ jobs:
       JIRA_PROJECT_KEYS: EDU
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.2.0
+        uses: actions/checkout@v4.2.1
         with:
           fetch-depth: 0
       - name: Install node
-        uses: actions/setup-node@v3.5.1
+        uses: actions/setup-node@v4.0.4
         with:
           node-version: "20.17.0"
           cache: "yarn"
@@ -25,7 +25,7 @@ jobs:
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Get tag from build environment
         id: tag
-        uses: ilDug/get-tag-action@v1.0.1
+        uses: ilDug/get-tag-action@v1.0.3
       - name: Verify tag format
         run: ./node_modules/.bin/gulp verifySemverTag --tag ${{steps.tag.outputs.version}}
       - name: Set package version
