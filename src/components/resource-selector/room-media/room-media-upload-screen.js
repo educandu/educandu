@@ -1,5 +1,6 @@
 import Info from '../../info.js';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
 import UsedStorage from '../../used-storage.js';
@@ -163,13 +164,13 @@ function RoomMediaUploadScreen({
   };
 
   const renderUploadMessage = () => {
-    const shouldRenderMessageDetails = currentStage === STAGE.uploadNotStarted && uploadItems.some(item => item.isEditable);
+    const renderEditingInfo = uploadItems.some(item => item.isEditable);
 
     return (
       <div className="RoomMediaUploadScreen-message">
         {getUploadMessage()}
-        {!!shouldRenderMessageDetails && (
-          <div className="RoomMediaUploadScreen-messageDetails">
+        {!!renderEditingInfo && (
+          <div className={classNames('RoomMediaUploadScreen-messageDetails', { 'is-visible': currentStage === STAGE.uploadNotStarted })}>
             <Info>{t('stageDetails_uploadNotStarted')}</Info>
           </div>
         )}
@@ -178,13 +179,27 @@ function RoomMediaUploadScreen({
   };
 
   const renderItemName = (item, itemIndex) => {
-    return <a onClick={() => handleItemClick(itemIndex)}>{item.file.name}</a>;
+    const classes = classNames(
+      'RoomMediaUploadScreen-fileStatusName',
+      { 'is-selected': uploadItems.length > 1 && previewedFileIndex === itemIndex }
+    );
+
+    return (
+      <div className={classes} onClick={() => handleItemClick(itemIndex)}>
+        {item.file.name}
+      </div>
+    );
   };
 
   const renderUploadItem = (item, itemIndex) => {
+    const rowClasses = classNames(
+      'RoomMediaUploadScreen-fileStatusRow',
+      { 'is-selected': uploadItems.length > 1 && previewedFileIndex === itemIndex }
+    );
+
     return (
       <div className="RoomMediaUploadScreen-fileStatus">
-        <div className="RoomMediaUploadScreen-fileStatusRow">
+        <div className={rowClasses}>
           {item.status === ITEM_STATUS.pristine && !!item.isEditable && (
           <Tooltip title={t('common:edit')}>
             <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
@@ -220,11 +235,6 @@ function RoomMediaUploadScreen({
           )}
         </div>
         {!!item.errorMessage && <div className="RoomMediaUploadScreen-fileStatusError">{item.errorMessage}</div>}
-        {previewedFileIndex === itemIndex && (
-          <div className="RoomMediaUploadScreen-fileStatusPreview">
-            <ResourcePreviewWithMetadata urlOrFile={item.file} size={item.file.size} />
-          </div>
-        )}
       </div>
     );
   };
@@ -245,56 +255,68 @@ function RoomMediaUploadScreen({
           )}
           {renderUploadMessage()}
           <div className="RoomMediaUploadScreen-fileStatusContainer">
-            {uploadItems.map((item, index) => (
-              <div key={index.toString()}>
-                {renderUploadItem(item, index)}
-              </div>
-            ))}
+            <div className="RoomMediaUploadScreen-fileStatusList">
+              {uploadItems.map((item, index) => (
+                <div key={index.toString()}>
+                  {renderUploadItem(item, index)}
+                </div>
+              ))}
+            </div>
+            <div className="RoomMediaUploadScreen-filePreviewContainer">
+              {!!uploadItems[previewedFileIndex] && (
+                <ResourcePreviewWithMetadata
+                  urlOrFile={uploadItems[previewedFileIndex].file}
+                  size={uploadItems[previewedFileIndex].file.size}
+                  />
+              )}
+            </div>
           </div>
         </div>
       </div>
-      {currentStage !== STAGE.uploadFinished && (
+      <div>
         <div className="RoomMediaUploadScreen-imageOptimizationCheckbox">
-          <Checkbox
-            checked={optimizeImages}
-            onChange={handleImageOptimizationChange}
-            disabled={currentStage === STAGE.uploading}
-            >
-            {t('optimizeImages')}
-          </Checkbox>
+          {currentStage !== STAGE.uploadFinished && (
+            <Checkbox
+              checked={optimizeImages}
+              onChange={handleImageOptimizationChange}
+              disabled={currentStage === STAGE.uploading}
+              >
+              {t('optimizeImages')}
+            </Checkbox>
+          )}
         </div>
-      )}
-      <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
-        {!!canGoBack && (
+        <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
+          {!!canGoBack && (
           <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={currentStage === STAGE.uploading}>{t('common:back')}</Button>
-        )}
-        <div className="u-resource-selector-screen-footer-buttons">
-          {(currentStage !== STAGE.uploadFinished || !!canSelectFilesAfterUpload) && (
+          )}
+          <div className="u-resource-selector-screen-footer-buttons">
+            {(currentStage !== STAGE.uploadFinished || !!canSelectFilesAfterUpload) && (
             <Button
               onClick={onCancelClick}
               disabled={currentStage === STAGE.uploading}
               >{t('common:cancel')}
             </Button>
-          )}
-          {(currentStage === STAGE.uploadNotStarted || currentStage === STAGE.uploading) && (
+            )}
+            {(currentStage === STAGE.uploadNotStarted || currentStage === STAGE.uploading) && (
             <Button
               type="primary"
               onClick={handleStartUploadClick}
               loading={currentStage === STAGE.uploading}
               >{t('startUpload')}
             </Button>
-          )}
-          {currentStage === STAGE.uploadFinished && !!canSelectFilesAfterUpload && (
+            )}
+            {currentStage === STAGE.uploadFinished && !!canSelectFilesAfterUpload && (
             <Button
               type="primary"
               onClick={handleSelectPreviewedFileClick}
               disabled={uploadItems[previewedFileIndex]?.status !== ITEM_STATUS.succeeded}
               >{t('common:select')}
             </Button>
-          )}
-          {currentStage === STAGE.uploadFinished && !canSelectFilesAfterUpload && (
+            )}
+            {currentStage === STAGE.uploadFinished && !canSelectFilesAfterUpload && (
             <Button type="primary" onClick={onOkClick}>{t('common:ok')}</Button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
