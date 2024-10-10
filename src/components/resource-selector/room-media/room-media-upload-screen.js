@@ -263,14 +263,15 @@ function RoomMediaUploadScreen({
         </div>
       </div>
       {currentStage !== STAGE.uploadFinished && (
-        <Checkbox
-          checked={optimizeImages}
-          onChange={handleImageOptimizationChange}
-          disabled={currentStage === STAGE.uploading}
-          className="RoomMediaUploadScreen-imageOptimizationCheckbox"
-          >
-          {t('optimizeImages')}
-        </Checkbox>
+        <div className="RoomMediaUploadScreen-imageOptimizationCheckbox">
+          <Checkbox
+            checked={optimizeImages}
+            onChange={handleImageOptimizationChange}
+            disabled={currentStage === STAGE.uploading}
+            >
+            {t('optimizeImages')}
+          </Checkbox>
+        </div>
       )}
       <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
         {!!canGoBack && (
