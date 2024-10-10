@@ -13,12 +13,16 @@
   margin-bottom: 20px;
 }
 
-.RoomMediaUploadScreen-fileStatus {
-  margin: 10px;
-}
-
 .RoomMediaUploadScreen-fileStatusRow {
   .m-control-group-wide;
+  grid-auto-columns: auto;
+  justify-content: start;
+  overflow: hidden;
+  padding: 10px;
+
+  &.is-selected {
+    background-color: @edu-background-color-base;
+  }
 }
 
 .RoomMediaUploadScreen-fileStatusError {
@@ -27,21 +31,49 @@
   color: @edu-error-color;
 }
 
-.RoomMediaUploadScreen-fileStatusPreview {
-  margin-top: 25px;
-}
-
 .RoomMediaUploadScreen-message {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .RoomMediaUploadScreen-messageDetails {
   padding: 5px 0 0 5px;
+  margin-left: 17px;
   font-size: @edu-font-size-sm;
+  visibility: hidden;
+
+  &.is-visible {
+    visibility: visible;
+  }
 }
 
 .RoomMediaUploadScreen-fileStatusContainer {
-  overflow: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  overflow: hidden;
+
+  @media @edu-media-phone {
+    grid-template-columns: none;
+    grid-template-rows: auto;
+    overflow: auto;
+  }
+}
+
+.RoomMediaUploadScreen-filePreviewContainer {
+  display: grid;
+  align-items: center;
+}
+
+.RoomMediaUploadScreen-fileStatusList {
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
+
+  @media @edu-media-phone {
+    overflow: visible;
+    border: none;
+  }
 }
 
 .RoomMediaUploadScreen-fileStatusIcon {
@@ -62,13 +94,22 @@
   }
 }
 
+.RoomMediaUploadScreen-fileStatusName {
+  .m-overflow-ellipsis;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .RoomMediaUploadScreen-fileStatusMessage {
   font-style: italic;
   color: @edu-secondary-color-dark;
 }
 
 .RoomMediaUploadScreen-imageOptimizationCheckbox {
+  display: grid;
+  justify-content: end;
   font-size: @edu-font-size-sm;
-  margin-left: auto;
-  margin-right: 0;
+  height: @edu-control-height-sm;
 }

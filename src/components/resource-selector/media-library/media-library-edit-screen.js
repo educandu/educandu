@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useService } from '../../container-context.js';
-import ResourceDetails from '../shared/resource-details.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../../utils/source-utils.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
+import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
 
 function MediaLibraryEditScreen({
   file,
@@ -36,7 +36,7 @@ function MediaLibraryEditScreen({
         <div className="u-resource-selector-screen-content-rows">
           <div className="u-resource-selector-screen-file-name">{renderFileName()}</div>
           <div className="u-resource-selector-screen-content-split">
-            <ResourceDetails url={file.url} size={file.size} previewOnly />
+            <ResourcePreviewWithMetadata urlOrFile={file.url} size={file.size} />
             <MediaLibraryMetadataForm form={form} file={file} useOptimizeImage={false} onFinish={onSaveClick} />
           </div>
         </div>

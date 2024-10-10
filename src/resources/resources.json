@@ -4055,8 +4055,8 @@
       "de": "bearbeitet"
     },
     "stage_uploadNotStarted": {
-      "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded.",
-      "de": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen."
+      "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded",
+      "de": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen"
     },
     "stageDetails_uploadNotStarted": {
       "en": "You can edit images before upload by clicking on the pen icon.",
@@ -4067,8 +4067,8 @@
       "de": "Hochladen ..."
     },
     "stage_uploadFinished": {
-      "en": "Upload finished.",
-      "de": "Upload beendet."
+      "en": "Upload finished",
+      "de": "Upload beendet"
     },
     "optimizeImages": {
       "en": "Optimize images for web display",

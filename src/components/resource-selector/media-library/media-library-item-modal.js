@@ -6,7 +6,6 @@ import ResourceUrl from '../shared/resource-url.js';
 import { Button, Form, message, Modal } from 'antd';
 import permissions from '../../../domain/permissions.js';
 import React, { useEffect, useRef, useState } from 'react';
-import ResourceDetails from '../shared/resource-details.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import { useIsMounted, usePermission } from '../../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
@@ -18,6 +17,7 @@ import { processFileBeforeUpload } from '../../../utils/storage-utils.js';
 import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
 import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
+import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -173,7 +173,7 @@ function MediaLibaryItemModal({
           {mediaLibraryItem.name}
         </div>
         <div className="MediaLibaryItemModal-splitView">
-          <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />
+          <ResourcePreviewWithMetadata urlOrFile={mediaLibraryItem.url} size={mediaLibraryItem.size} />
           <MediaLibraryMetadataDisplay mediaLibraryItem={mediaLibraryItem} />
         </div>
         <div className="MediaLibaryItemModal-url">
@@ -197,7 +197,7 @@ function MediaLibaryItemModal({
           {mediaLibraryItem.name}
         </div>
         <div className="MediaLibaryItemModal-splitView">
-          <ResourceDetails url={mediaLibraryItem.url} size={mediaLibraryItem.size} previewOnly />
+          <ResourcePreviewWithMetadata urlOrFile={mediaLibraryItem.url} size={mediaLibraryItem.size} />
           <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImage={false} onFinish={handleUpdateItemFinish} />
         </div>
       </div>
