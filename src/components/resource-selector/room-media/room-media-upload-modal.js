@@ -44,7 +44,7 @@ function RoomMediaUploadModal({ isOpen, files, onOk, onCancel }) {
           <RoomMediaUploadScreen
             canGoBack={false}
             uploadQueue={uploadQueue}
-            canSelectedFilesAfterUpload={false}
+            canSelectFilesAfterUpload={false}
             onOkClick={onOk}
             onCancelClick={onCancel}
             onEditFileClick={handleEditFileClick}

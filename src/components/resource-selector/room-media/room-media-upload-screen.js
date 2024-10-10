@@ -7,12 +7,12 @@ import { Button, Checkbox, Tooltip } from 'antd';
 import { useLocale } from '../../locale-context.js';
 import EditIcon from '../../icons/general/edit-icon.js';
 import FileIcon from '../../icons/general/file-icon.js';
-import ResourceDetails from '../shared/resource-details.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
+import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
 import { useRoomMediaContext, useSetRoomMediaContext } from '../../room-media-context.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
 import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -41,7 +41,7 @@ const createUploadItems = uploadQueue => uploadQueue.map(({ file, isPristine }) 
 function RoomMediaUploadScreen({
   canGoBack,
   uploadQueue,
-  canSelectedFilesAfterUpload,
+  canSelectFilesAfterUpload,
   onOkClick,
   onBackClick,
   onCancelClick,
@@ -55,7 +55,7 @@ function RoomMediaUploadScreen({
 
   const [optimizeImages, setOptimizeImages] = useState(true);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const [previewedFileIndex, setPreviewedFileIndex] = useState(-1);
+  const [previewedFileIndex, setPreviewedFileIndex] = useState(0);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
 
@@ -63,16 +63,10 @@ function RoomMediaUploadScreen({
 
   useEffect(() => {
     setOptimizeImages(true);
-    setPreviewedFileIndex(-1);
+    setPreviewedFileIndex(0);
     setCurrentStage(STAGE.uploadNotStarted);
     setUploadItems(createUploadItems(uploadQueue));
   }, [uploadQueue]);
-
-  useEffect(() => {
-    if (uploadItems.length === 1 && uploadItems[0].status === ITEM_STATUS.succeeded) {
-      setPreviewedFileIndex(0);
-    }
-  }, [uploadItems]);
 
   const ensureCanUpload = useCallback(file => {
     if (file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) {
@@ -151,8 +145,8 @@ function RoomMediaUploadScreen({
     onSelectFileClick(uploadItems[previewedFileIndex].uploadedFile);
   };
 
-  const handleUploadItemClick = itemIndex => {
-    setPreviewedFileIndex(itemIndex === previewedFileIndex ? -1 : itemIndex);
+  const handleItemClick = itemIndex => {
+    setPreviewedFileIndex(itemIndex);
   };
 
   const getUploadMessage = () => {
@@ -183,11 +177,8 @@ function RoomMediaUploadScreen({
     );
   };
 
-  const renderUploadItemName = (item, itemIndex) => {
-    if (item.status === ITEM_STATUS.succeeded && uploadItems.length > 1) {
-      return <a onClick={() => handleUploadItemClick(itemIndex)}>{item.file.name}</a>;
-    }
-    return item.file.name;
+  const renderItemName = (item, itemIndex) => {
+    return <a onClick={() => handleItemClick(itemIndex)}>{item.file.name}</a>;
   };
 
   const renderUploadItem = (item, itemIndex) => {
@@ -223,7 +214,7 @@ function RoomMediaUploadScreen({
           {item.status === ITEM_STATUS.failed && (
           <CloseOutlined className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--error" />
           )}
-          {renderUploadItemName(item, itemIndex)}
+          {renderItemName(item, itemIndex)}
           {item.status === ITEM_STATUS.preprocessed && (
           <span className="RoomMediaUploadScreen-fileStatusMessage">({t('preprocessed')})</span>
           )}
@@ -231,7 +222,7 @@ function RoomMediaUploadScreen({
         {!!item.errorMessage && <div className="RoomMediaUploadScreen-fileStatusError">{item.errorMessage}</div>}
         {previewedFileIndex === itemIndex && (
           <div className="RoomMediaUploadScreen-fileStatusPreview">
-            <ResourceDetails url={item.uploadedFile.url} size={item.uploadedFile.size} previewOnly />
+            <ResourcePreviewWithMetadata urlOrFile={item.file} size={item.file.size} />
           </div>
         )}
       </div>
@@ -278,16 +269,30 @@ function RoomMediaUploadScreen({
           <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={currentStage === STAGE.uploading}>{t('common:back')}</Button>
         )}
         <div className="u-resource-selector-screen-footer-buttons">
-          {(currentStage !== STAGE.uploadFinished || !!canSelectedFilesAfterUpload) && (
-            <Button onClick={onCancelClick} disabled={currentStage === STAGE.uploading}>{t('common:cancel')}</Button>
+          {(currentStage !== STAGE.uploadFinished || !!canSelectFilesAfterUpload) && (
+            <Button
+              onClick={onCancelClick}
+              disabled={currentStage === STAGE.uploading}
+              >{t('common:cancel')}
+            </Button>
           )}
           {(currentStage === STAGE.uploadNotStarted || currentStage === STAGE.uploading) && (
-            <Button type="primary" onClick={handleStartUploadClick} loading={currentStage === STAGE.uploading}>{t('startUpload')}</Button>
+            <Button
+              type="primary"
+              onClick={handleStartUploadClick}
+              loading={currentStage === STAGE.uploading}
+              >{t('startUpload')}
+            </Button>
           )}
-          {currentStage === STAGE.uploadFinished && !!canSelectedFilesAfterUpload && (
-            <Button type="primary" onClick={handleSelectPreviewedFileClick} disabled={previewedFileIndex === -1}>{t('common:select')}</Button>
+          {currentStage === STAGE.uploadFinished && !!canSelectFilesAfterUpload && (
+            <Button
+              type="primary"
+              onClick={handleSelectPreviewedFileClick}
+              disabled={uploadItems[previewedFileIndex]?.status !== ITEM_STATUS.succeeded}
+              >{t('common:select')}
+            </Button>
           )}
-          {currentStage === STAGE.uploadFinished && !canSelectedFilesAfterUpload && (
+          {currentStage === STAGE.uploadFinished && !canSelectFilesAfterUpload && (
             <Button type="primary" onClick={onOkClick}>{t('common:ok')}</Button>
           )}
         </div>
@@ -298,7 +303,7 @@ function RoomMediaUploadScreen({
 
 RoomMediaUploadScreen.propTypes = {
   canGoBack: PropTypes.bool,
-  canSelectedFilesAfterUpload: PropTypes.bool,
+  canSelectFilesAfterUpload: PropTypes.bool,
   uploadQueue: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
     isPristine: PropTypes.bool.isRequired
@@ -312,7 +317,7 @@ RoomMediaUploadScreen.propTypes = {
 
 RoomMediaUploadScreen.defaultProps = {
   canGoBack: true,
-  canSelectedFilesAfterUpload: true,
+  canSelectFilesAfterUpload: true,
   onOkClick: () => {},
   onBackClick: () => {},
   onCancelClick: () => {},
