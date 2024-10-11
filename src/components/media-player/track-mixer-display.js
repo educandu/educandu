@@ -54,9 +54,9 @@ function TrackMixerDisplay({
         <div className="TrackMixerDisplay-volumePreset">
           <span>{`${t('common:volumePreset')}:`}</span>
           <Select
-            bordered={false}
+            variant='borderless'
             placement="bottomRight"
-            dropdownMatchSelectWidth={false}
+            popupMatchSelectWidth={false}
             value={selectedVolumePresetIndex}
             options={volumePresets.map((preset, index) => ({ label: preset.name, value: index }))}
             onSelect={handleVolumePresetOptionSelect}

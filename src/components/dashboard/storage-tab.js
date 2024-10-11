@@ -153,7 +153,7 @@ function StorageTab({ allRoomMediaOverview, loading, onAllRoomMediaOverviewChang
             options={roomOptions}
             value={selectedRoomId}
             onChange={setSelectedRoomId}
-            dropdownMatchSelectWidth={false}
+            popupMatchSelectWidth={false}
             className="StorageTab-roomSelect"
             />
         </div>
