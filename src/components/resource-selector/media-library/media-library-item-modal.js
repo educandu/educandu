@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import prettyBytes from 'pretty-bytes';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import ImageEditor from '../../image-editor.js';
@@ -21,9 +22,22 @@ import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadat
 
 const logger = new Logger(import.meta.url);
 
-const createFileInfo = (file, allowUnlimitedUpload) => file
-  ? { file, isEdited: false, isTooBig: !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES }
-  : null;
+const createUploadItem = (t, file, allowUnlimitedUpload) => {
+  if (!file) {
+    return null;
+  }
+
+  const fileIsTooBig = !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES;
+  const errorMessage= fileIsTooBig
+    ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) })
+    : null;
+
+  return {
+    file,
+    isEdited: false,
+    errorMessage
+  };
+};
 
 export const MEDIA_LIBRARY_ITEM_MODAL_MODE = {
   preview: 'preview',
@@ -49,7 +63,7 @@ function MediaLibaryItemModal({
   const [isVisibleToUser, setIsVisibleToUser] = useState(false);
   const [isEditedImageDirty, setIsEditedImageDirty] = useState(false);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const [fileInfo, setFileInfo] = useState(createFileInfo(null, allowUnlimitedUpload));
+  const [uploadItem, setUploadItem] = useState(createUploadItem(t, null, allowUnlimitedUpload));
 
   if (mode !== MEDIA_LIBRARY_ITEM_MODAL_MODE.create && !mediaLibraryItem) {
     throw new Error('Cannot preview or update without a media library item');
@@ -63,8 +77,8 @@ function MediaLibaryItemModal({
     setIsEditingImage(false);
     setIsVisibleToUser(true);
     setIsEditedImageDirty(false);
-    setFileInfo(createFileInfo(null));
-  }, [isOpen, mode, form]);
+    setUploadItem(createUploadItem(t, null));
+  }, [t, isOpen, mode, form]);
 
   useEffect(() => {
     if (isOpen && isVisibleToUser && mode !== MEDIA_LIBRARY_ITEM_MODAL_MODE.preview) {
@@ -82,7 +96,7 @@ function MediaLibaryItemModal({
 
   const handleApplyImageEditorChanges = async () => {
     const newFile = await imageEditorRef.current.getCroppedFile();
-    setFileInfo({ ...createFileInfo(newFile, allowUnlimitedUpload), isEdited: true });
+    setUploadItem({ ...createUploadItem(t, newFile, allowUnlimitedUpload), isEdited: true });
     setIsEditingImage(false);
   };
 
@@ -101,15 +115,15 @@ function MediaLibaryItemModal({
 
   const handleFileDrop = ([newFile]) => {
     if (!isSaving && newFile) {
-      setFileInfo(createFileInfo(newFile, allowUnlimitedUpload));
+      setUploadItem(createUploadItem(t, newFile, allowUnlimitedUpload));
     }
   };
 
   const handleCreateItemFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImage }) => {
     try {
       setIsSaving(true);
-      const processedFile = await processFileBeforeUpload({ file: fileInfo.file, optimizeImage });
-      const createdItem = await mediaLibraryApiClient.createMediaLibraryItem({
+      const processedFile = await processFileBeforeUpload({ file: uploadItem.file, optimizeImage });
+      const createdMediaLibraryItem = await mediaLibraryApiClient.createMediaLibraryItem({
         file: processedFile,
         shortDescription,
         languages,
@@ -119,7 +133,7 @@ function MediaLibaryItemModal({
       });
 
       message.success(t('common:changesSavedSuccessfully'));
-      onSave(createdItem);
+      onSave(createdMediaLibraryItem);
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
@@ -218,7 +232,7 @@ function MediaLibaryItemModal({
         <div className="MediaLibaryItemModal">
           <div className="MediaLibaryItemModal-imageEditor">
             <ImageEditor
-              file={fileInfo.file}
+              file={uploadItem.file}
               editorRef={imageEditorRef}
               onCrop={handleImageEditorCrop}
               />
@@ -242,10 +256,10 @@ function MediaLibaryItemModal({
           <div className="MediaLibaryItemModal-splitView">
             <MediaLibraryFileDropzone
               dropzoneRef={dropzoneRef}
-              file={fileInfo?.file || null}
+              file={uploadItem?.file || null}
               canAcceptFile={!isSaving}
               uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
-              showSizeWarning={!!fileInfo?.isTooBig}
+              errorMessage={uploadItem?.errorMessage}
               onFileDrop={handleFileDrop}
               onEditImageClick={handleEditImageClick}
               />
@@ -257,7 +271,7 @@ function MediaLibaryItemModal({
         <div className="MediaLibaryItemModal-footer">
           <div className="MediaLibaryItemModal-footerButtons MediaLibaryItemModal-footerButtons--default">
             <Button onClick={onClose}>{t('common:cancel')}</Button>
-            <Button type="primary" loading={isSaving} disabled={!fileInfo || !!fileInfo.isTooBig} onClick={handleSaveClick}>{t('common:save')}</Button>
+            <Button type="primary" loading={isSaving} disabled={!uploadItem || !!uploadItem.errorMessage} onClick={handleSaveClick}>{t('common:save')}</Button>
           </div>
         </div>
       );

@@ -16,7 +16,7 @@ import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, uploadLimit, showSizeWarning, onFileDrop, onEditImageClick }) {
+function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, uploadLimit, errorMessage, onFileDrop, onEditImageClick }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibraryFileDropzone');
 
@@ -30,7 +30,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, uploadLimi
 
   const getPreviewAreaClasses = isDragActive => classNames(
     'MediaLibraryFileDropzone',
-    { 'MediaLibraryFileDropzone--warning': showSizeWarning },
+    { 'MediaLibraryFileDropzone--errorMessage': !!errorMessage },
     { 'is-dropping': canAcceptFile && isDragActive },
     { 'is-drop-rejected': !canAcceptFile && isDragActive }
   );
@@ -47,13 +47,10 @@ function MediaLibraryFileDropzone({ dropzoneRef, file, canAcceptFile, uploadLimi
                   urlOrFile={file}
                   footer={(
                     <Fragment>
-                      {!showSizeWarning && (
-                        <div>{t('fileWillBeAddedToMediaLibrary')}</div>
-                      )}
-                      {!!showSizeWarning && !!uploadLimit && (
-                        <div className="MediaLibraryFileDropzone-sizeWarning">
+                      {!!errorMessage && (
+                        <div className="MediaLibraryFileDropzone-errorMessage">
                           <WarningIcon />
-                          {t('common:fileIsTooBig', { limit: prettyBytes(uploadLimit) })}
+                          {errorMessage}
                         </div>
                       )}
                       {!!canEditImage && (
@@ -111,7 +108,7 @@ MediaLibraryFileDropzone.propTypes = {
   file: browserFileType,
   canAcceptFile: PropTypes.bool,
   uploadLimit: PropTypes.number,
-  showSizeWarning: PropTypes.bool,
+  errorMessage: PropTypes.string,
   onFileDrop: PropTypes.func.isRequired,
   onEditImageClick: PropTypes.func.isRequired
 };
@@ -120,7 +117,7 @@ MediaLibraryFileDropzone.defaultProps = {
   file: null,
   canAcceptFile: true,
   uploadLimit: null,
-  showSizeWarning: false
+  errorMessage: null
 };
 
 export default MediaLibraryFileDropzone;
