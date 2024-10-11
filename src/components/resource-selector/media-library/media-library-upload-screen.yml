@@ -2,7 +2,7 @@ mediaLibraryUploadScreen:
   uploadHeadline:
     en: File upload
     de: Datei-Upload
-  preprocessed:
+  processed:
     en: edited
     de: bearbeitet
   stage_uploadNotStarted:

@@ -28,13 +28,14 @@ const SCREEN = {
 function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   const { t } = useTranslation();
   const isMounted = useIsMounted();
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [fileToUpload, setFileToUpload] = useState(null);
+  const [filesToUpload, setFilesToUpload] = useState([]);
   const [highlightedFile, setHighlightedFile] = useState(null);
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const [screenStack, setScreenStack] = useState([SCREEN.search]);
-  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
   const [searchParams, setSearchParams] = useState({ searchTerm: '', searchResourceType: MEDIA_SEARCH_RESOURCE_TYPE.any });
 
@@ -61,7 +62,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     }
   }, [mediaLibraryApiClient, isMounted]);
 
-  const handleFileDrop = async file => {
+  const handleFilesDrop = async fs => {
     const checkPreconditions = () => {
       return new Promise(resolve => {
         if (!getCookie(uploadLiabilityCookieName)) {
@@ -76,11 +77,11 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     };
 
     const preconditionsAreMet = await checkPreconditions();
-    if (!preconditionsAreMet || !file) {
+    if (!preconditionsAreMet || !fs.length) {
       return;
     }
 
-    setFileToUpload(file);
+    setFilesToUpload(fs);
     pushScreen(SCREEN.upload);
   };
 
@@ -148,7 +149,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
 
   useEffect(() => {
     if (screen !== SCREEN.upload) {
-      setFileToUpload(null);
+      setFilesToUpload([]);
     }
 
     if (!highlightedFile || screen !== SCREEN.search) {
@@ -193,7 +194,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
         highlightedFile={highlightedFile}
         isHidden={screen !== SCREEN.search}
         onCancelClick={onCancel}
-        onFileDrop={handleFileDrop}
+        onFilesDrop={handleFilesDrop}
         onFileClick={handleFileClick}
         onFileDoubleClick={handleFileDoubleClick}
         onEditFileClick={handleEditFileClick}
@@ -205,7 +206,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
         />
       {screen === SCREEN.upload && (
         <MediaLibraryUploadScreen
-          initialFile={fileToUpload}
+          initialFiles={filesToUpload}
           onCancelClick={onCancel}
           onBackClick={handleScreenBackClick}
           onSelectNewUrl={handleSelectNewUrl}

@@ -7,6 +7,7 @@ import { usePermission } from '../../../ui/hooks.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import permissions from '../../../domain/permissions.js';
 import React, { useEffect, useRef, useState } from 'react';
+import { FILE_UPLOAD_STATUS } from '../shared/constants.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
@@ -28,55 +29,57 @@ const SCREEN = {
 };
 
 const createUploadItem = (t, file, allowUnlimitedUpload) => {
-  if (!file) {
-    return null;
-  }
-
   const fileIsTooBig = !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES;
-  const errorMessage= fileIsTooBig
+  const errorMessage = fileIsTooBig
     ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) })
     : null;
 
   return {
     file,
-    isEdited: false,
+    isEditable: isEditableImageFile(file),
+    status: errorMessage ? FILE_UPLOAD_STATUS.failed : FILE_UPLOAD_STATUS.pristine,
     errorMessage
   };
 };
 
+const createUploadItems = (t, files, allowUnlimitedUpload) => {
+  return files.map(file => createUploadItem(t, file, allowUnlimitedUpload));
+};
+
 function MediaLibraryUploadScreen({
-  initialFile,
+  initialFiles,
   onBackClick,
   onCancelClick,
   onSelectNewUrl
 }) {
-  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
   const { t } = useTranslation('mediaLibraryUploadScreen');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
 
   const [currentScreen, setCurrentScreen] = useState(SCREEN.enterData);
+  const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [createdMediaLibraryItem, setCreatedMediaLibraryItem] = useState(null);
-  const [uploadItem, setUploadItem] = useState(createUploadItem(t, initialFile, allowUnlimitedUpload));
+  const [uploadItems, setUploadItems] = useState(createUploadItems(t, initialFiles, allowUnlimitedUpload));
 
   useEffect(() => {
+    setCurrentEditedFileIndex(-1);
     setCreatedMediaLibraryItem(null);
     setCurrentScreen(SCREEN.enterData);
-    setUploadItem(createUploadItem(t, initialFile, allowUnlimitedUpload));
-  }, [t, allowUnlimitedUpload, initialFile, form]);
+    setUploadItems(createUploadItems(t, initialFiles, allowUnlimitedUpload));
+  }, [t, allowUnlimitedUpload, initialFiles, form]);
 
   const isCurrentlyUploading = currentScreen === SCREEN.createItem;
-  const canEditImage = uploadItem && isEditableImageFile(uploadItem.file);
 
-  const handleFileDrop = ([newFile]) => {
-    if (!isCurrentlyUploading && newFile) {
-      setUploadItem(createUploadItem(t, newFile, allowUnlimitedUpload));
+  const handleFilesDrop = droppedFiles => {
+    if (!isCurrentlyUploading && droppedFiles?.length) {
+      setUploadItems(createUploadItems(t, droppedFiles, allowUnlimitedUpload));
     }
   };
 
   const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImage }) => {
-    const currentFile = uploadItem?.file || null;
+    const currentFile = uploadItems[0]?.file || null;
     if (!currentFile) {
       return;
     }
@@ -109,23 +112,26 @@ function MediaLibraryUploadScreen({
     onSelectNewUrl(createdMediaLibraryItem.portableUrl);
   };
 
-  const handleEditImageClick = () => {
+  const handleEditImageClick = fileIndex => {
+    setCurrentEditedFileIndex(fileIndex);
     setCurrentScreen(SCREEN.editImage);
   };
 
   const handleEditorBackClick = () => {
+    setCurrentEditedFileIndex(-1);
     setCurrentScreen(SCREEN.enterData);
   };
 
   const handleEditorApplyClick = newFile => {
-    setUploadItem({ ...createUploadItem(t, newFile, allowUnlimitedUpload), isEdited: true });
+    setUploadItems(uploadItems.map((item, index) => index !== currentEditedFileIndex ? item : { ...item, file: newFile, status: FILE_UPLOAD_STATUS.processed }));
+    setCurrentEditedFileIndex(-1);
     setCurrentScreen(SCREEN.enterData);
   };
 
   if (currentScreen === SCREEN.editImage) {
     return (
       <FileEditorScreen
-        file={uploadItem.file}
+        file={uploadItems[currentEditedFileIndex].file}
         onCancelClick={onCancelClick}
         onBackClick={handleEditorBackClick}
         onApplyClick={handleEditorApplyClick}
@@ -152,21 +158,24 @@ function MediaLibraryUploadScreen({
         <div className="u-resource-selector-screen-content-split">
           <MediaLibraryFileDropzone
             dropzoneRef={dropzoneRef}
-            file={uploadItem?.file || null}
-            canAcceptFile={!isCurrentlyUploading}
+            uploadItems={uploadItems}
+            canAcceptFiles={!isCurrentlyUploading}
             uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
-            errorMessage={uploadItem?.errorMessage}
-            onFileDrop={handleFileDrop}
+            onFilesDrop={handleFilesDrop}
             onEditImageClick={handleEditImageClick}
             />
-          <MediaLibraryMetadataForm form={form} disableOptimizeImage={!canEditImage} onFinish={handleMetadataFormFinish} />
+          <MediaLibraryMetadataForm
+            form={form}
+            disableOptimizeImage={!uploadItems.some(item => item.isEditable)}
+            onFinish={handleMetadataFormFinish}
+            />
         </div>
       </div>
       <div className="u-resource-selector-screen-footer">
         <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleCreateItemClick} disabled={!uploadItem || !!uploadItem.errorMessage} loading={isCurrentlyUploading}>{t('common:upload')}</Button>
+          <Button type="primary" onClick={handleCreateItemClick} disabled={uploadItems.some(item => !!item.errorMessage)} loading={isCurrentlyUploading}>{t('common:upload')}</Button>
         </div>
       </div>
     </div>
@@ -174,14 +183,14 @@ function MediaLibraryUploadScreen({
 }
 
 MediaLibraryUploadScreen.propTypes = {
-  initialFile: browserFileType,
+  initialFiles: PropTypes.arrayOf(browserFileType),
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
   onSelectNewUrl: PropTypes.func
 };
 
 MediaLibraryUploadScreen.defaultProps = {
-  initialFile: null,
+  initialFiles: [],
   onBackClick: () => {},
   onCancelClick: () => {},
   onSelectNewUrl: () => {}

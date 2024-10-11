@@ -2,7 +2,7 @@
   display: grid;
   .m-dropzone;
 
-  &.MediaLibraryFileDropzone--errorMessage {
+  &.MediaLibraryFileDropzone--error {
     border-color: @edu-error-color;
   }
 
@@ -19,20 +19,4 @@
   display: grid;
   padding: @edu-content-padding;
   align-content: space-around;
-}
-
-.MediaLibraryFileDropzone-contentButton {
-  margin-top: @edu-content-padding;
-}
-
-.MediaLibraryFileDropzone-divider {
-  width: 100%;
-}
-
-.MediaLibraryFileDropzone-errorMessage {
-  font-weight: bold;
-  display: inline-grid;
-  color: @edu-error-color;
-  gap: @edu-control-spacing-wide;
-  grid-template-columns: repeat(2, auto);
 }

@@ -39,7 +39,7 @@ function MediaLibrarySearchScreen({
   initialUrl,
   searchParams,
   highlightedFile,
-  onFileDrop,
+  onFilesDrop,
   onFileClick,
   onCancelClick,
   onFileDoubleClick,
@@ -127,7 +127,7 @@ function MediaLibrarySearchScreen({
         {currentScreen === SCREEN.search && (
           <div className="MediaLibrarySearchScreen-searchContent u-resource-selector-screen-content">
 
-            <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFileDrop(fs[0])}>
+            <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFilesDrop(fs)}>
               {({ getRootProps, getInputProps, isDragActive }) => (
                 <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
                   <input {...getInputProps()} hidden />
@@ -157,7 +157,7 @@ function MediaLibrarySearchScreen({
         )}
 
         {currentScreen !== SCREEN.search && (
-          <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFileDrop(fs[0])}>
+          <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFilesDrop(fs)}>
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div {...getRootProps({ className: getNoSearchClasses(isDragActive) })}>
                 <MediaLibraryOptions
@@ -250,7 +250,7 @@ MediaLibrarySearchScreen.propTypes = {
     searchTerm: PropTypes.string.isRequired,
     searchResourceType: PropTypes.oneOf(Object.values(MEDIA_SEARCH_RESOURCE_TYPE)).isRequired
   }).isRequired,
-  onFileDrop: PropTypes.func.isRequired,
+  onFilesDrop: PropTypes.func.isRequired,
   onFileClick: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onFileDoubleClick: PropTypes.func.isRequired,
