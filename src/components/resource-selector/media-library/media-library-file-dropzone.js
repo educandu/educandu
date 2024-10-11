@@ -17,6 +17,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibraryFileDropzone');
 
+  // move this up into the parent to not loose selection when returning from edit screen
   const [previewedItemIndex, setPreviewedItemIndex] = useState(uploadItems.length ? 0 : -1);
 
   useEffect(() => {
@@ -51,14 +52,17 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
           <div className="MediaLibraryFileDropzone-content">
             <input {...getInputProps()} hidden />
             {!!uploadItems.length && (
-              <FilesUploadViewer
-                uploadItems={uploadItems}
-                previewedItemIndex={previewedItemIndex}
-                editingDisabled={!canAcceptFiles}
-                verticalMode
-                onEditItemClick={handleEditItemClick}
-                onItemClick={handleItemClick}
-                />
+              <div>
+                <div className="MediaLibraryFileDropzone-title">{t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length })}</div>
+                <FilesUploadViewer
+                  uploadItems={uploadItems}
+                  previewedItemIndex={previewedItemIndex}
+                  editingDisabled={!canAcceptFiles}
+                  verticalMode
+                  onEditItemClick={handleEditItemClick}
+                  onItemClick={handleItemClick}
+                  />
+              </div>
             )}
             {!uploadItems.length && (
               <EmptyState

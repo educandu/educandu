@@ -164,11 +164,13 @@ function MediaLibraryUploadScreen({
             onFilesDrop={handleFilesDrop}
             onEditImageClick={handleEditImageClick}
             />
-          <MediaLibraryMetadataForm
-            form={form}
-            disableOptimizeImage={!uploadItems.some(item => item.isEditable)}
-            onFinish={handleMetadataFormFinish}
-            />
+          <div className='u-resource-selector-screen-content-right-column'>
+            <MediaLibraryMetadataForm
+              form={form}
+              disableOptimizeImage={!uploadItems.some(item => item.isEditable)}
+              onFinish={handleMetadataFormFinish}
+              />
+          </div>
         </div>
       </div>
       <div className="u-resource-selector-screen-footer">

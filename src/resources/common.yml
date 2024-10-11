@@ -555,6 +555,9 @@ common:
   mediaUploadMultipleEmptyStateSubtitle:
     en: Drag and drop files here to upload them or use the button to select files from your machine.
     de: Ziehe Dateien hierher, um sie hochzuladen, oder benutze den Button, um Dateien von deinem Computer auszuwählen.
+  mediaFilesSelectedForUpload:
+    en: "The following {fileCount, plural, =1 {file} other {# files}} are selected for upload"
+    de: "Die {fileCount, plural, =1 {folgende Datei ist} other {folgenden # Dateien sind}} zum Hochladen ausgewählt"
   browse:
     en: Browse ...
     de: Durchsuchen ...

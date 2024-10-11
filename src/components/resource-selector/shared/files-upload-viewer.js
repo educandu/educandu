@@ -90,8 +90,19 @@ function FilesUploadViewer({
   };
 
   return (
-    <div className={classNames('FilesUploadViewer', { 'FilesUploadViewer--vertical': verticalMode })}>
-      <div className={classNames('FilesUploadViewer-itemsContainer', { 'FilesUploadViewer-itemsContainer--vertical': verticalMode })}>
+    <div
+      className={classNames(
+        'FilesUploadViewer',
+        { 'FilesUploadViewer--vertical': verticalMode }
+      )}
+      >
+      <div
+        className={classNames(
+          'FilesUploadViewer-itemsContainer',
+          { 'FilesUploadViewer-itemsContainer--vertical': verticalMode },
+          { 'FilesUploadViewer-itemsContainer--borderless': verticalMode && uploadItems.length === 1 }
+        )}
+        >
         {uploadItems.map((item, index) => (
           <div key={index.toString()}>
             {renderItem(item, index)}

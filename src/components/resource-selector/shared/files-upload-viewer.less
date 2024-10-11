@@ -20,6 +20,7 @@
 .FilesUploadViewer-itemsContainer {
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: @edu-white;
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
 
@@ -29,6 +30,10 @@
     @media @edu-media-phone {
       max-height: none;
     }
+  }
+
+  &.FilesUploadViewer-itemsContainer--borderless {
+    border: none;
   }
 
   @media @edu-media-phone {

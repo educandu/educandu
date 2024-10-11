@@ -144,7 +144,7 @@ function RoomMediaUploadScreen({
   const getUploadStageHeadline = () => {
     switch (currentStage) {
       case STAGE.uploadNotStarted:
-        return t('stage_uploadNotStarted', { fileCount: uploadItems.length });
+        return t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length });
       case STAGE.uploading:
         return t('stage_uploading');
       case STAGE.uploadFinished:
