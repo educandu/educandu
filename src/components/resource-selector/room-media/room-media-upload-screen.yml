@@ -11,9 +11,6 @@ roomMediaUploadScreen:
   startUpload:
     en: Start upload
     de: Upload starten
-  preprocessed:
-    en: edited
-    de: bearbeitet
   stage_uploadNotStarted:
     en: "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded"
     de: "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen"

@@ -2703,6 +2703,12 @@
       "de": "Datei hinzufügen"
     }
   },
+  "filesUploadViewer": {
+    "preprocessed": {
+      "en": "edited",
+      "de": "bearbeitet"
+    }
+  },
   "homepageDocumentCards": {
     "headline": {
       "en": "Recommended documents",
@@ -4049,10 +4055,6 @@
     "startUpload": {
       "en": "Start upload",
       "de": "Upload starten"
-    },
-    "preprocessed": {
-      "en": "edited",
-      "de": "bearbeitet"
     },
     "stage_uploadNotStarted": {
       "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded",
