@@ -25,7 +25,7 @@ const STAGE = {
 
 const createUploadItems = uploadQueue => uploadQueue.map(({ file, isPristine }) => ({
   file,
-  status: isPristine ? FILE_UPLOAD_STATUS.pristine : FILE_UPLOAD_STATUS.preprocessed,
+  status: isPristine ? FILE_UPLOAD_STATUS.pristine : FILE_UPLOAD_STATUS.processed,
   isEditable: isEditableImageFile(file),
   errorMessage: null
 }));
@@ -185,7 +185,7 @@ function RoomMediaUploadScreen({
           )}
           {renderUploadStageHeadline()}
           <FilesUploadViewer
-            items={uploadItems}
+            uploadItems={uploadItems}
             previewedItemIndex={previewedItemIndex}
             onEditItemClick={handleEditItemClick}
             onItemClick={handleItemClick}

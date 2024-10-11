@@ -1,6 +1,6 @@
 export const FILE_UPLOAD_STATUS = {
   pristine: 'pristine',
-  preprocessed: 'preprocessed',
+  processed: 'processed',
   uploading: 'uploading',
   succeeded: 'succeeded',
   failed: 'failed'

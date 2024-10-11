@@ -4,6 +4,12 @@
   gap: 15px;
   overflow: hidden;
 
+  &.FilesUploadViewer--vertical {
+    grid-template-columns: none;
+    grid-template-rows: auto;
+    overflow: auto;
+  }
+
   @media @edu-media-phone {
     grid-template-columns: none;
     grid-template-rows: auto;
@@ -16,6 +22,14 @@
   overflow-y: auto;
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
+
+  &.FilesUploadViewer-itemsContainer--vertical {
+    max-height: 250px;
+
+    @media @edu-media-phone {
+      max-height: none;
+    }
+  }
 
   @media @edu-media-phone {
     overflow: visible;

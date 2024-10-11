@@ -2704,7 +2704,7 @@
     }
   },
   "filesUploadViewer": {
-    "preprocessed": {
+    "processed": {
       "en": "edited",
       "de": "bearbeitet"
     }
@@ -3288,7 +3288,7 @@
       "en": "File upload",
       "de": "Datei-Upload"
     },
-    "preprocessed": {
+    "processed": {
       "en": "edited",
       "de": "bearbeitet"
     },

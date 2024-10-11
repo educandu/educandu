@@ -10,11 +10,12 @@ import { CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons
 import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
 
 function FilesUploadViewer({
-  items,
+  uploadItems,
   previewedItemIndex,
   editingDisabled,
+  verticalMode,
   onEditItemClick,
-  onItemClick
+  onItemClick,
 }) {
   const { t } = useTranslation('filesUploadViewer');
 
@@ -31,7 +32,7 @@ function FilesUploadViewer({
       <div
         className={classNames(
           'FilesUploadViewer-itemName',
-          { 'is-selected': items.length > 1 && previewedItemIndex === itemIndex }
+          { 'is-selected': uploadItems.length > 1 && previewedItemIndex === itemIndex }
         )}
         onClick={() => handleItemClick(itemIndex)}
         >
@@ -46,7 +47,7 @@ function FilesUploadViewer({
         <div
           className={classNames(
             'FilesUploadViewer-itemRow',
-            { 'is-selected': items.length > 1 && previewedItemIndex === itemIndex }
+            { 'is-selected': uploadItems.length > 1 && previewedItemIndex === itemIndex }
           )}
           >
           {item.status === FILE_UPLOAD_STATUS.pristine && !!item.isEditable && (
@@ -59,14 +60,14 @@ function FilesUploadViewer({
           {item.status === FILE_UPLOAD_STATUS.pristine && !item.isEditable && (
             <FileIcon className="FilesUploadViewer-itemIcon" />
           )}
-          {item.status === FILE_UPLOAD_STATUS.preprocessed && !!item.isEditable && (
+          {item.status === FILE_UPLOAD_STATUS.processed && !!item.isEditable && (
             <Tooltip title={t('common:edit')}>
               <a onClick={() => handleItemEditClick(itemIndex)}>
                 <EditIcon className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--processed" />
               </a>
             </Tooltip>
           )}
-          {item.status === FILE_UPLOAD_STATUS.preprocessed && !item.isEditable && (
+          {item.status === FILE_UPLOAD_STATUS.processed && !item.isEditable && (
             <FileIcon className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--processed" />
           )}
           {item.status === FILE_UPLOAD_STATUS.uploading && (
@@ -79,8 +80,8 @@ function FilesUploadViewer({
             <CloseOutlined className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--error" />
           )}
           {renderItemName(item, itemIndex)}
-          {item.status === FILE_UPLOAD_STATUS.preprocessed && (
-            <span className="FilesUploadViewer-itemMessage">({t('preprocessed')})</span>
+          {item.status === FILE_UPLOAD_STATUS.processed && (
+            <span className="FilesUploadViewer-itemMessage">({t('processed')})</span>
           )}
         </div>
         {!!item.errorMessage && <div className="FilesUploadViewer-itemError">{item.errorMessage}</div>}
@@ -89,19 +90,19 @@ function FilesUploadViewer({
   };
 
   return (
-    <div className="FilesUploadViewer">
-      <div className="FilesUploadViewer-itemsContainer">
-        {items.map((item, index) => (
+    <div className={classNames('FilesUploadViewer', { 'FilesUploadViewer--vertical': verticalMode })}>
+      <div className={classNames('FilesUploadViewer-itemsContainer', { 'FilesUploadViewer-itemsContainer--vertical': verticalMode })}>
+        {uploadItems.map((item, index) => (
           <div key={index.toString()}>
             {renderItem(item, index)}
           </div>
         ))}
       </div>
       <div className="FilesUploadViewer-previewContainer">
-        {!!items[previewedItemIndex] && (
+        {!!uploadItems[previewedItemIndex] && (
           <ResourcePreviewWithMetadata
-            urlOrFile={items[previewedItemIndex].file}
-            size={items[previewedItemIndex].file.size}
+            urlOrFile={uploadItems[previewedItemIndex].file}
+            size={uploadItems[previewedItemIndex].file.size}
             />
         )}
       </div>
@@ -111,18 +112,20 @@ function FilesUploadViewer({
 
 FilesUploadViewer.propTypes = {
   editingDisabled: PropTypes.bool.isRequired,
-  items: PropTypes.arrayOf(PropTypes.shape({
+  uploadItems: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
     status: PropTypes.oneOf(Object.values(FILE_UPLOAD_STATUS)),
     isEditable: PropTypes.bool.isRequired,
     errorMessage: PropTypes.string
   })).isRequired,
   previewedItemIndex: PropTypes.number.isRequired,
+  verticalMode: PropTypes.bool,
   onEditItemClick: PropTypes.func,
   onItemClick: PropTypes.func.isRequired,
 };
 
 FilesUploadViewer.defaultProps = {
+  verticalMode: false,
   onEditItemClick: () => {}
 };
 
