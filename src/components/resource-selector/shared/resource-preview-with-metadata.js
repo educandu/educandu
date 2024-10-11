@@ -5,33 +5,30 @@ import ResourceUrl from './resource-url.js';
 import { useTranslation } from 'react-i18next';
 import urlUtils from '../../../utils/url-utils.js';
 import ResourcePreview from './resource-preview.js';
-import { useService } from '../../container-context.js';
 import mimeTypeHelper from '../../../ui/mime-type-helper.js';
 import { RESOURCE_TYPE } from '../../../domain/constants.js';
 import { usePercentageFormat } from '../../locale-context.js';
-import ClientConfig from '../../../bootstrap/client-config.js';
-import { getAccessibleUrl } from '../../../utils/source-utils.js';
+import { browserFileType } from '../../../ui/default-prop-types.js';
 import { formatMediaPosition } from '../../../utils/media-utils.js';
 
-function ResourceDetails({ size, url, previewOnly }) {
+function ResourcePreviewWithMetadata({ urlOrFile, size, showName, showUrl }) {
   const { t } = useTranslation();
-  const clientConfig = useService(ClientConfig);
   const formatPercentage = usePercentageFormat();
   const [resourceData, setResourceData] = useState({ resourceType: RESOURCE_TYPE.none });
 
-  const accessibleUrl = getAccessibleUrl({ url, cdnRootUrl: clientConfig.cdnRootUrl });
-  const fileName = decodeURIComponent(urlUtils.getFileName(accessibleUrl));
+  const fileName = urlOrFile instanceof File ? urlOrFile.name : decodeURIComponent(urlUtils.getFileName(urlOrFile));
+  const fileUrl = urlOrFile instanceof File ? urlOrFile.url : urlOrFile;
   const category = mimeTypeHelper.getCategory(fileName);
 
   return (
-    <div className="ResourceDetails u-resource-selector-screen-content-rows">
-      {!previewOnly && (
+    <div className="ResourcePreviewWithMetadata u-resource-selector-screen-content-rows">
+      {!!showName && (
         <div className="u-resource-selector-screen-file-name">{fileName}</div>
       )}
 
-      <div className="ResourceDetails-previewArea">
-        <ResourcePreview urlOrFile={accessibleUrl} onResourceLoad={setResourceData} />
-        <div className="ResourceDetails-fileMetadata">
+      <div className="ResourcePreviewWithMetadata-preview">
+        <ResourcePreview urlOrFile={urlOrFile} onResourceLoad={setResourceData} />
+        <div className="ResourcePreviewWithMetadata-metadata">
           <div>{mimeTypeHelper.localizeCategory(category, t)}</div>
           {typeof size === 'number' && (
             <div>{prettyBytes(size)}</div>
@@ -47,20 +44,25 @@ function ResourceDetails({ size, url, previewOnly }) {
         </div>
       </div>
 
-      {!previewOnly && <ResourceUrl url={url} />}
+      {!!showUrl && <ResourceUrl url={fileUrl} />}
     </div>
   );
 }
 
-ResourceDetails.propTypes = {
+ResourcePreviewWithMetadata.propTypes = {
   size: PropTypes.number,
-  url: PropTypes.string.isRequired,
-  previewOnly: PropTypes.bool
+  showName: PropTypes.bool,
+  showUrl: PropTypes.bool,
+  urlOrFile: PropTypes.oneOfType([
+    PropTypes.string,
+    browserFileType
+  ]).isRequired,
 };
 
-ResourceDetails.defaultProps = {
+ResourcePreviewWithMetadata.defaultProps = {
   size: null,
-  previewOnly: false
+  showName: false,
+  showUrl: false
 };
 
-export default ResourceDetails;
+export default ResourcePreviewWithMetadata;
