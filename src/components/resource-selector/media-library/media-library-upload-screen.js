@@ -48,9 +48,14 @@ const createUploadItems = (t, files, allowUnlimitedUpload) => {
 
 function MediaLibraryUploadScreen({
   initialFiles,
+  showHeadline,
+  canGoBack,
+  canPreview,
+  uploadButtonText,
   onBackClick,
   onCancelClick,
-  onSelectNewUrl
+  onSelectNewUrl,
+  onUploadFinished
 }) {
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
@@ -105,11 +110,11 @@ function MediaLibraryUploadScreen({
         mediaLibraryItems.push(result);
       }
       setCreatedMediaLibraryItems(mediaLibraryItems);
-      setCurrentScreen(SCREEN.previewCreatedItem);
+      onUploadFinished(mediaLibraryItems);
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
-      setCurrentScreen(SCREEN.previewCreatedItem);
+      setCurrentScreen(canPreview ? SCREEN.previewCreatedItem : SCREEN.enterData);
     }
   };
 
@@ -171,7 +176,7 @@ function MediaLibraryUploadScreen({
 
   return (
     <div className="u-resource-selector-screen">
-      <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>
+      {showHeadline ? <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3> : null}
       <div className="u-overflow-auto">
         <div className="u-resource-selector-screen-content-split">
           <MediaLibraryFilesDropzone
@@ -197,11 +202,11 @@ function MediaLibraryUploadScreen({
             />
         </div>
       </div>
-      <div className="u-resource-selector-screen-footer">
-        <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>
+      <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
+        {canGoBack ? <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button> : null}
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleCreateItemsClick} disabled={uploadItems.every(item => !!item.errorMessage)} loading={isCurrentlyUploading}>{t('common:upload')}</Button>
+          <Button type="primary" onClick={handleCreateItemsClick} disabled={uploadItems.every(item => !!item.errorMessage)} loading={isCurrentlyUploading}>{uploadButtonText || t('common:upload')}</Button>
         </div>
       </div>
     </div>
@@ -210,16 +215,26 @@ function MediaLibraryUploadScreen({
 
 MediaLibraryUploadScreen.propTypes = {
   initialFiles: PropTypes.arrayOf(browserFileType),
+  canGoBack: PropTypes.bool,
+  canPreview: PropTypes.bool,
+  showHeadline: PropTypes.bool,
+  uploadButtonText: PropTypes.string,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
-  onSelectNewUrl: PropTypes.func
+  onSelectNewUrl: PropTypes.func,
+  onUploadFinished: PropTypes.func
 };
 
 MediaLibraryUploadScreen.defaultProps = {
   initialFiles: [],
+  canGoBack: true,
+  canPreview: true,
+  showHeadline: true,
+  uploadButtonText: null,
   onBackClick: () => {},
   onCancelClick: () => {},
-  onSelectNewUrl: () => {}
+  onSelectNewUrl: () => {},
+  onUploadFinished: () => {},
 };
 
 export default MediaLibraryUploadScreen;

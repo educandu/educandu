@@ -27,8 +27,9 @@ import { Button, Collapse, message, Table, Radio, DatePicker } from 'antd';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import { ensureAreExcluded, ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
 import { confirmBulkDeleteMediaItems, confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
-import { ensureAreExcluded, ensureIsExcluded, ensureIsIncluded, replaceItem } from '../../utils/array-utils.js';
+import MediaLibraryUploadModal from '../resource-selector/media-library/media-library-upload-modal.js';
 import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -64,7 +65,7 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.create, mediaLibraryItem = null, isOpen = false }) {
+function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem = null, isOpen = false }) {
   return { mode, isOpen, mediaLibraryItem };
 }
 
@@ -97,6 +98,7 @@ function ContentManagementMediaLibraryTab() {
   const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const [mediaLibraryUploadModalState, setMediaLibraryUploadModalState] = useState({ isOpen: false });
   const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
@@ -209,8 +211,8 @@ function ContentManagementMediaLibraryTab() {
     setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
   };
 
-  const handleCreateItemClick = () => {
-    setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.create, mediaLibraryItem: null, isOpen: true }));
+  const handleCreateItemsClick = () => {
+    setMediaLibraryUploadModalState({ isOpen: true });
   };
 
   const handleEditItemClick = row => {
@@ -232,13 +234,21 @@ function ContentManagementMediaLibraryTab() {
   };
 
   const handleMediaLibraryItemModalSave = savedItem => {
-    const isNewItem = mediaLibraryItemModalState.mode === MEDIA_LIBRARY_ITEM_MODAL_MODE.create;
     setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
-    setMediaLibraryItems(oldItems => isNewItem ? ensureIsIncluded(oldItems, savedItem) : replaceItem(oldItems, savedItem));
+    setMediaLibraryItems(oldItems => replaceItem(oldItems, savedItem));
   };
 
   const handleMediaLibraryItemModalClose = () => {
     setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
+  };
+
+  const handleMediaLibraryUploadModalSave = createdItems => {
+    setMediaLibraryUploadModalState({ isOpen: false });
+    setMediaLibraryItems(oldItems => [...oldItems, ...createdItems]);
+  };
+
+  const handleMediaLibraryUploadModalClose = () => {
+    setMediaLibraryUploadModalState({ isOpen: false });
   };
 
   const determineDisabledDate = dayjsValue => {
@@ -368,7 +378,7 @@ function ContentManagementMediaLibraryTab() {
           options={sortingOptions}
           onChange={handleSortingChange}
           />
-        <Button type="primary" onClick={handleCreateItemClick}>
+        <Button type="primary" onClick={handleCreateItemsClick}>
           {t('common:create')}
         </Button>
       </div>
@@ -435,6 +445,11 @@ function ContentManagementMediaLibraryTab() {
         {...mediaLibraryItemModalState}
         onSave={handleMediaLibraryItemModalSave}
         onClose={handleMediaLibraryItemModalClose}
+        />
+      <MediaLibraryUploadModal
+        {...mediaLibraryUploadModalState}
+        onSave={handleMediaLibraryUploadModalSave}
+        onClose={handleMediaLibraryUploadModalClose}
         />
     </div>
   );
