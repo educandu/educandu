@@ -11,8 +11,8 @@ import { handleApiError } from '../../../ui/error-helper.js';
 import { useIsMounted, usePermission } from '../../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { confirmExitFileEditor } from '../../confirmation-dialogs.js';
-import MediaLibraryFileDropzone from './media-library-file-dropzone.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
+import MediaLibraryFilesDropzone from './media-library-files-dropzone.js';
 import { mediaLibraryItemShape } from '../../../ui/default-prop-types.js';
 import { processFileBeforeUpload } from '../../../utils/storage-utils.js';
 import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
@@ -119,10 +119,10 @@ function MediaLibaryItemModal({
     }
   };
 
-  const handleCreateItemFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImage }) => {
+  const handleCreateItemFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImages }) => {
     try {
       setIsSaving(true);
-      const processedFile = await processFileBeforeUpload({ file: uploadItem.file, optimizeImage });
+      const processedFile = await processFileBeforeUpload({ file: uploadItem.file, optimizeImages });
       const createdMediaLibraryItem = await mediaLibraryApiClient.createMediaLibraryItem({
         file: processedFile,
         shortDescription,
@@ -212,7 +212,7 @@ function MediaLibaryItemModal({
         </div>
         <div className="MediaLibaryItemModal-splitView">
           <ResourcePreviewWithMetadata urlOrFile={mediaLibraryItem.url} size={mediaLibraryItem.size} />
-          <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImage={false} onFinish={handleUpdateItemFinish} />
+          <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImages={false} onFinish={handleUpdateItemFinish} />
         </div>
       </div>
     );
@@ -254,7 +254,7 @@ function MediaLibaryItemModal({
       dialogContent = (
         <div className="MediaLibaryItemModal">
           <div className="MediaLibaryItemModal-splitView">
-            <MediaLibraryFileDropzone
+            <MediaLibraryFilesDropzone
               dropzoneRef={dropzoneRef}
               file={uploadItem?.file || null}
               canAcceptFile={!isSaving}
@@ -268,7 +268,7 @@ function MediaLibaryItemModal({
               onFileDrop={handleFileDrop}
               onEditImageClick={handleEditImageClick}
               />
-            <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImage onFinish={handleCreateItemFinish} />
+            <MediaLibraryMetadataForm form={form} file={mediaLibraryItem} useOptimizeImages onFinish={handleCreateItemFinish} />
           </div>
         </div>
       );

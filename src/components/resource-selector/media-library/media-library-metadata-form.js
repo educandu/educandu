@@ -18,7 +18,7 @@ const RadioGroup = Radio.Group;
 
 const logger = new Logger(import.meta.url);
 
-function MediaLibraryMetadataForm({ form, file, useAllRightsReserved, useOptimizeImage, disableOptimizeImage, onFinish }) {
+function MediaLibraryMetadataForm({ form, file, useAllRightsReserved, useOptimizeImages, disableOptimizeImages, onFinish }) {
   const { t } = useTranslation('mediaLibraryMetadataForm');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
 
@@ -32,7 +32,7 @@ function MediaLibraryMetadataForm({ form, file, useAllRightsReserved, useOptimiz
       allRightsReserved: false,
       tags: [],
       ...file,
-      optimizeImage: true,
+      optimizeImages: true,
       allRightsReservedConfirmed: file?.allRightsReserved || false
     };
   }, [file]);
@@ -124,8 +124,8 @@ function MediaLibraryMetadataForm({ form, file, useAllRightsReserved, useOptimiz
         >
         <TagSelect placeholder={t('common:tagsPlaceholder')} onSuggestionsNeeded={handleMediaLibraryTagSuggestionsNeeded} />
       </FormItem>
-      <FormItem name="optimizeImage" valuePropName="checked" hidden={!useOptimizeImage}>
-        <Checkbox disabled={disableOptimizeImage}>{t('optimizeImage')}</Checkbox>
+      <FormItem name="optimizeImages" valuePropName="checked" hidden={!useOptimizeImages}>
+        <Checkbox disabled={disableOptimizeImages}>{t('common:optimizeImages')}</Checkbox>
       </FormItem>
     </Form>
   );
@@ -140,17 +140,17 @@ MediaLibraryMetadataForm.propTypes = {
     licenses: PropTypes.arrayOf(PropTypes.string),
     tags: PropTypes.arrayOf(PropTypes.string)
   }),
-  useOptimizeImage: PropTypes.bool,
-  disableOptimizeImage: PropTypes.bool,
+  useOptimizeImages: PropTypes.bool,
+  disableOptimizeImages: PropTypes.bool,
   useAllRightsReserved: PropTypes.bool,
   onFinish: PropTypes.func.isRequired
 };
 
 MediaLibraryMetadataForm.defaultProps = {
   file: null,
-  useOptimizeImage: true,
+  useOptimizeImages: true,
   useAllRightsReserved: true,
-  disableOptimizeImage: false
+  disableOptimizeImages: false
 };
 
 export default MediaLibraryMetadataForm;

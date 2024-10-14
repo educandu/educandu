@@ -1,28 +1,21 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
+import React, { Fragment } from 'react';
 import reactDropzoneNs from 'react-dropzone';
 import EmptyState from '../../empty-state.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { useService } from '../../container-context.js';
 import { CloudUploadOutlined } from '@ant-design/icons';
 import { FILE_UPLOAD_STATUS } from '../shared/constants.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import FilesUploadViewer from '../shared/files-upload-viewer.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, uploadLimit, onFilesDrop, onEditImageClick }) {
+function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, uploadLimit, previewedItemIndex, onPreviewItemClick, onFilesDrop, onEditImageClick }) {
   const clientConfig = useService(ClientConfig);
-  const { t } = useTranslation('mediaLibraryFileDropzone');
-
-  // move this up into the parent to not loose selection when returning from edit screen
-  const [previewedItemIndex, setPreviewedItemIndex] = useState(uploadItems.length ? 0 : -1);
-
-  useEffect(() => {
-    setPreviewedItemIndex(uploadItems.length ? 0 : -1);
-  }, [uploadItems]);
+  const { t } = useTranslation('mediaLibraryFilesDropzone');
 
   const handleUploadButtonClick = () => {
     if (canAcceptFiles) {
@@ -31,7 +24,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
   };
 
   const handleItemClick = itemIndex => {
-    setPreviewedItemIndex(itemIndex);
+    onPreviewItemClick(itemIndex);
   };
 
   const handleEditItemClick = itemIndex => {
@@ -47,8 +40,8 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
   };
 
   const getPreviewAreaClasses = isDragActive => classNames(
-    'MediaLibraryFileDropzone',
-    { 'MediaLibraryFileDropzone--error': !!uploadItems.some(item => item.errorMessage) },
+    'MediaLibraryFilesDropzone',
+    { 'MediaLibraryFilesDropzone--error': !!uploadItems.some(item => item.errorMessage) },
     { 'is-dropping': canAcceptFiles && isDragActive },
     { 'is-drop-rejected': !canAcceptFiles && isDragActive }
   );
@@ -57,11 +50,11 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
     <ReactDropzone ref={dropzoneRef} onDrop={handleFilesDrop} noKeyboard noClick>
       {({ getRootProps, getInputProps, isDragActive }) => (
         <div {...getRootProps({ className: getPreviewAreaClasses(isDragActive) })}>
-          <div className="MediaLibraryFileDropzone-content">
+          <div className="MediaLibraryFilesDropzone-content">
             <input {...getInputProps()} hidden />
             {!!uploadItems.length && (
               <div>
-                <div className="MediaLibraryFileDropzone-title">{t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length })}</div>
+                <div className="MediaLibraryFilesDropzone-title">{t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length })}</div>
                 <FilesUploadViewer
                   uploadItems={uploadItems}
                   previewedItemIndex={previewedItemIndex}
@@ -108,7 +101,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
   );
 }
 
-MediaLibraryFileDropzone.propTypes = {
+MediaLibraryFilesDropzone.propTypes = {
   dropzoneRef: PropTypes.shape({
     current: PropTypes.object
   }).isRequired,
@@ -119,17 +112,21 @@ MediaLibraryFileDropzone.propTypes = {
     errorMessage: PropTypes.string
   })).isRequired,
   canAcceptFiles: PropTypes.bool,
+  previewedItemIndex: PropTypes.number,
   uploadLimit: PropTypes.shape({
     sizeInBytes: PropTypes.number,
     fileCount: PropTypes.number
   }),
+  onPreviewItemClick:PropTypes.func,
   onFilesDrop: PropTypes.func.isRequired,
   onEditImageClick: PropTypes.func.isRequired
 };
 
-MediaLibraryFileDropzone.defaultProps = {
+MediaLibraryFilesDropzone.defaultProps = {
   canAcceptFiles: true,
-  uploadLimit: null
+  uploadLimit: null,
+  previewedItemIndex: -1,
+  onPreviewItemClick: () => {}
 };
 
-export default MediaLibraryFileDropzone;
+export default MediaLibraryFilesDropzone;

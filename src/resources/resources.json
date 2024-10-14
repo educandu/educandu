@@ -1513,6 +1513,10 @@
     "documentCategoryDocumentListHeader": {
       "en": "Documents in this category",
       "de": "Dokumente in dieser Kategorie"
+    },
+    "optimizeImages": {
+      "en": "Optimize images for web display",
+      "de": "Bilder für Web optimieren"
     }
   },
   "comparison": {
@@ -3279,10 +3283,6 @@
     "tagsRequired": {
       "en": "Please provide at least one tag",
       "de": "Bitte gib mindestens einen Tag an"
-    },
-    "optimizeImage": {
-      "en": "Optimize image for web display",
-      "de": "Bild für Webdarstellung optimieren"
     }
   },
   "mediaLibrarySearchScreen": {
@@ -4053,10 +4053,6 @@
     "stage_uploadFinished": {
       "en": "Upload finished",
       "de": "Upload beendet"
-    },
-    "optimizeImages": {
-      "en": "Optimize images for web display",
-      "de": "Bilder für Web optimieren"
     }
   },
   "roomMembers": {

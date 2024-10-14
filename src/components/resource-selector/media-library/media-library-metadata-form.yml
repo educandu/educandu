@@ -14,6 +14,3 @@ mediaLibraryMetadataForm:
   tagsRequired:
     en: Please provide at least one tag
     de: Bitte gib mindestens einen Tag an
-  optimizeImage:
-    en: Optimize image for web display
-    de: Bild für Webdarstellung optimieren

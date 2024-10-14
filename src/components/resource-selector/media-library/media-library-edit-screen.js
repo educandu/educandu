@@ -37,7 +37,7 @@ function MediaLibraryEditScreen({
           <div className="u-resource-selector-screen-file-name">{renderFileName()}</div>
           <div className="u-resource-selector-screen-content-split">
             <ResourcePreviewWithMetadata urlOrFile={file.url} size={file.size} />
-            <MediaLibraryMetadataForm form={form} file={file} useOptimizeImage={false} onFinish={onSaveClick} />
+            <MediaLibraryMetadataForm form={form} file={file} useOptimizeImages={false} onFinish={onSaveClick} />
           </div>
         </div>
       </div>

@@ -201,7 +201,7 @@ function RoomMediaUploadScreen({
               onChange={handleImageOptimizationChange}
               disabled={currentStage === STAGE.uploading}
               >
-              {t('optimizeImages')}
+              {t('common:optimizeImages')}
             </Checkbox>
           )}
         </div>
