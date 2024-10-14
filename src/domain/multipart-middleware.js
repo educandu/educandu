@@ -16,7 +16,7 @@ const EFFECTIVE_REQUEST_LIMIT_IN_BYTES = STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES + SI
 function createMultipartMiddleware({ cdn, fileField, bodyField = null, multipleFiles = false, allowUnlimitedUploadForElevatedRoles = false }) {
   const checkUploadLimitMiddleware = (req, _res, next) => {
     const requestSize = !!req.headers['content-length'] && Number(req.headers['content-length']);
-    const allowUnrestricted = allowUnlimitedUploadForElevatedRoles && hasUserPermission(req.user, permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
+    const allowUnrestricted = allowUnlimitedUploadForElevatedRoles && hasUserPermission(req.user, permissions.UPLOAD_WITHOUT_RESTRICTION);
     return requestSize && requestSize > EFFECTIVE_REQUEST_LIMIT_IN_BYTES && !allowUnrestricted
       ? next(new BadRequest(`Upload limit exceeded: limit ${prettyBytes(EFFECTIVE_REQUEST_LIMIT_IN_BYTES)}, requested ${prettyBytes(requestSize)}.`))
       : next();

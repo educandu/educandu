@@ -16,9 +16,9 @@ import MediaLibraryMetadataForm from './media-library-metadata-form.js';
 import { mediaLibraryItemShape } from '../../../ui/default-prop-types.js';
 import { processFileBeforeUpload } from '../../../utils/storage-utils.js';
 import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
-import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
+import { STORAGE_FILE_UPLOAD_COUNT_LIMIT, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -52,7 +52,7 @@ function MediaLibaryItemModal({
   onSave,
   onClose
 }) {
-  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_RESTRICTION);
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -258,8 +258,13 @@ function MediaLibaryItemModal({
               dropzoneRef={dropzoneRef}
               file={uploadItem?.file || null}
               canAcceptFile={!isSaving}
-              uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
               errorMessage={uploadItem?.errorMessage}
+              uploadLimit={allowUnlimitedUpload
+                ? null
+                : {
+                  sizeInBytes: STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES,
+                  fileCount: STORAGE_FILE_UPLOAD_COUNT_LIMIT
+                }}
               onFileDrop={handleFileDrop}
               onEditImageClick={handleEditImageClick}
               />

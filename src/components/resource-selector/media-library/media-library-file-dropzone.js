@@ -38,6 +38,14 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
     onEditImageClick(itemIndex);
   };
 
+  const handleFilesDrop = fs => {
+    if (!fs.length) {
+      return;
+    }
+    const allowedFiles = !uploadLimit?.fileCount ? fs : fs.slice(0, uploadLimit.fileCount);
+    onFilesDrop(allowedFiles);
+  };
+
   const getPreviewAreaClasses = isDragActive => classNames(
     'MediaLibraryFileDropzone',
     { 'MediaLibraryFileDropzone--error': !!uploadItems.some(item => item.errorMessage) },
@@ -46,7 +54,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
   );
 
   return (
-    <ReactDropzone ref={dropzoneRef} onDrop={onFilesDrop} noKeyboard noClick>
+    <ReactDropzone ref={dropzoneRef} onDrop={handleFilesDrop} noKeyboard noClick>
       {({ getRootProps, getInputProps, isDragActive }) => (
         <div {...getRootProps({ className: getPreviewAreaClasses(isDragActive) })}>
           <div className="MediaLibraryFileDropzone-content">
@@ -68,14 +76,15 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
               <EmptyState
                 compact
                 icon={<CloudUploadOutlined />}
-                title={uploadItems.length ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
-                subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+                title={uploadItems.length ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadMultipleEmptyStateTitle')}
+                subtitle={t('common:mediaUploadMultipleEmptyStateSubtitle')}
                 button={{
                   isDefaultType: true,
                   text: t('common:browse'),
                   subtext: (
                     <Fragment>
-                      {t('common:uploadLimitInfo', { limit: uploadLimit ? prettyBytes(uploadLimit) : 'none', maxFiles: 1 })}
+                      {!uploadLimit && t('common:noUploadLimitInfo')}
+                      {!!uploadLimit && t('common:uploadLimitInfo', { limit: prettyBytes(uploadLimit.sizeInBytes), maxFiles: uploadLimit.fileCount })}
                       {!!uploadLimit && !!clientConfig.adminEmailAddress && (
                         <Fragment>
                           <br />
@@ -110,7 +119,10 @@ MediaLibraryFileDropzone.propTypes = {
     errorMessage: PropTypes.string
   })).isRequired,
   canAcceptFiles: PropTypes.bool,
-  uploadLimit: PropTypes.number,
+  uploadLimit: PropTypes.shape({
+    sizeInBytes: PropTypes.number,
+    fileCount: PropTypes.number
+  }),
   onFilesDrop: PropTypes.func.isRequired,
   onEditImageClick: PropTypes.func.isRequired
 };

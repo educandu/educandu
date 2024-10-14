@@ -564,9 +564,12 @@ common:
   upload:
     en: Upload
     de: Hochladen
+  noUploadLimitInfo:
+    en: "(no file size or count limit)"
+    de: "(keine Dateigrößen- oder Anzahlbeschränkung)"
   uploadLimitInfo:
-    en: "({limit, select, none {without size limit} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # files}})"
-    de: "({limit, select, none {keine Größenbegrenzung} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
+    en: "(max. {limit}{maxFiles, plural, =1 {} other {, max. # files}})"
+    de: "(max. {limit}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
   uploadLimitAdminContactInfo:
     en: "(if you would like to upload bigger files, please contact an <0>administrator</0>)"
     de: "(falls du größere Dateien hochladen möchtest, wende dich bitte an einen <0>Administrator</0>)"

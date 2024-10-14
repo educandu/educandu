@@ -15,9 +15,9 @@ import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
 import MediaLibraryFileDropzone from './media-library-file-dropzone.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
-import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { isEditableImageFile, processFileBeforeUpload } from '../../../utils/storage-utils.js';
+import { STORAGE_FILE_UPLOAD_COUNT_LIMIT, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -56,7 +56,7 @@ function MediaLibraryUploadScreen({
   const [form] = Form.useForm();
   const { t } = useTranslation('mediaLibraryUploadScreen');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_RESTRICTION);
 
   const [currentScreen, setCurrentScreen] = useState(SCREEN.enterData);
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
@@ -160,7 +160,12 @@ function MediaLibraryUploadScreen({
             dropzoneRef={dropzoneRef}
             uploadItems={uploadItems}
             canAcceptFiles={!isCurrentlyUploading}
-            uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
+            uploadLimit={allowUnlimitedUpload
+              ? null
+              : {
+                sizeInBytes: STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES,
+                fileCount: STORAGE_FILE_UPLOAD_COUNT_LIMIT
+              }}
             onFilesDrop={handleFilesDrop}
             onEditImageClick={handleEditImageClick}
             />

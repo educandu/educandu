@@ -22,7 +22,7 @@ import SelectedResourceDisplay from '../shared/selected-resource-display.js';
 import permissions, { hasUserPermission } from '../../../domain/permissions.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { mediaLibraryItemShape, mediaLibraryItemWithRelevanceShape } from '../../../ui/default-prop-types.js';
-import { MEDIA_SEARCH_RESOURCE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
+import { MEDIA_SEARCH_RESOURCE_TYPE, STORAGE_FILE_UPLOAD_COUNT_LIMIT, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -55,7 +55,7 @@ function MediaLibrarySearchScreen({
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibrarySearchScreen');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_RESTRICTION);
 
   const [hasSearchedAtLeastOnce, setHasSearchedAtLeastOnce] = useState(false);
   const [initialMediaLibraryItem, setInitialMediaLibraryItem] = useState(null);
@@ -104,6 +104,14 @@ function MediaLibrarySearchScreen({
     dropzoneRef.current.open();
   };
 
+  const handleFilesDrop = fs => {
+    if (!fs.length) {
+      return;
+    }
+    const allowedFiles = allowUnlimitedUpload ? fs : fs.slice(0, STORAGE_FILE_UPLOAD_COUNT_LIMIT);
+    onFilesDrop(allowedFiles);
+  };
+
   const getFilesViewerClasses = isDragActive => classNames(
     'MediaLibrarySearchScreen-filesViewer',
     { 'is-dropping': isDragActive && !isLoading },
@@ -127,7 +135,7 @@ function MediaLibrarySearchScreen({
         {currentScreen === SCREEN.search && (
           <div className="MediaLibrarySearchScreen-searchContent u-resource-selector-screen-content">
 
-            <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFilesDrop(fs)}>
+            <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={handleFilesDrop}>
               {({ getRootProps, getInputProps, isDragActive }) => (
                 <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
                   <input {...getInputProps()} hidden />
@@ -157,7 +165,7 @@ function MediaLibrarySearchScreen({
         )}
 
         {currentScreen !== SCREEN.search && (
-          <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={fs => fs.length && onFilesDrop(fs)}>
+          <ReactDropzone ref={dropzoneRef} noClick noKeyboard onDrop={handleFilesDrop}>
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div {...getRootProps({ className: getNoSearchClasses(isDragActive) })}>
                 <MediaLibraryOptions
@@ -194,14 +202,15 @@ function MediaLibrarySearchScreen({
                     <EmptyState
                       compact
                       icon={<CloudUploadOutlined />}
-                      title={initialUrl ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadEmptyStateTitle')}
-                      subtitle={t('common:mediaUploadEmptyStateSubtitle')}
+                      title={initialUrl ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadMultipleEmptyStateTitle')}
+                      subtitle={t('common:mediaUploadMultipleEmptyStateSubtitle')}
                       button={{
                         isDefaultType: true,
                         text: t('common:browse'),
                         subtext: (
                           <Fragment>
-                            {t('common:uploadLimitInfo', { limit: allowUnlimitedUpload ? 'none' : prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES), maxFiles: 1 })}
+                            {!!allowUnlimitedUpload && t('common:noUploadLimitInfo')}
+                            {!allowUnlimitedUpload && t('common:uploadLimitInfo', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES), maxFiles: STORAGE_FILE_UPLOAD_COUNT_LIMIT })}
                             {!allowUnlimitedUpload && !!clientConfig.adminEmailAddress && (
                               <Fragment>
                                 <br />
