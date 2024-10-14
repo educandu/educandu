@@ -4,7 +4,7 @@
   gap: 15px;
   overflow: hidden;
 
-  &.FilesUploadViewer--vertical {
+  &.FilesUploadViewer--compact {
     grid-template-columns: none;
     grid-template-rows: auto;
     overflow: auto;
@@ -24,8 +24,8 @@
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
 
-  &.FilesUploadViewer-itemsContainer--vertical {
-    max-height: 250px;
+  &.FilesUploadViewer-itemsContainer--compact {
+    max-height: 175px;
 
     @media @edu-media-phone {
       max-height: none;
@@ -52,7 +52,7 @@
   grid-auto-columns: auto;
   justify-content: start;
   overflow: hidden;
-  padding: 10px;
+  padding: 5px;
 
   &.is-selected {
     background-color: @edu-background-color-base;
@@ -91,7 +91,7 @@
 }
 
 .FilesUploadViewer-itemError {
-  padding-left: 25px;
+  padding-left: 30px;
   font-size: @edu-font-size-sm;
   color: @edu-error-color;
 }

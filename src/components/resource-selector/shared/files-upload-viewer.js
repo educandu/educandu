@@ -13,7 +13,7 @@ function FilesUploadViewer({
   uploadItems,
   previewedItemIndex,
   editingDisabled,
-  verticalMode,
+  compactMode,
   onEditItemClick,
   onItemClick,
 }) {
@@ -84,7 +84,9 @@ function FilesUploadViewer({
             <span className="FilesUploadViewer-itemMessage">({t('processed')})</span>
           )}
         </div>
-        {!!item.errorMessage && <div className="FilesUploadViewer-itemError">{item.errorMessage}</div>}
+        {!!item.errorMessage && (!compactMode || previewedItemIndex === itemIndex) && (
+          <div className="FilesUploadViewer-itemError">{item.errorMessage}</div>
+        )}
       </div>
     );
   };
@@ -93,14 +95,14 @@ function FilesUploadViewer({
     <div
       className={classNames(
         'FilesUploadViewer',
-        { 'FilesUploadViewer--vertical': verticalMode }
+        { 'FilesUploadViewer--compact': compactMode }
       )}
       >
       <div
         className={classNames(
           'FilesUploadViewer-itemsContainer',
-          { 'FilesUploadViewer-itemsContainer--vertical': verticalMode },
-          { 'FilesUploadViewer-itemsContainer--borderless': verticalMode && uploadItems.length === 1 }
+          { 'FilesUploadViewer-itemsContainer--compact': compactMode },
+          { 'FilesUploadViewer-itemsContainer--borderless': compactMode && uploadItems.length === 1 }
         )}
         >
         {uploadItems.map((item, index) => (
@@ -130,13 +132,13 @@ FilesUploadViewer.propTypes = {
     errorMessage: PropTypes.string
   })).isRequired,
   previewedItemIndex: PropTypes.number.isRequired,
-  verticalMode: PropTypes.bool,
+  compactMode: PropTypes.bool,
   onEditItemClick: PropTypes.func,
   onItemClick: PropTypes.func.isRequired,
 };
 
 FilesUploadViewer.defaultProps = {
-  verticalMode: false,
+  compactMode: false,
   onEditItemClick: () => {}
 };
 

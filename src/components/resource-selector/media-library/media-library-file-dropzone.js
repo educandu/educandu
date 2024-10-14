@@ -58,7 +58,7 @@ function MediaLibraryFileDropzone({ dropzoneRef, uploadItems, canAcceptFiles, up
                   uploadItems={uploadItems}
                   previewedItemIndex={previewedItemIndex}
                   editingDisabled={!canAcceptFiles}
-                  verticalMode
+                  compactMode
                   onEditItemClick={handleEditItemClick}
                   onItemClick={handleItemClick}
                   />
