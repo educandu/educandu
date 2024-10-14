@@ -65,10 +65,6 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem = null, isOpen = false }) {
-  return { mode, isOpen, mediaLibraryItem };
-}
-
 function createTableRows(mediaLibraryItems, t) {
   return mediaLibraryItems.map(item => ({
     ...item,
@@ -99,7 +95,7 @@ function ContentManagementMediaLibraryTab() {
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [mediaLibraryUploadModalState, setMediaLibraryUploadModalState] = useState({ isOpen: false });
-  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
+  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem: null, isOpen: false });
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
@@ -208,7 +204,7 @@ function ContentManagementMediaLibraryTab() {
 
   const handlePreviewItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true }));
+    setMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true });
   };
 
   const handleCreateItemsClick = () => {
@@ -217,7 +213,7 @@ function ContentManagementMediaLibraryTab() {
 
   const handleEditItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    setMediaLibraryItemModalState(getMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.update, mediaLibraryItem, isOpen: true }));
+    setMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.update, mediaLibraryItem, isOpen: true });
   };
 
   const handleDeleteItemClick = row => {

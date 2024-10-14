@@ -89,10 +89,6 @@ function createTableRows(documents, mediaLibraryItems, tagCategoryFilter) {
   return finalRows;
 }
 
-function getMediaLibraryItemModalState({ mode = MEDIA_LIBRARY_ITEM_MODAL_MODE.create, mediaLibraryItem = null, isOpen = false }) {
-  return { mode, isOpen, mediaLibraryItem };
-}
-
 const getSanitizedQueryFromRequest = request => {
   const query = request.query.tab === TAB.tags ? request.query : {};
 
@@ -117,7 +113,11 @@ function ContentManagementTagsTab() {
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState(getMediaLibraryItemModalState({}));
+  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState({
+    mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview,
+    mediaLibraryItem: null,
+    isOpen: false
+  });
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
@@ -214,15 +214,11 @@ function ContentManagementTagsTab() {
 
   const handleMediaLibraryItemPreviewClick = (mediaLibraryItem, event) => {
     event.preventDefault();
-    setMediaLibraryItemModalState(getMediaLibraryItemModalState({
-      mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview,
-      mediaLibraryItem,
-      isOpen: true
-    }));
+    setMediaLibraryItemModalState(previousState => ({ ...previousState, mediaLibraryItem, isOpen: true }));
   };
 
   const handleMediaLibraryItemModalClose = () => {
-    setMediaLibraryItemModalState(getMediaLibraryItemModalState({}));
+    setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
   };
 
   const renderExpandedRow = row => {
