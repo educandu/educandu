@@ -102,7 +102,7 @@ function FilesUploadViewer({
         className={classNames(
           'FilesUploadViewer-itemsContainer',
           { 'FilesUploadViewer-itemsContainer--compact': compactMode },
-          { 'FilesUploadViewer-itemsContainer--borderless': compactMode && uploadItems.length === 1 }
+          { 'FilesUploadViewer-itemsContainer--singleItem': compactMode && uploadItems.length === 1 }
         )}
         >
         {uploadItems.map((item, index) => (

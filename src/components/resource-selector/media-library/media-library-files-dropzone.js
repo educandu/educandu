@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
@@ -7,13 +8,14 @@ import EmptyState from '../../empty-state.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { useService } from '../../container-context.js';
 import { CloudUploadOutlined } from '@ant-design/icons';
+import DeleteIcon from '../../icons/general/delete-icon.js';
 import { FILE_UPLOAD_STATUS } from '../shared/constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import FilesUploadViewer from '../shared/files-upload-viewer.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, uploadLimit, previewedItemIndex, onPreviewItemClick, onFilesDrop, onEditImageClick }) {
+function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, uploadLimit, previewedItemIndex, onPreviewItemClick, onFilesDrop, onEditImageClick, onClear }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibraryFilesDropzone');
 
@@ -56,18 +58,22 @@ function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, u
               <div>
                 <div className="MediaLibraryFilesDropzone-title">{t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length })}</div>
                 <FilesUploadViewer
-                  uploadItems={uploadItems}
-                  previewedItemIndex={previewedItemIndex}
-                  editingDisabled={!canAcceptFiles}
                   compactMode
+                  uploadItems={uploadItems}
+                  editingDisabled={!canAcceptFiles}
+                  previewedItemIndex={previewedItemIndex}
                   onEditItemClick={handleEditItemClick}
                   onItemClick={handleItemClick}
                   />
+                <div className='MediaLibraryFilesDropzone-clearButton'>
+                  <Button icon={<DeleteIcon />} disabled={!canAcceptFiles} onClick={onClear}>
+                    {t('clearDropzone', { count: uploadItems.count })}
+                  </Button>
+                </div>
               </div>
             )}
             {!uploadItems.length && (
               <EmptyState
-                compact
                 icon={<CloudUploadOutlined />}
                 title={uploadItems.length ? t('common:mediaUploadAlternativeTitle') : t('common:mediaUploadMultipleEmptyStateTitle')}
                 subtitle={t('common:mediaUploadMultipleEmptyStateSubtitle')}
@@ -119,14 +125,16 @@ MediaLibraryFilesDropzone.propTypes = {
   }),
   onPreviewItemClick:PropTypes.func,
   onFilesDrop: PropTypes.func.isRequired,
-  onEditImageClick: PropTypes.func.isRequired
+  onEditImageClick: PropTypes.func.isRequired,
+  onClear: PropTypes.func
 };
 
 MediaLibraryFilesDropzone.defaultProps = {
   canAcceptFiles: true,
   uploadLimit: null,
   previewedItemIndex: -1,
-  onPreviewItemClick: () => {}
+  onPreviewItemClick: () => {},
+  onClear: () => {}
 };
 
 export default MediaLibraryFilesDropzone;

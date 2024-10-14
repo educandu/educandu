@@ -68,13 +68,15 @@ function MediaLibraryUploadScreen({
     setCurrentEditedFileIndex(-1);
     setCreatedMediaLibraryItems([]);
     setCurrentScreen(SCREEN.enterData);
+    setCurrentPreviewedFileIndex(initialFiles.length ? 0 : -1);
     setUploadItems(createUploadItems(t, initialFiles, allowUnlimitedUpload));
   }, [t, allowUnlimitedUpload, initialFiles, form]);
 
   const isCurrentlyUploading = currentScreen === SCREEN.createItem;
 
-  const handleFilesDrop = droppedFiles => {
+  const handleDropzoneFilesDrop = droppedFiles => {
     if (!isCurrentlyUploading && droppedFiles?.length) {
+      setCurrentPreviewedFileIndex(0);
       setUploadItems(createUploadItems(t, droppedFiles, allowUnlimitedUpload));
     }
   };
@@ -119,8 +121,8 @@ function MediaLibraryUploadScreen({
     onSelectNewUrl(createdMediaLibraryItems[0].portableUrl);
   };
 
-  const handleEditImageClick = fileIndex => {
-    setCurrentEditedFileIndex(fileIndex);
+  const handleDropzoneEditImageClick = index => {
+    setCurrentEditedFileIndex(index);
     setCurrentScreen(SCREEN.editImage);
   };
 
@@ -135,8 +137,13 @@ function MediaLibraryUploadScreen({
     setCurrentScreen(SCREEN.enterData);
   };
 
-  const handleFileClick = fileIndex => {
-    setCurrentPreviewedFileIndex(fileIndex);
+  const handleDropzonePreviewItemClick = index => {
+    setCurrentPreviewedFileIndex(index);
+  };
+
+  const handleDropzoneClear = () => {
+    setCurrentPreviewedFileIndex(-1);
+    setUploadItems([]);
   };
 
   if (currentScreen === SCREEN.editImage) {
@@ -178,9 +185,10 @@ function MediaLibraryUploadScreen({
                 sizeInBytes: STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES,
                 fileCount: STORAGE_FILE_UPLOAD_COUNT_LIMIT
               }}
-            onFilesDrop={handleFilesDrop}
-            onEditImageClick={handleEditImageClick}
-            onPreviewItemClick={handleFileClick}
+            onFilesDrop={handleDropzoneFilesDrop}
+            onEditImageClick={handleDropzoneEditImageClick}
+            onPreviewItemClick={handleDropzonePreviewItemClick}
+            onClear={handleDropzoneClear}
             />
           <div className='u-resource-selector-screen-content-right-column'>
             <MediaLibraryMetadataForm
