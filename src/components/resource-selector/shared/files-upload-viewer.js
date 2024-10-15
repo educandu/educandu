@@ -84,7 +84,7 @@ function FilesUploadViewer({
             <span className="FilesUploadViewer-itemMessage">({t('processed')})</span>
           )}
         </div>
-        {!!item.errorMessage && (!compact || previewedItemIndex === itemIndex) && (
+        {!!item.errorMessage && previewedItemIndex === itemIndex && (
           <div className="FilesUploadViewer-itemError">{item.errorMessage}</div>
         )}
       </div>

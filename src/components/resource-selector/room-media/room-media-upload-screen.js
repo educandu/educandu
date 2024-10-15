@@ -23,12 +23,25 @@ const STAGE = {
   uploadFinished: 'uploadFinished'
 };
 
-const createUploadItems = uploadQueue => uploadQueue.map(({ file, isPristine }) => ({
-  file,
-  status: isPristine ? FILE_UPLOAD_STATUS.pristine : FILE_UPLOAD_STATUS.processed,
-  isEditable: isEditableImageFile(file),
-  errorMessage: null
-}));
+const mapToUploadItem = (t, uiLocale, file, isPristine) => {
+  const fileIsTooBig = file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES;
+  const errorMessage = fileIsTooBig
+    ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES, { locale: uiLocale }) })
+    : null;
+
+  const processedStatus = isPristine ? FILE_UPLOAD_STATUS.pristine : FILE_UPLOAD_STATUS.processed;
+
+  return {
+    file,
+    status: errorMessage ? FILE_UPLOAD_STATUS.failed : processedStatus,
+    isEditable: isEditableImageFile(file),
+    errorMessage
+  };
+};
+
+const mapToUploadItems = (t, uiLocale, uploadQueue) => {
+  return uploadQueue.map(({ file, isPristine }) => mapToUploadItem(t, uiLocale, file, isPristine));
+};
 
 function RoomMediaUploadScreen({
   canGoBack,
@@ -38,7 +51,7 @@ function RoomMediaUploadScreen({
   onOkClick,
   onBackClick,
   onCancelClick,
-  onSelectClick,
+  onSelectUrl,
   onFileClick,
   onEditFileClick
 }) {
@@ -50,50 +63,48 @@ function RoomMediaUploadScreen({
 
   const [optimizeImages, setOptimizeImages] = useState(true);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
-  const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
+  const [uploadItems, setUploadItems] = useState(mapToUploadItems(t, uiLocale, uploadQueue));
 
   const roomId = roomMediaContext?.singleRoomMediaOverview.roomStorage.roomId || null;
 
   useEffect(() => {
     setOptimizeImages(true);
     setCurrentStage(STAGE.uploadNotStarted);
-    setUploadItems(createUploadItems(uploadQueue));
-  }, [uploadQueue]);
+    setUploadItems(mapToUploadItems(t, uiLocale, uploadQueue));
+  }, [uploadQueue, t, uiLocale]);
 
   const ensureCanUpload = useCallback(file => {
-    if (file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) {
-      throw new Error(t('uploadLimitExceeded', {
-        uploadSize: prettyBytes(file.size, { locale: uiLocale }),
-        uploadLimit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES, { locale: uiLocale })
-      }));
-    }
-
     const maxBytes = roomMediaContext?.singleRoomMediaOverview.storagePlan?.maxBytes || 0;
-    const usedBytes = roomMediaContext?.singleRoomMediaOverview.usedBytes.usedBytes || 0;
+    const usedBytes = roomMediaContext?.singleRoomMediaOverview.usedBytes || 0;
     const availableBytes = Math.max(0, maxBytes - usedBytes);
 
     if (file.size > availableBytes) {
       throw new Error(t('insufficientPrivateStorge'));
     }
-  }, [t, uiLocale, roomMediaContext]);
+  }, [t, roomMediaContext]);
 
   const uploadFiles = useCallback(async itemsToUpload => {
+    if (!itemsToUpload.length) {
+      return;
+    }
+
     const processedFiles = await processFilesBeforeUpload({ files: itemsToUpload.map(item => item.file), optimizeImages });
 
     for (let i = 0; i < processedFiles.length; i += 1) {
       const file = processedFiles[i];
-      const currentItem = itemsToUpload[i];
+      const currentItem = { ...itemsToUpload[i], file, status: FILE_UPLOAD_STATUS.uploading };
 
-      setUploadItems(prevItems => replaceItemAt(prevItems, { ...currentItem, status: FILE_UPLOAD_STATUS.uploading }, i));
+      setUploadItems(prevItems => replaceItemAt(prevItems, currentItem, i));
 
       let updatedItem;
       try {
         ensureCanUpload(file);
         const { storagePlan, usedBytes, roomStorage, createdRoomMediaItemId } = await roomApiClient.postRoomMedia({ roomId, file });
+
         updatedItem = {
           ...currentItem,
           status: FILE_UPLOAD_STATUS.succeeded,
-          uploadedFile: roomStorage.roomMediaItems.find(item => item._id === createdRoomMediaItemId) || null
+          createdRoomMediaItem: roomStorage.roomMediaItems.find(item => item._id === createdRoomMediaItemId) || null
         };
 
         setRoomMediaContext(oldContext => (
@@ -120,7 +131,9 @@ function RoomMediaUploadScreen({
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
-    await uploadFiles(uploadItems);
+    const itemsToUpload = uploadItems.filter(item => !item.errorMessage);
+    setUploadItems(itemsToUpload);
+    await uploadFiles(itemsToUpload);
     setCurrentStage(STAGE.uploadFinished);
   };
 
@@ -138,7 +151,7 @@ function RoomMediaUploadScreen({
   };
 
   const handleSelectButtonClick = () => {
-    onSelectClick(uploadItems[previewedFileIndex].uploadedFile);
+    onSelectUrl(uploadItems[previewedFileIndex].createdRoomMediaItem.portableUrl);
   };
 
   const getUploadStageHeadline = () => {
@@ -221,6 +234,7 @@ function RoomMediaUploadScreen({
             <Button
               type="primary"
               onClick={handleStartUploadClick}
+              disabled={uploadItems.every(item => !!item.errorMessage)}
               loading={currentStage === STAGE.uploading}
               >{t('startUpload')}
             </Button>
@@ -254,7 +268,7 @@ RoomMediaUploadScreen.propTypes = {
   onOkClick: PropTypes.func,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
-  onSelectClick: PropTypes.func,
+  onSelectUrl: PropTypes.func,
   onFileClick: PropTypes.func,
   onEditFileClick: PropTypes.func
 };
@@ -265,7 +279,7 @@ RoomMediaUploadScreen.defaultProps = {
   onOkClick: () => {},
   onBackClick: () => {},
   onCancelClick: () => {},
-  onSelectClick: () => {},
+  onSelectUrl: () => {},
   onFileClick: () => {},
   onEditFileClick: () => {}
 };

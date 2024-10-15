@@ -82,8 +82,8 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     onSelect(highlightedFile.portableUrl);
   };
 
-  const handleUploadScreenSelectClick = file => {
-    onSelect(file.portableUrl);
+  const handleUploadScreenSelectUrl = portableUrl => {
+    onSelect(portableUrl);
   };
 
   const handleDefaultScreenDeleteFileClick = file => {
@@ -111,6 +111,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     setFilterText('');
     setUploadQueue([]);
     setCurrentEditedFileIndex(-1);
+    setUploadScreenPreviewedFileIndex(0);
     await fetchStorageContent();
   };
 
@@ -212,7 +213,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
           onFileClick={handleUploadScreenFileClick}
           onEditFileClick={handleUpoadScreenEditFileClick}
           onBackClick={handleUploadScreenBackClick}
-          onSelectClick={handleUploadScreenSelectClick}
+          onSelectUrl={handleUploadScreenSelectUrl}
           />
       )}
 
