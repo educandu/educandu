@@ -10,8 +10,10 @@ function RoomMediaUploadModal({ isOpen, files, onOk, onCancel }) {
   const isMounted = useIsMounted();
   const [uploadQueue, setUploadQueue] = useState([]);
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
+  const [currentPreviewedFileIndex, setCurrentPreviewedFileIndex] = useState(0);
 
   useEffect(() => {
+    setCurrentPreviewedFileIndex(0);
     setUploadQueue(files.map(file => ({ file, isPristine: true })));
   }, [files]);
 
@@ -26,6 +28,10 @@ function RoomMediaUploadModal({ isOpen, files, onOk, onCancel }) {
   const handleEditApplyClick = newFile => {
     setUploadQueue(queue => queue.map((item, index) => index !== currentEditedFileIndex ? item : { file: newFile, isPristine: false }));
     setCurrentEditedFileIndex(-1);
+  };
+
+  const handleFileClick = fileIndex => {
+    setCurrentPreviewedFileIndex(fileIndex);
   };
 
   return !!isMounted.current && (
@@ -45,8 +51,10 @@ function RoomMediaUploadModal({ isOpen, files, onOk, onCancel }) {
             canGoBack={false}
             uploadQueue={uploadQueue}
             canSelectFilesAfterUpload={false}
+            previewedFileIndex={currentPreviewedFileIndex}
             onOkClick={onOk}
             onCancelClick={onCancel}
+            onFileClick={handleFileClick}
             onEditFileClick={handleEditFileClick}
             />
         )}

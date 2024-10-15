@@ -33,12 +33,14 @@ const createUploadItems = uploadQueue => uploadQueue.map(({ file, isPristine }) 
 function RoomMediaUploadScreen({
   canGoBack,
   uploadQueue,
+  previewedFileIndex,
   canSelectFilesAfterUpload,
   onOkClick,
   onBackClick,
   onCancelClick,
-  onEditFileClick,
-  onSelectFileClick
+  onSelectClick,
+  onFileClick,
+  onEditFileClick
 }) {
   const { uiLocale } = useLocale();
   const roomMediaContext = useRoomMediaContext();
@@ -47,7 +49,6 @@ function RoomMediaUploadScreen({
 
   const [optimizeImages, setOptimizeImages] = useState(true);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const [previewedItemIndex, setPreviewedItemIndex] = useState(0);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
 
@@ -55,7 +56,6 @@ function RoomMediaUploadScreen({
 
   useEffect(() => {
     setOptimizeImages(true);
-    setPreviewedItemIndex(0);
     setCurrentStage(STAGE.uploadNotStarted);
     setUploadItems(createUploadItems(uploadQueue));
   }, [uploadQueue]);
@@ -129,7 +129,7 @@ function RoomMediaUploadScreen({
   };
 
   const handleItemClick = itemIndex => {
-    setPreviewedItemIndex(itemIndex);
+    onFileClick(itemIndex);
   };
 
   const handleImageOptimizationChange = event => {
@@ -137,8 +137,8 @@ function RoomMediaUploadScreen({
     setOptimizeImages(checked);
   };
 
-  const handleSelectPreviewedFileClick = () => {
-    onSelectFileClick(uploadItems[previewedItemIndex].uploadedFile);
+  const handleSelectButtonClick = () => {
+    onSelectClick(uploadItems[previewedFileIndex].uploadedFile);
   };
 
   const getUploadStageHeadline = () => {
@@ -186,7 +186,7 @@ function RoomMediaUploadScreen({
           {renderUploadStageHeadline()}
           <FilesUploadViewer
             uploadItems={uploadItems}
-            previewedItemIndex={previewedItemIndex}
+            previewedItemIndex={previewedFileIndex}
             onEditItemClick={handleEditItemClick}
             onItemClick={handleItemClick}
             editingDisabled={currentStage !== STAGE.uploadNotStarted}
@@ -228,8 +228,8 @@ function RoomMediaUploadScreen({
             {currentStage === STAGE.uploadFinished && !!canSelectFilesAfterUpload && (
             <Button
               type="primary"
-              onClick={handleSelectPreviewedFileClick}
-              disabled={uploadItems[previewedItemIndex]?.status !== FILE_UPLOAD_STATUS.succeeded}
+              onClick={handleSelectButtonClick}
+              disabled={uploadItems[previewedFileIndex]?.status !== FILE_UPLOAD_STATUS.succeeded}
               >{t('common:select')}
             </Button>
             )}
@@ -250,11 +250,13 @@ RoomMediaUploadScreen.propTypes = {
     file: PropTypes.object.isRequired,
     isPristine: PropTypes.bool.isRequired
   })).isRequired,
+  previewedFileIndex: PropTypes.number.isRequired,
   onOkClick: PropTypes.func,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
-  onEditFileClick: PropTypes.func,
-  onSelectFileClick: PropTypes.func
+  onSelectClick: PropTypes.func,
+  onFileClick: PropTypes.func,
+  onEditFileClick: PropTypes.func
 };
 
 RoomMediaUploadScreen.defaultProps = {
@@ -263,8 +265,9 @@ RoomMediaUploadScreen.defaultProps = {
   onOkClick: () => {},
   onBackClick: () => {},
   onCancelClick: () => {},
-  onEditFileClick: () => {},
-  onSelectFileClick: () => {}
+  onSelectClick: () => {},
+  onFileClick: () => {},
+  onEditFileClick: () => {}
 };
 
 export default RoomMediaUploadScreen;

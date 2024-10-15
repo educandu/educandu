@@ -34,6 +34,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
   const [screenStack, setScreenStack] = useState([SCREEN.default]);
   const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
   const [showInitialFileHighlighting, setShowInitialFileHighlighting] = useState(true);
+  const [uploadScreenPreviewedFileIndex, setUploadScreenPreviewedFileIndex] = useState(0);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
   const roomId = roomMediaContext?.singleRoomMediaOverview.roomStorage.roomId || null;
@@ -68,12 +69,12 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     }
   }, [roomId, setRoomMediaContext, roomApiClient]);
 
-  const handleFileClick = newFile => {
+  const handleDefaultScreenFileClick = newFile => {
     setShowInitialFileHighlighting(false);
     setHighlightedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
   };
 
-  const handleFileDoubleClick = newFile => {
+  const handleDefaultScreenFileDoubleClick = newFile => {
     onSelect(newFile.portableUrl);
   };
 
@@ -81,11 +82,11 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     onSelect(highlightedFile.portableUrl);
   };
 
-  const handleSelectUploadedFileClick = file => {
+  const handleUploadScreenSelectClick = file => {
     onSelect(file.portableUrl);
   };
 
-  const handleDeleteFileClick = file => {
+  const handleDefaultScreenDeleteFileClick = file => {
     confirmMediaFileHardDelete(t, file.name, async () => {
       const { storagePlan, usedBytes, roomStorage } = await roomApiClient.deleteRoomMedia({ roomId, roomMediaItemId: file._id });
       setFiles(roomStorage.roomMediaItems);
@@ -93,7 +94,7 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     });
   };
 
-  const handlePreviewFileClick = () => {
+  const handleDefaultScreenPreviewFileClick = () => {
     pushScreen(SCREEN.preview);
   };
 
@@ -101,11 +102,11 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     popScreen();
   };
 
-  const handleFilesViewerDisplayChange = value => {
+  const handleDefaultScreenFilesViewerDisplayChange = value => {
     setFilesViewerDisplay(value);
   };
 
-  const handleFilesUploadScreenBackClick = async () => {
+  const handleUploadScreenBackClick = async () => {
     popScreen();
     setFilterText('');
     setUploadQueue([]);
@@ -113,15 +114,19 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
     await fetchStorageContent();
   };
 
-  const handleFilesDropped = fs => {
+  const handleDefaultScreenFilesDropped = fs => {
     setUploadQueue(fs.map(f => ({ file: f, isPristine: true })));
   };
 
-  const handleFilterTextChange = value => {
+  const handleDefaultScreenFilterTextChange = value => {
     setFilterText(value);
   };
 
-  const handleEditFileClick = fileIndex => {
+  const handleUploadScreenFileClick = fileIndex => {
+    setUploadScreenPreviewedFileIndex(fileIndex);
+  };
+
+  const handleUpoadScreenEditFileClick = fileIndex => {
     setCurrentEditedFileIndex(fileIndex);
     pushScreen(SCREEN.editor);
   };
@@ -179,14 +184,14 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
           highlightedFile={highlightedFile}
           filesViewerDisplay={filesViewerDisplay}
           onSelectHighlightedFileClick={handleSelectHighlightedFileClick}
-          onFileClick={handleFileClick}
+          onFileClick={handleDefaultScreenFileClick}
           onCancelClick={onCancel}
-          onDeleteFileClick={handleDeleteFileClick}
-          onPreviewFileClick={handlePreviewFileClick}
-          onFilterTextChange={handleFilterTextChange}
-          onFilesViewerDisplayChange={handleFilesViewerDisplayChange}
-          onFilesDropped={handleFilesDropped}
-          onFileDoubleClick={handleFileDoubleClick}
+          onDeleteFileClick={handleDefaultScreenDeleteFileClick}
+          onPreviewFileClick={handleDefaultScreenPreviewFileClick}
+          onFilterTextChange={handleDefaultScreenFilterTextChange}
+          onFilesViewerDisplayChange={handleDefaultScreenFilesViewerDisplayChange}
+          onFilesDropped={handleDefaultScreenFilesDropped}
+          onFileDoubleClick={handleDefaultScreenFileDoubleClick}
           />
       )}
 
@@ -202,10 +207,12 @@ function RoomMediaScreens({ initialUrl, onSelect, onCancel }) {
       {screen === SCREEN.upload && (
         <RoomMediaUploadScreen
           uploadQueue={uploadQueue}
+          previewedFileIndex={uploadScreenPreviewedFileIndex}
           onCancelClick={onCancel}
-          onEditFileClick={handleEditFileClick}
-          onBackClick={handleFilesUploadScreenBackClick}
-          onSelectFileClick={handleSelectUploadedFileClick}
+          onFileClick={handleUploadScreenFileClick}
+          onEditFileClick={handleUpoadScreenEditFileClick}
+          onBackClick={handleUploadScreenBackClick}
+          onSelectClick={handleUploadScreenSelectClick}
           />
       )}
 
