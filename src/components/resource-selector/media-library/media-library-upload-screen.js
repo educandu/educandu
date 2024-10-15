@@ -55,7 +55,7 @@ function MediaLibraryUploadScreen({
   onBackClick,
   onCancelClick,
   onSelectNewUrl,
-  onUploadFinished
+  onUploadFinish
 }) {
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
@@ -110,7 +110,7 @@ function MediaLibraryUploadScreen({
         mediaLibraryItems.push(result);
       }
       setCreatedMediaLibraryItems(mediaLibraryItems);
-      onUploadFinished(mediaLibraryItems);
+      onUploadFinish(mediaLibraryItems);
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
@@ -222,7 +222,7 @@ MediaLibraryUploadScreen.propTypes = {
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
   onSelectNewUrl: PropTypes.func,
-  onUploadFinished: PropTypes.func
+  onUploadFinish: PropTypes.func
 };
 
 MediaLibraryUploadScreen.defaultProps = {
@@ -234,7 +234,7 @@ MediaLibraryUploadScreen.defaultProps = {
   onBackClick: () => {},
   onCancelClick: () => {},
   onSelectNewUrl: () => {},
-  onUploadFinished: () => {},
+  onUploadFinish: () => {},
 };
 
 export default MediaLibraryUploadScreen;

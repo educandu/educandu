@@ -29,8 +29,7 @@ import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { ensureAreExcluded, ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
 import { confirmBulkDeleteMediaItems, confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
-import MediaLibraryUploadModal from '../resource-selector/media-library/media-library-upload-modal.js';
-import MediaLibaryItemModal, { MEDIA_LIBRARY_ITEM_MODAL_MODE } from '../resource-selector/media-library/media-library-item-modal.js';
+import MediaLibaryItemsModal, { MEDIA_LIBRARY_ITEMS_MODAL_MODE } from '../resource-selector/media-library/media-library-items-modal.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -86,6 +85,14 @@ function filterRows(rows, filter) {
   return lowerCasedFilter ? rows.filter(row => filterRow(row, lowerCasedFilter)) : rows;
 }
 
+function getMediaLibraryItemsModalDefaultState() {
+  return {
+    mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.none,
+    mediaLibraryItem: null,
+    isOpen: false
+  };
+}
+
 function ContentManagementMediaLibraryTab() {
   const user = useUser();
   const request = useRequest();
@@ -94,8 +101,7 @@ function ContentManagementMediaLibraryTab() {
   const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const [mediaLibraryUploadModalState, setMediaLibraryUploadModalState] = useState({ isOpen: false });
-  const [mediaLibraryItemModalState, setMediaLibraryItemModalState] = useState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem: null, isOpen: false });
+  const [mediaLibraryItemsModalState, setMediaLibraryItemsModalState] = useState(getMediaLibraryItemsModalDefaultState());
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
@@ -204,16 +210,16 @@ function ContentManagementMediaLibraryTab() {
 
   const handlePreviewItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    setMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.preview, mediaLibraryItem, isOpen: true });
+    setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview, mediaLibraryItem, isOpen: true });
   };
 
   const handleCreateItemsClick = () => {
-    setMediaLibraryUploadModalState({ isOpen: true });
+    setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.create, mediaLibraryItem: null, isOpen: true });
   };
 
   const handleEditItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    setMediaLibraryItemModalState({ mode: MEDIA_LIBRARY_ITEM_MODAL_MODE.update, mediaLibraryItem, isOpen: true });
+    setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.update, mediaLibraryItem, isOpen: true });
   };
 
   const handleDeleteItemClick = row => {
@@ -229,22 +235,18 @@ function ContentManagementMediaLibraryTab() {
     });
   };
 
-  const handleMediaLibraryItemModalSave = savedItem => {
-    setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
-    setMediaLibraryItems(oldItems => replaceItem(oldItems, savedItem));
-  };
-
-  const handleMediaLibraryItemModalClose = () => {
-    setMediaLibraryItemModalState(previousState => ({ ...previousState, isOpen: false }));
-  };
-
-  const handleMediaLibraryUploadModalSave = createdItems => {
-    setMediaLibraryUploadModalState({ isOpen: false });
+  const handleMediaLibraryItemsModalCreated = createdItems => {
+    setMediaLibraryItemsModalState(getMediaLibraryItemsModalDefaultState());
     setMediaLibraryItems(oldItems => [...oldItems, ...createdItems]);
   };
 
-  const handleMediaLibraryUploadModalClose = () => {
-    setMediaLibraryUploadModalState({ isOpen: false });
+  const handleMediaLibraryItemsModalUpdated = savedItem => {
+    setMediaLibraryItemsModalState(getMediaLibraryItemsModalDefaultState());
+    setMediaLibraryItems(oldItems => replaceItem(oldItems, savedItem));
+  };
+
+  const handleMediaLibraryItemsModalClose = () => {
+    setMediaLibraryItemsModalState(getMediaLibraryItemsModalDefaultState());
   };
 
   const determineDisabledDate = dayjsValue => {
@@ -437,15 +439,11 @@ function ContentManagementMediaLibraryTab() {
         loading={fetchingData}
         onChange={handleTableChange}
         />
-      <MediaLibaryItemModal
-        {...mediaLibraryItemModalState}
-        onSave={handleMediaLibraryItemModalSave}
-        onClose={handleMediaLibraryItemModalClose}
-        />
-      <MediaLibraryUploadModal
-        {...mediaLibraryUploadModalState}
-        onSave={handleMediaLibraryUploadModalSave}
-        onClose={handleMediaLibraryUploadModalClose}
+      <MediaLibaryItemsModal
+        {...mediaLibraryItemsModalState}
+        onCreated={handleMediaLibraryItemsModalCreated}
+        onUpdated={handleMediaLibraryItemsModalUpdated}
+        onClose={handleMediaLibraryItemsModalClose}
         />
     </div>
   );

@@ -1,19 +1,24 @@
-.MediaLibaryItemModal {}
+.MediaLibaryItemsModal {
+  &.MediaLibaryItemsModal--createMode {
+    height: 70vh;
+    position: relative;
+  }
+}
 
-.MediaLibaryItemModal-name {
+.MediaLibaryItemsModal-name {
   .m-overflow-ellipsis;
   text-align: center;
   font-size: @edu-font-size-lg;
   margin-bottom: 25px;
 }
 
-.MediaLibaryItemModal-url {
+.MediaLibaryItemsModal-url {
   .m-overflow-ellipsis;
   text-align: center;
   margin-top: 25px;
 }
 
-.MediaLibaryItemModal-splitView {
+.MediaLibaryItemsModal-splitView {
   display: grid;
   gap: 20px;
   grid-auto-flow: column;
@@ -27,7 +32,7 @@
   }
 }
 
-.MediaLibaryItemModal-footer {
+.MediaLibaryItemsModal-footer {
   display: grid;
   justify-content: end;
   grid-auto-flow: column;
