@@ -3,158 +3,197 @@ import { Button, Form } from 'antd';
 import prettyBytes from 'pretty-bytes';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from '../../locale-context.js';
 import { usePermission } from '../../../ui/hooks.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import permissions from '../../../domain/permissions.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { FILE_UPLOAD_STATUS } from '../shared/constants.js';
 import { handleApiError } from '../../../ui/error-helper.js';
+import { replaceItemAt } from '../../../utils/array-utils.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
+import FilesUploadViewer from '../shared/files-upload-viewer.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
-import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import MediaLibraryFilesDropzone from './media-library-files-dropzone.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
+import { isEditableImageFile, processFileBeforeUpload } from '../../../utils/storage-utils.js';
 import { STORAGE_FILE_UPLOAD_COUNT_LIMIT, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
-const SCREEN = {
+const STAGE = {
   enterData: 'enter-data',
   editImage: 'edit-image',
-  createItem: 'create-item',
-  previewCreatedItem: 'preview-created-item'
+  upload: 'upload',
+  select: 'select'
 };
 
-const createUploadItem = (t, file, allowUnlimitedUpload) => {
+const mapToUploadItem = (t, uiLocale, file, allowUnlimitedUpload) => {
   const fileIsTooBig = !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES;
-  const errorMessage = fileIsTooBig
-    ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) })
-    : null;
 
   return {
     file,
     isEditable: isEditableImageFile(file),
-    status: errorMessage ? FILE_UPLOAD_STATUS.failed : FILE_UPLOAD_STATUS.pristine,
-    errorMessage
+    status: fileIsTooBig ? FILE_UPLOAD_STATUS.failedValidation : FILE_UPLOAD_STATUS.pristine,
+    errorMessage: fileIsTooBig
+      ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES, { locale: uiLocale }) })
+      : null
   };
 };
 
-const createUploadItems = (t, files, allowUnlimitedUpload) => {
-  return files.map(file => createUploadItem(t, file, allowUnlimitedUpload));
+const mapToUploadItems = (t, uiLocale, files, allowUnlimitedUpload) => {
+  return files.map(file => mapToUploadItem(t, uiLocale, file, allowUnlimitedUpload));
+};
+
+const processFilesBeforeUpload = ({ items, optimizeImages }) => {
+  return Promise.all(items.map(item =>
+    item.status === FILE_UPLOAD_STATUS.failedValidation
+      ? item.file
+      : processFileBeforeUpload({ file: item.file, optimizeImages })
+  ));
 };
 
 function MediaLibraryUploadScreen({
   initialFiles,
   showHeadline,
   canGoBack,
-  canPreview,
+  canSelect,
   uploadButtonText,
   onBackClick,
   onCancelClick,
-  onSelectNewUrl,
+  onSelectUrl,
   onUploadFinish
 }) {
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
+  const { uiLocale } = useLocale();
   const { t } = useTranslation('mediaLibraryUploadScreen');
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_RESTRICTION);
 
-  const [currentScreen, setCurrentScreen] = useState(SCREEN.enterData);
-  const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
-  const [createdMediaLibraryItems, setCreatedMediaLibraryItems] = useState([]);
-  const [currentPreviewedFileIndex, setCurrentPreviewedFileIndex] = useState(initialFiles.length ? 0 : -1);
-  const [uploadItems, setUploadItems] = useState(createUploadItems(t, initialFiles, allowUnlimitedUpload));
+  const [currentStage, setCurrentStage] = useState(STAGE.enterData);
+  const [currentEditedItemIndex, setCurrentEditedItemIndex] = useState(-1);
+  const [currentPreviewedItemIndex, setCurrentPreviewedItemIndex] = useState(0);
+  const [uploadItems, setUploadItems] = useState(mapToUploadItems(t, uiLocale, initialFiles, allowUnlimitedUpload));
 
   useEffect(() => {
-    setCurrentEditedFileIndex(-1);
-    setCreatedMediaLibraryItems([]);
-    setCurrentScreen(SCREEN.enterData);
-    setCurrentPreviewedFileIndex(initialFiles.length ? 0 : -1);
-    setUploadItems(createUploadItems(t, initialFiles, allowUnlimitedUpload));
-  }, [t, allowUnlimitedUpload, initialFiles, form]);
+    setCurrentEditedItemIndex(-1);
+    setCurrentStage(STAGE.enterData);
+    setCurrentPreviewedItemIndex(0);
+    setUploadItems(mapToUploadItems(t, uiLocale, initialFiles, allowUnlimitedUpload));
+  }, [t, uiLocale, allowUnlimitedUpload, initialFiles, form]);
 
-  const isCurrentlyUploading = currentScreen === SCREEN.createItem;
+  const isCurrentlyUploading = currentStage === STAGE.upload;
 
   const handleDropzoneFilesDrop = droppedFiles => {
     if (!isCurrentlyUploading && droppedFiles?.length) {
-      setCurrentPreviewedFileIndex(0);
-      setUploadItems(createUploadItems(t, droppedFiles, allowUnlimitedUpload));
+      setCurrentPreviewedItemIndex(0);
+      setUploadItems(mapToUploadItems(t, uiLocale, droppedFiles, allowUnlimitedUpload));
     }
   };
 
   const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImages }) => {
-    const filesToUpload = uploadItems.filter(item => !item.errorMessage).map(item => item.file);
-    if (!filesToUpload.length) {
+    const allItemsFailedValidation = uploadItems.every(item => item.status === FILE_UPLOAD_STATUS.failedValidation);
+    if (allItemsFailedValidation) {
       return;
     }
 
-    setCurrentScreen(SCREEN.createItem);
-    const mediaLibraryItems = [];
+    setCurrentStage(STAGE.upload);
 
     try {
-      const processedFiles = await processFilesBeforeUpload({ files: filesToUpload, optimizeImages });
+      const createdMediaLibraryItems = [];
+      const processedFiles = await processFilesBeforeUpload({ items: uploadItems, optimizeImages });
 
       for (let i = 0; i < processedFiles.length; i += 1) {
-        const result = await mediaLibraryApiClient.createMediaLibraryItem({
-          file: processedFiles[i],
-          shortDescription,
-          languages,
-          licenses,
-          allRightsReserved,
-          tags
-        });
-        mediaLibraryItems.push(result);
+        const isValidItem = uploadItems[i].status !== FILE_UPLOAD_STATUS.failedValidation;
+
+        if (isValidItem) {
+          const file = processedFiles[i];
+          const currentItem = { ...uploadItems[i], file, status: FILE_UPLOAD_STATUS.uploading };
+
+          setUploadItems(prevItems => replaceItemAt(prevItems, currentItem, i));
+
+          let updatedItem;
+          try {
+            const mediaLibraryItem = await mediaLibraryApiClient.createMediaLibraryItem({
+              file,
+              shortDescription,
+              languages,
+              licenses,
+              allRightsReserved,
+              tags
+            });
+
+            updatedItem = {
+              ...currentItem,
+              status: FILE_UPLOAD_STATUS.succeededUpload,
+              createdMediaLibraryItem: mediaLibraryItem
+            };
+            createdMediaLibraryItems.push(mediaLibraryItem);
+          } catch (error) {
+            updatedItem = {
+              ...currentItem,
+              status: FILE_UPLOAD_STATUS.failedUpload,
+              errorMessage: error.message
+            };
+          }
+          setUploadItems(prevItems => replaceItemAt(prevItems, updatedItem, i));
+        }
       }
-      setCreatedMediaLibraryItems(mediaLibraryItems);
-      onUploadFinish(mediaLibraryItems);
+
+      if (uploadItems[currentPreviewedItemIndex].status === FILE_UPLOAD_STATUS.failedValidation) {
+        setCurrentPreviewedItemIndex(0);
+      }
+      onUploadFinish(createdMediaLibraryItems);
+      setCurrentStage(canSelect ? STAGE.select : STAGE.enterData);
     } catch (error) {
       handleApiError({ error, logger, t });
-    } finally {
-      setCurrentScreen(canPreview ? SCREEN.previewCreatedItem : SCREEN.enterData);
     }
   };
 
-  const handleCreateItemsClick = () => {
+  const handleUploadClick = () => {
     form.submit();
   };
 
-  const handleSelectCreatedItemClick = () => {
-    onSelectNewUrl(createdMediaLibraryItems[0].portableUrl);
+  const handleSelectButtonClick = () => {
+    onSelectUrl(uploadItems[currentPreviewedItemIndex].mediaLibraryItem.portableUrl);
   };
 
   const handleDropzoneEditImageClick = index => {
-    setCurrentEditedFileIndex(index);
-    setCurrentScreen(SCREEN.editImage);
+    setCurrentEditedItemIndex(index);
+    setCurrentStage(STAGE.editImage);
   };
 
   const handleEditorBackClick = () => {
-    setCurrentEditedFileIndex(-1);
-    setCurrentScreen(SCREEN.enterData);
+    setCurrentEditedItemIndex(-1);
+    setCurrentStage(STAGE.enterData);
   };
 
   const handleEditorApplyClick = newFile => {
-    setUploadItems(uploadItems.map((item, index) => index !== currentEditedFileIndex ? item : { ...item, file: newFile, status: FILE_UPLOAD_STATUS.processed }));
-    setCurrentEditedFileIndex(-1);
-    setCurrentScreen(SCREEN.enterData);
+    setUploadItems(uploadItems.map((item, index) => index !== currentEditedItemIndex ? item : { ...item, file: newFile, status: FILE_UPLOAD_STATUS.processed }));
+    setCurrentEditedItemIndex(-1);
+    setCurrentStage(STAGE.enterData);
   };
 
   const handleDropzonePreviewItemClick = index => {
-    setCurrentPreviewedFileIndex(index);
+    setCurrentPreviewedItemIndex(index);
   };
 
   const handleDropzoneClear = () => {
-    setCurrentPreviewedFileIndex(-1);
+    setCurrentPreviewedItemIndex(-1);
     setUploadItems([]);
   };
 
-  if (currentScreen === SCREEN.editImage) {
+  const handleUploadViewerItemClick = index => {
+    setCurrentPreviewedItemIndex(index);
+  };
+
+  if (currentStage === STAGE.editImage) {
     return (
       <FileEditorScreen
-        file={uploadItems[currentEditedFileIndex].file}
+        file={uploadItems[currentEditedItemIndex].file}
         onCancelClick={onCancelClick}
         onBackClick={handleEditorBackClick}
         onApplyClick={handleEditorApplyClick}
@@ -162,28 +201,43 @@ function MediaLibraryUploadScreen({
     );
   }
 
-  if (currentScreen === SCREEN.previewCreatedItem) {
+  if (currentStage === STAGE.select) {
     return (
-      <ResourcePreviewScreen
-        file={createdMediaLibraryItems[0]}
-        renderMediaLibraryMetadata
-        onBackClick={onBackClick}
-        onCancelClick={onCancelClick}
-        onSelectClick={handleSelectCreatedItemClick}
-        />
+      <div className="u-resource-selector-screen">
+        {!!showHeadline && <h3 className="u-resource-selector-screen-headline">{t('common:select')}</h3>}
+        <div className="u-overflow-auto">
+          <FilesUploadViewer
+            canEdit={false}
+            showInvalid={false}
+            items={uploadItems}
+            previewedItemIndex={currentPreviewedItemIndex}
+            onItemClick={handleUploadViewerItemClick}
+            />
+        </div>
+
+        <div className="u-resource-selector-screen-footer">
+          {!!canGoBack && <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>}
+          <div className="u-resource-selector-screen-footer-buttons">
+            <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
+            <Button type="primary" disabled={!uploadItems[currentPreviewedItemIndex]?.mediaLibraryItem} onClick={handleSelectButtonClick}>
+              {t('common:select')}
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
     <div className="u-resource-selector-screen">
-      {showHeadline ? <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3> : null}
+      {!!showHeadline && <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>}
       <div className="u-overflow-auto">
         <div className="u-resource-selector-screen-content-split">
           <MediaLibraryFilesDropzone
             dropzoneRef={dropzoneRef}
             uploadItems={uploadItems}
-            canAcceptFiles={!isCurrentlyUploading}
-            previewedItemIndex={currentPreviewedFileIndex}
+            readOnly={isCurrentlyUploading}
+            previewedItemIndex={currentPreviewedItemIndex}
             uploadLimit={allowUnlimitedUpload
               ? null
               : {
@@ -203,10 +257,10 @@ function MediaLibraryUploadScreen({
         </div>
       </div>
       <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
-        {canGoBack ? <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button> : null}
+        {!!canGoBack && <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>}
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleCreateItemsClick} disabled={uploadItems.every(item => !!item.errorMessage)} loading={isCurrentlyUploading}>{uploadButtonText || t('common:upload')}</Button>
+          <Button type="primary" onClick={handleUploadClick} disabled={uploadItems.every(item => !!item.errorMessage)} loading={isCurrentlyUploading}>{uploadButtonText || t('common:upload')}</Button>
         </div>
       </div>
     </div>
@@ -216,24 +270,24 @@ function MediaLibraryUploadScreen({
 MediaLibraryUploadScreen.propTypes = {
   initialFiles: PropTypes.arrayOf(browserFileType),
   canGoBack: PropTypes.bool,
-  canPreview: PropTypes.bool,
+  canSelect: PropTypes.bool,
   showHeadline: PropTypes.bool,
   uploadButtonText: PropTypes.string,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
-  onSelectNewUrl: PropTypes.func,
+  onSelectUrl: PropTypes.func,
   onUploadFinish: PropTypes.func
 };
 
 MediaLibraryUploadScreen.defaultProps = {
   initialFiles: [],
   canGoBack: true,
-  canPreview: true,
+  canSelect: true,
   showHeadline: true,
   uploadButtonText: null,
   onBackClick: () => {},
   onCancelClick: () => {},
-  onSelectNewUrl: () => {},
+  onSelectUrl: () => {},
   onUploadFinish: () => {},
 };
 

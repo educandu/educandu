@@ -112,7 +112,7 @@ function MediaLibaryItemsModal({
         <div className="MediaLibaryItemsModal MediaLibaryItemsModal--createMode">
           <MediaLibraryUploadScreen
             canGoBack={false}
-            canPreview={false}
+            canSelect={false}
             showHeadline={false}
             uploadButtonText={t('common:create')}
             onCancelClick={onClose}

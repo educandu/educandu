@@ -2,6 +2,7 @@ export const FILE_UPLOAD_STATUS = {
   pristine: 'pristine',
   processed: 'processed',
   uploading: 'uploading',
-  succeeded: 'succeeded',
-  failed: 'failed'
+  succeededUpload: 'succeeded',
+  failedUpload: 'failed-upload',
+  failedValidation: 'failed-validation'
 };
