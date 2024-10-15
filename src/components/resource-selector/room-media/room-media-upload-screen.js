@@ -15,7 +15,7 @@ import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 import { useRoomMediaContext, useSetRoomMediaContext } from '../../room-media-context.js';
-import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
+import { isEditableImageFile, processFileBeforeUpload } from '../../../utils/storage-utils.js';
 
 const STAGE = {
   uploadNotStarted: 'uploadNotStarted',
@@ -25,22 +25,29 @@ const STAGE = {
 
 const mapToUploadItem = (t, uiLocale, file, isPristine) => {
   const fileIsTooBig = file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES;
-  const errorMessage = fileIsTooBig
-    ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES, { locale: uiLocale }) })
-    : null;
 
-  const processedStatus = isPristine ? FILE_UPLOAD_STATUS.pristine : FILE_UPLOAD_STATUS.processed;
+  const statusIfValid = isPristine ? FILE_UPLOAD_STATUS.pristine : FILE_UPLOAD_STATUS.processed;
 
   return {
     file,
-    status: errorMessage ? FILE_UPLOAD_STATUS.failed : processedStatus,
+    status: fileIsTooBig ? FILE_UPLOAD_STATUS.failedValidation : statusIfValid,
     isEditable: isEditableImageFile(file),
-    errorMessage
+    errorMessage: fileIsTooBig
+      ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES, { locale: uiLocale }) })
+      : null
   };
 };
 
 const mapToUploadItems = (t, uiLocale, uploadQueue) => {
   return uploadQueue.map(({ file, isPristine }) => mapToUploadItem(t, uiLocale, file, isPristine));
+};
+
+const processFilesBeforeUpload = ({ items, optimizeImages }) => {
+  return Promise.all(items.map(item =>
+    item.status === FILE_UPLOAD_STATUS.failedValidation
+      ? item.file
+      : processFileBeforeUpload({ file: item.file, optimizeImages })
+  ));
 };
 
 function RoomMediaUploadScreen({
@@ -83,57 +90,60 @@ function RoomMediaUploadScreen({
     }
   }, [t, roomMediaContext]);
 
-  const uploadFiles = useCallback(async itemsToUpload => {
-    if (!itemsToUpload.length) {
+  const doUpload = useCallback(async itemsToUpload => {
+    const allItemsFailedValidation = itemsToUpload.every(item => item.status === FILE_UPLOAD_STATUS.failedValidation);
+    if (allItemsFailedValidation) {
       return;
     }
 
-    const processedFiles = await processFilesBeforeUpload({ files: itemsToUpload.map(item => item.file), optimizeImages });
+    const processedFiles = await processFilesBeforeUpload({ items: itemsToUpload, optimizeImages });
 
-    for (let i = 0; i < processedFiles.length; i += 1) {
-      const file = processedFiles[i];
-      const currentItem = { ...itemsToUpload[i], file, status: FILE_UPLOAD_STATUS.uploading };
+    for (let i = 0; i < itemsToUpload.length; i += 1) {
+      const isValidItem = itemsToUpload[i].status !== FILE_UPLOAD_STATUS.failedValidation;
 
-      setUploadItems(prevItems => replaceItemAt(prevItems, currentItem, i));
+      if (isValidItem) {
+        const file = processedFiles[i];
+        const currentItem = { ...itemsToUpload[i], file, status: FILE_UPLOAD_STATUS.uploading };
 
-      let updatedItem;
-      try {
-        ensureCanUpload(file);
-        const { storagePlan, usedBytes, roomStorage, createdRoomMediaItemId } = await roomApiClient.postRoomMedia({ roomId, file });
+        setUploadItems(prevItems => replaceItemAt(prevItems, currentItem, i));
 
-        updatedItem = {
-          ...currentItem,
-          status: FILE_UPLOAD_STATUS.succeeded,
-          createdRoomMediaItem: roomStorage.roomMediaItems.find(item => item._id === createdRoomMediaItemId) || null
-        };
+        let updatedItem;
+        try {
+          ensureCanUpload(file);
+          const { storagePlan, usedBytes, roomStorage, createdRoomMediaItemId } = await roomApiClient.postRoomMedia({ roomId, file });
 
-        setRoomMediaContext(oldContext => (
-          {
-            ...oldContext,
-            singleRoomMediaOverview: {
-              storagePlan,
-              usedBytes,
-              roomStorage
+          updatedItem = {
+            ...currentItem,
+            status: FILE_UPLOAD_STATUS.succeededUpload,
+            createdRoomMediaItem: roomStorage.roomMediaItems.find(item => item._id === createdRoomMediaItemId) || null
+          };
+
+          setRoomMediaContext(oldContext => (
+            {
+              ...oldContext,
+              singleRoomMediaOverview: {
+                storagePlan,
+                usedBytes,
+                roomStorage
+              }
             }
-          }
-        ));
-      } catch (error) {
-        updatedItem = {
-          ...currentItem,
-          status: FILE_UPLOAD_STATUS.failed,
-          errorMessage: error.message
-        };
-      }
+          ));
+        } catch (error) {
+          updatedItem = {
+            ...currentItem,
+            status: FILE_UPLOAD_STATUS.failedUpload,
+            errorMessage: error.message
+          };
+        }
 
-      setUploadItems(prevItems => replaceItemAt(prevItems, updatedItem, i));
+        setUploadItems(prevItems => replaceItemAt(prevItems, updatedItem, i));
+      }
     }
   }, [roomId, roomApiClient, ensureCanUpload, setRoomMediaContext, optimizeImages]);
 
   const handleStartUploadClick = async () => {
     setCurrentStage(STAGE.uploading);
-    const itemsToUpload = uploadItems.filter(item => !item.errorMessage);
-    setUploadItems(itemsToUpload);
-    await uploadFiles(itemsToUpload);
+    await doUpload(uploadItems);
     setCurrentStage(STAGE.uploadFinished);
   };
 
@@ -201,6 +211,7 @@ function RoomMediaUploadScreen({
             items={uploadItems}
             previewedItemIndex={previewedFileIndex}
             canEdit={currentStage === STAGE.uploadNotStarted}
+            showInvalid={currentStage === STAGE.uploadNotStarted}
             onEditItemClick={handleUploadViewerEditItemClick}
             onItemClick={handleUploadViewerItemClick}
             />
@@ -243,7 +254,7 @@ function RoomMediaUploadScreen({
             <Button
               type="primary"
               onClick={handleSelectButtonClick}
-              disabled={uploadItems[previewedFileIndex]?.status !== FILE_UPLOAD_STATUS.succeeded}
+              disabled={uploadItems[previewedFileIndex]?.status !== FILE_UPLOAD_STATUS.succeededUpload}
               >{t('common:select')}
             </Button>
             )}

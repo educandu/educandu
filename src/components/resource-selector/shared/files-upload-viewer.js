@@ -11,8 +11,9 @@ import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadat
 
 function FilesUploadViewer({
   items,
-  canEdit,
   compact,
+  canEdit,
+  showInvalid,
   previewedItemIndex,
   onEditItemClick,
   onItemClick,
@@ -41,7 +42,15 @@ function FilesUploadViewer({
     );
   };
 
+  const canRenderItem = item => {
+    return !!item && (!!showInvalid || item.status !== FILE_UPLOAD_STATUS.failedValidation);
+  };
+
   const renderItem = (item, itemIndex) => {
+    if (!canRenderItem(item)) {
+      return null;
+    }
+
     return (
       <div className="FilesUploadViewer-item">
         <div
@@ -73,10 +82,10 @@ function FilesUploadViewer({
           {item.status === FILE_UPLOAD_STATUS.uploading && (
             <LoadingOutlined className="FilesUploadViewer-itemIcon" />
           )}
-          {item.status === FILE_UPLOAD_STATUS.succeeded && (
+          {item.status === FILE_UPLOAD_STATUS.succeededUpload && (
             <CheckOutlined className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--success" />
           )}
-          {item.status === FILE_UPLOAD_STATUS.failed && (
+          {(item.status === FILE_UPLOAD_STATUS.failedValidation || item.status === FILE_UPLOAD_STATUS.failedUpload) && (
             <CloseOutlined className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--error" />
           )}
           {renderItemName(item, itemIndex)}
@@ -112,7 +121,7 @@ function FilesUploadViewer({
         ))}
       </div>
       <div className="FilesUploadViewer-previewContainer">
-        {!!items[previewedItemIndex] && (
+        {!!canRenderItem(items[previewedItemIndex]) && (
           <ResourcePreviewWithMetadata
             urlOrFile={items[previewedItemIndex].file}
             size={items[previewedItemIndex].file.size}
@@ -124,12 +133,13 @@ function FilesUploadViewer({
 }
 
 FilesUploadViewer.propTypes = {
-  canEdit: PropTypes.bool.isRequired,
   compact: PropTypes.bool,
   previewedItemIndex: PropTypes.number.isRequired,
+  canEdit: PropTypes.bool.isRequired,
+  showInvalid: PropTypes.bool.isRequired,
   items: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
-    status: PropTypes.oneOf(Object.values(FILE_UPLOAD_STATUS)),
+    status: PropTypes.oneOf(Object.values(FILE_UPLOAD_STATUS)).isRequired,
     isEditable: PropTypes.bool,
     errorMessage: PropTypes.string
   })).isRequired,

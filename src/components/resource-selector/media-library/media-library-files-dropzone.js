@@ -15,12 +15,12 @@ import FilesUploadViewer from '../shared/files-upload-viewer.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
-function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, uploadLimit, previewedItemIndex, onPreviewItemClick, onFilesDrop, onEditImageClick, onClear }) {
+function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, readOnly, uploadLimit, previewedItemIndex, onPreviewItemClick, onFilesDrop, onEditImageClick, onClear }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaLibraryFilesDropzone');
 
   const handleUploadButtonClick = () => {
-    if (canAcceptFiles) {
+    if (!readOnly) {
       dropzoneRef.current.open();
     }
   };
@@ -44,8 +44,8 @@ function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, u
   const getPreviewAreaClasses = isDragActive => classNames(
     'MediaLibraryFilesDropzone',
     { 'MediaLibraryFilesDropzone--error': !!uploadItems.some(item => item.errorMessage) },
-    { 'is-dropping': canAcceptFiles && isDragActive },
-    { 'is-drop-rejected': !canAcceptFiles && isDragActive }
+    { 'is-dropping': !readOnly && isDragActive },
+    { 'is-drop-rejected': readOnly && isDragActive }
   );
 
   return (
@@ -60,13 +60,14 @@ function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, u
                 <FilesUploadViewer
                   compact
                   items={uploadItems}
-                  canEdit={!!canAcceptFiles}
+                  canEdit={!readOnly}
+                  showInvalid
                   previewedItemIndex={previewedItemIndex}
                   onEditItemClick={handleUploadViewerEditItemClick}
                   onItemClick={handleUploadViewerItemClick}
                   />
                 <div className='MediaLibraryFilesDropzone-clearButton'>
-                  <Button icon={<DeleteIcon />} disabled={!canAcceptFiles} onClick={onClear}>
+                  <Button icon={<DeleteIcon />} disabled={readOnly} onClick={onClear}>
                     {t('clearDropzone', { count: uploadItems.count })}
                   </Button>
                 </div>
@@ -117,7 +118,7 @@ MediaLibraryFilesDropzone.propTypes = {
     status: PropTypes.oneOf(Object.values(FILE_UPLOAD_STATUS)),
     errorMessage: PropTypes.string
   })).isRequired,
-  canAcceptFiles: PropTypes.bool,
+  readOnly: PropTypes.bool,
   previewedItemIndex: PropTypes.number,
   uploadLimit: PropTypes.shape({
     sizeInBytes: PropTypes.number,
@@ -130,7 +131,7 @@ MediaLibraryFilesDropzone.propTypes = {
 };
 
 MediaLibraryFilesDropzone.defaultProps = {
-  canAcceptFiles: true,
+  readOnly: false,
   uploadLimit: null,
   previewedItemIndex: -1,
   onPreviewItemClick: () => {},
