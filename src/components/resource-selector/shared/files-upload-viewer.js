@@ -10,10 +10,10 @@ import { CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons
 import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
 
 function FilesUploadViewer({
-  uploadItems,
+  items,
+  canEdit,
+  compact,
   previewedItemIndex,
-  editingDisabled,
-  compactMode,
   onEditItemClick,
   onItemClick,
 }) {
@@ -32,7 +32,7 @@ function FilesUploadViewer({
       <div
         className={classNames(
           'FilesUploadViewer-itemName',
-          { 'is-selected': uploadItems.length > 1 && previewedItemIndex === itemIndex }
+          { 'is-selected': items.length > 1 && previewedItemIndex === itemIndex }
         )}
         onClick={() => handleItemClick(itemIndex)}
         >
@@ -47,12 +47,12 @@ function FilesUploadViewer({
         <div
           className={classNames(
             'FilesUploadViewer-itemRow',
-            { 'is-selected': uploadItems.length > 1 && previewedItemIndex === itemIndex }
+            { 'is-selected': items.length > 1 && previewedItemIndex === itemIndex }
           )}
           >
           {item.status === FILE_UPLOAD_STATUS.pristine && !!item.isEditable && (
             <Tooltip title={t('common:edit')}>
-              <a onClick={() => handleItemEditClick(itemIndex)} disabled={editingDisabled}>
+              <a onClick={() => handleItemEditClick(itemIndex)} disabled={!canEdit}>
                 <EditIcon className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--pristine" />
               </a>
             </Tooltip>
@@ -84,7 +84,7 @@ function FilesUploadViewer({
             <span className="FilesUploadViewer-itemMessage">({t('processed')})</span>
           )}
         </div>
-        {!!item.errorMessage && (!compactMode || previewedItemIndex === itemIndex) && (
+        {!!item.errorMessage && (!compact || previewedItemIndex === itemIndex) && (
           <div className="FilesUploadViewer-itemError">{item.errorMessage}</div>
         )}
       </div>
@@ -95,27 +95,27 @@ function FilesUploadViewer({
     <div
       className={classNames(
         'FilesUploadViewer',
-        { 'FilesUploadViewer--compact': compactMode }
+        { 'FilesUploadViewer--compact': compact }
       )}
       >
       <div
         className={classNames(
           'FilesUploadViewer-itemsContainer',
-          { 'FilesUploadViewer-itemsContainer--compact': compactMode },
-          { 'FilesUploadViewer-itemsContainer--singleItem': compactMode && uploadItems.length === 1 }
+          { 'FilesUploadViewer-itemsContainer--compact': compact },
+          { 'FilesUploadViewer-itemsContainer--singleItem': compact && items.length === 1 }
         )}
         >
-        {uploadItems.map((item, index) => (
+        {items.map((item, index) => (
           <div key={index.toString()}>
             {renderItem(item, index)}
           </div>
         ))}
       </div>
       <div className="FilesUploadViewer-previewContainer">
-        {!!uploadItems[previewedItemIndex] && (
+        {!!items[previewedItemIndex] && (
           <ResourcePreviewWithMetadata
-            urlOrFile={uploadItems[previewedItemIndex].file}
-            size={uploadItems[previewedItemIndex].file.size}
+            urlOrFile={items[previewedItemIndex].file}
+            size={items[previewedItemIndex].file.size}
             />
         )}
       </div>
@@ -124,21 +124,21 @@ function FilesUploadViewer({
 }
 
 FilesUploadViewer.propTypes = {
-  editingDisabled: PropTypes.bool.isRequired,
-  uploadItems: PropTypes.arrayOf(PropTypes.shape({
+  canEdit: PropTypes.bool.isRequired,
+  compact: PropTypes.bool,
+  previewedItemIndex: PropTypes.number.isRequired,
+  items: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
     status: PropTypes.oneOf(Object.values(FILE_UPLOAD_STATUS)),
-    isEditable: PropTypes.bool.isRequired,
+    isEditable: PropTypes.bool,
     errorMessage: PropTypes.string
   })).isRequired,
-  previewedItemIndex: PropTypes.number.isRequired,
-  compactMode: PropTypes.bool,
   onEditItemClick: PropTypes.func,
   onItemClick: PropTypes.func.isRequired,
 };
 
 FilesUploadViewer.defaultProps = {
-  compactMode: false,
+  compact: false,
   onEditItemClick: () => {}
 };
 

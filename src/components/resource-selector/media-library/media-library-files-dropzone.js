@@ -25,11 +25,11 @@ function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, u
     }
   };
 
-  const handleItemClick = itemIndex => {
+  const handleUploadViewerItemClick = itemIndex => {
     onPreviewItemClick(itemIndex);
   };
 
-  const handleEditItemClick = itemIndex => {
+  const handleUploadViewerEditItemClick = itemIndex => {
     onEditImageClick(itemIndex);
   };
 
@@ -58,12 +58,12 @@ function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, canAcceptFiles, u
               <div>
                 <div className="MediaLibraryFilesDropzone-title">{t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length })}</div>
                 <FilesUploadViewer
-                  compactMode
-                  uploadItems={uploadItems}
-                  editingDisabled={!canAcceptFiles}
+                  compact
+                  items={uploadItems}
+                  canEdit={!!canAcceptFiles}
                   previewedItemIndex={previewedItemIndex}
-                  onEditItemClick={handleEditItemClick}
-                  onItemClick={handleItemClick}
+                  onEditItemClick={handleUploadViewerEditItemClick}
+                  onItemClick={handleUploadViewerItemClick}
                   />
                 <div className='MediaLibraryFilesDropzone-clearButton'>
                   <Button icon={<DeleteIcon />} disabled={!canAcceptFiles} onClick={onClear}>

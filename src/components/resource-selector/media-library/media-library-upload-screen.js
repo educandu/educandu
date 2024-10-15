@@ -10,10 +10,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FILE_UPLOAD_STATUS } from '../shared/constants.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
+import FilesUploadViewer from '../shared/files-upload-viewer.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
-import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import MediaLibraryFilesDropzone from './media-library-files-dropzone.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
@@ -21,11 +21,11 @@ import { STORAGE_FILE_UPLOAD_COUNT_LIMIT, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } f
 
 const logger = new Logger(import.meta.url);
 
-const SCREEN = {
+const STAGE = {
   enterData: 'enter-data',
   editImage: 'edit-image',
-  createItem: 'create-item',
-  previewCreatedItem: 'preview-created-item'
+  createItems: 'create-items',
+  selectFromCreatedItems: 'select-from-created-items'
 };
 
 const createUploadItem = (t, file, allowUnlimitedUpload) => {
@@ -50,11 +50,11 @@ function MediaLibraryUploadScreen({
   initialFiles,
   showHeadline,
   canGoBack,
-  canPreview,
+  canSelect,
   uploadButtonText,
   onBackClick,
   onCancelClick,
-  onSelectNewUrl,
+  onSelectUrl,
   onUploadFinish
 }) {
   const dropzoneRef = useRef();
@@ -63,58 +63,67 @@ function MediaLibraryUploadScreen({
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_RESTRICTION);
 
-  const [currentScreen, setCurrentScreen] = useState(SCREEN.enterData);
-  const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
-  const [createdMediaLibraryItems, setCreatedMediaLibraryItems] = useState([]);
-  const [currentPreviewedFileIndex, setCurrentPreviewedFileIndex] = useState(initialFiles.length ? 0 : -1);
+  const [createdItems, setCreatedItems] = useState([]);
+  const [currentStage, setCurrentStage] = useState(STAGE.enterData);
+  const [currentEditedItemIndex, setCurrentEditedItemIndex] = useState(-1);
+  const [currentSelectedItemIndex, setCurrentSelectedItemIndex] = useState(-1);
+  const [currentPreviewedItemIndex, setCurrentPreviewedItemIndex] = useState(0);
   const [uploadItems, setUploadItems] = useState(createUploadItems(t, initialFiles, allowUnlimitedUpload));
 
   useEffect(() => {
-    setCurrentEditedFileIndex(-1);
-    setCreatedMediaLibraryItems([]);
-    setCurrentScreen(SCREEN.enterData);
-    setCurrentPreviewedFileIndex(initialFiles.length ? 0 : -1);
+    setCreatedItems([]);
+    setCurrentEditedItemIndex(-1);
+    setCurrentSelectedItemIndex(-1);
+    setCurrentStage(STAGE.enterData);
+    setCurrentPreviewedItemIndex(0);
     setUploadItems(createUploadItems(t, initialFiles, allowUnlimitedUpload));
   }, [t, allowUnlimitedUpload, initialFiles, form]);
 
-  const isCurrentlyUploading = currentScreen === SCREEN.createItem;
+  const isCurrentlyUploading = currentStage === STAGE.createItems;
 
   const handleDropzoneFilesDrop = droppedFiles => {
     if (!isCurrentlyUploading && droppedFiles?.length) {
-      setCurrentPreviewedFileIndex(0);
+      setCurrentPreviewedItemIndex(0);
       setUploadItems(createUploadItems(t, droppedFiles, allowUnlimitedUpload));
     }
   };
 
   const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImages }) => {
-    const filesToUpload = uploadItems.filter(item => !item.errorMessage).map(item => item.file);
-    if (!filesToUpload.length) {
+    const errorFreeUploadItems = uploadItems.filter(item => !item.errorMessage);
+    if (!errorFreeUploadItems.length) {
       return;
     }
 
-    setCurrentScreen(SCREEN.createItem);
-    const mediaLibraryItems = [];
+    setCurrentStage(STAGE.createItems);
+    setCreatedItems([]);
+
+    const newlyCreatedItems = [];
 
     try {
+      const filesToUpload = errorFreeUploadItems.map(item => item.file);
       const processedFiles = await processFilesBeforeUpload({ files: filesToUpload, optimizeImages });
 
       for (let i = 0; i < processedFiles.length; i += 1) {
-        const result = await mediaLibraryApiClient.createMediaLibraryItem({
-          file: processedFiles[i],
+        const file = processedFiles[i];
+
+        const mediaLibraryItem = await mediaLibraryApiClient.createMediaLibraryItem({
+          file,
           shortDescription,
           languages,
           licenses,
           allRightsReserved,
           tags
         });
-        mediaLibraryItems.push(result);
+        newlyCreatedItems.push({ file, status: FILE_UPLOAD_STATUS.succeeded, mediaLibraryItem });
       }
-      setCreatedMediaLibraryItems(mediaLibraryItems);
-      onUploadFinish(mediaLibraryItems);
+
+      setCurrentSelectedItemIndex(0);
+      setCreatedItems(newlyCreatedItems);
+      onUploadFinish(newlyCreatedItems.map(item => item.mediaLibraryItem));
+
+      setCurrentStage(canSelect ? STAGE.selectFromCreatedItems : STAGE.enterData);
     } catch (error) {
       handleApiError({ error, logger, t });
-    } finally {
-      setCurrentScreen(canPreview ? SCREEN.previewCreatedItem : SCREEN.enterData);
     }
   };
 
@@ -122,39 +131,43 @@ function MediaLibraryUploadScreen({
     form.submit();
   };
 
-  const handleSelectCreatedItemClick = () => {
-    onSelectNewUrl(createdMediaLibraryItems[0].portableUrl);
+  const handleSelectButtonClick = () => {
+    onSelectUrl(createdItems[currentSelectedItemIndex].mediaLibraryItem.portableUrl);
   };
 
   const handleDropzoneEditImageClick = index => {
-    setCurrentEditedFileIndex(index);
-    setCurrentScreen(SCREEN.editImage);
+    setCurrentEditedItemIndex(index);
+    setCurrentStage(STAGE.editImage);
   };
 
   const handleEditorBackClick = () => {
-    setCurrentEditedFileIndex(-1);
-    setCurrentScreen(SCREEN.enterData);
+    setCurrentEditedItemIndex(-1);
+    setCurrentStage(STAGE.enterData);
   };
 
   const handleEditorApplyClick = newFile => {
-    setUploadItems(uploadItems.map((item, index) => index !== currentEditedFileIndex ? item : { ...item, file: newFile, status: FILE_UPLOAD_STATUS.processed }));
-    setCurrentEditedFileIndex(-1);
-    setCurrentScreen(SCREEN.enterData);
+    setUploadItems(uploadItems.map((item, index) => index !== currentEditedItemIndex ? item : { ...item, file: newFile, status: FILE_UPLOAD_STATUS.processed }));
+    setCurrentEditedItemIndex(-1);
+    setCurrentStage(STAGE.enterData);
   };
 
   const handleDropzonePreviewItemClick = index => {
-    setCurrentPreviewedFileIndex(index);
+    setCurrentPreviewedItemIndex(index);
   };
 
   const handleDropzoneClear = () => {
-    setCurrentPreviewedFileIndex(-1);
+    setCurrentPreviewedItemIndex(-1);
     setUploadItems([]);
   };
 
-  if (currentScreen === SCREEN.editImage) {
+  const handleUploadViewerItemClick = index => {
+    setCurrentSelectedItemIndex(index);
+  };
+
+  if (currentStage === STAGE.editImage) {
     return (
       <FileEditorScreen
-        file={uploadItems[currentEditedFileIndex].file}
+        file={uploadItems[currentEditedItemIndex].file}
         onCancelClick={onCancelClick}
         onBackClick={handleEditorBackClick}
         onApplyClick={handleEditorApplyClick}
@@ -162,28 +175,40 @@ function MediaLibraryUploadScreen({
     );
   }
 
-  if (currentScreen === SCREEN.previewCreatedItem) {
+  if (currentStage === STAGE.selectFromCreatedItems) {
     return (
-      <ResourcePreviewScreen
-        file={createdMediaLibraryItems[0]}
-        renderMediaLibraryMetadata
-        onBackClick={onBackClick}
-        onCancelClick={onCancelClick}
-        onSelectClick={handleSelectCreatedItemClick}
-        />
+      <div className="u-resource-selector-screen">
+        {!!showHeadline && <h3 className="u-resource-selector-screen-headline">{t('common:select')}</h3>}
+        <div className="u-overflow-auto">
+          <FilesUploadViewer
+            canEdit={false}
+            items={createdItems}
+            previewedItemIndex={currentSelectedItemIndex}
+            onItemClick={handleUploadViewerItemClick}
+            />
+        </div>
+
+        <div className="u-resource-selector-screen-footer">
+          {!!canGoBack && <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>}
+          <div className="u-resource-selector-screen-footer-buttons">
+            <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
+            <Button type="primary" onClick={handleSelectButtonClick}>{t('common:select')}</Button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
     <div className="u-resource-selector-screen">
-      {showHeadline ? <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3> : null}
+      {!!showHeadline && <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>}
       <div className="u-overflow-auto">
         <div className="u-resource-selector-screen-content-split">
           <MediaLibraryFilesDropzone
             dropzoneRef={dropzoneRef}
             uploadItems={uploadItems}
             canAcceptFiles={!isCurrentlyUploading}
-            previewedItemIndex={currentPreviewedFileIndex}
+            previewedItemIndex={currentPreviewedItemIndex}
             uploadLimit={allowUnlimitedUpload
               ? null
               : {
@@ -203,7 +228,7 @@ function MediaLibraryUploadScreen({
         </div>
       </div>
       <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
-        {canGoBack ? <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button> : null}
+        {!!canGoBack && <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>}
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
           <Button type="primary" onClick={handleCreateItemsClick} disabled={uploadItems.every(item => !!item.errorMessage)} loading={isCurrentlyUploading}>{uploadButtonText || t('common:upload')}</Button>
@@ -216,24 +241,24 @@ function MediaLibraryUploadScreen({
 MediaLibraryUploadScreen.propTypes = {
   initialFiles: PropTypes.arrayOf(browserFileType),
   canGoBack: PropTypes.bool,
-  canPreview: PropTypes.bool,
+  canSelect: PropTypes.bool,
   showHeadline: PropTypes.bool,
   uploadButtonText: PropTypes.string,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
-  onSelectNewUrl: PropTypes.func,
+  onSelectUrl: PropTypes.func,
   onUploadFinish: PropTypes.func
 };
 
 MediaLibraryUploadScreen.defaultProps = {
   initialFiles: [],
   canGoBack: true,
-  canPreview: true,
+  canSelect: true,
   showHeadline: true,
   uploadButtonText: null,
   onBackClick: () => {},
   onCancelClick: () => {},
-  onSelectNewUrl: () => {},
+  onSelectUrl: () => {},
   onUploadFinish: () => {},
 };
 

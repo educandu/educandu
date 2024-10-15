@@ -46,9 +46,9 @@ function RoomMediaUploadScreen({
   const roomMediaContext = useRoomMediaContext();
   const setRoomMediaContext = useSetRoomMediaContext();
   const { t } = useTranslation('roomMediaUploadScreen');
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const [optimizeImages, setOptimizeImages] = useState(true);
-  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
 
@@ -124,11 +124,11 @@ function RoomMediaUploadScreen({
     setCurrentStage(STAGE.uploadFinished);
   };
 
-  const handleEditItemClick = itemIndex => {
+  const handleUploadViewerEditItemClick = itemIndex => {
     onEditFileClick(itemIndex);
   };
 
-  const handleItemClick = itemIndex => {
+  const handleUploadViewerItemClick = itemIndex => {
     onFileClick(itemIndex);
   };
 
@@ -185,11 +185,11 @@ function RoomMediaUploadScreen({
           )}
           {renderUploadStageHeadline()}
           <FilesUploadViewer
-            uploadItems={uploadItems}
+            items={uploadItems}
             previewedItemIndex={previewedFileIndex}
-            onEditItemClick={handleEditItemClick}
-            onItemClick={handleItemClick}
-            editingDisabled={currentStage !== STAGE.uploadNotStarted}
+            canEdit={currentStage === STAGE.uploadNotStarted}
+            onEditItemClick={handleUploadViewerEditItemClick}
+            onItemClick={handleUploadViewerItemClick}
             />
         </div>
       </div>

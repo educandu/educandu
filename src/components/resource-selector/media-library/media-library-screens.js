@@ -102,7 +102,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
     onSelect(highlightedFile.portableUrl);
   };
 
-  const handleSelectNewUrl = newUrl => {
+  const handleUploadScreenSelectUrl = newUrl => {
     onSelect(newUrl);
   };
 
@@ -209,7 +209,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
           initialFiles={filesToUpload}
           onCancelClick={onCancel}
           onBackClick={handleScreenBackClick}
-          onSelectNewUrl={handleSelectNewUrl}
+          onSelectUrl={handleUploadScreenSelectUrl}
           />
       )}
       {screen === SCREEN.preview && (
