@@ -1,0 +1,98 @@
+.FilesUploadViewer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  overflow: hidden;
+
+  &.FilesUploadViewer--compact {
+    grid-template-columns: none;
+    grid-template-rows: auto;
+    overflow: auto;
+  }
+
+  @media @edu-media-phone {
+    grid-template-columns: none;
+    grid-template-rows: auto;
+    overflow: auto;
+  }
+}
+
+.FilesUploadViewer-itemsContainer {
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: @edu-white;
+  border: 1px solid @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
+
+  &.FilesUploadViewer-itemsContainer--compact {
+    max-height: 175px;
+
+    @media @edu-media-phone {
+      max-height: none;
+    }
+  }
+
+  &.FilesUploadViewer-itemsContainer--singleItem {
+    border: none;
+    background-color: unset;
+  }
+
+  @media @edu-media-phone {
+    overflow: visible;
+    border: none;
+  }
+}
+
+.FilesUploadViewer-previewContainer {
+  display: grid;
+  align-items: center;
+}
+
+.FilesUploadViewer-itemRow {
+  .m-control-group-wide;
+  grid-auto-columns: auto;
+  justify-content: start;
+  overflow: hidden;
+  padding: 5px;
+
+  &.is-selected {
+    background-color: @edu-background-color-base;
+  }
+}
+
+.FilesUploadViewer-itemIcon {
+  &.FilesUploadViewer-itemIcon--pristine {
+    color: @edu-success-color;
+  }
+
+  &.FilesUploadViewer-itemIcon--processed {
+    color: @edu-secondary-color-dark;
+  }
+
+  &.FilesUploadViewer-itemIcon--success {
+    color: @edu-success-color;
+  }
+
+  &.FilesUploadViewer-itemIcon--error {
+    color: @edu-error-color;
+  }
+}
+
+.FilesUploadViewer-itemName {
+  .m-overflow-ellipsis;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.FilesUploadViewer-itemMessage {
+  font-style: italic;
+  color: @edu-secondary-color-dark;
+}
+
+.FilesUploadViewer-itemError {
+  padding-left: 30px;
+  font-size: @edu-font-size-sm;
+  color: @edu-error-color;
+}

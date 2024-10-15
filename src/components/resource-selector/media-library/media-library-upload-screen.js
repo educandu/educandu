@@ -1,21 +1,23 @@
 import PropTypes from 'prop-types';
 import { Button, Form } from 'antd';
+import prettyBytes from 'pretty-bytes';
 import Logger from '../../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { usePermission } from '../../../ui/hooks.js';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import permissions from '../../../domain/permissions.js';
 import React, { useEffect, useRef, useState } from 'react';
+import { FILE_UPLOAD_STATUS } from '../shared/constants.js';
 import { handleApiError } from '../../../ui/error-helper.js';
 import FileEditorScreen from '../shared/file-editor-screen.js';
 import { browserFileType } from '../../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
-import MediaLibraryFileDropzone from './media-library-file-dropzone.js';
 import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
-import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
+import MediaLibraryFilesDropzone from './media-library-files-dropzone.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { isEditableImageFile, processFileBeforeUpload } from '../../../utils/storage-utils.js';
+import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
+import { STORAGE_FILE_UPLOAD_COUNT_LIMIT, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -26,91 +28,133 @@ const SCREEN = {
   previewCreatedItem: 'preview-created-item'
 };
 
-const createFileInfo = (file, allowUnlimitedUpload) => file
-  ? { file, isEdited: false, isTooBig: !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES }
-  : null;
+const createUploadItem = (t, file, allowUnlimitedUpload) => {
+  const fileIsTooBig = !allowUnlimitedUpload && file.size > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES;
+  const errorMessage = fileIsTooBig
+    ? t('common:fileIsTooBig', { limit: prettyBytes(STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES) })
+    : null;
+
+  return {
+    file,
+    isEditable: isEditableImageFile(file),
+    status: errorMessage ? FILE_UPLOAD_STATUS.failed : FILE_UPLOAD_STATUS.pristine,
+    errorMessage
+  };
+};
+
+const createUploadItems = (t, files, allowUnlimitedUpload) => {
+  return files.map(file => createUploadItem(t, file, allowUnlimitedUpload));
+};
 
 function MediaLibraryUploadScreen({
-  initialFile,
+  initialFiles,
+  showHeadline,
+  canGoBack,
+  canPreview,
+  uploadButtonText,
   onBackClick,
   onCancelClick,
-  onSelectNewUrl
+  onSelectNewUrl,
+  onUploadFinish
 }) {
-  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_SIZE_RESTRICTION);
   const dropzoneRef = useRef();
   const [form] = Form.useForm();
-  const [createdItem, setCreatedItem] = useState(null);
   const { t } = useTranslation('mediaLibraryUploadScreen');
-  const [currentScreen, setCurrentScreen] = useState(SCREEN.enterData);
-  const [fileInfo, setFileInfo] = useState(createFileInfo(initialFile, allowUnlimitedUpload));
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const allowUnlimitedUpload = usePermission(permissions.UPLOAD_WITHOUT_RESTRICTION);
+
+  const [currentScreen, setCurrentScreen] = useState(SCREEN.enterData);
+  const [currentEditedFileIndex, setCurrentEditedFileIndex] = useState(-1);
+  const [createdMediaLibraryItems, setCreatedMediaLibraryItems] = useState([]);
+  const [currentPreviewedFileIndex, setCurrentPreviewedFileIndex] = useState(initialFiles.length ? 0 : -1);
+  const [uploadItems, setUploadItems] = useState(createUploadItems(t, initialFiles, allowUnlimitedUpload));
 
   useEffect(() => {
-    setCreatedItem(null);
+    setCurrentEditedFileIndex(-1);
+    setCreatedMediaLibraryItems([]);
     setCurrentScreen(SCREEN.enterData);
-    setFileInfo(createFileInfo(initialFile, allowUnlimitedUpload));
-  }, [allowUnlimitedUpload, initialFile, form]);
+    setCurrentPreviewedFileIndex(initialFiles.length ? 0 : -1);
+    setUploadItems(createUploadItems(t, initialFiles, allowUnlimitedUpload));
+  }, [t, allowUnlimitedUpload, initialFiles, form]);
 
   const isCurrentlyUploading = currentScreen === SCREEN.createItem;
-  const canEditImage = fileInfo && isEditableImageFile(fileInfo.file);
 
-  const handleFileDrop = ([newFile]) => {
-    if (!isCurrentlyUploading && newFile) {
-      setFileInfo(createFileInfo(newFile, allowUnlimitedUpload));
+  const handleDropzoneFilesDrop = droppedFiles => {
+    if (!isCurrentlyUploading && droppedFiles?.length) {
+      setCurrentPreviewedFileIndex(0);
+      setUploadItems(createUploadItems(t, droppedFiles, allowUnlimitedUpload));
     }
   };
 
-  const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImage }) => {
-    const currentFile = fileInfo?.file || null;
-    if (!currentFile) {
+  const handleMetadataFormFinish = async ({ shortDescription, languages, licenses, allRightsReserved, tags, optimizeImages }) => {
+    const filesToUpload = uploadItems.filter(item => !item.errorMessage).map(item => item.file);
+    if (!filesToUpload.length) {
       return;
     }
 
     setCurrentScreen(SCREEN.createItem);
+    const mediaLibraryItems = [];
+
     try {
-      const processedFile = await processFileBeforeUpload({ file: currentFile, optimizeImage });
-      const result = await mediaLibraryApiClient.createMediaLibraryItem({
-        file: processedFile,
-        shortDescription,
-        languages,
-        licenses,
-        allRightsReserved,
-        tags
-      });
-      setCreatedItem(result);
-      setCurrentScreen(SCREEN.previewCreatedItem);
+      const processedFiles = await processFilesBeforeUpload({ files: filesToUpload, optimizeImages });
+
+      for (let i = 0; i < processedFiles.length; i += 1) {
+        const result = await mediaLibraryApiClient.createMediaLibraryItem({
+          file: processedFiles[i],
+          shortDescription,
+          languages,
+          licenses,
+          allRightsReserved,
+          tags
+        });
+        mediaLibraryItems.push(result);
+      }
+      setCreatedMediaLibraryItems(mediaLibraryItems);
+      onUploadFinish(mediaLibraryItems);
     } catch (error) {
       handleApiError({ error, logger, t });
     } finally {
-      setCurrentScreen(SCREEN.previewCreatedItem);
+      setCurrentScreen(canPreview ? SCREEN.previewCreatedItem : SCREEN.enterData);
     }
   };
 
-  const handleCreateItemClick = () => {
+  const handleCreateItemsClick = () => {
     form.submit();
   };
 
   const handleSelectCreatedItemClick = () => {
-    onSelectNewUrl(createdItem.portableUrl);
+    onSelectNewUrl(createdMediaLibraryItems[0].portableUrl);
   };
 
-  const handleEditImageClick = () => {
+  const handleDropzoneEditImageClick = index => {
+    setCurrentEditedFileIndex(index);
     setCurrentScreen(SCREEN.editImage);
   };
 
   const handleEditorBackClick = () => {
+    setCurrentEditedFileIndex(-1);
     setCurrentScreen(SCREEN.enterData);
   };
 
   const handleEditorApplyClick = newFile => {
-    setFileInfo({ ...createFileInfo(newFile, allowUnlimitedUpload), isEdited: true });
+    setUploadItems(uploadItems.map((item, index) => index !== currentEditedFileIndex ? item : { ...item, file: newFile, status: FILE_UPLOAD_STATUS.processed }));
+    setCurrentEditedFileIndex(-1);
     setCurrentScreen(SCREEN.enterData);
+  };
+
+  const handleDropzonePreviewItemClick = index => {
+    setCurrentPreviewedFileIndex(index);
+  };
+
+  const handleDropzoneClear = () => {
+    setCurrentPreviewedFileIndex(-1);
+    setUploadItems([]);
   };
 
   if (currentScreen === SCREEN.editImage) {
     return (
       <FileEditorScreen
-        file={fileInfo.file}
+        file={uploadItems[currentEditedFileIndex].file}
         onCancelClick={onCancelClick}
         onBackClick={handleEditorBackClick}
         onApplyClick={handleEditorApplyClick}
@@ -121,7 +165,7 @@ function MediaLibraryUploadScreen({
   if (currentScreen === SCREEN.previewCreatedItem) {
     return (
       <ResourcePreviewScreen
-        file={createdItem}
+        file={createdMediaLibraryItems[0]}
         renderMediaLibraryMetadata
         onBackClick={onBackClick}
         onCancelClick={onCancelClick}
@@ -132,26 +176,37 @@ function MediaLibraryUploadScreen({
 
   return (
     <div className="u-resource-selector-screen">
-      <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>
+      {showHeadline ? <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3> : null}
       <div className="u-overflow-auto">
         <div className="u-resource-selector-screen-content-split">
-          <MediaLibraryFileDropzone
+          <MediaLibraryFilesDropzone
             dropzoneRef={dropzoneRef}
-            file={fileInfo?.file || null}
-            canAcceptFile={!isCurrentlyUploading}
-            uploadLimit={allowUnlimitedUpload ? null : STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
-            showSizeWarning={!!fileInfo?.isTooBig}
-            onFileDrop={handleFileDrop}
-            onEditImageClick={handleEditImageClick}
+            uploadItems={uploadItems}
+            canAcceptFiles={!isCurrentlyUploading}
+            previewedItemIndex={currentPreviewedFileIndex}
+            uploadLimit={allowUnlimitedUpload
+              ? null
+              : {
+                sizeInBytes: STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES,
+                fileCount: STORAGE_FILE_UPLOAD_COUNT_LIMIT
+              }}
+            onFilesDrop={handleDropzoneFilesDrop}
+            onEditImageClick={handleDropzoneEditImageClick}
+            onPreviewItemClick={handleDropzonePreviewItemClick}
+            onClear={handleDropzoneClear}
             />
-          <MediaLibraryMetadataForm form={form} disableOptimizeImage={!canEditImage} onFinish={handleMetadataFormFinish} />
+          <MediaLibraryMetadataForm
+            form={form}
+            disableOptimizeImages={!uploadItems.some(item => item.isEditable)}
+            onFinish={handleMetadataFormFinish}
+            />
         </div>
       </div>
-      <div className="u-resource-selector-screen-footer">
-        <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button>
+      <div className={canGoBack ? 'u-resource-selector-screen-footer' : 'u-resource-selector-screen-footer-right-aligned'}>
+        {canGoBack ? <Button onClick={onBackClick} icon={<ArrowLeftOutlined />} disabled={isCurrentlyUploading}>{t('common:back')}</Button> : null}
         <div className="u-resource-selector-screen-footer-buttons">
           <Button onClick={onCancelClick} disabled={isCurrentlyUploading}>{t('common:cancel')}</Button>
-          <Button type="primary" onClick={handleCreateItemClick} disabled={!fileInfo || !!fileInfo.isTooBig} loading={isCurrentlyUploading}>{t('common:upload')}</Button>
+          <Button type="primary" onClick={handleCreateItemsClick} disabled={uploadItems.every(item => !!item.errorMessage)} loading={isCurrentlyUploading}>{uploadButtonText || t('common:upload')}</Button>
         </div>
       </div>
     </div>
@@ -159,17 +214,27 @@ function MediaLibraryUploadScreen({
 }
 
 MediaLibraryUploadScreen.propTypes = {
-  initialFile: browserFileType,
+  initialFiles: PropTypes.arrayOf(browserFileType),
+  canGoBack: PropTypes.bool,
+  canPreview: PropTypes.bool,
+  showHeadline: PropTypes.bool,
+  uploadButtonText: PropTypes.string,
   onBackClick: PropTypes.func,
   onCancelClick: PropTypes.func,
-  onSelectNewUrl: PropTypes.func
+  onSelectNewUrl: PropTypes.func,
+  onUploadFinish: PropTypes.func
 };
 
 MediaLibraryUploadScreen.defaultProps = {
-  initialFile: null,
+  initialFiles: [],
+  canGoBack: true,
+  canPreview: true,
+  showHeadline: true,
+  uploadButtonText: null,
   onBackClick: () => {},
   onCancelClick: () => {},
-  onSelectNewUrl: () => {}
+  onSelectNewUrl: () => {},
+  onUploadFinish: () => {},
 };
 
 export default MediaLibraryUploadScreen;

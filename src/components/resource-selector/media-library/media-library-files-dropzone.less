@@ -1,0 +1,33 @@
+.MediaLibraryFilesDropzone {
+  display: grid;
+  .m-dropzone;
+
+  &.MediaLibraryFilesDropzone--error {
+    border-color: @edu-error-color;
+  }
+
+  &.is-dropping {
+    .m-dropzone-active;
+  }
+
+  &.is-drop-rejected {
+    .m-dropzone-error;
+  }
+}
+
+.MediaLibraryFilesDropzone-title {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.MediaLibraryFilesDropzone-content {
+  display: grid;
+  padding: @edu-content-padding;
+  align-content: space-around;
+}
+
+.MediaLibraryFilesDropzone-clearButton {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}

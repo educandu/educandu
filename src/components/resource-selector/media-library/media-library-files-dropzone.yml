@@ -1,0 +1,5 @@
+mediaLibraryFilesDropzone:
+  clearDropzone:
+    en: Remove {count, plural, =1 {file} other {files}}
+    de: |
+      {count, plural, =1 {Datei} other {Dateien}} entfernen

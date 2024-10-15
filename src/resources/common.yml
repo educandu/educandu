@@ -555,15 +555,21 @@ common:
   mediaUploadMultipleEmptyStateSubtitle:
     en: Drag and drop files here to upload them or use the button to select files from your machine.
     de: Ziehe Dateien hierher, um sie hochzuladen, oder benutze den Button, um Dateien von deinem Computer auszuwählen.
+  mediaFilesSelectedForUpload:
+    en: "{fileCount, plural, =1 {One file is} other {# files are}} selected for upload"
+    de: "{fileCount, plural, =1 {Eine Datei ist} other {# Dateien sind}} zum Hochladen ausgewählt"
   browse:
     en: Browse ...
     de: Durchsuchen ...
   upload:
     en: Upload
     de: Hochladen
+  noUploadLimitInfo:
+    en: "(no file size or count limit)"
+    de: "(keine Dateigrößen- oder Anzahlbeschränkung)"
   uploadLimitInfo:
-    en: "({limit, select, none {without size limit} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # files}})"
-    de: "({limit, select, none {keine Größenbegrenzung} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
+    en: "(max. {limit}{maxFiles, plural, =1 {} other {, max. # files}})"
+    de: "(max. {limit}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
   uploadLimitAdminContactInfo:
     en: "(if you would like to upload bigger files, please contact an <0>administrator</0>)"
     de: "(falls du größere Dateien hochladen möchtest, wende dich bitte an einen <0>Administrator</0>)"
@@ -738,3 +744,6 @@ common:
   documentCategoryDocumentListHeader:
     en: Documents in this category
     de: Dokumente in dieser Kategorie
+  optimizeImages:
+    en: Optimize images for web display
+    de: Bilder für Web optimieren

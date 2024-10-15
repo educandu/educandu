@@ -2,29 +2,20 @@ import Info from '../../info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
+import { Button, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
 import UsedStorage from '../../used-storage.js';
-import { Button, Checkbox, Tooltip } from 'antd';
 import { useLocale } from '../../locale-context.js';
-import EditIcon from '../../icons/general/edit-icon.js';
-import FileIcon from '../../icons/general/file-icon.js';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import { FILE_UPLOAD_STATUS } from '../shared/constants.js';
 import { replaceItemAt } from '../../../utils/array-utils.js';
 import React, { useCallback, useEffect, useState } from 'react';
+import FilesUploadViewer from '../shared/files-upload-viewer.js';
 import RoomApiClient from '../../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../../domain/constants.js';
-import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
 import { useRoomMediaContext, useSetRoomMediaContext } from '../../room-media-context.js';
 import { isEditableImageFile, processFilesBeforeUpload } from '../../../utils/storage-utils.js';
-import { ArrowLeftOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-
-const ITEM_STATUS = {
-  pristine: 'pristine',
-  preprocessed: 'preprocessed',
-  uploading: 'uploading',
-  succeeded: 'succeeded',
-  failed: 'failed'
-};
 
 const STAGE = {
   uploadNotStarted: 'uploadNotStarted',
@@ -34,7 +25,7 @@ const STAGE = {
 
 const createUploadItems = uploadQueue => uploadQueue.map(({ file, isPristine }) => ({
   file,
-  status: isPristine ? ITEM_STATUS.pristine : ITEM_STATUS.preprocessed,
+  status: isPristine ? FILE_UPLOAD_STATUS.pristine : FILE_UPLOAD_STATUS.processed,
   isEditable: isEditableImageFile(file),
   errorMessage: null
 }));
@@ -56,7 +47,7 @@ function RoomMediaUploadScreen({
 
   const [optimizeImages, setOptimizeImages] = useState(true);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const [previewedFileIndex, setPreviewedFileIndex] = useState(0);
+  const [previewedItemIndex, setPreviewedItemIndex] = useState(0);
   const [currentStage, setCurrentStage] = useState(STAGE.uploadNotStarted);
   const [uploadItems, setUploadItems] = useState(createUploadItems(uploadQueue));
 
@@ -64,7 +55,7 @@ function RoomMediaUploadScreen({
 
   useEffect(() => {
     setOptimizeImages(true);
-    setPreviewedFileIndex(0);
+    setPreviewedItemIndex(0);
     setCurrentStage(STAGE.uploadNotStarted);
     setUploadItems(createUploadItems(uploadQueue));
   }, [uploadQueue]);
@@ -93,7 +84,7 @@ function RoomMediaUploadScreen({
       const file = processedFiles[i];
       const currentItem = itemsToUpload[i];
 
-      setUploadItems(prevItems => replaceItemAt(prevItems, { ...currentItem, status: ITEM_STATUS.uploading }, i));
+      setUploadItems(prevItems => replaceItemAt(prevItems, { ...currentItem, status: FILE_UPLOAD_STATUS.uploading }, i));
 
       let updatedItem;
       try {
@@ -101,7 +92,7 @@ function RoomMediaUploadScreen({
         const { storagePlan, usedBytes, roomStorage, createdRoomMediaItemId } = await roomApiClient.postRoomMedia({ roomId, file });
         updatedItem = {
           ...currentItem,
-          status: ITEM_STATUS.succeeded,
+          status: FILE_UPLOAD_STATUS.succeeded,
           uploadedFile: roomStorage.roomMediaItems.find(item => item._id === createdRoomMediaItemId) || null
         };
 
@@ -118,7 +109,7 @@ function RoomMediaUploadScreen({
       } catch (error) {
         updatedItem = {
           ...currentItem,
-          status: ITEM_STATUS.failed,
+          status: FILE_UPLOAD_STATUS.failed,
           errorMessage: error.message
         };
       }
@@ -133,8 +124,12 @@ function RoomMediaUploadScreen({
     setCurrentStage(STAGE.uploadFinished);
   };
 
-  const handleItemEditClick = itemIndex => {
+  const handleEditItemClick = itemIndex => {
     onEditFileClick(itemIndex);
+  };
+
+  const handleItemClick = itemIndex => {
+    setPreviewedItemIndex(itemIndex);
   };
 
   const handleImageOptimizationChange = event => {
@@ -143,17 +138,13 @@ function RoomMediaUploadScreen({
   };
 
   const handleSelectPreviewedFileClick = () => {
-    onSelectFileClick(uploadItems[previewedFileIndex].uploadedFile);
+    onSelectFileClick(uploadItems[previewedItemIndex].uploadedFile);
   };
 
-  const handleItemClick = itemIndex => {
-    setPreviewedFileIndex(itemIndex);
-  };
-
-  const getUploadMessage = () => {
+  const getUploadStageHeadline = () => {
     switch (currentStage) {
       case STAGE.uploadNotStarted:
-        return t('stage_uploadNotStarted', { fileCount: uploadItems.length });
+        return t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length });
       case STAGE.uploading:
         return t('stage_uploading');
       case STAGE.uploadFinished:
@@ -163,78 +154,17 @@ function RoomMediaUploadScreen({
     }
   };
 
-  const renderUploadMessage = () => {
-    const renderEditingInfo = uploadItems.some(item => item.isEditable);
+  const renderUploadStageHeadline = () => {
+    const renderInfo = uploadItems.some(item => item.isEditable);
 
     return (
-      <div className="RoomMediaUploadScreen-message">
-        {getUploadMessage()}
-        {!!renderEditingInfo && (
-          <div className={classNames('RoomMediaUploadScreen-messageDetails', { 'is-visible': currentStage === STAGE.uploadNotStarted })}>
+      <div className="RoomMediaUploadScreen-uploadStageHeadline">
+        {getUploadStageHeadline()}
+        {!!renderInfo && (
+          <div className={classNames('RoomMediaUploadScreen-uploadStageHeadlineInfo', { 'is-visible': currentStage === STAGE.uploadNotStarted })}>
             <Info>{t('stageDetails_uploadNotStarted')}</Info>
           </div>
         )}
-      </div>
-    );
-  };
-
-  const renderItemName = (item, itemIndex) => {
-    const classes = classNames(
-      'RoomMediaUploadScreen-fileStatusName',
-      { 'is-selected': uploadItems.length > 1 && previewedFileIndex === itemIndex }
-    );
-
-    return (
-      <div className={classes} onClick={() => handleItemClick(itemIndex)}>
-        {item.file.name}
-      </div>
-    );
-  };
-
-  const renderUploadItem = (item, itemIndex) => {
-    const rowClasses = classNames(
-      'RoomMediaUploadScreen-fileStatusRow',
-      { 'is-selected': uploadItems.length > 1 && previewedFileIndex === itemIndex }
-    );
-
-    return (
-      <div className="RoomMediaUploadScreen-fileStatus">
-        <div className={rowClasses}>
-          {item.status === ITEM_STATUS.pristine && !!item.isEditable && (
-          <Tooltip title={t('common:edit')}>
-            <a onClick={() => handleItemEditClick(itemIndex)} disabled={currentStage !== STAGE.uploadNotStarted}>
-              <EditIcon className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--pristine" />
-            </a>
-          </Tooltip>
-          )}
-          {item.status === ITEM_STATUS.pristine && !item.isEditable && (
-          <FileIcon className="RoomMediaUploadScreen-fileStatusIcon" />
-          )}
-          {item.status === ITEM_STATUS.preprocessed && !!item.isEditable && (
-          <Tooltip title={t('common:edit')}>
-            <a onClick={() => handleItemEditClick(itemIndex)}>
-              <EditIcon className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--processed" />
-            </a>
-          </Tooltip>
-          )}
-          {item.status === ITEM_STATUS.preprocessed && !item.isEditable && (
-            <FileIcon className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--processed" />
-          )}
-          {item.status === ITEM_STATUS.uploading && (
-          <LoadingOutlined className="RoomMediaUploadScreen-fileStatusIcon" />
-          )}
-          {item.status === ITEM_STATUS.succeeded && (
-          <CheckOutlined className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--success" />
-          )}
-          {item.status === ITEM_STATUS.failed && (
-          <CloseOutlined className="RoomMediaUploadScreen-fileStatusIcon RoomMediaUploadScreen-fileStatusIcon--error" />
-          )}
-          {renderItemName(item, itemIndex)}
-          {item.status === ITEM_STATUS.preprocessed && (
-          <span className="RoomMediaUploadScreen-fileStatusMessage">({t('preprocessed')})</span>
-          )}
-        </div>
-        {!!item.errorMessage && <div className="RoomMediaUploadScreen-fileStatusError">{item.errorMessage}</div>}
       </div>
     );
   };
@@ -253,24 +183,14 @@ function RoomMediaUploadScreen({
                 />
             </div>
           )}
-          {renderUploadMessage()}
-          <div className="RoomMediaUploadScreen-fileStatusContainer">
-            <div className="RoomMediaUploadScreen-fileStatusList">
-              {uploadItems.map((item, index) => (
-                <div key={index.toString()}>
-                  {renderUploadItem(item, index)}
-                </div>
-              ))}
-            </div>
-            <div className="RoomMediaUploadScreen-filePreviewContainer">
-              {!!uploadItems[previewedFileIndex] && (
-                <ResourcePreviewWithMetadata
-                  urlOrFile={uploadItems[previewedFileIndex].file}
-                  size={uploadItems[previewedFileIndex].file.size}
-                  />
-              )}
-            </div>
-          </div>
+          {renderUploadStageHeadline()}
+          <FilesUploadViewer
+            uploadItems={uploadItems}
+            previewedItemIndex={previewedItemIndex}
+            onEditItemClick={handleEditItemClick}
+            onItemClick={handleItemClick}
+            editingDisabled={currentStage !== STAGE.uploadNotStarted}
+            />
         </div>
       </div>
       <div>
@@ -281,7 +201,7 @@ function RoomMediaUploadScreen({
               onChange={handleImageOptimizationChange}
               disabled={currentStage === STAGE.uploading}
               >
-              {t('optimizeImages')}
+              {t('common:optimizeImages')}
             </Checkbox>
           )}
         </div>
@@ -309,7 +229,7 @@ function RoomMediaUploadScreen({
             <Button
               type="primary"
               onClick={handleSelectPreviewedFileClick}
-              disabled={uploadItems[previewedFileIndex]?.status !== ITEM_STATUS.succeeded}
+              disabled={uploadItems[previewedItemIndex]?.status !== FILE_UPLOAD_STATUS.succeeded}
               >{t('common:select')}
             </Button>
             )}

@@ -1262,6 +1262,10 @@
       "en": "Drag and drop files here to upload them or use the button to select files from your machine.",
       "de": "Ziehe Dateien hierher, um sie hochzuladen, oder benutze den Button, um Dateien von deinem Computer auszuwählen."
     },
+    "mediaFilesSelectedForUpload": {
+      "en": "{fileCount, plural, =1 {One file is} other {# files are}} selected for upload",
+      "de": "{fileCount, plural, =1 {Eine Datei ist} other {# Dateien sind}} zum Hochladen ausgewählt"
+    },
     "browse": {
       "en": "Browse ...",
       "de": "Durchsuchen ..."
@@ -1270,9 +1274,13 @@
       "en": "Upload",
       "de": "Hochladen"
     },
+    "noUploadLimitInfo": {
+      "en": "(no file size or count limit)",
+      "de": "(keine Dateigrößen- oder Anzahlbeschränkung)"
+    },
     "uploadLimitInfo": {
-      "en": "({limit, select, none {without size limit} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # files}})",
-      "de": "({limit, select, none {keine Größenbegrenzung} other {max. {limit}}}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
+      "en": "(max. {limit}{maxFiles, plural, =1 {} other {, max. # files}})",
+      "de": "(max. {limit}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
     },
     "uploadLimitAdminContactInfo": {
       "en": "(if you would like to upload bigger files, please contact an <0>administrator</0>)",
@@ -1505,6 +1513,10 @@
     "documentCategoryDocumentListHeader": {
       "en": "Documents in this category",
       "de": "Dokumente in dieser Kategorie"
+    },
+    "optimizeImages": {
+      "en": "Optimize images for web display",
+      "de": "Bilder für Web optimieren"
     }
   },
   "comparison": {
@@ -2703,6 +2715,12 @@
       "de": "Datei hinzufügen"
     }
   },
+  "filesUploadViewer": {
+    "processed": {
+      "en": "edited",
+      "de": "bearbeitet"
+    }
+  },
   "homepageDocumentCards": {
     "headline": {
       "en": "Recommended documents",
@@ -3225,10 +3243,10 @@
       "de": "Datei-Editor"
     }
   },
-  "mediaLibraryFileDropzone": {
-    "fileWillBeAddedToMediaLibrary": {
-      "en": "This file will be added to the media center",
-      "de": "Diese Datei wird zur Mediathek hinzugefügt"
+  "mediaLibraryFilesDropzone": {
+    "clearDropzone": {
+      "en": "Remove {count, plural, =1 {file} other {files}}",
+      "de": "{count, plural, =1 {Datei} other {Dateien}} entfernen\n"
     }
   },
   "mediaLibraryItem": {
@@ -3271,10 +3289,6 @@
     "tagsRequired": {
       "en": "Please provide at least one tag",
       "de": "Bitte gib mindestens einen Tag an"
-    },
-    "optimizeImage": {
-      "en": "Optimize image for web display",
-      "de": "Bild für Webdarstellung optimieren"
     }
   },
   "mediaLibrarySearchScreen": {
@@ -3287,22 +3301,6 @@
     "uploadHeadline": {
       "en": "File upload",
       "de": "Datei-Upload"
-    },
-    "preprocessed": {
-      "en": "edited",
-      "de": "bearbeitet"
-    },
-    "stage_uploadNotStarted": {
-      "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded.",
-      "de": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen."
-    },
-    "stage_uploading": {
-      "en": "Uploading ...",
-      "de": "Hochladen ..."
-    },
-    "stage_uploadFinished": {
-      "en": "Upload finished.",
-      "de": "Upload beendet."
     }
   },
   "mediaPlayerControls": {
@@ -4050,14 +4048,6 @@
       "en": "Start upload",
       "de": "Upload starten"
     },
-    "preprocessed": {
-      "en": "edited",
-      "de": "bearbeitet"
-    },
-    "stage_uploadNotStarted": {
-      "en": "The following {fileCount, plural, =1 {file} other {# files}} will be uploaded",
-      "de": "Die {fileCount, plural, =1 {folgende Datei wird} other {folgenden # Dateien werden}} hochgeladen"
-    },
     "stageDetails_uploadNotStarted": {
       "en": "You can edit images before upload by clicking on the pen icon.",
       "de": "Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten."
@@ -4069,10 +4059,6 @@
     "stage_uploadFinished": {
       "en": "Upload finished",
       "de": "Upload beendet"
-    },
-    "optimizeImages": {
-      "en": "Optimize images for web display",
-      "de": "Bilder für Web optimieren"
     }
   },
   "roomMembers": {
