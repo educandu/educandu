@@ -158,7 +158,7 @@ function MediaLibraryUploadScreen({
   };
 
   const handleSelectButtonClick = () => {
-    onSelectUrl(uploadItems[currentPreviewedItemIndex].mediaLibraryItem.portableUrl);
+    onSelectUrl(uploadItems[currentPreviewedItemIndex].createdMediaLibraryItem.portableUrl);
   };
 
   const handleDropzoneEditImageClick = index => {
@@ -219,7 +219,7 @@ function MediaLibraryUploadScreen({
           {!!canGoBack && <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>}
           <div className="u-resource-selector-screen-footer-buttons">
             <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
-            <Button type="primary" disabled={!uploadItems[currentPreviewedItemIndex]?.mediaLibraryItem} onClick={handleSelectButtonClick}>
+            <Button type="primary" disabled={!uploadItems[currentPreviewedItemIndex]?.createdMediaLibraryItem} onClick={handleSelectButtonClick}>
               {t('common:select')}
             </Button>
           </div>
