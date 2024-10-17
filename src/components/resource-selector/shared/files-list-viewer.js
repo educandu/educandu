@@ -142,7 +142,7 @@ function FilesListViewer({
       createdOn: file.createdOn,
       typeTranslated: t(`common:resource_${getResourceType(file.url)}`),
       sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale: uiLocale }) : '---',
-      createdOnFormatted: file.createdOn ? formatDate(file.createdOn, 'PPp') : '---'
+      createdOnFormatted: file.createdOn ? formatDate(file.createdOn) : '---'
     };
   });
 
