@@ -34,7 +34,7 @@ function ResourcePreviewWithMetadata({ urlOrFile, size, showName, showUrl }) {
             <div>{prettyBytes(size)}</div>
           )}
           {resourceData.resourceType === RESOURCE_TYPE.image && (
-            <div>{resourceData.width}&nbsp;⨉&nbsp;{resourceData.height}&nbsp;px</div>
+            <div>{resourceData.width}&nbsp;x&nbsp;{resourceData.height}&nbsp;px</div>
           )}
           {(resourceData.resourceType === RESOURCE_TYPE.audio || resourceData.resourceType === RESOURCE_TYPE.video) && (
             <div>
