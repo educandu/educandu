@@ -80,6 +80,16 @@ function RoomMediaUploadScreen({
     setUploadItems(mapToUploadItems(t, uiLocale, uploadQueue));
   }, [uploadQueue, t, uiLocale]);
 
+  useEffect(() => {
+    if (currentStage === STAGE.uploadNotStarted) {
+      return;
+    }
+    if (uploadItems[previewedFileIndex].status === FILE_UPLOAD_STATUS.failedValidation) {
+      const firstValidItemIndex = uploadItems.findIndex(item => item.status !== FILE_UPLOAD_STATUS.failedValidation);
+      onFileClick(firstValidItemIndex);
+    }
+  }, [currentStage, previewedFileIndex, uploadItems, onFileClick]);
+
   const ensureCanUpload = useCallback(file => {
     const maxBytes = roomMediaContext?.singleRoomMediaOverview.storagePlan?.maxBytes || 0;
     const usedBytes = roomMediaContext?.singleRoomMediaOverview.usedBytes || 0;
@@ -209,11 +219,11 @@ function RoomMediaUploadScreen({
           {renderUploadStageHeadline()}
           <FilesUploadViewer
             items={uploadItems}
-            previewedItemIndex={previewedFileIndex}
             canEdit={currentStage === STAGE.uploadNotStarted}
-            showInvalid={currentStage === STAGE.uploadNotStarted}
-            onEditItemClick={handleUploadViewerEditItemClick}
+            previewedItemIndex={previewedFileIndex}
+            showInvalidItems={currentStage === STAGE.uploadNotStarted}
             onItemClick={handleUploadViewerItemClick}
+            onEditItemClick={handleUploadViewerEditItemClick}
             />
         </div>
       </div>
