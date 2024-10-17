@@ -61,7 +61,7 @@ function MediaLibraryFilesDropzone({ dropzoneRef, uploadItems, readOnly, uploadL
                   compact
                   items={uploadItems}
                   canEdit={!readOnly}
-                  showInvalid
+                  showInvalidItems
                   previewedItemIndex={previewedItemIndex}
                   onEditItemClick={handleUploadViewerEditItemClick}
                   onItemClick={handleUploadViewerItemClick}

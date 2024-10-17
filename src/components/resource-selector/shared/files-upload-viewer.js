@@ -13,7 +13,7 @@ function FilesUploadViewer({
   items,
   compact,
   canEdit,
-  showInvalid,
+  showInvalidItems,
   previewedItemIndex,
   onEditItemClick,
   onItemClick,
@@ -43,7 +43,7 @@ function FilesUploadViewer({
   };
 
   const canRenderItem = item => {
-    return !!item && (!!showInvalid || item.status !== FILE_UPLOAD_STATUS.failedValidation);
+    return !!item && (!!showInvalidItems || item.status !== FILE_UPLOAD_STATUS.failedValidation);
   };
 
   const renderItem = (item, itemIndex) => {
@@ -136,7 +136,7 @@ FilesUploadViewer.propTypes = {
   compact: PropTypes.bool,
   previewedItemIndex: PropTypes.number.isRequired,
   canEdit: PropTypes.bool.isRequired,
-  showInvalid: PropTypes.bool.isRequired,
+  showInvalidItems: PropTypes.bool.isRequired,
   items: PropTypes.arrayOf(PropTypes.shape({
     file: PropTypes.object.isRequired,
     status: PropTypes.oneOf(Object.values(FILE_UPLOAD_STATUS)).isRequired,

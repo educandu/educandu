@@ -145,7 +145,8 @@ function MediaLibraryUploadScreen({
       }
 
       if (uploadItems[currentPreviewedItemIndex].status === FILE_UPLOAD_STATUS.failedValidation) {
-        setCurrentPreviewedItemIndex(0);
+        const firstValidItemIndex = uploadItems.findIndex(item => item.status !== FILE_UPLOAD_STATUS.failedValidation);
+        setCurrentPreviewedItemIndex(firstValidItemIndex);
       }
       onUploadFinish(createdMediaLibraryItems);
       setCurrentStage(STAGE.select);
@@ -211,8 +212,8 @@ function MediaLibraryUploadScreen({
         <div className="u-overflow-auto">
           <FilesUploadViewer
             canEdit={false}
-            showInvalid={false}
             items={uploadItems}
+            showInvalidItems={false}
             previewedItemIndex={currentPreviewedItemIndex}
             onItemClick={handleUploadViewerItemClick}
             />
