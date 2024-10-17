@@ -58,6 +58,7 @@ const processFilesBeforeUpload = ({ items, optimizeImages }) => {
 function MediaLibraryUploadScreen({
   initialFiles,
   showHeadline,
+  canCancel,
   canGoBack,
   canSelect,
   uploadButtonText,
@@ -147,7 +148,7 @@ function MediaLibraryUploadScreen({
         setCurrentPreviewedItemIndex(0);
       }
       onUploadFinish(createdMediaLibraryItems);
-      setCurrentStage(canSelect ? STAGE.select : STAGE.enterData);
+      setCurrentStage(STAGE.select);
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -204,7 +205,9 @@ function MediaLibraryUploadScreen({
   if (currentStage === STAGE.select) {
     return (
       <div className="u-resource-selector-screen">
-        {!!showHeadline && <h3 className="u-resource-selector-screen-headline">{t('common:select')}</h3>}
+        <h3 className="u-resource-selector-screen-headline">
+          {!!showHeadline && t('common:select')}
+        </h3>
         <div className="u-overflow-auto">
           <FilesUploadViewer
             canEdit={false}
@@ -218,10 +221,12 @@ function MediaLibraryUploadScreen({
         <div className="u-resource-selector-screen-footer">
           {!!canGoBack && <Button onClick={onBackClick} icon={<ArrowLeftOutlined />}>{t('common:back')}</Button>}
           <div className="u-resource-selector-screen-footer-buttons">
-            <Button onClick={onCancelClick}>{t('common:cancel')}</Button>
-            <Button type="primary" disabled={!uploadItems[currentPreviewedItemIndex]?.createdMediaLibraryItem} onClick={handleSelectButtonClick}>
-              {t('common:select')}
-            </Button>
+            {!!canCancel && <Button onClick={onCancelClick}>{t('common:cancel')}</Button>}
+            {!!canSelect && (
+              <Button type="primary" disabled={!uploadItems[currentPreviewedItemIndex]?.createdMediaLibraryItem} onClick={handleSelectButtonClick}>
+                {t('common:select')}
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -269,6 +274,7 @@ function MediaLibraryUploadScreen({
 
 MediaLibraryUploadScreen.propTypes = {
   initialFiles: PropTypes.arrayOf(browserFileType),
+  canCancel: PropTypes.bool,
   canGoBack: PropTypes.bool,
   canSelect: PropTypes.bool,
   showHeadline: PropTypes.bool,
@@ -281,6 +287,7 @@ MediaLibraryUploadScreen.propTypes = {
 
 MediaLibraryUploadScreen.defaultProps = {
   initialFiles: [],
+  canCancel: true,
   canGoBack: true,
   canSelect: true,
   showHeadline: true,

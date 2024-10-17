@@ -236,7 +236,6 @@ function ContentManagementMediaLibraryTab() {
   };
 
   const handleMediaLibraryItemsModalCreated = createdItems => {
-    setMediaLibraryItemsModalState(getMediaLibraryItemsModalDefaultState());
     setMediaLibraryItems(oldItems => [...oldItems, ...createdItems]);
   };
 
