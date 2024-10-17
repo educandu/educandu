@@ -36,6 +36,7 @@ function MediaLibaryItemsModal({
   const [updateForm] = Form.useForm();
   const [isVisible, setIsVisible] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isFinishedUploading, setIsFinishedUploading] = useState(false);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const modesRequiringMediaLibraryItem = [MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview, MEDIA_LIBRARY_ITEMS_MODAL_MODE.update];
 
@@ -45,6 +46,8 @@ function MediaLibaryItemsModal({
 
   useEffect(() => {
     if (!isOpen) {
+      setIsUpdating(false);
+      setIsFinishedUploading(false);
       return;
     }
 
@@ -82,8 +85,13 @@ function MediaLibaryItemsModal({
     }
   };
 
+  const handleCancelUploadClick = () => {
+    onClose();
+  };
+
   const handleUploadFinish = createdMediaLibraryItems => {
     message.success(t('common:changesSavedSuccessfully'));
+    setIsFinishedUploading(true);
     onCreated(createdMediaLibraryItems);
   };
 
@@ -111,11 +119,12 @@ function MediaLibaryItemsModal({
       return (
         <div className="MediaLibaryItemsModal MediaLibaryItemsModal--createMode">
           <MediaLibraryUploadScreen
+            canCancel={!isFinishedUploading}
             canGoBack={false}
             canSelect={false}
             showHeadline={false}
             uploadButtonText={t('common:create')}
-            onCancelClick={onClose}
+            onCancelClick={handleCancelUploadClick}
             onUploadFinish={handleUploadFinish}
             />
         </div>
@@ -157,6 +166,13 @@ function MediaLibaryItemsModal({
   };
 
   const getDialogFooter = () => {
+    if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.create && isFinishedUploading) {
+      return (
+        <div className="MediaLibaryItemsModal-footer">
+          <Button type="primary" onClick={onClose}>{t('common:ok')}</Button>
+        </div>
+      );
+    }
     if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview) {
       return (
         <div className="MediaLibaryItemsModal-footer">
