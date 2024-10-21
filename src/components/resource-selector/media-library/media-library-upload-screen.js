@@ -209,7 +209,7 @@ function MediaLibraryUploadScreen({
         <h3 className="u-resource-selector-screen-headline">
           {!!showHeadline && `${t('common:uploadFinished')} - ${t('common:selectAFile')}`}
         </h3>
-        <div className="u-overflow-auto">
+        <div className="u-overflow-auto u-full-height">
           <FilesUploadViewer
             canEdit={false}
             items={uploadItems}
@@ -237,7 +237,7 @@ function MediaLibraryUploadScreen({
   return (
     <div className="u-resource-selector-screen">
       {!!showHeadline && <h3 className="u-resource-selector-screen-headline">{t('uploadHeadline')}</h3>}
-      <div className="u-overflow-auto">
+      <div className="u-overflow-auto u-full-height">
         <div className="u-resource-selector-screen-content-split">
           <MediaLibraryFilesDropzone
             dropzoneRef={dropzoneRef}

@@ -2,18 +2,20 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
-  overflow: hidden;
+  height: 100%;
+  overflow: auto;
 
   &.FilesUploadViewer--compact {
     grid-template-columns: none;
     grid-template-rows: auto;
-    overflow: auto;
+    height: auto;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
   @media @edu-media-phone {
     grid-template-columns: none;
     grid-template-rows: auto;
-    overflow: auto;
   }
 }
 
@@ -25,7 +27,7 @@
   border-radius: @edu-border-radius-base;
 
   &.FilesUploadViewer-itemsContainer--compact {
-    max-height: 175px;
+    max-height: 30vh;
 
     @media @edu-media-phone {
       max-height: none;
