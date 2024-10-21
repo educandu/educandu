@@ -73,6 +73,7 @@ function RatingDialog({ documentRating, isOpen, onDocumentRatingChange, onClose 
       footer={null}
       destroyOnClose
       title={t('title')}
+      className='u-modal'
       onCancel={onClose}
       >
       <div className="u-modal-body">

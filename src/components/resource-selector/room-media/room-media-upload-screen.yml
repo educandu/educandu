@@ -8,12 +8,6 @@ roomMediaUploadScreen:
   startUpload:
     en: Start upload
     de: Upload starten
-  stageDetails_uploadNotStarted:
-    en: "You can edit images before upload by clicking on the pen icon."
-    de: "Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten."
-  stage_uploading:
+  uploading:
     en: Uploading ...
     de: Hochladen ...
-  stage_uploadFinished:
-    en: Upload finished
-    de: Upload beendet

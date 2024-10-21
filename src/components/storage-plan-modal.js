@@ -56,6 +56,7 @@ function StoragePlanModal({ isOpen, isLoading, storagePlan, storagePlanNamesInUs
   return !!isMounted.current && (
     <Modal
       title={storagePlan?._id ? t('editStoragePlan') : t('newStoragePlan')}
+      className='u-modal'
       open={isOpen}
       onOk={handleOk}
       onCancel={onCancel}

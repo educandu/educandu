@@ -89,6 +89,7 @@ function DocumentCategoryMetadataModal({ isOpen, isEditing, initialDocumentCateg
       width="80%"
       forceRender
       open={isOpen}
+      className='u-modal'
       maskClosable={false}
       okText={isEditing ? t('common:save') : t('common:create')}
       cancelText={t('common:cancel')}

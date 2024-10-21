@@ -1517,6 +1517,18 @@
     "optimizeImages": {
       "en": "Optimize images for web display",
       "de": "Bilder für Web optimieren"
+    },
+    "uploadFinished": {
+      "en": "Upload finished",
+      "de": "Upload beendet"
+    },
+    "selectAFile": {
+      "en": "Select a file",
+      "de": "Wähle eine Datei aus"
+    },
+    "createdMediaCenterItems": {
+      "en": "Created media center entries",
+      "de": "Erstellte Mediathek-Einträge"
     }
   },
   "comparison": {
@@ -2716,9 +2728,9 @@
     }
   },
   "filesUploadViewer": {
-    "processed": {
-      "en": "edited",
-      "de": "bearbeitet"
+    "editImage": {
+      "en": "Edit image",
+      "de": "Bild bearbeiten"
     }
   },
   "homepageDocumentCards": {
@@ -4044,17 +4056,9 @@
       "en": "Start upload",
       "de": "Upload starten"
     },
-    "stageDetails_uploadNotStarted": {
-      "en": "You can edit images before upload by clicking on the pen icon.",
-      "de": "Du kannst Bilder vor dem Upload durch Klick auf das Stift-Symbol bearbeiten."
-    },
-    "stage_uploading": {
+    "uploading": {
       "en": "Uploading ...",
       "de": "Hochladen ..."
-    },
-    "stage_uploadFinished": {
-      "en": "Upload finished",
-      "de": "Upload beendet"
     }
   },
   "roomMembers": {

@@ -1,5 +1,5 @@
 filesUploadViewer:
-  processed:
-    en: edited
-    de: bearbeitet
+  editImage:
+    en: Edit image
+    de: Bild bearbeiten
 

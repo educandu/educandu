@@ -57,6 +57,7 @@ function RoomCreationModal({ isOpen, onClose }) {
   return (
     <Modal
       title={t('newRoom')}
+      className='u-modal'
       onOk={handleOk}
       onCancel={handleCancel}
       maskClosable={false}

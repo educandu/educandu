@@ -31,6 +31,7 @@ function ExternalAccountProviderDialog({ providers, isOpen, onCancel, onOk }) {
   return (
     <Modal
       title={t('title')}
+      className='u-modal'
       open={isOpen}
       onOk={handleOk}
       okButtonProps={{ disabled: !selectedProvider }}

@@ -23,7 +23,7 @@ ActionButtonGroup.defaultProps = {
   children: null
 };
 
-function ActionButton({ title, icon, onClick, intent, overlay }) {
+function ActionButton({ title, icon, onClick, intent, overlay, disabled }) {
   const classes = classNames({
     'ActionButton': true,
     'ActionButton--default': intent === ACTION_BUTTON_INTENT.default,
@@ -31,12 +31,19 @@ function ActionButton({ title, icon, onClick, intent, overlay }) {
     'ActionButton--success': intent === ACTION_BUTTON_INTENT.success,
     'ActionButton--warning': intent === ACTION_BUTTON_INTENT.warning,
     'ActionButton--error': intent === ACTION_BUTTON_INTENT.error,
+    'ActionButton--disabled': !!disabled,
     'ActionButton--overlay': overlay
   });
 
+  const handleClick = event => {
+    if (!disabled) {
+      onClick(event);
+    }
+  };
+
   return (
     <Tooltip title={title}>
-      <a className={classes} onClick={onClick}>
+      <a className={classes} onClick={handleClick}>
         {icon}
       </a>
     </Tooltip>
@@ -44,6 +51,7 @@ function ActionButton({ title, icon, onClick, intent, overlay }) {
 }
 
 ActionButton.propTypes = {
+  disabled: PropTypes.bool,
   icon: PropTypes.node,
   intent: PropTypes.oneOf(Object.values(ACTION_BUTTON_INTENT)),
   onClick: PropTypes.func,
@@ -52,6 +60,7 @@ ActionButton.propTypes = {
 };
 
 ActionButton.defaultProps = {
+  disabled: false,
   icon: null,
   intent: ACTION_BUTTON_INTENT.default,
   onClick: () => {},

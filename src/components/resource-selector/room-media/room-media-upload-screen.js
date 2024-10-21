@@ -1,6 +1,4 @@
-import Info from '../../info.js';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import { Button, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -179,27 +177,12 @@ function RoomMediaUploadScreen({
       case STAGE.uploadNotStarted:
         return t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length });
       case STAGE.uploading:
-        return t('stage_uploading');
+        return t('uploading');
       case STAGE.uploadFinished:
-        return t('stage_uploadFinished');
+        return t('common:uploadFinished');
       default:
         throw new Error(`Invalid stage value: ${currentStage}`);
     }
-  };
-
-  const renderUploadStageHeadline = () => {
-    const renderInfo = uploadItems.some(item => item.isEditable);
-
-    return (
-      <div className="RoomMediaUploadScreen-uploadStageHeadline">
-        {getUploadStageHeadline()}
-        {!!renderInfo && (
-          <div className={classNames('RoomMediaUploadScreen-uploadStageHeadlineInfo', { 'is-visible': currentStage === STAGE.uploadNotStarted })}>
-            <Info>{t('stageDetails_uploadNotStarted')}</Info>
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
@@ -216,7 +199,9 @@ function RoomMediaUploadScreen({
                 />
             </div>
           )}
-          {renderUploadStageHeadline()}
+          <div className="RoomMediaUploadScreen-uploadStageHeadline">
+            {getUploadStageHeadline()}
+          </div>
           <FilesUploadViewer
             items={uploadItems}
             canEdit={currentStage === STAGE.uploadNotStarted}

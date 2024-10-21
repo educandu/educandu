@@ -17,6 +17,7 @@ function ResourceSelectorDialog({ allowedSourceTypes, isOpen, url, onSelect, onC
     <Modal
       centered
       width="80%"
+      className='u-modal'
       open={isOpen}
       footer={null}
       destroyOnClose

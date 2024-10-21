@@ -103,7 +103,7 @@ function MediaLibaryItemsModal({
 
   const getDialogTitle = () => {
     if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.create) {
-      return t('common:create');
+      return isFinishedUploading ? t('common:createdMediaCenterItems') : t('common:create');
     }
     if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview) {
       return t('common:preview');
@@ -196,8 +196,10 @@ function MediaLibaryItemsModal({
   return !!isMounted.current && (
     <Modal
       width="80%"
+      centered
       forceRender
       open={isOpen}
+      className='u-modal'
       title={getDialogTitle()}
       footer={getDialogFooter()}
       closable={isDialogClosable}

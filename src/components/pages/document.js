@@ -1331,6 +1331,7 @@ function Document({ initialState, PageTemplate }) {
 
       <Modal
         maskClosable={false}
+        className='u-modal'
         okText={t('common:save')}
         canceText={t('common:cancel')}
         open={isExtendedSaveModelOpen}
