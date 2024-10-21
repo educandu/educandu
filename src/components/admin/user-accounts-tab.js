@@ -873,6 +873,7 @@ function UserAccountsTab() {
         renderTabBar={() => null}
         />
       <Modal
+        className='u-modal'
         okText={t('processAll')}
         open={isBatchProcessingModalOpen}
         title={t('batchProcessingModalTitle')}

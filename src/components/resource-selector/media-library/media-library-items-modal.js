@@ -196,8 +196,10 @@ function MediaLibaryItemsModal({
   return !!isMounted.current && (
     <Modal
       width="80%"
+      centered
       forceRender
       open={isOpen}
+      className='u-modal'
       title={getDialogTitle()}
       footer={getDialogFooter()}
       closable={isDialogClosable}

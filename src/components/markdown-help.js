@@ -131,6 +131,7 @@ function MarkdownHelp({ inline, small, disabled }) {
       <Modal
         width="80%"
         footer={null}
+        className='u-modal'
         open={isBlockHelpModalOpen}
         onCancel={toggleModal}
         destroyOnClose

@@ -42,6 +42,7 @@ function RoomMediaUploadModal({ isOpen, files, onOk, onCancel }) {
       open={isOpen}
       footer={null}
       closable={false}
+      className='u-modal'
       maskClosable={false}
       onCancel={onCancel}
       >

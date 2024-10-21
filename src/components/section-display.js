@@ -389,6 +389,7 @@ function SectionDisplay({
 
       <Modal
         footer={null}
+        className='u-modal'
         open={isHelpModalOpen}
         onCancel={() => setIsHelpModalOpen(false)}
         destroyOnClose

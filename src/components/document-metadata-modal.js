@@ -395,6 +395,7 @@ function DocumentMetadataModal({
   return (
     <Modal
       title={getDialogTitle(mode, t)}
+      className='u-modal'
       open={isOpen}
       maskClosable={false}
       onCancel={handleModalCancelClick}

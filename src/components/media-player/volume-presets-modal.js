@@ -95,6 +95,7 @@ function VolumePresetsModal({ volumePresets, isOpen, onOk, onClose }) {
     <Modal
       title={t('modalTitle')}
       open={isOpen}
+      className='u-modal'
       onCancel={handleCancel}
       footer={[
         <Button key="cancel" onClick={handleCancel}>

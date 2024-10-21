@@ -81,6 +81,7 @@ function RoomInvitationCreationModal({ isOpen, onOk, onCancel, roomId }) {
   return !!isMounted.current && (
     <Modal
       title={t('sendRoomInvitations')}
+      className='u-modal'
       onCancel={handleModalCancel}
       onOk={handleModalOk}
       open={isOpen}

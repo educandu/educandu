@@ -125,6 +125,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
       <Modal
         width="70%"
         open={isModalOpen}
+        className='u-modal'
         title={t('modalTitle')}
         onOk={handleApply}
         okText={t('common:apply')}

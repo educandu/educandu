@@ -70,7 +70,7 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
       title={t('title')}
       footer={renderFooter()}
       onCancel={onCancel}
-      className="PluginSelectorDialog"
+      className="u-modal"
       >
       <div className="u-modal-body">
         <GridSelector

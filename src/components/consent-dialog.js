@@ -41,6 +41,7 @@ export default function ConsentDialog() {
       centered
       open={isOpen}
       closable={false}
+      className='u-modal'
       title={<div><CookieAlertIcon />&nbsp;&nbsp;{t('title')}</div>}
       footer={<Button type="primary" onClick={handleAcceptClick}>{t('acceptButton')}</Button>}
       >

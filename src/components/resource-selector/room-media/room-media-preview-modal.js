@@ -16,6 +16,7 @@ function RoomMediaPreviewModal({ isOpen, file, onClose }) {
       open={isOpen}
       footer={null}
       closable={false}
+      className='u-modal'
       maskClosable={false}
       title={t('common:preview')}
       onCancel={onClose}
