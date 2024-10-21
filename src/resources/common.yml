@@ -747,3 +747,12 @@ common:
   optimizeImages:
     en: Optimize images for web display
     de: Bilder für Web optimieren
+  uploadFinished:
+    en: Upload finished
+    de: Upload beendet
+  selectAFile:
+    en: Select a file
+    de: Wähle eine Datei aus
+  createdMediaCenterItems:
+    en: Created media center items
+    de: Erstellte Mediathek-Elemente

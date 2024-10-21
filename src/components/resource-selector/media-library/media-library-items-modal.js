@@ -103,7 +103,7 @@ function MediaLibaryItemsModal({
 
   const getDialogTitle = () => {
     if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.create) {
-      return t('common:create');
+      return isFinishedUploading ? t('common:createdMediaCenterItems') : t('common:create');
     }
     if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview) {
       return t('common:preview');

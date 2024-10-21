@@ -179,9 +179,9 @@ function RoomMediaUploadScreen({
       case STAGE.uploadNotStarted:
         return t('common:mediaFilesSelectedForUpload', { fileCount: uploadItems.length });
       case STAGE.uploading:
-        return t('stage_uploading');
+        return t('uploading');
       case STAGE.uploadFinished:
-        return t('stage_uploadFinished');
+        return t('common:uploadFinished');
       default:
         throw new Error(`Invalid stage value: ${currentStage}`);
     }

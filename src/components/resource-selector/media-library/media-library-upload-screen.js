@@ -207,7 +207,7 @@ function MediaLibraryUploadScreen({
     return (
       <div className="u-resource-selector-screen">
         <h3 className="u-resource-selector-screen-headline">
-          {!!showHeadline && t('common:select')}
+          {!!showHeadline && `${t('common:uploadFinished')} - ${t('common:selectAFile')}`}
         </h3>
         <div className="u-overflow-auto">
           <FilesUploadViewer
