@@ -1,12 +1,14 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FILE_UPLOAD_STATUS } from './constants.js';
 import FileIcon from '../../icons/general/file-icon.js';
 import EditIcon from '../../icons/general/edit-icon.js';
+import { mediaLibraryItemShape } from '../../../ui/default-prop-types.js';
 import { CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
+import MediaLibraryMetadataDisplay from '../media-library/media-library-metadata-display.js';
 import ActionButton, { ACTION_BUTTON_INTENT, ActionButtonGroup } from '../../action-button.js';
 
 function FilesUploadViewer({
@@ -118,10 +120,17 @@ function FilesUploadViewer({
       </div>
       <div className="FilesUploadViewer-previewContainer">
         {!!canRenderItem(items[previewedItemIndex]) && (
-          <ResourcePreviewWithMetadata
-            urlOrFile={items[previewedItemIndex].file}
-            size={items[previewedItemIndex].file.size}
-            />
+          <Fragment>
+            <ResourcePreviewWithMetadata
+              urlOrFile={items[previewedItemIndex].file}
+              size={items[previewedItemIndex].file.size}
+              />
+            {!!items[previewedItemIndex].createdMediaLibraryItem && (
+              <div className='FilesUploadViewer-previewContainerMetadata'>
+                <MediaLibraryMetadataDisplay mediaLibraryItem={items[previewedItemIndex].createdMediaLibraryItem} />
+              </div>
+            )}
+          </Fragment>
         )}
       </div>
     </div>
@@ -137,7 +146,8 @@ FilesUploadViewer.propTypes = {
     file: PropTypes.object.isRequired,
     status: PropTypes.oneOf(Object.values(FILE_UPLOAD_STATUS)).isRequired,
     isEditable: PropTypes.bool,
-    errorMessage: PropTypes.string
+    errorMessage: PropTypes.string,
+    createdMediaLibraryItem: mediaLibraryItemShape
   })).isRequired,
   onEditItemClick: PropTypes.func,
   onItemClick: PropTypes.func.isRequired,
