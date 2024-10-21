@@ -143,7 +143,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
         closable={false}
         open={!!iframeUrl}
         width={modalBodyStyle.width}
-        style={{ body: modalBodyStyle }}
+        styles={{ body: modalBodyStyle }}
         destroyOnClose
         centered
         className="DiagramNetEditor-modal"
