@@ -1,13 +1,13 @@
 import React from 'react';
-import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { FILE_UPLOAD_STATUS } from './constants.js';
-import EditIcon from '../../icons/general/edit-icon.js';
 import FileIcon from '../../icons/general/file-icon.js';
+import EditIcon from '../../icons/general/edit-icon.js';
 import { CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
+import ActionButton, { ACTION_BUTTON_INTENT, ActionButtonGroup } from '../../action-button.js';
 
 function FilesUploadViewer({
   items,
@@ -19,6 +19,8 @@ function FilesUploadViewer({
   onItemClick,
 }) {
   const { t } = useTranslation('filesUploadViewer');
+  const editableFileStatuses = [FILE_UPLOAD_STATUS.pristine, FILE_UPLOAD_STATUS.processed];
+  const preUploadStatuses = [FILE_UPLOAD_STATUS.pristine, FILE_UPLOAD_STATUS.processed, FILE_UPLOAD_STATUS.failedValidation, FILE_UPLOAD_STATUS.uploading];
 
   const handleItemEditClick = itemIndex => {
     onEditItemClick(itemIndex);
@@ -51,6 +53,9 @@ function FilesUploadViewer({
       return null;
     }
 
+    const canRenderEditButton = item.isEditable && preUploadStatuses.includes(item.status);
+    const canUseEditButton = canEdit && editableFileStatuses.includes(item.status);
+
     return (
       <div className="FilesUploadViewer-item">
         <div
@@ -59,25 +64,8 @@ function FilesUploadViewer({
             { 'is-selected': items.length > 1 && previewedItemIndex === itemIndex }
           )}
           >
-          {item.status === FILE_UPLOAD_STATUS.pristine && !!item.isEditable && (
-            <Tooltip title={t('common:edit')}>
-              <a onClick={() => handleItemEditClick(itemIndex)} disabled={!canEdit}>
-                <EditIcon className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--pristine" />
-              </a>
-            </Tooltip>
-          )}
-          {item.status === FILE_UPLOAD_STATUS.pristine && !item.isEditable && (
+          {(item.status === FILE_UPLOAD_STATUS.pristine || item.status === FILE_UPLOAD_STATUS.processed) && (
             <FileIcon className="FilesUploadViewer-itemIcon" />
-          )}
-          {item.status === FILE_UPLOAD_STATUS.processed && !!item.isEditable && (
-            <Tooltip title={t('common:edit')}>
-              <a onClick={() => handleItemEditClick(itemIndex)}>
-                <EditIcon className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--processed" />
-              </a>
-            </Tooltip>
-          )}
-          {item.status === FILE_UPLOAD_STATUS.processed && !item.isEditable && (
-            <FileIcon className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--processed" />
           )}
           {item.status === FILE_UPLOAD_STATUS.uploading && (
             <LoadingOutlined className="FilesUploadViewer-itemIcon" />
@@ -89,8 +77,16 @@ function FilesUploadViewer({
             <CloseOutlined className="FilesUploadViewer-itemIcon FilesUploadViewer-itemIcon--error" />
           )}
           {renderItemName(item, itemIndex)}
-          {item.status === FILE_UPLOAD_STATUS.processed && (
-            <span className="FilesUploadViewer-itemMessage">({t('processed')})</span>
+          {!!canRenderEditButton && (
+            <ActionButtonGroup>
+              <ActionButton
+                title={t('editImage')}
+                icon={<EditIcon />}
+                disabled={!canUseEditButton}
+                intent={item.status === FILE_UPLOAD_STATUS.processed ? ACTION_BUTTON_INTENT.warning : ACTION_BUTTON_INTENT.success}
+                onClick={() => handleItemEditClick(itemIndex)}
+                />
+            </ActionButtonGroup>
           )}
         </div>
         {!!item.errorMessage && previewedItemIndex === itemIndex && (

@@ -52,6 +52,7 @@
   .m-control-group-wide;
   grid-auto-columns: auto;
   justify-content: start;
+  grid-template-columns: auto 1fr auto;
   overflow: hidden;
   padding: 5px;
 
@@ -61,14 +62,6 @@
 }
 
 .FilesUploadViewer-itemIcon {
-  &.FilesUploadViewer-itemIcon--pristine {
-    color: @edu-success-color;
-  }
-
-  &.FilesUploadViewer-itemIcon--processed {
-    color: @edu-secondary-color-dark;
-  }
-
   &.FilesUploadViewer-itemIcon--success {
     color: @edu-success-color;
   }

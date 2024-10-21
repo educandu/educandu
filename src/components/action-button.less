@@ -65,6 +65,18 @@
       color: @edu-error-color;
     }
   }
+
+  &.ActionButton--disabled {
+    color: @edu-disabled-color;
+
+    &:hover,
+    &:active {
+      color: @edu-disabled-color;
+      background-color: transparent;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
 }
 
 .ActionButtonGroup {

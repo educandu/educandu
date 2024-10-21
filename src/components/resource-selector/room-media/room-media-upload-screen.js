@@ -1,6 +1,4 @@
-import Info from '../../info.js';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import { Button, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -187,21 +185,6 @@ function RoomMediaUploadScreen({
     }
   };
 
-  const renderUploadStageHeadline = () => {
-    const renderInfo = uploadItems.some(item => item.isEditable);
-
-    return (
-      <div className="RoomMediaUploadScreen-uploadStageHeadline">
-        {getUploadStageHeadline()}
-        {!!renderInfo && (
-          <div className={classNames('RoomMediaUploadScreen-uploadStageHeadlineInfo', { 'is-visible': currentStage === STAGE.uploadNotStarted })}>
-            <Info>{t('stageDetails_uploadNotStarted')}</Info>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="u-resource-selector-screen">
       <h3 className="u-resource-selector-screen-headline">{t('headline')}</h3>
@@ -216,7 +199,9 @@ function RoomMediaUploadScreen({
                 />
             </div>
           )}
-          {renderUploadStageHeadline()}
+          <div className="RoomMediaUploadScreen-uploadStageHeadline">
+            {getUploadStageHeadline()}
+          </div>
           <FilesUploadViewer
             items={uploadItems}
             canEdit={currentStage === STAGE.uploadNotStarted}
