@@ -30,9 +30,7 @@ function MultitrackMediaPlayer({
   allowLoop,
   allowPlaybackRate,
   aspectRatio,
-  customUnderScreenContent,
   initialVolume,
-  multitrackMediaPlayerRef,
   posterImageUrl,
   screenWidth,
   selectedVolumePresetIndex,
@@ -268,10 +266,6 @@ function MultitrackMediaPlayer({
     );
   };
 
-  multitrackMediaPlayerRef.current = {
-    play: triggerPlayMainTrack
-  };
-
   const allSourcesAreSet = trackStates.every(trackState => !!trackState.sourceUrl);
 
   if (isIOS) {
@@ -305,7 +299,6 @@ function MultitrackMediaPlayer({
           key={trackState.key}
           allowFullscreen={screenMode === MEDIA_SCREEN_MODE.video && allowFullscreen}
           aspectRatio={aspectRatio}
-          customUnderScreenContent={trackState.isMainTrack ? customUnderScreenContent : null}
           playbackRange={trackState.playbackRange}
           playbackRate={playbackRate}
           posterImageUrl={posterImageUrl}
@@ -338,11 +331,7 @@ MultitrackMediaPlayer.propTypes = {
   allowFullscreen: PropTypes.bool,
   allowLoop: PropTypes.bool,
   allowPlaybackRate: PropTypes.bool,
-  customUnderScreenContent: PropTypes.node,
   initialVolume: PropTypes.number,
-  multitrackMediaPlayerRef: PropTypes.shape({
-    current: PropTypes.any
-  }),
   posterImageUrl: PropTypes.string,
   screenWidth: PropTypes.oneOf([...Array(101).keys()]),
   selectedVolumePresetIndex: PropTypes.number,
@@ -368,11 +357,7 @@ MultitrackMediaPlayer.defaultProps = {
   allowFullscreen: false,
   allowLoop: false,
   allowPlaybackRate: false,
-  customUnderScreenContent: null,
   initialVolume: 1,
-  multitrackMediaPlayerRef: {
-    current: null
-  },
   posterImageUrl: null,
   screenWidth: 100,
   selectedVolumePresetIndex: null,

@@ -9,24 +9,46 @@ import MediaVolumeSlider from './media-volume-slider.js';
 import ObjectWidthSlider from '../object-width-slider.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import { memoAndTransformProps } from '../../ui/react-helper.js';
-import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, SOURCE_TYPE } from '../../domain/constants.js';
+import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, MULTITRACK_PLAYER_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePosterImage, useWidth, disableVideo, onContentChange }) {
+function PlayerSettingsEditor({ content, useMultitrackPlayerType, useShowVideo, useAspectRatio, usePosterImage, useWidth, disableVideo, onContentChange }) {
   const { t } = useTranslation('playerSettingsEditor');
 
-  const { showVideo, aspectRatio, posterImage, width, initialVolume } = content;
+  const { multitrackPlayerType, showVideo, aspectRatio, posterImage, width, initialVolume } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
     onContentChange(newContent);
   };
 
+  const handleMultitrackPlayerTypeChanged = newMultitrackPlayerType => {
+    const newContent = { multitrackPlayerType: newMultitrackPlayerType };
+
+    if (useShowVideo && newMultitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise) {
+      newContent.showVideo = false;
+    }
+
+    if (useAspectRatio && newMultitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise) {
+      newContent.aspectRatio = MEDIA_ASPECT_RATIO.sixteenToNine;
+    }
+
+    if (usePosterImage && newMultitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise) {
+      newContent.posterImage = { sourceUrl: '' };
+    }
+
+    changeContent(newContent);
+  };
+
   const handleShowVideoChanged = newShowVideo => {
     const newContent = { showVideo: newShowVideo };
+
+    if (useAspectRatio && !newShowVideo) {
+      newContent.aspectRatio = MEDIA_ASPECT_RATIO.sixteenToNine;
+    }
 
     if (usePosterImage && !newShowVideo) {
       newContent.posterImage = { sourceUrl: '' };
@@ -53,8 +75,20 @@ function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePoster
 
   return (
     <Fragment>
+      {!!useMultitrackPlayerType && (
+        <FormItem label={t('multitrackPlayerType')} {...FORM_ITEM_LAYOUT}>
+          <RadioGroup
+            defaultValue={MULTITRACK_PLAYER_TYPE.default}
+            value={multitrackPlayerType}
+            onChange={handleMultitrackPlayerTypeChanged}
+            >
+            <RadioButton value={MULTITRACK_PLAYER_TYPE.default}>{t('multitrackPlayerType_default')}</RadioButton>
+            <RadioButton value={MULTITRACK_PLAYER_TYPE.precise}>{t('multitrackPlayerType_precise')}</RadioButton>
+          </RadioGroup>
+        </FormItem>
+      )}
       {!!useShowVideo && (
-        <FormItem label={t('common:videoDisplay')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t(':videoDisplay')} {...FORM_ITEM_LAYOUT}>
           <Switch
             size="small"
             checked={showVideo}
@@ -96,7 +130,7 @@ function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePoster
         </FormItem>
       )}
       <FormItem
-        label={<Info tooltip={t('common:multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
+        label={<Info tooltip={t('multitrackInitialVolumeInfo')}>{t('common:initialVolume')}</Info>}
         {...FORM_ITEM_LAYOUT}
         >
         <MediaVolumeSlider
@@ -113,6 +147,7 @@ function PlayerSettingsEditor({ content, useShowVideo, useAspectRatio, usePoster
 
 PlayerSettingsEditor.propTypes = {
   content: PropTypes.shape({
+    multitrackPlayerType: PropTypes.oneOf(Object.values(MULTITRACK_PLAYER_TYPE)),
     showVideo: PropTypes.bool,
     aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
     posterImage: PropTypes.shape({
@@ -121,6 +156,7 @@ PlayerSettingsEditor.propTypes = {
     width: PropTypes.number,
     initialVolume: PropTypes.number
   }).isRequired,
+  useMultitrackPlayerType: PropTypes.bool,
   useShowVideo: PropTypes.bool,
   useAspectRatio: PropTypes.bool,
   usePosterImage: PropTypes.bool,
@@ -130,6 +166,7 @@ PlayerSettingsEditor.propTypes = {
 };
 
 PlayerSettingsEditor.defaultProps = {
+  useMultitrackPlayerType: false,
   useShowVideo: true,
   useAspectRatio: true,
   usePosterImage: true,

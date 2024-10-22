@@ -1,0 +1,22 @@
+playerSettingsEditor:
+  multitrackPlayerType:
+    en: Multitrack player type
+    de: Multitrack-Player-Typ
+  videoDisplay:
+    en: Video display
+    de: Videoanzeige
+  multitrackInitialVolumeInfo:
+    en: This is the initial mix volume
+    de: Dies ist die initiale Mix-Lautstärke
+  multitrackPlayerType_default:
+    en: default
+    de: Standard
+  multitrackPlayerType_precise:
+    en: precise
+    de: Präzise
+
+
+
+
+
+
