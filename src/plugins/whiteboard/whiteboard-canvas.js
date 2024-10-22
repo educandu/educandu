@@ -12,8 +12,8 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import { drawImageToCanvas } from '../../utils/image-utils.js';
 import { useService } from '../../components/container-context.js';
 import { isInternalSourceType } from '../../utils/source-utils.js';
-import { Canvas, Textbox, Line, Triangle, Group, Rect, Circle } from 'fabric';
 import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
+import { Canvas, Textbox, Line, Triangle, Group, Rect, Circle, PencilBrush } from 'fabric';
 import { DEFAULT_STROKE_COLOR, FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_COLOR, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
 const useDimensions = useDimensionsNs.default || useDimensionsNs;
@@ -140,11 +140,12 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
 
     if (newToolbarMode === MODE.select) {
       canvas.isDrawingMode = false;
-      canvas.discardActiveObject().renderAll();
+      delete canvas.freeDrawingBrush;
     }
 
     if (newToolbarMode === MODE.freeDraw) {
       canvas.isDrawingMode = true;
+      canvas.freeDrawingBrush = new PencilBrush(canvas);
       canvas.freeDrawingBrush.width = strokeWidth;
       canvas.freeDrawingBrush.color = strokeColor;
     }
