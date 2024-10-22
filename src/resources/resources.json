@@ -986,10 +986,6 @@
       "en": "Copyright",
       "de": "Urheberrecht"
     },
-    "videoDisplay": {
-      "en": "Video display",
-      "de": "Videoanzeige"
-    },
     "source": {
       "en": "Source",
       "de": "Quelle"
@@ -1233,10 +1229,6 @@
     "initialVolume": {
       "en": "Initial volume",
       "de": "Anfangslautstärke"
-    },
-    "multitrackInitialVolumeInfo": {
-      "en": "This is the initial mix volume",
-      "de": "Dies ist die initiale Mix-Lautstärke"
     },
     "posterImageUrl": {
       "en": "Preview image URL",
@@ -3745,6 +3737,28 @@
     "showTextOverlayInfo": {
       "en": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n",
       "de": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachte, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
+    }
+  },
+  "playerSettingsEditor": {
+    "multitrackPlayerType": {
+      "en": "Player type",
+      "de": "Player-Typ"
+    },
+    "videoDisplay": {
+      "en": "Video display",
+      "de": "Videoanzeige"
+    },
+    "multitrackInitialVolumeInfo": {
+      "en": "This is the initial mix volume",
+      "de": "Dies ist die initiale Mix-Lautstärke"
+    },
+    "multitrackPlayerType_default": {
+      "en": "default",
+      "de": "Standard"
+    },
+    "multitrackPlayerType_precise": {
+      "en": "precise",
+      "de": "Präzise"
     }
   },
   "pluginSelectorDialog": {

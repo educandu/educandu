@@ -1,7 +1,7 @@
 playerSettingsEditor:
   multitrackPlayerType:
-    en: Multitrack player type
-    de: Multitrack-Player-Typ
+    en: Player type
+    de: Player-Typ
   videoDisplay:
     en: Video display
     de: Videoanzeige

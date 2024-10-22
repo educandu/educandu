@@ -37,15 +37,14 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const shouldDisableVideoOnNewUrl = shouldDisableVideo(newContent.sourceUrl);
-    const shouldDisableVideoOnOldUrl = shouldDisableVideo(content.sourceUrl);
+    const newDisableVideo = shouldDisableVideo(newContent.tracks[0].sourceUrl);
 
-    const autoEnableVideo = !!shouldDisableVideoOnOldUrl && !shouldDisableVideoOnNewUrl;
-    const autoDisableVideo = !!shouldDisableVideoOnNewUrl;
-    newContent.showVideo = autoDisableVideo ? false : autoEnableVideo || newContent.showVideo;
-    newContent.posterImage = autoDisableVideo ? { sourceUrl: '' } : newContent.posterImage;
+    if (newDisableVideo) {
+      newContent.showVideo = false;
+      newContent.posterImage = { sourceUrl: '' };
+    }
 
-    setDisableVideo(autoDisableVideo);
+    setDisableVideo(newDisableVideo);
     onContentChanged(newContent);
   };
 
@@ -182,6 +181,11 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
         <ItemPanel header={t('common:player')}>
           <PlayerSettingsEditor
+            useMultitrackPlayerType
+            useShowVideo
+            useAspectRatio
+            usePosterImage
+            useWidth
             content={content}
             disableVideo={disableVideo}
             onContentChange={handlePlayerSettingsContentChange}

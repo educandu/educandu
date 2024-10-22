@@ -229,6 +229,10 @@ function MediaAnalysisEditor({ content, onContentChanged }) {
 
         <ItemPanel header={t('common:player')}>
           <PlayerSettingsEditor
+            useShowVideo
+            useAspectRatio
+            usePosterImage
+            useWidth
             content={content}
             disableVideo={disableVideo}
             onContentChange={handlePlayerSettingsContentChange}

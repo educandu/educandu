@@ -25,7 +25,9 @@ function PlayerSettingsEditor({ content, useMultitrackPlayerType, useShowVideo, 
     onContentChange(newContent);
   };
 
-  const handleMultitrackPlayerTypeChanged = newMultitrackPlayerType => {
+  const handleMultitrackPlayerTypeChanged = event => {
+    const newMultitrackPlayerType = event.target.value;
+
     const newContent = { multitrackPlayerType: newMultitrackPlayerType };
 
     if (useShowVideo && newMultitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise) {
@@ -88,12 +90,12 @@ function PlayerSettingsEditor({ content, useMultitrackPlayerType, useShowVideo, 
         </FormItem>
       )}
       {!!useShowVideo && (
-        <FormItem label={t(':videoDisplay')} {...FORM_ITEM_LAYOUT}>
+        <FormItem label={t('videoDisplay')} {...FORM_ITEM_LAYOUT}>
           <Switch
             size="small"
             checked={showVideo}
             onChange={handleShowVideoChanged}
-            disabled={disableVideo}
+            disabled={disableVideo || (useMultitrackPlayerType && multitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise)}
             />
         </FormItem>
       )}
@@ -167,10 +169,10 @@ PlayerSettingsEditor.propTypes = {
 
 PlayerSettingsEditor.defaultProps = {
   useMultitrackPlayerType: false,
-  useShowVideo: true,
-  useAspectRatio: true,
-  usePosterImage: true,
-  useWidth: true,
+  useShowVideo: false,
+  useAspectRatio: false,
+  usePosterImage: false,
+  useWidth: false,
   disableVideo: false
 };
 

@@ -1,6 +1,6 @@
 import joi from 'joi';
 import uniqueId from '../../utils/unique-id.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 
 export function createDefaultTrack() {
   return {
@@ -24,6 +24,7 @@ export function createDefaultContent(t) {
   return {
     tracks,
     volumePresets: [createDefaultVolumePreset(t, tracks.length)],
+    multitrackPlayerType: MULTITRACK_PLAYER_TYPE.default,
     showVideo: false,
     aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
     posterImage: { sourceUrl: '' },
@@ -45,6 +46,7 @@ export function validateContent(content) {
       name: joi.string().required(),
       tracks: joi.array().items(joi.number().min(0).max(1)).min(1).required()
     })).min(1).required(),
+    multitrackPlayerType: joi.string().valid(...Object.values(MULTITRACK_PLAYER_TYPE)).required(),
     showVideo: joi.boolean().required(),
     aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
     posterImage: joi.object({
