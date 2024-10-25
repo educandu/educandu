@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useStableCallback } from '../../ui/hooks.js';
 import MediaVolumeSlider from './media-volume-slider.js';
 import ObjectWidthSlider from '../object-width-slider.js';
+import WarningIcon from '../icons/general/warning-icon.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import { memoAndTransformProps } from '../../ui/react-helper.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, MULTITRACK_PLAYER_TYPE, SOURCE_TYPE } from '../../domain/constants.js';
@@ -79,14 +80,37 @@ function PlayerSettingsEditor({ content, useMultitrackPlayerType, useShowVideo, 
     <Fragment>
       {!!useMultitrackPlayerType && (
         <FormItem label={t('multitrackPlayerType')} {...FORM_ITEM_LAYOUT}>
-          <RadioGroup
-            defaultValue={MULTITRACK_PLAYER_TYPE.default}
-            value={multitrackPlayerType}
-            onChange={handleMultitrackPlayerTypeChanged}
-            >
-            <RadioButton value={MULTITRACK_PLAYER_TYPE.default}>{t('multitrackPlayerType_default')}</RadioButton>
-            <RadioButton value={MULTITRACK_PLAYER_TYPE.precise}>{t('multitrackPlayerType_precise')}</RadioButton>
-          </RadioGroup>
+          <div className='PlayerSettingsEditor-playerTypeValue'>
+            <RadioGroup
+              defaultValue={MULTITRACK_PLAYER_TYPE.default}
+              value={multitrackPlayerType}
+              onChange={handleMultitrackPlayerTypeChanged}
+              >
+              <RadioButton value={MULTITRACK_PLAYER_TYPE.default}>{t('multitrackPlayerType_default')}</RadioButton>
+              <RadioButton value={MULTITRACK_PLAYER_TYPE.precise}>{t('multitrackPlayerType_precise')}</RadioButton>
+            </RadioGroup>
+            <div className="PlayerSettingsEditor-playerTypeValueInfo">
+              {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default
+                ? t('multitrackPlayerTypeInfo_default')
+                : t('multitrackPlayerTypeInfo_precise')}
+            </div>
+            <div className="PlayerSettingsEditor-playerTypeValueWarning">
+              {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default && (
+                <Fragment>
+                  <WarningIcon className="PlayerSettingsEditor-playerTypeValueWarningIcon" />
+                  <div>{t('multitrackPlayerTypeWarning1_default')}</div>
+                  <WarningIcon className="PlayerSettingsEditor-playerTypeValueWarningIcon" />
+                  <div>{t('multitrackPlayerTypeWarning2_default')}</div>
+                </Fragment>
+              )}
+              {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise && (
+                <Fragment>
+                  <WarningIcon className="PlayerSettingsEditor-playerTypeValueWarningIcon" />
+                  <div>{t('multitrackPlayerTypeWarning_precise')}</div>
+                </Fragment>
+              )}
+            </div>
+          </div>
         </FormItem>
       )}
       {!!useShowVideo && (
@@ -139,7 +163,7 @@ function PlayerSettingsEditor({ content, useMultitrackPlayerType, useShowVideo, 
           value={initialVolume}
           useValueLabel
           useButton={false}
-          showIOSWarning
+          showIOSWarning={multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default}
           onChange={handleInitialVolumeChange}
           />
       </FormItem>

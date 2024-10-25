@@ -12,7 +12,6 @@ import { useService } from '../../components/container-context.js';
 import { MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
-import WarningIcon from '../../components/icons/general/warning-icon.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { removeItemAt, swapItemsAt, moveItem } from '../../utils/array-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
@@ -152,18 +151,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   return (
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal" labelAlign="left">
-        <div className="MultitrackMediaEditor-warning">
-          <div>
-            <WarningIcon className="MultitrackMediaEditor-warningIcon" />
-          </div>
-          <div>
-            <div>{t('warningsHeader')}</div>
-            <ul className="MultitrackMediaEditor-warningList">
-              <li>{t('internalSourcesRecommendedWarning')}</li>
-              <li>{t('common:playerNotSupportedOnIOS')}</li>
-            </ul>
-          </div>
-        </div>
         <ItemPanel
           collapsed
           key={tracks[0].key}

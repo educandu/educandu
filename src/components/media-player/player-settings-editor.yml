@@ -12,9 +12,35 @@ playerSettingsEditor:
     en: default
     de: Standard
   multitrackPlayerType_precise:
-    en: precise
-    de: Präzise
-
+    en: precise (audio-only)
+    de: Präzise (nur Audio)
+  multitrackPlayerTypeInfo_default:
+    en: |
+      This player uses the built-in browser audio/video playback capabilities.
+      Only the currently played back parts of the tracks are downloaded.
+    de: |
+      Dieser Player nutzt die im Browser eingebauten Audio/Video-Wiedergabefunktionen.
+      Nur die zu einem Zeitpunkt wiedergegebenen Teile eines Tracks werden herundergeladen.
+  multitrackPlayerTypeWarning1_default:
+    en: Tracks might not play synchronously if external sources are used.
+    de: Bei Verwendung externer Quellen werden die Spuren eventuell nicht synchron abgespielt.
+  multitrackPlayerTypeWarning2_default:
+    en: This player is not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.
+    de: Da iPads und iPhones Einschränkungen in für diesen Player benötigten Funktionen haben, werden diese Geräte nicht unterstützt.
+  multitrackPlayerTypeInfo_precise:
+    en: |
+      This player uses the browser's audio API playback capabilities and can play sample-accurately.
+      All tracks are fully downloaded and decoded before playback.
+    de: |
+      Dieser Player nutzt die Audio-API-Wiedergabefunktionen des Browsers und kann samplegenau abspielen.
+      Alle Tracks werden vor der Wiedergabe komplett heruntergeladen und dekodiert.
+  multitrackPlayerTypeWarning_precise:
+    en: |
+      Based on the size and number of tracks, this player might use a lot of system resources.
+      It is not recommended to use very long audio tracks as it might cause the user's browser to freeze or crash.
+    de: |
+      Abhängig von der Größe und Anzahl der Spuren könnte dieser Player viele Systemressourcen benötigen.
+      Es ist nicht empfehlenswert, sehr lange Audiospuren zu benutzen, da dies den Browser von Benutzern zum Einfrieren oder Abstürzen bringen könnte.
 
 
 
