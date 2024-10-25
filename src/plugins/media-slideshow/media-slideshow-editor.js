@@ -192,10 +192,8 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
 
         <ItemPanel header={t('common:player')}>
           <PlayerSettingsEditor
+            useWidth
             content={content}
-            useShowVideo={false}
-            useAspectRatio={false}
-            usePosterImage={false}
             onContentChange={handlePlayerSettingsContentChange}
             />
         </ItemPanel>

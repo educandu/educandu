@@ -41,16 +41,14 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
+    const newDisableVideo = shouldDisableVideo(newContent.player1.track.sourceUrl);
 
-    const shouldDisableVideoOnNewUrl = shouldDisableVideo(newContent.player1.track.sourceUrl);
-    const shouldDisableVideoOnOldUrl = shouldDisableVideo(content.player1.track.sourceUrl);
+    if (newDisableVideo) {
+      newContent.player1.showVideo = false;
+      newContent.player1.posterImage = { sourceUrl: '' };
+    }
 
-    const autoEnableVideo = !!shouldDisableVideoOnOldUrl && !shouldDisableVideoOnNewUrl;
-    const autoDisableVideo = !!shouldDisableVideoOnNewUrl;
-    newContent.player1.showVideo = autoDisableVideo ? false : autoEnableVideo || newContent.player1.showVideo;
-    newContent.player1.posterImage = autoDisableVideo ? { sourceUrl: '' } : newContent.player1.posterImage;
-
-    setDisableVideo(autoDisableVideo);
+    setDisableVideo(newDisableVideo);
     onContentChanged(newContent);
   };
 
@@ -190,8 +188,10 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
             onContentChange={handlePlayer1TrackContentChange}
             />
           <PlayerSettingsEditor
+            useShowVideo
+            useAspectRatio
+            usePosterImage
             content={player1}
-            useWidth={false}
             disableVideo={disableVideo}
             onContentChange={handlePlayer1SettingsContentChange}
             />

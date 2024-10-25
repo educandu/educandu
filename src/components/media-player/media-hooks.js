@@ -1,9 +1,13 @@
 import deepEqual from 'fast-deep-equal';
-import { useEffect, useState } from 'react';
+import MediaDownloader from './media-downloader.js';
+import { useEffect, useState, useMemo } from 'react';
 import { useService } from '../container-context.js';
 import MediaDurationCache from './media-duration-cache.js';
 import YoutubeThumbnailUrlCache from './youtube-thumbnail-url-cache.js';
 import RunningAudioContextCache from './running-audio-context-cache.js';
+import RunningAudioContextProvider from './running-audio-context-provider.js';
+import HttpClient from '../../api-clients/http-client.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 
 export function useMediaDurations(urls) {
   const [, setSemaphore] = useState(0);
@@ -58,4 +62,17 @@ export function useRunningAudioContext() {
   }, [cache, setSemaphore]);
 
   return cache.value;
+}
+
+export function useRunningAudioContextProvider() {
+  const runningAudioContextCache = useService(RunningAudioContextCache);
+  const audioContextProvider = useMemo(() => new RunningAudioContextProvider(runningAudioContextCache), [runningAudioContextCache]);
+  return audioContextProvider;
+}
+
+export function useMediaDownloader() {
+  const httpClient = useService(HttpClient);
+  const clientConfig = useService(ClientConfig);
+  const mediaDownloader = useMemo(() => new MediaDownloader(httpClient, clientConfig), [httpClient, clientConfig]);
+  return mediaDownloader;
 }

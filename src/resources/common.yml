@@ -346,9 +346,6 @@ common:
   copyrightNotice:
     en: Copyright
     de: Urheberrecht
-  videoDisplay:
-    en: Video display
-    de: Videoanzeige
   source:
     en: Source
     de: Quelle
@@ -534,9 +531,6 @@ common:
   initialVolume:
     en: Initial volume
     de: Anfangslautstärke
-  multitrackInitialVolumeInfo:
-    en: This is the initial mix volume
-    de: Dies ist die initiale Mix-Lautstärke
   posterImageUrl:
     en: Preview image URL
     de: Vorschau-Bild-URL

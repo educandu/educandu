@@ -1,0 +1,48 @@
+playerSettingsEditor:
+  multitrackPlayerType:
+    en: Player type
+    de: Player-Typ
+  videoDisplay:
+    en: Video display
+    de: Videoanzeige
+  multitrackInitialVolumeInfo:
+    en: This is the initial mix volume
+    de: Dies ist die initiale Mix-Lautstärke
+  multitrackPlayerType_default:
+    en: default (audio/video)
+    de: Standard (Audio/Video)
+  multitrackPlayerType_precise:
+    en: precise (audio)
+    de: Präzise (Audio)
+  multitrackPlayerTypeInfo_default:
+    en: |
+      This player uses the built-in browser audio/video playback capabilities.
+      Only the currently played back parts of the tracks are downloaded.
+    de: |
+      Dieser Player nutzt die im Browser eingebauten Audio/Video-Wiedergabefunktionen.
+      Nur die zu einem Zeitpunkt wiedergegebenen Teile eines Tracks werden herundergeladen.
+  multitrackPlayerTypeWarning1_default:
+    en: Tracks could play out of sync in certain circumstances.
+    de: Spuren können unter Umständen zeitlich verschoben abgespielt werden.
+  multitrackPlayerTypeWarning2_default:
+    en: This player is not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.
+    de: Da iPads und iPhones Einschränkungen in für diesen Player benötigten Funktionen haben, werden diese Geräte nicht unterstützt.
+  multitrackPlayerTypeInfo_precise:
+    en: |
+      This player uses the browser's audio API playback capabilities and can play sample-accurately.
+      All tracks are fully downloaded and decoded before playback.
+    de: |
+      Dieser Player nutzt die Audio-API-Wiedergabefunktionen des Browsers und kann samplegenau abspielen.
+      Alle Tracks werden vor der Wiedergabe komplett heruntergeladen und dekodiert.
+  multitrackPlayerTypeWarning_precise:
+    en: |
+      Based on the size and number of tracks, this player might use a lot of system resources.
+      It is not recommended to use very long audio tracks as it might cause the user's browser to freeze or crash.
+    de: |
+      Abhängig von der Größe und Anzahl der Spuren könnte dieser Player viele Systemressourcen benötigen.
+      Es ist nicht empfehlenswert, sehr lange Audiospuren zu benutzen, da dies den Browser von Benutzern zum Einfrieren oder Abstürzen bringen könnte.
+
+
+
+
+

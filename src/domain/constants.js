@@ -130,6 +130,11 @@ export const MEDIA_ASPECT_RATIO = {
   fourToThree: '4:3'
 };
 
+export const MULTITRACK_PLAYER_TYPE = {
+  default: 'default',
+  precise: 'precise'
+};
+
 export const MEDIA_SCREEN_MODE = {
   none: 'none',
   audio: 'audio',

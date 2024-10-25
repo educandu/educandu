@@ -9,14 +9,15 @@ import { shouldDisableVideo } from '../../utils/media-utils.js';
 import React, { useId, useMemo, useRef, useState } from 'react';
 import { createDefaultTrack } from './multitrack-media-utils.js';
 import { useService } from '../../components/container-context.js';
+import { MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
-import WarningIcon from '../../components/icons/general/warning-icon.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { removeItemAt, swapItemsAt, moveItem } from '../../utils/array-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import PreciseMultitrackMediaPlayer from '../../components/media-player/precise-multitrack-media-player.js';
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
   const droppableIdRef = useRef(useId());
@@ -26,7 +27,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
   const [disableVideo, setDisableVideo] = useState(shouldDisableVideo(content.tracks[0].sourceUrl));
 
-  const { tracks, volumePresets, showVideo, aspectRatio, posterImage, initialVolume } = content;
+  const { tracks, volumePresets, showVideo, aspectRatio, posterImage, initialVolume, multitrackPlayerType } = content;
 
   const sources = useMemo(() => {
     return tracks.map(track => ({
@@ -37,15 +38,14 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const shouldDisableVideoOnNewUrl = shouldDisableVideo(newContent.sourceUrl);
-    const shouldDisableVideoOnOldUrl = shouldDisableVideo(content.sourceUrl);
+    const newDisableVideo = shouldDisableVideo(newContent.tracks[0].sourceUrl);
 
-    const autoEnableVideo = !!shouldDisableVideoOnOldUrl && !shouldDisableVideoOnNewUrl;
-    const autoDisableVideo = !!shouldDisableVideoOnNewUrl;
-    newContent.showVideo = autoDisableVideo ? false : autoEnableVideo || newContent.showVideo;
-    newContent.posterImage = autoDisableVideo ? { sourceUrl: '' } : newContent.posterImage;
+    if (newDisableVideo) {
+      newContent.showVideo = false;
+      newContent.posterImage = { sourceUrl: '' };
+    }
 
-    setDisableVideo(autoDisableVideo);
+    setDisableVideo(newDisableVideo);
     onContentChanged(newContent);
   };
 
@@ -152,18 +152,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   return (
     <div className="MultitrackMediaEditor">
       <Form layout="horizontal" labelAlign="left">
-        <div className="MultitrackMediaEditor-warning">
-          <div>
-            <WarningIcon className="MultitrackMediaEditor-warningIcon" />
-          </div>
-          <div>
-            <div>{t('warningsHeader')}</div>
-            <ul className="MultitrackMediaEditor-warningList">
-              <li>{t('internalSourcesRecommendedWarning')}</li>
-              <li>{t('common:playerNotSupportedOnIOS')}</li>
-            </ul>
-          </div>
-        </div>
         <ItemPanel
           collapsed
           key={tracks[0].key}
@@ -182,6 +170,11 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
 
         <ItemPanel header={t('common:player')}>
           <PlayerSettingsEditor
+            useMultitrackPlayerType
+            useShowVideo={multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default}
+            useAspectRatio={multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default}
+            usePosterImage={multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default}
+            useWidth
             content={content}
             disableVideo={disableVideo}
             onContentChange={handlePlayerSettingsContentChange}
@@ -193,19 +186,30 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             <div className="MultitrackMediaEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
-            <MultitrackMediaPlayer
-              allowLoop
-              allowPlaybackRate
-              aspectRatio={aspectRatio}
-              initialVolume={initialVolume}
-              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-              screenWidth={50}
-              selectedVolumePresetIndex={selectedVolumePresetIndex}
-              showVideo={!disableVideo && showVideo}
-              showTrackMixer={false}
-              sources={sources}
-              volumePresets={volumePresets}
-              />
+            {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default && (
+              <MultitrackMediaPlayer
+                allowLoop
+                allowPlaybackRate
+                aspectRatio={aspectRatio}
+                initialVolume={initialVolume}
+                posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+                screenWidth={50}
+                selectedVolumePresetIndex={selectedVolumePresetIndex}
+                showVideo={!disableVideo && showVideo}
+                showTrackMixer={false}
+                sources={sources}
+                volumePresets={volumePresets}
+                />
+            )}
+            {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise && (
+              <PreciseMultitrackMediaPlayer
+                allowLoop
+                initialVolume={initialVolume}
+                showTrackMixer={false}
+                sources={sources}
+                volumePresets={volumePresets}
+                />
+            )}
           </div>
           <TrackMixerEditor
             tracks={sources}
