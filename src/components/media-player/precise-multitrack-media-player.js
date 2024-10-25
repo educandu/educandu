@@ -5,6 +5,7 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { handleError } from '../../ui/error-helper.js';
 import TrackMixerDisplay from './track-mixer-display.js';
+import { useOnComponentUnmount } from '../../ui/hooks.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../empty-state.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -43,7 +44,6 @@ const createPlayerConfiguration = ({
   trackVolumes,
   mediaDownloader,
   audioContextProvider
-
 }) => {
   return {
     trackConfiguration: {
@@ -170,6 +170,10 @@ function PreciseMultitrackMediaPlayer({
     wasCurrentPlayerPlayClicked.current = false;
 
   }, [playerConfiguration, handlePlayerPlayStateChanged, handlePlayerPositionChanged, handlePlayerStateChanged]);
+
+  useOnComponentUnmount(() => {
+    currentPlayer.dispose();
+  });
 
   const handleVolumesChange = newVolumes => {
     setTrackVolumes(newVolumes);

@@ -3745,20 +3745,20 @@
       "de": "Dies ist die initiale Mix-Lautstärke"
     },
     "multitrackPlayerType_default": {
-      "en": "default",
-      "de": "Standard"
+      "en": "default (audio/video)",
+      "de": "Standard (Audio/Video)"
     },
     "multitrackPlayerType_precise": {
-      "en": "precise (audio-only)",
-      "de": "Präzise (nur Audio)"
+      "en": "precise (audio)",
+      "de": "Präzise (Audio)"
     },
     "multitrackPlayerTypeInfo_default": {
       "en": "This player uses the built-in browser audio/video playback capabilities.\nOnly the currently played back parts of the tracks are downloaded.\n",
       "de": "Dieser Player nutzt die im Browser eingebauten Audio/Video-Wiedergabefunktionen.\nNur die zu einem Zeitpunkt wiedergegebenen Teile eines Tracks werden herundergeladen.\n"
     },
     "multitrackPlayerTypeWarning1_default": {
-      "en": "Tracks might not play synchronously if external sources are used.",
-      "de": "Bei Verwendung externer Quellen werden die Spuren eventuell nicht synchron abgespielt."
+      "en": "Tracks could play out of sync in certain circumstances.",
+      "de": "Spuren können unter Umständen zeitlich verschoben abgespielt werden."
     },
     "multitrackPlayerTypeWarning2_default": {
       "en": "This player is not supported on iPad and iPhone devices due to iOS restrictions on essential functionality.",

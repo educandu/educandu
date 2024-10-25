@@ -17,6 +17,7 @@ import { removeItemAt, swapItemsAt, moveItem } from '../../utils/array-utils.js'
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import PreciseMultitrackMediaPlayer from '../../components/media-player/precise-multitrack-media-player.js';
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
   const droppableIdRef = useRef(useId());
@@ -185,19 +186,30 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
             <div className="MultitrackMediaEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
-            <MultitrackMediaPlayer
-              allowLoop
-              allowPlaybackRate
-              aspectRatio={aspectRatio}
-              initialVolume={initialVolume}
-              posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
-              screenWidth={50}
-              selectedVolumePresetIndex={selectedVolumePresetIndex}
-              showVideo={!disableVideo && showVideo}
-              showTrackMixer={false}
-              sources={sources}
-              volumePresets={volumePresets}
-              />
+            {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default && (
+              <MultitrackMediaPlayer
+                allowLoop
+                allowPlaybackRate
+                aspectRatio={aspectRatio}
+                initialVolume={initialVolume}
+                posterImageUrl={getAccessibleUrl({ url: posterImage.sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })}
+                screenWidth={50}
+                selectedVolumePresetIndex={selectedVolumePresetIndex}
+                showVideo={!disableVideo && showVideo}
+                showTrackMixer={false}
+                sources={sources}
+                volumePresets={volumePresets}
+                />
+            )}
+            {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise && (
+              <PreciseMultitrackMediaPlayer
+                allowLoop
+                initialVolume={initialVolume}
+                showTrackMixer={false}
+                sources={sources}
+                volumePresets={volumePresets}
+                />
+            )}
           </div>
           <TrackMixerEditor
             tracks={sources}
