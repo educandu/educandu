@@ -77,8 +77,8 @@ function PreciseMultitrackMediaPlayer({
   const [, setSemaphore] = useState(0);
   const mediaDownloader = useMediaDownloader();
   const [loopMedia, setLoopMedia] = useState(false);
-  const { t } = useTranslation('multitrackMediaPlayer');
   const [mixVolume, setMixVolume] = useState(initialVolume);
+  const { t } = useTranslation('preciseMultitrackMediaPlayer');
   const audioContextProvider = useRunningAudioContextProvider();
   const [internalSelectedVolumePresetIndex, setInternalSelectedVolumePresetIndex] = useState(0);
 
@@ -235,7 +235,7 @@ function PreciseMultitrackMediaPlayer({
   const trackStates = currentPlayer?.tracks.map(track => track.customProps) || [];
 
   return (
-    <div className="MultitrackMediaPlayer">
+    <div className="MultitrackMediaPlayer MultitrackMediaPlayer--noScreen">
       <MediaPlayerProgressBar
         durationInMilliseconds={durationInMilliseconds}
         playedMilliseconds={playedMilliseconds}

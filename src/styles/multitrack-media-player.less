@@ -1,4 +1,8 @@
-.MultitrackMediaPlayer {}
+.MultitrackMediaPlayer {
+  &.MultitrackMediaPlayer--noScreen {
+    .m-media-player-no-screen;
+  }
+}
 
 .MultitrackMediaPlayer-loadingOverlay {
   .m-mask;
@@ -18,5 +22,3 @@
   padding-top: 15px;
   border-top: 1px solid darken(@edu-background-color-base, 10%);
 }
-
-.MultitrackMediaPlayer-trackMixerEditor {}
