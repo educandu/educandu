@@ -9,6 +9,7 @@ import { shouldDisableVideo } from '../../utils/media-utils.js';
 import React, { useId, useMemo, useRef, useState } from 'react';
 import { createDefaultTrack } from './multitrack-media-utils.js';
 import { useService } from '../../components/container-context.js';
+import { MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
 import WarningIcon from '../../components/icons/general/warning-icon.js';
@@ -26,7 +27,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
   const [selectedVolumePresetIndex, setSelectedVolumePresetIndex] = useState(0);
   const [disableVideo, setDisableVideo] = useState(shouldDisableVideo(content.tracks[0].sourceUrl));
 
-  const { tracks, volumePresets, showVideo, aspectRatio, posterImage, initialVolume } = content;
+  const { tracks, volumePresets, showVideo, aspectRatio, posterImage, initialVolume, multitrackPlayerType } = content;
 
   const sources = useMemo(() => {
     return tracks.map(track => ({
@@ -182,9 +183,9 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
         <ItemPanel header={t('common:player')}>
           <PlayerSettingsEditor
             useMultitrackPlayerType
-            useShowVideo
-            useAspectRatio
-            usePosterImage
+            useShowVideo={multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default}
+            useAspectRatio={multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default}
+            usePosterImage={multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default}
             useWidth
             content={content}
             disableVideo={disableVideo}
