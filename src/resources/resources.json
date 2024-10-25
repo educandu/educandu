@@ -1913,8 +1913,8 @@
   },
   "contentManagementDocumentsTab": {
     "filterPlaceholder": {
-      "en": "Filter by title or creator",
-      "de": "Nach Titel oder Ersteller filtern"
+      "en": "Filter by document title or contributor display name",
+      "de": "Nach Dokument-Titel oder Anzeigename des Bearbeiters filtern"
     }
   },
   "contentManagementMediaLibraryTab": {

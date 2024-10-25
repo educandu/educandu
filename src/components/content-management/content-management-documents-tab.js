@@ -84,6 +84,7 @@ function createTableRows(documents, documentRatings) {
       updatedOn: doc.updatedOn,
       updatedBy: doc.updatedBy,
       user: doc.user,
+      contributors: doc.contributors,
       allowedEditors: doc.publicContext.allowedEditors,
       protected: doc.publicContext.protected,
       archived: doc.publicContext.archived,
@@ -198,8 +199,10 @@ function ContentManagementDocumentsTab() {
     const lowerCasedFilter = filter.toLowerCase();
 
     const filteredRows = lowerCasedFilter
-      ? allRows.filter(row => row.title.toLowerCase().includes(lowerCasedFilter)
-          || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilter))
+      ? allRows.filter(row =>
+        row.title.toLowerCase().includes(lowerCasedFilter)
+        || row.contributors.some(contributor => contributor.displayName.toLowerCase().includes(lowerCasedFilter))
+      )
       : allRows;
 
     const sorter = tableSorters[sorting.value];
