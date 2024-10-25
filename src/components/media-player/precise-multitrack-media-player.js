@@ -60,6 +60,7 @@ const createPlayerConfiguration = ({
       soloTrackIndex: -1
     },
     autoInitialize: true,
+    autoRewind: true,
     gainParams: { gain: mixVolume, mute: false },
     mediaDownloader,
     audioContextProvider
@@ -76,7 +77,6 @@ function PreciseMultitrackMediaPlayer({
 }) {
   const [, setSemaphore] = useState(0);
   const mediaDownloader = useMediaDownloader();
-  const [loopMedia, setLoopMedia] = useState(false);
   const [mixVolume, setMixVolume] = useState(initialVolume);
   const { t } = useTranslation('preciseMultitrackMediaPlayer');
   const audioContextProvider = useRunningAudioContextProvider();
@@ -104,7 +104,7 @@ function PreciseMultitrackMediaPlayer({
     }
 
     if (newState === STATE.faulted) {
-      const error = new Error(currentPlayerRef.current.error);
+      const error = currentPlayerRef.current.error;
       handleError({ message: error.message, error, logger, t });
     }
 
@@ -209,7 +209,8 @@ function PreciseMultitrackMediaPlayer({
   };
 
   const handleLoopMediaChange = newLoopMedia => {
-    setLoopMedia(newLoopMedia);
+    currentPlayer.loop = newLoopMedia;
+    setSemaphore(oldValue => oldValue + 1);
   };
 
   const handleSeek = newPositionInMs => {
@@ -234,6 +235,7 @@ function PreciseMultitrackMediaPlayer({
     ? MEDIA_PLAYER_CONTROLS_STATE.playing
     : MEDIA_PLAYER_CONTROLS_STATE.paused;
 
+  const loopMedia = currentPlayer?.loop || false;
   const durationInMilliseconds = (currentPlayer?.duration || 0) * 1000;
   const playedMilliseconds = (currentPlayer?.position || 0) * 1000;
   const trackStates = currentPlayer?.tracks.map(track => track.customProps) || [];
