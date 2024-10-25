@@ -807,10 +807,10 @@
     yaml "^2.3.4"
     yargs "^17.7.2"
 
-"@educandu/multitrack-audio-player@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@educandu/multitrack-audio-player/-/multitrack-audio-player-0.0.2.tgz#b8e2237432ca8bf2cd05e6a2c1033c64412815d5"
-  integrity sha512-rG4s0gpLWdY98n2CPvzofmMHym3RjvYGQdqDocD235YUebFEjbGvf1UbQ4TsQ+lWlxy92qRlLu5ssrLo8I7hYQ==
+"@educandu/multitrack-audio-player@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@educandu/multitrack-audio-player/-/multitrack-audio-player-0.0.3.tgz#f65a8e9ca13c1ed91a06ad2c490532fc66d03d43"
+  integrity sha512-mnteffd7Cj27BWSYCYKj2YhnB8RB1n/E5HQAHtIDbf/Iv+8SlYlA0wvoQ6dY/fM98iTH9AI8oCwYaQrKhnE/fQ==
   dependencies:
     p-queue "^8.0.0"
     standardized-audio-context "^25.3.77"

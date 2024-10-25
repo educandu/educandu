@@ -69,7 +69,7 @@ function AbcPlayer({ renderResult, initialVolume }) {
           setDownloadTitle(createDownloadFileName(renderResult));
         }
       } catch (error) {
-        handleError({ message: error.message, logger, t });
+        handleError({ message: error.message, error, logger, t });
       }
     })();
   }, [renderResult, runningAudioContext, isMounted, t]);
