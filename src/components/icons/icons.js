@@ -36,7 +36,9 @@ import {
   IconTag,
   IconBuildingBank,
   IconTableImport,
-  IconTableDown
+  IconTableDown,
+  IconPlayerPlay,
+  IconCircleDashed
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -51,6 +53,32 @@ function createIconFromSvgComponent(SvgComponent) {
 function createIconFromTablerIconComponent(TablerIconComponent, { filled } = {}) {
   function TablerIconWrapper() {
     return <TablerIconComponent size="1em" stroke={1.5} fill={filled ? 'currentColor': 'none'} />;
+  }
+  return createIconFromSvgComponent(TablerIconWrapper);
+}
+
+function createIconFromTablerIconComponents(
+  TablerIconComponentOuter,
+  TablerIconComponentInner,
+  { filled = false, scaleOuter = 1, scaleInner = 1 } = { filled: false, scaleOuter: 1, scaleInner: 1 }
+) {
+  function TablerIconWrapper() {
+    return (
+      <div style={{ display: 'grid' }}>
+        <TablerIconComponentOuter
+          size="1em"
+          stroke={1.5}
+          style={{ gridRow: 1, gridColumn: 1, transform: `scale(${scaleOuter})` }}
+          fill={filled ? 'currentColor': 'none'}
+          />
+        <TablerIconComponentInner
+          size="1em"
+          stroke={1.5}
+          style={{ gridRow: 1, gridColumn: 1, transform: `scale(${scaleInner})` }}
+          fill={filled ? 'currentColor': 'none'}
+          />
+      </div>
+    );
   }
   return createIconFromSvgComponent(TablerIconWrapper);
 }
@@ -94,3 +122,4 @@ export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomS
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
 export const FavoriteIconFilled = createIconFromTablerIconComponent(IconHeart, { filled: true });
+export const LoadMusicIcon = createIconFromTablerIconComponents(IconCircleDashed, IconPlayerPlay, { scaleOuter: 1.5, scaleInner: 0.7 });

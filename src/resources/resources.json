@@ -3779,6 +3779,12 @@
       "de": "Abschnitt hinzufügen"
     }
   },
+  "preciseMultitrackMediaPlayer": {
+    "loadButtonText": {
+      "en": "Load tracks",
+      "de": "Spuren laden"
+    }
+  },
   "quickTester": {
     "name": {
       "en": "Quick tester",

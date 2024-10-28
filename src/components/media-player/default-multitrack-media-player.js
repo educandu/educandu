@@ -258,7 +258,7 @@ function DefaultMultitrackMediaPlayer({
           </div>
         )}
         {!isReady && (
-          <div className="MultitrackMediaPlayer-loadingOverlay">
+          <div className="MultitrackMediaPlayer-overlay">
             <Spin size="large" />
           </div>
         )}

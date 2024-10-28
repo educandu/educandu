@@ -1,8 +1,9 @@
-import { Spin } from 'antd';
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import deepEqual from 'fast-deep-equal';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { LoadMusicIcon } from '../icons/icons.js';
 import { handleError } from '../../ui/error-helper.js';
 import TrackMixerDisplay from './track-mixer-display.js';
 import { useOnComponentUnmount } from '../../ui/hooks.js';
@@ -87,7 +88,7 @@ function PreciseMultitrackMediaPlayer({
 
   const currentPlayerRef = useRef(null);
   const currentPlayer = currentPlayerRef.current;
-  const wasCurrentPlayerPlayClicked = useRef(false);
+  const wasCurrentPlayerLoadClicked = useRef(false);
 
   const handleVolumeChange = newVolume => {
     setMixVolume(newVolume);
@@ -95,12 +96,8 @@ function PreciseMultitrackMediaPlayer({
   };
 
   const handlePlayerStateChanged = useCallback(newState => {
-    if (newState === STATE.initialized && wasCurrentPlayerPlayClicked.current) {
+    if (newState === STATE.initialized && wasCurrentPlayerLoadClicked.current) {
       currentPlayerRef.current.load();
-    }
-
-    if (newState === STATE.ready && wasCurrentPlayerPlayClicked.current) {
-      currentPlayerRef.current.start();
     }
 
     if (newState === STATE.faulted) {
@@ -167,7 +164,7 @@ function PreciseMultitrackMediaPlayer({
       onPositionChanged: handlePlayerPositionChanged
     });
 
-    wasCurrentPlayerPlayClicked.current = false;
+    wasCurrentPlayerLoadClicked.current = false;
 
   }, [playerConfiguration, handlePlayerPlayStateChanged, handlePlayerPositionChanged, handlePlayerStateChanged]);
 
@@ -190,8 +187,8 @@ function PreciseMultitrackMediaPlayer({
     setInternalSelectedVolumePresetIndex(newIndex);
   };
 
-  const handlePlayClick = () => {
-    wasCurrentPlayerPlayClicked.current = true;
+  const handleLoadClick = () => {
+    wasCurrentPlayerLoadClicked.current = true;
 
     if (!audioContextProvider.value) {
       audioContextProvider.resume();
@@ -199,7 +196,11 @@ function PreciseMultitrackMediaPlayer({
 
     if (currentPlayer.state === STATE.initialized) {
       currentPlayer.load();
-    } else if (currentPlayer.state === STATE.ready) {
+    }
+  };
+
+  const handlePlayClick = () => {
+    if (currentPlayer.state === STATE.ready) {
       currentPlayer.start();
     }
   };
@@ -239,6 +240,7 @@ function PreciseMultitrackMediaPlayer({
   const durationInMilliseconds = (currentPlayer?.duration || 0) * 1000;
   const playedMilliseconds = (currentPlayer?.position || 0) * 1000;
   const trackStates = currentPlayer?.tracks.map(track => track.customProps) || [];
+  const overlayStates = [STATE.created, STATE.initializing, STATE.initialized, STATE.loading];
 
   return (
     <div className="MultitrackMediaPlayer MultitrackMediaPlayer--noScreen">
@@ -271,9 +273,17 @@ function PreciseMultitrackMediaPlayer({
             />
         </div>
       )}
-      {currentPlayer?.state === STATE.loading && (
-        <div className="MultitrackMediaPlayer-loadingOverlay">
-          <Spin size="large" />
+      {overlayStates.includes(currentPlayer?.state) && (
+        <div className="MultitrackMediaPlayer-overlay MultitrackMediaPlayer-overlay--bordered">
+          <Button
+            size="large"
+            type="primary"
+            icon={<LoadMusicIcon />}
+            loading={currentPlayer?.state === STATE.loading}
+            onClick={handleLoadClick}
+            >
+            {t('loadButtonText')}
+          </Button>
         </div>
       )}
     </div>
