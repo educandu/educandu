@@ -2025,6 +2025,16 @@
       "de": "Mehr entdecken?"
     }
   },
+  "defaultMultitrackMediaPlayer": {
+    "emptyStateSubtitle": {
+      "en": "Make sure that a URL is provided for each track.",
+      "de": "Stelle sicher, dass für jede Spur eine URL angegeben wurde."
+    },
+    "playerNotSupportedTitle": {
+      "en": "Multitrack media not supported",
+      "de": "Mehrspur-Medien nicht unterstützt"
+    }
+  },
   "diagramNet": {
     "name": {
       "en": "Diagram",
@@ -3497,16 +3507,6 @@
     "name": {
       "en": "Multitrack media",
       "de": "Mehrspur-Medien"
-    }
-  },
-  "multitrackMediaPlayer": {
-    "emptyStateSubtitle": {
-      "en": "Make sure that a URL is provided for each track.",
-      "de": "Stelle sicher, dass für jede Spur eine URL angegeben wurde."
-    },
-    "playerNotSupportedTitle": {
-      "en": "Multitrack media not supported",
-      "de": "Mehrspur-Medien nicht unterstützt"
     }
   },
   "musicAccentuation": {

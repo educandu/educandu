@@ -9,7 +9,7 @@ import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import DefaultMultitrackMediaPlayer from '../../components/media-player/default-multitrack-media-player.js';
 
 function CombinedMultitrackMediaDisplay({ content }) {
   const isMounted = useIsMounted();
@@ -69,7 +69,7 @@ function CombinedMultitrackMediaDisplay({ content }) {
                       </div>
                     )}
                     <div className="CombinedMultitrackMediaDisplay-player2">
-                      <MultitrackMediaPlayer
+                      <DefaultMultitrackMediaPlayer
                         initialVolume={player2.initialVolume}
                         showTrackMixer
                         showVideo={false}

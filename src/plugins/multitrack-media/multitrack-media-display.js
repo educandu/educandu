@@ -5,7 +5,7 @@ import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import DefaultMultitrackMediaPlayer from '../../components/media-player/default-multitrack-media-player.js';
 import PreciseMultitrackMediaPlayer from '../../components/media-player/precise-multitrack-media-player.js';
 
 function MultitrackMediaDisplay({ content }) {
@@ -30,7 +30,7 @@ function MultitrackMediaDisplay({ content }) {
         {!!canRenderMediaPlayer && (
           <Fragment>
             {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default && (
-              <MultitrackMediaPlayer
+              <DefaultMultitrackMediaPlayer
                 allowFullscreen
                 allowLoop
                 allowPlaybackRate

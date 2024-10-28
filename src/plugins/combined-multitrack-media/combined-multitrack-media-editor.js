@@ -19,8 +19,8 @@ import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { createDefaultPlayer2Track } from './combined-multitrack-media-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import { moveItem, removeItemAt, replaceItemAt, swapItemsAt } from '../../utils/array-utils.js';
+import DefaultMultitrackMediaPlayer from '../../components/media-player/default-multitrack-media-player.js';
 
 function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
   const droppableIdRef = useRef(useId());
@@ -212,7 +212,7 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
             <div className="CombinedMultitrackMediaEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
-            <MultitrackMediaPlayer
+            <DefaultMultitrackMediaPlayer
               initialVolume={player2.initialVolume}
               selectedVolumePresetIndex={selectedVolumePresetIndex}
               showVideo={false}
