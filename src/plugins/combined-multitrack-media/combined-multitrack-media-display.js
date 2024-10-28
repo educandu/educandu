@@ -74,7 +74,6 @@ function CombinedMultitrackMediaDisplay({ content }) {
                         <DefaultMultitrackMediaPlayer
                           initialVolume={player2.initialVolume}
                           showTrackMixer
-                          showVideo={false}
                           sources={player2Sources}
                           volumePresets={player2.volumePresets}
                           />

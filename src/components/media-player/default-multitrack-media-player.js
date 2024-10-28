@@ -362,7 +362,7 @@ DefaultMultitrackMediaPlayer.defaultProps = {
   screenWidth: 100,
   selectedVolumePresetIndex: null,
   showTrackMixer: false,
-  showVideo: true,
+  showVideo: false,
   onEnded: () => {},
   onPause: () => {},
   onPlay: () => {}

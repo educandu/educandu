@@ -229,8 +229,6 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
               <DefaultMultitrackMediaPlayer
                 initialVolume={player2.initialVolume}
                 selectedVolumePresetIndex={selectedVolumePresetIndex}
-                showVideo={false}
-                showTrackMixer={false}
                 sources={player2Sources}
                 volumePresets={player2.volumePresets}
                 />
@@ -239,7 +237,6 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
               <PreciseMultitrackMediaPlayer
                 allowLoop
                 initialVolume={player2.initialVolume}
-                showTrackMixer={false}
                 sources={player2Sources}
                 volumePresets={player2.volumePresets}
                 />

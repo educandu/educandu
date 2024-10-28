@@ -196,7 +196,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
                 screenWidth={50}
                 selectedVolumePresetIndex={selectedVolumePresetIndex}
                 showVideo={!disableVideo && showVideo}
-                showTrackMixer={false}
                 sources={sources}
                 volumePresets={volumePresets}
                 />
@@ -205,7 +204,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               <PreciseMultitrackMediaPlayer
                 allowLoop
                 initialVolume={initialVolume}
-                showTrackMixer={false}
                 sources={sources}
                 volumePresets={volumePresets}
                 />
