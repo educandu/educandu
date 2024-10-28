@@ -3,13 +3,14 @@ import { useIsMounted } from '../../ui/hooks.js';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import MediaPlayer from '../../components/media-player/media-player.js';
+import { MEDIA_SCREEN_MODE, MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 import DefaultMultitrackMediaPlayer from '../../components/media-player/default-multitrack-media-player.js';
+import PreciseMultitrackMediaPlayer from '../../components/media-player/precise-multitrack-media-player.js';
 
 function CombinedMultitrackMediaDisplay({ content }) {
   const isMounted = useIsMounted();
@@ -69,13 +70,24 @@ function CombinedMultitrackMediaDisplay({ content }) {
                       </div>
                     )}
                     <div className="CombinedMultitrackMediaDisplay-player2">
-                      <DefaultMultitrackMediaPlayer
-                        initialVolume={player2.initialVolume}
-                        showTrackMixer
-                        showVideo={false}
-                        sources={player2Sources}
-                        volumePresets={player2.volumePresets}
-                        />
+                      {player2.multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default && (
+                        <DefaultMultitrackMediaPlayer
+                          initialVolume={player2.initialVolume}
+                          showTrackMixer
+                          showVideo={false}
+                          sources={player2Sources}
+                          volumePresets={player2.volumePresets}
+                          />
+                      )}
+                      {player2.multitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise && (
+                        <PreciseMultitrackMediaPlayer
+                          allowLoop
+                          initialVolume={player2.initialVolume}
+                          showTrackMixer
+                          sources={player2Sources}
+                          volumePresets={player2.volumePresets}
+                          />
+                      )}
                     </div>
                   </Fragment>
                 )}

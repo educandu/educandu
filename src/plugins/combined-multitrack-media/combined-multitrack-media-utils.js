@@ -1,6 +1,6 @@
 import joi from 'joi';
 import uniqueId from '../../utils/unique-id.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 
 export function createDefaultPlayer1Track() {
   return {
@@ -42,7 +42,8 @@ export function createDefaultContent(t) {
     player2: {
       tracks: player2Tracks,
       volumePresets: [createDefaultVolumePreset(t, player2Tracks.length)],
-      initialVolume: 1
+      initialVolume: 1,
+      multitrackPlayerType: MULTITRACK_PLAYER_TYPE.default
     },
     note: '',
     width: 100
@@ -76,7 +77,8 @@ export function validateContent(content) {
         name: joi.string().required(),
         tracks: joi.array().items(joi.number().min(0).max(1)).min(1).required()
       })).min(1).required(),
-      initialVolume: joi.number().min(0).max(1).required()
+      initialVolume: joi.number().min(0).max(1).required(),
+      multitrackPlayerType: joi.string().valid(...Object.values(MULTITRACK_PLAYER_TYPE)).required(),
     }).required(),
     note: joi.string().allow('').required(),
     width: joi.number().min(0).max(100).required()
