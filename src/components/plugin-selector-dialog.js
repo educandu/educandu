@@ -45,7 +45,7 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
           {t('common:pasteFromClipboard')}
         </Button>
       </div>
-      <div>
+      <div className="PluginSelectorDialog-footerButtonGroup">
         <Button
           onClick={onCancel}
           >
