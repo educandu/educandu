@@ -25,7 +25,7 @@ const sourcesCanBeConsideredEqual = (sources1, sources2) => {
     });
 };
 
-function MultitrackMediaPlayer({
+function DefaultMultitrackMediaPlayer({
   allowFullscreen,
   allowLoop,
   allowPlaybackRate,
@@ -63,7 +63,7 @@ function MultitrackMediaPlayer({
 
   const isIOS = useIsIOS();
   const trackRefs = useRef({});
-  const { t } = useTranslation('multitrackMediaPlayer');
+  const { t } = useTranslation('defaultMultitrackMediaPlayer');
 
   const getTrackRef = key => {
     let trackRef = trackRefs.current[key];
@@ -258,7 +258,7 @@ function MultitrackMediaPlayer({
           </div>
         )}
         {!isReady && (
-          <div className="MultitrackMediaPlayer-loadingOverlay">
+          <div className="MultitrackMediaPlayer-overlay">
             <Spin size="large" />
           </div>
         )}
@@ -326,7 +326,7 @@ function MultitrackMediaPlayer({
   );
 }
 
-MultitrackMediaPlayer.propTypes = {
+DefaultMultitrackMediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   allowFullscreen: PropTypes.bool,
   allowLoop: PropTypes.bool,
@@ -352,7 +352,7 @@ MultitrackMediaPlayer.propTypes = {
   onPlay: PropTypes.func
 };
 
-MultitrackMediaPlayer.defaultProps = {
+DefaultMultitrackMediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   allowFullscreen: false,
   allowLoop: false,
@@ -362,10 +362,10 @@ MultitrackMediaPlayer.defaultProps = {
   screenWidth: 100,
   selectedVolumePresetIndex: null,
   showTrackMixer: false,
-  showVideo: true,
+  showVideo: false,
   onEnded: () => {},
   onPause: () => {},
   onPlay: () => {}
 };
 
-export default MultitrackMediaPlayer;
+export default DefaultMultitrackMediaPlayer;

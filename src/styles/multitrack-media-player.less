@@ -1,15 +1,22 @@
 .MultitrackMediaPlayer {
+  position: relative;
+
   &.MultitrackMediaPlayer--noScreen {
     .m-media-player-no-screen;
   }
 }
 
-.MultitrackMediaPlayer-loadingOverlay {
+.MultitrackMediaPlayer-overlay {
   .m-mask;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: fade(@edu-background-color-light, 80%);
+
+  &.MultitrackMediaPlayer-overlay--bordered {
+    border: 1px solid @edu-border-color-base;
+    border-radius: @edu-border-radius-base;
+  }
 }
 
 .MultitrackMediaPlayer-errorMessage {

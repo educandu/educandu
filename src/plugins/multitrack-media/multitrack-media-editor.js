@@ -16,7 +16,7 @@ import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { removeItemAt, swapItemsAt, moveItem } from '../../utils/array-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
+import DefaultMultitrackMediaPlayer from '../../components/media-player/default-multitrack-media-player.js';
 import PreciseMultitrackMediaPlayer from '../../components/media-player/precise-multitrack-media-player.js';
 
 function MultitrackMediaEditor({ content, onContentChanged }) {
@@ -187,7 +187,7 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               {t('common:preview')}
             </div>
             {multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default && (
-              <MultitrackMediaPlayer
+              <DefaultMultitrackMediaPlayer
                 allowLoop
                 allowPlaybackRate
                 aspectRatio={aspectRatio}
@@ -196,7 +196,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
                 screenWidth={50}
                 selectedVolumePresetIndex={selectedVolumePresetIndex}
                 showVideo={!disableVideo && showVideo}
-                showTrackMixer={false}
                 sources={sources}
                 volumePresets={volumePresets}
                 />
@@ -205,7 +204,6 @@ function MultitrackMediaEditor({ content, onContentChanged }) {
               <PreciseMultitrackMediaPlayer
                 allowLoop
                 initialVolume={initialVolume}
-                showTrackMixer={false}
                 sources={sources}
                 volumePresets={volumePresets}
                 />

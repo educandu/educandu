@@ -5,7 +5,6 @@ import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import ItemPanel from '../../components/item-panel.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { shouldDisableVideo } from '../../utils/media-utils.js';
@@ -18,9 +17,11 @@ import WarningIcon from '../../components/icons/general/warning-icon.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
 import { createDefaultPlayer2Track } from './combined-multitrack-media-utils.js';
 import TrackMixerEditor from '../../components/media-player/track-mixer-editor.js';
+import { FORM_ITEM_LAYOUT, MULTITRACK_PLAYER_TYPE } from '../../domain/constants.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
-import MultitrackMediaPlayer from '../../components/media-player/multitrack-media-player.js';
 import { moveItem, removeItemAt, replaceItemAt, swapItemsAt } from '../../utils/array-utils.js';
+import DefaultMultitrackMediaPlayer from '../../components/media-player/default-multitrack-media-player.js';
+import PreciseMultitrackMediaPlayer from '../../components/media-player/precise-multitrack-media-player.js';
 
 function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
   const droppableIdRef = useRef(useId());
@@ -71,6 +72,10 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
 
   const handlePlayer1SettingsContentChange = newSettings => {
     changeContent({ player1: { ...player1, ...newSettings } });
+  };
+
+  const handlePlayer2SettingsContentChange = newSettings => {
+    changeContent({ player2: { ...player2, ...newSettings } });
   };
 
   const handleMovePlayer2TrackUp = index => {
@@ -197,6 +202,14 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
             />
         </ItemPanel>
 
+        <ItemPanel header={t('playerNumber', { number: 2 })}>
+          <PlayerSettingsEditor
+            content={player2}
+            useMultitrackPlayerType
+            onContentChange={handlePlayer2SettingsContentChange}
+            />
+        </ItemPanel>
+
         <DragAndDropContainer
           droppableId={droppableIdRef.current}
           items={dragAndDropPlayer2Tracks}
@@ -212,14 +225,22 @@ function CombinedMultitrackMediaEditor({ content, onContentChanged }) {
             <div className="CombinedMultitrackMediaEditor-trackMixerPreviewLabel">
               {t('common:preview')}
             </div>
-            <MultitrackMediaPlayer
-              initialVolume={player2.initialVolume}
-              selectedVolumePresetIndex={selectedVolumePresetIndex}
-              showVideo={false}
-              showTrackMixer={false}
-              sources={player2Sources}
-              volumePresets={player2.volumePresets}
-              />
+            {player2.multitrackPlayerType === MULTITRACK_PLAYER_TYPE.default && (
+              <DefaultMultitrackMediaPlayer
+                initialVolume={player2.initialVolume}
+                selectedVolumePresetIndex={selectedVolumePresetIndex}
+                sources={player2Sources}
+                volumePresets={player2.volumePresets}
+                />
+            )}
+            {player2.multitrackPlayerType === MULTITRACK_PLAYER_TYPE.precise && (
+              <PreciseMultitrackMediaPlayer
+                allowLoop
+                initialVolume={player2.initialVolume}
+                sources={player2Sources}
+                volumePresets={player2.volumePresets}
+                />
+            )}
           </div>
           <TrackMixerEditor
             tracks={player2Sources}
