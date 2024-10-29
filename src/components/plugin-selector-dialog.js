@@ -9,15 +9,15 @@ import { PLUGIN_GROUP } from '../domain/constants.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import PasteFromClipboardIcon from './icons/general/paste-from-clipboard-icon.js';
 
-function getGroups(pluginInfo) {
-  return pluginInfo?.getGroups?.() || [PLUGIN_GROUP.other];
+function isPluginInGroup(plugin, groupKey) {
+  const pluginGroups = plugin.info?.getGroups?.() || [PLUGIN_GROUP.other];
+  return pluginGroups.includes(groupKey);
 }
 
-function groupPlugins(plugins, t) {
+function groupPlugins(plugins) {
   return Object.values(PLUGIN_GROUP).map(groupKey => ({
     key: groupKey,
-    label: t(`pluginGroup_${groupKey}`),
-    plugins: plugins.filter(plugin => getGroups(plugin.info).includes(groupKey))
+    plugins: plugins.filter(plugin => isPluginInGroup(plugin, groupKey))
   })).filter(group => !!group.plugins.length);
 }
 
@@ -26,8 +26,8 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
   const pluginRegistry = useService(PluginRegistry);
 
   const pluginItemGroups = useMemo(() => {
-    return groupPlugins(pluginRegistry.getAllRegisteredPlugins(), t);
-  }, [pluginRegistry, t]);
+    return groupPlugins(pluginRegistry.getAllRegisteredPlugins());
+  }, [pluginRegistry]);
 
   const [activeGroupKey, setActiveGroupKey] = useState(pluginItemGroups[0]?.key || null);
   const [selectedPluginType, setSelectedPluginType] = useState(pluginItemGroups[0]?.[0]?.key || null);
@@ -61,7 +61,7 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
 
     return {
       key: group.key,
-      label: group.label,
+      label: t(`pluginGroup_${group.key}`),
       children: (
         <GridSelector
           items={gridSelectorItems}
@@ -103,12 +103,11 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
   return (
     <Modal
       centered
-      width="560px"
       open={isOpen}
       title={t('title')}
       footer={renderFooter()}
       onCancel={onCancel}
-      className="u-modal"
+      className="PluginSelectorDialog"
       >
       <div className="u-modal-body">
         <Collapse
