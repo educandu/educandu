@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import SeparatorIcon from './separator-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { COLOR_INTENSITY, TITLE_POSITION } from './constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -21,6 +22,10 @@ class SeparatorInfo {
 
   getIcon() {
     return <SeparatorIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {

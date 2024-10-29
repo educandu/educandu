@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import TableOfContentsIcon from './table-of-contents-icon.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -20,6 +21,10 @@ class TableOfContentsInfo {
 
   getIcon() {
     return <TableOfContentsIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {

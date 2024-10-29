@@ -1,27 +1,36 @@
 import PropTypes from 'prop-types';
-import { Button, Modal } from 'antd';
 import GridSelector from './grid-selector.js';
 import { useTranslation } from 'react-i18next';
+import { Button, Collapse, Modal } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useService } from './container-context.js';
 import { QuestionOutlined } from '@ant-design/icons';
+import { PLUGIN_GROUP } from '../domain/constants.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import PasteFromClipboardIcon from './icons/general/paste-from-clipboard-icon.js';
+
+function isPluginInGroup(plugin, groupKey) {
+  const pluginGroups = plugin.info?.getGroups?.() || [PLUGIN_GROUP.other];
+  return pluginGroups.includes(groupKey);
+}
+
+function groupPlugins(plugins) {
+  return Object.values(PLUGIN_GROUP).map(groupKey => ({
+    key: groupKey,
+    plugins: plugins.filter(plugin => isPluginInGroup(plugin, groupKey))
+  })).filter(group => !!group.plugins.length);
+}
 
 function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard }) {
   const { t } = useTranslation('pluginSelectorDialog');
   const pluginRegistry = useService(PluginRegistry);
 
-  const pluginItems = useMemo(() => {
-    return pluginRegistry.getAllRegisteredPlugins()
-      .map(plugin => ({
-        key: plugin.name,
-        icon: plugin.info.getIcon?.(t) || <QuestionOutlined />,
-        label: plugin.info.getDisplayName(t)
-      }));
-  }, [pluginRegistry, t]);
+  const pluginItemGroups = useMemo(() => {
+    return groupPlugins(pluginRegistry.getAllRegisteredPlugins());
+  }, [pluginRegistry]);
 
-  const [selectedPluginType, setSelectedPluginType] = useState(pluginItems[0]?.key || null);
+  const [activeGroupKey, setActiveGroupKey] = useState(pluginItemGroups[0]?.key || null);
+  const [selectedPluginType, setSelectedPluginType] = useState(pluginItemGroups[0]?.[0]?.key || null);
 
   const handleOk = () => {
     onSelect(selectedPluginType);
@@ -33,6 +42,35 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
       onSelect(type);
     }
   };
+
+  const handleCollapseChange = newKeys => {
+    if (!newKeys.length) {
+      return;
+    }
+
+    setActiveGroupKey(newKeys[0]);
+    setSelectedPluginType(null);
+  };
+
+  const collapseItems = pluginItemGroups.map(group => {
+    const gridSelectorItems = group.plugins.map(plugin => ({
+      key: plugin.name,
+      icon: plugin.info.getIcon?.(t) || <QuestionOutlined />,
+      label: plugin.info.getDisplayName(t)
+    }));
+
+    return {
+      key: group.key,
+      label: t(`pluginGroup_${group.key}`),
+      children: (
+        <GridSelector
+          items={gridSelectorItems}
+          selectedItemKey={selectedPluginType}
+          onSelectionChange={handleSelectionChange}
+          />
+      )
+    };
+  });
 
   const renderFooter = () => (
     <div className="PluginSelectorDialog-footer">
@@ -65,18 +103,18 @@ function PluginSelectorDialog({ isOpen, onSelect, onCancel, onPasteFromClipboard
   return (
     <Modal
       centered
-      width="560px"
       open={isOpen}
       title={t('title')}
       footer={renderFooter()}
       onCancel={onCancel}
-      className="u-modal"
+      className="PluginSelectorDialog"
       >
       <div className="u-modal-body">
-        <GridSelector
-          items={pluginItems}
-          selectedItemKey={selectedPluginType}
-          onSelectionChange={handleSelectionChange}
+        <Collapse
+          accordion
+          items={collapseItems}
+          activeKey={activeGroupKey}
+          onChange={handleCollapseChange}
           />
       </div>
     </Modal>

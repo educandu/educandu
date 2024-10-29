@@ -4,7 +4,7 @@ import TableIcon from './table-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
+import { HORIZONTAL_ALIGNMENT, PLUGIN_GROUP, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import { CELL_TYPE, COLUMN_DISTRIBUTION, createEmptyCell, createTableCellsFlat } from './table-utils.js';
 
 const DEFAULT_TABLE_ROW_COUNT = 3;
@@ -25,6 +25,10 @@ class TableInfo {
 
   getIcon() {
     return <TableIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {

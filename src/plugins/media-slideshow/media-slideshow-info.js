@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowIcon from './media-slideshow-icon.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -22,6 +23,10 @@ class MediaSlideshowInfo {
 
   getIcon() {
     return <MediaSlideshowIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.audioVideo];
   }
 
   async resolveDisplayComponent() {

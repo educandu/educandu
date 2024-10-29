@@ -3,6 +3,7 @@ import React from 'react';
 import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -21,6 +22,10 @@ class AnnotationInfo {
 
   getIcon() {
     return <AnnotationIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {

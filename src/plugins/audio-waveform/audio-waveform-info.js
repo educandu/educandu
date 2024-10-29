@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import { DISPLAY_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import AudioWaveformIcon from './audio-waveform-icon.js';
 import { getDefaultContent } from './audio-waveform-utils.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
@@ -15,6 +16,10 @@ class AudioWaveformInfo {
 
   getIcon() {
     return <AudioWaveformIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.audioVideo, PLUGIN_GROUP.interactive];
   }
 
   async resolveDisplayComponent() {

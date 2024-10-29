@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import { SIZE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import MatchingCardsIcon from './matching-cards-icon.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultTile, getTilePairCountBySize } from './matching-cards-utils.js';
@@ -22,6 +23,10 @@ class MatchingCardsInfo {
 
   getIcon() {
     return <MatchingCardsIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.interactive];
   }
 
   async resolveDisplayComponent() {

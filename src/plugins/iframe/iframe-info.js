@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import IframeIcon from './iframe-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 
 class IframeInfo {
   static typeName = 'iframe';
@@ -12,6 +13,10 @@ class IframeInfo {
 
   getIcon() {
     return <IframeIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.other];
   }
 
   async resolveDisplayComponent() {

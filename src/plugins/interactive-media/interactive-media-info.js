@@ -3,7 +3,7 @@ import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, PLUGIN_GROUP } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
@@ -22,6 +22,10 @@ class InteractiveMediaInfo {
 
   getIcon() {
     return <InteractiveMediaIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.audioVideo, PLUGIN_GROUP.interactive];
   }
 
   async resolveDisplayComponent() {

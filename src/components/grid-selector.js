@@ -6,6 +6,10 @@ function GridSelector({ items, selectedItemKey, onSelectionChange }) {
   const listRef = useRef();
 
   useEffect(() => {
+    if (!selectedItemKey) {
+      return;
+    }
+
     const selectedElement = listRef.current?.querySelector(`[data-item-key="${selectedItemKey.replaceAll('"', '\\"')}"]`);
     if (selectedElement && selectedElement !== document.activeElement) {
       selectedElement.focus();

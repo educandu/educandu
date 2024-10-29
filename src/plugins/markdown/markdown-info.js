@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -20,6 +21,10 @@ class MarkdownInfo {
 
   getIcon() {
     return <MarkdownIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.mostUsed, PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {

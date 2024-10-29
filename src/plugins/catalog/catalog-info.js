@@ -1,6 +1,7 @@
 import React from 'react';
 import CatalogIcon from './catalog-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { createDefaultContent, validateContent } from './catalog-utils.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
@@ -13,6 +14,10 @@ export default class Catalog {
 
   getIcon() {
     return <CatalogIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {
