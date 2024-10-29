@@ -3,14 +3,16 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Card, Tooltip } from 'antd';
 import routes from '../utils/routes.js';
+import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
 import FavoriteToggle from './favorite-toggle.js';
 import { useDateFormat } from './locale-context.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
 import { InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { contributedDocumentMetadataShape, favoriteDocumentShape } from '../ui/default-prop-types.js';
+import { TrafficConeIcon } from './icons/icons.js';
 
-function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
+function DocumentCard({ doc, favoriteDocument, onToggleFavorite, isDraft }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('documentCard');
 
@@ -28,11 +30,15 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
 
     const classes = classNames(
       'DocumentCard-title',
+      { 'DocumentCard-title--draft': isDraft },
       { 'DocumentCard-title--deletedDocument': !userAccessibleDocument }
     );
 
     return (
-      <div className={classes} onClick={handleCardClick}>{title}</div>
+      <div className={classes} onClick={handleCardClick}>
+        <span>{title}</span>
+        {!!isDraft && <div className="DocumentCard-draftIcon">ENTWURF</div>}
+      </div>
     );
   };
 
@@ -54,15 +60,23 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
 
   const actions = [];
 
-  actions.push((
-    <div key="favorite">
-      <FavoriteToggle
-        id={documentId}
-        type={FAVORITE_TYPE.document}
-        onToggle={isFavorite => onToggleFavorite(documentId, isFavorite)}
-        />
-    </div>
-  ));
+  if (isDraft) {
+    actions.push((
+      <div key="delete">
+        <DeleteButton onClick={() => {}} />
+      </div>
+    ));
+  } else {
+    actions.push((
+      <div key="favorite">
+        <FavoriteToggle
+          id={documentId}
+          type={FAVORITE_TYPE.document}
+          onToggle={isFavorite => onToggleFavorite(documentId, isFavorite)}
+          />
+      </div>
+    ));
+  }
 
   if (userAccessibleDocument) {
     const contributors = userAccessibleDocument.contributors?.map(c => c.displayName).join(', ');
@@ -95,7 +109,7 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
   );
 
   return (
-    <Card className="DocumentCard" actions={actions} title={renderTitle()}>
+    <Card className={classNames('DocumentCard', { 'is-draft': isDraft })} actions={actions} title={renderTitle()}>
       <div className={contentClasses} onClick={handleCardClick}>
         <div className="DocumentCard-details">
           <div className="DocumentCard-description">{userAccessibleDocument?.shortDescription}</div>
@@ -107,6 +121,7 @@ function DocumentCard({ doc, favoriteDocument, onToggleFavorite }) {
 
 DocumentCard.propTypes = {
   doc: contributedDocumentMetadataShape,
+  isDraft: PropTypes.bool,
   favoriteDocument: PropTypes.shape({
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
@@ -119,6 +134,7 @@ DocumentCard.propTypes = {
 
 DocumentCard.defaultProps = {
   doc: null,
+  isDraft: false,
   favoriteDocument: null,
   onToggleFavorite: () => {}
 };

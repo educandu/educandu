@@ -1,5 +1,9 @@
 .DocumentCard {
   .m-row-card(2);
+
+  &.is-draft {
+    background-color: @edu-background-color-medium;
+  }
 }
 
 .DocumentCard-title {
@@ -12,6 +16,18 @@
   &.DocumentCard-title--deletedDocument {
     .m-data-unavailable;
   }
+
+  &.DocumentCard-title--draft {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.DocumentCard-draftIcon {
+  color: @edu-warning-color;
+  font-style: italic;
+  font-size: 12px;
+  font-weight: normal;
 }
 
 .DocumentCard-content {

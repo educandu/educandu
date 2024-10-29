@@ -132,13 +132,16 @@ function DocumentsTab({ documents, loading }) {
                 onChange={handleFilterChange}
                 />
               <Checkbox checked={ownDocumentsOnly} onChange={handleOwnDocumentsOnlyChange}>{t('ownDocumentOnly')}</Checkbox>
+              <Checkbox checked={false} onChange={handleOwnDocumentsOnlyChange}>nur Entwürfe</Checkbox>
             </div>
             <div>
               {!!displayedDocuments.length && (
                 <span className="DocumentsTab-counter">{t('documentsCount', { count: displayedDocuments.length })}</span>
               )}
               <div className="DocumentsTab-documents">
-                {pageDocuments.map(doc => (<DocumentCard key={doc._id} doc={doc} />))}
+                {pageDocuments.map((doc, index) => (
+                  <DocumentCard key={doc._id} doc={doc} isDraft={index===0} />
+                ))}
                 {!!showNoMatchingDataEmptyState && (
                   <div className="DocumentsTab-filterEmptyState">
                     <EmptyState

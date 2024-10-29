@@ -113,18 +113,10 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
   }
 
   if ((view === VIEW.display || view === VIEW.comments) && doc.publicContext?.archived) {
-    const documentUrl = doc.publicContext.archiveRedirectionDocumentId
-      ? routes.getDocUrl({ id: doc.publicContext.archiveRedirectionDocumentId })
-      : null;
-
-    const redirectMarkdown = doc.publicContext.archiveRedirectionDocumentId
-      ? (<Markdown>{` ${t('archiveAlertRedirectMarkdown', { documentUrl })}`}</Markdown>)
-      : null;
-
     alerts.push({ message: (
       <div className="DocumentPage-alertWithButton ">
-        <div>{t('archiveAlert')}{redirectMarkdown} </div>
-        <Button onClick={handleUnarchiveClick}>{t('unarchive')}</Button>
+        <div>{t('draftAsContributorAlert')}</div>
+        {/* <Button onClick={handleUnarchiveClick}>Veröffentlichen</Button> */}
       </div>),
     type: ALERT_TYPE.warning });
   }
@@ -1276,57 +1268,48 @@ function Document({ initialState, PageTemplate }) {
       )}
 
       {!!actionsPanelPositionInPx && view === VIEW.display && (
-        <Fragment>
-          {!!isVerifiedDocument && (
-            <div className="DocumentPage-verifiedBadge" style={{ ...verifiedBadgePositionInPx }}>
-              <Tooltip title={t('common:verifiedDocumentBadge')} placement="left">
-                <SafetyCertificateOutlined />
-              </Tooltip>
-            </div>
+        <div className="DocumentPage-actionsPanelWrapper">
+          <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }}>
+            <FloatButton
+              disabled={!user}
+              tooltip={favoriteActionTooltip}
+              icon={<FavoriteToggle useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
+              />
+            <FloatButton
+              icon={<DuplicateIcon />}
+              disabled={!userCanEdit}
+              tooltip={userCanEdit ? t('duplicateDocument') : t('duplicateRestrictionTooltip')}
+              onClick={() => handleDocumentCloneClick()}
+              />
+            <FloatButton
+              icon={<HistoryIcon />}
+              tooltip={t('historyActionTooltip')}
+              onClick={handleHistoryOpen}
+              />
+            <FloatButton
+              icon={<CommentIcon />}
+              tooltip={t('commentsActionTooltip')}
+              onClick={handleDocumentCommentsOpen}
+              />
+            <FloatButton
+              icon={<EditIcon />}
+              disabled={!userCanEdit || !userCanEditDocument}
+              tooltip={!userCanEdit || !userCanEditDocument ? editDocRestrictionTooltip : t('editDocument')}
+              onClick={handleEditOpen}
+              />
+          </FloatButton.Group>
+          {!!userCanManageInputs && (
+          <FloatButton.Group shape="square" style={{ ...inputsPanelPositionInPx }}>
+            <FloatButton
+              className={classNames('DocumentPage-inputsPanelButton', { 'is-animated': hasPendingInputChanges })}
+              badge={{ dot: hasPendingInputChanges }}
+              icon={<InputsIcon />}
+              tooltip={t('inputsActionTooltip')}
+              onClick={handleInputsOpen}
+              />
+          </FloatButton.Group>
           )}
-          <div className="DocumentPage-actionsPanelWrapper">
-            <FloatButton.Group shape="square" style={{ ...actionsPanelPositionInPx }}>
-              <FloatButton
-                disabled={!user}
-                tooltip={favoriteActionTooltip}
-                icon={<FavoriteToggle useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
-                />
-              <FloatButton
-                icon={<DuplicateIcon />}
-                disabled={!userCanEdit}
-                tooltip={userCanEdit ? t('duplicateDocument') : t('duplicateRestrictionTooltip')}
-                onClick={() => handleDocumentCloneClick()}
-                />
-              <FloatButton
-                icon={<HistoryIcon />}
-                tooltip={t('historyActionTooltip')}
-                onClick={handleHistoryOpen}
-                />
-              <FloatButton
-                icon={<CommentIcon />}
-                tooltip={t('commentsActionTooltip')}
-                onClick={handleDocumentCommentsOpen}
-                />
-              <FloatButton
-                icon={<EditIcon />}
-                disabled={!userCanEdit || !userCanEditDocument}
-                tooltip={!userCanEdit || !userCanEditDocument ? editDocRestrictionTooltip : t('editDocument')}
-                onClick={handleEditOpen}
-                />
-            </FloatButton.Group>
-            {!!userCanManageInputs && (
-              <FloatButton.Group shape="square" style={{ ...inputsPanelPositionInPx }}>
-                <FloatButton
-                  className={classNames('DocumentPage-inputsPanelButton', { 'is-animated': hasPendingInputChanges })}
-                  badge={{ dot: hasPendingInputChanges }}
-                  icon={<InputsIcon />}
-                  tooltip={t('inputsActionTooltip')}
-                  onClick={handleInputsOpen}
-                  />
-              </FloatButton.Group>
-            )}
-          </div>
-        </Fragment>
+        </div>
       )}
 
       <Modal

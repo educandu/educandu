@@ -38,7 +38,8 @@ import {
   IconTableImport,
   IconTableDown,
   IconPlayerPlay,
-  IconCircleDashed
+  IconCircleDashed,
+  IconTrafficCone
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -120,6 +121,7 @@ export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRig
 export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
 export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomScan);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
+export const TrafficConeIcon = createIconFromTablerIconComponent(IconTrafficCone);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
 export const FavoriteIconFilled = createIconFromTablerIconComponent(IconHeart, { filled: true });
 export const LoadMusicIcon = createIconFromTablerIconComponents(IconCircleDashed, IconPlayerPlay, { scaleOuter: 1.5, scaleInner: 0.7 });

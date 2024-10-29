@@ -83,6 +83,12 @@ document:
   archiveAlert:
     en: This document is archived and accessible only by users with admin or maintainer role.
     de: Dieses Dokument ist archiviert und nur für Benutzer mit der Rolle Admin oder Maintainer zugänglich.
+  draftAsAuthorAlert:
+    en:
+    de: Dieses Dokument ist ein Entwurf. Du kannst den Link mit anderen Autoren teilen.
+  draftAsContributorAlert:
+    en:
+    de: Dieses Dokument ist ein Entwurf eines anderen Autoren. Du kannst Änderungen beitragen.
   archiveAlertRedirectMarkdown:
     en: The other users are automatically redirected to [this document]({documentUrl}).
     de: Die anderen Benutzer sind zu [diesem Dokument]({documentUrl}) weitergeleitet.

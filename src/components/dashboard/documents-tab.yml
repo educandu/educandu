@@ -12,8 +12,8 @@ documentsTab:
 
       **Hinweis**: Öffentliche Dokumente können nicht gelöscht werden!
   createPublicDocumentMarkdown:
-    en: "Create **public** document"
-    de: "**Öffentliches** Dokument erstellen"
+    en: "Create **draft** document"
+    de: "Dokument entwerfen"
   ownDocumentOnly:
     en: Only documents created by me
     de: Nur Dokumente, die ich erstellt habe
