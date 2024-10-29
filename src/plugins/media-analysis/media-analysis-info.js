@@ -1,5 +1,6 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import MediaAnalysisIcon from './media-analysis-icon.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultContent, validateContent } from './media-analysis-utils.js';
@@ -20,6 +21,10 @@ class MediaAnalysisInfo {
 
   getIcon() {
     return <MediaAnalysisIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.audioVideo];
   }
 
   async resolveDisplayComponent() {

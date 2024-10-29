@@ -1,6 +1,7 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import SelectFieldIcon from './select-field-icon.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { createDefaultContent, validateContent } from './select-field-utils.js';
 
 class SelectFieldInfo {
@@ -14,6 +15,10 @@ class SelectFieldInfo {
 
   getIcon() {
     return <SelectFieldIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.userInput];
   }
 
   async resolveDisplayComponent() {

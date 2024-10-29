@@ -3,6 +3,7 @@ import React from 'react';
 import TextFieldIcon from './text-field-icon.js';
 import { TEXT_FIELD_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 
 class TextFieldInfo {
   static typeName = 'text-field';
@@ -15,6 +16,10 @@ class TextFieldInfo {
 
   getIcon() {
     return <TextFieldIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.userInput];
   }
 
   async resolveDisplayComponent() {

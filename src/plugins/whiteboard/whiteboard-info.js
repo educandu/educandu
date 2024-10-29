@@ -2,8 +2,8 @@ import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import WhiteboardIcon from './whiteboard-icon.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { OPTIMAL_VIEWPORT_WIDTH_FACTOR } from './constants.js';
+import { MEDIA_ASPECT_RATIO, PLUGIN_GROUP } from '../../domain/constants.js';
 
 class WhiteboardInfo {
   static typeName = 'whiteboard';
@@ -16,6 +16,10 @@ class WhiteboardInfo {
 
   getIcon() {
     return <WhiteboardIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.userInput];
   }
 
   async resolveDisplayComponent() {

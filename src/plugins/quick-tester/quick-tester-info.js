@@ -4,6 +4,7 @@ import { TESTS_ORDER } from './constants.js';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import QuickTesterIcon from './quick-tester-icon.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -22,6 +23,10 @@ class QuickTesterInfo {
 
   getIcon() {
     return <QuickTesterIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.interactive];
   }
 
   async resolveDisplayComponent() {

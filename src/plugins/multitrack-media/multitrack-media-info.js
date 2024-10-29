@@ -1,5 +1,6 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import MultitrackMediaIcon from './multitrack-media-icon.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { createDefaultContent, validateContent } from './multitrack-media-utils.js';
@@ -20,6 +21,10 @@ class MultitrackMediaInfo {
 
   getIcon() {
     return <MultitrackMediaIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.audioVideo];
   }
 
   async resolveDisplayComponent() {

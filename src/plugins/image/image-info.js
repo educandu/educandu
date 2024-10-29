@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import ImageIcon from './image-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
@@ -22,6 +23,10 @@ class ImageInfo {
 
   getIcon() {
     return <ImageIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.mostUsed, PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {

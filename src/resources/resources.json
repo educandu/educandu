@@ -3777,6 +3777,30 @@
     "title": {
       "en": "Add section",
       "de": "Abschnitt hinzufügen"
+    },
+    "pluginGroup_most-used": {
+      "en": "Most used",
+      "de": "Häufig genutzt"
+    },
+    "pluginGroup_text-image": {
+      "en": "Text & image",
+      "de": "Text & Bild"
+    },
+    "pluginGroup_audio-video": {
+      "en": "Audio & video",
+      "de": "Audio & Video"
+    },
+    "pluginGroup_user-input": {
+      "en": "User input",
+      "de": "Benutzereingabe"
+    },
+    "pluginGroup_interactive": {
+      "en": "Interactive",
+      "de": "Interaktiv"
+    },
+    "pluginGroup_other": {
+      "en": "Other",
+      "de": "Andere"
     }
   },
   "preciseMultitrackMediaPlayer": {

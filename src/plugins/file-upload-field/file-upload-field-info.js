@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import FileUploadFieldIcon from './file-upload-field-icon.js';
 import { MAXIMUM_ALLOWED_UPLOAD_FILE_COUNT } from './constants.js';
 
@@ -15,6 +16,10 @@ class FileUploadFieldInfo {
 
   getIcon() {
     return <FileUploadFieldIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.userInput];
   }
 
   async resolveDisplayComponent() {

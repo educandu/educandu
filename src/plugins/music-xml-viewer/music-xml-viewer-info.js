@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import MusicXmlViewerIcon from './music-xml-viewer-icon.js';
 import { DEFAULT_ZOOM_VALUE, MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
@@ -14,6 +15,10 @@ class MusicXmlViewerInfo {
 
   getIcon() {
     return <MusicXmlViewerIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.other];
   }
 
   async resolveDisplayComponent() {

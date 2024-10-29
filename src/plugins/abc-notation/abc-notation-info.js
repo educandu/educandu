@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -20,6 +21,10 @@ class AbcNotationInfo {
 
   getIcon() {
     return <AbcNotationIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.other];
   }
 
   async resolveDisplayComponent() {

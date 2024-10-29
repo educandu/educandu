@@ -2,7 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import VideoIcon from './video-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, PLUGIN_GROUP } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
@@ -21,6 +21,10 @@ class VideoInfo {
 
   getIcon() {
     return <VideoIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.mostUsed, PLUGIN_GROUP.audioVideo];
   }
 
   async resolveDisplayComponent() {

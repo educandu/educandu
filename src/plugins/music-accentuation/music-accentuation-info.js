@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { BEHAVIOR, ICON, COLOR_SCHEME } from './constants.js';
 import MusicAccentuationIcon from './music-accentuation-icon.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
@@ -21,6 +22,10 @@ class MusicAccentuationInfo {
 
   getIcon() {
     return <MusicAccentuationIcon />;
+  }
+
+  getGroups() {
+    return [PLUGIN_GROUP.textImage];
   }
 
   async resolveDisplayComponent() {
