@@ -33,6 +33,13 @@ class S3Client {
       });
   }
 
+  headObject(bucketName, objectName) {
+    return this.queue.add(() => this.client.headObject({
+      Bucket: bucketName,
+      Key: objectName
+    }));
+  }
+
   async createBucket(bucketName, region) {
     await this.queue.add(() => this.client.createBucket({
       Bucket: bucketName,

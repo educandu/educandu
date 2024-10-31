@@ -4,6 +4,7 @@ import multerS3 from 'multer-s3';
 import { Router } from 'express';
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
+import { ensureIsArray } from '../utils/array-utils.js';
 import permissions, { hasUserPermission } from './permissions.js';
 import { STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from './constants.js';
 import { createUniqueStorageFileName, getTemporaryUploadsPath } from '../utils/storage-utils.js';
@@ -42,6 +43,20 @@ function createMultipartMiddleware({ cdn, fileField, bodyField = null, multipleF
       : next();
   };
 
+  // This fixes the following multer-s3 bug: https://github.com/anacronw/multer-s3/issues/208
+  const ensureCorrectFileSizeMiddleware = async (req, _res, next) => {
+    try {
+      const filesToCorrect = ensureIsArray(req[fileField]).filter(file => !file.size);
+      for (const file of filesToCorrect) {
+        const headResponse = await cdn.s3Client.headObject(cdn.bucketName, file.key);
+        file.size = headResponse.ContentLength;
+      }
+      return next();
+    } catch (err) {
+      return next(err);
+    }
+  };
+
   const transformBodyMiddleware = (req, _res, next) => {
     try {
       if (bodyField) {
@@ -57,6 +72,7 @@ function createMultipartMiddleware({ cdn, fileField, bodyField = null, multipleF
     checkUploadLimitMiddleware,
     multerMiddleware,
     checkFileExistsMiddleware,
+    ensureCorrectFileSizeMiddleware,
     transformBodyMiddleware
   ]);
 }
