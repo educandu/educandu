@@ -98,8 +98,8 @@ const getSanitizedQueryFromRequest = request => {
   return {
     filter: (query.filter || '').trim(),
     tagCategoryFilter: Object.values(TAG_CATEGORY_FILTER).includes(query.tagCategoryFilter) ? query.tagCategoryFilter : TAG_CATEGORY_FILTER.documentsAndMedia,
-    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.name,
-    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.asc,
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.frequency,
+    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
     page: !isNaN(pageNumber) ? pageNumber : 1,
     pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
   };
