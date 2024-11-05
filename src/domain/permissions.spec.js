@@ -76,7 +76,6 @@ describe('permissions', () => {
           permissions.BROWSE_STORAGE,
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
-          permissions.VIEW_USERS,
           permissions.MANAGE_PUBLIC_CONTENT
         ]);
       });
@@ -94,8 +93,8 @@ describe('permissions', () => {
           permissions.BROWSE_STORAGE,
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
-          permissions.VIEW_USERS,
           permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.BROWSE_USERS,
           permissions.VIEW_STATISTICS,
           permissions.DELETE_PUBLIC_CONTENT,
           permissions.MANAGE_ASSIGNED_EDITORS,
@@ -118,8 +117,8 @@ describe('permissions', () => {
           permissions.BROWSE_STORAGE,
           permissions.DELETE_OWN_PRIVATE_CONTENT,
           permissions.PROTECT_OWN_PUBLIC_CONTENT,
-          permissions.VIEW_USERS,
           permissions.MANAGE_PUBLIC_CONTENT,
+          permissions.BROWSE_USERS,
           permissions.VIEW_STATISTICS,
           permissions.DELETE_PUBLIC_CONTENT,
           permissions.MANAGE_ASSIGNED_EDITORS,

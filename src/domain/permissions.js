@@ -1,6 +1,6 @@
 import { ROLE } from './constants.js';
 
-const VIEW_USERS = 'view-users';
+const BROWSE_USERS = 'browse-users';
 const MANAGE_USERS = 'manage-users';
 const MANAGE_SETUP = 'manage-setup';
 const CREATE_CONTENT = 'create-content';
@@ -32,7 +32,6 @@ const editorPermissions = [
   ...new Set([
     ...userPermissions,
     ...accreditedAuthorPermissions,
-    VIEW_USERS,
     MANAGE_PUBLIC_CONTENT
   ])
 ];
@@ -42,6 +41,7 @@ const maintainerPermissions = [
     ...userPermissions,
     ...accreditedAuthorPermissions,
     ...editorPermissions,
+    BROWSE_USERS,
     VIEW_STATISTICS,
     DELETE_PUBLIC_CONTENT,
     MANAGE_ASSIGNED_EDITORS,
@@ -81,7 +81,7 @@ export function getUserPermissions(user) {
 }
 
 export default {
-  VIEW_USERS,
+  BROWSE_USERS,
   MANAGE_USERS,
   MANAGE_SETUP,
   CREATE_CONTENT,

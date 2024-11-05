@@ -633,7 +633,7 @@ class UserController {
 
     router.get(
       '/api/v1/users/search',
-      needsPermission(permissions.VIEW_USERS),
+      needsPermission(permissions.BROWSE_USERS),
       validateQuery(getUsersBySearchQuerySchema),
       (req, res) => this.handleGetUsersBySearch(req, res)
     );
