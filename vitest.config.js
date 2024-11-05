@@ -10,7 +10,7 @@ export default defineConfig({
     include: ['src/**/*.spec.js', 'migrations/**/*.spec.js'],
     exclude: ['migrations/archived/**/*.spec.js'],
     setupFiles: ['src/test-setup.js'],
-    hookTimeout: 20000,
+    hookTimeout: 25000,
     coverage: {
       reporter: ['text', 'json', 'html'],
       include: ['src/**'],

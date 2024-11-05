@@ -47,7 +47,7 @@ class ClientDataMappingService {
       accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
     };
 
-    if (hasUserPermission(viewingUser, permissions.VIEW_USERS)) {
+    if (hasUserPermission(viewingUser, permissions.MANAGE_USERS)) {
       mappedViewedUser.email = viewedUser.email;
     }
 
@@ -540,7 +540,7 @@ class ClientDataMappingService {
       displayName: user.displayName
     };
 
-    if (grantedPermissions.includes(permissions.VIEW_USERS)) {
+    if (grantedPermissions.includes(permissions.MANAGE_USERS)) {
       mappedUser.email = user.email;
     }
 
