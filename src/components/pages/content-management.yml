@@ -1,7 +1,7 @@
 contentManagement:
   pageSubtitle:
-    en: Exclusive for editor and maintainer roles.
-    de: Ausschließlich für Redakteur- und Maintainer-Rollen.
+    en: Exclusive for roles starting from editor
+    de: Ausschließlich für Rollen ab Redakteur
   documentsTabTitle:
     en: Documents
     de: Dokumente

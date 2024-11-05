@@ -319,8 +319,9 @@ function Dashboard({ PageTemplate }) {
           </div>
           <div className="DashboardPage-profileInfo">
             <div className="u-page-title">{user.displayName}</div>
-            <div className="DashboardPage-profileRole">
-              {t('rolePrefix')} {t(`common:role_${user.role}`)}<UserRoleInfo />
+            <div className="u-page-subtitle">
+              <div>{t('rolePrefix')} {t(`common:role_${user.role}`)}</div>
+              <UserRoleInfo />
             </div>
           </div>
         </section>

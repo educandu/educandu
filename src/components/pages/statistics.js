@@ -1,6 +1,7 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import UserRoleInfo from '../user-role-info.js';
 import React, { useMemo, useState } from 'react';
 import { TAB } from '../statistics/constants.js';
 import { useRequest } from '../request-context.js';
@@ -53,7 +54,10 @@ function Statistics({ PageTemplate }) {
     <PageTemplate>
       <div className="StatisticsPage">
         <h1 className="u-page-title-with-subtitle">{t('pageNames:statistics')}</h1>
-        <div className="u-page-subtitle">{t('pageSubtitle')}</div>
+        <div className="u-page-subtitle">
+          <div>{t('pageSubtitle')}</div>
+          <UserRoleInfo />
+        </div>
         <Tabs
           type="line"
           size="middle"

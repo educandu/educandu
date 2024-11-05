@@ -1,7 +1,7 @@
 statistics:
   pageSubtitle:
-    en: Exclusive for maintainer roles.
-    de: Ausschließlich für Maintainer-Rollen.
+    en: Exclusive for roles starting from maintainer
+    de: Ausschließlich für Rollen ab Maintainer
   tagsTabTitle:
     en: Tags
     de: Tags

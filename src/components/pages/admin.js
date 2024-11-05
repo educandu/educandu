@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
+import UserRoleInfo from '../user-role-info.js';
 import { ToolOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { useBeforeunload } from 'react-beforeunload';
@@ -99,7 +100,10 @@ function Admin({ PageTemplate }) {
     <PageTemplate>
       <div className="AdminPage">
         <h1 className="u-page-title-with-subtitle">{t('pageNames:admin')}</h1>
-        <div className="u-page-subtitle">{t('pageSubtitle')}</div>
+        <div className="u-page-subtitle">
+          <div>{t('pageSubtitle')}</div>
+          <UserRoleInfo />
+        </div>
         <Restricted
           to={[
             permissions.MANAGE_USERS,

@@ -99,7 +99,6 @@ describe('permissions', () => {
           permissions.DELETE_PUBLIC_CONTENT,
           permissions.MANAGE_ASSIGNED_EDITORS,
           permissions.MANAGE_PROTECTED_CONTENT,
-          permissions.MANAGE_DOCUMENT_CATEGORIES,
           permissions.UPLOAD_WITHOUT_RESTRICTION
         ]);
       });
@@ -123,7 +122,6 @@ describe('permissions', () => {
           permissions.DELETE_PUBLIC_CONTENT,
           permissions.MANAGE_ASSIGNED_EDITORS,
           permissions.MANAGE_PROTECTED_CONTENT,
-          permissions.MANAGE_DOCUMENT_CATEGORIES,
           permissions.UPLOAD_WITHOUT_RESTRICTION,
           permissions.MANAGE_USERS,
           permissions.MANAGE_SETUP,

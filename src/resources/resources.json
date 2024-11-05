@@ -57,8 +57,8 @@
   },
   "admin": {
     "pageSubtitle": {
-      "en": "Exclusive for administrator roles.",
-      "de": "Ausschließlich für Administrator-Rollen."
+      "en": "Exclusive for administrator roles",
+      "de": "Ausschließlich für Administrator-Rollen"
     },
     "userAccountsTabTitle": {
       "en": "User accounts",
@@ -1751,8 +1751,8 @@
   },
   "contentManagement": {
     "pageSubtitle": {
-      "en": "Exclusive for editor and maintainer roles.",
-      "de": "Ausschließlich für Redakteur- und Maintainer-Rollen."
+      "en": "Exclusive for roles starting from editor",
+      "de": "Ausschließlich für Rollen ab Redakteur"
     },
     "documentsTabTitle": {
       "en": "Documents",
@@ -4343,8 +4343,8 @@
   },
   "statistics": {
     "pageSubtitle": {
-      "en": "Exclusive for maintainer roles.",
-      "de": "Ausschließlich für Maintainer-Rollen."
+      "en": "Exclusive for roles starting from maintainer",
+      "de": "Ausschließlich für Rollen ab Maintainer"
     },
     "tagsTabTitle": {
       "en": "Tags",
