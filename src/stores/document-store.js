@@ -82,6 +82,17 @@ class DocumentStore {
     return this.collection.find({ slug }, { projection: documentMetadataProjection, session }).toArray();
   }
 
+  getPublicNonArchivedTaggedDocumentsCount({ session } = {}) {
+    return this.collection.countDocuments(
+      {
+        'roomId': null,
+        'publicContext.archived': false,
+        '$expr': { $gt: [{ $size: '$tags' }, 0] }
+      },
+      { session }
+    );
+  }
+
   getPublicNonArchivedDocumentsByContributingUser(contributingUserId, { session } = {}) {
     return this.collection.find(
       {

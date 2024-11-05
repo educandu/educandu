@@ -76,6 +76,11 @@ class MediaLibraryService {
     }));
   }
 
+  async getMediaLibraryItemsCount() {
+    const count = await this.mediaLibraryItemStore.getMediaLibraryItemsCount();
+    return count;
+  }
+
   async getSearchableMediaLibraryItemsByTags(query) {
     const items = await this._getSearchableMediaLibraryItems({ query, searchAlsoInNames: false });
     return items;

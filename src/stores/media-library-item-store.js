@@ -18,6 +18,10 @@ class MediaLibraryItemStore {
     return this.collection.findOne({ url }, { session });
   }
 
+  getMediaLibraryItemsCount({ session } = {}) {
+    return this.collection.countDocuments({}, { session });
+  }
+
   getAllMediaLibraryItems({ session } = {}) {
     return this.collection.find({}, { session }).toArray();
   }
