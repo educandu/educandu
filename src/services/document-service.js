@@ -85,6 +85,11 @@ class DocumentService {
     this.eventStore = eventStore;
   }
 
+  async getSearchableDocumentsCount() {
+    const count = await this.documentStore.getPublicNonArchivedTaggedDocumentsCount();
+    return count;
+  }
+
   async getAllPublicDocumentsExtendedMetadata({ includeArchived } = {}) {
     const conditions = [{ roomId: null }];
     if (includeArchived === false) {

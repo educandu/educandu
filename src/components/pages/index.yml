@@ -2,3 +2,6 @@ index:
   recommendedSearches:
     en: Recommended searches
     de: Empfohlene Suchbegriffe
+  infoText:
+    en: Educandu currently provides {documentsCount, plural, =1 {# document} other {# documents}} and {mediaItemsCount, plural, =1 {# media resource} other {# media resources}}.
+    de: Educandu umfasst derzeit {documentsCount, plural, =1 {# Dokument} other {# Dokumente}} and {mediaItemsCount, plural, =1 {# Medium} other {# Medien}}.

@@ -102,15 +102,12 @@ export function useDateFormat() {
   return useMemo(() => {
     const dateFormat = uiLocale === 'de-DE' ? 'DD.MM.YYYY' : 'MM/DD/YYYY';
     const dateTimeFormat = `${dateFormat}, HH:mm`;
-    const numberFormat = new Intl.NumberFormat(uiLocale);
 
     const formatDate = (date, localePattern = 'L, LT') => date ? moment(date).locale(uiLocale).format(localePattern) : '';
-    const formatNumber = value => numberFormat(value);
     const formatDuration = (...args) => args.length ? moment.duration(...args).locale(uiLocale).humanize() : '';
 
     return {
       formatDate,
-      formatNumber,
       formatDuration,
       dateFormat,
       dateTimeFormat

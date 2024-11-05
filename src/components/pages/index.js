@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 function Index({ HomePageTemplate, initialState }) {
   const { t } = useTranslation('index');
+  const { tags, documentsCount, mediaItemsCount } = initialState;
 
   const handleSearch = searchText => {
     window.location = routes.getSearchUrl({ query: searchText });
@@ -28,11 +29,16 @@ function Index({ HomePageTemplate, initialState }) {
     <HomePageTemplate>
       <div className="IndexPage">
         <SearchBar onSearch={handleSearch} autoFocus />
-        {!!initialState.tags?.length && (
+        {!!documentsCount && !!mediaItemsCount && (
+          <div className="IndexPage-infoText">
+            {t('infoText', { documentsCount, mediaItemsCount })}
+          </div>
+        )}
+        {!!tags?.length && (
           <div className="IndexPage-searchesWrapper">
             <div className="IndexPage-searchesLabel">{t('recommendedSearches')}:</div>
             <div className="IndexPage-searches">
-              {initialState.tags.map(renderTag)}
+              {tags.map(renderTag)}
             </div>
           </div>
         )}
@@ -44,7 +50,9 @@ function Index({ HomePageTemplate, initialState }) {
 Index.propTypes = {
   HomePageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    tags: PropTypes.arrayOf(PropTypes.string)
+    tags: PropTypes.arrayOf(PropTypes.string),
+    documentsCount: PropTypes.number,
+    mediaItemsCount: PropTypes.number
   }).isRequired
 };
 
