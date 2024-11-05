@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
-import { useDateFormat } from '../locale-context.js';
 import SortingSelector from '../sorting-selector.js';
 import { DAY_OF_WEEK } from '../../domain/constants.js';
 import { objectsToCsv } from '../../utils/csv-utils.js';
@@ -17,6 +16,7 @@ import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { ResetIcon, TableExportIcon } from '../icons/icons.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { Table, DatePicker, Checkbox, Button, Tooltip } from 'antd';
+import { useDateFormat, useNumberFormat } from '../locale-context.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
@@ -78,6 +78,7 @@ const getSanitizedQueryFromRequest = request => {
 function ContentManagementDocumentRequestsTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
+  const formatNumber = useNumberFormat();
   const httpClient = useService(HttpClient);
   const { t } = useTranslation('contentManagementDocumentRequestsTab');
   const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
@@ -244,7 +245,7 @@ function ContentManagementDocumentRequestsTab() {
           {title}
         </div>
         <div className='ContentManagementDocumentRequestsTab-titleCellSubtitle'>
-          ({count})
+          ({formatNumber(count)})
         </div>
       </div>
     );
@@ -264,7 +265,7 @@ function ContentManagementDocumentRequestsTab() {
       }),
       dataIndex: 'totalCount',
       key: 'totalCount',
-      render: _totalCount => _totalCount,
+      render: _totalCount => formatNumber(_totalCount),
       align: 'center',
       width: '100px'
     },
@@ -279,7 +280,7 @@ function ContentManagementDocumentRequestsTab() {
           }),
           dataIndex: 'readCount',
           key: 'readCount',
-          render: _readCount => _readCount,
+          render: _readCount => formatNumber(_readCount),
           align: 'center',
           width: '100px'
         },
@@ -290,7 +291,7 @@ function ContentManagementDocumentRequestsTab() {
           }),
           dataIndex: 'writeCount',
           key: 'writeCount',
-          render: _writeCount => _writeCount,
+          render: _writeCount => formatNumber(_writeCount),
           align: 'center',
           width: '100px'
         }
@@ -307,7 +308,7 @@ function ContentManagementDocumentRequestsTab() {
           }),
           dataIndex: 'anonymousCount',
           key: 'anonymousCount',
-          render: _anonymousCount => _anonymousCount,
+          render: _anonymousCount => formatNumber(_anonymousCount),
           align: 'center',
           width: '100px'
         },
@@ -318,7 +319,7 @@ function ContentManagementDocumentRequestsTab() {
           }),
           dataIndex: 'loggedInCount',
           key: 'loggedInCount',
-          render: _loggedInCount => _loggedInCount,
+          render: _loggedInCount => formatNumber(_loggedInCount),
           align: 'center',
           width: '100px'
         }
