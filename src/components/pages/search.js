@@ -15,10 +15,10 @@ import ResourceTypeCell from '../resource-type-cell.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import { SEARCH_RESOURCE_TYPE } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
+import { SEARCH_RESOURCE_TYPE, SORTING_DIRECTION } from '../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -30,11 +30,6 @@ const SORTING_VALUE = {
   title: 'title',
   createdOn: 'createdOn',
   updatedOn: 'updatedOn'
-};
-
-const SORTING_DIRECTION = {
-  asc: 'asc',
-  desc: 'desc'
 };
 
 const getSanitizedQueryFromRequest = request => {

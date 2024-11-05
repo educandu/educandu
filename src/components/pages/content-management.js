@@ -6,12 +6,10 @@ import React, { useMemo, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { TAB } from '../content-management/constants.js';
+import { CategoryIcon, MediaLibraryIcon } from '../icons/icons.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { CategoryIcon, ClickIcon, MediaLibraryIcon, TagIcon } from '../icons/icons.js';
-import ContentManagementTagsTab from '../content-management/content-management-tags-tab.js';
 import ContentManagementDocumentsTab from '../content-management/content-management-documents-tab.js';
 import ContentManagementMediaLibraryTab from '../content-management/content-management-media-library-tab.js';
-import ContentManagementDocumentRequestsTab from '../content-management/content-management-document-requests-tab.js';
 import ContentManagementDocumentCategoriesTab from '../content-management/content-management-document-categories-tab.js';
 
 const determineTab = query => Object.values(TAB)
@@ -45,28 +43,6 @@ function ContentManagement({ PageTemplate }) {
         </div>
       ),
       showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
-    },
-    {
-      key: TAB.tags,
-      icon: <TagIcon />,
-      label: t('tagsTabTitle'),
-      children: (
-        <div className="Tabs-tabPane">
-          <ContentManagementTagsTab />
-        </div>
-      ),
-      showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
-    },
-    {
-      key: TAB.documentRequests,
-      icon: <ClickIcon />,
-      label: t('documentRequestsTabTitle'),
-      children: (
-        <div className="Tabs-tabPane">
-          <ContentManagementDocumentRequestsTab />
-        </div>
-      ),
-      showWhen: hasUserPermission(user, permissions.VIEW_STATISTICS)
     },
     {
       key: TAB.documentCategories,

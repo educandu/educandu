@@ -14,6 +14,9 @@ pageNames:
   contentManagement:
     en: Content management
     de: Content Management
+  statistics:
+    en: Statistics
+    de: Statistik
   userProfile:
     en: Profile
     de: Profil

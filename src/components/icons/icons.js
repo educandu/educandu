@@ -38,7 +38,9 @@ import {
   IconTableImport,
   IconTableDown,
   IconPlayerPlay,
-  IconCircleDashed
+  IconCircleDashed,
+  IconReportSearch,
+  IconUserEdit
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -111,6 +113,7 @@ export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);
 export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);
 export const TableExportIcon = createIconFromTablerIconComponent(IconTableDown);
+export const StatisticsIcon = createIconFromTablerIconComponent(IconReportSearch);
 export const ExitFullscreenIcon = createIconFromTablerIconComponent(IconMinimize);
 export const FillColorIcon = createIconFromTablerIconComponent(IconBucketDroplet);
 export const ChevronLeftIcon = createIconFromTablerIconComponent(IconChevronLeft);
@@ -119,6 +122,7 @@ export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximiz
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
 export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomScan);
+export const UserContributionsIcon = createIconFromTablerIconComponent(IconUserEdit);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
 export const FavoriteIconFilled = createIconFromTablerIconComponent(IconHeart, { filled: true });

@@ -61,6 +61,15 @@ class MediaLibraryController {
     return res.send({ mediaLibraryItems: mappedMediaLibraryItems });
   }
 
+  async handleGetMediaLibraryItemsForStatistics(req, res) {
+    const { user } = req;
+
+    const mediaLibraryItems = await this.mediaLibraryService.getAllMediaLibraryItems();
+    const mappedMediaLibraryItems = await this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user);
+
+    return res.send({ mediaLibraryItems: mappedMediaLibraryItems });
+  }
+
   async handleFindMediaLibraryItemByUrl(req, res) {
     const { user } = req;
     const { url } = req.params;
@@ -136,6 +145,12 @@ class MediaLibraryController {
       '/api/v1/media-library/items/content-management',
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
       (req, res) => this.handleGetMediaLibraryItemsForContentManagement(req, res)
+    );
+
+    router.get(
+      '/api/v1/media-library/items/statistics',
+      needsPermission(permissions.VIEW_STATISTICS),
+      (req, res) => this.handleGetMediaLibraryItemsForStatistics(req, res)
     );
 
     router.get(

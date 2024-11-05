@@ -16,6 +16,7 @@ import PdfJsApiController from './pdfjs-api-controller.js';
 import DashboardController from './dashboard-controller.js';
 import UserAgentController from './user-agent-controller.js';
 import ComparisonController from './comparison-controller.js';
+import StatisticsController from './statistics-controller.js';
 import StoragePlanController from './storage-plan-controller.js';
 import NotificationController from './notification-controller.js';
 import MediaLibraryController from './media-library-controller.js';
@@ -55,6 +56,7 @@ const pageAndApiControllers = [
   DocumentRequestController,
   DocumentCategoryController,
   ContentManagementController,
+  StatisticsController,
   NotificationController,
   RecentContributionsController
 ];

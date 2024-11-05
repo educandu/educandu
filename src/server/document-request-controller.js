@@ -6,7 +6,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import { parseNumberArrayFromCsv, parseDate } from '../utils/query-utils.js';
 import DocumentRequestService from '../services/document-request-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { getDocumentRequestsForContentManagementQuerySchema } from '../domain/schemas/document-request-schemas.js';
+import { getDocumentRequestsForStatisticsQuerySchema } from '../domain/schemas/document-request-schemas.js';
 
 class DocumentController {
   static dependencies = [
@@ -28,7 +28,7 @@ class DocumentController {
     this.pageRenderer = pageRenderer;
   }
 
-  async handleGetDocumentRequestsForContentManagement(req, res) {
+  async handleGetDocumentRequestsForStatistics(req, res) {
     const { registeredFrom, registeredUntil, daysOfWeek } = req.query;
 
     const parsedRegisteredFrom = parseDate(registeredFrom);
@@ -48,10 +48,10 @@ class DocumentController {
 
   registerApi(router) {
     router.get(
-      '/api/v1/document-requests/content-management',
-      validateQuery(getDocumentRequestsForContentManagementQuerySchema),
+      '/api/v1/document-requests/statistics',
+      validateQuery(getDocumentRequestsForStatisticsQuerySchema),
       needsPermission(permissions.VIEW_STATISTICS),
-      (req, res) => this.handleGetDocumentRequestsForContentManagement(req, res)
+      (req, res) => this.handleGetDocumentRequestsForStatistics(req, res)
     );
   }
 }
