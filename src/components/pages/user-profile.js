@@ -56,11 +56,11 @@ export default function UserProfile({ PageTemplate, initialState }) {
           <div className="UserProfilePage-profileAvatar">
             <Avatar className="u-avatar" shape="circle" size={AVATAR_SIZE_BIG} src={user.avatarUrl} alt={user.displayName} />
           </div>
+          <div className="UserProfilePage-profileButtons">
+            <FavoriteToggle type={FAVORITE_TYPE.user} id={user._id} showAsButton />
+          </div>
           <div className="UserProfilePage-profileTitle">
             <div className="u-page-title">{user.displayName}</div>
-            <div className="UserProfilePage-profileStar">
-              <FavoriteToggle type={FAVORITE_TYPE.user} id={user._id} />
-            </div>
           </div>
           <div className="UserProfilePage-profileOrganization">{user.organization}</div>
           <section className="UserProfilePage-profileOverview">

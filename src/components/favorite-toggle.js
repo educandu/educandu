@@ -1,6 +1,6 @@
-import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Button, Tooltip } from 'antd';
 import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ function getIsSet(user, type, id) {
   return !!user?.favorites.find(x => x.type === type && x.id === id);
 }
 
-function FavoriteToggle({ type, id, useTooltip, disabled, onToggle }) {
+function FavoriteToggle({ type, id, useTooltip, showAsButton, disabled, onToggle }) {
   const user = useUser();
   const setUser = useSetUser();
   const getCurrentUrl = useGetCurrentUrl();
@@ -66,14 +66,27 @@ function FavoriteToggle({ type, id, useTooltip, disabled, onToggle }) {
     </div>
   );
 
+  const renderFavoriteButton = () => (
+    <Button
+      icon={
+        <div className={classes}>
+          {isSet ? <FavoriteIconFilled /> : <FavoriteIcon />}
+        </div>
+      }
+      onClick={handleClick}
+      />
+  );
+
+  const renderFavoriteIconOrButton = showAsButton ? renderFavoriteButton : renderFavoriteIcon;
+
   return (
     <Fragment>
       {!!useTooltip && (
         <Tooltip title={isSet ? t('common:removeFavorite') : t('common:addFavorite')}>
-          {renderFavoriteIcon()}
+          {renderFavoriteIconOrButton()}
         </Tooltip>
       )}
-      {!useTooltip && renderFavoriteIcon()}
+      {!useTooltip && renderFavoriteIconOrButton()}
     </Fragment>
   );
 }
@@ -83,12 +96,14 @@ FavoriteToggle.propTypes = {
   id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   useTooltip: PropTypes.bool,
+  showAsButton: PropTypes.bool,
   onToggle: PropTypes.func
 };
 
 FavoriteToggle.defaultProps = {
   disabled: false,
   useTooltip: true,
+  showAsButton: false,
   onToggle: () => {}
 };
 
