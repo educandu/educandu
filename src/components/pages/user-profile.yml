@@ -1,7 +1,16 @@
 userProfile:
-  contactUserTooltip:
-    en: Send a contact request
-    de: Eine Kontaktanfrage schicken
+  sendContactRequest:
+    en: Send contact request
+    de: Kontaktanfrage schicken
+  contactRequestModalInfoMarkdown:
+    en: User **{displayName}** will receive an email about your intention to get in contact. Provide an email address to which they can write you.
+    de: Benutzer **{displayName}** bekommt eine E-Mail mit deiner Absicht um Kontakt aufzunehmen. Gib eine E-Mail-Adresse, an die der Benutzer dir schreiben kann.
+  contactEmailAddressLabel:
+    en: Your email address
+    de: Deine E-Mail-Adresse
+  contactRequestModalOkButton:
+    en: Send
+    de: Schicken
   contactUserDisabledTooltip:
     en: You have already sent a contact request on {date}
     de: Du hast schon am {date} eine Kontaktanfrage geschickt

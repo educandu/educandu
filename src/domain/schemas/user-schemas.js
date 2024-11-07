@@ -79,6 +79,11 @@ export const favoriteBodySchema = joi.object({
   id: idOrKeySchema.required()
 });
 
+export const contactRequestBodySchema = joi.object({
+  toUserId: idOrKeySchema.required(),
+  contactEmailAddress: joi.string().required()
+});
+
 export const hiddenRoomsBodySchema = joi.object({
   roomId: idOrKeySchema.required()
 });

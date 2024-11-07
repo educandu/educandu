@@ -2878,7 +2878,7 @@
     },
     "roomInvitationEmail.subject": {
       "en": "You have been invited to a room",
-      "de": "Du wurdest in einen Raum eingeladen."
+      "de": "Du wurdest in einen Raum eingeladen"
     },
     "roomInvitationEmail.text": {
       "en": "Hello!\n\nUser {ownerName} has invited you to the room {roomName}.\nTo accept the invitation, please follow this link: {invitationLink}\nThe link remains valid for {days, plural, =1 {one day} other {# days}}.\n",
@@ -2947,6 +2947,18 @@
     "roomMessageEmail.markdown": {
       "en": "Hello {userDisplayName}!\n\nA new message was just posted in this {appName} room: [{roomName}]({roomLink}).\n",
       "de": "Hallo {userDisplayName}!\n\nEine neue Nachricht wurde in diesem {appName}-Raum gepostet: [{roomName}]({roomLink}).\n"
+    },
+    "contactRequestEmail.subject": {
+      "en": "You have received a contact request",
+      "de": "Du hast eine Kontaktanfrage bekommen"
+    },
+    "contactRequestEmail.text": {
+      "en": "Hello!\n\nUser {displayName} would like to get in contact with you.\nYou can write them at {contactEmailAddress}.\n",
+      "de": "Hallo!\n\nBenutzer {displayName} möchte mit dir Kontakt aufnehmen.\nDu kannst diesen Benutzer unter {contactEmailAddress} anschreiben.\n"
+    },
+    "contactRequestEmail.markdown": {
+      "en": "Hello!\n\nUser **{displayName}** would like to get in contact with you. \\\nYou can write them at <{contactEmailAddress}>.\n",
+      "de": "Hallo!\n\nBenutzer **{displayName}** möchte mit dir Kontakt aufnehmen. \\\nDu kannst diesen Benutzer unter <{contactEmailAddress}> anschreiben.\n"
     }
   },
   "markdown": {
@@ -5044,9 +5056,21 @@
     }
   },
   "userProfile": {
-    "contactUserTooltip": {
-      "en": "Send a contact request",
-      "de": "Eine Kontaktanfrage schicken"
+    "sendContactRequest": {
+      "en": "Send contact request",
+      "de": "Kontaktanfrage schicken"
+    },
+    "contactRequestModalInfoMarkdown": {
+      "en": "User **{displayName}** will receive an email about your intention to get in contact. Provide an email address to which they can write you.",
+      "de": "Benutzer **{displayName}** bekommt eine E-Mail mit deiner Absicht um Kontakt aufzunehmen. Gib eine E-Mail-Adresse, an die der Benutzer dir schreiben kann."
+    },
+    "contactEmailAddressLabel": {
+      "en": "Your email address",
+      "de": "Deine E-Mail-Adresse"
+    },
+    "contactRequestModalOkButton": {
+      "en": "Send",
+      "de": "Schicken"
     },
     "contactUserDisabledTooltip": {
       "en": "You have already sent a contact request on {date}",

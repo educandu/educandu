@@ -83,7 +83,7 @@ mailService:
       Der Code bleibt {minutes, plural, =1 {eine Minute} other {# Minuten}} gültig.
   roomInvitationEmail.subject:
     en: You have been invited to a room
-    de: Du wurdest in einen Raum eingeladen.
+    de: Du wurdest in einen Raum eingeladen
   roomInvitationEmail.text:
     en: |
       Hello!
@@ -234,3 +234,28 @@ mailService:
       Hallo {userDisplayName}!
 
       Eine neue Nachricht wurde in diesem {appName}-Raum gepostet: [{roomName}]({roomLink}).
+  contactRequestEmail.subject:
+    en: You have received a contact request
+    de: Du hast eine Kontaktanfrage bekommen
+  contactRequestEmail.text:
+    en: |
+      Hello!
+
+      User {displayName} would like to get in contact with you.
+      You can write them at {contactEmailAddress}.
+    de: |
+      Hallo!
+
+      Benutzer {displayName} möchte mit dir Kontakt aufnehmen.
+      Du kannst diesen Benutzer unter {contactEmailAddress} anschreiben.
+  contactRequestEmail.markdown:
+    en: |
+      Hello!
+
+      User **{displayName}** would like to get in contact with you. \
+      You can write them at <{contactEmailAddress}>.
+    de: |
+      Hallo!
+
+      Benutzer **{displayName}** möchte mit dir Kontakt aufnehmen. \
+      Du kannst diesen Benutzer unter <{contactEmailAddress}> anschreiben.
