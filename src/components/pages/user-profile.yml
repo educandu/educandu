@@ -12,8 +12,8 @@ userProfile:
     en: Send
     de: Schicken
   contactUserDisabledTooltip:
-    en: You have already sent a contact request on {date}
-    de: Du hast schon am {date} eine Kontaktanfrage geschickt
+    en: You have already sent a contact request on {date}. You can try again after {retryInDays, plural, =1 {one day} other {# days}}.
+    de: Du hast schon am {date} eine Kontaktanfrage geschickt. Du kannst nochmal nach {retryInDays, plural, =1 {einem Tag} other {# Tage}} versuchen.
   documentsHeadline:
     en: Created documents
     de: Erstellte Dokumente

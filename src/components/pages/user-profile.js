@@ -15,8 +15,8 @@ import { publicUserShape } from '../../ui/default-prop-types.js';
 import { Avatar, Button, Form, Input, Modal, Tooltip } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import { AVATAR_SIZE_BIG, FAVORITE_TYPE } from '../../domain/constants.js';
 import { useDebouncedFetchingState, useGetCurrentUrl } from '../../ui/hooks.js';
+import { AVATAR_SIZE_BIG, CONTACT_REQUEST_EXPIRATION_IN_DAYS, FAVORITE_TYPE } from '../../domain/constants.js';
 
 const DOCUMENTS_BATCH_SIZE = 8;
 
@@ -103,7 +103,7 @@ export default function UserProfile({ PageTemplate, initialState }) {
   const nextBatchSize = Math.min(DOCUMENTS_BATCH_SIZE, notShownDocumentsCount);
 
   const contactUserTooltip = contactRequestSentOn
-    ? t('contactUserDisabledTooltip', { date: formatDate(contactRequestSentOn) })
+    ? t('contactUserDisabledTooltip', { date: formatDate(contactRequestSentOn), retryInDays: CONTACT_REQUEST_EXPIRATION_IN_DAYS })
     : t('sendContactRequest');
 
   return (
