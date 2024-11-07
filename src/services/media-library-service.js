@@ -45,6 +45,10 @@ class MediaLibraryService {
     this.settingStore = settingStore;
   }
 
+  getAllMediaLibraryItems() {
+    return this.mediaLibraryItemStore.getAllMediaLibraryItems();
+  }
+
   async getAllMediaLibraryItemsWithUsage() {
     const [
       items,

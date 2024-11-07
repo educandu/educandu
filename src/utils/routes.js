@@ -9,6 +9,7 @@ const searchPath = '/search';
 const batchesPath = '/batches';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
+const statisticsPath = '/statistics';
 const resetPasswordPath = '/reset-password';
 const contentManagementPath = '/content-management';
 const recentContributionsPath = '/recent-contributions';
@@ -66,6 +67,11 @@ function getRecentContributionsUrl({ tab, page, pageSize } = {}) {
 function getContentManagementUrl(tab, params) {
   const queryString = urlUtils.composeQueryString({ tab, ...params });
   return queryString ? `${contentManagementPath}?${queryString}` : contentManagementPath;
+}
+
+function getStatisticsUrl(tab, params) {
+  const queryString = urlUtils.composeQueryString({ tab, ...params });
+  return queryString ? `${statisticsPath}?${queryString}` : statisticsPath;
 }
 
 function getAdminUrl({ tab } = {}) {
@@ -172,6 +178,7 @@ function isConnectExternalAccountPath(path) {
 export default {
   getUserProfileUrl,
   getContentManagementUrl,
+  getStatisticsUrl,
   getDocUrl,
   getDocumentInputUrl,
   getDocumentCategoryUrl,

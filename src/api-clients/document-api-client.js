@@ -43,6 +43,15 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  getStatisticsDocuments() {
+    return this.httpClient
+      .get(
+        '/api/v1/docs/statistics',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getDocumentRevisions(documentId) {
     return this.httpClient
       .get(

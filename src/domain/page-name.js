@@ -12,6 +12,7 @@ export const PAGE_NAME = {
   register: 'register',
   dashboard: 'dashboard',
   comparison: 'comparison',
+  statistics: 'statistics',
   userProfile: 'user-profile',
   documentInput: 'document-input',
   resetPassword: 'reset-password',

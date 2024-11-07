@@ -3,50 +3,48 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import UserRoleInfo from '../user-role-info.js';
 import React, { useMemo, useState } from 'react';
+import { TAB } from '../statistics/constants.js';
 import { useRequest } from '../request-context.js';
-import FileIcon from '../icons/general/file-icon.js';
-import { TAB } from '../content-management/constants.js';
-import { CategoryIcon, MediaLibraryIcon } from '../icons/icons.js';
-import ContentManagementDocumentsTab from '../content-management/content-management-documents-tab.js';
-import ContentManagementMediaLibraryTab from '../content-management/content-management-media-library-tab.js';
-import ContentManagementDocumentCategoriesTab from '../content-management/content-management-document-categories-tab.js';
+import StatisticsTagsTab from '../statistics/statistics-tags-tab.js';
+import { ClickIcon, TagIcon, UserContributionsIcon } from '../icons/icons.js';
+import StatisticsDocumentRequestsTab from '../statistics/statistics-document-requests-tab.js';
 
 const determineTab = query => Object.values(TAB)
   .find(val => val === query) || Object.keys(TAB)[0];
 
-function ContentManagement({ PageTemplate }) {
+function Statistics({ PageTemplate }) {
   const request = useRequest();
-  const { t } = useTranslation('contentManagement');
+  const { t } = useTranslation('statistics');
   const [currentTab, setCurrentTab] = useState(determineTab(request.query.tab));
 
   const tabItems = useMemo(() => [
     {
-      key: TAB.documents,
-      icon: <FileIcon />,
-      label: t('documentsTabTitle'),
+      key: TAB.tags,
+      icon: <TagIcon />,
+      label: t('tagsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <ContentManagementDocumentsTab />
+          <StatisticsTagsTab />
         </div>
       )
     },
     {
-      key: TAB.mediaLibrary,
-      icon: <MediaLibraryIcon />,
-      label: t('mediaLibraryTabTitle'),
+      key: TAB.documentRequests,
+      icon: <ClickIcon />,
+      label: t('documentRequestsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <ContentManagementMediaLibraryTab />
+          <StatisticsDocumentRequestsTab />
         </div>
       )
     },
     {
-      key: TAB.documentCategories,
-      icon: <CategoryIcon />,
-      label: t('documentCategoriesTabTitle'),
+      key: TAB.userContributions,
+      icon: <UserContributionsIcon />,
+      label: t('userContributionsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <ContentManagementDocumentCategoriesTab />
+          <div />
         </div>
       )
     }
@@ -54,8 +52,8 @@ function ContentManagement({ PageTemplate }) {
 
   return (
     <PageTemplate>
-      <div className="ContentManagementPage">
-        <h1 className="u-page-title-with-subtitle">{t('pageNames:contentManagement')}</h1>
+      <div className="StatisticsPage">
+        <h1 className="u-page-title-with-subtitle">{t('pageNames:statistics')}</h1>
         <div className="u-page-subtitle">
           <div>{t('pageSubtitle')}</div>
           <UserRoleInfo />
@@ -74,8 +72,8 @@ function ContentManagement({ PageTemplate }) {
   );
 }
 
-ContentManagement.propTypes = {
+Statistics.propTypes = {
   PageTemplate: PropTypes.func.isRequired
 };
 
-export default ContentManagement;
+export default Statistics;

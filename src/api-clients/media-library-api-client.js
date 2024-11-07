@@ -93,6 +93,15 @@ class MediaLibraryApiClient {
       )
       .then(res => res.data);
   }
+
+  getStatisticsMediaLibraryItems() {
+    return this.httpClient
+      .get(
+        '/api/v1/media-library/items/statistics',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default MediaLibraryApiClient;

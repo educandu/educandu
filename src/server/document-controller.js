@@ -227,7 +227,7 @@ class DocumentController {
     return res.send({ documents: mappedDocuments });
   }
 
-  async handleGetDocsForContentManagement(req, res) {
+  async handleGetDocsForContentManagementOrStatistics(req, res) {
     const { user } = req;
 
     const documents = await this.documentService.getAllPublicDocumentsExtendedMetadata({ includeArchived: true });
@@ -381,7 +381,13 @@ class DocumentController {
     router.get(
       '/api/v1/docs/content-management',
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
-      (req, res) => this.handleGetDocsForContentManagement(req, res)
+      (req, res) => this.handleGetDocsForContentManagementOrStatistics(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/statistics',
+      needsPermission(permissions.VIEW_STATISTICS),
+      (req, res) => this.handleGetDocsForContentManagementOrStatistics(req, res)
     );
 
     router.get(

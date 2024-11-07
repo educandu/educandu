@@ -1,4 +1,5 @@
 import by from 'thenby';
+import { TAB } from './constants.js';
 import { Button, Table } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
@@ -7,18 +8,17 @@ import TagsExpander from '../tags-expander.js';
 import { useRequest } from '../request-context.js';
 import EditIcon from '../icons/general/edit-icon.js';
 import SortingSelector from '../sorting-selector.js';
-import { SORTING_DIRECTION, TAB } from './constants.js';
 import { replaceItem } from '../../utils/array-utils.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import DocumentBadgesCell from '../document-bagdes-cell.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
-import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
+import { DOC_VIEW_QUERY_PARAM, SORTING_DIRECTION } from '../../domain/constants.js';
 import DocumentRatingApiClient from '../../api-clients/document-rating-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 

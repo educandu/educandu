@@ -1,11 +1,12 @@
 import by from 'thenby';
+import { TAB } from './constants.js';
 import { Select, Table, Tag } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
-import { SORTING_DIRECTION, TAB } from './constants.js';
+import { SORTING_DIRECTION } from '../../domain/constants.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
@@ -113,10 +114,10 @@ function getMediaLibraryItemsModalDefaultState() {
   };
 }
 
-function ContentManagementTagsTab() {
+function StatisticsTagsTab() {
   const request = useRequest();
   const [documents, setDocuments] = useState([]);
-  const { t } = useTranslation('contentManagementTagsTab');
+  const { t } = useTranslation('statisticsTagsTab');
   const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
@@ -138,8 +139,8 @@ function ContentManagementTagsTab() {
       setFetchingData(true);
 
       const [documentApiResponse, mediaLibraryApiResponse] = await Promise.all([
-        documentApiClient.getContentManagementDocuments(),
-        mediaLibraryApiClient.getContentManagementMediaLibraryItems()
+        documentApiClient.getStatisticsDocuments(),
+        mediaLibraryApiClient.getStatisticsMediaLibraryItems()
       ]);
 
       setDocuments(documentApiResponse.documents);
@@ -171,7 +172,7 @@ function ContentManagementTagsTab() {
       direction: sorting.direction
     };
 
-    history.replaceState(null, '', routes.getContentManagementUrl(TAB.tags, queryParams));
+    history.replaceState(null, '', routes.getStatisticsUrl(TAB.tags, queryParams));
   }, [filter, tagCategoryFilter, sorting, pagination]);
 
   const tagCategoryFilterOptions = useMemo(() => {
@@ -227,11 +228,11 @@ function ContentManagementTagsTab() {
 
   const renderExpandedRow = row => {
     return (
-      <div className="ContentManagementTagsTab-expandedRow">
+      <div className="StatisticsTagsTab-expandedRow">
         {!!row.documents.length && (
           <Fragment>
-            <div className="ContentManagementTagsTab-expandedRowHeader">{t('documents')}:</div>
-            <ul className="ContentManagementTagsTab-documentList">
+            <div className="StatisticsTagsTab-expandedRowHeader">{t('documents')}:</div>
+            <ul className="StatisticsTagsTab-documentList">
               {row.documents.map(doc => (
                 <li key={doc._id}>
                   <a href={routes.getDocUrl({ id: doc._id, slug: doc.slug })}>{doc.title}</a>
@@ -242,8 +243,8 @@ function ContentManagementTagsTab() {
         )}
         {!!row.mediaLibraryItems.length && (
           <Fragment>
-            <div className="ContentManagementTagsTab-expandedRowHeader">{t('mediaLibraryItems')}:</div>
-            <ul className="ContentManagementTagsTab-documentList">
+            <div className="StatisticsTagsTab-expandedRowHeader">{t('mediaLibraryItems')}:</div>
+            <ul className="StatisticsTagsTab-documentList">
               {row.mediaLibraryItems.map(item => (
                 <li key={item._id}>
                   <a href={item.url} onClick={event => handleMediaLibraryItemPreviewClick(item, event)}>{item.name}</a>
@@ -254,12 +255,12 @@ function ContentManagementTagsTab() {
         )}
         {!!row.companionTags.length && (
           <Fragment>
-            <div className="ContentManagementTagsTab-expandedRowHeader">{t('companionTags')}:</div>
-            <div className="ContentManagementTagsTab-companionTags">
+            <div className="StatisticsTagsTab-expandedRowHeader">{t('companionTags')}:</div>
+            <div className="StatisticsTagsTab-companionTags">
               {row.companionTags.map(ctag => (
-                <span key={ctag.name} className="ContentManagementTagsTab-companionTag">
+                <span key={ctag.name} className="StatisticsTagsTab-companionTag">
                   <Tag>{ctag.name}</Tag>
-                  <span className="ContentManagementTagsTab-companionTagFrequency">({ctag.frequency})</span>
+                  <span className="StatisticsTagsTab-companionTagFrequency">({ctag.frequency})</span>
                 </span>
               ))}
             </div>
@@ -288,11 +289,11 @@ function ContentManagementTagsTab() {
   ];
 
   return (
-    <div className="ContentManagementTagsTab">
-      <div className="ContentManagementTagsTab-controls">
+    <div className="StatisticsTagsTab">
+      <div className="StatisticsTagsTab-controls">
         <FilterInput
           size="large"
-          className="ContentManagementTagsTab-textFilter"
+          className="StatisticsTagsTab-textFilter"
           value={filter}
           onChange={handleFilterChange}
           placeholder={t('filterPlaceholder')}
@@ -306,7 +307,7 @@ function ContentManagementTagsTab() {
         <Select
           value={tagCategoryFilter}
           options={tagCategoryFilterOptions}
-          className="ContentManagementTagsTab-tagCategoryFilter"
+          className="StatisticsTagsTab-tagCategoryFilter"
           onChange={setTagCategoryFilter}
           />
       </div>
@@ -328,4 +329,4 @@ function ContentManagementTagsTab() {
   );
 }
 
-export default ContentManagementTagsTab;
+export default StatisticsTagsTab;

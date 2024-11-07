@@ -334,3 +334,8 @@ export const PLUGIN_GROUP = {
   interactive: 'interactive',
   other: 'other'
 };
+
+export const SORTING_DIRECTION = {
+  asc: 'asc',
+  desc: 'desc'
+};

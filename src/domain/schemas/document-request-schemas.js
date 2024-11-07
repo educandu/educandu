@@ -13,7 +13,7 @@ export const documentRequestDBSchema = joi.object({
   registeredOnDayOfWeek: joi.valid(...Object.values(DAY_OF_WEEK)).required()
 });
 
-export const getDocumentRequestsForContentManagementQuerySchema = joi.object({
+export const getDocumentRequestsForStatisticsQuerySchema = joi.object({
   registeredFrom: joi.string(),
   registeredUntil: joi.string(),
   daysOfWeek: joi.string()

@@ -1,0 +1,13 @@
+statistics:
+  pageSubtitle:
+    en: Exclusive for roles starting from maintainer
+    de: Ausschließlich für Rollen ab Maintainer
+  tagsTabTitle:
+    en: Tags
+    de: Tags
+  documentRequestsTabTitle:
+    en: Document requests
+    de: Dokument-Requests
+  userContributionsTabTitle:
+    en: User contributions
+    de: Nutzerbeiträge

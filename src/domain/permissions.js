@@ -11,7 +11,6 @@ const MANAGE_PUBLIC_CONTENT = 'manage-public-content';
 const DELETE_PUBLIC_CONTENT = 'delete-public-content';
 const MANAGE_ASSIGNED_EDITORS = 'manage-assigned-editors';
 const MANAGE_PROTECTED_CONTENT = 'manage-protected-content';
-const MANAGE_DOCUMENT_CATEGORIES = 'manage-document-categories';
 const PROTECT_OWN_PUBLIC_CONTENT = 'protect-own-public-content';
 const DELETE_OWN_PRIVATE_CONTENT = 'delete-own-private-content';
 const DELETE_ANY_PRIVATE_CONTENT = 'delete-any-private-content';
@@ -46,7 +45,6 @@ const maintainerPermissions = [
     DELETE_PUBLIC_CONTENT,
     MANAGE_ASSIGNED_EDITORS,
     MANAGE_PROTECTED_CONTENT,
-    MANAGE_DOCUMENT_CATEGORIES,
     UPLOAD_WITHOUT_RESTRICTION
   ])
 ];
@@ -92,7 +90,6 @@ export default {
   DELETE_PUBLIC_CONTENT,
   MANAGE_ASSIGNED_EDITORS,
   MANAGE_PROTECTED_CONTENT,
-  MANAGE_DOCUMENT_CATEGORIES,
   PROTECT_OWN_PUBLIC_CONTENT,
   DELETE_OWN_PRIVATE_CONTENT,
   DELETE_ANY_PRIVATE_CONTENT,

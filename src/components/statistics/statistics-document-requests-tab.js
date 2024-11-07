@@ -1,5 +1,6 @@
 import by from 'thenby';
 import dayjs from 'dayjs';
+import { TAB } from './constants.js';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
@@ -7,9 +8,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import SortingSelector from '../sorting-selector.js';
-import { DAY_OF_WEEK } from '../../domain/constants.js';
 import { objectsToCsv } from '../../utils/csv-utils.js';
-import { SORTING_DIRECTION, TAB } from './constants.js';
 import HttpClient from '../../api-clients/http-client.js';
 import { replaceItemAt } from '../../utils/array-utils.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
@@ -17,6 +16,7 @@ import { ResetIcon, TableExportIcon } from '../icons/icons.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { Table, DatePicker, Checkbox, Button, Tooltip } from 'antd';
 import { useDateFormat, useNumberFormat } from '../locale-context.js';
+import { DAY_OF_WEEK, SORTING_DIRECTION } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
@@ -75,12 +75,12 @@ const getSanitizedQueryFromRequest = request => {
   };
 };
 
-function ContentManagementDocumentRequestsTab() {
+function StatisticsDocumentRequestsTab() {
   const request = useRequest();
   const { dateFormat } = useDateFormat();
   const formatNumber = useNumberFormat();
   const httpClient = useService(HttpClient);
-  const { t } = useTranslation('contentManagementDocumentRequestsTab');
+  const { t } = useTranslation('statisticsDocumentRequestsTab');
   const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
 
   const daysOfWeekOptions = [
@@ -119,7 +119,7 @@ function ContentManagementDocumentRequestsTab() {
   const fetchData = useCallback(async () => {
     try {
       setFetchingData(true);
-      const apiClientResponse = await documentRequestApiClient.getContentManagementDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek });
+      const apiClientResponse = await documentRequestApiClient.getStatisticsDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek });
       setDocumentRequestCounters(apiClientResponse.documentRequestCounters);
     } finally {
       setFetchingData(false);
@@ -141,7 +141,7 @@ function ContentManagementDocumentRequestsTab() {
       sortingPairs: sortingPairs.map(pair => pair.join('_')).join(',')
     };
 
-    history.replaceState(null, '', routes.getContentManagementUrl(TAB.documentRequests, queryParams));
+    history.replaceState(null, '', routes.getStatisticsUrl(TAB.documentRequests, queryParams));
   }, [filter, sortingPairs, registeredFrom, registeredUntil, daysOfWeek, pagination]);
 
   useEffect(() => {
@@ -232,7 +232,7 @@ function ContentManagementDocumentRequestsTab() {
     const documentUrl = routes.getDocUrl({ id: documentWithCounters._id, slug: documentWithCounters.slug });
 
     return (
-      <a href={documentUrl} className="ContentManagementDocumentRequestsTab-documentTitleCell">
+      <a href={documentUrl} className="StatisticsDocumentRequestsTab-documentTitleCell">
         {_title}
       </a>
     );
@@ -240,11 +240,11 @@ function ContentManagementDocumentRequestsTab() {
 
   const renderColumnTitleWithCountSubtitle = ({ title, count = 0 }) => {
     return (
-      <div className="ContentManagementDocumentRequestsTab-titleCell">
+      <div className="StatisticsDocumentRequestsTab-titleCell">
         <div>
           {title}
         </div>
-        <div className='ContentManagementDocumentRequestsTab-titleCellSubtitle'>
+        <div className='StatisticsDocumentRequestsTab-titleCellSubtitle'>
           ({formatNumber(count)})
         </div>
       </div>
@@ -330,9 +330,9 @@ function ContentManagementDocumentRequestsTab() {
   const canAddSorter = sortingPairs.length < Object.values(SORTING_VALUE).length;
 
   return (
-    <div className="ContentManagementDocumentRequestsTab">
-      <div className="ContentManagementDocumentRequestsTab-controls">
-        <div className="ContentManagementDocumentRequestsTab-controlsColumn">
+    <div className="StatisticsDocumentRequestsTab">
+      <div className="StatisticsDocumentRequestsTab-controls">
+        <div className="StatisticsDocumentRequestsTab-controlsColumn">
           <FilterInput
             size="large"
             value={filter}
@@ -340,7 +340,7 @@ function ContentManagementDocumentRequestsTab() {
             onChange={handleFilterChange}
             placeholder={t('titlePlaceholder')}
             />
-          <div className="ContentManagementDocumentRequestsTab-controlsColumnFilters">
+          <div className="StatisticsDocumentRequestsTab-controlsColumnFilters">
             <RangePicker
               allowClear
               allowEmpty
@@ -358,7 +358,7 @@ function ContentManagementDocumentRequestsTab() {
               value={daysOfWeek}
               disabled={fetchingData}
               options={daysOfWeekOptions}
-              className='ContentManagementDocumentRequestsTab-controlsColumnCheckboxes'
+              className='StatisticsDocumentRequestsTab-controlsColumnCheckboxes'
               onChange={handleDaysOfWeekChange}
               />
           </div>
@@ -367,7 +367,7 @@ function ContentManagementDocumentRequestsTab() {
           {sortingPairs.map((sortingPair, sortingPairIndex) => (
             <Fragment key={sortingPairIndex}>
               {sortingPairIndex > 0 && (
-                <div className='ContentManagementDocumentRequestsTab-sortersSeparator'>
+                <div className='StatisticsDocumentRequestsTab-sortersSeparator'>
                   {t('sortersJoiningText')}
                 </div>
               )}
@@ -380,7 +380,7 @@ function ContentManagementDocumentRequestsTab() {
             </Fragment>
           )
           )}
-          <div className="ContentManagementDocumentRequestsTab-sorterButtons">
+          <div className="StatisticsDocumentRequestsTab-sorterButtons">
             <Button
               size="small"
               disabled={!canAddSorter}
@@ -399,7 +399,7 @@ function ContentManagementDocumentRequestsTab() {
           </div>
         </div>
       </div>
-      <div className="ContentManagementDocumentRequestsTab-csvExportButton">
+      <div className="StatisticsDocumentRequestsTab-csvExportButton">
         <Tooltip title={t('exportAsCsv')}>
           <Button
             icon={<TableExportIcon />}
@@ -423,4 +423,4 @@ function ContentManagementDocumentRequestsTab() {
   );
 }
 
-export default ContentManagementDocumentRequestsTab;
+export default StatisticsDocumentRequestsTab;

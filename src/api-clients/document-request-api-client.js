@@ -8,11 +8,11 @@ class DocumentRequestApiClient {
     this.httpClient = httpClient;
   }
 
-  getContentManagementDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek } = {}) {
+  getStatisticsDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek } = {}) {
     const queryString = urlUtils.composeQueryString({ registeredFrom, registeredUntil, daysOfWeek });
     return this.httpClient
       .get(
-        `/api/v1/document-requests/content-management?${queryString}`,
+        `/api/v1/document-requests/statistics?${queryString}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -6,10 +6,10 @@ import HelpIcon from './icons/main-menu/help-icon.js';
 import UsersIcon from './icons/main-menu/users-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
 import DashboardIcon from './icons/main-menu/dashboard-icon.js';
-import { ContentManagementIcon, CategoryIcon } from './icons/icons.js';
 import AdministrationIcon from './icons/main-menu/administration-icon.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import RecentContributionsIcon from './icons/main-menu/recent-contributions-icon.js';
+import { ContentManagementIcon, CategoryIcon, StatisticsIcon } from './icons/icons.js';
 
 export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, helpPage, documentCategoriesPage }) => {
   return [
@@ -68,6 +68,14 @@ export const getCommonNavigationMenuItems = ({ t, user, notificationsCount, help
       badge: null,
       onClick: () => { window.location = routes.getContentManagementUrl(); },
       showWhen: hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)
+    },
+    {
+      key: 'statistics',
+      label: t('pageNames:statistics'),
+      icon: <div><StatisticsIcon /></div>,
+      badge: null,
+      onClick: () => { window.location = routes.getStatisticsUrl(); },
+      showWhen: hasUserPermission(user, permissions.VIEW_STATISTICS)
     },
     {
       key: 'admin',
