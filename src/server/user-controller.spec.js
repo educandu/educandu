@@ -12,12 +12,14 @@ const { NotFound, BadRequest } = httpErrors;
 
 describe('user-controller', () => {
 
+  const now = new Date();
   const sandbox = createSandbox();
 
   let passwordResetRequestService;
   let requestLimitRecordService;
   let clientDataMappingService;
   let externalAccountService;
+  let contactRequestService;
   let pageRenderer;
   let serverConfig;
   let userService;
@@ -26,6 +28,8 @@ describe('user-controller', () => {
   let sut;
 
   beforeEach(() => {
+    sandbox.useFakeTimers(now);
+
     serverConfig = {};
     userService = {
       createUser: sandbox.stub(),
@@ -58,6 +62,9 @@ describe('user-controller', () => {
       sendRegistrationVerificationEmail: sandbox.stub(),
       sendPasswordResetEmail: sandbox.stub()
     };
+    contactRequestService = {
+      getContactRequestFromUserToUser: sandbox.stub()
+    };
     clientDataMappingService = {
       mapWebsiteUser: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
@@ -77,6 +84,7 @@ describe('user-controller', () => {
       mailService,
       clientDataMappingService,
       roomService,
+      contactRequestService,
       pageRenderer
     );
   });
@@ -104,10 +112,13 @@ describe('user-controller', () => {
     });
 
     describe('when the viewed user exists', () => {
+      let viewedUser;
+      let viewingUser;
+      let contactRequest;
       let mappedViewedUser;
 
       beforeEach(() => {
-        const viewedUser = {
+        viewedUser = {
           _id: uniqueId.create(),
           email: 'educandu@test.com',
           organization: 'Educandu',
@@ -115,7 +126,7 @@ describe('user-controller', () => {
           shortDescription: 'Educandu test user',
           accountClosedOn: new Date()
         };
-        const viewingUser = { _id: uniqueId.create() };
+        viewingUser = { _id: uniqueId.create() };
 
         req = {
           user: viewingUser,
@@ -126,16 +137,46 @@ describe('user-controller', () => {
         mappedViewedUser = cloneDeep(viewedUser);
 
         userService.getUserById.withArgs(viewedUser._id).resolves(viewedUser);
-
         clientDataMappingService.mapWebsitePublicUser.withArgs({ viewingUser, viewedUser }).returns(mappedViewedUser);
-        pageRenderer.sendPage.resolves();
 
-        return sut.handleGetUserProfilePage(req, res);
+        pageRenderer.sendPage.resolves();
       });
 
-      it('should call pageRenderer.sendPage', () => {
-        assert.calledWith(pageRenderer.sendPage, req, res, 'user-profile', {
-          user: mappedViewedUser
+      describe('and a contact request does not exists', () => {
+        beforeEach(() => {
+          contactRequestService.getContactRequestFromUserToUser.withArgs({ fromUserId: viewingUser._id, toUserId: viewedUser._id }).resolves(null);
+
+          return sut.handleGetUserProfilePage(req, res);
+        });
+
+        it('should call pageRenderer.sendPage', () => {
+          assert.calledWith(pageRenderer.sendPage, req, res, 'user-profile', {
+            user: mappedViewedUser,
+            contactRequestSentOn: ''
+          });
+        });
+      });
+
+      describe('and a contact request exists as well', () => {
+        beforeEach(() => {
+          contactRequest = {
+            _id: uniqueId.create(),
+            fromUserId: viewingUser._id,
+            toUserId: viewedUser._id,
+            contactEmailAddress: 'write-me@test.com',
+            createdOn: now
+          };
+
+          contactRequestService.getContactRequestFromUserToUser.withArgs({ fromUserId: viewingUser._id, toUserId: viewedUser._id }).resolves(contactRequest);
+
+          return sut.handleGetUserProfilePage(req, res);
+        });
+
+        it('should call pageRenderer.sendPage', () => {
+          assert.calledWith(pageRenderer.sendPage, req, res, 'user-profile', {
+            user: mappedViewedUser,
+            contactRequestSentOn: contactRequest.createdOn.toISOString()
+          });
         });
       });
     });

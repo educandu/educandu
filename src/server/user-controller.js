@@ -16,6 +16,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import rateLimit from '../domain/rate-limit-middleware.js';
 import SamlConfigService from '../services/saml-config-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import ContactRequestService from '../services/contact-request-service.js';
 import ExternalAccountService from '../services/external-account-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -60,6 +61,7 @@ class UserController {
     MailService,
     ClientDataMappingService,
     RoomService,
+    ContactRequestService,
     PageRenderer,
     SamlConfigService
   ];
@@ -73,6 +75,7 @@ class UserController {
     mailService,
     clientDataMappingService,
     roomService,
+    contactRequestService,
     pageRenderer,
     samlConfigService
   ) {
@@ -82,6 +85,7 @@ class UserController {
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.samlConfigService = samlConfigService;
+    this.contactRequestService = contactRequestService;
     this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
     this.requestLimitRecordService = requestLimitRecordService;
@@ -214,9 +218,10 @@ class UserController {
       throw new NotFound();
     }
 
+    const contactRequest = await this.contactRequestService.getContactRequestFromUserToUser({ fromUserId: viewingUser._id, toUserId: userId });
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.userProfile, { user: mappedViewedUser });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.userProfile, { user: mappedViewedUser, contactRequestSentOn: contactRequest?.createdOn.toISOString() || '' });
   }
 
   async handleGetUsers(req, res) {

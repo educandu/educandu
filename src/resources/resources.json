@@ -5044,6 +5044,14 @@
     }
   },
   "userProfile": {
+    "contactUserTooltip": {
+      "en": "Send a contact request",
+      "de": "Eine Kontaktanfrage schicken"
+    },
+    "contactUserDisabledTooltip": {
+      "en": "You have already sent a contact request on {date}",
+      "de": "Du hast schon am {date} eine Kontaktanfrage geschickt"
+    },
     "documentsHeadline": {
       "en": "Created documents",
       "de": "Erstellte Dokumente"

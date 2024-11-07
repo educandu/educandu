@@ -40,7 +40,8 @@ import {
   IconPlayerPlay,
   IconCircleDashed,
   IconReportSearch,
-  IconUserEdit
+  IconUserEdit,
+  IconSend
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -97,6 +98,7 @@ export const SquareIcon = createIconFromTablerIconComponent(IconSquare);
 export const FavoriteIcon = createIconFromTablerIconComponent(IconHeart);
 export const StarIcon = createIconFromTablerIconComponent(IconStarFilled);
 export const TextIcon = createIconFromTablerIconComponent(IconTypography);
+export const ContactUserIcon = createIconFromTablerIconComponent(IconSend);
 export const ArrowIcon = createIconFromTablerIconComponent(IconArrowRight);
 export const FreeDrawIcon = createIconFromTablerIconComponent(IconBallpen);
 export const RectangleIcon = createIconFromTablerIconComponent(IconSquare);
