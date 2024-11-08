@@ -8,6 +8,7 @@ import { useRequest } from '../request-context.js';
 import StatisticsTagsTab from '../statistics/statistics-tags-tab.js';
 import { ClickIcon, TagIcon, UserContributionsIcon } from '../icons/icons.js';
 import StatisticsDocumentRequestsTab from '../statistics/statistics-document-requests-tab.js';
+import StatisticsUserContributionsTab from '../statistics/statistics-user-contributions-tab.js';
 
 const determineTab = query => Object.values(TAB)
   .find(val => val === query) || Object.keys(TAB)[0];
@@ -44,7 +45,7 @@ function Statistics({ PageTemplate }) {
       label: t('userContributionsTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <div />
+          <StatisticsUserContributionsTab />
         </div>
       )
     }

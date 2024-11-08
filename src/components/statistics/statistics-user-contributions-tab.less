@@ -1,0 +1,78 @@
+.StatisticsUserContributionsTab {
+  .ant-table-thead th::before {
+    height: 80% !important;
+  }
+
+  .ant-table-thead th[colspan] {
+    border-bottom: 1px solid @edu-border-color-light !important;
+  }
+
+  .ant-table-thead th[rowspan="2"]:last-child::before {
+    position: absolute;
+    height: 80%;
+    top: 50%;
+    left: 0;
+    inset-inline-end: 0;
+    width: 1px;
+    background-color: @edu-border-color-light;
+    transform: translateY(-50%);
+    content: "";
+  }
+
+  .ant-table-thead .ant-table-cell {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .ant-table-row .ant-table-cell {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+}
+
+.StatisticsUserContributionsTab-controls {
+  margin-bottom: 10px;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: 5fr 3fr auto;
+  grid-template-rows: auto;
+  align-items: center;
+
+  @media @edu-media-phone {
+    grid-template-columns: 100%;
+    grid-template-rows: repeat(3, auto);
+  }
+}
+
+.StatisticsUserContributionsTab-csvExportButton {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.StatisticsUserContributionsTab-titleCell {
+  line-height: @edu-line-height-narrow;
+}
+
+.StatisticsUserContributionsTab-titleCellSubtitle {
+  font-size: @edu-font-size-xs;
+  color: @edu-text-color-secondary;
+}
+
+.StatisticsUserContributionsTab-expandedRow {
+  font-size: @edu-font-size-sm;
+}
+
+.StatisticsUserContributionsTab-expandedRowHeader {
+  font-weight: bold;
+  margin-bottom: 5px;
+
+  &:not(:first-child) {
+    margin-top: 20px;
+  }
+}
+
+.StatisticsUserContributionsTab-documentList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
