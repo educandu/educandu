@@ -16,6 +16,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import rateLimit from '../domain/rate-limit-middleware.js';
 import SamlConfigService from '../services/saml-config-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import ContactRequestService from '../services/contact-request-service.js';
 import ExternalAccountService from '../services/external-account-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
@@ -39,7 +40,8 @@ import {
   externalAccountIdParamsSchema,
   getUsersBySearchQuerySchema,
   postUserNotificationSettingsBodySchema,
-  hiddenRoomsBodySchema
+  hiddenRoomsBodySchema,
+  contactRequestBodySchema
 } from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
@@ -60,6 +62,7 @@ class UserController {
     MailService,
     ClientDataMappingService,
     RoomService,
+    ContactRequestService,
     PageRenderer,
     SamlConfigService
   ];
@@ -73,6 +76,7 @@ class UserController {
     mailService,
     clientDataMappingService,
     roomService,
+    contactRequestService,
     pageRenderer,
     samlConfigService
   ) {
@@ -82,6 +86,7 @@ class UserController {
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.samlConfigService = samlConfigService;
+    this.contactRequestService = contactRequestService;
     this.externalAccountService = externalAccountService;
     this.clientDataMappingService = clientDataMappingService;
     this.requestLimitRecordService = requestLimitRecordService;
@@ -214,9 +219,10 @@ class UserController {
       throw new NotFound();
     }
 
+    const contactRequest = viewingUser ? await this.contactRequestService.getContactRequestFromUserToUser({ fromUserId: viewingUser._id, toUserId: userId }) : null;
     const mappedViewedUser = this.clientDataMappingService.mapWebsitePublicUser({ viewedUser, viewingUser });
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.userProfile, { user: mappedViewedUser });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.userProfile, { user: mappedViewedUser, contactRequestSentOn: contactRequest?.createdOn.toISOString() || '' });
   }
 
   async handleGetUsers(req, res) {
@@ -493,6 +499,26 @@ class UserController {
     const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapUserOwnRoomInvitations(invitation)));
 
     return res.send({ invitations: mappedInvitations });
+  }
+
+  async handlePostContactRequest(req, res) {
+    const { user } = req;
+    let createdContactRequest;
+    const { toUserId, contactEmailAddress } = req.body;
+
+    const toUser = await this.userService.getUserById(toUserId);
+    if (!toUser || toUser.accountClosedOn) {
+      throw new BadRequest(`User ${toUserId} does not exist or has closed their account`);
+    }
+
+    try {
+      createdContactRequest = await this.contactRequestService.createContactRequest({ fromUserId: user._id, toUserId, contactEmailAddress });
+    } catch (error) {
+      throw new BadRequest(error.message);
+    }
+
+    await this.mailService.sendContactRequestEmail({ fromUser: user, toUser, contactEmailAddress });
+    return res.status(201).send({ contactRequestSentOn: createdContactRequest.createdOn.toISOString() });
   }
 
   async handleCloseOwnUserAccount(req, res) {
@@ -807,6 +833,14 @@ class UserController {
       '/api/v1/users/rooms-invitations',
       needsAuthentication(),
       (req, res) => this.handleGetRoomsInvitations(req, res)
+    );
+
+    router.post(
+      '/api/v1/users/contact-requests',
+      needsAuthentication(),
+      jsonParser,
+      validateBody(contactRequestBodySchema),
+      (req, res) => this.handlePostContactRequest(req, res)
     );
 
     router.delete(

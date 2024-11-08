@@ -1,4 +1,19 @@
 userProfile:
+  sendContactRequest:
+    en: Send contact request
+    de: Kontaktanfrage schicken
+  contactRequestModalInfoMarkdown:
+    en: User **{displayName}** will receive an email with your contact request. Please provide an email address through which you would like {displayName} to contact you.
+    de: Benutzer **{displayName}** bekommt eine E-Mail mit deiner Kontaktanfrage. Bitte gib eine E-Mail-Adresse an, unter der du gerne von {displayName} kontaktiert werden möchtest.
+  contactEmailAddressLabel:
+    en: Your email address
+    de: Deine E-Mail-Adresse
+  contactRequestModalOkButton:
+    en: Send
+    de: Senden
+  contactUserDisabledTooltip:
+    en: You have already sent a contact request on {date}. You can try again after {retryInDays, plural, =1 {one day} other {# days}}.
+    de: Du hast bereits am {date} eine Kontaktanfrage geschickt. Du kannst es nach {retryInDays, plural, =1 {einem Tag} other {# Tagen}} erneut versuchen.
   documentsHeadline:
     en: Created documents
     de: Erstellte Dokumente

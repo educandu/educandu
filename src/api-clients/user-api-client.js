@@ -248,6 +248,16 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  postContactRequest({ toUserId, contactEmailAddress }) {
+    return this.httpClient
+      .post(
+        '/api/v1/users/contact-requests',
+        { toUserId, contactEmailAddress },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   closeUserAccount() {
     return this.httpClient
       .delete(

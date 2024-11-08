@@ -180,8 +180,8 @@ export default function Room({ PageTemplate, initialState }) {
             />
           <div className="RoomPage-title">
             <div>{room.name}</div>
-            <div className="RoomPage-titleStar">
-              <FavoriteToggle type={FAVORITE_TYPE.room} id={room._id} />
+            <div className="RoomPage-titleFavoriteToggle">
+              <FavoriteToggle type={FAVORITE_TYPE.room} id={room._id} showAsButton />
             </div>
           </div>
 

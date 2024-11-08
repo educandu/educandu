@@ -196,6 +196,11 @@ class MailService {
     return this._sendMail(message);
   }
 
+  sendContactRequestEmail({ fromUser, toUser, contactEmailAddress }) {
+    logger.info(`Sending contact request email to ${toUser.email}`);
+    return this._sendContactRequestEmail({ displayName: fromUser.displayName, contactEmailAddress, email: toUser.email });
+  }
+
   _sendRoomInvitationEmail({ ownerName, roomName, email, invitationLink }) {
     logger.info(`Creating email with room invitation link ${invitationLink}`);
 
@@ -277,6 +282,31 @@ class MailService {
       .join(MARKDOWN_LANGUAGE_SEPARATOR));
 
     const message = { from: this.serverConfig.emailSenderAddress, to: user.email, subject, text, html };
+    return this._sendMail(message);
+  }
+
+  _sendContactRequestEmail({ displayName, contactEmailAddress, email }) {
+    logger.info(`Creating email with contact request from user '${displayName}' (contact email addresss: ${contactEmailAddress}) to send to ${email}`);
+
+    const subject = this.translators
+      .map(t => t('mailService:contactRequestEmail.subject'))
+      .join(SUBJECT_LANGUAGE_SEPARATOR);
+
+    const text = this.translators
+      .map(t => t('mailService:contactRequestEmail.text', {
+        displayName,
+        contactEmailAddress
+      }))
+      .join(TEXT_LANGUAGE_SEPARATOR);
+
+    const html = this.gfm.render(this.translators
+      .map(t => t('mailService:contactRequestEmail.markdown', {
+        displayName: escapeMarkdown(displayName),
+        contactEmailAddress: escapeMarkdown(contactEmailAddress)
+      }))
+      .join(MARKDOWN_LANGUAGE_SEPARATOR));
+
+    const message = { from: this.serverConfig.emailSenderAddress, to: email, subject, text, html };
     return this._sendMail(message);
   }
 
