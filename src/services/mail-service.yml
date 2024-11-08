@@ -242,20 +242,20 @@ mailService:
       Hello!
 
       User {displayName} would like to get in contact with you.
-      You can write them at {contactEmailAddress}.
+      {displayName} has provided and email address to which you can write back: {contactEmailAddress}
     de: |
       Hallo!
 
       Benutzer {displayName} möchte mit dir Kontakt aufnehmen.
-      Du kannst diesen Benutzer unter {contactEmailAddress} anschreiben.
+      {displayName} hat eine E-Mail-Adresse angegeben, an die du zurückschreiben kannst: {contactEmailAddress}
   contactRequestEmail.markdown:
     en: |
       Hello!
 
       User **{displayName}** would like to get in contact with you. \
-      You can write them at <{contactEmailAddress}>.
+      {displayName} has provided and email address to which you can write back: <{contactEmailAddress}>
     de: |
       Hallo!
 
       Benutzer **{displayName}** möchte mit dir Kontakt aufnehmen. \
-      Du kannst diesen Benutzer unter <{contactEmailAddress}> anschreiben.
+      {displayName} hat eine E-Mail-Adresse angegeben, an die du zurückschreiben kannst: <{contactEmailAddress}>
