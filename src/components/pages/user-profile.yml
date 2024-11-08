@@ -11,7 +11,10 @@ userProfile:
   contactRequestModalOkButton:
     en: Send
     de: Senden
-  contactUserDisabledTooltip:
+  contactRequestNotAllowedTooltip:
+    en: "{displayName} prefers to not receive contact requests."
+    de: "{displayName} zieht es vor, keine Kontaktanfragen zu erhalten."
+  contactRequestAlreadySentTooltip:
     en: You have already sent a contact request on {date}. You can try again after {retryInDays, plural, =1 {one day} other {# days}}.
     de: Du hast bereits am {date} eine Kontaktanfrage geschickt. Du kannst es nach {retryInDays, plural, =1 {einem Tag} other {# Tagen}} erneut versuchen.
   documentsHeadline:

@@ -511,6 +511,10 @@ class UserController {
       throw new BadRequest(`User ${toUserId} does not exist or has closed their account`);
     }
 
+    if (!toUser.allowContactRequestEmails) {
+      throw new BadRequest(`User ${toUserId} does not allow contact request emails`);
+    }
+
     try {
       createdContactRequest = await this.contactRequestService.createContactRequest({ fromUserId: user._id, toUserId, contactEmailAddress });
     } catch (error) {
