@@ -41,7 +41,8 @@ import {
   IconCircleDashed,
   IconReportSearch,
   IconUserEdit,
-  IconSend
+  IconSend,
+  IconSendOff
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -126,6 +127,7 @@ export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBa
 export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomScan);
 export const UserContributionsIcon = createIconFromTablerIconComponent(IconUserEdit);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
+export const ContactUserNotAllowedIcon = createIconFromTablerIconComponent(IconSendOff);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
 export const FavoriteIconFilled = createIconFromTablerIconComponent(IconHeart, { filled: true });
 export const LoadMusicIcon = createIconFromTablerIconComponents(IconCircleDashed, IconPlayerPlay, { scaleOuter: 1.5, scaleInner: 0.7 });

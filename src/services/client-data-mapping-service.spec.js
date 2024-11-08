@@ -203,7 +203,8 @@ describe('client-data-mapping-service', () => {
             hiddenRooms: ['r1']
           }
         },
-        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
+        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly,
+        allowContactRequestEmails: true
       };
       result = sut.mapWebsiteUser(dbUser);
     });
@@ -229,7 +230,8 @@ describe('client-data-mapping-service', () => {
             hiddenRooms: ['r1']
           }
         },
-        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly
+        emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.monthly,
+        allowContactRequestEmails: true
       });
     });
   });

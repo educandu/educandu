@@ -2212,7 +2212,7 @@
     },
     "tagsInfo": {
       "en": "Specify search terms with which your document can be found by other users",
-      "de": "Gib Suchbegriffe an, mit denen dein Dokument von anderen Nutzern gefunden werden kann"
+      "de": "Gib Suchbegriffe an, mit denen dein Dokument von anderen Benutzern gefunden werden kann"
     },
     "content": {
       "en": "Content",
@@ -3150,7 +3150,7 @@
     },
     "tagsInfo": {
       "en": "Specify search terms with which your resource can be found by other users",
-      "de": "Gib Suchbegriffe an, mit denen deine Ressource von anderen Nutzern gefunden werden kann"
+      "de": "Gib Suchbegriffe an, mit denen deine Ressource von anderen Benutzern gefunden werden kann"
     },
     "tagsRequired": {
       "en": "Please provide at least one tag",
@@ -3984,7 +3984,7 @@
     },
     "membersEmptyStateSubtitle": {
       "en": "For other users to have access to your room, send them an invitation.",
-      "de": "Um anderen Nutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung."
+      "de": "Um anderen Benutzern Zugang zu deinem Raum zu geben, schicke ihnen eine Einladung."
     },
     "inviteMembersButton": {
       "en": "Invite members",
@@ -4299,6 +4299,10 @@
     "emailNotificationFrequency": {
       "en": "Please specify in which intervals you want us to send you an email reminder in case you have received new notifications.",
       "de": "Bitte gib an, in welchen Abständen du von uns eine Erinnerung per E-Mail bekommen möchtest, wenn du neue Benachrichtigungen erhalten hast."
+    },
+    "allowContactRequestEmails": {
+      "en": "Allow contact request emails to be sent to you when other users want to get in touch with you through your Profile page. Independent of this setting, your email address remains private and will not be shown to other users.",
+      "de": "Erlaube, dass E-Mails mit Kontaktanfragen an dich gesendet werden, wenn andere Benutzer über deine Profilseite mit dir in Kontakt treten möchten. Unabhängig von dieser Einstellung bleibt deine E-Mail-Adresse privat und wird anderen Benutzern nicht angezeigt."
     },
     "emailNotificationFrequency_daily": {
       "en": "daily",

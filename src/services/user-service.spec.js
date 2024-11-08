@@ -1000,6 +1000,7 @@ describe('user-service', () => {
       user.shortDescription = 'About me';
       user.role = ROLE.maintainer;
       user.emailNotificationFrequency = EMAIL_NOTIFICATION_FREQUENCY.daily;
+      user.allowContactRequestEmails = true;
       await updateTestUser(container, user);
       await sut.closeUserAccount(user._id);
       userFetchFromDbAfterAccountWasClosed = await db.users.findOne({ _id: user._id });
@@ -1024,6 +1025,7 @@ describe('user-service', () => {
         },
         favorites: [],
         emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.never,
+        allowContactRequestEmails: false,
         accountLockedOn: null,
         accountClosedOn: expect.any(Date),
         lastLoggedInOn: null,
