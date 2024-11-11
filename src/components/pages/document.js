@@ -39,7 +39,6 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
-import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureKeyIsExcluded, mapObjectValues } from '../../utils/object-utils.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
@@ -50,6 +49,7 @@ import { createDocumentInputUploadedFileName } from '../../utils/document-input-
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { supportsClipboardPaste, tryBringElementIntoView } from '../../ui/browser-helper.js';
 import { maxDocumentRevisionCreatedBecauseLength } from '../../domain/validation-constants.js';
+import { DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE, STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import { documentCategoryShape, documentRatingShape, documentShape, roomMediaContextShape, roomShape, sectionShape } from '../../ui/default-prop-types.js';
@@ -1089,7 +1089,7 @@ function Document({ initialState, PageTemplate }) {
             icon={<UploadIcon />}
             type="primary"
             loading={false}
-            disabled={!hasPendingInputChanges || inputSubmittingDisabled}
+            disabled={!hasPendingInputChanges || inputSubmittingDisabled || pendingDocumentInput.pendingFilesSize > STORAGE_FILE_UPLOAD_LIMIT_IN_BYTES}
             className="DocumentPage-focusHeaderButton"
             onClick={handleInputSubmit}
             >
