@@ -43,6 +43,18 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  getStatisticsUserContributions({ contributedFrom, contributedUntil }) {
+    return this.httpClient
+      .get(
+        '/api/v1/docs/statistics/user-contributions',
+        {
+          params: { contributedFrom, contributedUntil },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
   getStatisticsDocuments() {
     return this.httpClient
       .get(

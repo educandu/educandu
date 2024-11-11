@@ -9,6 +9,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
+import UserStore from '../stores/user-store.js';
 import BatchStore from '../stores/batch-store.js';
 import EventStore from '../stores/event-store.js';
 import { isRoomOwner } from '../utils/room-utils.js';
@@ -50,7 +51,8 @@ class DocumentService {
     LockStore,
     TransactionRunner,
     PluginRegistry,
-    EventStore
+    EventStore,
+    UserStore
   ];
 
   constructor(
@@ -67,7 +69,8 @@ class DocumentService {
     lockStore,
     transactionRunner,
     pluginRegistry,
-    eventStore
+    eventStore,
+    userStore
   ) {
     this.cdn = cdn;
     this.documentRevisionStore = documentRevisionStore;
@@ -83,6 +86,7 @@ class DocumentService {
     this.transactionRunner = transactionRunner;
     this.pluginRegistry = pluginRegistry;
     this.eventStore = eventStore;
+    this.userStore = userStore;
   }
 
   async getSearchableDocumentsCount() {
@@ -97,6 +101,59 @@ class DocumentService {
     }
     const documentsMetadata = await this.documentStore.getDocumentsExtendedMetadataByConditions(conditions);
     return documentsMetadata.sort(by(doc => doc.updatedBy, 'desc'));
+  }
+
+  async getUserContributions({ from, until }) {
+    const revisions = await this.documentRevisionStore.getAllPublicDocumentRevisionCreationMetadataInInterval({ from, until });
+    const allUserIds = revisions.reduce((accu, revision) => {
+      accu.add(revision.createdBy);
+      return accu;
+    }, new Set());
+    const allDocumentIds = revisions.reduce((accu, revision) => {
+      accu.add(revision.documentId);
+      return accu;
+    }, new Set());
+
+    const users = await this.userStore.getUsersByIds([...allUserIds]);
+    const documents = await this.documentStore.getDocumentsCreationMetadataByIds([...allDocumentIds]);
+    const documentsById = new Map(documents.map(doc => [doc._id, doc]));
+
+    const userContributions = users.map(user => {
+      const ownDocumentsContributedTo = new Set();
+      const otherDocumentsContributedTo = new Set();
+      const documentsCreated = new Set();
+
+      for (const revision of revisions) {
+        if (revision.createdBy === user._id) {
+          const document = documentsById.get(revision.documentId);
+
+          const isFirstRevision = document.createdOn.valueOf() === revision.createdOn.valueOf();
+          const isOwnDocument = document.createdBy === user._id;
+
+          if (isOwnDocument) {
+            ownDocumentsContributedTo.add(document._id);
+          } else {
+            otherDocumentsContributedTo.add(document._id);
+          }
+
+          if (isFirstRevision) {
+            documentsCreated.add(document._id);
+          }
+        }
+      }
+
+      return {
+        user,
+        ownDocumentsContributedTo: [...ownDocumentsContributedTo],
+        otherDocumentsContributedTo: [...otherDocumentsContributedTo],
+        documentsCreated: [...documentsCreated]
+      };
+    });
+
+    return {
+      userContributions,
+      documents
+    };
   }
 
   async getTopDocumentTags({ maxCount = 0 } = { maxCount: 0 }) {
