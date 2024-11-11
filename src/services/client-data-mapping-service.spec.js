@@ -74,6 +74,7 @@ describe('client-data-mapping-service', () => {
         storage: {},
         favorites: [],
         dashboardSettings: {},
+        allowContactRequestEmails: true,
         accountLockedOn: null,
         accountClosedOn: null
       };
@@ -94,6 +95,7 @@ describe('client-data-mapping-service', () => {
           profileOverview: 'About Educandu test user',
           shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
+          allowContactRequestEmails: true,
           accountClosedOn: null
         });
       });
@@ -118,6 +120,7 @@ describe('client-data-mapping-service', () => {
           profileOverview: 'About Educandu test user',
           shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/placeholder',
+          allowContactRequestEmails: true,
           accountClosedOn: accountClosedOn.toISOString()
         });
       });
@@ -137,6 +140,7 @@ describe('client-data-mapping-service', () => {
           profileOverview: 'About Educandu test user',
           shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
+          allowContactRequestEmails: true,
           accountClosedOn: null
         });
       });
@@ -157,6 +161,7 @@ describe('client-data-mapping-service', () => {
           profileOverview: 'About Educandu test user',
           shortDescription: 'Educandu test user',
           avatarUrl: 'www://avatar.domain/12345',
+          allowContactRequestEmails: true,
           accountClosedOn: null
         });
       });

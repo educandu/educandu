@@ -44,7 +44,8 @@ class ClientDataMappingService {
       profileOverview: viewedUser.profileOverview,
       shortDescription: viewedUser.shortDescription,
       avatarUrl: urlUtils.getGravatarUrl(viewedUser.accountClosedOn ? null : viewedUser.email),
-      accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null
+      allowContactRequestEmails: viewedUser.allowContactRequestEmails,
+      accountClosedOn: viewedUser.accountClosedOn ? viewedUser.accountClosedOn.toISOString() : null,
     };
 
     if (hasUserPermission(viewingUser, permissions.MANAGE_USERS)) {

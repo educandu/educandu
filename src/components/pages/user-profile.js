@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import DocumentCard from '../document-card.js';
 import { PlusOutlined } from '@ant-design/icons';
 import FavoriteToggle from '../favorite-toggle.js';
-import { ContactUserIcon } from '../icons/icons.js';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -15,6 +14,7 @@ import { publicUserShape } from '../../ui/default-prop-types.js';
 import { Avatar, Button, Form, Input, Modal, Tooltip } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import { ContactUserIcon, ContactUserNotAllowedIcon } from '../icons/icons.js';
 import { useDebouncedFetchingState, useGetCurrentUrl } from '../../ui/hooks.js';
 import { AVATAR_SIZE_BIG, CONTACT_REQUEST_EXPIRATION_IN_DAYS, FAVORITE_TYPE } from '../../domain/constants.js';
 
@@ -99,12 +99,19 @@ export default function UserProfile({ PageTemplate, initialState }) {
     );
   };
 
+  const getContactUserTooltip = () => {
+    if (!user.allowContactRequestEmails) {
+      return t('contactRequestNotAllowedTooltip', { displayName: user.displayName });
+    }
+    return contactRequestSentOn
+      ? t('contactRequestAlreadySentTooltip', { date: formatDate(contactRequestSentOn), retryInDays: CONTACT_REQUEST_EXPIRATION_IN_DAYS })
+      : t('sendContactRequest');
+  };
+
+  const getContactUserIcon = () => user.allowContactRequestEmails ? <ContactUserIcon /> : <ContactUserNotAllowedIcon />;
+
   const notShownDocumentsCount = Math.max(documents.length - visibleDocumentsCount, 0);
   const nextBatchSize = Math.min(DOCUMENTS_BATCH_SIZE, notShownDocumentsCount);
-
-  const contactUserTooltip = contactRequestSentOn
-    ? t('contactUserDisabledTooltip', { date: formatDate(contactRequestSentOn), retryInDays: CONTACT_REQUEST_EXPIRATION_IN_DAYS })
-    : t('sendContactRequest');
 
   return (
     <Fragment>
@@ -116,8 +123,12 @@ export default function UserProfile({ PageTemplate, initialState }) {
             </div>
             <div className="UserProfilePage-profileButtons">
               {!user.accountClosedOn && (
-                <Tooltip title={contactUserTooltip}>
-                  <Button icon={<ContactUserIcon />} disabled={isSendingUserContactRequest || !!contactRequestSentOn} onClick={handleContactUserClick} />
+                <Tooltip title={getContactUserTooltip()}>
+                  <Button
+                    icon={getContactUserIcon()}
+                    disabled={!user.allowContactRequestEmails || isSendingUserContactRequest || !!contactRequestSentOn}
+                    onClick={handleContactUserClick}
+                    />
                 </Tooltip>
               )}
               <FavoriteToggle type={FAVORITE_TYPE.user} id={user._id} showAsButton />
