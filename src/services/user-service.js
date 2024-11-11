@@ -137,10 +137,10 @@ class UserService {
     return updatedUser;
   }
 
-  async updateUserNotificationSettings({ userId, emailNotificationFrequency }) {
+  async updateUserNotificationSettings({ userId, emailNotificationFrequency, allowContactRequestEmails }) {
     logger.info(`Updating notification settings for user with id ${userId}`);
     const user = await this.userStore.getUserById(userId);
-    const updatedUser = { ...user, emailNotificationFrequency };
+    const updatedUser = { ...user, emailNotificationFrequency, allowContactRequestEmails };
 
     await this.userStore.saveUser(updatedUser);
     return updatedUser;
@@ -445,7 +445,7 @@ class UserService {
     }));
   }
 
-  async createUser({ email, password, displayName, role = DEFAULT_ROLE, emailNotificationFrequency = DEFAULT_EMAIL_NOTIFICATION_FREQUENCY, verified = false }) {
+  async createUser({ email, password, displayName, role = DEFAULT_ROLE, emailNotificationFrequency = DEFAULT_EMAIL_NOTIFICATION_FREQUENCY, allowContactRequestEmails = true, verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
     const existingActiveUserWithEmail = await this.userStore.findActiveUserByEmail(lowerCasedEmail);
@@ -460,6 +460,7 @@ class UserService {
       displayName,
       role,
       emailNotificationFrequency,
+      allowContactRequestEmails,
       expiresOn: verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_MINUTES, 'minutes').toDate(),
       verificationCode: verified ? null : uniqueId.create()
     };
@@ -601,6 +602,7 @@ class UserService {
       },
       favorites: [],
       emailNotificationFrequency: EMAIL_NOTIFICATION_FREQUENCY.never,
+      allowContactRequestEmails: false,
       accountLockedOn: null,
       accountClosedOn: null,
       lastLoggedInOn: null,

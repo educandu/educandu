@@ -41,7 +41,8 @@ export const postUserProfileBodySchema = joi.object({
 });
 
 export const postUserNotificationSettingsBodySchema = joi.object({
-  emailNotificationFrequency: joi.string().valid(...Object.values(EMAIL_NOTIFICATION_FREQUENCY)).required()
+  emailNotificationFrequency: joi.string().valid(...Object.values(EMAIL_NOTIFICATION_FREQUENCY)).required(),
+  allowContactRequestEmails: joi.boolean().required()
 });
 
 export const postUserPasswordResetRequestBodySchema = joi.object({
@@ -125,6 +126,7 @@ export const userDBSchema = joi.object({
   storage: storageDBSchema.required(),
   favorites: joi.array().required().items(favoriteDBSchema),
   emailNotificationFrequency: joi.string().valid(...Object.values(EMAIL_NOTIFICATION_FREQUENCY)).required(),
+  allowContactRequestEmails: joi.boolean().required(),
   accountLockedOn: joi.date().allow(null).required(),
   accountClosedOn: joi.date().allow(null).required(),
   lastLoggedInOn: joi.date().allow(null).required(),

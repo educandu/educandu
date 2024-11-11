@@ -316,8 +316,8 @@ class UserController {
 
   async handlePostUserNotificationSettings(req, res) {
     const userId = req.user._id;
-    const { emailNotificationFrequency } = req.body;
-    const updatedUser = await this.userService.updateUserNotificationSettings({ userId, emailNotificationFrequency });
+    const { emailNotificationFrequency, allowContactRequestEmails } = req.body;
+    const updatedUser = await this.userService.updateUserNotificationSettings({ userId, emailNotificationFrequency, allowContactRequestEmails });
 
     if (!updatedUser) {
       throw new NotFound();

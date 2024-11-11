@@ -14,10 +14,11 @@ import DisplayNameFormItem from '../displayName-form-item.js';
 import { confirmCloseAccount } from '../confirmation-dialogs.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { Form, Input, Avatar, Button, message, Radio } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import { Form, Input, Avatar, Button, message, Radio, Switch } from 'antd';
 import IrreversibleActionsSection from '../irreversible-actions-section.js';
+import { ContactUserIcon, ContactUserNotAllowedIcon } from '../icons/icons.js';
 import { EMAIL_NOTIFICATION_FREQUENCY, SAVE_USER_RESULT } from '../../domain/constants.js';
 import { maxUserShortDescriptionLength, maxUserOrganizationLength } from '../../domain/validation-constants.js';
 
@@ -125,10 +126,11 @@ function SettingsTab() {
     setIsNotificationSettingsFormDirty(true);
   };
 
-  const handleNotificationSettingsFormFinish = async ({ emailNotificationFrequency }) => {
+  const handleNotificationSettingsFormFinish = async ({ emailNotificationFrequency, allowContactRequestEmails }) => {
     try {
       const { user: updatedUser } = await userApiClient.saveUserNotificationSettings({
-        emailNotificationFrequency
+        emailNotificationFrequency,
+        allowContactRequestEmails
       });
       setUser(updatedUser);
       setIsNotificationSettingsFormDirty(false);
@@ -248,6 +250,16 @@ function SettingsTab() {
             initialValue={user.emailNotificationFrequency}
             >
             <RadioGroup options={emailNotificationFrequencyOptions} optionType="button" />
+          </FormItem>
+          <FormItem
+            name="allowContactRequestEmails"
+            label={t('allowContactRequestEmails')}
+            initialValue={user.allowContactRequestEmails}
+            >
+            <Switch
+              checkedChildren={<ContactUserIcon />}
+              unCheckedChildren={<ContactUserNotAllowedIcon />}
+              />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" disabled={!isNotificationSettingsFormDirty}>{t('common:save')}</Button>

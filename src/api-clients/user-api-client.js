@@ -132,11 +132,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  saveUserNotificationSettings({ emailNotificationFrequency }) {
+  saveUserNotificationSettings({ emailNotificationFrequency, allowContactRequestEmails }) {
     return this.httpClient
       .post(
         '/api/v1/users/notification-settings',
-        { emailNotificationFrequency },
+        { emailNotificationFrequency, allowContactRequestEmails },
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -22,7 +22,7 @@ documentMetadataModal:
     de: Schlagworte dürfen nicht kürzer als {minChars} Zeichen und nicht länger als {maxChars} Zeichen sein
   tagsInfo:
     en: Specify search terms with which your document can be found by other users
-    de: Gib Suchbegriffe an, mit denen dein Dokument von anderen Nutzern gefunden werden kann
+    de: Gib Suchbegriffe an, mit denen dein Dokument von anderen Benutzern gefunden werden kann
   content:
     en: Content
     de: Inhalt
