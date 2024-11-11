@@ -169,3 +169,8 @@ export const getDocumentQuerySchema = joi.object({
   view: joi.string().valid(...Object.values(DOC_VIEW_QUERY_PARAM)),
   templateDocumentId: idOrKeySchema
 });
+
+export const getUserContributionsForStatisticsQuerySchema = joi.object({
+  contributedFrom: joi.string(),
+  contributedUntil: joi.string()
+});

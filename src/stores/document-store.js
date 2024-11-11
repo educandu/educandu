@@ -8,6 +8,14 @@ const documentTagsProjection = {
   tags: 1
 };
 
+const documentCreationMetadataProjection = {
+  _id: 1,
+  createdOn: 1,
+  createdBy: 1,
+  title: 1,
+  slug: 1
+};
+
 const documentMetadataProjection = {
   _id: 1,
   revision: 1,
@@ -68,6 +76,10 @@ class DocumentStore {
 
   getDocumentMetadataById(id, { session } = {}) {
     return this.collection.findOne({ _id: id }, { projection: documentMetadataProjection, session });
+  }
+
+  getDocumentsCreationMetadataByIds(ids, { session } = {}) {
+    return this.collection.find({ _id: { $in: ids } }, { projection: documentCreationMetadataProjection, session }).toArray();
   }
 
   getDocumentsMetadataByIds(ids, { session } = {}) {

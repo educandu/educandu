@@ -2,6 +2,13 @@ import Database from './database.js';
 import { validate } from '../domain/validation.js';
 import { documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 
+const documentRevisionCreationProjection = {
+  _id: 1,
+  documentId: 1,
+  createdOn: 1,
+  createdBy: 1,
+};
+
 class DocumentRevisionStore {
   static dependencies = [Database];
 
@@ -15,6 +22,22 @@ class DocumentRevisionStore {
 
   getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
     return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
+  }
+
+  getAllPublicDocumentRevisionCreationMetadataInInterval({ from, until }, { session } = {}) {
+    const conditions = [{ roomId: null }];
+
+    if (from) {
+      conditions.push({ createdOn: { $gt: from } });
+    }
+
+    if (until) {
+      conditions.push({ createdOn: { $lt: until } });
+    }
+
+    const filter = conditions.length ? { $and: conditions } : {};
+
+    return this.collection.find(filter, { projection: documentRevisionCreationProjection, session }).toArray();
   }
 
   getAllCdnResourcesReferencedFromDocumentRevisions() {
