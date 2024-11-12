@@ -22,6 +22,7 @@ import DocumentInputStore from '../stores/document-input-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import { getDocumentInputMediaPath } from '../utils/storage-utils.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
+import { slugifyWithFallbackToInitial } from '../utils/string-utils.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { canRestoreDocumentRevisions } from '../utils/document-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -738,6 +739,9 @@ class DocumentService {
       }
       : null;
 
+    const tags = data.tags || [];
+    const searchTags = tags.map(slugifyWithFallbackToInitial);
+
     return {
       _id: data._id || uniqueId.create(),
       documentId: data.documentId || uniqueId.create(),
@@ -752,7 +756,8 @@ class DocumentService {
       slug: data.slug?.trim() || '',
       language: data.language || '',
       sections: mappedSections,
-      tags: data.tags || [],
+      tags,
+      searchTags,
       publicContext,
       roomContext,
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
@@ -792,6 +797,7 @@ class DocumentService {
       sections: lastRevision.sections,
       contributors,
       tags: lastRevision.tags,
+      searchTags: lastRevision.searchTags,
       publicContext: cloneDeep(lastRevision.publicContext) || null,
       roomContext: cloneDeep(lastRevision.roomContext) || null,
       cdnResources: lastRevision.cdnResources

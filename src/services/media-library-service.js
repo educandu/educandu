@@ -11,6 +11,7 @@ import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
+import { slugifyWithFallbackToInitial } from '../utils/string-utils.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
@@ -132,7 +133,8 @@ class MediaLibraryService {
       languages: metadata.languages,
       allRightsReserved: metadata.allRightsReserved,
       licenses: metadata.licenses,
-      tags: metadata.tags
+      tags: metadata.tags,
+      searchTags: metadata.tags.map(slugifyWithFallbackToInitial)
     };
 
     try {
@@ -154,7 +156,8 @@ class MediaLibraryService {
       languages: data.languages,
       allRightsReserved: data.allRightsReserved,
       licenses: data.licenses,
-      tags: data.tags
+      tags: data.tags,
+      searchTags: data.tags.map(slugifyWithFallbackToInitial)
     };
 
     return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);
