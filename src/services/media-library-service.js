@@ -9,9 +9,9 @@ import SettingStore from '../stores/setting-store.js';
 import { getCdnPath } from '../utils/source-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
+import transliterate from '@sindresorhus/transliterate';
 import { getResourceType } from '../utils/resource-utils.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
-import { slugifyWithFallbackToInitial } from '../utils/string-utils.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
@@ -134,7 +134,7 @@ class MediaLibraryService {
       allRightsReserved: metadata.allRightsReserved,
       licenses: metadata.licenses,
       tags: metadata.tags,
-      searchTags: metadata.tags.map(slugifyWithFallbackToInitial)
+      searchTags: metadata.tags.map(tag => transliterate(tag))
     };
 
     try {
@@ -157,7 +157,7 @@ class MediaLibraryService {
       allRightsReserved: data.allRightsReserved,
       licenses: data.licenses,
       tags: data.tags,
-      searchTags: data.tags.map(slugifyWithFallbackToInitial)
+      searchTags: data.tags.map(tag => transliterate(tag))
     };
 
     return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);

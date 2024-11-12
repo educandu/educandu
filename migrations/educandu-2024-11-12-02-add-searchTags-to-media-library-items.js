@@ -1,9 +1,4 @@
-import slugify from '@sindresorhus/slugify';
-
-function slugifyWithFallbackToInitial(value) {
-  const slugifiedValue = slugify(value);
-  return slugifiedValue || value;
-}
+import transliterate from '@sindresorhus/transliterate';
 
 export default class Educandu_2024_11_12_02_add_searchTags_to_media_library_items {
   constructor(db) {
@@ -17,7 +12,7 @@ export default class Educandu_2024_11_12_02_add_searchTags_to_media_library_item
 
     for await (const doc of docsIterator) {
       updateCount += 1;
-      const searchTags = doc.tags.map(slugifyWithFallbackToInitial);
+      const searchTags = doc.tags.map(tag => transliterate(tag));
       await this.db.collection(collectionName).updateOne({ _id: doc._id }, { $set: { searchTags } });
     }
 

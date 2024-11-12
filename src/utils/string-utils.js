@@ -1,4 +1,3 @@
-import slugify from '@sindresorhus/slugify';
 import escapeStringRegexp from 'escape-string-regexp';
 
 const HTML_REPLACEMENT_MAP = {
@@ -147,9 +146,4 @@ function renderBlockValue(value) {
 export function prettyPrintValue(value) {
   const [isInlineValue, renderedInlineValue] = tryRenderInlineValue(value);
   return isInlineValue ? renderedInlineValue : renderBlockValue(value).join('\n');
-}
-
-export function slugifyWithFallbackToInitial(value) {
-  const slugifiedValue = slugify(value);
-  return slugifiedValue || value;
 }
