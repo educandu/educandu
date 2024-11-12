@@ -3,6 +3,10 @@ import { validate } from '../domain/validation.js';
 import { combineQueryConditions, createTagsPipelineQuery } from '../utils/query-utils.js';
 import { mediaLibraryItemDbSchema, mediaLibraryItemMetadataUpdateDbSchema } from '../domain/schemas/media-library-item-schemas.js';
 
+const mediaLibraryItemProjection = {
+  searchTags: 0
+};
+
 class MediaLibraryItemStore {
   static dependencies = [Database];
 
@@ -11,11 +15,11 @@ class MediaLibraryItemStore {
   }
 
   getMediaLibraryItemById(mediaLibraryItemId, { session } = {}) {
-    return this.collection.findOne({ _id: mediaLibraryItemId }, { session });
+    return this.collection.findOne({ _id: mediaLibraryItemId }, { projection: mediaLibraryItemProjection, session });
   }
 
   getMediaLibraryItemByUrl(url, { session } = {}) {
-    return this.collection.findOne({ url }, { session });
+    return this.collection.findOne({ url }, { projection: mediaLibraryItemProjection, session });
   }
 
   getMediaLibraryItemsCount({ session } = {}) {
@@ -23,11 +27,11 @@ class MediaLibraryItemStore {
   }
 
   getAllMediaLibraryItems({ session } = {}) {
-    return this.collection.find({}, { session }).toArray();
+    return this.collection.find({}, { projection: mediaLibraryItemProjection, session }).toArray();
   }
 
   getMediaLibraryItemsByConditions(conditions, { session } = {}) {
-    return this.collection.find(combineQueryConditions('$and', conditions), { session }).toArray();
+    return this.collection.find(combineQueryConditions('$and', conditions), { projection: mediaLibraryItemProjection, session }).toArray();
   }
 
   getMediaLibraryItemTagsMatchingText(text) {
@@ -47,7 +51,11 @@ class MediaLibraryItemStore {
         }, {
           $facet: {
             metadata: [{ $count: 'totalCount' }],
-            data: [{ $skip: (page - 1) * pageSize }, { $limit: pageSize }]
+            data: [
+              { $skip: (page - 1) * pageSize },
+              { $limit: pageSize },
+              { $project: mediaLibraryItemProjection }
+            ]
           }
         }
       ], { session }).toArray();
@@ -60,8 +68,11 @@ class MediaLibraryItemStore {
 
   async insertMediaLibraryItem(mediaLibraryItem, { session } = {}) {
     validate(mediaLibraryItem, mediaLibraryItemDbSchema);
+
     await this.collection.insertOne(mediaLibraryItem, { session });
-    return mediaLibraryItem;
+    const insertedMediaLibraryItem = await this.collection.findOne({ _id: mediaLibraryItem._id }, { projection: mediaLibraryItemProjection, session });
+
+    return insertedMediaLibraryItem;
   }
 
   async updateMediaLibraryItem(mediaLibraryItemId, metadata, { session } = {}) {
@@ -69,15 +80,14 @@ class MediaLibraryItemStore {
 
     const filter = { _id: mediaLibraryItemId };
     const update = { $set: { ...metadata } };
-    const options = { returnDocument: 'after', session };
+    const options = { returnDocument: 'after', projection: mediaLibraryItemProjection, session };
 
     const value = await this.collection.findOneAndUpdate(filter, update, options);
     return value;
   }
 
   async deleteMediaLibraryItem(mediaLibraryItemId, { session } = {}) {
-    const result = await this.collection.deleteOne({ _id: mediaLibraryItemId }, { session });
-    return result.value;
+    await this.collection.deleteOne({ _id: mediaLibraryItemId }, { session });
   }
 }
 

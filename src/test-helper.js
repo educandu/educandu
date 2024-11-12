@@ -10,7 +10,9 @@ import UserService from './services/user-service.js';
 import SettingService from './services/setting-service.js';
 import { getResourceType } from './utils/resource-utils.js';
 import DocumentService from './services/document-service.js';
+import { slugifyWithFallbackToInitial } from './utils/string-utils.js';
 import DocumentInputService from './services/document-input-service.js';
+import MediaLibraryItemStore from './stores/media-library-item-store.js';
 import GithubFlavoredMarkdown from './common/github-flavored-markdown.js';
 import DocumentCommentService from './services/document-comment-service.js';
 import { createDocumentInputUploadedFileName } from './utils/document-input-utils.js';
@@ -231,10 +233,13 @@ export async function createTestDocumentInputMediaItem(container, user, data) {
 
 export async function createTestMediaLibraryItem(container, user, data) {
   const now = new Date();
-  const db = container.get(Database);
+  const mediaLibraryItemStore = container.get(MediaLibraryItemStore);
 
+  const tags = data.tags || ['test'];
+  const searchTags = tags.map(slugifyWithFallbackToInitial);
   const url = data.url || `${CDN_URL_PREFIX}${urlUtils.concatParts(getMediaLibraryPath(), `${uniqueId.create()}.txt`)}`;
-  const newItem = {
+
+  const mediaLibraryItemToCreate = {
     _id: uniqueId.create(),
     resourceType: data.resourceType || getResourceType(url),
     contentType: data.contentType || mime.getType(url) || DEFAULT_CONTENT_TYPE,
@@ -247,12 +252,14 @@ export async function createTestMediaLibraryItem(container, user, data) {
     name: data.name || urlUtils.getFileName(url),
     shortDescription: data.shortDescription || 'Lorem Ipsum',
     languages: data.languages || ['en'],
+    allRightsReserved: data.allRightsReserved || false,
     licenses: data.licenses || ['CC0-1.0'],
-    tags: data.tags || ['test']
+    tags,
+    searchTags
   };
 
-  await db.mediaLibraryItems.insertOne(newItem);
-  return newItem;
+  const createdMediaLibraryItem = await mediaLibraryItemStore.insertMediaLibraryItem(mediaLibraryItemToCreate);
+  return createdMediaLibraryItem;
 }
 
 export function createTestDocument(container, user, data) {
