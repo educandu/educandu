@@ -221,7 +221,7 @@ class DocumentService {
   }
 
   async getSearchableDocumentsMetadataByTags(searchQuery) {
-    const textQuery = createTextSearchQuery(searchQuery, ['tags']);
+    const textQuery = createTextSearchQuery(searchQuery, ['searchTags']);
     if (!textQuery.isValid) {
       return [];
     }
@@ -232,12 +232,15 @@ class DocumentService {
       textQuery.query
     ];
 
-    const documents = await this.documentStore.getDocumentsExtendedMetadataByConditions(queryConditions);
+    const documentsWithSearchTags = await this.documentStore.getDocumentsExtendedMetadataWithSearchTagsByConditions(queryConditions);
 
-    return documents.map(document => {
-      const exactTagMatchCount = document.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
+    return documentsWithSearchTags.map(document => {
+      const exactTagMatchCount = document.searchTags.filter(searchTag => textQuery.positiveTokens.has(searchTag.toLowerCase())).length;
       const verifiedPoints = document.publicContext.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
       const relevance = exactTagMatchCount + verifiedPoints;
+
+      delete document.searchTags;
+
       return { ...document, relevance };
     });
   }
