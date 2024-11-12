@@ -15,6 +15,7 @@ import EventStore from '../stores/event-store.js';
 import { isRoomOwner } from '../utils/room-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
+import transliterate from '@sindresorhus/transliterate';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
@@ -22,7 +23,6 @@ import DocumentInputStore from '../stores/document-input-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import { getDocumentInputMediaPath } from '../utils/storage-utils.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
-import { slugifyWithFallbackToInitial } from '../utils/string-utils.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { canRestoreDocumentRevisions } from '../utils/document-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -740,7 +740,7 @@ class DocumentService {
       : null;
 
     const tags = data.tags || [];
-    const searchTags = tags.map(slugifyWithFallbackToInitial);
+    const searchTags = tags.map(tag => transliterate(tag));
 
     return {
       _id: data._id || uniqueId.create(),

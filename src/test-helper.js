@@ -7,10 +7,10 @@ import urlUtils from './utils/url-utils.js';
 import UserStore from './stores/user-store.js';
 import { DISPOSAL_PRIORITY } from './common/di.js';
 import UserService from './services/user-service.js';
+import transliterate from '@sindresorhus/transliterate';
 import SettingService from './services/setting-service.js';
 import { getResourceType } from './utils/resource-utils.js';
 import DocumentService from './services/document-service.js';
-import { slugifyWithFallbackToInitial } from './utils/string-utils.js';
 import DocumentInputService from './services/document-input-service.js';
 import MediaLibraryItemStore from './stores/media-library-item-store.js';
 import GithubFlavoredMarkdown from './common/github-flavored-markdown.js';
@@ -236,7 +236,7 @@ export async function createTestMediaLibraryItem(container, user, data) {
   const mediaLibraryItemStore = container.get(MediaLibraryItemStore);
 
   const tags = data.tags || ['test'];
-  const searchTags = tags.map(slugifyWithFallbackToInitial);
+  const searchTags = tags.map(tag => transliterate(tag));
   const url = data.url || `${CDN_URL_PREFIX}${urlUtils.concatParts(getMediaLibraryPath(), `${uniqueId.create()}.txt`)}`;
 
   const mediaLibraryItemToCreate = {
