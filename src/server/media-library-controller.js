@@ -46,7 +46,7 @@ class MediaLibraryController {
 
     const splittedResourceTypes = resourceTypes.split(',');
 
-    const mediaLibraryItems = await this.mediaLibraryService.getSearchableMediaLibraryItemsByTagsOrName({ query, resourceTypes: splittedResourceTypes });
+    const mediaLibraryItems = await this.mediaLibraryService.getSearchableMediaLibraryItems({ query, resourceTypes: splittedResourceTypes });
     const mappedMediaLibraryItems = await this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user);
 
     return res.send(mappedMediaLibraryItems);

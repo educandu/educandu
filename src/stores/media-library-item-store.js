@@ -4,7 +4,7 @@ import { combineQueryConditions, createTagsPipelineQuery } from '../utils/query-
 import { mediaLibraryItemDbSchema, mediaLibraryItemMetadataUpdateDbSchema } from '../domain/schemas/media-library-item-schemas.js';
 
 const mediaLibraryItemProjection = {
-  searchTags: 0
+  searchTokens: 0
 };
 
 class MediaLibraryItemStore {
@@ -30,8 +30,8 @@ class MediaLibraryItemStore {
     return this.collection.find({}, { projection: mediaLibraryItemProjection, session }).toArray();
   }
 
-  getMediaLibraryItemsByConditions(conditions, { session } = {}) {
-    return this.collection.find(combineQueryConditions('$and', conditions), { projection: mediaLibraryItemProjection, session }).toArray();
+  getMediaLibraryItemsWithSearchTokensByConditions(conditions, { session } = {}) {
+    return this.collection.find(combineQueryConditions('$and', conditions), { session }).toArray();
   }
 
   getMediaLibraryItemTagsMatchingText(text) {

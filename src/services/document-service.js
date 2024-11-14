@@ -221,7 +221,7 @@ class DocumentService {
   }
 
   async getSearchableDocumentsMetadataByTags(searchQuery) {
-    const textQuery = createTextSearchQuery(searchQuery, ['tags']);
+    const textQuery = createTextSearchQuery(searchQuery, 'searchTokens');
     if (!textQuery.isValid) {
       return [];
     }
@@ -232,12 +232,15 @@ class DocumentService {
       textQuery.query
     ];
 
-    const documents = await this.documentStore.getDocumentsExtendedMetadataByConditions(queryConditions);
+    const documentsWithSearchTokens = await this.documentStore.getDocumentsExtendedMetadataWithSearchTokensByConditions(queryConditions);
 
-    return documents.map(document => {
-      const exactTagMatchCount = document.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
+    return documentsWithSearchTokens.map(document => {
+      const exactTokenMatchCount = document.searchTokens.filter(searchToken => textQuery.positiveTokens.has(searchToken.toLowerCase())).length;
       const verifiedPoints = document.publicContext.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
-      const relevance = exactTagMatchCount + verifiedPoints;
+      const relevance = exactTokenMatchCount + verifiedPoints;
+
+      delete document.searchTokens;
+
       return { ...document, relevance };
     });
   }
@@ -740,7 +743,7 @@ class DocumentService {
       : null;
 
     const tags = data.tags || [];
-    const searchTags = tags.map(tag => transliterate(tag));
+    const searchTokens = tags.map(tag => transliterate(tag));
 
     return {
       _id: data._id || uniqueId.create(),
@@ -757,7 +760,7 @@ class DocumentService {
       language: data.language || '',
       sections: mappedSections,
       tags,
-      searchTags,
+      searchTokens,
       publicContext,
       roomContext,
       cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
@@ -797,7 +800,7 @@ class DocumentService {
       sections: lastRevision.sections,
       contributors,
       tags: lastRevision.tags,
-      searchTags: lastRevision.searchTags,
+      searchTokens: lastRevision.searchTokens,
       publicContext: cloneDeep(lastRevision.publicContext) || null,
       roomContext: cloneDeep(lastRevision.roomContext) || null,
       cdnResources: lastRevision.cdnResources

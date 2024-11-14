@@ -7,17 +7,15 @@ import urlUtils from './utils/url-utils.js';
 import UserStore from './stores/user-store.js';
 import { DISPOSAL_PRIORITY } from './common/di.js';
 import UserService from './services/user-service.js';
-import transliterate from '@sindresorhus/transliterate';
 import SettingService from './services/setting-service.js';
 import { getResourceType } from './utils/resource-utils.js';
 import DocumentService from './services/document-service.js';
+import { getDocumentInputMediaPath } from './utils/storage-utils.js';
 import DocumentInputService from './services/document-input-service.js';
-import MediaLibraryItemStore from './stores/media-library-item-store.js';
 import GithubFlavoredMarkdown from './common/github-flavored-markdown.js';
 import DocumentCommentService from './services/document-comment-service.js';
 import { createDocumentInputUploadedFileName } from './utils/document-input-utils.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
-import { getDocumentInputMediaPath, getMediaLibraryPath } from './utils/storage-utils.js';
 import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, SAVE_USER_RESULT } from './domain/constants.js';
 
 async function purgeDatabase(db) {
@@ -229,37 +227,6 @@ export async function createTestDocumentInputMediaItem(container, user, data) {
 
   await db.documentInputMediaItems.insertOne(newItem);
   return newItem;
-}
-
-export async function createTestMediaLibraryItem(container, user, data) {
-  const now = new Date();
-  const mediaLibraryItemStore = container.get(MediaLibraryItemStore);
-
-  const tags = data.tags || ['test'];
-  const searchTags = tags.map(tag => transliterate(tag));
-  const url = data.url || `${CDN_URL_PREFIX}${urlUtils.concatParts(getMediaLibraryPath(), `${uniqueId.create()}.txt`)}`;
-
-  const mediaLibraryItemToCreate = {
-    _id: uniqueId.create(),
-    resourceType: data.resourceType || getResourceType(url),
-    contentType: data.contentType || mime.getType(url) || DEFAULT_CONTENT_TYPE,
-    size: data.size || 1,
-    createdBy: data.createdBy || user._id,
-    createdOn: data.createdOn || now,
-    updatedBy: data.updatedBy || user._id,
-    updatedOn: data.updatedOn || now,
-    url,
-    name: data.name || urlUtils.getFileName(url),
-    shortDescription: data.shortDescription || 'Lorem Ipsum',
-    languages: data.languages || ['en'],
-    allRightsReserved: data.allRightsReserved || false,
-    licenses: data.licenses || ['CC0-1.0'],
-    tags,
-    searchTags
-  };
-
-  const createdMediaLibraryItem = await mediaLibraryItemStore.insertMediaLibraryItem(mediaLibraryItemToCreate);
-  return createdMediaLibraryItem;
 }
 
 export function createTestDocument(container, user, data) {

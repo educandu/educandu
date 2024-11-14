@@ -1,4 +1,5 @@
 import escapeStringRegexp from 'escape-string-regexp';
+import transliterate from '@sindresorhus/transliterate';
 import { PARTIAL_SEARCH_THRESHOLD } from '../domain/constants.js';
 
 const createTokenSearchRegex = token => {
@@ -22,7 +23,7 @@ export function combineQueryConditions(operator, conditions, allowEmpty = false)
   }
 }
 
-export function createTextSearchQuery(searchExpression, keys) {
+export function createTextSearchQuery(searchExpression, key) {
   const tokens = (searchExpression || '').trim().split(/\s+/);
 
   const positiveTokens = new Set();
@@ -30,16 +31,16 @@ export function createTextSearchQuery(searchExpression, keys) {
 
   for (const token of tokens) {
     const isNegative = token.startsWith('-');
-    const rawToken = token.slice(isNegative ? 1 : 0).toLowerCase();
+    const rawToken = token.slice(isNegative ? 1 : 0);
     if (rawToken) {
-      (isNegative ? negativeTokens : positiveTokens).add(rawToken);
+      (isNegative ? negativeTokens : positiveTokens).add(transliterate(rawToken).toLowerCase());
     }
   }
 
   const queryConditions = positiveTokens.size
     ? [
-      ...[...positiveTokens].map(token => combineQueryConditions('$or', keys.map(key => ({ [key]: createTokenSearchRegex(token) })))),
-      ...[...negativeTokens].map(token => combineQueryConditions('$and', keys.map(key => ({ [key]: { $not: createTokenSearchRegex(token) } }))))
+      ...[...positiveTokens].map(token => ({ [key]: createTokenSearchRegex(token) })),
+      ...[...negativeTokens].map(token => ({ [key]: { $not: createTokenSearchRegex(token) } }))
     ]
     : [];
 
