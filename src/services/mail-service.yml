@@ -242,7 +242,7 @@ mailService:
       Hello!
 
       User {displayName} would like to get in contact with you.
-      {displayName} has provided and email address to which you can write back: {contactEmailAddress}
+      {displayName} has provided an email address to which you can write back: {contactEmailAddress}
     de: |
       Hallo!
 
@@ -253,7 +253,7 @@ mailService:
       Hello!
 
       User **{displayName}** would like to get in contact with you. \
-      {displayName} has provided and email address to which you can write back: <{contactEmailAddress}>
+      {displayName} has provided an email address to which you can write back: <{contactEmailAddress}>
     de: |
       Hallo!
 

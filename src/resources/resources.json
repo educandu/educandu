@@ -2953,11 +2953,11 @@
       "de": "Du hast eine Kontaktanfrage bekommen"
     },
     "contactRequestEmail.text": {
-      "en": "Hello!\n\nUser {displayName} would like to get in contact with you.\n{displayName} has provided and email address to which you can write back: {contactEmailAddress}\n",
+      "en": "Hello!\n\nUser {displayName} would like to get in contact with you.\n{displayName} has provided an email address to which you can write back: {contactEmailAddress}\n",
       "de": "Hallo!\n\nBenutzer {displayName} möchte mit dir Kontakt aufnehmen.\n{displayName} hat eine E-Mail-Adresse angegeben, an die du zurückschreiben kannst: {contactEmailAddress}\n"
     },
     "contactRequestEmail.markdown": {
-      "en": "Hello!\n\nUser **{displayName}** would like to get in contact with you. \\\n{displayName} has provided and email address to which you can write back: <{contactEmailAddress}>\n",
+      "en": "Hello!\n\nUser **{displayName}** would like to get in contact with you. \\\n{displayName} has provided an email address to which you can write back: <{contactEmailAddress}>\n",
       "de": "Hallo!\n\nBenutzer **{displayName}** möchte mit dir Kontakt aufnehmen. \\\n{displayName} hat eine E-Mail-Adresse angegeben, an die du zurückschreiben kannst: <{contactEmailAddress}>\n"
     }
   },
