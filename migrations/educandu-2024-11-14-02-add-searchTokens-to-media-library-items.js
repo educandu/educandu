@@ -12,7 +12,7 @@ export default class Educandu_2024_11_14_02_add_searchTokens_to_media_library_it
 
     for await (const doc of docsIterator) {
       updateCount += 1;
-      const searchTokens = doc.tags.map(tag => transliterate(tag));
+      const searchTokens = [...doc.tags.map(tag => transliterate(tag)), transliterate(doc.name)];
       await this.db.collection(collectionName).updateOne({ _id: doc._id }, { $set: { searchTokens } });
     }
 

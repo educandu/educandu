@@ -1,6 +1,7 @@
 import by from 'thenby';
 import mime from 'mime';
 import Cdn from '../stores/cdn.js';
+import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
 import UserStore from '../stores/user-store.js';
@@ -16,6 +17,8 @@ import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
 import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, RESOURCE_USAGE } from '../domain/constants.js';
+
+const { NotFound } = httpErrors;
 
 class MediaLibraryService {
   static dependencies = [
@@ -87,9 +90,7 @@ class MediaLibraryService {
   }
 
   async getSearchableMediaLibraryItems({ query, resourceTypes = null }) {
-    const searchKeys = ['tags', 'name'];
-
-    const textQuery = createTextSearchQuery(query, searchKeys);
+    const textQuery = createTextSearchQuery(query, 'tags');
     if (!textQuery.isValid) {
       return [];
     }
@@ -155,7 +156,7 @@ class MediaLibraryService {
       allRightsReserved: metadata.allRightsReserved,
       licenses: metadata.licenses,
       tags: metadata.tags,
-      searchTokens: metadata.tags.map(tag => transliterate(tag))
+      searchTokens: [...metadata.tags.map(tag => transliterate(tag)), transliterate(storageFileName)]
     };
 
     try {
@@ -167,7 +168,12 @@ class MediaLibraryService {
     }
   }
 
-  updateMediaLibraryItem({ mediaLibraryItemId, data, user }) {
+  async updateMediaLibraryItem({ mediaLibraryItemId, data, user }) {
+    const mediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemById(mediaLibraryItemId);
+    if (!mediaLibraryItem) {
+      throw new NotFound();
+    }
+
     const now = new Date();
 
     const newMediaLibraryItemMetadata = {
@@ -178,7 +184,7 @@ class MediaLibraryService {
       allRightsReserved: data.allRightsReserved,
       licenses: data.licenses,
       tags: data.tags,
-      searchTokens: data.tags.map(tag => transliterate(tag))
+      searchTokens: [...data.tags.map(tag => transliterate(tag)), transliterate(mediaLibraryItem.name)]
     };
 
     return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);

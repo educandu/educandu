@@ -221,7 +221,7 @@ class DocumentService {
   }
 
   async getSearchableDocumentsMetadataByTags(searchQuery) {
-    const textQuery = createTextSearchQuery(searchQuery, ['searchTokens']);
+    const textQuery = createTextSearchQuery(searchQuery, 'searchTokens');
     if (!textQuery.isValid) {
       return [];
     }
