@@ -3,8 +3,8 @@ import { createSandbox } from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import MediaLibraryService from './media-library-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { RESOURCE_TYPE, RESOURCE_USAGE, ROLE } from '../domain/constants.js';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   destroyTestEnvironment,
   pruneTestEnvironment,
