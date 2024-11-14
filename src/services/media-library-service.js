@@ -134,7 +134,7 @@ class MediaLibraryService {
       allRightsReserved: metadata.allRightsReserved,
       licenses: metadata.licenses,
       tags: metadata.tags,
-      searchTags: metadata.tags.map(tag => transliterate(tag))
+      searchTokens: metadata.tags.map(tag => transliterate(tag))
     };
 
     try {
@@ -157,7 +157,7 @@ class MediaLibraryService {
       allRightsReserved: data.allRightsReserved,
       licenses: data.licenses,
       tags: data.tags,
-      searchTags: data.tags.map(tag => transliterate(tag))
+      searchTokens: data.tags.map(tag => transliterate(tag))
     };
 
     return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);

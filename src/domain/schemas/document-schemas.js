@@ -135,7 +135,7 @@ export const documentRevisionDBSchema = joi.object({
   sections: joi.array().items(documentSectionDBSchema).required(),
   restoredFrom: joi.string().allow(null).required(),
   tags: joi.array().items(joi.string()).required(),
-  searchTags: joi.array().items(joi.string()).required(),
+  searchTokens: joi.array().items(joi.string()).required(),
   publicContext: publicContextConditionalSchema,
   roomContext: roomContextConditionalSchema,
   cdnResources: joi.array().items(joi.string()).required()
@@ -157,7 +157,7 @@ export const documentDBSchema = joi.object({
   sections: joi.array().items(documentSectionDBSchema).required(),
   contributors: joi.array().items(joi.string()).required(),
   tags: joi.array().items(joi.string()).required(),
-  searchTags: joi.array().items(joi.string()).required(),
+  searchTokens: joi.array().items(joi.string()).required(),
   publicContext: publicContextConditionalSchema,
   roomContext: roomContextConditionalSchema,
   cdnResources: joi.array().items(joi.string()).required()

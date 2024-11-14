@@ -20,14 +20,14 @@ const mediaLibraryItemMetadataProperties = {
 export const mediaLibraryItemDbSchema = joi.object({
   ...commonMediaItemProperties,
   ...mediaLibraryItemMetadataProperties,
-  searchTags: joi.array().min(1).items(joi.string()).required(),
+  searchTokens: joi.array().min(1).items(joi.string()).required(),
   updatedOn: joi.date().required(),
   updatedBy: idOrKeySchema.required()
 });
 
 export const mediaLibraryItemMetadataUpdateDbSchema = joi.object({
   ...mediaLibraryItemMetadataProperties,
-  searchTags: joi.array().min(1).items(joi.string()).required(),
+  searchTokens: joi.array().min(1).items(joi.string()).required(),
   updatedOn: joi.date().required(),
   updatedBy: idOrKeySchema.required()
 });

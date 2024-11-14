@@ -9,7 +9,7 @@ describe('query-utils', () => {
     const testCases = [
       {
         searchExpression: '',
-        fields: ['searchTags'],
+        fields: ['searchTokens'],
         expectedResult: {
           isValid: false,
           query: null,
@@ -19,7 +19,7 @@ describe('query-utils', () => {
       },
       {
         searchExpression: '-notThis',
-        fields: ['searchTags'],
+        fields: ['searchTokens'],
         expectedResult: {
           isValid: false,
           query: null,
@@ -29,34 +29,34 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'a',
-        fields: ['searchTags'],
+        fields: ['searchTokens'],
         expectedResult: {
           isValid: true,
-          query: { searchTags: { $regex: '^a$', $options: 'i' } },
+          query: { searchTokens: { $regex: '^a$', $options: 'i' } },
           positiveTokens: new Set(['a']),
           negativeTokens: new Set([])
         }
       },
       {
         searchExpression: 'this',
-        fields: ['searchTags'],
+        fields: ['searchTokens'],
         expectedResult: {
           isValid: true,
-          query: { searchTags: { $regex: '.*this.*', $options: 'i' } },
+          query: { searchTokens: { $regex: '.*this.*', $options: 'i' } },
           positiveTokens: new Set(['this']),
           negativeTokens: new Set([])
         }
       },
       {
         searchExpression: 'this andThis -butNotThis',
-        fields: ['searchTags'],
+        fields: ['searchTokens'],
         expectedResult: {
           isValid: true,
           query: {
             $and: [
-              { searchTags: { $regex: '.*this.*', $options: 'i' } },
-              { searchTags: { $regex: '.*andthis.*', $options: 'i' } },
-              { searchTags: { $not: { $regex: '.*butnotthis.*', $options: 'i' } } }
+              { searchTokens: { $regex: '.*this.*', $options: 'i' } },
+              { searchTokens: { $regex: '.*andthis.*', $options: 'i' } },
+              { searchTokens: { $not: { $regex: '.*butnotthis.*', $options: 'i' } } }
             ]
           },
           positiveTokens: new Set(['this', 'andthis']),
@@ -65,15 +65,15 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'a and b -C',
-        fields: ['searchTags'],
+        fields: ['searchTokens'],
         expectedResult: {
           isValid: true,
           query: {
             $and: [
-              { searchTags: { $regex: '^a$', $options: 'i' } },
-              { searchTags: { $regex: '.*and.*', $options: 'i' } },
-              { searchTags: { $regex: '^b$', $options: 'i' } },
-              { searchTags: { $not: { $regex: '^c$', $options: 'i' } } }
+              { searchTokens: { $regex: '^a$', $options: 'i' } },
+              { searchTokens: { $regex: '.*and.*', $options: 'i' } },
+              { searchTokens: { $regex: '^b$', $options: 'i' } },
+              { searchTokens: { $not: { $regex: '^c$', $options: 'i' } } }
             ]
           },
           positiveTokens: new Set(['a', 'and', 'b']),
@@ -82,32 +82,32 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'a and b -butNotC',
-        fields: ['searchTags', 'name'],
+        fields: ['searchTokens', 'name'],
         expectedResult: {
           isValid: true,
           query: {
             $and: [
               {
                 $or: [
-                  { searchTags: { $regex: '^a$', $options: 'i' } },
+                  { searchTokens: { $regex: '^a$', $options: 'i' } },
                   { name: { $regex: '^a$', $options: 'i' } }
                 ]
               },
               {
                 $or: [
-                  { searchTags: { $regex: '.*and.*', $options: 'i' } },
+                  { searchTokens: { $regex: '.*and.*', $options: 'i' } },
                   { name: { $regex: '.*and.*', $options: 'i' } }
                 ]
               },
               {
                 $or: [
-                  { searchTags: { $regex: '^b$', $options: 'i' } },
+                  { searchTokens: { $regex: '^b$', $options: 'i' } },
                   { name: { $regex: '^b$', $options: 'i' } }
                 ]
               },
               {
                 $and: [
-                  { searchTags: { $not: { $regex: '.*butnotc.*', $options: 'i' } } },
+                  { searchTokens: { $not: { $regex: '.*butnotc.*', $options: 'i' } } },
                   { name: { $not: { $regex: '.*butnotc.*', $options: 'i' } } }
                 ]
               }

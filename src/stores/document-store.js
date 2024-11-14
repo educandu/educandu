@@ -63,9 +63,9 @@ const documentExtendedMetadataProjection = {
   'roomContext.inputSubmittingDisabled': 1
 };
 
-const documentExtendedMetadataWithSearchTagsProjection = {
+const documentExtendedMetadataWithSearchTokensProjection = {
   ...documentExtendedMetadataProjection,
-  searchTags: 1
+  searchTokens: 1
 };
 
 class DocumentStore {
@@ -158,8 +158,8 @@ class DocumentStore {
     return this.collection.find({ $and: conditions }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 
-  getDocumentsExtendedMetadataWithSearchTagsByConditions(conditions, { session } = {}) {
-    return this.collection.find({ $and: conditions }, { projection: documentExtendedMetadataWithSearchTagsProjection, session }).toArray();
+  getDocumentsExtendedMetadataWithSearchTokensByConditions(conditions, { session } = {}) {
+    return this.collection.find({ $and: conditions }, { projection: documentExtendedMetadataWithSearchTokensProjection, session }).toArray();
   }
 
   async getDocumentsExtendedMetadataPageByConditions(conditions, { page, pageSize }, { session } = {}) {

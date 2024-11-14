@@ -14,8 +14,8 @@ export default {
       key: { tags: 1 }
     },
     {
-      name: '_idx_searchTags_',
-      key: { searchTags: 1 }
+      name: '_idx_searchTokens_',
+      key: { searchTokens: 1 }
     },
     {
       name: '_idx_resourceType_name_tags_',

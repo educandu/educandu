@@ -1,6 +1,6 @@
 import transliterate from '@sindresorhus/transliterate';
 
-export default class Educandu_2024_11_12_02_add_searchTags_to_media_library_items {
+export default class Educandu_2024_11_14_02_add_searchTokens_to_media_library_items {
   constructor(db) {
     this.db = db;
   }
@@ -12,8 +12,8 @@ export default class Educandu_2024_11_12_02_add_searchTags_to_media_library_item
 
     for await (const doc of docsIterator) {
       updateCount += 1;
-      const searchTags = doc.tags.map(tag => transliterate(tag));
-      await this.db.collection(collectionName).updateOne({ _id: doc._id }, { $set: { searchTags } });
+      const searchTokens = doc.tags.map(tag => transliterate(tag));
+      await this.db.collection(collectionName).updateOne({ _id: doc._id }, { $set: { searchTokens } });
     }
 
     return updateCount;
@@ -24,8 +24,8 @@ export default class Educandu_2024_11_12_02_add_searchTags_to_media_library_item
 
     await this.db.collection('mediaLibraryItems').createIndexes([
       {
-        name: '_idx_searchTags_',
-        key: { searchTags: 1 }
+        name: '_idx_searchTokens_',
+        key: { searchTokens: 1 }
       },
     ]);
 

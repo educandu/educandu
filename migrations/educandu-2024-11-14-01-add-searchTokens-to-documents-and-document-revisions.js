@@ -1,12 +1,12 @@
 import transliterate from '@sindresorhus/transliterate';
 
-export default class Educandu_2024_11_12_01_add_searchTags_to_documents_and_document_revisions {
+export default class Educandu_2024_11_14_01_add_searchTokens_to_documents_and_document_revisions {
   constructor(db) {
     this.db = db;
   }
 
   async processCollection(collectionName) {
-    await this.db.collection(collectionName).updateMany({}, { $set: { searchTags: [] } });
+    await this.db.collection(collectionName).updateMany({}, { $set: { searchTokens: [] } });
 
     const docsWithTagsIterator = await this.db.collection(collectionName).find({ tags: { $ne: [] } });
 
@@ -14,8 +14,8 @@ export default class Educandu_2024_11_12_01_add_searchTags_to_documents_and_docu
 
     for await (const doc of docsWithTagsIterator) {
       updateCount += 1;
-      const searchTags = doc.tags.map(tag => transliterate(tag));
-      await this.db.collection(collectionName).updateOne({ _id: doc._id }, { $set: { searchTags } });
+      const searchTokens = doc.tags.map(tag => transliterate(tag));
+      await this.db.collection(collectionName).updateOne({ _id: doc._id }, { $set: { searchTokens } });
     }
 
     return updateCount;
@@ -27,8 +27,8 @@ export default class Educandu_2024_11_12_01_add_searchTags_to_documents_and_docu
 
     await this.db.collection('documents').createIndexes([
       {
-        name: '_idx_searchTags_',
-        key: { searchTags: 1 }
+        name: '_idx_searchTokens_',
+        key: { searchTokens: 1 }
       },
     ]);
 

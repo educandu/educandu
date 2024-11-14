@@ -236,7 +236,7 @@ export async function createTestMediaLibraryItem(container, user, data) {
   const mediaLibraryItemStore = container.get(MediaLibraryItemStore);
 
   const tags = data.tags || ['test'];
-  const searchTags = tags.map(tag => transliterate(tag));
+  const searchTokens = tags.map(tag => transliterate(tag));
   const url = data.url || `${CDN_URL_PREFIX}${urlUtils.concatParts(getMediaLibraryPath(), `${uniqueId.create()}.txt`)}`;
 
   const mediaLibraryItemToCreate = {
@@ -255,7 +255,7 @@ export async function createTestMediaLibraryItem(container, user, data) {
     allRightsReserved: data.allRightsReserved || false,
     licenses: data.licenses || ['CC0-1.0'],
     tags,
-    searchTags
+    searchTokens
   };
 
   const createdMediaLibraryItem = await mediaLibraryItemStore.insertMediaLibraryItem(mediaLibraryItemToCreate);

@@ -4,7 +4,7 @@ import { combineQueryConditions, createTagsPipelineQuery } from '../utils/query-
 import { mediaLibraryItemDbSchema, mediaLibraryItemMetadataUpdateDbSchema } from '../domain/schemas/media-library-item-schemas.js';
 
 const mediaLibraryItemProjection = {
-  searchTags: 0
+  searchTokens: 0
 };
 
 class MediaLibraryItemStore {
