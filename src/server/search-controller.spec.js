@@ -21,7 +21,7 @@ describe('search-controller', () => {
       getSearchableDocumentsMetadataByTags: sandbox.stub()
     };
     mediaLibraryService = {
-      getSearchableMediaLibraryItemsByTags: sandbox.stub()
+      getSearchableMediaLibraryItems: sandbox.stub()
     };
     clientDataMappingService = {
       mapSearchableResults: sandbox.stub()
@@ -58,7 +58,7 @@ describe('search-controller', () => {
       mappedResults = [...documents, ...mediaLibraryItems];
 
       documentService.getSearchableDocumentsMetadataByTags.resolves(documents);
-      mediaLibraryService.getSearchableMediaLibraryItemsByTags.resolves(mediaLibraryItems);
+      mediaLibraryService.getSearchableMediaLibraryItems.resolves(mediaLibraryItems);
       clientDataMappingService.mapSearchableResults.resolves(mappedResults);
 
       sut.handleGetSearchResult(req, res).catch(reject);
@@ -68,8 +68,8 @@ describe('search-controller', () => {
       assert.calledWith(documentService.getSearchableDocumentsMetadataByTags, 'Musik');
     });
 
-    it('should call mediaLibraryService.getSearchableMediaLibraryItemsByTags', () => {
-      assert.calledWith(mediaLibraryService.getSearchableMediaLibraryItemsByTags, 'Musik');
+    it('should call mediaLibraryService.getSearchableMediaLibraryItems', () => {
+      assert.calledWith(mediaLibraryService.getSearchableMediaLibraryItems, { query: 'Musik' });
     });
 
     it('should call clientDataMappingService.mapSearchableResults', () => {

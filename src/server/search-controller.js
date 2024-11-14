@@ -24,7 +24,7 @@ export default class SearchController {
     const { query } = req.query;
 
     const documents = await this.documentService.getSearchableDocumentsMetadataByTags(query);
-    const mediaLibraryItems = await this.mediaLibraryService.getSearchableMediaLibraryItemsByTags(query);
+    const mediaLibraryItems = await this.mediaLibraryService.getSearchableMediaLibraryItems({ query });
 
     const searchableResults = await this.clientDataMappingService.mapSearchableResults({ documents, mediaLibraryItems });
 
