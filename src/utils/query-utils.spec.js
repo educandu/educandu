@@ -9,7 +9,7 @@ describe('query-utils', () => {
     const testCases = [
       {
         searchExpression: '',
-        fields: ['searchTokens'],
+        key: 'searchTokens',
         expectedResult: {
           isValid: false,
           query: null,
@@ -19,7 +19,7 @@ describe('query-utils', () => {
       },
       {
         searchExpression: '-notThis',
-        fields: ['searchTokens'],
+        key: 'searchTokens',
         expectedResult: {
           isValid: false,
           query: null,
@@ -29,7 +29,7 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'a',
-        fields: ['searchTokens'],
+        key: 'searchTokens',
         expectedResult: {
           isValid: true,
           query: { searchTokens: { $regex: '^a$', $options: 'i' } },
@@ -39,7 +39,7 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'this',
-        fields: ['searchTokens'],
+        key: 'searchTokens',
         expectedResult: {
           isValid: true,
           query: { searchTokens: { $regex: '.*this.*', $options: 'i' } },
@@ -49,7 +49,7 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'this andThis -butNotThis',
-        fields: ['searchTokens'],
+        key: 'searchTokens',
         expectedResult: {
           isValid: true,
           query: {
@@ -65,7 +65,7 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'a and b -C',
-        fields: ['searchTokens'],
+        key: 'searchTokens',
         expectedResult: {
           isValid: true,
           query: {
@@ -82,35 +82,15 @@ describe('query-utils', () => {
       },
       {
         searchExpression: 'a and b -butNotC',
-        fields: ['searchTokens', 'name'],
+        key: 'searchTokens',
         expectedResult: {
           isValid: true,
           query: {
             $and: [
-              {
-                $or: [
-                  { searchTokens: { $regex: '^a$', $options: 'i' } },
-                  { name: { $regex: '^a$', $options: 'i' } }
-                ]
-              },
-              {
-                $or: [
-                  { searchTokens: { $regex: '.*and.*', $options: 'i' } },
-                  { name: { $regex: '.*and.*', $options: 'i' } }
-                ]
-              },
-              {
-                $or: [
-                  { searchTokens: { $regex: '^b$', $options: 'i' } },
-                  { name: { $regex: '^b$', $options: 'i' } }
-                ]
-              },
-              {
-                $and: [
-                  { searchTokens: { $not: { $regex: '.*butnotc.*', $options: 'i' } } },
-                  { name: { $not: { $regex: '.*butnotc.*', $options: 'i' } } }
-                ]
-              }
+              { searchTokens: { $regex: '^a$', $options: 'i' } },
+              { searchTokens: { $regex: '.*and.*', $options: 'i' } },
+              { searchTokens: { $regex: '^b$', $options: 'i' } },
+              { searchTokens: { $not: { $regex: '.*butnotc.*', $options: 'i' } } }
             ]
           },
           positiveTokens: new Set(['a', 'and', 'b']),
@@ -119,10 +99,10 @@ describe('query-utils', () => {
       }
     ];
 
-    testCases.forEach(({ searchExpression, fields, expectedResult }) => {
-      describe(`when searchExpression is '${searchExpression}' and fields are '${fields.join('\' and \'')}'`, () => {
+    testCases.forEach(({ searchExpression, key, expectedResult }) => {
+      describe(`when searchExpression is '${searchExpression}' and key is '${key}'`, () => {
         beforeEach(() => {
-          result = createTextSearchQuery(searchExpression, fields);
+          result = createTextSearchQuery(searchExpression, key);
         });
         it('should return the expected result', () => {
           expect(result).toStrictEqual(expectedResult);

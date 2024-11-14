@@ -90,7 +90,7 @@ class MediaLibraryService {
   }
 
   async getSearchableMediaLibraryItems({ query, resourceTypes = null }) {
-    const textQuery = createTextSearchQuery(query, 'tags');
+    const textQuery = createTextSearchQuery(query, 'searchTokens');
     if (!textQuery.isValid) {
       return [];
     }
@@ -100,18 +100,13 @@ class MediaLibraryService {
       textAndResourceTypeQueryConditions.push({ resourceType: { $in: resourceTypes } });
     }
 
-    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsByConditions(textAndResourceTypeQueryConditions);
+    const mediaLibraryItems = await this.mediaLibraryItemStore.getMediaLibraryItemsWithSearchTokensByConditions(textAndResourceTypeQueryConditions);
 
-    const positiveTokensArray = [...textQuery.positiveTokens].filter(token => token.toLowerCase());
     const itemsWithRelevance = mediaLibraryItems
       .map(item => {
-        const exactTagMatchCount = item.tags.filter(tag => textQuery.positiveTokens.has(tag.toLowerCase())).length;
-
-        let relevance = exactTagMatchCount;
-        const partialNameMatchCount = positiveTokensArray.filter(token => item.name.toLowerCase().includes(token)).length;
-        relevance += partialNameMatchCount;
-
-        return { ...item, relevance };
+        const exactTokenMatchCount = item.searchTokens.filter(searchToken => textQuery.positiveTokens.has(searchToken.toLowerCase())).length;
+        delete item.searchTokens;
+        return { ...item, relevance: exactTokenMatchCount };
       })
       .sort(by(item => item.relevance).thenBy(item => item.name));
 

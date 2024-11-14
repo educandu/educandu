@@ -30,8 +30,8 @@ class MediaLibraryItemStore {
     return this.collection.find({}, { projection: mediaLibraryItemProjection, session }).toArray();
   }
 
-  getMediaLibraryItemsByConditions(conditions, { session } = {}) {
-    return this.collection.find(combineQueryConditions('$and', conditions), { projection: mediaLibraryItemProjection, session }).toArray();
+  getMediaLibraryItemsWithSearchTokensByConditions(conditions, { session } = {}) {
+    return this.collection.find(combineQueryConditions('$and', conditions), { session }).toArray();
   }
 
   getMediaLibraryItemTagsMatchingText(text) {

@@ -235,9 +235,9 @@ class DocumentService {
     const documentsWithSearchTokens = await this.documentStore.getDocumentsExtendedMetadataWithSearchTokensByConditions(queryConditions);
 
     return documentsWithSearchTokens.map(document => {
-      const exactTagMatchCount = document.searchTokens.filter(searchToken => textQuery.positiveTokens.has(searchToken.toLowerCase())).length;
+      const exactTokenMatchCount = document.searchTokens.filter(searchToken => textQuery.positiveTokens.has(searchToken.toLowerCase())).length;
       const verifiedPoints = document.publicContext.verified ? DOCUMENT_VERIFIED_RELEVANCE_POINTS : 0;
-      const relevance = exactTagMatchCount + verifiedPoints;
+      const relevance = exactTokenMatchCount + verifiedPoints;
 
       delete document.searchTokens;
 
