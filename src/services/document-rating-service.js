@@ -17,7 +17,7 @@ class DocumentRatingService {
   }
 
   async getDocumentRatingsByDocumentIds(documentIds) {
-    const existingRatings = await this.documentRatingStore.getAllDocumentRatings();
+    const existingRatings = await this.documentRatingStore.getDocumentRatingsByDocumentIds(documentIds);
     const existingRatingsByDocumentId = new Map(existingRatings.map(rating => [rating.documentId, rating]));
     return documentIds.map(documentId => existingRatingsByDocumentId.get(documentId) || this._createNonPersistedDocumentRating(documentId));
   }

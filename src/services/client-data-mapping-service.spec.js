@@ -1303,6 +1303,15 @@ describe('client-data-mapping-service', () => {
           updatedOn: new Date('2024-11-01T10:01:00.000Z')
         }
       ];
+      const documentRatings = [
+        {
+          _id: 'DR1',
+          documentId: 'D1',
+          ratingsCount: 2,
+          ratingsCountPerValue: [0, 0, 0, 1, 1],
+          averageRatingValue: 4.5
+        }
+      ];
       const mediaLibraryItems = [
         {
           _id: 'MLI1',
@@ -1315,10 +1324,10 @@ describe('client-data-mapping-service', () => {
         }
       ];
 
-      result = sut.mapSearchableResults({ documents, mediaLibraryItems });
+      result = sut.mapSearchableResults({ documents, documentRatings, mediaLibraryItems });
     });
 
-    it('should map documents and media library items to a unified result set', () => {
+    it('should map documents, document ratings and media library items to a unified result set', () => {
       expect(result).toEqual([
         {
           _id: 'D1',
@@ -1329,7 +1338,12 @@ describe('client-data-mapping-service', () => {
           relevance: 1,
           shortDescription: 'Details about document content',
           createdOn: '2024-11-01T10:00:00.000Z',
-          updatedOn: '2024-11-01T10:01:00.000Z'
+          updatedOn: '2024-11-01T10:01:00.000Z',
+          rating: {
+            ratingsCount: 2,
+            ratingsCountPerValue: [0, 0, 0, 1, 1],
+            averageRatingValue: 4.5
+          }
         }, {
           _id: 'MLI1',
           tags: ['theory'],

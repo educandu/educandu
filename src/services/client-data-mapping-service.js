@@ -156,18 +156,31 @@ class ClientDataMappingService {
     }));
   }
 
-  mapSearchableResults({ documents, mediaLibraryItems }) {
-    const mappedDocuments = documents.map(document => ({
-      _id: document._id,
-      tags: document.tags,
-      slug: document.slug,
-      title: document.title,
-      searchResourceType: SEARCH_RESOURCE_TYPE.document,
-      relevance: document.relevance,
-      shortDescription: document.shortDescription,
-      createdOn: document.createdOn.toISOString(),
-      updatedOn: document.updatedOn.toISOString()
-    }));
+  mapSearchableResults({ documents, documentRatings, mediaLibraryItems }) {
+    const mappedDocuments = documents.map(document => {
+      const documentRating = documentRatings.find(rating => rating.documentId === document._id);
+
+      if (!documentRating) {
+        throw new Error(`Document rating missing for document with _id ${document._id}.`);
+      }
+
+      return {
+        _id: document._id,
+        tags: document.tags,
+        slug: document.slug,
+        title: document.title,
+        searchResourceType: SEARCH_RESOURCE_TYPE.document,
+        relevance: document.relevance,
+        shortDescription: document.shortDescription,
+        createdOn: document.createdOn.toISOString(),
+        updatedOn: document.updatedOn.toISOString(),
+        rating: {
+          ratingsCount: documentRating.ratingsCount,
+          ratingsCountPerValue: documentRating.ratingsCountPerValue,
+          averageRatingValue: documentRating.averageRatingValue
+        }
+      };
+    });
 
     const mappedMediaLibraryItems = mediaLibraryItems.map(mediaLibraryItem => {
       const resourceType = getResourceType(mediaLibraryItem.url);

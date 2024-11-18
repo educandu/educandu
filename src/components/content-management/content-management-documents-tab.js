@@ -90,9 +90,7 @@ function createTableRows(documents, documentRatings) {
       archived: doc.publicContext.archived,
       verified: doc.publicContext.verified,
       tags: doc.tags,
-      rating: documentRating,
-      ratingsCount: documentRating.ratingsCount,
-      averageRatingValue: documentRating.averageRatingValue
+      rating: documentRating
     };
   });
 }
@@ -191,8 +189,8 @@ function ContentManagementDocumentsTab() {
     archived: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.archived, direction)),
     protected: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.protected, direction)),
     verified: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.verified, direction)),
-    ratingsCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.ratingsCount, direction)),
-    averageRatingValue: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.averageRatingValue, direction))
+    ratingsCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.rating.ratingsCount, direction)),
+    averageRatingValue: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.rating.averageRatingValue, direction))
   }), []);
 
   useEffect(() => {

@@ -9,6 +9,7 @@ describe('search-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
+  let documentRatingService;
   let mediaLibraryService;
   let documentService;
   let user;
@@ -23,12 +24,15 @@ describe('search-controller', () => {
     mediaLibraryService = {
       getSearchableMediaLibraryItems: sandbox.stub()
     };
+    documentRatingService = {
+      getDocumentRatingsByDocumentIds: sandbox.stub()
+    };
     clientDataMappingService = {
       mapSearchableResults: sandbox.stub()
     };
     user = { _id: uniqueId.create() };
 
-    sut = new SearchController(documentService, mediaLibraryService, clientDataMappingService, {});
+    sut = new SearchController(documentService, mediaLibraryService, documentRatingService, clientDataMappingService, {});
   });
 
   afterEach(() => {
@@ -38,6 +42,7 @@ describe('search-controller', () => {
   describe('handleGetSearchResult', () => {
     let documents;
     let mappedResults;
+    let documentRatings;
     let mediaLibraryItems;
 
     beforeEach(() => new Promise((resolve, reject) => {
@@ -50,6 +55,11 @@ describe('search-controller', () => {
         { _id: 'D2' },
         { _id: 'D3' }
       ];
+      documentRatings = [
+        { _id: 'DR2', documentId: 'D1' },
+        { _id: 'DR1', documentId: 'D2' },
+        { _id: 'DR3', documentId: 'D3' }
+      ];
       mediaLibraryItems = [
         { _id: 'I1' },
         { _id: 'I2' },
@@ -58,6 +68,7 @@ describe('search-controller', () => {
       mappedResults = [...documents, ...mediaLibraryItems];
 
       documentService.getSearchableDocumentsMetadataByTags.resolves(documents);
+      documentRatingService.getDocumentRatingsByDocumentIds.resolves(documentRatings);
       mediaLibraryService.getSearchableMediaLibraryItems.resolves(mediaLibraryItems);
       clientDataMappingService.mapSearchableResults.resolves(mappedResults);
 
@@ -68,12 +79,16 @@ describe('search-controller', () => {
       assert.calledWith(documentService.getSearchableDocumentsMetadataByTags, 'Musik');
     });
 
+    it('should call documentRatingService.getDocumentRatingsByDocumentIds', () => {
+      assert.calledWith(documentRatingService.getDocumentRatingsByDocumentIds, ['D1', 'D2', 'D3']);
+    });
+
     it('should call mediaLibraryService.getSearchableMediaLibraryItems', () => {
       assert.calledWith(mediaLibraryService.getSearchableMediaLibraryItems, { query: 'Musik' });
     });
 
     it('should call clientDataMappingService.mapSearchableResults', () => {
-      assert.calledWith(clientDataMappingService.mapSearchableResults, { documents, mediaLibraryItems });
+      assert.calledWith(clientDataMappingService.mapSearchableResults, { documents, documentRatings, mediaLibraryItems });
     });
 
     it('should return status 200', () => {
