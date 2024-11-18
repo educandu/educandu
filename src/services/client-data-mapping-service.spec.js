@@ -1300,7 +1300,10 @@ describe('client-data-mapping-service', () => {
           relevance: 1,
           shortDescription: 'Details about document content',
           createdOn: new Date('2024-11-01T10:00:00.000Z'),
-          updatedOn: new Date('2024-11-01T10:01:00.000Z')
+          updatedOn: new Date('2024-11-01T10:01:00.000Z'),
+          publicContext: {
+            verified: true
+          }
         }
       ];
       const documentRatings = [
@@ -1343,7 +1346,8 @@ describe('client-data-mapping-service', () => {
             ratingsCount: 2,
             ratingsCountPerValue: [0, 0, 0, 1, 1],
             averageRatingValue: 4.5
-          }
+          },
+          verified: true
         }, {
           _id: 'MLI1',
           tags: ['theory'],
@@ -1353,7 +1357,9 @@ describe('client-data-mapping-service', () => {
           searchResourceType: SEARCH_RESOURCE_TYPE.image,
           shortDescription: 'Details about media item content',
           createdOn: '2024-11-01T10:02:00.000Z',
-          updatedOn: '2024-11-01T10:03:00.000Z'
+          updatedOn: '2024-11-01T10:03:00.000Z',
+          rating: null,
+          verified: false
         }
       ]);
     });

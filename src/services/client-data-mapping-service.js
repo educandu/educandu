@@ -178,7 +178,8 @@ class ClientDataMappingService {
           ratingsCount: documentRating.ratingsCount,
           ratingsCountPerValue: documentRating.ratingsCountPerValue,
           averageRatingValue: documentRating.averageRatingValue
-        }
+        },
+        verified: !!document.publicContext?.verified
       };
     });
 
@@ -194,7 +195,9 @@ class ClientDataMappingService {
         relevance: mediaLibraryItem.relevance,
         shortDescription: mediaLibraryItem.shortDescription,
         createdOn: mediaLibraryItem.createdOn.toISOString(),
-        updatedOn: mediaLibraryItem.updatedOn.toISOString()
+        updatedOn: mediaLibraryItem.updatedOn.toISOString(),
+        rating: null,
+        verified: false
       };
     });
 

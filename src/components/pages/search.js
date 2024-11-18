@@ -169,6 +169,7 @@ function Search({ PageTemplate }) {
     return (
       <ResourceInfoCell
         title={row.title}
+        verified={row.verified}
         documentRating={row.rating}
         shortDescription={row.shortDescription}
         subtext={subtext}
