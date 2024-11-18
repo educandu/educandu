@@ -174,12 +174,20 @@ export const otherUserDisplayNameOnlyShape = PropTypes.shape({
   displayName: PropTypes.string.isRequired
 });
 
-export const documentRatingShape = PropTypes.shape({
-  _id: PropTypes.string,
-  documentId: PropTypes.string.isRequired,
+const commonDocumentRatingProps = {
   ratingsCount: PropTypes.number.isRequired,
   ratingsCountPerValue: PropTypes.arrayOf(PropTypes.number).isRequired,
   averageRatingValue: PropTypes.number
+};
+
+export const documentRatingBasicShape = PropTypes.shape({
+  ...commonDocumentRatingProps
+});
+
+export const documentRatingShape = PropTypes.shape({
+  ...commonDocumentRatingProps,
+  _id: PropTypes.string,
+  documentId: PropTypes.string.isRequired,
 });
 
 export const sectionShape = PropTypes.shape({

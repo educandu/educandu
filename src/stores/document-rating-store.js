@@ -26,6 +26,10 @@ class DocumentRatingStore {
     return this.collection.findOne({ documentId }, { projection: documentRatingProjection, session });
   }
 
+  getDocumentRatingsByDocumentIds(documentIds, { session } = {}) {
+    return this.collection.find({ documentId: { $in: documentIds } }, { projection: documentRatingProjection, session }).toArray();
+  }
+
   async getRating({ documentId, userId }, { session } = {}) {
     const foundRatings = await this.collection.aggregate([
       { $match : { documentId, 'ratings.userId': userId } },

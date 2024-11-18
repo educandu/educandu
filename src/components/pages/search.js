@@ -29,7 +29,8 @@ const SORTING_VALUE = {
   relevance: 'relevance',
   title: 'title',
   createdOn: 'createdOn',
-  updatedOn: 'updatedOn'
+  updatedOn: 'updatedOn',
+  averageRatingValue: 'averageRatingValue'
 };
 
 const getSanitizedQueryFromRequest = request => {
@@ -70,6 +71,7 @@ function Search({ PageTemplate }) {
 
   const sortingOptions = [
     { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: SORTING_VALUE.relevance },
+    { label: t('common:averageRatingValue'), appliedLabel: t('common:sortedByAverageRatingValue'), value: SORTING_VALUE.averageRatingValue },
     { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: SORTING_VALUE.title },
     { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
     { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn }
@@ -77,6 +79,7 @@ function Search({ PageTemplate }) {
 
   const sorters = useMemo(() => ({
     relevance: rowsToSort => rowsToSort.sort(by(row => row.relevance, sorting.direction).thenBy(row => row.updatedOn, SORTING_DIRECTION.desc)),
+    averageRatingValue: rowsToSort => rowsToSort.sort(by(row => row.rating ? row.rating.averageRatingValue : -1, sorting.direction).thenBy(row => row.rating ? row.rating.ratingsCount : 0, SORTING_DIRECTION.desc)),
     title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: sorting.direction, ignoreCase: true })),
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
     updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction))
@@ -166,6 +169,8 @@ function Search({ PageTemplate }) {
     return (
       <ResourceInfoCell
         title={row.title}
+        verified={row.verified}
+        documentRating={row.rating}
         shortDescription={row.shortDescription}
         subtext={subtext}
         url={url}

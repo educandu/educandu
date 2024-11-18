@@ -1300,7 +1300,19 @@ describe('client-data-mapping-service', () => {
           relevance: 1,
           shortDescription: 'Details about document content',
           createdOn: new Date('2024-11-01T10:00:00.000Z'),
-          updatedOn: new Date('2024-11-01T10:01:00.000Z')
+          updatedOn: new Date('2024-11-01T10:01:00.000Z'),
+          publicContext: {
+            verified: true
+          }
+        }
+      ];
+      const documentRatings = [
+        {
+          _id: 'DR1',
+          documentId: 'D1',
+          ratingsCount: 2,
+          ratingsCountPerValue: [0, 0, 0, 1, 1],
+          averageRatingValue: 4.5
         }
       ];
       const mediaLibraryItems = [
@@ -1315,10 +1327,10 @@ describe('client-data-mapping-service', () => {
         }
       ];
 
-      result = sut.mapSearchableResults({ documents, mediaLibraryItems });
+      result = sut.mapSearchableResults({ documents, documentRatings, mediaLibraryItems });
     });
 
-    it('should map documents and media library items to a unified result set', () => {
+    it('should map documents, document ratings and media library items to a unified result set', () => {
       expect(result).toEqual([
         {
           _id: 'D1',
@@ -1329,7 +1341,13 @@ describe('client-data-mapping-service', () => {
           relevance: 1,
           shortDescription: 'Details about document content',
           createdOn: '2024-11-01T10:00:00.000Z',
-          updatedOn: '2024-11-01T10:01:00.000Z'
+          updatedOn: '2024-11-01T10:01:00.000Z',
+          rating: {
+            ratingsCount: 2,
+            ratingsCountPerValue: [0, 0, 0, 1, 1],
+            averageRatingValue: 4.5
+          },
+          verified: true
         }, {
           _id: 'MLI1',
           tags: ['theory'],
@@ -1339,7 +1357,9 @@ describe('client-data-mapping-service', () => {
           searchResourceType: SEARCH_RESOURCE_TYPE.image,
           shortDescription: 'Details about media item content',
           createdOn: '2024-11-01T10:02:00.000Z',
-          updatedOn: '2024-11-01T10:03:00.000Z'
+          updatedOn: '2024-11-01T10:03:00.000Z',
+          rating: null,
+          verified: false
         }
       ]);
     });
