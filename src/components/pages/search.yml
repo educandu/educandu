@@ -1,4 +1,10 @@
 search:
+  searchLabel:
+    en: Search terms/tags
+    de: Suchbegriffe/Tags
+  filtersLabel:
+    en: Search results filters
+    de: Suchergebnis-Filter
   sorting:
     en: Sorting
     de: Sortierung
@@ -11,3 +17,6 @@ search:
   totalItems:
     en: "{count, plural, =1 {# result} other {# results}} found"
     de: "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden"
+  textFilterPlaceholder:
+    en: Filter by title or description
+    de: Nach Titel oder Beschreibung filtern

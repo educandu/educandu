@@ -125,11 +125,12 @@ function getConnectExternalAccountPath(redirect = null) {
   return redirect ? urlUtils.createRedirectUrl(connectExternalAccountPath, redirect) : connectExternalAccountPath;
 }
 
-function getSearchUrl({ query, tags, type, sorting, direction, page, pageSize }) {
+function getSearchUrl({ query, tags, type, text, sorting, direction, page, pageSize }) {
   const queryString = urlUtils.composeQueryString({
     query: (query || '').trim(),
     tags: (tags || []).filter(tag => tag).join(','),
     type,
+    text: (text || '').trim(),
     sorting,
     direction,
     page,

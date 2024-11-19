@@ -6,7 +6,7 @@ import { delay } from '../utils/time-utils.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 
-function TagSelector({ tags, selectedCount, onSelect, size }) {
+function TagSelector({ tags, onSelect }) {
   const relativeElemRef = useRef(null);
   const absoluteElemRef = useRef(null);
   const { t } = useTranslation('tagSelector');
@@ -45,18 +45,13 @@ function TagSelector({ tags, selectedCount, onSelect, size }) {
     setIsActive(false);
   };
 
-  const mainClasses = classNames({
-    'TagSelector': true,
-    'is-adding-subsequent-tag': !!selectedCount
-  });
-
   const linkClasses = classNames({
     'TagSelector-link': true,
     'is-active': isActive
   });
 
   return (
-    <div className={mainClasses} ref={relativeElemRef}>
+    <div className="TagSelector" ref={relativeElemRef}>
       <a className={linkClasses} onClick={handleClick}>{t('linkText')}</a>
       {!!isActive && (
         <div ref={absoluteElemRef} className="TagSelector-selectWrapper" style={{ left: selectLeftOffset }}>
@@ -65,7 +60,7 @@ function TagSelector({ tags, selectedCount, onSelect, size }) {
             autoFocus
             defaultOpen
             showSearch
-            size={size}
+            size="large"
             value={null}
             onBlur={handleOnBlur}
             options={options}
@@ -79,13 +74,7 @@ function TagSelector({ tags, selectedCount, onSelect, size }) {
 
 TagSelector.propTypes = {
   onSelect: PropTypes.func.isRequired,
-  selectedCount: PropTypes.number.isRequired,
-  size: PropTypes.oneOf(['small', 'middle', 'large']),
   tags: PropTypes.arrayOf(PropTypes.string).isRequired
-};
-
-TagSelector.defaultProps = {
-  size: 'middle'
 };
 
 export default TagSelector;
