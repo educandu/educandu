@@ -4,6 +4,7 @@ import SearchBar from '../search-bar.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import TagSelector from '../tag-selector.js';
+import FilterInput from '../filter-input.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
@@ -42,6 +43,7 @@ const getSanitizedQueryFromRequest = request => {
     query: query.query.trim(),
     tags: (query.tags?.trim() || '').split(',').filter(tag => tag),
     type: Object.values(SEARCH_RESOURCE_TYPE).includes(query.type) ? query.type : SEARCH_RESOURCE_TYPE.document,
+    text: query.text?.trim() || '',
     sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.relevance,
     direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
     page: !isNaN(pageNumber) ? pageNumber : 1,
@@ -63,6 +65,7 @@ function Search({ PageTemplate }) {
 
   const requestQuery = getSanitizedQueryFromRequest(request);
 
+  const [textFilter, setTextFilter] = useState(requestQuery.text);
   const [searchText, setSearchText] = useState(requestQuery.query);
   const [selectedTags, setSelectedTags] = useState(requestQuery.tags);
   const [searchResourceType, setSearchResourceType] = useState(requestQuery.type);
@@ -94,6 +97,7 @@ function Search({ PageTemplate }) {
       query: searchText,
       tags: selectedTags,
       type: searchResourceType,
+      text: textFilter,
       page: pagination.page,
       pageSize: pagination.pageSize,
       sorting: sorting.value,
@@ -101,7 +105,7 @@ function Search({ PageTemplate }) {
     };
 
     history.replaceState(null, '', routes.getSearchUrl(queryParams));
-  }, [searchText, selectedTags, searchResourceType, sorting, pagination]);
+  }, [searchText, selectedTags, searchResourceType, textFilter, sorting, pagination]);
 
   useEffect(() => {
     (async () => {
@@ -134,17 +138,33 @@ function Search({ PageTemplate }) {
 
     const sorter = sorters[sorting.value];
 
-    let filteredRows = newRows
-      .filter(row => selectedTags.every(selectedTag => row.tags.some(tag => tag.toLowerCase() === selectedTag)));
+    const doesRowMatchResourceType = row => {
+      return searchResourceType === SEARCH_RESOURCE_TYPE.any
+        || row.searchResourceType === searchResourceType;
+    };
 
-    if (searchResourceType !== SEARCH_RESOURCE_TYPE.any) {
-      filteredRows = filteredRows.filter(row => row.searchResourceType === searchResourceType);
-    }
+    const doesRowMatchTextFilter = row => {
+      const sanitizedTextFilter = textFilter.trim().toLowerCase();
+      return !sanitizedTextFilter
+        || row.title.toLowerCase().includes(sanitizedTextFilter)
+        || row.shortDescription.toLowerCase().includes(sanitizedTextFilter);
+    };
+
+    const doesRowMatchSelectedTags = row => {
+      return selectedTags.every(selectedTag => row.tags.some(tag => tag.toLowerCase() === selectedTag));
+    };
+
+    const filteredRows = newRows
+      .filter(doesRowMatchResourceType)
+      .filter(doesRowMatchTextFilter)
+      .filter(doesRowMatchSelectedTags);
+
     const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
     setDisplayedRows(sortedRows);
-  }, [searchResults, selectedTags, searchResourceType, sorting, sorters]);
+  }, [searchResults, selectedTags, searchResourceType, textFilter, sorting, sorters]);
 
+  const handleTextFilterChange = event => setTextFilter(event.target.value);
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
@@ -236,16 +256,23 @@ function Search({ PageTemplate }) {
                 key: 'filters',
                 label: t('filtersLabel'),
                 children: (
-                  <div className='SearchPage-filtersContainer'>
-                    <RadioGroup className="SearchPage-typeFilter" value={searchResourceType} disabled={isSearching} onChange={handleSearcheResourceTypeChange}>
-                      <RadioButton value={SEARCH_RESOURCE_TYPE.document}>{t('common:searchResourceType_document')}</RadioButton>
-                      <RadioButton value={SEARCH_RESOURCE_TYPE.audio}>{t('common:resourceType_audio')}</RadioButton>
-                      <RadioButton value={SEARCH_RESOURCE_TYPE.video}>{t('common:resourceType_video')}</RadioButton>
-                      <RadioButton value={SEARCH_RESOURCE_TYPE.image}>{t('common:resourceType_image')}</RadioButton>
-                      <RadioButton value={SEARCH_RESOURCE_TYPE.pdf}>{t('common:resourceType_pdf')}</RadioButton>
-                      <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t('common:resourceType_any')}</RadioButton>
-                    </RadioGroup>
-
+                  <div className="SearchPage-filtersContainer">
+                    <div className="SearchPage-filtersRow">
+                      <RadioGroup value={searchResourceType} disabled={isSearching} onChange={handleSearcheResourceTypeChange}>
+                        <RadioButton value={SEARCH_RESOURCE_TYPE.document}>{t('common:searchResourceType_document')}</RadioButton>
+                        <RadioButton value={SEARCH_RESOURCE_TYPE.audio}>{t('common:resourceType_audio')}</RadioButton>
+                        <RadioButton value={SEARCH_RESOURCE_TYPE.video}>{t('common:resourceType_video')}</RadioButton>
+                        <RadioButton value={SEARCH_RESOURCE_TYPE.image}>{t('common:resourceType_image')}</RadioButton>
+                        <RadioButton value={SEARCH_RESOURCE_TYPE.pdf}>{t('common:resourceType_pdf')}</RadioButton>
+                        <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t('common:resourceType_any')}</RadioButton>
+                      </RadioGroup>
+                      <FilterInput
+                        className="SearchPage-textFilter"
+                        value={textFilter}
+                        onChange={handleTextFilterChange}
+                        placeholder={t('textFilterPlaceholder')}
+                        />
+                    </div>
                     <div className="SearchPage-selectedTags">
                       {renderSelectedTags()}
                       <TagSelector size="large" tags={unselectedTags} onSelect={handleSelectTag} selectedCount={selectedTags.length} />

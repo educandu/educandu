@@ -4139,6 +4139,10 @@
     "totalItems": {
       "en": "{count, plural, =1 {# result} other {# results}} found",
       "de": "{count, plural, =1 {# Ergebnis} other {# Ergebnisse}} gefunden"
+    },
+    "textFilterPlaceholder": {
+      "en": "Filter by title or description",
+      "de": "Nach Titel oder Beschreibung filtern"
     }
   },
   "searchBar": {

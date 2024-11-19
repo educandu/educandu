@@ -29,6 +29,24 @@
   padding: 10px 0;
 }
 
+.SearchPage-filtersRow {
+  display: grid;
+  align-items: start;
+  grid-template-columns: auto 1fr;
+  gap: 2* @edu-control-spacing-wide;
+  margin-bottom: @edu-content-padding;
+
+  @media @edu-media-phone {
+    grid-template-columns: 100%;
+    grid-template-rows: auto auto;
+  }
+}
+
+.SearchPage-textFilter {
+  display: block;
+  min-width: 200px !important;
+}
+
 .SearchPage-selectedTags {
   display: flex;
   flex-wrap: wrap;
@@ -61,10 +79,4 @@
   &:first-of-type .ant-table-cell {
     border-top: none !important;
   }
-}
-
-.SearchPage-typeFilter {
-  display: flex !important;
-  flex-wrap: wrap;
-  margin-bottom: @edu-content-padding !important;
 }
