@@ -275,7 +275,7 @@ function Search({ PageTemplate }) {
                     </div>
                     <div className="SearchPage-selectedTags">
                       {renderSelectedTags()}
-                      <TagSelector size="large" tags={unselectedTags} onSelect={handleSelectTag} selectedCount={selectedTags.length} />
+                      <TagSelector tags={unselectedTags} onSelect={handleSelectTag} />
                       {selectedTags.length > 1 && (
                       <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
                         <CloseIcon />

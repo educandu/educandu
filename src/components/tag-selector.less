@@ -1,24 +1,25 @@
 .TagSelector {
   position: relative;
-
-  &.is-adding-subsequent-tag {
-    margin-left: @edu-control-spacing-base;
-  }
 }
 
 .TagSelector-link {
   display: flex;
   align-items: center;
   color: @edu-link-color;
+  margin: @tag-margin;
   padding: @tag-padding;
   font-size: @tag-font-size;
-  text-decoration: @edu-link-decoration;
   user-select: none;
+  text-decoration: none;
+  border-radius: @tag-border-radius;
+  background-color: @edu-background-color-base;
+
+  &:hover {
+    background-color: darken(@edu-background-color-base, 3%);
+  }
 
   &.is-active {
     color: @edu-white;
-    text-decoration: none;
-    border-radius: @tag-border-radius;
     background-color: @edu-primary-color-light;
   }
 }
