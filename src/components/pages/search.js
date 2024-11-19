@@ -1,6 +1,5 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import { Radio, Table, Tag } from 'antd';
 import SearchBar from '../search-bar.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -8,6 +7,7 @@ import TagSelector from '../tag-selector.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
+import { Collapse, Radio, Table, Tag } from 'antd';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
@@ -221,29 +221,47 @@ function Search({ PageTemplate }) {
         <h1 className="u-page-title">{t('common:search')}</h1>
 
         <div className="SearchPage-controls">
-          <SearchBar initialValue={searchText} onSearch={setSearchText} />
+          <div className="SearchPage-searchBar">
+            <span>{t('searchLabel')}:</span>
+            <SearchBar initialValue={searchText} onSearch={setSearchText} placeholder="" />
+          </div>
           <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
 
-        <div className="SearchPage-selectedTags">
-          {renderSelectedTags()}
-          <TagSelector size="large" tags={unselectedTags} onSelect={handleSelectTag} selectedCount={selectedTags.length} />
-          {selectedTags.length > 1 && (
-            <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
-              <CloseIcon />
-              {t('common:removeAll')}
-            </a>
-          )}
-        </div>
+        <div className="SearchPage-filters">
+          <Collapse
+            defaultActiveKey="filters"
+            items={
+              [{
+                key: 'filters',
+                label: t('filtersLabel'),
+                children: (
+                  <div className='SearchPage-filtersContainer'>
+                    <RadioGroup className="SearchPage-typeFilter" value={searchResourceType} disabled={isSearching} onChange={handleSearcheResourceTypeChange}>
+                      <RadioButton value={SEARCH_RESOURCE_TYPE.document}>{t('common:searchResourceType_document')}</RadioButton>
+                      <RadioButton value={SEARCH_RESOURCE_TYPE.audio}>{t('common:resourceType_audio')}</RadioButton>
+                      <RadioButton value={SEARCH_RESOURCE_TYPE.video}>{t('common:resourceType_video')}</RadioButton>
+                      <RadioButton value={SEARCH_RESOURCE_TYPE.image}>{t('common:resourceType_image')}</RadioButton>
+                      <RadioButton value={SEARCH_RESOURCE_TYPE.pdf}>{t('common:resourceType_pdf')}</RadioButton>
+                      <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t('common:resourceType_any')}</RadioButton>
+                    </RadioGroup>
 
-        <RadioGroup className="SearchPage-typeFilter" value={searchResourceType} disabled={isSearching} onChange={handleSearcheResourceTypeChange}>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.document}>{t('common:searchResourceType_document')}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.audio}>{t('common:resourceType_audio')}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.video}>{t('common:resourceType_video')}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.image}>{t('common:resourceType_image')}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.pdf}>{t('common:resourceType_pdf')}</RadioButton>
-          <RadioButton value={SEARCH_RESOURCE_TYPE.any}>{t('common:resourceType_any')}</RadioButton>
-        </RadioGroup>
+                    <div className="SearchPage-selectedTags">
+                      {renderSelectedTags()}
+                      <TagSelector size="large" tags={unselectedTags} onSelect={handleSelectTag} selectedCount={selectedTags.length} />
+                      {selectedTags.length > 1 && (
+                      <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
+                        <CloseIcon />
+                        {t('common:removeAll')}
+                      </a>
+                      )}
+                    </div>
+                  </div>
+                )
+              }]
+            }
+            />
+        </div>
 
         <Table
           key={searchText}

@@ -1,4 +1,10 @@
 search:
+  searchLabel:
+    en: Search terms/tags
+    de: Suchbegriffe/Tags
+  filtersLabel:
+    en: Search results filters
+    de: Suchergebnis-Filter
   sorting:
     en: Sorting
     de: Sortierung

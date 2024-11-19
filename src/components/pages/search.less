@@ -11,12 +11,28 @@
   }
 }
 
+.SearchPage-searchBar {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  grid-auto-flow: column;
+}
+
+.SearchPage-filters {
+  display: grid;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.SearchPage-filtersContainer {
+  padding: 10px 0;
+}
+
 .SearchPage-selectedTags {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  padding-top: @edu-content-padding;
-  padding-bottom: @edu-content-padding;
 }
 
 .SearchPage-deselectTagsLink {
@@ -50,5 +66,5 @@
 .SearchPage-typeFilter {
   display: flex !important;
   flex-wrap: wrap;
-  margin-bottom: 30px !important;
+  margin-bottom: @edu-content-padding !important;
 }

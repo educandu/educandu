@@ -2771,7 +2771,7 @@
   },
   "index": {
     "recommendedSearches": {
-      "en": "Recommended searches",
+      "en": "Recommended search terms",
       "de": "Empfohlene Suchbegriffe"
     },
     "infoText": {
@@ -4116,6 +4116,14 @@
     }
   },
   "search": {
+    "searchLabel": {
+      "en": "Search terms/tags",
+      "de": "Suchbegriffe/Tags"
+    },
+    "filtersLabel": {
+      "en": "Search results filters",
+      "de": "Suchergebnis-Filter"
+    },
     "sorting": {
       "en": "Sorting",
       "de": "Sortierung"
