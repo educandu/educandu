@@ -624,6 +624,10 @@
       "en": "Duplicate",
       "de": "Duplizieren"
     },
+    "publish": {
+      "en": "Publish",
+      "de": "Veröffentlichen"
+    },
     "create": {
       "en": "Create",
       "de": "Erstellen"

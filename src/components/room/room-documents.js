@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, message, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import FileIcon from '../icons/general/file-icon.js';
+import { PublishDocumentIcon } from '../icons/icons.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
@@ -55,8 +56,9 @@ export default function RoomDocuments({
   roomId,
   initialRoomDocumentIds,
   initialRoomDocuments,
-  canDeleteDocuments,
   canManageDocuments,
+  canDeleteDocuments,
+  canPublishDocuments,
   canManageDraftDocuments
 }) {
   const droppableIdRef = useRef(useId());
@@ -71,6 +73,10 @@ export default function RoomDocuments({
 
   const handleNewDocumentClick = (documentToClone = null) => {
     setDocumentMetadataModalState(getDocumentMetadataModalState({ t, roomId, documentToClone, canManageDraftDocuments, isOpen: true }));
+  };
+
+  const handlePublishDocumentClick = documentToPublish => {
+    console.log('Will do', documentToPublish._id);
   };
 
   const handleDocumentMetadataModalSave = async (newDocuments, templateDocumentId) => {
@@ -175,6 +181,8 @@ export default function RoomDocuments({
     switch (actionButton.key) {
       case 'clone':
         return handleNewDocumentClick(doc);
+      case 'publish':
+        return handlePublishDocumentClick(doc);
       case 'delete':
         return handleDeleteDocumentClick(doc);
       case 'moveUp':
@@ -222,6 +230,21 @@ export default function RoomDocuments({
         icon: <DuplicateIcon />
       }
     ];
+
+    if (canPublishDocuments) {
+      const isDisabled = !!doc.roomContext.draft;
+
+      actionButtons.push({
+        key: 'publish',
+        title: t('common:publish'),
+        icon: (
+          <div className={classNames({ 'RoomDocuments-documentActionButtonsPublish': !isDisabled })}>
+            <PublishDocumentIcon />
+          </div>
+        ),
+        disabled: isDisabled
+      });
+    }
 
     if (canDeleteDocuments) {
       actionButtons.push({
@@ -362,6 +385,7 @@ RoomDocuments.propTypes = {
   roomId: PropTypes.string.isRequired,
   canManageDocuments: PropTypes.bool.isRequired,
   canDeleteDocuments: PropTypes.bool.isRequired,
+  canPublishDocuments: PropTypes.bool.isRequired,
   canManageDraftDocuments: PropTypes.bool.isRequired,
   initialRoomDocumentIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   initialRoomDocuments: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired

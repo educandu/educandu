@@ -139,6 +139,7 @@ export default function Room({ PageTemplate, initialState }) {
           initialRoomDocumentIds={initialState.room.documents}
           initialRoomDocuments={initialState.documents}
           canDeleteDocuments={viewMode === VIEW_MODE.owner}
+          canPublishDocuments={viewMode === VIEW_MODE.owner}
           canManageDocuments={viewMode === VIEW_MODE.owner || viewMode === VIEW_MODE.collaboratingMember}
           canManageDraftDocuments={viewMode === VIEW_MODE.owner}
           />
