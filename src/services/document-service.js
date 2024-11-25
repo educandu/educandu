@@ -421,6 +421,67 @@ class DocumentService {
     return this.updateDocument({ documentId, data, revisionCreatedBecause, user });
   }
 
+  async publishDocument({ documentId, metadata, user, silentPublish = false }) {
+    let newPublicDocument;
+
+    await this.transactionRunner.run(async session => {
+      const roomDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId, { session });
+
+      if (!roomDocumentRevisions.length) {
+        throw new NotFound(`Could not find revisions for document ${documentId} during the publishing process.`);
+      }
+
+      const lastRoomDocumentRevision = roomDocumentRevisions[roomDocumentRevisions.length - 1];
+      if (!lastRoomDocumentRevision.roomId) {
+        throw new BadRequest(`Can not publish document ${documentId} because it is not a room document.`);
+      }
+
+      const room = await this.roomStore.getRoomById(lastRoomDocumentRevision.roomId, { session });
+      if (!isRoomOwner({ room, userId: user._id })) {
+        throw new Forbidden('Only room owners can publish room documents.');
+      }
+
+      const redactedSections = lastRoomDocumentRevision.sections.map(section => {
+        const redactedSection = cloneDeep(section);
+        const plugin = this.pluginRegistry.getRegisteredPlugin(redactedSection.type);
+        const redactedContent = plugin?.info.redactContent?.(redactedSection.content, null) || null;
+        redactedSection.content = redactedContent;
+        return redactedSection;
+      });
+
+      const newPublicDocumentRevision = this._buildDocumentRevision({
+        ...lastRoomDocumentRevision,
+        sections: redactedSections,
+        ...metadata,
+        _id: null,
+        roomId: null,
+        roomContext: null,
+        documentId: uniqueId.create(),
+        createdBy: user._id
+      });
+
+      try {
+        checkRevisionOnDocumentCreation({ newRevision: newPublicDocumentRevision, room: null, user });
+      } catch (error) {
+        logger.error(error);
+        throw new Forbidden(error.message);
+      }
+
+      newPublicDocumentRevision.order = await this.documentOrderStore.getNextOrder();
+      newPublicDocument = this._buildDocumentFromRevisions([newPublicDocumentRevision]);
+
+      await this.documentRevisionStore.saveDocumentRevision(newPublicDocumentRevision, { session });
+      if (!silentPublish) {
+        await this.eventStore.recordDocumentRevisionCreatedEvent({ documentRevision: newPublicDocumentRevision, user }, { session });
+      }
+      await this.documentStore.saveDocument(newPublicDocument, { session });
+    });
+
+    await this.hardDeletePrivateDocument({ documentId, user });
+
+    return newPublicDocument;
+  }
+
   async hardDeletePrivateDocument({ documentId, user }) {
     let doc;
     let room;

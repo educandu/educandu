@@ -33,7 +33,8 @@ import {
   getPublicNonArchivedDocumentsByContributingUserParams,
   getPublicNonArchivedDocumentsByContributingUserQuery,
   getSearchableDocumentsTitlesQuerySchema,
-  getUserContributionsForStatisticsQuerySchema
+  getUserContributionsForStatisticsQuerySchema,
+  publishDocumentBodySchema
 } from '../domain/schemas/document-schemas.js';
 
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
@@ -324,6 +325,17 @@ class DocumentController {
     return res.status(201).send({ document: mappedDocument, documentRevisions: mappedDocumentRevisions });
   }
 
+  async handlePatchDocumentPublish(req, res) {
+    const { user } = req;
+    const { metadata } = req.body;
+    const { documentId } = req.params;
+
+    const publishedDocument = await this.documentService.publishDocument({ documentId, metadata, user });
+    const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(publishedDocument, user);
+
+    return res.status(201).send(mappedDocument);
+  }
+
   async handleGetDocs(req, res) {
     const { user } = req;
     const { documentId } = req.query;
@@ -468,6 +480,15 @@ class DocumentController {
       validateParams(documentIdParamsOrQuerySchema),
       validateBody(restoreRevisionBodySchema),
       (req, res) => this.handlePatchDocumentRestoreRevision(req, res)
+    );
+
+    router.patch(
+      '/api/v1/docs/:documentId/publish',
+      jsonParser,
+      needsPermission(permissions.CREATE_CONTENT),
+      validateParams(documentIdParamsOrQuerySchema),
+      validateBody(publishDocumentBodySchema),
+      (req, res) => this.handlePatchDocumentPublish(req, res)
     );
 
     router.delete(

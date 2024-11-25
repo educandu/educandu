@@ -368,6 +368,12 @@ function DocumentMetadataModal({
             savedDocuments.push(await documentApiClient.createDocument(documentToSave));
           }
           break;
+        case DOCUMENT_METADATA_MODAL_MODE.publish:
+          savedDocuments.push(await documentApiClient.publishDocument({
+            documentId: initialDocumentMetadata._id,
+            metadata: mappedDocument
+          }));
+          break;
         case DOCUMENT_METADATA_MODAL_MODE.update:
           savedDocuments.push(await documentApiClient.updateDocumentMetadata({
             documentId: initialDocumentMetadata._id,
@@ -605,9 +611,9 @@ function DocumentMetadataModal({
 }
 
 DocumentMetadataModal.propTypes = {
-  documentToClone: documentExtendedMetadataShape,
-  allowMultipleInCreateMode: PropTypes.bool,
   allowDraftInRoomContext: PropTypes.bool,
+  allowMultipleInCreateMode: PropTypes.bool,
+  documentToClone: documentExtendedMetadataShape,
   initialDocumentMetadata: PropTypes.oneOfType([
     PropTypes.shape({ roomId: PropTypes.string }),
     documentMetadataEditShape
@@ -619,9 +625,9 @@ DocumentMetadataModal.propTypes = {
 };
 
 DocumentMetadataModal.defaultProps = {
-  documentToClone: null,
+  allowDraftInRoomContext: false,
   allowMultipleInCreateMode: false,
-  allowDraftInRoomContext: false
+  documentToClone: null
 };
 
 export default DocumentMetadataModal;
