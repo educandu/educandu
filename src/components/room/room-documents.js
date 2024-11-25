@@ -38,11 +38,11 @@ function getDocumentMetadataModalState({ t, roomId, canManageDraftDocuments, doc
 
   return {
     mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
-    allowMultiple: !documentToClone,
+    allowMultipleInCreateMode: !documentToClone,
     isOpen,
     documentToClone,
     initialDocumentMetadata,
-    allowDraft: canManageDraftDocuments
+    allowDraftInRoomContext: canManageDraftDocuments
   };
 }
 
