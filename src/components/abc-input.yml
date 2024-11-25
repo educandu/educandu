@@ -1,0 +1,10 @@
+abcInput:
+  importMusicXmlLabel:
+    en: Import MusicXML
+    de: MusicXML importieren
+  transposeLabel:
+    en: Transpose
+    de: Transponieren
+  transposeChildLabel:
+    en: "{halfSteps, plural, =1 {1 half step} other {# half steps}} {direction, select, down {down} other {up}}"
+    de: "{halfSteps, plural, =1 {1 Halbtonschritt} other {# Halbtonschritte}} {direction, select, down {nach unten} other {nach oben}}"

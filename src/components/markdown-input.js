@@ -125,7 +125,7 @@ function MarkdownInput({
         >
         {value}
       </Markdown>
-      <Tooltip title={t('previewArea')}>
+      <Tooltip title={t('common:previewArea')}>
         <PreviewIcon className="MarkdownInput-previewWatermark" />
       </Tooltip>
     </div>

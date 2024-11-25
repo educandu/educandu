@@ -42,7 +42,10 @@ import {
   IconReportSearch,
   IconUserEdit,
   IconSend,
-  IconSendOff
+  IconSendOff,
+  IconTool,
+  IconSourceCode,
+  IconArrowsDownUp
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -88,6 +91,7 @@ function createIconFromTablerIconComponents(
 }
 
 export const TagIcon = createIconFromTablerIconComponent(IconTag);
+export const ToolIcon = createIconFromTablerIconComponent(IconTool);
 export const LineIcon = createIconFromSvgComponent(LineIconComponent);
 export const ClickIcon = createIconFromTablerIconComponent(IconClick);
 export const SpinIcon = createIconFromTablerIconComponent(IconLoader2);
@@ -115,6 +119,7 @@ export const CategoryIcon = createIconFromTablerIconComponent(IconCategory2);
 export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);
 export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);
+export const SourceCodeIcon = createIconFromTablerIconComponent(IconSourceCode);
 export const TableExportIcon = createIconFromTablerIconComponent(IconTableDown);
 export const StatisticsIcon = createIconFromTablerIconComponent(IconReportSearch);
 export const ExitFullscreenIcon = createIconFromTablerIconComponent(IconMinimize);
@@ -122,6 +127,7 @@ export const FillColorIcon = createIconFromTablerIconComponent(IconBucketDroplet
 export const ChevronLeftIcon = createIconFromTablerIconComponent(IconChevronLeft);
 export const TableImportIcon = createIconFromTablerIconComponent(IconTableImport);
 export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximize);
+export const ArrowsDownUpIcon = createIconFromTablerIconComponent(IconArrowsDownUp);
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
 export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomScan);

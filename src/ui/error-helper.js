@@ -47,3 +47,18 @@ export function handleError({ message, error, logger, t, duration = 10 }) {
     console.error(err);
   }
 }
+
+export function handleWarning({ message, logger, t, duration = 10 }) {
+  notification.warning({
+    message: t('common:warning'),
+    description: message,
+    duration
+  });
+
+  try {
+    logger.warn(message);
+  } catch {
+    // eslint-disable-next-line no-console
+    console.warn(message);
+  }
+}
