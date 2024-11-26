@@ -107,20 +107,22 @@ function AbcInput({
 
   const renderToolsButton = () => (
     <Dropdown
-      placement='top'
+      placement="top"
       trigger={['click']}
       disabled={disabled}
       arrow={{ pointAtCenter: true }}
       menu={{ items: toolsItems, onClick: handleToolsItemClick }}
       >
-      <div
-        className={classNames({
-          'AbcInput-abcToolsButton': true,
-          'is-disabled': disabled
-        })}
-        >
-        <ToolIcon />
-      </div>
+      <Tooltip title={t('toolsButtonTooltip')} placement="left">
+        <div
+          className={classNames({
+            'AbcInput-abcToolsButton': true,
+            'is-disabled': disabled
+          })}
+          >
+          <ToolIcon />
+        </div>
+      </Tooltip>
     </Dropdown>
   );
 

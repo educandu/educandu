@@ -1,5 +1,9 @@
 {
   "abcInput": {
+    "toolsButtonTooltip": {
+      "en": "ABC tools",
+      "de": "ABC-Tools"
+    },
     "importMusicXmlLabel": {
       "en": "Import MusicXML",
       "de": "MusicXML importieren"
