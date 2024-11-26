@@ -11,9 +11,6 @@ documentsTab:
       Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen.
 
       **Hinweis**: Öffentliche Dokumente können nicht gelöscht werden!
-  createPublicDocumentMarkdown:
-    en: "Create **public** document"
-    de: "**Öffentliches** Dokument erstellen"
   ownDocumentOnly:
     en: Only documents created by me
     de: Nur Dokumente, die ich erstellt habe

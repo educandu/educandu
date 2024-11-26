@@ -1,20 +1,16 @@
 import PropTypes from 'prop-types';
 import Spinner from '../spinner.js';
 import Markdown from '../markdown.js';
-import routes from '../../utils/routes.js';
 import EmptyState from '../empty-state.js';
+import { Checkbox, Pagination } from 'antd';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
 import DocumentCard from '../document-card.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Pagination } from 'antd';
 import FileIcon from '../icons/general/file-icon.js';
 import FilterIcon from '../icons/general/filter-icon.js';
-import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import DocumentMetadataModal from '../document-metadata-modal.js';
 import { contributedDocumentMetadataShape } from '../../ui/default-prop-types.js';
-import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 
 const PAGE_SIZE = 8;
 const DEFAULT_PAGE_NUMBER = 1;
@@ -55,26 +51,6 @@ function DocumentsTab({ documents, loading }) {
     setPageDocuments(filteredDocuments.slice(indexOfFirstPageDocument, indexOfLastPageDocument));
   }, [user, documents, filterText, ownDocumentsOnly, currentPage]);
 
-  const [isDocumentModalOpen, setIsDocumentCreationModalOpen] = useState(false);
-
-  const handleCreateDocumentClick = () => {
-    setIsDocumentCreationModalOpen(true);
-  };
-
-  const handleDocumentModalSave = createdDocuments => {
-    setIsDocumentCreationModalOpen(false);
-
-    window.location = routes.getDocUrl({
-      id: createdDocuments[0]._id,
-      slug: createdDocuments[0].slug,
-      view: DOC_VIEW_QUERY_PARAM.edit
-    });
-  };
-
-  const handleDocumentModalClose = () => {
-    setIsDocumentCreationModalOpen(false);
-  };
-
   const handleFilterChange = event => {
     const { value } = event.target;
     setFilterText(value);
@@ -94,16 +70,6 @@ function DocumentsTab({ documents, loading }) {
 
   return (
     <div className="DocumentsTab">
-      {!loading && !showNoDataEmptyState && (
-        <Button
-          type="primary"
-          className="DocumentsTab-button"
-          onClick={handleCreateDocumentClick}
-          >
-          <Markdown>{t('createPublicDocumentMarkdown')}</Markdown>
-        </Button>
-      )}
-
       <section>
         {!!loading && <Spinner />}
 
@@ -114,12 +80,6 @@ function DocumentsTab({ documents, loading }) {
             subtitle={
               <Markdown>{t('emptyStateSubtitleMarkdown')}</Markdown>
             }
-            button={{
-              text: (
-                <Markdown>{t('createPublicDocumentMarkdown')}</Markdown>
-              ),
-              onClick: handleCreateDocumentClick
-            }}
             />
         )}
 
@@ -161,14 +121,6 @@ function DocumentsTab({ documents, loading }) {
           </div>
         )}
       </section>
-
-      <DocumentMetadataModal
-        initialDocumentMetadata={{}}
-        isOpen={isDocumentModalOpen}
-        mode={DOCUMENT_METADATA_MODAL_MODE.create}
-        onSave={handleDocumentModalSave}
-        onClose={handleDocumentModalClose}
-        />
     </div>
   );
 }

@@ -2416,10 +2416,6 @@
       "en": "Public documents that you have created or contributed to will show up here, so that you can access them easily. Private documents can only be reached through their respective rooms.\n\n**Note**: Public documents can not be deleted!\n",
       "de": "Öffentliche Dokumente, die du erstellt oder bearbeitet hast, werden hier angezeigt, sodass du einfachen Zugriff darauf hast. Private Dokumente kannst du nur über deren jeweiligen Raum erreichen.\n\n**Hinweis**: Öffentliche Dokumente können nicht gelöscht werden!\n"
     },
-    "createPublicDocumentMarkdown": {
-      "en": "Create **public** document",
-      "de": "**Öffentliches** Dokument erstellen"
-    },
     "ownDocumentOnly": {
       "en": "Only documents created by me",
       "de": "Nur Dokumente, die ich erstellt habe"

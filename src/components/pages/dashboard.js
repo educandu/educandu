@@ -247,17 +247,17 @@ function Dashboard({ PageTemplate }) {
       )
     }),
     createTabItem({
-      tabKey: DASHBOARD_TAB_KEY.documents,
-      icon: <FileIcon />,
-      content: (
-        <DocumentsTab documents={documents} loading={fetchingDocuments} />
-      )
-    }),
-    createTabItem({
       tabKey: DASHBOARD_TAB_KEY.rooms,
       icon: <RoomIcon />,
       content: (
         <RoomsTab rooms={rooms} invitations={invitations} loading={fetchingRooms} />
+      )
+    }),
+    createTabItem({
+      tabKey: DASHBOARD_TAB_KEY.documents,
+      icon: <FileIcon />,
+      content: (
+        <DocumentsTab documents={documents} loading={fetchingDocuments} />
       )
     }),
     createTabItem({
