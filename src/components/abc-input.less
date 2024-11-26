@@ -1,0 +1,48 @@
+.AbcInput {
+  display: grid;
+}
+
+.AbcInput-textareaContainer {
+  position: relative;
+  display: grid;
+}
+
+.AbcInput-abcToolsContainer {
+  position: absolute;
+  display: grid;
+  gap: 3px;
+  grid-auto-flow: column;
+  bottom: 10px;
+  right: 10px;
+}
+
+.AbcInput-abcToolsButton {
+  .m-textarea-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: darken(@edu-background-color-base, 3%);
+
+  &.is-disabled {
+    .m-textarea-button-disabled;
+  }
+}
+
+.AbcInput-previewContainer {
+  position: relative;
+  display: grid;
+  padding-bottom: 20px;
+}
+
+.AbcInput-preview {
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+.AbcInput-previewWatermark {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  opacity: 0.4;
+  font-size: @edu-font-size-xl;
+}

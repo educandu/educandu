@@ -4,19 +4,17 @@ import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import { Form, Button, Radio, Divider } from 'antd';
 import EarTrainingInfo from './ear-training-info.js';
+import AbcInput from '../../components/abc-input.js';
 import UrlInput from '../../components/url-input.js';
 import ItemPanel from '../../components/item-panel.js';
 import React, { Fragment, useId, useRef } from 'react';
-import AbcNotation from '../../components/abc-notation.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
-import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { SOUND_MODE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
-import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
@@ -274,30 +272,18 @@ function EarTrainingEditor({ content, onContentChanged }) {
           <Fragment>
             <Divider plain>{t('testQuestion')}</Divider>
             <FormItem label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
-              <InputAndPreview
-                input={
-                  <NeverScrollingTextArea
-                    debounced
-                    minRows={6}
-                    value={test.questionAbcCode}
-                    onChange={event => handleQuestionAbcCodeChanged(event, index)}
-                    />
-                }
-                preview={<AbcNotation abcCode={test.questionAbcCode} />}
+              <AbcInput
+                debounced
+                value={test.questionAbcCode}
+                onChange={event => handleQuestionAbcCodeChanged(event, index)}
                 />
             </FormItem>
             <Divider plain>{t('testAnswer')}</Divider>
             <FormItem label={t('abcCode')} {...FORM_ITEM_LAYOUT_VERTICAL}>
-              <InputAndPreview
-                input={
-                  <NeverScrollingTextArea
-                    debounced
-                    minRows={6}
-                    value={test.answerAbcCode}
-                    onChange={event => handleAnswerAbcCodeChanged(event, index)}
-                    />
-                }
-                preview={<AbcNotation abcCode={test.answerAbcCode} />}
+              <AbcInput
+                debounced
+                value={test.answerAbcCode}
+                onChange={event => handleAnswerAbcCodeChanged(event, index)}
                 />
             </FormItem>
           </Fragment>

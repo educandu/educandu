@@ -65,6 +65,9 @@ common:
   error:
     en: Error
     de: Fehler
+  warning:
+    en: Warning
+    de: Warnung
   date:
     en: Date
     de: Datum
@@ -750,3 +753,6 @@ common:
   createdMediaCenterItems:
     en: Created media center entries
     de: Erstellte Mediathek-Einträge
+  previewArea:
+    en: Preview area
+    de: Vorschaubereich
