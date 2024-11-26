@@ -772,13 +772,12 @@
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz#b6c75a56a1947cc916ea058772d666a2c8932f31"
   integrity sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==
 
-"@educandu/abc-tools@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@educandu/abc-tools/-/abc-tools-1.0.0.tgz#68c527e6909e0504a50827bc0da5391bfec53811"
-  integrity sha512-+S/cA6d1d4NAmHfznVy4K/I62ygbO8JAaiUAC0BmVNkjHKAuU6EE1W9ldWvjCD4/Lg9DCHnh9ZO7vi5Z+EQm2A==
+"@educandu/abc-tools@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@educandu/abc-tools/-/abc-tools-1.1.0.tgz#664209ac978796e51307b73f6b86de45b389419c"
+  integrity sha512-PDyT/mpWqV2F9XCCeo8dpD0kXYFKCSIODjlF/MINqKQhdxZOWnJtLs6mF6fOOyh4y9VXaySvj4tCJ5vEpZa2nA==
   dependencies:
     abc-notation-transposition "^1.0.5"
-    cash-dom "^8.1.5"
 
 "@educandu/dev-tools@^14.0.0":
   version "14.0.0"
@@ -3552,11 +3551,6 @@ caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==
-
-cash-dom@^8.1.5:
-  version "8.1.5"
-  resolved "https://registry.yarnpkg.com/cash-dom/-/cash-dom-8.1.5.tgz#7b2668ddbcce1c7893915d56fddb0abcda2e32c5"
-  integrity sha512-/BS05CfzyHR5xT2ksKj1sDLPaOv5rSmIwoGxNgdKwUtnIuiJ5neMxVEmZxvfyJiSjGbOMD0Lwe+9v+fszDqHew==
 
 centra@^2.7.0:
   version "2.7.0"

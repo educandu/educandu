@@ -10,6 +10,7 @@ import InputAndPreview from './input-and-preview.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import { handleError, handleWarning } from '../ui/error-helper.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
+import { convertMusicXmlToAbc, transposeAbc } from '@educandu/abc-tools';
 import { ArrowsDownUpIcon, SourceCodeIcon, ToolIcon } from './icons/icons.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
@@ -43,9 +44,9 @@ function AbcInput({
     dropzoneRef.current.open();
   };
 
-  const transpose = async halfSteps => {
+  const transpose = halfSteps => {
     try {
-      const newValue = (await import('@educandu/abc-tools')).transposeAbc(value, halfSteps);
+      const newValue = transposeAbc(value, halfSteps);
       replaceValueAndFlush(newValue);
     } catch (error) {
       handleError({ message: error.message, error, logger, t });
@@ -65,7 +66,7 @@ function AbcInput({
         reader.readAsText(fs[0]);
       });
 
-      const { result, warningMessage } = (await import('@educandu/abc-tools')).convertMusicXmlToAbc(xmlString);
+      const { result, warningMessage } = convertMusicXmlToAbc(xmlString);
       replaceValueAndFlush(result);
       if (warningMessage) {
         handleWarning({ message: warningMessage, logger, t });
@@ -107,7 +108,7 @@ function AbcInput({
 
   const renderToolsButton = () => (
     <Dropdown
-      placement="top"
+      placement="topLeft"
       trigger={['click']}
       disabled={disabled}
       arrow={{ pointAtCenter: true }}
