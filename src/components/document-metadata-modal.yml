@@ -8,6 +8,9 @@ documentMetadataModal:
   editDocument:
     en: Edit document metadata
     de: Dokument-Metadaten bearbeiten
+  publishDocument:
+    en: Publish document
+    de: Dokument veröffentlichen
   roomRequired:
     en: Please specify a room
     de: Bitte gib einen Raum an

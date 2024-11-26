@@ -55,7 +55,6 @@ function getDocumentMetadataModalState({ t, mode = DOCUMENT_METADATA_MODAL_MODE.
   }
   return {
     mode,
-    allowMultiple: false,
     isOpen,
     documentToClone: document,
     initialDocumentMetadata

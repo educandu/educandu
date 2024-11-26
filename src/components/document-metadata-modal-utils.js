@@ -4,7 +4,8 @@ import { maxDocumentShortDescriptionLength, maxDocumentTagLength, minDocumentTag
 export const DOCUMENT_METADATA_MODAL_MODE = {
   create: 'create',
   update: 'update',
-  clone: 'clone'
+  clone: 'clone',
+  publish: 'publish'
 };
 
 export const CLONING_STRATEGY = {
@@ -93,6 +94,7 @@ export function determineActualTemplateDocumentId({ mode, documentToClone, useTe
     case DOCUMENT_METADATA_MODAL_MODE.create:
       return useTemplateDocument ? defaultTemplateDocumentId : null;
     case DOCUMENT_METADATA_MODAL_MODE.update:
+    case DOCUMENT_METADATA_MODAL_MODE.publish:
       return null;
     default:
       throw new Error(`Invalid document metadata modal mode: '${mode}'`);
@@ -115,6 +117,8 @@ export function determineDocumentRoomId({ mode, initialDocumentMetadata, documen
     case DOCUMENT_METADATA_MODAL_MODE.create:
     case DOCUMENT_METADATA_MODAL_MODE.update:
       return initialDocumentMetadata.roomId || null;
+    case DOCUMENT_METADATA_MODAL_MODE.publish:
+      return null;
     default:
       throw new Error(`Invalid document metadata modal mode: '${mode}'`);
   }
@@ -128,6 +132,8 @@ export function getDialogTitle(mode, t) {
       return t('newDocument');
     case DOCUMENT_METADATA_MODAL_MODE.update:
       return t('editDocument');
+    case DOCUMENT_METADATA_MODAL_MODE.publish:
+      return t('publishDocument');
     default:
       throw new Error(`Invalid document metadata modal mode: '${mode}'`);
   }
@@ -141,6 +147,8 @@ export function getDialogOkButtonText(mode, t) {
       return t('common:create');
     case DOCUMENT_METADATA_MODAL_MODE.update:
       return t('common:save');
+    case DOCUMENT_METADATA_MODAL_MODE.publish:
+      return t('common:publish');
     default:
       throw new Error(`Invalid document metadata modal mode: '${mode}'`);
   }

@@ -114,6 +114,16 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  publishDocument({ documentId, metadata }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/docs/${encodeURIComponent(documentId)}/publish`,
+        { metadata },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   updateDocumentSections({ documentId, sections, revisionCreatedBecause = '' }) {
     return this.httpClient
       .patch(

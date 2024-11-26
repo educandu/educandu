@@ -163,7 +163,6 @@ function DocumentsTab({ documents, loading }) {
       </section>
 
       <DocumentMetadataModal
-        allowMultiple={false}
         initialDocumentMetadata={{}}
         isOpen={isDocumentModalOpen}
         mode={DOCUMENT_METADATA_MODAL_MODE.create}

@@ -25,7 +25,7 @@ import {
   createTestDocumentInputMediaItem
 } from '../test-helper.js';
 
-const { NotFound, Forbidden } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 const createDefaultSection = () => ({
   key: uniqueId.create(),
@@ -445,6 +445,185 @@ describe('document-service', () => {
 
     it('creates an event', () => {
       assert.calledOnce(eventStore.recordDocumentRevisionCreatedEvent);
+    });
+  });
+
+  describe('publishDocument', () => {
+
+    describe('when the document is not a room document', () => {
+      let document;
+      let documentData;
+      let documentMetadata;
+
+      beforeEach(async () => {
+        documentMetadata = {
+          title: 'Public document',
+          slug: '',
+          language: 'en',
+          tags: ['tag'],
+          roomContext: null,
+          publicContext: {
+            allowedEditors: [],
+            protected: false,
+            archived: false,
+            verified: false,
+            review: ''
+          }
+        };
+
+        documentData = {
+          ...documentMetadata,
+          roomId: null,
+          sections: []
+        };
+
+        document = await sut.createDocument({ data: documentData, user });
+      });
+
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.publishDocument({
+          documentId: document._id,
+          metadata: { ...documentMetadata },
+          user,
+          silentPublish: true
+        })).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when the user is not the room owner', () => {
+      let document;
+      let documentData;
+      let publishingUser;
+      let documentMetadata;
+
+      beforeEach(async () => {
+        publishingUser = await createTestUser(container);
+        const room = await createTestRoom(container, { ownedBy: user._id });
+
+        documentMetadata = {
+          title: 'Room document',
+          slug: '',
+          language: 'en',
+          tags: ['tag'],
+          roomContext: { draft: false, inputSubmittingDisabled: false },
+          publicContext: null
+        };
+
+        documentData = {
+          ...documentMetadata,
+          roomId: room._id,
+          sections: []
+        };
+
+        document = await sut.createDocument({ data: documentData, user });
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.publishDocument({
+          documentId: document._id,
+          metadata: { ...documentMetadata },
+          user: publishingUser,
+          silentPublish: true
+        })).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the document is a room document', () => {
+      let result;
+      let roomDocument;
+      let roomDocumentData;
+      let roomDocumentMetadata;
+      let publishedDocumentMetadata;
+
+      const roomLock = { _id: uniqueId.create() };
+      const documentLock = { _id: uniqueId.create() };
+
+      beforeEach(async () => {
+        sandbox.stub(lockStore, 'takeDocumentLock').resolves(documentLock);
+        sandbox.stub(lockStore, 'takeRoomLock').resolves(roomLock);
+        sandbox.stub(lockStore, 'releaseLock');
+        sandbox.stub(cdn, 'deleteDirectory').resolves();
+        sandbox.stub(sut, 'hardDeletePrivateDocument').resolves();
+
+        const room = await createTestRoom(container, { ownedBy: user._id });
+
+        roomDocumentMetadata = {
+          title: 'Room document',
+          slug: '',
+          language: 'en',
+          tags: ['room'],
+          roomContext: { draft: false, inputSubmittingDisabled: false },
+          publicContext: null
+        };
+
+        roomDocumentData = {
+          ...roomDocumentMetadata,
+          roomId: room._id,
+          sections: [
+            {
+              ...createDefaultSection(),
+              type: 'video',
+              content: {
+                sourceUrl: 'cdn://media-library/video.mp4',
+                aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+                copyrightNotice: '',
+                posterImage: { sourceUrl: `cdn://room-media/${room._id}/poster.jpeg` },
+                playbackRange: [0, 1],
+                width: 100,
+                initialVolume: 1
+              }
+            }
+          ]
+        };
+
+        publishedDocumentMetadata = {
+          ...roomDocumentMetadata,
+          title: 'Published document',
+          tags: ['published'],
+          publicContext: {
+            allowedEditors: [],
+            protected: false,
+            archived: false,
+            archiveRedirectionDocumentId: null,
+            verified: false,
+            review: ''
+          }
+        };
+
+        roomDocument = await sut.createDocument({ data: roomDocumentData, user });
+
+        result = await sut.publishDocument({
+          documentId: roomDocument._id,
+          metadata: { ...publishedDocumentMetadata },
+          user,
+          silentPublish: true
+        });
+      });
+
+      it('returns the published document with redacted CDN resources', () => {
+        expect(result).toMatchObject({
+          ...roomDocument,
+          ...publishedDocumentMetadata,
+          order: 2,
+          roomId: null,
+          roomContext: null,
+          _id: expect.stringMatching(/\w+/),
+          revision: expect.stringMatching(/\w+/),
+          searchTokens: publishedDocumentMetadata.tags,
+          sections: [{
+            ...roomDocument.sections[0],
+            content: {
+              ...roomDocument.sections[0].content,
+              posterImage: { sourceUrl: '' }
+            }
+          }],
+          cdnResources: ['cdn://media-library/video.mp4']
+        });
+      });
+
+      it('calls hardDeletePrivateDocument', () => {
+        assert.calledWith(sut.hardDeletePrivateDocument, { documentId: roomDocument._id, user });
+      });
     });
   });
 

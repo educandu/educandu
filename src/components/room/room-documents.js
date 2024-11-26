@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { Button, message, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import FileIcon from '../icons/general/file-icon.js';
+import { PublishDocumentIcon } from '../icons/icons.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
-import React, { Fragment, useId, useRef, useState } from 'react';
 import DragAndDropContainer from '../drag-and-drop-container.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
@@ -19,31 +19,10 @@ import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSetRoomMediaContext } from '../room-media-context.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import React, { Fragment, useCallback, useId, useRef, useState } from 'react';
 import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
-
-function getDocumentMetadataModalState({ t, roomId, canManageDraftDocuments, documentToClone = null, isOpen = false }) {
-  const initialDocumentMetadata = documentToClone
-    ? {
-      ...documentToClone,
-      title: `${documentToClone.title} ${t('common:copyTitleSuffix')}`,
-      slug: documentToClone.slug ? `${documentToClone.slug}-${t('common:copySlugSuffix')}` : '',
-      tags: [...documentToClone.tags]
-    }
-    : {
-      roomId
-    };
-
-  return {
-    mode: documentToClone ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.create,
-    allowMultiple: !documentToClone,
-    isOpen,
-    documentToClone,
-    initialDocumentMetadata,
-    allowDraft: canManageDraftDocuments
-  };
-}
 
 function getDocumentsByRoomDictatedOrder(roomDocumentIds, documents) {
   return roomDocumentIds
@@ -55,22 +34,63 @@ export default function RoomDocuments({
   roomId,
   initialRoomDocumentIds,
   initialRoomDocuments,
-  canDeleteDocuments,
   canManageDocuments,
+  canDeleteDocuments,
+  canPublishDocuments,
   canManageDraftDocuments
 }) {
   const droppableIdRef = useRef(useId());
   const { t } = useTranslation('roomDocuments');
+  const setRoomMediaContext = useSetRoomMediaContext();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-  const setRoomMediaContext = useSetRoomMediaContext();
+  const getDocumentMetadataModalStateForCreateMode = useCallback(() => {
+    return {
+      isOpen: false,
+      mode: DOCUMENT_METADATA_MODAL_MODE.create,
+      allowMultipleInCreateMode: true,
+      allowDraftInRoomContext: !!canManageDraftDocuments,
+      initialDocumentMetadata: { roomId },
+    };
+  }, [roomId, canManageDraftDocuments]);
+
   const [roomDocumentIds, setRoomDocumentIds] = useState(initialRoomDocumentIds);
   const [roomDocuments, setRoomDocuments] = useState(getDocumentsByRoomDictatedOrder(initialRoomDocumentIds, initialRoomDocuments));
-  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t, roomId, canManageDraftDocuments }));
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalStateForCreateMode());
 
-  const handleNewDocumentClick = (documentToClone = null) => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, roomId, documentToClone, canManageDraftDocuments, isOpen: true }));
+  const handleNewDocumentClick = () => {
+    setDocumentMetadataModalState({
+      ...getDocumentMetadataModalStateForCreateMode(),
+      isOpen: true
+    });
+  };
+
+  const handleCloneDocumentClick = documentToClone => {
+    setDocumentMetadataModalState({
+      isOpen: true,
+      mode: DOCUMENT_METADATA_MODAL_MODE.clone,
+      documentToClone,
+      allowDraftInRoomContext: !!canManageDraftDocuments,
+      initialDocumentMetadata: {
+        ...documentToClone,
+        title: `${documentToClone.title} ${t('common:copyTitleSuffix')}`,
+        slug: documentToClone.slug ? `${documentToClone.slug}-${t('common:copySlugSuffix')}` : '',
+        tags: [...documentToClone.tags]
+      }
+    });
+  };
+
+  const handlePublishDocumentClick = documentToPublish => {
+    setDocumentMetadataModalState({
+      isOpen: true,
+      mode: DOCUMENT_METADATA_MODAL_MODE.publish,
+      initialDocumentMetadata: {
+        ...documentToPublish,
+        roomId: null,
+        roomContext: null
+      }
+    });
   };
 
   const handleDocumentMetadataModalSave = async (newDocuments, templateDocumentId) => {
@@ -78,10 +98,12 @@ export default function RoomDocuments({
     const shouldNavigateToCreatedDocument = newDocuments.length === 1;
 
     if (shouldNavigateToCreatedDocument) {
+      const shouldSeeDocumentInEditMode = documentMetadataModalState.mode !== DOCUMENT_METADATA_MODAL_MODE.publish;
+
       window.location = routes.getDocUrl({
         id: newDocuments[0]._id,
         slug: newDocuments[0].slug,
-        view: DOC_VIEW_QUERY_PARAM.edit,
+        view: shouldSeeDocumentInEditMode ? DOC_VIEW_QUERY_PARAM.edit : null,
         templateDocumentId: clonedOrTemplateDocumentId
       });
     } else {
@@ -174,7 +196,9 @@ export default function RoomDocuments({
   const handleActionButtonClick = (doc, docIndex, actionButton) => {
     switch (actionButton.key) {
       case 'clone':
-        return handleNewDocumentClick(doc);
+        return handleCloneDocumentClick(doc);
+      case 'publish':
+        return handlePublishDocumentClick(doc);
       case 'delete':
         return handleDeleteDocumentClick(doc);
       case 'moveUp':
@@ -192,7 +216,7 @@ export default function RoomDocuments({
         type="primary"
         icon={<PlusOutlined />}
         className="RoomDocuments-createDocumentButton"
-        onClick={() => handleNewDocumentClick(null)}
+        onClick={() => handleNewDocumentClick()}
         >
         {t('common:createDocument')}
       </Button>
@@ -222,6 +246,21 @@ export default function RoomDocuments({
         icon: <DuplicateIcon />
       }
     ];
+
+    if (canPublishDocuments) {
+      const isDisabled = !!doc.roomContext.draft;
+
+      actionButtons.push({
+        key: 'publish',
+        title: t('common:publish'),
+        icon: (
+          <div className={classNames({ 'RoomDocuments-documentActionButtonsPublish': !isDisabled })}>
+            <PublishDocumentIcon />
+          </div>
+        ),
+        disabled: isDisabled
+      });
+    }
 
     if (canDeleteDocuments) {
       actionButtons.push({
@@ -335,7 +374,7 @@ export default function RoomDocuments({
               button={{
                 text: t('common:createDocument'),
                 icon: <PlusOutlined />,
-                onClick: () => handleNewDocumentClick(null)
+                onClick: () => handleNewDocumentClick()
               }}
               />
           )}
@@ -362,6 +401,7 @@ RoomDocuments.propTypes = {
   roomId: PropTypes.string.isRequired,
   canManageDocuments: PropTypes.bool.isRequired,
   canDeleteDocuments: PropTypes.bool.isRequired,
+  canPublishDocuments: PropTypes.bool.isRequired,
   canManageDraftDocuments: PropTypes.bool.isRequired,
   initialRoomDocumentIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   initialRoomDocuments: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired

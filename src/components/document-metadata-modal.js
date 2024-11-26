@@ -63,10 +63,10 @@ const getDefaultRoomContext = () => (
 function DocumentMetadataModal({
   isOpen,
   mode,
-  allowMultiple,
   onSave,
   onClose,
-  allowDraft,
+  allowDraftInRoomContext,
+  allowMultipleInCreateMode,
   documentToClone,
   initialDocumentMetadata
 }) {
@@ -119,7 +119,7 @@ function DocumentMetadataModal({
 
   const defaultTemplateDocumentId = settings.templateDocument?.documentId || null;
   const canUseTemplateDocument = mode === DOCUMENT_METADATA_MODAL_MODE.create && !!defaultTemplateDocumentId;
-  const canCreateSequence = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultiple;
+  const canCreateSequence = mode === DOCUMENT_METADATA_MODAL_MODE.create && allowMultipleInCreateMode;
   const canSelectCloningStrategy = mode === DOCUMENT_METADATA_MODAL_MODE.clone && cloningOptions.strategyOptions.length > 1;
   const canSaveThroughExtendedSaveScreen = mode === DOCUMENT_METADATA_MODAL_MODE.update;
 
@@ -368,6 +368,12 @@ function DocumentMetadataModal({
             savedDocuments.push(await documentApiClient.createDocument(documentToSave));
           }
           break;
+        case DOCUMENT_METADATA_MODAL_MODE.publish:
+          savedDocuments.push(await documentApiClient.publishDocument({
+            documentId: initialDocumentMetadata._id,
+            metadata: mappedDocument
+          }));
+          break;
         case DOCUMENT_METADATA_MODAL_MODE.update:
           savedDocuments.push(await documentApiClient.updateDocumentMetadata({
             documentId: initialDocumentMetadata._id,
@@ -390,7 +396,7 @@ function DocumentMetadataModal({
   const isDocInPublicContext = !documentRoomId && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom
     && hasPublicContextPermissions && !!publicContext;
   const isDocInRoomContext = !!documentRoomId && !!roomContext;
-  const showDraftInput = allowDraft && isDocInRoomContext && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom;
+  const showDraftInput = isDocInRoomContext && allowDraftInRoomContext && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom;
 
   return (
     <Modal
@@ -605,13 +611,13 @@ function DocumentMetadataModal({
 }
 
 DocumentMetadataModal.propTypes = {
-  allowMultiple: PropTypes.bool,
+  allowDraftInRoomContext: PropTypes.bool,
+  allowMultipleInCreateMode: PropTypes.bool,
   documentToClone: documentExtendedMetadataShape,
   initialDocumentMetadata: PropTypes.oneOfType([
     PropTypes.shape({ roomId: PropTypes.string }),
     documentMetadataEditShape
   ]).isRequired,
-  allowDraft: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(Object.values(DOCUMENT_METADATA_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
@@ -619,9 +625,9 @@ DocumentMetadataModal.propTypes = {
 };
 
 DocumentMetadataModal.defaultProps = {
-  allowMultiple: false,
-  documentToClone: null,
-  allowDraft: false
+  allowDraftInRoomContext: false,
+  allowMultipleInCreateMode: false,
+  documentToClone: null
 };
 
 export default DocumentMetadataModal;

@@ -90,6 +90,18 @@ export const updateDocumentMetadataBodySchema = joi.object({
   revisionCreatedBecause: joi.string().allow('').max(maxDocumentRevisionCreatedBecauseLength).required()
 });
 
+export const publishDocumentBodySchema = joi.object({
+  metadata: joi.object({
+    title: joi.string().required(),
+    shortDescription: joi.string().allow('').max(maxDocumentShortDescriptionLength).required(),
+    slug: slugSchema.required(),
+    language: joi.string().case('lower').required(),
+    tags: joi.array().items(joi.string()).required(),
+    publicContext: publicContextSchema.required(),
+    roomContext: roomContextSchema.allow(null).required()
+  })
+});
+
 export const restoreRevisionBodySchema = joi.object({
   revisionId: idOrKeySchema.required(),
   revisionRestoredBecause: joi.string().allow('').max(maxDocumentRevisionCreatedBecauseLength).required()

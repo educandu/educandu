@@ -624,6 +624,10 @@
       "en": "Duplicate",
       "de": "Duplizieren"
     },
+    "publish": {
+      "en": "Publish",
+      "de": "Veröffentlichen"
+    },
     "create": {
       "en": "Create",
       "de": "Erstellen"
@@ -2219,6 +2223,10 @@
     "editDocument": {
       "en": "Edit document metadata",
       "de": "Dokument-Metadaten bearbeiten"
+    },
+    "publishDocument": {
+      "en": "Publish document",
+      "de": "Dokument veröffentlichen"
     },
     "roomRequired": {
       "en": "Please specify a room",
