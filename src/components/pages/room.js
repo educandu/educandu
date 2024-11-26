@@ -27,7 +27,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
-import { roomShape, roomInvitationShape, documentExtendedMetadataShape, roomMediaContextShape, documentInputShape } from '../../ui/default-prop-types.js';
+import { roomShape, roomInvitationShape, roomMediaContextShape, documentInputShape, roomDocumentMetadataShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -293,7 +293,7 @@ Room.propTypes = {
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(roomInvitationShape).isRequired,
-    documents: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired,
+    documents: PropTypes.arrayOf(roomDocumentMetadataShape).isRequired,
     documentInputs: PropTypes.arrayOf(documentInputShape).isRequired,
     roomMediaContext: roomMediaContextShape
   }).isRequired

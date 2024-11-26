@@ -127,7 +127,7 @@ documentMetadataModal:
         - removed from the room
         - free of room media resources (they are removed because they are private)
     de: |
-      Nach der Veröffentlichung, ist das Dokument
+      Nach der Veröffentlichung ist das Dokument
         - öffentlich über seine Tags suchbar
         - nicht mehr löschbar
         - aus dem Raum entfernt

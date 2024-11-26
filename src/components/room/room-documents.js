@@ -19,8 +19,8 @@ import DocumentMetadataModal from '../document-metadata-modal.js';
 import { useSetRoomMediaContext } from '../room-media-context.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import { roomDocumentMetadataShape } from '../../ui/default-prop-types.js';
 import React, { Fragment, useCallback, useId, useRef, useState } from 'react';
-import { documentExtendedMetadataShape } from '../../ui/default-prop-types.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureIsExcluded, moveItem, swapItemsAt } from '../../utils/array-utils.js';
 
@@ -400,5 +400,5 @@ RoomDocuments.propTypes = {
   canPublishDocuments: PropTypes.bool.isRequired,
   canManageDraftDocuments: PropTypes.bool.isRequired,
   initialRoomDocumentIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-  initialRoomDocuments: PropTypes.arrayOf(documentExtendedMetadataShape).isRequired
+  initialRoomDocuments: PropTypes.arrayOf(roomDocumentMetadataShape).isRequired
 };

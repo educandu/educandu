@@ -229,6 +229,21 @@ export const documentExtendedMetadataShape = PropTypes.shape({
   updatedBy: otherUserShape.isRequired
 });
 
+export const roomDocumentMetadataShape = PropTypes.shape({
+  ...commonDocumentOrRevisionProps,
+  _id: PropTypes.string.isRequired,
+  revision: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: otherUserShape.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  contributors: PropTypes.arrayOf(otherUserShape).isRequired,
+  cdnResources: PropTypes.arrayOf(PropTypes.string).isRequired,
+  roomContext: PropTypes.shape({
+    draft: PropTypes.bool.isRequired,
+    inputSubmittingDisabled: PropTypes.bool.isRequired
+  }).isRequired
+});
+
 const contributedDocumentMetadataProps = {
   _id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
@@ -263,6 +278,7 @@ export const documentMetadataEditShape = PropTypes.shape({
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  cdnResources: PropTypes.arrayOf(PropTypes.string),
   publicContext: documentPublicContextShape,
   roomContext: documentRoomContextShape
 });
