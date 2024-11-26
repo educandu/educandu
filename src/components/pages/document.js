@@ -23,7 +23,6 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import UploadIcon from '../icons/general/upload-icon.js';
 import HistoryIcon from '../icons/general/history-icon.js';
 import CommentIcon from '../icons/general/comment-icon.js';
-import { InputsIcon, SettingsIcon } from '../icons/icons.js';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import DocumentInputsPanel from '../document-inputs-panel.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
@@ -39,6 +38,7 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { useDebouncedFetchingState, useIsMounted } from '../../ui/hooks.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { isRoomOwnerOrInvitedCollaborator } from '../../utils/room-utils.js';
+import { InputsIcon, PublishDocumentIcon, SettingsIcon } from '../icons/icons.js';
 import { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal-utils.js';
 import { ensureKeyIsExcluded, mapObjectValues } from '../../utils/object-utils.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
@@ -136,20 +136,16 @@ function createPageAlerts({ doc, docRevision, view, hasPendingTemplateSectionKey
   return alerts;
 }
 
-function getDocumentMetadataModalState({ t, doc, room, user, isCloning, isOpen = false }) {
+function isRoomDocumentViewedByRoomOwner({ room, user }) {
+  return !!room && room.ownedBy === user?._id;
+}
+
+function getDocumentMetadataModalStateForUpdateMode({ doc, room, user }) {
   return {
-    isOpen,
-    mode: isCloning ? DOCUMENT_METADATA_MODAL_MODE.clone : DOCUMENT_METADATA_MODAL_MODE.update,
-    documentToClone: isCloning ? doc : null,
-    allowDraftInRoomContext: !!room && room.ownedBy === user?._id,
-    initialDocumentMetadata: isCloning
-      ? {
-        ...doc,
-        title: `${doc.title} ${t('common:copyTitleSuffix')}`,
-        slug: doc.slug ? `${doc.slug}-${t('common:copySlugSuffix')}` : '',
-        tags: [...doc.tags]
-      }
-      : { ...doc }
+    isOpen: false,
+    mode: DOCUMENT_METADATA_MODAL_MODE.update,
+    allowDraftInRoomContext: isRoomDocumentViewedByRoomOwner({ room, user }),
+    initialDocumentMetadata: { ...doc }
   };
 }
 
@@ -205,6 +201,7 @@ function Document({ initialState, PageTemplate }) {
   const userCanRestoreDocumentRevisions = canRestoreDocumentRevisions({ user, doc: initialState.doc, room });
 
   const userCanManageInputs = !!room;
+  const userCanPublishDocument = isRoomDocumentViewedByRoomOwner({ room, user });
   const userIsRoomOwnerOrInvitedCollaborator = !!room && isRoomOwnerOrInvitedCollaborator({ room, userId: user?._id });
 
   const favoriteActionTooltip = getFavoriteActionTooltip({ t, user, doc: initialState.doc });
@@ -240,9 +237,9 @@ function Document({ initialState, PageTemplate }) {
   const [initialDocumentRevisionsFetched, setInitialDocumentRevisionsFetched] = useState(false);
   const [fetchingInitialComments, setFetchingInitialComments] = useDebouncedFetchingState(true);
   const [currentSections, setCurrentSections] = useState(() => cloneDeep(getInitialSections()));
-  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalState({ t }));
   const [pendingDocumentInput, setPendingDocumentInput] = useState(() => createPendingDocumentInput(getInitialSections()));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
+  const [documentMetadataModalState, setDocumentMetadataModalState] = useState(getDocumentMetadataModalStateForUpdateMode({ doc, room, user }));
 
   const handleApplyAllPendingSections = () => {
     setPendingTemplateSectionKeys([]);
@@ -363,14 +360,16 @@ function Document({ initialState, PageTemplate }) {
       return;
     }
 
+    const topOffset = userCanPublishDocument ? 260 : 220;
+
     const position = {
-      top: actionsPanelPositionInPx.top + 220,
+      top: actionsPanelPositionInPx.top + topOffset,
       right: actionsPanelPositionInPx.right,
       left: actionsPanelPositionInPx.left
     };
 
     setInputsPanelPositionInPx(position);
-  }, [view, actionsPanelPositionInPx]);
+  }, [view, actionsPanelPositionInPx, userCanPublishDocument]);
 
   const ensureSidePanelPosition = useCallback(() => {
     if (view !== VIEW.history && view !== VIEW.inputs) {
@@ -500,7 +499,10 @@ function Document({ initialState, PageTemplate }) {
   }, [user, doc._id, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: false, isOpen: true }));
+    setDocumentMetadataModalState({
+      ...getDocumentMetadataModalStateForUpdateMode({ doc, room, user }),
+      isOpen: true
+    });
   };
 
   const handleExtendedSaveModalOpen = () => {
@@ -519,7 +521,30 @@ function Document({ initialState, PageTemplate }) {
   };
 
   const handleDocumentCloneClick = () => {
-    setDocumentMetadataModalState(getDocumentMetadataModalState({ t, doc, room, user, isCloning: true, isOpen: true }));
+    setDocumentMetadataModalState({
+      isOpen: true,
+      mode: DOCUMENT_METADATA_MODAL_MODE.clone,
+      documentToClone: doc,
+      allowDraftInRoomContext: isRoomDocumentViewedByRoomOwner({ room, user }),
+      initialDocumentMetadata: {
+        ...doc,
+        title: `${doc.title} ${t('common:copyTitleSuffix')}`,
+        slug: doc.slug ? `${doc.slug}-${t('common:copySlugSuffix')}` : '',
+        tags: [...doc.tags]
+      }
+    });
+  };
+
+  const handleDocumentPublishClick = () => {
+    setDocumentMetadataModalState({
+      isOpen: true,
+      mode: DOCUMENT_METADATA_MODAL_MODE.publish,
+      initialDocumentMetadata: {
+        ...doc,
+        roomId: null,
+        roomContext: null
+      }
+    });
   };
 
   const handleDocumentMetadataModalSave = updatedDocuments => {
@@ -543,6 +568,15 @@ function Document({ initialState, PageTemplate }) {
         slug: updatedDocuments[0].slug,
         view: DOC_VIEW_QUERY_PARAM.edit,
         templateDocumentId: doc._id
+      });
+    }
+
+    if (documentMetadataModalState.mode === DOCUMENT_METADATA_MODAL_MODE.publish) {
+      window.location = routes.getDocUrl({
+        id: updatedDocuments[0]._id,
+        slug: updatedDocuments[0].slug,
+        view: null,
+        templateDocumentId: null
       });
     }
   };
@@ -1290,6 +1324,13 @@ function Document({ initialState, PageTemplate }) {
                 tooltip={favoriteActionTooltip}
                 icon={<FavoriteToggle useTooltip={false} type={FAVORITE_TYPE.document} id={doc._id} disabled={!user} />}
                 />
+              {!!userCanPublishDocument && (
+                <FloatButton
+                  icon={<div className="DocumentPage-actionsPanelWrapperPublishAction"><PublishDocumentIcon /></div>}
+                  tooltip={t('common:publish')}
+                  onClick={() => handleDocumentPublishClick()}
+                  />
+              )}
               <FloatButton
                 icon={<DuplicateIcon />}
                 disabled={!userCanEdit}

@@ -232,44 +232,40 @@ export default function RoomDocuments({
         key: 'moveUp',
         title: null,
         icon: <MoveUpIcon />,
-        disabled: doc._id === firstVisibleDocument?._id
+        disabled: doc._id === firstVisibleDocument?._id,
+        rendered: true
       },
       {
         key: 'moveDown',
         title: null,
         icon: <MoveDownIcon />,
-        disabled: doc._id === lastVisibleDocument?._id
+        disabled: doc._id === lastVisibleDocument?._id,
+        rendered: true
+      },
+      {
+        key: 'publish',
+        title: t('common:publish'),
+        icon: (
+          <div className="RoomDocuments-documentActionButtonsPublish">
+            <PublishDocumentIcon />
+          </div>
+        ),
+        rendered: canPublishDocuments
       },
       {
         key: 'clone',
         title: t('common:duplicate'),
-        icon: <DuplicateIcon />
-      }
-    ];
-
-    if (canPublishDocuments) {
-      const isDisabled = !!doc.roomContext.draft;
-
-      actionButtons.push({
-        key: 'publish',
-        title: t('common:publish'),
-        icon: (
-          <div className={classNames({ 'RoomDocuments-documentActionButtonsPublish': !isDisabled })}>
-            <PublishDocumentIcon />
-          </div>
-        ),
-        disabled: isDisabled
-      });
-    }
-
-    if (canDeleteDocuments) {
-      actionButtons.push({
+        icon: <DuplicateIcon />,
+        rendered: true
+      },
+      {
         key: 'delete',
         title: t('common:delete'),
         icon: <DeleteIcon />,
-        danger: true
-      });
-    }
+        danger: true,
+        rendered: canDeleteDocuments
+      }
+    ].filter(actionButton => actionButton.rendered);
 
     return actionButtons.map(actionButton => (
       <div key={actionButton.key}>

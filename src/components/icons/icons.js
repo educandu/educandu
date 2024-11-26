@@ -58,9 +58,9 @@ function createIconFromSvgComponent(SvgComponent) {
   return AntdIconWrapper;
 }
 
-function createIconFromTablerIconComponent(TablerIconComponent, { filled } = {}) {
+function createIconFromTablerIconComponent(TablerIconComponent, { size, stroke, filled } = {}) {
   function TablerIconWrapper() {
-    return <TablerIconComponent size="1em" stroke={1.5} fill={filled ? 'currentColor': 'none'} />;
+    return <TablerIconComponent size={size || '1em'} stroke={stroke || 1.5} fill={filled ? 'currentColor': 'none'} />;
   }
   return createIconFromSvgComponent(TablerIconWrapper);
 }
@@ -133,9 +133,9 @@ export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRig
 export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
 export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomScan);
 export const UserContributionsIcon = createIconFromTablerIconComponent(IconUserEdit);
-export const PublishDocumentIcon = createIconFromTablerIconComponent(IconWorldUpload);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);
 export const ContactUserNotAllowedIcon = createIconFromTablerIconComponent(IconSendOff);
 export const ChevronLeftPipeIcon = createIconFromTablerIconComponent(IconChevronLeftPipe);
 export const FavoriteIconFilled = createIconFromTablerIconComponent(IconHeart, { filled: true });
+export const PublishDocumentIcon = createIconFromTablerIconComponent(IconWorldUpload, { size: '1.1em', stroke: 1 });
 export const LoadMusicIcon = createIconFromTablerIconComponents(IconCircleDashed, IconPlayerPlay, { scaleOuter: 1.5, scaleInner: 0.7 });
