@@ -119,3 +119,19 @@ documentMetadataModal:
   extendedSaveTooltip:
     en: Save (extended)
     de: Speichern (erweitert)
+  publishingInfoMarkdown:
+    en: |
+      After publishing, the document is
+        - publicly searchable by its tags
+        - no longer deletable
+        - removed from the room
+        - free of room media resources (they are removed because they are private)
+    de: |
+      Nach der Veröffentlichung ist das Dokument
+        - öffentlich über seine Tags suchbar
+        - nicht mehr löschbar
+        - aus dem Raum entfernt
+        - frei von Raum-Medien-Ressourcen (sie werden entfernt, weil sie privat sind)
+  publishingInfoWarning:
+    en: The document contains {count, plural, =1 {# room media resource} other {# room media resources}}.
+    de: Das Dokument enthält {count, plural, =1 {# Raum-Medien-Ressource} other {# Raum-Medien-Ressourcen}}.

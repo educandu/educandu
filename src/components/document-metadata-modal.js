@@ -1,6 +1,7 @@
 import Info from './info.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Markdown from './markdown.js';
 import TagSelect from './tag-select.js';
 import Logger from '../common/logger.js';
 import UserSelect from './user-select.js';
@@ -9,14 +10,18 @@ import cloneDeep from '../utils/clone-deep.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { SettingsIcon } from './icons/icons.js';
+import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
 import DocumentSelector from './document-selector.js';
 import { handleApiError } from '../ui/error-helper.js';
 import { ROOM_USER_ROLE } from '../domain/constants.js';
+import ClientConfig from '../bootstrap/client-config.js';
+import WarningIcon from './icons/general/warning-icon.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import { isInternalSourceType } from '../utils/source-utils.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -74,6 +79,7 @@ function DocumentMetadataModal({
   const formRef = useRef(null);
   const settings = useSettings();
   const { uiLanguage } = useLocale();
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('documentMetadataModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
@@ -397,6 +403,7 @@ function DocumentMetadataModal({
     && hasPublicContextPermissions && !!publicContext;
   const isDocInRoomContext = !!documentRoomId && !!roomContext;
   const showDraftInput = isDocInRoomContext && allowDraftInRoomContext && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom;
+  const internalCdnResourcesCount = (initialDocumentMetadata.cdnResources || []).filter(url => isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })).length;
 
   return (
     <Modal
@@ -440,6 +447,17 @@ function DocumentMetadataModal({
         )
       ]}
       >
+      {mode === DOCUMENT_METADATA_MODAL_MODE.publish && (
+        <div className='DocumentMetadataModal-infoContent'>
+          <Markdown>{t('publishingInfoMarkdown')}</Markdown>
+          {!!internalCdnResourcesCount && (
+            <div className="DocumentMetadataModal-infoContentWarning">
+              <WarningIcon className="DocumentMetadataModal-infoContentWarningIcon" />
+              <div>{t('publishingInfoWarning', { count: internalCdnResourcesCount })}</div>
+            </div>
+          )}
+        </div>
+      )}
       <Form ref={formRef} layout="vertical" onFinish={handleFinish} className="u-modal-body">
         <div className={classNames('DocumentMetadataModal-formContent', { 'is-hidden' : !!showExtendedSaveScreen })}>
           {!!canSelectCloningStrategy && (

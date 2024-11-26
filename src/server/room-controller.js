@@ -395,7 +395,7 @@ export default class RoomController {
       }
       : null;
 
-    const documentsMetadata = await this.documentService.getDocumentsExtendedMetadataByIds(room.documents);
+    const documentsMetadata = await this.documentService.getRoomDocumentsMetadataByDocumentIds(room.documents);
 
     const mappedRoom = await this.clientDataMappingService.mapRoom({ room, viewingUser: user });
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);

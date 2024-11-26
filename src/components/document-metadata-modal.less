@@ -4,6 +4,26 @@
   width: 100%;
 }
 
+.DocumentMetadataModal-infoContent {
+  font-size: @edu-font-size-sm;
+  padding: @edu-content-padding;
+  border: 1px solid @edu-banner-yellow-background-color;
+  border-radius: @edu-border-radius-base;
+  background-color: lighten(@edu-banner-yellow-background-color, 5%);
+}
+
+.DocumentMetadataModal-infoContentWarning {
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 15px;
+  margin-top: 15px;
+  justify-content: start;
+}
+
+.DocumentMetadataModal-infoContentWarningIcon {
+  color: @edu-warning-color !important;
+}
+
 .DocumentMetadataModal-formContent {
   &.is-hidden {
     display: none;
