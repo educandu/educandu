@@ -121,17 +121,17 @@ documentMetadataModal:
     de: Speichern (erweitert)
   publishingInfoMarkdown:
     en: |
-      After publishing, the document
-        - can no longer be deleted
-        - can be searched for publicly by its tags
-        - is removed from the room
-        - no longer contains room media resources (they are removed because they are private)
+      After publishing, the document is
+        - publicly searchable by its tags
+        - no longer deletable
+        - removed from the room
+        - free of room media resources (they are removed because they are private)
     de: |
-      Nach der Veröffentlichung, das Dokument
-        - kann nicht mehr gelöscht werden
-        - kann öffentlich über seine Tags gesucht werden
-        - wird aus dem Raum entfernt
-        - enthält keine Raum-Medien-Ressourcen mehr (sie werden entfernt, weil sie privat sind)
+      Nach der Veröffentlichung, ist das Dokument
+        - öffentlich über seine Tags suchbar
+        - nicht mehr löschbar
+        - aus dem Raum entfernt
+        - frei von Raum-Medien-Ressourcen (sie werden entfernt, weil sie privat sind)
   publishingInfoWarning:
     en: The document contains {count, plural, =1 {# room media resource} other {# room media resources}}.
-    de: Das Dokument enthält {count, plural, =1 {# Raum-Medien-Ressource} other {# Raum-Medien-Ressource}}.
+    de: Das Dokument enthält {count, plural, =1 {# Raum-Medien-Ressource} other {# Raum-Medien-Ressourcen}}.

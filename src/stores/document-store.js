@@ -27,6 +27,26 @@ const documentMetadataProjection = {
   roomId: 1
 };
 
+const roomDocumentMetadataProjection = {
+  '_id': 1,
+  'roomId': 1,
+  'order': 1,
+  'revision': 1,
+  'title': 1,
+  'shortDescription': 1,
+  'slug': 1,
+  'language': 1,
+  'createdOn': 1,
+  'createdBy': 1,
+  'updatedOn': 1,
+  'updatedBy': 1,
+  'tags': 1,
+  'contributors': 1,
+  'cdnResources': 1,
+  'roomContext.draft': 1,
+  'roomContext.inputSubmittingDisabled': 1
+};
+
 const contributedDocumentMetadataProjection = {
   _id: 1,
   title: 1,
@@ -53,7 +73,6 @@ const documentExtendedMetadataProjection = {
   'updatedBy': 1,
   'tags': 1,
   'contributors': 1,
-  'cdnResources': 1,
   'publicContext.allowedEditors': 1,
   'publicContext.protected': 1,
   'publicContext.archived': 1,
@@ -86,6 +105,10 @@ class DocumentStore {
 
   getDocumentsCreationMetadataByIds(ids, { session } = {}) {
     return this.collection.find({ _id: { $in: ids } }, { projection: documentCreationMetadataProjection, session }).toArray();
+  }
+
+  getRoomDocumentsMetadataByDocumentIds(ids, { session } = {}) {
+    return this.collection.find({ _id: { $in: ids } }, { projection: roomDocumentMetadataProjection, session }).toArray();
   }
 
   getDocumentsMetadataByIds(ids, { session } = {}) {

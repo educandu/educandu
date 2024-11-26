@@ -49,7 +49,7 @@ describe('room-controller', () => {
       getSingleRoomMediaOverview: sandbox.stub()
     };
     documentService = {
-      getDocumentsExtendedMetadataByIds: sandbox.stub()
+      getRoomDocumentsMetadataByDocumentIds: sandbox.stub()
     };
     documentInputService = {
       getDocumentInputsByRoomId: sandbox.stub()
@@ -667,7 +667,7 @@ describe('room-controller', () => {
 
         roomService.getRoomById.resolves(room);
 
-        documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
+        documentService.getRoomDocumentsMetadataByDocumentIds.resolves(documents);
         documentInputService.getDocumentInputsByRoomId.resolves(documentInputs);
         roomService.getRoomInvitations.resolves(invitations);
 
@@ -703,8 +703,8 @@ describe('room-controller', () => {
         assert.calledWith(clientDataMappingService.mapDocumentInputs, { documentInputs, documents });
       });
 
-      it('should call getDocumentsExtendedMetadataByIds', () => {
-        assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
+      it('should call getRoomDocumentsMetadataByDocumentIds', () => {
+        assert.calledWith(documentService.getRoomDocumentsMetadataByDocumentIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the documents returned by the service', () => {
@@ -750,7 +750,7 @@ describe('room-controller', () => {
         mappedDocumentInputs = [];
 
         roomService.getRoomById.resolves(room);
-        documentService.getDocumentsExtendedMetadataByIds.resolves(documents);
+        documentService.getRoomDocumentsMetadataByDocumentIds.resolves(documents);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
@@ -781,8 +781,8 @@ describe('room-controller', () => {
         assert.notCalled(roomService.getRoomInvitations);
       });
 
-      it('should call getDocumentsExtendedMetadataByIds', () => {
-        assert.calledWith(documentService.getDocumentsExtendedMetadataByIds, room.documents);
+      it('should call getRoomDocumentsMetadataByDocumentIds', () => {
+        assert.calledWith(documentService.getRoomDocumentsMetadataByDocumentIds, room.documents);
       });
 
       it('should call mapDocsOrRevisions with the documents returned by the service', () => {
