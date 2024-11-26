@@ -457,6 +457,7 @@ describe('user-service', () => {
           revision: favoriteDocument.revision,
           roomId: favoriteDocument.roomId,
           tags: favoriteDocument.tags,
+          cdnResources: favoriteDocument.cdnResources,
           contributors: favoriteDocument.contributors,
           publicContext: favoriteDocument.publicContext
         };
