@@ -106,7 +106,6 @@ function AbcInput({
     }
   ];
 
-  // eslint-disable-next-line no-unused-vars
   const renderToolsButton = () => (
     <Dropdown
       placement="topLeft"
@@ -141,7 +140,7 @@ function AbcInput({
         onChange={onChange}
         />
       <div className="AbcInput-abcToolsContainer">
-        {/* {renderToolsButton()} */}
+        {renderToolsButton()}
       </div>
     </div>
   );
