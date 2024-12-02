@@ -25,6 +25,18 @@ export default function TableOfContentsDisplay({ context, content }) {
     setNodes(nodeList);
   }, [minLevel, maxLevel, context]);
 
+  const handleNodeClick = nodeId => {
+    setTimeout(() => {
+      const minimumTopInPx = 150;
+      const nodeTopInPx = document.getElementById(nodeId)?.getBoundingClientRect().top;
+      if (nodeTopInPx < minimumTopInPx) {
+        window.scrollBy({ top: -minimumTopInPx, behavior: 'smooth' });
+      }
+    }, 50);
+
+    return true;
+  };
+
   return (
     <div className="TableOfContentsDisplay">
       <div className="TableOfContentsDisplay-content">
@@ -41,7 +53,7 @@ export default function TableOfContentsDisplay({ context, content }) {
                 key={node.id}
                 className={`TableOfContentsDisplay-node TableOfContentsDisplay-node--indent${node.level - minLevel}`}
                 >
-                <a href={`#${node.id}`}>{node.text}</a>
+                <a href={`#${node.id}`} onClick={() => handleNodeClick(node.id)}>{node.text}</a>
               </li>
             ))}
           </ul>
