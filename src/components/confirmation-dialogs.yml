@@ -79,7 +79,7 @@ confirmationDialogs:
     de: Möchtest du den Speicherplan "{storagePlanName}" wirklich löschen?
   confirmPublicUploadLiability:
     en: You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.
-    de: Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.
+    de: Du bist dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachte, dass du eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen kannst und dass du für alle Rechtsverstöße in deiner Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden kannst.
   closeAccountConfirmation:
     en: Do you really want to close your account?
     de: Möchtest du wirklich dein Konto schließen?
