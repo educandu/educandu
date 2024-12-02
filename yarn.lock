@@ -772,10 +772,10 @@
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz#b6c75a56a1947cc916ea058772d666a2c8932f31"
   integrity sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==
 
-"@educandu/abc-tools@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@educandu/abc-tools/-/abc-tools-1.1.0.tgz#664209ac978796e51307b73f6b86de45b389419c"
-  integrity sha512-PDyT/mpWqV2F9XCCeo8dpD0kXYFKCSIODjlF/MINqKQhdxZOWnJtLs6mF6fOOyh4y9VXaySvj4tCJ5vEpZa2nA==
+"@educandu/abc-tools@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@educandu/abc-tools/-/abc-tools-3.0.0.tgz#43db29f1354c5b3678d8231364e7ed7aa882d363"
+  integrity sha512-6EP3KCNZdIT/OqAh0489noP5KVGdHjFMwyz5PF7FSzMBfXxhdZ/On2I+mF0l2g58D9ThDKiPnXsh/1DbtVt0kw==
   dependencies:
     abc-notation-transposition "^1.0.5"
 
