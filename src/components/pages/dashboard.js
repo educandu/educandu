@@ -15,6 +15,7 @@ import StorageTab from '../dashboard/storage-tab.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { useSettings } from '../settings-context.js';
 import SettingsTab from '../dashboard/settings-tab.js';
+import HelpIcon from '../icons/main-menu/help-icon.js';
 import FavoritesTab from '../dashboard/favorites-tab.js';
 import DocumentsTab from '../dashboard/documents-tab.js';
 import ActivitiesTab from '../dashboard/activities-tab.js';
@@ -23,13 +24,13 @@ import PrivateIcon from '../icons/general/private-icon.js';
 import { FavoriteIcon, InputsIcon } from '../icons/icons.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
-import React, { useCallback, useEffect, useState } from 'react';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import NotificationsTab from '../dashboard/notifications-tab.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentInputsTab from '../dashboard/document-inputs-tab.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import NotificationsApiClient from '../../api-clients/notifications-api-client.js';
 import DocumentInputApiClient from '../../api-clients/document-input-api-client.js';
 import { useNotificationsCount, useSetNotificationsCount } from '../notification-context.js';
@@ -215,7 +216,10 @@ function Dashboard({ PageTemplate }) {
         <div>
           <div className="DashboardPage-tabHelp">
             {!!helpUrl && (
-              <a href={helpUrl}>{t('tabsHelpLinkText')}</a>
+              <Fragment>
+                <HelpIcon />
+                <a href={helpUrl}>{t('tabsHelpLinkText')}</a>
+              </Fragment>
             )}
           </div>
           <div className="Tabs-tabPane">
