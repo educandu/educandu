@@ -21,7 +21,7 @@ import RoomApiClient from '../api-clients/room-api-client.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { isInternalSourceType } from '../utils/source-utils.js';
+import { isRoomMediaSourceType } from '../utils/source-utils.js';
 import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -403,7 +403,7 @@ function DocumentMetadataModal({
     && hasPublicContextPermissions && !!publicContext;
   const isDocInRoomContext = !!documentRoomId && !!roomContext;
   const showDraftInput = isDocInRoomContext && allowDraftInRoomContext && cloningStrategy !== CLONING_STRATEGY.crossCloneIntoRoom;
-  const internalCdnResourcesCount = (initialDocumentMetadata.cdnResources || []).filter(url => isInternalSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })).length;
+  const internalCdnResourcesCount = (initialDocumentMetadata.cdnResources || []).filter(url => isRoomMediaSourceType({ url, cdnRootUrl: clientConfig.cdnRootUrl })).length;
 
   return (
     <Modal
