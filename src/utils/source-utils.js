@@ -88,6 +88,11 @@ export function isInternalSourceType({ url, cdnRootUrl }) {
   return sourceType === SOURCE_TYPE.mediaLibrary || sourceType === SOURCE_TYPE.roomMedia;
 }
 
+export function isRoomMediaSourceType({ url, cdnRootUrl }) {
+  const sourceType = getSourceType({ url, cdnRootUrl });
+  return sourceType === SOURCE_TYPE.roomMedia;
+}
+
 export function couldAccessUrlFromRoom(url, targetRoomId) {
   const urlOrCdnPath = getCdnPath({ url });
   const sourceRoomId = urlOrCdnPath.match(ROOM_MEDIA_STORAGE_PATH_PATTERN)?.[1];
