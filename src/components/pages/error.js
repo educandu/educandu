@@ -32,6 +32,12 @@ function ErrorPage({ PageTemplate, initialState }) {
       title = t('notFoundEmptyStateTitle');
       subtitle = t('notFoundEmptyStateSubtitle');
       break;
+    case HTTP_STATUS.badRequest:
+      status = EMPTY_STATE_STATUS.error;
+      icon = <ExclamationCircleFilled />;
+      title = t('badRequestEmptyStateTitle');
+      subtitle = t('badRequestEmptyStateSubtitle');
+      break;
     case HTTP_STATUS.unauthorized:
     case HTTP_STATUS.forbidden:
       icon = <StopFilled />;
