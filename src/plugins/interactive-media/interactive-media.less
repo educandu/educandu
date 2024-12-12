@@ -113,13 +113,16 @@
 }
 
 .InteractiveMediaDisplay-chaptersProgressBar {
-  padding: 10px 0;
+  padding: 20px 0 10px 0;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  .m-fake-flex-gap(@edu-control-spacing-base);
 }
 
 .InteractiveMediaDisplay-chaptersProgressBarCards {
-  .m-control-group-wide;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  .m-fake-flex-gap(@edu-control-spacing-wide);
 }

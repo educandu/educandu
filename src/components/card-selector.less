@@ -1,7 +1,10 @@
 @card-selector-selected-card-background-color: lighten(@edu-primary-color-light, 35%);
 
 .CardSelector {
-  .m-control-group;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  .m-fake-flex-gap(@edu-control-spacing-base);
 }
 
 .CardSelector-card {

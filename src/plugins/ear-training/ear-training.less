@@ -10,10 +10,10 @@
 
 .EarTrainingDisplay-controlPanel {
   .m-horizontally-centered;
-  margin-top: 15px;
   width: 100%;
   display: flex;
   justify-content: space-between;
+  .m-fake-flex-gap(@edu-control-spacing-base);
 }
 
 .EarTrainingDisplay-randomTestsIcon {
@@ -35,6 +35,7 @@
 
 .EarTrainingDisplay-test {
   margin-top: 15px;
+  margin-bottom: 15px;
   padding: 10px;
   border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
