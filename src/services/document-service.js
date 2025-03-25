@@ -745,8 +745,11 @@ class DocumentService {
     }
 
     if (errorCases.length) {
+      const maxErrorCaseCountPersisted = 10;
       const err = new Error(`Error validating document with ID ${documentId}`);
-      err.cases = errorCases;
+      err.totalCaseCount = errorCases.length;
+      err.areCasesTruncated = errorCases.length > maxErrorCaseCountPersisted;
+      err.cases = errorCases.length > maxErrorCaseCountPersisted ? errorCases.slice(-maxErrorCaseCountPersisted) : errorCases;
       err.isIrrecoverable = true;
       throw err;
     }
