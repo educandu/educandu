@@ -695,14 +695,14 @@ class DocumentService {
   }
 
   async validateDocument(documentId) {
-    const errorCases = [];
+    const validationErrors = [];
     const validationOptions = { abortEarly: false, convert: false, noDefaults: true };
 
     const doc = await this.documentStore.getDocumentById(documentId);
     try {
       joi.attempt(doc, documentDBSchema, validationOptions);
     } catch (error) {
-      errorCases.push({
+      validationErrors.push({
         ...error,
         documentId: doc._id
       });
@@ -712,7 +712,7 @@ class DocumentService {
       try {
         validateSection(section, this.pluginRegistry);
       } catch (error) {
-        errorCases.push({
+        validationErrors.push({
           ...error,
           documentId: doc._id,
           sectionKey: section.key
@@ -725,9 +725,9 @@ class DocumentService {
       try {
         joi.attempt(revision, documentRevisionDBSchema, validationOptions);
       } catch (error) {
-        errorCases.push({
+        validationErrors.push({
           ...error,
-          documentId: doc._id
+          documentRevisionId: revision._id
         });
       }
 
@@ -735,7 +735,7 @@ class DocumentService {
         try {
           validateSection(section, this.pluginRegistry);
         } catch (error) {
-          errorCases.push({
+          validationErrors.push({
             ...error,
             documentRevisionId: revision._id,
             sectionKey: section.key
@@ -744,13 +744,22 @@ class DocumentService {
       }
     }
 
-    if (errorCases.length) {
-      const maxErrorCaseCountPersisted = 10;
+    if (validationErrors.length) {
+      const truncatedErrors = validationErrors.slice(-10);
+
       const err = new Error(`Error validating document with ID ${documentId}`);
-      err.totalCaseCount = errorCases.length;
-      err.areCasesTruncated = errorCases.length > maxErrorCaseCountPersisted;
-      err.cases = errorCases.length > maxErrorCaseCountPersisted ? errorCases.slice(-maxErrorCaseCountPersisted) : errorCases;
+      err.totalErrorCount = validationErrors.length;
+
+      for (const error of truncatedErrors) {
+        delete error._original;
+        for (const detail of error.details) {
+          delete detail.context;
+        }
+      }
+
+      err.lastErrors = truncatedErrors;
       err.isIrrecoverable = true;
+
       throw err;
     }
   }
