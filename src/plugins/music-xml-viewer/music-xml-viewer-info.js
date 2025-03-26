@@ -3,11 +3,18 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
 import MusicXmlViewerIcon from './music-xml-viewer-icon.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { DEFAULT_ZOOM_VALUE, MAX_ZOOM_VALUE, MIN_ZOOM_VALUE } from './constants.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class MusicXmlViewerInfo {
+  static dependencies = [GithubFlavoredMarkdown];
+
   static typeName = 'music-xml-viewer';
+
+  constructor(gfm) {
+    this.gfm = gfm;
+  }
 
   getDisplayName(t) {
     return t('musicXmlViewer:name');
@@ -56,6 +63,11 @@ class MusicXmlViewerInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
+    redactedContent.caption = this.gfm.redactCdnResources(
+      redactedContent.caption,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
+
     if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
@@ -64,7 +76,15 @@ class MusicXmlViewerInfo {
   }
 
   getCdnResources(content) {
-    return isInternalSourceType({ url: content.sourceUrl }) ? [content.sourceUrl] : [];
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.caption));
+
+    if (isInternalSourceType({ url: content.sourceUrl })) {
+      cdnResources.push(content.sourceUrl);
+    }
+
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
