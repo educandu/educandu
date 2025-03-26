@@ -4,11 +4,19 @@ import TextFieldIcon from './text-field-icon.js';
 import { TEXT_FIELD_MODE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
+import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class TextFieldInfo {
+  static dependencies = [GithubFlavoredMarkdown];
+
   static typeName = 'text-field';
 
   allowsInput = true;
+
+  constructor(gfm) {
+    this.gfm = gfm;
+  }
 
   getDisplayName(t) {
     return t('textField:name');
@@ -54,12 +62,23 @@ class TextFieldInfo {
     return cloneDeep(content);
   }
 
-  redactContent(content) {
-    return cloneDeep(content);
+  redactContent(content, targetRoomId) {
+    const redactedContent = cloneDeep(content);
+
+    redactedContent.label = this.gfm.redactCdnResources(
+      redactedContent.label,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
+
+    return redactedContent;
   }
 
-  getCdnResources() {
-    return [];
+  getCdnResources(content) {
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.label));
+
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
