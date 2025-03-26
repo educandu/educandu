@@ -38,7 +38,7 @@ describe('music-xml-viewer-info', () => {
   });
 
   describe('getCdnResources', () => {
-    it('returns a list from resources within the caption', () => {
+    it('returns a list of resources from within the caption', () => {
       const result = sut.getCdnResources({
         sourceUrl: null,
         caption: 'This [hyperlink](cdn://room-media/12345/my-file.pdf) and [another one](https://google.com)'
