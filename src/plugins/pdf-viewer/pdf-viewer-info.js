@@ -3,10 +3,17 @@ import React from 'react';
 import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 
 class PdfViewerInfo {
+  static dependencies = [GithubFlavoredMarkdown];
+
   static typeName = 'pdf-viewer';
+
+  constructor(gfm) {
+    this.gfm = gfm;
+  }
 
   getDisplayName(t) {
     return t('pdfViewer:name');
@@ -57,6 +64,11 @@ class PdfViewerInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
+    redactedContent.caption = this.gfm.redactCdnResources(
+      redactedContent.caption,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
+
     if (!couldAccessUrlFromRoom(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
@@ -65,7 +77,15 @@ class PdfViewerInfo {
   }
 
   getCdnResources(content) {
-    return isInternalSourceType({ url: content.sourceUrl }) ? [content.sourceUrl] : [];
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.caption));
+
+    if (isInternalSourceType({ url: content.sourceUrl })) {
+      cdnResources.push(content.sourceUrl);
+    }
+
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

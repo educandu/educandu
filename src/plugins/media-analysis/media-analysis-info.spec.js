@@ -18,6 +18,9 @@ describe('media-analysis-info', () => {
     it('redacts the copyrightNotice', () => {
       content = {
         copyrightNotice: `[Click me](cdn://room-media/${currentRoomId}/my-file-1.pdf)`,
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: ''
         }
@@ -30,6 +33,9 @@ describe('media-analysis-info', () => {
       content = {
         sourceUrl: `cdn://room-media/${currentRoomId}/my-video-1.mp4`,
         copyrightNotice: '',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: `cdn://room-media/${currentRoomId}/my-photo.jpeg`
         }
@@ -43,6 +49,9 @@ describe('media-analysis-info', () => {
       content = {
         sourceUrl: '',
         copyrightNotice: '',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: `cdn://room-media/${currentRoomId}/my-image.jpg`
         }
@@ -51,10 +60,28 @@ describe('media-analysis-info', () => {
       expect(result.posterImage.sourceUrl).toBe('');
     });
 
+    it('redacts the chapter text', () => {
+      content = {
+        sourceUrl: '',
+        copyrightNotice: '',
+        chapters: [
+          { text: `[Click me](cdn://room-media/${currentRoomId}/my-file.pdf)` }
+        ],
+        posterImage: {
+          sourceUrl: ''
+        }
+      };
+      result = sut.redactContent(content, otherRoomId);
+      expect(result.chapters[0].text).toBe('[Click me]()');
+    });
+
     it('leaves accessible paths intact', () => {
       content = {
         sourceUrl: `cdn://room-media/${currentRoomId}/my-file-1.pdf`,
         copyrightNotice: '',
+        chapters: [
+          { text: `[Click me](cdn://room-media/${currentRoomId}/my-file.pdf)` }
+        ],
         posterImage: {
           sourceUrl: `cdn://room-media/${currentRoomId}/my-image.jpg`
         }
@@ -69,6 +96,9 @@ describe('media-analysis-info', () => {
       content = {
         sourceUrl: '',
         copyrightNotice: 'This [hyperlink](cdn://media-library/my-file-1.pdf) and [another one](https://google.com)',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: ''
         }
@@ -77,10 +107,28 @@ describe('media-analysis-info', () => {
       expect(result).toStrictEqual(['cdn://media-library/my-file-1.pdf']);
     });
 
+    it('returns CDN resources from chapter text', () => {
+      content = {
+        sourceUrl: '',
+        copyrightNotice: '',
+        chapters: [
+          { text: 'This [hyperlink](cdn://media-library/my-file.pdf) and [another one](https://google.com)' }
+        ],
+        posterImage: {
+          sourceUrl: ''
+        }
+      };
+      result = sut.getCdnResources(content);
+      expect(result).toStrictEqual(['cdn://media-library/my-file.pdf']);
+    });
+
     it('returns empty list for a YouTube resource', () => {
       content = {
         sourceUrl: 'https://youtube.com/something',
         copyrightNotice: '',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: ''
         }
@@ -93,6 +141,9 @@ describe('media-analysis-info', () => {
       content = {
         sourceUrl: 'https://someplace.com/video.mp4',
         copyrightNotice: '',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: 'https://someplace.com/image.jpg'
         }
@@ -105,6 +156,9 @@ describe('media-analysis-info', () => {
       content = {
         sourceUrl: null,
         copyrightNotice: '',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: ''
         }
@@ -117,6 +171,9 @@ describe('media-analysis-info', () => {
       content = {
         sourceUrl: 'cdn://media-library/some-video-1.mp4',
         copyrightNotice: '',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: 'cdn://media-library/some-image.jpg'
         }
@@ -132,6 +189,9 @@ describe('media-analysis-info', () => {
       content = {
         sourceUrl: 'cdn://room-media/12345/some-video-1.mp4',
         copyrightNotice: '',
+        chapters: [
+          { text: '' }
+        ],
         posterImage: {
           sourceUrl: 'cdn://room-media/12345/some-image.jpg'
         }

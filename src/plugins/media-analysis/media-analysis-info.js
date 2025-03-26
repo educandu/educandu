@@ -63,6 +63,13 @@ class MediaAnalysisInfo {
       redactedContent.posterImage.sourceUrl = '';
     }
 
+    for (const chapter of redactedContent.chapters) {
+      chapter.text = this.gfm.redactCdnResources(
+        chapter.text,
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+      );
+    }
+
     return redactedContent;
   }
 
@@ -77,6 +84,10 @@ class MediaAnalysisInfo {
 
     if (isInternalSourceType({ url: content.posterImage.sourceUrl })) {
       cdnResources.push(content.posterImage.sourceUrl);
+    }
+
+    for (const chapter of content.chapters) {
+      cdnResources.push(...this.gfm.extractCdnResources(chapter.text));
     }
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);

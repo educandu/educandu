@@ -50,6 +50,11 @@ class CombinedMultitrackMediaInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
+    redactedContent.note = this.gfm.redactCdnResources(
+      redactedContent.note,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
+
     redactedContent.player1.track.copyrightNotice = this.gfm.redactCdnResources(
       redactedContent.player1.track.copyrightNotice,
       url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
@@ -80,6 +85,7 @@ class CombinedMultitrackMediaInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
+    cdnResources.push(...this.gfm.extractCdnResources(content.note));
     cdnResources.push(...this.gfm.extractCdnResources(content.player1.track.copyrightNotice));
 
     if (isInternalSourceType({ url: content.player1.track.sourceUrl })) {

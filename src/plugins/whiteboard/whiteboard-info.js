@@ -4,11 +4,19 @@ import cloneDeep from '../../utils/clone-deep.js';
 import WhiteboardIcon from './whiteboard-icon.js';
 import { OPTIMAL_VIEWPORT_WIDTH_FACTOR } from './constants.js';
 import { MEDIA_ASPECT_RATIO, PLUGIN_GROUP } from '../../domain/constants.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
 class WhiteboardInfo {
+  static dependencies = [GithubFlavoredMarkdown];
+
   static typeName = 'whiteboard';
 
   allowsInput = true;
+
+  constructor(gfm) {
+    this.gfm = gfm;
+  }
 
   getDisplayName(t) {
     return t('whiteboard:name');
@@ -65,12 +73,37 @@ class WhiteboardInfo {
     return cloneDeep(content);
   }
 
-  redactContent(content) {
-    return cloneDeep(content);
+  redactContent(content, targetRoomId) {
+    const redactedContent = cloneDeep(content);
+
+    redactedContent.label = this.gfm.redactCdnResources(
+      redactedContent.label,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
+
+    redactedContent.image.copyrightNotice = this.gfm.redactCdnResources(
+      redactedContent.image.copyrightNotice,
+      url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+    );
+
+    if (!couldAccessUrlFromRoom(redactedContent.image.sourceUrl, targetRoomId)) {
+      redactedContent.image.sourceUrl = '';
+    }
+
+    return redactedContent;
   }
 
-  getCdnResources() {
-    return [];
+  getCdnResources(content) {
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.label));
+    cdnResources.push(...this.gfm.extractCdnResources(content.image.copyrightNotice));
+
+    if (isInternalSourceType({ url: content.image.sourceUrl })) {
+      cdnResources.push(content.image.sourceUrl);
+    }
+
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
