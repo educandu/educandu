@@ -106,6 +106,11 @@ class MediaSlideshowInfo {
     }
 
     redactedContent.chapters.forEach(chapter => {
+      chapter.text = this.gfm.redactCdnResources(
+        chapter.text,
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+      );
+
       chapter.image.copyrightNotice = this.gfm.redactCdnResources(
         chapter.image.copyrightNotice,
         url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
@@ -129,11 +134,12 @@ class MediaSlideshowInfo {
     }
 
     content.chapters.forEach(chapter => {
+      cdnResources.push(...this.gfm.extractCdnResources(chapter.text));
+      cdnResources.push(...this.gfm.extractCdnResources(chapter.image.copyrightNotice));
+
       if (isInternalSourceType({ url: chapter.image.sourceUrl })) {
         cdnResources.push(chapter.image.sourceUrl);
       }
-
-      cdnResources.push(...this.gfm.extractCdnResources(chapter.image.copyrightNotice));
     });
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);

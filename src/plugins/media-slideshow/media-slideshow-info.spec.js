@@ -36,6 +36,25 @@ describe('media-slideshow-info', () => {
       expect(result.chapters[0].image.copyrightNotice).toBe('[Click me 2]()');
     });
 
+    it('redacts the chapter text', () => {
+      content = {
+        sourceUrl: '',
+        copyrightNotice: '',
+        chapters: [
+          {
+            type: CHAPTER_TYPE.image,
+            image: {
+              sourceUrl: '',
+              copyrightNotice: ''
+            },
+            text: `[Click me](cdn://room-media/${currentRoomId}/my-file-1.pdf)`
+          }
+        ]
+      };
+      result = sut.redactContent(content, otherRoomId);
+      expect(result.chapters[0].text).toBe('[Click me]()');
+    });
+
     it('redacts the media source url', () => {
       content = {
         sourceUrl: `room-media/${currentRoomId}/my-video-1.mp4`,
@@ -66,7 +85,7 @@ describe('media-slideshow-info', () => {
               sourceUrl: `room-media/${currentRoomId}/my-video-2.mp4`,
               copyrightNotice: `[Click me 2](cdn://room-media/${currentRoomId}/my-file-2.pdf)`
             },
-            text: ''
+            text: `[Click me 3](cdn://room-media/${currentRoomId}/my-file-3.pdf)`
           }
         ]
       };
@@ -95,6 +114,27 @@ describe('media-slideshow-info', () => {
       expect(result).toStrictEqual([
         'cdn://media-library/my-file-1.pdf',
         'cdn://media-library/my-file-2.pdf'
+      ]);
+    });
+
+    it('returns CDN resources from chapter text', () => {
+      content = {
+        sourceUrl: '',
+        copyrightNotice: '',
+        chapters: [
+          {
+            type: CHAPTER_TYPE.image,
+            image: {
+              sourceUrl: '',
+              copyrightNotice: ''
+            },
+            text: 'This [hyperlink](cdn://media-library/my-file-1.pdf) and [another one](https://google.com)'
+          }
+        ]
+      };
+      result = sut.getCdnResources(content);
+      expect(result).toStrictEqual([
+        'cdn://media-library/my-file-1.pdf'
       ]);
     });
 
