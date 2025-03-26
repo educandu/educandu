@@ -108,6 +108,20 @@ class InteractiveMediaInfo {
       redactedContent.posterImage.sourceUrl = '';
     }
 
+    for (const chapter of redactedContent.chapters) {
+      chapter.text = this.gfm.redactCdnResources(
+        chapter.text,
+        url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+      );
+
+      chapter.answers = chapter.answers.map(answer => {
+        return this.gfm.redactCdnResources(
+          answer,
+          url => couldAccessUrlFromRoom(url, targetRoomId) ? url : ''
+        );
+      });
+    }
+
     return redactedContent;
   }
 
@@ -122,6 +136,14 @@ class InteractiveMediaInfo {
 
     if (isInternalSourceType({ url: content.posterImage.sourceUrl })) {
       cdnResources.push(content.posterImage.sourceUrl);
+    }
+
+    for (const chapter of content.chapters) {
+      cdnResources.push(...this.gfm.extractCdnResources(chapter.text));
+
+      for (const answer of chapter.answers) {
+        cdnResources.push(...this.gfm.extractCdnResources(answer));
+      }
     }
 
     return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
