@@ -2,7 +2,7 @@ import Database from './database.js';
 import { validate } from '../domain/validation.js';
 import { documentCategoryDbSchema } from '../domain/schemas/document-category-schemas.js';
 
-class CategoryStore {
+class DocumentCategoryStore {
   static dependencies = [Database];
 
   constructor(db) {
@@ -19,6 +19,10 @@ class CategoryStore {
 
   getAllDocumentCategoryIds({ session } = {}) {
     return this.collection.distinct('_id', {}, { session });
+  }
+
+  getAllCdnResourcesReferencedFromDocumentCategories() {
+    return this.collection.distinct('cdnResources');
   }
 
   getDocumentCategoriesByDocumentId(documentId, { session } = {}) {
@@ -39,4 +43,4 @@ class CategoryStore {
   }
 }
 
-export default CategoryStore;
+export default DocumentCategoryStore;

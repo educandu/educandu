@@ -14,7 +14,8 @@ import {
   createTestSection,
   updateTestDocument,
   createTestRoom,
-  createTestSetting
+  createTestSetting,
+  createTestDocumentCategory
 } from '../test-helper.js';
 
 async function createTestMediaLibraryItem(sut, user, { tags, name }) {
@@ -159,6 +160,25 @@ describe('media-library-service', () => {
       });
       it('has usage `unused`', () => {
         expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.unused);
+      });
+    });
+
+    describe('when an item is referenced from a document category', () => {
+      beforeEach(async () => {
+        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
+        await createTestDocumentCategory(
+          container,
+          user,
+          {
+            description: `Download [this file](${createdMediaLibraryItem.url}), please!`
+          }
+        );
+
+        result = await sut.getAllMediaLibraryItemsWithUsage();
+      });
+
+      it('has usage `used`', () => {
+        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.used);
       });
     });
 

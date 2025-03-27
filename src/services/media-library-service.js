@@ -13,6 +13,7 @@ import DocumentStore from '../stores/document-store.js';
 import transliterate from '@sindresorhus/transliterate';
 import { getResourceType } from '../utils/resource-utils.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
+import DocumentCategoryStore from '../stores/document-category-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
@@ -24,6 +25,7 @@ class MediaLibraryService {
   static dependencies = [
     Cdn,
     MediaLibraryItemStore,
+    DocumentCategoryStore,
     DocumentRevisionStore,
     DocumentStore,
     UserStore,
@@ -34,6 +36,7 @@ class MediaLibraryService {
   constructor(
     cdn,
     mediaLibraryItemStore,
+    documentCategoryStore,
     documentRevisionStore,
     documentStore,
     userStore,
@@ -42,6 +45,7 @@ class MediaLibraryService {
   ) {
     this.cdn = cdn;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
+    this.documentCategoryStore = documentCategoryStore;
     this.documentRevisionStore = documentRevisionStore;
     this.documentStore = documentStore;
     this.userStore = userStore;
@@ -58,6 +62,7 @@ class MediaLibraryService {
       items,
       docCdnResources,
       revCdnResources,
+      categoryResources,
       userCdnResources,
       roomCdnResources,
       settingCdnResources
@@ -66,6 +71,7 @@ class MediaLibraryService {
       this.mediaLibraryItemStore.getAllMediaLibraryItems(),
       this.documentStore.getAllCdnResourcesReferencedFromNonArchivedDocuments().then(x => new Set(x)),
       this.documentRevisionStore.getAllCdnResourcesReferencedFromDocumentRevisions().then(x => new Set(x)),
+      this.documentCategoryStore.getAllCdnResourcesReferencedFromDocumentCategories().then(x => new Set(x)),
       this.userStore.getAllCdnResourcesReferencedFromUsers().then(x => new Set(x)),
       this.roomStore.getAllCdnResourcesReferencedFromRoomsMetadata().then(x => new Set(x)),
       this.settingStore.getAllCdnResourcesReferencedFromSettings().then(x => new Set(x)),
@@ -77,6 +83,7 @@ class MediaLibraryService {
         item,
         docCdnResources,
         revCdnResources,
+        categoryResources,
         userCdnResources,
         roomCdnResources,
         settingCdnResources
@@ -209,12 +216,14 @@ class MediaLibraryService {
     mediaLibraryItem,
     documentCdnResourcesSet,
     documentRevisionsCdnResourcesSet,
+    documentCategoryResourcesSet,
     userCdnResourcesSet,
     roomCdnResourcesSet,
     settingCdnResourcesSet
   ) {
     if (
       documentCdnResourcesSet.has(mediaLibraryItem.url)
+      || documentCategoryResourcesSet.has(mediaLibraryItem.url)
       || userCdnResourcesSet.has(mediaLibraryItem.url)
       || roomCdnResourcesSet.has(mediaLibraryItem.url)
       || settingCdnResourcesSet.has(mediaLibraryItem.url)
