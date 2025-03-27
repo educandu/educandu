@@ -14,6 +14,7 @@ import { getDocumentInputMediaPath } from './utils/storage-utils.js';
 import DocumentInputService from './services/document-input-service.js';
 import GithubFlavoredMarkdown from './common/github-flavored-markdown.js';
 import DocumentCommentService from './services/document-comment-service.js';
+import DocumentCategoryService from './services/document-category-service.js';
 import { createDocumentInputUploadedFileName } from './utils/document-input-utils.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, SAVE_USER_RESULT } from './domain/constants.js';
@@ -181,6 +182,18 @@ export function createTestDocumentComment(container, user, data) {
       text: 'Test comment text',
       ...data
     },
+    user
+  });
+}
+
+export function createTestDocumentCategory(container, user, data) {
+  const documentCategoryService = container.get(DocumentCategoryService);
+
+  return documentCategoryService.createDocumentCategory({
+    name: 'Test Category',
+    iconUrl: '',
+    description: '',
+    ...data,
     user
   });
 }
