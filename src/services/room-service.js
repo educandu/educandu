@@ -22,6 +22,7 @@ import RoomInvitationStore from '../stores/room-invitation-store.js';
 import DocumentCommentStore from '../stores/document-comment-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
+import { consolidateCdnResourcesForSaving } from '../utils/cdn-resource-utils.js';
 import { ensureIsExcluded, getSymmetricalDifference } from '../utils/array-utils.js';
 import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
 import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
@@ -553,6 +554,7 @@ export default class RoomService {
   }
 
   _extractCdnResources({ overview }) {
-    return this.githubFlavoredMarkdown.extractCdnResources(overview);
+    const rawCdnResources = this.githubFlavoredMarkdown.extractCdnResources(overview);
+    return consolidateCdnResourcesForSaving(rawCdnResources);
   }
 }
