@@ -4,6 +4,7 @@ import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import cryptoJsUtf8Encoder from 'crypto-js/enc-utf8.js';
+import { consolidateCdnResourcesForSaving } from '../utils/cdn-resource-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -103,14 +104,14 @@ export function createSectionRevision({ section, ancestorSection = null, isResto
 }
 
 export function extractCdnResources(sections, pluginRegistry) {
-  return [
-    ...sections.reduce((cdnResources, section) => {
-      const plugin = pluginRegistry.getRegisteredPlugin(section.type);
-      return plugin && section.content
-        ? [...cdnResources, ...plugin.info.getCdnResources(section.content).filter(resource => resource)]
-        : cdnResources;
-    }, new Set())
-  ].sort();
+  const rawCdnResources = sections.reduce((cdnResources, section) => {
+    const plugin = pluginRegistry.getRegisteredPlugin(section.type);
+    return plugin && section.content
+      ? [...cdnResources, ...plugin.info.getCdnResources(section.content).filter(resource => resource)]
+      : cdnResources;
+  }, []);
+
+  return consolidateCdnResourcesForSaving(rawCdnResources);
 }
 
 export function validateSection(section, pluginRegistry) {

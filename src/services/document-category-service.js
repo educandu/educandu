@@ -6,6 +6,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import { SAVE_DOCUMENT_CATEGORY_RESULT } from '../domain/constants.js';
 import DocumentCategoryStore from  '../stores/document-category-store.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
+import { consolidateCdnResourcesForSaving } from '../utils/cdn-resource-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -130,13 +131,13 @@ class DocumentCategoryService {
   }
 
   _extractCdnResources({ iconUrl, description }) {
-    const cdnResources = this.githubFlavoredMarkdown.extractCdnResources(description);
+    const rawCdnResources = this.githubFlavoredMarkdown.extractCdnResources(description);
 
     if (!!iconUrl && isInternalSourceType({ url: iconUrl })) {
-      cdnResources.push(iconUrl);
+      rawCdnResources.push(iconUrl);
     }
 
-    return cdnResources;
+    return consolidateCdnResourcesForSaving(rawCdnResources);
   }
 }
 

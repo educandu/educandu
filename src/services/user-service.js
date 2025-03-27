@@ -12,6 +12,7 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
+import { consolidateCdnResourcesForSaving } from '../utils/cdn-resource-utils.js';
 import {
   ROLE,
   FAVORITE_TYPE,
@@ -616,7 +617,8 @@ class UserService {
   }
 
   _extractCdnResources({ profileOverview }) {
-    return this.githubFlavoredMarkdown.extractCdnResources(profileOverview);
+    const rawCdnResources = this.githubFlavoredMarkdown.extractCdnResources(profileOverview);
+    return consolidateCdnResourcesForSaving(rawCdnResources);
   }
 }
 

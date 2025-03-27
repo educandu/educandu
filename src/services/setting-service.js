@@ -1,7 +1,7 @@
 import SettingStore from '../stores/setting-store.js';
-import { ensureIsUnique } from '../utils/array-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
+import { consolidateCdnResourcesForSaving } from '../utils/cdn-resource-utils.js';
 
 class SettingService {
   static dependencies = [SettingStore, TransactionRunner, GithubFlavoredMarkdown];
@@ -47,8 +47,8 @@ class SettingService {
   }
 
   _getFlattenedCdnResources(texts) {
-    const allCdnResources = texts.flatMap(text => this.githubFlavoredMarkdown.extractCdnResources(text));
-    return ensureIsUnique(allCdnResources).sort();
+    const rawCdnResources = texts.flatMap(text => this.githubFlavoredMarkdown.extractCdnResources(text));
+    return consolidateCdnResourcesForSaving(rawCdnResources);
   }
 }
 
