@@ -21,6 +21,10 @@ export function getMediaLibraryPath() {
   return 'media-library';
 }
 
+export function getMediaTrashPath() {
+  return 'media-trash';
+}
+
 export function getRoomMediaRootPath() {
   return 'room-media';
 }

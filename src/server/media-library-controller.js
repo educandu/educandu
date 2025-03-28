@@ -102,17 +102,19 @@ class MediaLibraryController {
   }
 
   async handleDeleteMediaLibraryItem(req, res) {
+    const { user } = req;
     const { mediaLibraryItemId } = req.params;
 
-    await this.mediaLibraryService.deleteMediaLibraryItem({ mediaLibraryItemId });
+    await this.mediaLibraryService.deleteMediaLibraryItem({ mediaLibraryItemId, user });
 
     return res.status(204).end();
   }
 
   async handleBulkDeleteMediaLibraryItems(req, res) {
+    const { user } = req;
     const { mediaLibraryItemIds } = req.body;
 
-    await this.mediaLibraryService.bulkDeleteMediaLibraryItems({ mediaLibraryItemIds });
+    await this.mediaLibraryService.bulkDeleteMediaLibraryItems({ mediaLibraryItemIds, user });
 
     return res.status(204).end();
   }

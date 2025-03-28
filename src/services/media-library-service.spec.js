@@ -1,9 +1,12 @@
 import by from 'thenby';
-import { createSandbox } from 'sinon';
+import Cdn from '../stores/cdn.js';
 import uniqueId from '../utils/unique-id.js';
+import Database from '../stores/database.js';
+import { assert, createSandbox } from 'sinon';
 import MediaLibraryService from './media-library-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { RESOURCE_TYPE, RESOURCE_USAGE, ROLE } from '../domain/constants.js';
+import { getMediaLibraryPath, getMediaTrashPath } from '../utils/storage-utils.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   destroyTestEnvironment,
@@ -30,7 +33,7 @@ async function createTestMediaLibraryItem(sut, user, { tags, name }) {
     languages: [],
     allRightsReserved: false,
     licenses: ['CC0-1.0'],
-    tags: tags || ['test'],
+    tags: tags || ['test']
   };
 
   const createdMediaLibraryItem = await sut.createMediaLibraryItem({ file, metadata, user });
@@ -46,6 +49,8 @@ describe('media-library-service', () => {
   let container;
   let user;
   let sut;
+  let cdn;
+  let db;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -53,6 +58,8 @@ describe('media-library-service', () => {
     user = await createTestUser(container, { email: 'user@test.com', role: ROLE.user });
     markdownInfo = container.get(MarkdownInfo);
     sut = container.get(MediaLibraryService);
+    cdn = container.get(Cdn);
+    db = container.get(Database);
   });
 
   afterAll(async () => {
@@ -61,6 +68,7 @@ describe('media-library-service', () => {
 
   beforeEach(() => {
     sandbox.useFakeTimers(now);
+    sandbox.stub(cdn, 'moveObject').resolves();
   });
 
   afterEach(async () => {
@@ -354,5 +362,82 @@ describe('media-library-service', () => {
         expect(result.sort(by(x => x.name))).toStrictEqual([{ ...item1, relevance: 1 }]);
       });
     });
+  });
+
+  describe('deleteMediaLibraryItem', () => {
+    describe('when the mediaLibraryItem does not exist', () => {
+      beforeEach(async () => {
+        await sut.deleteMediaLibraryItem({ mediaLibraryItemId: 'non-existing-id', user });
+      });
+
+      it('should not call the CDN', () => {
+        assert.notCalled(cdn.moveObject);
+      });
+    });
+
+    describe('when the mediaLibraryItem and the matching CDN file exist', () => {
+      let mediaLibraryItemBeforeDeletion;
+      let mediaLibraryItemAfterDeletion;
+      let createdMediaTrashItem;
+
+      beforeEach(async () => {
+        const createdTestItem = await createTestMediaLibraryItem(sut, user, { name: 'some-item.txt' });
+
+        mediaLibraryItemBeforeDeletion = await db.mediaLibraryItems.findOne({ _id: createdTestItem._id });
+        await sut.deleteMediaLibraryItem({ mediaLibraryItemId: mediaLibraryItemBeforeDeletion._id, user });
+        mediaLibraryItemAfterDeletion = await db.mediaLibraryItems.findOne({ _id: mediaLibraryItemBeforeDeletion._id });
+        createdMediaTrashItem = await db.mediaTrashItems.findOne({ 'originalItem._id': mediaLibraryItemBeforeDeletion._id });
+      });
+
+      it('should delete the media library item', () => {
+        expect(mediaLibraryItemAfterDeletion).toBeNull();
+      });
+
+      it('should create the media trash item', () => {
+        expect(createdMediaTrashItem?.originalItem).toStrictEqual(mediaLibraryItemBeforeDeletion);
+      });
+
+      it('should call the CDN to move the file', () => {
+        assert.calledWith(
+          cdn.moveObject,
+          `${getMediaLibraryPath()}/${mediaLibraryItemBeforeDeletion.name}`,
+          `${getMediaTrashPath()}/${mediaLibraryItemBeforeDeletion.name}`
+        );
+      });
+    });
+
+    describe('when the mediaLibraryItem exists, but the matching CDN file does not exist', () => {
+      let mediaLibraryItemBeforeDeletion;
+      let mediaLibraryItemAfterDeletion;
+      let createdMediaTrashItem;
+
+      beforeEach(async () => {
+        const createdTestItem = await createTestMediaLibraryItem(sut, user, { name: 'some-item.txt' });
+
+        cdn.moveObject.rejects(new Error('Not Found'));
+
+        mediaLibraryItemBeforeDeletion = await db.mediaLibraryItems.findOne({ _id: createdTestItem._id });
+        await sut.deleteMediaLibraryItem({ mediaLibraryItemId: mediaLibraryItemBeforeDeletion._id, user });
+        mediaLibraryItemAfterDeletion = await db.mediaLibraryItems.findOne({ _id: mediaLibraryItemBeforeDeletion._id });
+        createdMediaTrashItem = await db.mediaTrashItems.findOne({ 'originalItem._id': mediaLibraryItemBeforeDeletion._id });
+      });
+
+      it('should delete the media library item', () => {
+        expect(mediaLibraryItemAfterDeletion).toBeNull();
+      });
+
+      it('should create the media trash item', () => {
+        expect(createdMediaTrashItem?.originalItem).toStrictEqual(mediaLibraryItemBeforeDeletion);
+      });
+
+      it('should call the CDN to move the file', () => {
+        assert.calledWith(
+          cdn.moveObject,
+          `${getMediaLibraryPath()}/${mediaLibraryItemBeforeDeletion.name}`,
+          `${getMediaTrashPath()}/${mediaLibraryItemBeforeDeletion.name}`
+        );
+      });
+    });
+
   });
 });

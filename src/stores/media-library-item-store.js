@@ -18,6 +18,10 @@ class MediaLibraryItemStore {
     return this.collection.findOne({ _id: mediaLibraryItemId }, { projection: mediaLibraryItemProjection, session });
   }
 
+  getMediaLibraryItemWithSearchTokensById(mediaLibraryItemId, { session } = {}) {
+    return this.collection.findOne({ _id: mediaLibraryItemId }, { session });
+  }
+
   getMediaLibraryItemByUrl(url, { session } = {}) {
     return this.collection.findOne({ url }, { projection: mediaLibraryItemProjection, session });
   }

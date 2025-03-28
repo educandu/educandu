@@ -67,7 +67,7 @@ describe('maintenance-service', () => {
       });
 
       it('should have created the initial CDN directories', () => {
-        assert.callCount(cdn.ensureDirectory, 4);
+        assert.callCount(cdn.ensureDirectory, 5);
       });
     });
 

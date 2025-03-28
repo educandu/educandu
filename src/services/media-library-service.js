@@ -2,22 +2,27 @@ import by from 'thenby';
 import mime from 'mime';
 import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
+import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import urlUtils from '../utils/url-utils.js';
+import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import SettingStore from '../stores/setting-store.js';
-import { getCdnPath } from '../utils/source-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import transliterate from '@sindresorhus/transliterate';
 import { getResourceType } from '../utils/resource-utils.js';
+import TransactionRunner from '../stores/transaction-runner.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
-import DocumentCategoryStore from '../stores/document-category-store.js';
+import MediaTrashStore from '../stores/media-trash-item-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import DocumentCategoryStore from '../stores/document-category-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
-import { createUniqueStorageFileName, getMediaLibraryPath } from '../utils/storage-utils.js';
 import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, RESOURCE_USAGE } from '../domain/constants.js';
+import { createUniqueStorageFileName, getMediaLibraryPath, getMediaTrashPath } from '../utils/storage-utils.js';
+
+const logger = new Logger(import.meta.url);
 
 const { NotFound } = httpErrors;
 
@@ -27,10 +32,12 @@ class MediaLibraryService {
     MediaLibraryItemStore,
     DocumentCategoryStore,
     DocumentRevisionStore,
+    MediaTrashStore,
     DocumentStore,
     UserStore,
     RoomStore,
-    SettingStore
+    SettingStore,
+    TransactionRunner
   ];
 
   constructor(
@@ -38,19 +45,23 @@ class MediaLibraryService {
     mediaLibraryItemStore,
     documentCategoryStore,
     documentRevisionStore,
+    mediaTrashStore,
     documentStore,
     userStore,
     roomStore,
-    settingStore
+    settingStore,
+    transactionRunner
   ) {
     this.cdn = cdn;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
     this.documentCategoryStore = documentCategoryStore;
     this.documentRevisionStore = documentRevisionStore;
+    this.mediaTrashStore = mediaTrashStore;
     this.documentStore = documentStore;
     this.userStore = userStore;
     this.roomStore = roomStore;
     this.settingStore = settingStore;
+    this.transactionRunner = transactionRunner;
   }
 
   getAllMediaLibraryItems() {
@@ -192,17 +203,44 @@ class MediaLibraryService {
     return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);
   }
 
-  async deleteMediaLibraryItem({ mediaLibraryItemId }) {
-    const mediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemById(mediaLibraryItemId);
-    if (mediaLibraryItem) {
-      await this.mediaLibraryItemStore.deleteMediaLibraryItem(mediaLibraryItemId);
-      await this.cdn.deleteObject(getCdnPath({ url: mediaLibraryItem.url }));
+  async deleteMediaLibraryItem({ mediaLibraryItemId, user }) {
+    const oldMediaLibraryItem = await this.mediaLibraryItemStore.getMediaLibraryItemWithSearchTokensById(mediaLibraryItemId);
+    if (oldMediaLibraryItem) {
+      const now = new Date();
+      const newMediaTrashItemId = uniqueId.create();
+
+      const oldStoragePath = urlUtils.concatParts(getMediaLibraryPath(), oldMediaLibraryItem.name);
+      const newStoragePath = urlUtils.concatParts(getMediaTrashPath(), oldMediaLibraryItem.name);
+      const newStorageUrl = `${CDN_URL_PREFIX}${newStoragePath}`;
+
+      const newMediaTrashItem = {
+        _id: newMediaTrashItemId,
+        resourceType: oldMediaLibraryItem.resourceType,
+        contentType: oldMediaLibraryItem.contentType,
+        size: oldMediaLibraryItem.size,
+        createdOn: now,
+        createdBy: user._id,
+        url: newStorageUrl,
+        name: oldMediaLibraryItem.name,
+        originalItem: cloneDeep(oldMediaLibraryItem)
+      };
+
+      await this.transactionRunner.run(async session => {
+        await this.mediaTrashStore.insertMediaTrashItem(newMediaTrashItem, { session });
+        await this.mediaLibraryItemStore.deleteMediaLibraryItem(mediaLibraryItemId, { session });
+      });
+
+      try {
+        await this.cdn.moveObject(oldStoragePath, newStoragePath);
+      } catch (error) {
+        logger.error(`Error moving ${oldStoragePath} to ${newStoragePath} while deleting media library item with ID ${mediaLibraryItemId}`, error);
+      }
     }
   }
 
-  async bulkDeleteMediaLibraryItems({ mediaLibraryItemIds }) {
+  async bulkDeleteMediaLibraryItems({ mediaLibraryItemIds, user }) {
     for (const mediaLibraryItemId of mediaLibraryItemIds) {
-      await this.deleteMediaLibraryItem({ mediaLibraryItemId });
+      await this.deleteMediaLibraryItem({ mediaLibraryItemId, user });
     }
   }
 
