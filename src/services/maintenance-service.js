@@ -3,7 +3,7 @@ import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
 import LockStore from '../stores/lock-store.js';
-import { getDocumentInputMediaRootPath, getMediaLibraryPath, getRoomMediaRootPath, getTemporaryUploadsPath } from '../utils/storage-utils.js';
+import { getDocumentInputMediaRootPath, getMediaLibraryPath, getMediaTrashPath, getRoomMediaRootPath, getTemporaryUploadsPath } from '../utils/storage-utils.js';
 
 const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 
@@ -47,6 +47,7 @@ export default class MaintenanceService {
       await Promise.all([
         this.cdn.ensureDirectory({ directoryPath: getTemporaryUploadsPath() }),
         this.cdn.ensureDirectory({ directoryPath: getMediaLibraryPath() }),
+        this.cdn.ensureDirectory({ directoryPath: getMediaTrashPath() }),
         this.cdn.ensureDirectory({ directoryPath: getRoomMediaRootPath() }),
         this.cdn.ensureDirectory({ directoryPath: getDocumentInputMediaRootPath() })
       ]);
