@@ -3,7 +3,6 @@ import { serializeError } from 'serialize-error';
 import LockStore from '../../../stores/lock-store.js';
 import TaskStore from '../../../stores/task-store.js';
 import { TASK_TYPE } from '../../../domain/constants.js';
-import ServerConfig from '../../../bootstrap/server-config.js';
 import DocumentValidationTaskProcessor from './document-validation-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
@@ -18,8 +17,7 @@ export default class TaskProcessor {
     LockStore,
     DocumentValidationTaskProcessor,
     DocumentRegenerationTaskProcessor,
-    CdnResourcesConsolidationTaskProcessor,
-    ServerConfig
+    CdnResourcesConsolidationTaskProcessor
   ];
 
   constructor(
@@ -27,12 +25,10 @@ export default class TaskProcessor {
     lockStore,
     documentValidationTaskProcessor,
     documentRegenerationTaskProcessor,
-    cdnResourcesConsolidationTaskProcessor,
-    serverConfig
+    cdnResourcesConsolidationTaskProcessor
   ) {
     this.taskStore = taskStore;
     this.lockStore = lockStore;
-    this.serverConfig = serverConfig;
 
     this.taskProcessors = {
       [TASK_TYPE.documentValidation]: documentValidationTaskProcessor,

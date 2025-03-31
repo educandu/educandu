@@ -42,6 +42,7 @@ const configSchema = joi.object({
   announcementCookieNamePrefix: joi.string().required(),
   xFrameOptions: joi.string().valid('DENY', 'SAMEORIGIN').allow(null).default(null),
   xRoomsAuthSecret: joi.string().allow(null).default(null),
+  mediaTrashExpiryTimeoutInDays: joi.number().min(1).default(365),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
   adminEmailAddress: joi.string().allow(null).default(null),

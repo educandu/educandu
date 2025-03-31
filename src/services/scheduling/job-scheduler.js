@@ -3,6 +3,7 @@ import CronJobScheduler from './cron-job-scheduler.js';
 import ProcessEventsJob from './jobs/process-events-job.js';
 import ProcessBatchesJob from './jobs/process-batches-job.js';
 import LoadSamlMetadataJob from './jobs/load-saml-metadata-job.js';
+import CleanupMediaTrashJob from './jobs/cleanup-media-trash-job.js';
 import AlwaysRunningJobScheduler from './always-running-job-scheduler.js';
 import IntervalBasedJobScheduler from './interval-based-job-scheduler.js';
 import SendNotificationEmailsJob from './jobs/send-notification-emails-job.js';
@@ -38,7 +39,7 @@ const jobs = {
   // │ │ │ │ │ │
   // * * * * * *
   // * has to have a `preventOverrun` boolean field that when set to true will prevent the next run from being fired up while the previous one is still executing
-  cron: [SendNotificationEmailsJob]
+  cron: [SendNotificationEmailsJob, CleanupMediaTrashJob]
 };
 
 export default class JobScheduler {
