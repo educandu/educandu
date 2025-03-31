@@ -279,6 +279,8 @@ export const ANTI_BRUTE_FORCE_EXPIRES_IN_MS = 60 * 60 * 1000;
 export const NOTIFICATION_EXPIRATION_IN_MONTHS = 2;
 export const CONTACT_REQUEST_EXPIRATION_IN_DAYS = 5;
 
+export const MEDIA_TRASH_CLEANUP_CRON_PATTERN = '0 4 * * *'; // every day at 4am
+
 export const EMAIL_NOTIFICATION_SENDER_CRON_PATTERN = '0 20 * * *'; // every day at 8pm
 export const EMAIL_NOTIFICATION_DUE_DAY_OF_WEEK = 1;
 export const EMAIL_NOTIFICATION_DUE_DAY_OF_MONTH = 1;
