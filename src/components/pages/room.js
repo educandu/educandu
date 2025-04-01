@@ -5,6 +5,7 @@ import EmptyState from '../empty-state.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import RoomMedia from '../room/room-media.js';
 import { InputsIcon } from '../icons/icons.js';
 import { useTranslation } from 'react-i18next';
 import RoomMembers from '../room/room-members.js';
@@ -17,6 +18,7 @@ import RoomDocuments from '../room/room-documents.js';
 import WriteIcon from '../icons/general/write-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { FAVORITE_TYPE } from '../../domain/constants.js';
+import PrivateIcon from '../icons/general/private-icon.js';
 import React, { Fragment, useMemo, useState } from 'react';
 import { confirmLeaveRoom } from '../confirmation-dialogs.js';
 import SettingsIcon from '../icons/main-menu/settings-icon.js';
@@ -27,7 +29,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { RoomMediaContextProvider } from '../room-media-context.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import { isRoomInvitedCollaborator, isRoomOwner } from '../../utils/room-utils.js';
-import { roomShape, roomInvitationShape, roomMediaContextShape, documentInputShape, roomDocumentMetadataShape } from '../../ui/default-prop-types.js';
+import { roomShape, roomInvitationShape, roomMediaContextShape, roomDocumentMetadataShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -39,6 +41,7 @@ const VIEW_MODE = {
 
 const TAB_KEYS = {
   view: 'view',
+  media: 'media',
   documentInputs: 'documentInputs',
   members: 'members',
   settings: 'settings'
@@ -164,6 +167,70 @@ export default function Room({ PageTemplate, initialState }) {
     return text;
   };
 
+  const tabItems = [
+    {
+      key: TAB_KEYS.view,
+      icon: <RoomIcon />,
+      label: t('roomViewTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          {renderRoomView()}
+        </div>
+      ),
+      isVisible: true
+    },
+    {
+      key: TAB_KEYS.media,
+      icon: <PrivateIcon />,
+      label: t('roomMediaTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <RoomMedia roomId={room._id} />
+        </div>
+      ),
+      isVisible: true
+    },
+    {
+      key: TAB_KEYS.documentInputs,
+      icon: <InputsIcon />,
+      label: t('roomDocumentInputsTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <RoomDocumentInputs roomId={room._id} />
+        </div>
+      ),
+      isVisible: viewMode === VIEW_MODE.collaboratingMember || viewMode === VIEW_MODE.owner
+    },
+    {
+      key: TAB_KEYS.members,
+      icon: room.isCollaborative ? <TeamOutlined /> : <UserOutlined />,
+      label: getMembersTabTitle(),
+      children: (
+        <div className="Tabs-tabPane">
+          <RoomMembers
+            roomId={room._id}
+            roomIsCollaborative={room.isCollaborative}
+            initialRoomMembers={initialState.room.members}
+            initialRoomInvitations={initialState.invitations}
+            onChange={handleRoomMembersChange}
+            />
+        </div>
+      ),
+      isVisible: viewMode === VIEW_MODE.owner
+    },
+    {
+      key: TAB_KEYS.settings,
+      icon: <SettingsIcon />,
+      label: t('common:settings'),
+      children: (
+        <div className="Tabs-tabPane" >
+          <RoomSettings room={room} onChange={handleRoomSettingsChange} />
+        </div>
+      ),
+      isVisible: viewMode === VIEW_MODE.owner
+    }
+  ].filter(tab => !!tab.isVisible);
+
   return (
     <RoomMediaContextProvider context={initialState.roomMediaContext}>
       <PageTemplate>
@@ -185,103 +252,19 @@ export default function Room({ PageTemplate, initialState }) {
               <FavoriteToggle type={FAVORITE_TYPE.room} id={room._id} showAsButton />
             </div>
           </div>
-
           <div className="RoomPage-subtitle">
             {renderSubtitleLink()}
             {viewMode !== VIEW_MODE.owner && renderLeaveRoomLink()}
           </div>
-
-          {viewMode === VIEW_MODE.nonCollaboratingMember && renderRoomView()}
-
-          {viewMode === VIEW_MODE.collaboratingMember && (
-            <Tabs
-              type="line"
-              size="middle"
-              className="Tabs"
-              defaultActiveKey={initialTab}
-              onChange={handleTabChange}
-              items={[
-                {
-                  key: TAB_KEYS.view,
-                  icon: <RoomIcon />,
-                  label: t('roomViewTitle'),
-                  children: (
-                    <div className="Tabs-tabPane">
-                      {renderRoomView()}
-                    </div>
-                  )
-                },
-                {
-                  key: TAB_KEYS.documentInputs,
-                  icon: <InputsIcon />,
-                  label: t('roomDocumentInputsTitle'),
-                  children: (
-                    <div className="Tabs-tabPane">
-                      <RoomDocumentInputs roomId={room._id} />
-                    </div>
-                  )
-                }
-              ]}
-              />
-          )}
-
-          {viewMode === VIEW_MODE.owner && (
-            <Tabs
-              type="line"
-              size="middle"
-              className="Tabs"
-              defaultActiveKey={initialTab}
-              onChange={handleTabChange}
-              items={[
-                {
-                  key: TAB_KEYS.view,
-                  icon: <RoomIcon />,
-                  label: t('roomViewTitle'),
-                  children: (
-                    <div className="Tabs-tabPane">
-                      {renderRoomView()}
-                    </div>
-                  )
-                },
-                {
-                  key: TAB_KEYS.documentInputs,
-                  icon: <InputsIcon />,
-                  label: t('roomDocumentInputsTitle'),
-                  children: (
-                    <div className="Tabs-tabPane">
-                      <RoomDocumentInputs roomId={room._id} />
-                    </div>
-                  )
-                },
-                {
-                  key: TAB_KEYS.members,
-                  icon: room.isCollaborative ? <TeamOutlined /> : <UserOutlined />,
-                  label: getMembersTabTitle(),
-                  children: (
-                    <div className="Tabs-tabPane">
-                      <RoomMembers
-                        roomId={room._id}
-                        roomIsCollaborative={room.isCollaborative}
-                        initialRoomMembers={initialState.room.members}
-                        initialRoomInvitations={initialState.invitations}
-                        onChange={handleRoomMembersChange}
-                        />
-                    </div>
-                  )
-                },
-                {
-                  key: TAB_KEYS.settings,
-                  icon: <SettingsIcon />,
-                  label: t('common:settings'),
-                  children: (
-                    <div className="Tabs-tabPane" >
-                      <RoomSettings room={room} onChange={handleRoomSettingsChange} />
-                    </div>
-                  )
-                }
-              ]}
-              />
-          )}
+          <Tabs
+            type="line"
+            size="middle"
+            className="Tabs"
+            destroyInactiveTabPane
+            defaultActiveKey={initialTab}
+            onChange={handleTabChange}
+            items={tabItems}
+            />
         </div>
       </PageTemplate>
     </RoomMediaContextProvider>
@@ -294,7 +277,6 @@ Room.propTypes = {
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(roomInvitationShape).isRequired,
     documents: PropTypes.arrayOf(roomDocumentMetadataShape).isRequired,
-    documentInputs: PropTypes.arrayOf(documentInputShape).isRequired,
     roomMediaContext: roomMediaContextShape
   }).isRequired
 };

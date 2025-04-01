@@ -13,7 +13,6 @@ import ServerConfig from '../bootstrap/server-config.js';
 import DocumentService from '../services/document-service.js';
 import multipartMiddleware from '../domain/multipart-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import DocumentInputService from '../services/document-input-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -53,9 +52,9 @@ const jsonParser = express.json();
 const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 export default class RoomController {
-  static dependencies = [ServerConfig, RoomService, DocumentService, DocumentInputService, UserService, MailService, ClientDataMappingService, PageRenderer, Cdn];
+  static dependencies = [ServerConfig, RoomService, DocumentService, UserService, MailService, ClientDataMappingService, PageRenderer, Cdn];
 
-  constructor(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer, cdn) {
+  constructor(serverConfig, roomService, documentService, userService, mailService, clientDataMappingService, pageRenderer, cdn) {
     this.cdn = cdn;
     this.roomService = roomService;
     this.userService = userService;
@@ -63,7 +62,6 @@ export default class RoomController {
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.documentService = documentService;
-    this.documentInputService = documentInputService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
@@ -381,10 +379,6 @@ export default class RoomController {
       ? await this.roomService.getRoomInvitations(roomId)
       : [];
 
-    const documentInputs = isRoomOwnerOrInvitedCollaborator({ room, userId: user._id })
-      ? await this.documentInputService.getDocumentInputsByRoomId(roomId)
-      : [];
-
     const singleRoomMediaOverview = await this.roomService.getSingleRoomMediaOverview({ user, roomId });
     const mappedSingleRoomMediaOverview = await this.clientDataMappingService.mapSingleRoomMediaOverview(singleRoomMediaOverview, user);
 
@@ -399,13 +393,11 @@ export default class RoomController {
 
     const mappedRoom = await this.clientDataMappingService.mapRoom({ room, viewingUser: user });
     const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata);
-    const mappedDocumentInputs = await this.clientDataMappingService.mapDocumentInputs({ documentInputs, documents: documentsMetadata });
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
     const initialState = {
       room: mappedRoom,
       documents: mappedDocumentsMetadata,
-      documentInputs: mappedDocumentInputs,
       invitations: mappedInvitations,
       roomMediaContext
     };
