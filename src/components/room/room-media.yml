@@ -1,0 +1,10 @@
+roomMedia:
+  emptyStateTitle:
+    en: No media has been uploaded in this room
+    de: In diesem Raum wurden keine Medien hochgeladen
+  emptyStateSubtitle:
+    en: Private media can be uploaded into rooms, provided that a storage plan is configured for the room owner's account.
+    de: In Räumen können private Medien hochgeladen, sofern ein Speicherplan für das Konto des Raumbesitzers konfiguriert ist.
+  downloadAll:
+    en: Download all displayed items
+    de: Alle angezeigten Einträge herunterladen

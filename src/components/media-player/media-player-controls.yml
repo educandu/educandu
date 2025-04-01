@@ -1,7 +1,4 @@
 mediaPlayerControls:
-  download:
-    en: Download
-    de: Herunterladen
   playbackRate:
     en: Speed
     de: Geschwindigkeit

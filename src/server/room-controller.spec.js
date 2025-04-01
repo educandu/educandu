@@ -15,7 +15,6 @@ describe('room-controller', () => {
   const sandbox = createSandbox();
 
   let clientDataMappingService;
-  let documentInputService;
   let documentService;
   let serverConfig;
   let pageRenderer;
@@ -51,9 +50,6 @@ describe('room-controller', () => {
     documentService = {
       getRoomDocumentsMetadataByDocumentIds: sandbox.stub()
     };
-    documentInputService = {
-      getDocumentInputsByRoomId: sandbox.stub()
-    };
     userService = {
       getUserById: sandbox.stub()
     };
@@ -80,7 +76,7 @@ describe('room-controller', () => {
     };
     cdn = {};
 
-    sut = new RoomController(serverConfig, roomService, documentService, documentInputService, userService, mailService, clientDataMappingService, pageRenderer, cdn);
+    sut = new RoomController(serverConfig, roomService, documentService, userService, mailService, clientDataMappingService, pageRenderer, cdn);
   });
 
   afterEach(() => {
@@ -623,7 +619,6 @@ describe('room-controller', () => {
     let request;
     let mappedRoom;
     let mappedDocuments;
-    let mappedDocumentInputs;
 
     beforeEach(() => {
       room = {
@@ -644,7 +639,6 @@ describe('room-controller', () => {
       let documents;
       let invitations;
       let viewingUser;
-      let documentInputs;
       let mappedInvitations;
 
       beforeEach(async () => {
@@ -659,7 +653,6 @@ describe('room-controller', () => {
           { _id: room.documents[1], roomContext: { draft: true, inputSubmittingDisabled: false } }
         ];
         invitations = [{ email: 'test@test.com', sentOn: new Date() }];
-        documentInputs = [{ documentId: documents[0]._id }];
 
         mappedDocuments = cloneDeep(documents);
 
@@ -668,13 +661,11 @@ describe('room-controller', () => {
         roomService.getRoomById.resolves(room);
 
         documentService.getRoomDocumentsMetadataByDocumentIds.resolves(documents);
-        documentInputService.getDocumentInputsByRoomId.resolves(documentInputs);
         roomService.getRoomInvitations.resolves(invitations);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
         clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
-        clientDataMappingService.mapDocumentInputs.returns(mappedDocumentInputs);
 
         await sut.handleGetRoomPage(request, {});
       });
@@ -691,16 +682,8 @@ describe('room-controller', () => {
         assert.calledWith(roomService.getRoomInvitations, room._id);
       });
 
-      it('should call getDocumentInputsByRoomId', () => {
-        assert.calledWith(documentInputService.getDocumentInputsByRoomId, room._id);
-      });
-
       it('should call mapRoomInvitations with the invitations returned by the service', () => {
         assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
-      });
-
-      it('should call mapDocumentInputs with the document inputs returned by the service', () => {
-        assert.calledWith(clientDataMappingService.mapDocumentInputs, { documentInputs, documents });
       });
 
       it('should call getRoomDocumentsMetadataByDocumentIds', () => {
@@ -720,7 +703,6 @@ describe('room-controller', () => {
           {
             room: mappedRoom,
             documents: mappedDocuments,
-            documentInputs: mappedDocumentInputs,
             invitations: mappedInvitations,
             roomMediaContext: null
           }
@@ -747,7 +729,6 @@ describe('room-controller', () => {
         ];
         mappedDocuments = cloneDeep(documents);
         mappedInvitations = [];
-        mappedDocumentInputs = [];
 
         roomService.getRoomById.resolves(room);
         documentService.getRoomDocumentsMetadataByDocumentIds.resolves(documents);
@@ -755,7 +736,6 @@ describe('room-controller', () => {
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapDocsOrRevisions.returns(mappedDocuments);
         clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
-        clientDataMappingService.mapDocumentInputs.returns(mappedDocumentInputs);
         clientDataMappingService.mapSingleRoomMediaOverview.returns(mappedDocuments);
 
         await sut.handleGetRoomPage(request, {});
@@ -767,10 +747,6 @@ describe('room-controller', () => {
 
       it('should not call getRoomInvitations', () => {
         assert.notCalled(roomService.getRoomInvitations);
-      });
-
-      it('should not call getDocumentInputsByRoomId', () => {
-        assert.notCalled(documentInputService.getDocumentInputsByRoomId);
       });
 
       it('should call mapRoom with the room returned by the service', () => {
@@ -798,7 +774,6 @@ describe('room-controller', () => {
           {
             room: mappedRoom,
             documents: mappedDocuments,
-            documentInputs: mappedDocumentInputs,
             invitations: mappedInvitations,
             roomMediaContext: null
           }

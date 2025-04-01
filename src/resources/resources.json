@@ -684,6 +684,10 @@
       "en": "View document",
       "de": "Dokument ansehen"
     },
+    "download": {
+      "en": "Download",
+      "de": "Herunterladen"
+    },
     "copySectionToClipboardError": {
       "en": "Error copying the section to the clipboard due to missing access permissions.",
       "de": "Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung."
@@ -3210,10 +3214,6 @@
     }
   },
   "mediaPlayerControls": {
-    "download": {
-      "en": "Download",
-      "de": "Herunterladen"
-    },
     "playbackRate": {
       "en": "Speed",
       "de": "Geschwindigkeit"
@@ -3858,6 +3858,10 @@
       "en": "Room view",
       "de": "Raum-Ansicht"
     },
+    "roomMediaTitle": {
+      "en": "Room media",
+      "de": "Raum-Medien"
+    },
     "roomDocumentInputsTitle": {
       "en": "Room document inputs",
       "de": "Raum-Dokumenteingaben"
@@ -3926,7 +3930,7 @@
   "roomDocumentInputs": {
     "emptyStateTitle": {
       "en": "No document input has been submitted in this room",
-      "de": "Keine Dokumenteingabe wurden in diesem Raum gesendet"
+      "de": "In diesem Raum wurden keine Dokumenteingaben gesendet"
     },
     "emptyStateSubtitle": {
       "en": "Documents which contain input fields can be filled in and submitted by room members. They can be then managed here.",
@@ -3971,6 +3975,20 @@
     "notAllEmailsValid": {
       "en": "Not all specified email addresses are valid",
       "de": "Nicht alle angegebenen E-Mail-Adressen sind gültig"
+    }
+  },
+  "roomMedia": {
+    "emptyStateTitle": {
+      "en": "No media has been uploaded in this room",
+      "de": "In diesem Raum wurden keine Medien hochgeladen"
+    },
+    "emptyStateSubtitle": {
+      "en": "Private media can be uploaded into rooms, provided that a storage plan is configured for the room owner's account.",
+      "de": "In Räumen können private Medien hochgeladen, sofern ein Speicherplan für das Konto des Raumbesitzers konfiguriert ist."
+    },
+    "downloadAll": {
+      "en": "Download all displayed items",
+      "de": "Alle angezeigten Einträge herunterladen"
     }
   },
   "roomMediaFilesViewer": {

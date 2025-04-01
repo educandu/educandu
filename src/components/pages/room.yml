@@ -2,6 +2,9 @@ room:
   roomViewTitle:
     en: Room view
     de: Raum-Ansicht
+  roomMediaTitle:
+    en: Room media
+    de: Raum-Medien
   roomDocumentInputsTitle:
     en: Room document inputs
     de: Raum-Dokumenteingaben
