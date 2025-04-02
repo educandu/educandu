@@ -1,9 +1,10 @@
-import { ORIENTATION } from './constants.js';
+import { HOVER_OR_REVEAL_ACTION, ORIENTATION } from './constants.js';
 
 export function createDefaultHoverEffect() {
   return {
     sourceUrl: '',
-    copyrightNotice: ''
+    copyrightNotice: '',
+    hoverAction: HOVER_OR_REVEAL_ACTION.switch
   };
 }
 
@@ -11,6 +12,7 @@ export function createDefaultRevealEffect() {
   return {
     sourceUrl: '',
     copyrightNotice: '',
+    revealAction: HOVER_OR_REVEAL_ACTION.switch,
     startPosition: 0,
     orientation: ORIENTATION.horizontal
   };

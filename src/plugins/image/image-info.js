@@ -3,8 +3,8 @@ import React from 'react';
 import ImageIcon from './image-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
-import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { EFFECT_TYPE, HOVER_OR_REVEAL_ACTION, ORIENTATION } from './constants.js';
 import { isInternalSourceType, couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import { createDefaultClipEffect, createDefaultHoverEffect, createDefaultRevealEffect } from './image-utils.js';
 
@@ -57,11 +57,13 @@ class ImageInfo {
       effectType: joi.string().valid(...Object.values(EFFECT_TYPE)).required(),
       hoverEffect: joi.object({
         sourceUrl: joi.string().allow('').required(),
-        copyrightNotice: joi.string().allow('').required()
+        copyrightNotice: joi.string().allow('').required(),
+        hoverAction: joi.string().valid(...Object.values(HOVER_OR_REVEAL_ACTION)).required()
       }).required(),
       revealEffect: joi.object({
         sourceUrl: joi.string().allow('').required(),
         copyrightNotice: joi.string().allow('').required(),
+        revealAction: joi.string().valid(...Object.values(HOVER_OR_REVEAL_ACTION)).required(),
         startPosition: joi.number().min(0).required(),
         orientation: joi.string().valid(...Object.values(ORIENTATION)).required()
       }).required(),
