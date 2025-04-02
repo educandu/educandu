@@ -23,6 +23,18 @@ image:
   effectTypeLabel:
     en: Effect
     de: Effekt
+  hoverActionLabel:
+    en: Hover action
+    de: Hover-Aktion
+  revealActionLabel:
+    en: Reveal action
+    de: Aufdeck-Aktion
+  hoverOrRevealActionOptionSwitch:
+    en: switch
+    de: Austauschen
+  hoverOrRevealActionOptionOverlay:
+    en: overlay
+    de: Überlagern
   startPosition:
     en: Start Position
     de: Startposition

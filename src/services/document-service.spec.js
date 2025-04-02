@@ -9,8 +9,8 @@ import EventStore from '../stores/event-store.js';
 import DocumentService from './document-service.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { MEDIA_ASPECT_RATIO, ROLE } from '../domain/constants.js';
-import { EFFECT_TYPE, ORIENTATION } from '../plugins/image/constants.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { EFFECT_TYPE, HOVER_OR_REVEAL_ACTION, ORIENTATION } from '../plugins/image/constants.js';
 import {
   createTestDocument,
   updateTestDocument,
@@ -110,11 +110,13 @@ describe('document-service', () => {
               effectType: EFFECT_TYPE.hover,
               hoverEffect: {
                 sourceUrl: 'cdn://media-library/image-2.png',
-                copyrightNotice: ''
+                copyrightNotice: '',
+                hoverAction: HOVER_OR_REVEAL_ACTION.switch
               },
               revealEffect: {
                 sourceUrl: '',
                 copyrightNotice: '',
+                revealAction: HOVER_OR_REVEAL_ACTION.switch,
                 startPosition: 0,
                 orientation: ORIENTATION.horizontal
               },
@@ -276,11 +278,13 @@ describe('document-service', () => {
               effectType: EFFECT_TYPE.hover,
               hoverEffect: {
                 sourceUrl: 'cdn://media-library/image-2.png',
-                copyrightNotice: ''
+                copyrightNotice: '',
+                hoverAction: HOVER_OR_REVEAL_ACTION.switch
               },
               revealEffect: {
                 sourceUrl: '',
                 copyrightNotice: '',
+                revealAction: HOVER_OR_REVEAL_ACTION.switch,
                 startPosition: 0,
                 orientation: ORIENTATION.horizontal
               },

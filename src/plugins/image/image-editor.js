@@ -3,7 +3,6 @@ import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
 import { Form, Radio, InputNumber } from 'antd';
 import UrlInput from '../../components/url-input.js';
-import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
@@ -12,6 +11,7 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import { EFFECT_TYPE, HOVER_OR_REVEAL_ACTION, ORIENTATION } from './constants.js';
 import { createCopyrightForSource, getAccessibleUrl } from '../../utils/source-utils.js';
 import {
   createDefaultClipEffect,
@@ -129,6 +129,12 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ hoverEffect: newHoverEffect });
   };
 
+  const handleHoverEffectHoverActionChange = event => {
+    const { value } = event.target;
+    const newHoverEffect = { ...hoverEffect, hoverAction: value };
+    changeContent({ hoverEffect: newHoverEffect });
+  };
+
   const handleRevealEffectSourceUrlChange = (value, metadata) => {
     const newRevealEffect = {
       ...revealEffect,
@@ -147,6 +153,12 @@ function ImageEditor({ content, onContentChanged }) {
   const handleRevealEffectCopyrightNoticeChange = event => {
     const { value } = event.target;
     const newRevealEffect = { ...revealEffect, copyrightNotice: value };
+    changeContent({ revealEffect: newRevealEffect });
+  };
+
+  const handleRevealEffectRevealActionChange = event => {
+    const { value } = event.target;
+    const newRevealEffect = { ...revealEffect, revealAction: value };
     changeContent({ revealEffect: newRevealEffect });
   };
 
@@ -217,6 +229,12 @@ function ImageEditor({ content, onContentChanged }) {
                   />
               </FormItem>
               {renderCopyrightNoticeInput(hoverEffect.copyrightNotice, handleHoverEffectCopyrightNoticeChange)}
+              <Form.Item label={t('hoverActionLabel')} {...FORM_ITEM_LAYOUT}>
+                <RadioGroup value={hoverEffect.hoverAction} onChange={handleHoverEffectHoverActionChange}>
+                  <RadioButton value={HOVER_OR_REVEAL_ACTION.switch}>{t('hoverOrRevealActionOptionSwitch')}</RadioButton>
+                  <RadioButton value={HOVER_OR_REVEAL_ACTION.overlay}>{t('hoverOrRevealActionOptionOverlay')}</RadioButton>
+                </RadioGroup>
+              </Form.Item>
             </Fragment>
             )}
 
@@ -230,6 +248,12 @@ function ImageEditor({ content, onContentChanged }) {
                   />
               </FormItem>
               {renderCopyrightNoticeInput(revealEffect.copyrightNotice, handleRevealEffectCopyrightNoticeChange)}
+              <Form.Item label={t('revealActionLabel')} {...FORM_ITEM_LAYOUT}>
+                <RadioGroup value={revealEffect.revealAction} onChange={handleRevealEffectRevealActionChange}>
+                  <RadioButton value={HOVER_OR_REVEAL_ACTION.switch}>{t('hoverOrRevealActionOptionSwitch')}</RadioButton>
+                  <RadioButton value={HOVER_OR_REVEAL_ACTION.overlay}>{t('hoverOrRevealActionOptionOverlay')}</RadioButton>
+                </RadioGroup>
+              </Form.Item>
               <FormItem label={t('startPosition')} {...FORM_ITEM_LAYOUT}>
                 <InputNumber
                   defaultValue={revealEffect.startPosition}

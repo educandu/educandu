@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
@@ -9,6 +8,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { ReactCompareSlider, styleFitContainer } from 'react-compare-slider';
 import EmptyState, { EMPTY_STATE_STATUS } from '../../components/empty-state.js';
+import { EFFECT_TYPE, HOVER_OR_REVEAL_ACTION, ORIENTATION } from './constants.js';
 
 function ImageDisplay({ content }) {
   const mainImageRef = useRef();
@@ -105,6 +105,7 @@ function ImageDisplay({ content }) {
         position={revealEffect.startPosition}
         portrait={revealEffect.orientation === ORIENTATION.vertical}
         className={`ImageDisplay-mainImage u-width-${width}`}
+        clip={revealEffect.revealAction === HOVER_OR_REVEAL_ACTION.overlay ? 'itemOne' : 'both'}
         itemOne={!!isMainImageLoaded && <img src={effectImageUrl} style={styleFitContainer()} />}
         itemTwo={<img src={imageUrl} ref={mainImageRef} style={styleFitContainer()} />}
         />
@@ -121,7 +122,10 @@ function ImageDisplay({ content }) {
   const mainImageClasses = classNames(
     'ImageDisplay-mainImage',
     `u-width-${width}`,
-    { 'ImageDisplay-mainImage--hoverEffect': shouldApplyHoverEffect }
+    {
+      'ImageDisplay-mainImage--hoverEffect': shouldApplyHoverEffect,
+      'ImageDisplay-mainImage--hoverEffectHidden': shouldApplyHoverEffect && hoverEffect.hoverAction === HOVER_OR_REVEAL_ACTION.switch
+    }
   );
 
   const showMainImageCopyright = !shouldApplyHoverEffect;
