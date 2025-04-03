@@ -17,3 +17,6 @@ pdfViewer:
         Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.
         Bitte beachte, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht
         vollständig mit der des Dokuments übereinstimmen kann.
+  downloadLinkText:
+    en: Download PDF file
+    de: PDF-Datei herunterladen
