@@ -99,9 +99,8 @@ function CatalogItemEditor({ item, enableImageEditing, onChange }) {
       <FormItem {...FORM_ITEM_LAYOUT} label={t('common:description')}>
         <MarkdownInput
           debounced
-          minRows={2}
+          minRows={3}
           value={link.description}
-          disableResourceSelector
           onChange={handleOnLinkDescriptionChange}
           />
       </FormItem>
