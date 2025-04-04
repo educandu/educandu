@@ -88,6 +88,11 @@ export function isInternalSourceType({ url, cdnRootUrl }) {
   return sourceType === SOURCE_TYPE.mediaLibrary || sourceType === SOURCE_TYPE.roomMedia;
 }
 
+export function isMediaLibrarySourceType({ url, cdnRootUrl }) {
+  const sourceType = getSourceType({ url, cdnRootUrl });
+  return sourceType === SOURCE_TYPE.mediaLibrary;
+}
+
 export function isRoomMediaSourceType({ url, cdnRootUrl }) {
   const sourceType = getSourceType({ url, cdnRootUrl });
   return sourceType === SOURCE_TYPE.roomMedia;
