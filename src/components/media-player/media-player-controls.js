@@ -2,16 +2,18 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
-import React, { Fragment, useId } from 'react';
 import { useIsIOS } from '../request-context.js';
 import { CheckOutlined } from '@ant-design/icons';
+import MediaInfoDialog from './media-info-dialog.js';
 import { useNumberFormat } from '../locale-context.js';
 import MediaVolumeSlider from './media-volume-slider.js';
+import React, { Fragment, useId, useState } from 'react';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
+import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
-import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon, SpinIcon } from '../icons/icons.js';
+import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, InfoIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon, SpinIcon } from '../icons/icons.js';
 
 export const MEDIA_PLAYER_CONTROLS_STATE = {
   paused: 'paused',
@@ -26,6 +28,7 @@ function MediaPlayerControls({
   allowFullscreen,
   allowLoop,
   allowPlaybackRate,
+  allowMediaInfo,
   durationInMilliseconds,
   millisecondsLength,
   playedMilliseconds,
@@ -35,6 +38,7 @@ function MediaPlayerControls({
   loopMedia,
   isFullscreen,
   playbackRate,
+  mediaInfo,
   onDownloadClick,
   onPauseClick,
   onPlaybackRateChange,
@@ -45,9 +49,9 @@ function MediaPlayerControls({
 }) {
   const isIOS = useIsIOS();
   const componentInstanceId = useId();
-
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
+  const [isMediaInfoDialogOpen, setIsMediaInfoDialogOpen] = useState(false);
 
   const handlePlaybackRateMenuItemClick = ({ key }) => {
     onPlaybackRateChange(Number(key));
@@ -59,6 +63,14 @@ function MediaPlayerControls({
 
   const handleFullscreenButtonClick = () => {
     onFullscreenChange(!isFullscreen);
+  };
+
+  const handleMediaInfoButtonClick = () => {
+    setIsMediaInfoDialogOpen(true);
+  };
+
+  const handleMediaInfoDialogClose = () => {
+    setIsMediaInfoDialogOpen(false);
   };
 
   const getPlaybackRateMenuItems = () => {
@@ -160,6 +172,14 @@ function MediaPlayerControls({
               onClick={handleLoopToggleButtonClick}
               />
           )}
+          {!!allowMediaInfo && (
+            <Button
+              type="link"
+              icon={<InfoIcon />}
+              disabled={disableSecondaryControls}
+              onClick={handleMediaInfoButtonClick}
+              />
+          )}
           {!!allowDownload && (
             <Button
               type="link"
@@ -176,6 +196,11 @@ function MediaPlayerControls({
           )}
         </div>
       </div>
+      <MediaInfoDialog
+        mediaInfo={mediaInfo}
+        isOpen={isMediaInfoDialogOpen}
+        onClose={handleMediaInfoDialogClose}
+        />
     </div>
   );
 }
@@ -185,6 +210,7 @@ MediaPlayerControls.propTypes = {
   allowFullscreen: PropTypes.bool,
   allowLoop: PropTypes.bool,
   allowPlaybackRate: PropTypes.bool,
+  allowMediaInfo: PropTypes.bool,
   durationInMilliseconds: PropTypes.number,
   isFullscreen: PropTypes.bool,
   millisecondsLength: PropTypes.number,
@@ -194,6 +220,7 @@ MediaPlayerControls.propTypes = {
   volume: PropTypes.number,
   loopMedia: PropTypes.bool,
   playbackRate: PropTypes.oneOf(MEDIA_PLAYBACK_RATES),
+  mediaInfo: mediaLibraryItemShape,
   onDownloadClick: PropTypes.func,
   onFullscreenChange: PropTypes.func,
   onPauseClick: PropTypes.func,
@@ -208,6 +235,7 @@ MediaPlayerControls.defaultProps = {
   allowFullscreen: false,
   allowLoop: false,
   allowPlaybackRate: false,
+  allowMediaInfo: false,
   durationInMilliseconds: 0,
   isFullscreen: false,
   millisecondsLength: 0,
@@ -217,6 +245,7 @@ MediaPlayerControls.defaultProps = {
   volume: 1,
   loopMedia: false,
   playbackRate: DEFAULT_MEDIA_PLAYBACK_RATE,
+  mediaInfo: null,
   onPauseClick: () => {},
   onPlayClick: () => {},
   onPlaybackRateChange: () => {},

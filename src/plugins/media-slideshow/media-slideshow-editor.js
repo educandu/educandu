@@ -211,6 +211,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
             {!!canRenderMediaPlayer && (
               <MediaPlayer
                 allowLoop
+                allowMediaInfo
                 allowPlaybackRate
                 volume={initialVolume}
                 parts={playerParts}

@@ -78,6 +78,7 @@ function MediaSlideshowDisplay({ content }) {
               allowDownload={allowDownload}
               allowFullscreen
               allowLoop
+              allowMediaInfo
               allowPlaybackRate
               aspectRatio={MEDIA_ASPECT_RATIO.sixteenToNine}
               customScreenOverlay={renderPlayingChapter()}

@@ -207,6 +207,7 @@ function InteractiveMediaDisplay({ content }) {
           <Fragment>
             <MediaPlayer
               allowDownload={allowDownload}
+              allowMediaInfo
               allowFullscreen
               allowPlaybackRate
               aspectRatio={aspectRatio}

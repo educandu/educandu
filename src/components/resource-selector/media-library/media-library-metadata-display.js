@@ -6,8 +6,8 @@ import { useService } from '../../container-context.js';
 import LanguageDataProvider from '../../../localization/language-data-provider.js';
 
 function MediaLibraryMetadataDisplay({ mediaLibraryItem }) {
+  const { t } = useTranslation();
   const { uiLanguage } = useLocale();
-  const { t } = useTranslation('mediaLibraryMetadataDisplay');
   const languageDataProvider = useService(LanguageDataProvider);
 
   const renderLanguages = () => {
@@ -17,7 +17,7 @@ function MediaLibraryMetadataDisplay({ mediaLibraryItem }) {
     }).join(', ');
   };
 
-  const renderMissingData = () => <i>{t('missingDataPlaceholder')}</i>;
+  const renderMissingData = () => <i>{t('common:missingDataPlaceholder')}</i>;
 
   const renderAllRightsReserved = () => <i>{t('common:allRightsReserved')}</i>;
 

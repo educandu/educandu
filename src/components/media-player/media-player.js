@@ -10,6 +10,7 @@ import { remountOnPropChanges } from '../../ui/react-helper.js';
 import { useIsFullscreenSupported } from '../request-context.js';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
+import { useResolvedMediaLibraryItemForSource } from './media-hooks.js';
 import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
 import MediaPlayerControls, { MEDIA_PLAYER_CONTROLS_STATE } from './media-player-controls.js';
 import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS, DEFAULT_MEDIA_PLAYBACK_RATE } from '../../domain/constants.js';
@@ -47,6 +48,7 @@ function MediaPlayer({
   allowFullscreen,
   allowLoop,
   allowPartClick,
+  allowMediaInfo,
   allowPlaybackRate,
   aspectRatio,
   clickToPlay,
@@ -99,6 +101,8 @@ function MediaPlayer({
 
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
+
+  const resolvedMediaLibraryItem = useResolvedMediaLibraryItemForSource(sourceUrl);
 
   const appliedVolume = volume ?? internalVolume;
   const appliedPlaybackRate = playbackRate ?? internalPlaybackRate;
@@ -313,6 +317,7 @@ function MediaPlayer({
           <MediaPlayerControls
             allowDownload={allowDownload}
             allowLoop={allowLoop}
+            allowMediaInfo={!!allowMediaInfo && resolvedMediaLibraryItem.canResolve}
             allowFullscreen={canEnterFullscreen}
             allowPlaybackRate={allowPlaybackRate}
             durationInMilliseconds={durationInMilliseconds}
@@ -324,6 +329,7 @@ function MediaPlayer({
             loopMedia={loopMedia}
             isFullscreen={isFullscreen}
             playbackRate={internalPlaybackRate}
+            mediaInfo={resolvedMediaLibraryItem.resolvedItem}
             onDownloadClick={allowDownload ? handleDownloadClick : null}
             onPauseClick={handlePauseClick}
             onPlaybackRateChange={setInternaPlaybackRate}
@@ -344,6 +350,7 @@ MediaPlayer.propTypes = {
   allowFullscreen: PropTypes.bool,
   allowLoop: PropTypes.bool,
   allowPartClick: PropTypes.bool,
+  allowMediaInfo: PropTypes.bool,
   allowPlaybackRate: PropTypes.bool,
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   clickToPlay: PropTypes.bool,
@@ -389,6 +396,7 @@ MediaPlayer.defaultProps = {
   allowFullscreen: false,
   allowLoop: false,
   allowPartClick: false,
+  allowMediaInfo: false,
   allowPlaybackRate: false,
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   clickToPlay: true,
