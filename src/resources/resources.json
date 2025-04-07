@@ -688,6 +688,10 @@
       "en": "Download",
       "de": "Herunterladen"
     },
+    "missingDataPlaceholder": {
+      "en": "not provided",
+      "de": "nicht angegeben"
+    },
     "copySectionToClipboardError": {
       "en": "Error copying the section to the clipboard due to missing access permissions.",
       "de": "Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung."
@@ -3163,6 +3167,12 @@
       "de": "Segment-Anmerkung anzeigen"
     }
   },
+  "mediaInfoDialog": {
+    "title": {
+      "en": "Media information",
+      "de": "Medien-Informationen"
+    }
+  },
   "mediaLibraryEditScreen": {
     "editHeadline": {
       "en": "File editor",
@@ -3187,12 +3197,6 @@
     "updated": {
       "en": "Updated",
       "de": "Aktualisiert"
-    }
-  },
-  "mediaLibraryMetadataDisplay": {
-    "missingDataPlaceholder": {
-      "en": "not provided",
-      "de": "nicht angegeben"
     }
   },
   "mediaLibraryMetadataForm": {

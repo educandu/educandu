@@ -179,6 +179,7 @@ function MediaAnalysisDisplay({ content }) {
               allowDownload={allowDownload}
               allowFullscreen={showVideo}
               allowLoop
+              allowMediaInfo
               allowPlaybackRate
               aspectRatio={aspectRatio}
               initialVolume={initialVolume}

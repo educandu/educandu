@@ -21,6 +21,7 @@ function VideoDisplay({ content }) {
             allowDownload={allowDownload}
             allowFullscreen
             allowLoop
+            allowMediaInfo
             allowPlaybackRate
             aspectRatio={content.aspectRatio}
             initialVolume={content.initialVolume}

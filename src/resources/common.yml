@@ -101,6 +101,9 @@ common:
   download:
     en: Download
     de: Herunterladen
+  missingDataPlaceholder:
+    en: not provided
+    de: nicht angegeben
   copySectionToClipboardError:
     en: Error copying the section to the clipboard due to missing access permissions.
     de: Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.

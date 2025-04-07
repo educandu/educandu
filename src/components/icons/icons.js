@@ -46,7 +46,8 @@ import {
   IconTool,
   IconSourceCode,
   IconArrowsDownUp,
-  IconWorldUpload
+  IconWorldUpload,
+  IconInfoCircle
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -102,6 +103,7 @@ export const EraserIcon = createIconFromTablerIconComponent(IconEraser);
 export const RepeatIcon = createIconFromTablerIconComponent(IconRepeat);
 export const SquareIcon = createIconFromTablerIconComponent(IconSquare);
 export const FavoriteIcon = createIconFromTablerIconComponent(IconHeart);
+export const InfoIcon = createIconFromTablerIconComponent(IconInfoCircle);
 export const StarIcon = createIconFromTablerIconComponent(IconStarFilled);
 export const TextIcon = createIconFromTablerIconComponent(IconTypography);
 export const ContactUserIcon = createIconFromTablerIconComponent(IconSend);

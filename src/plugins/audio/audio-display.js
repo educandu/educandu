@@ -20,6 +20,7 @@ function AudioDisplay({ content }) {
           <MediaPlayer
             allowDownload={allowDownload}
             allowLoop
+            allowMediaInfo
             allowPlaybackRate
             initialVolume={content.initialVolume}
             playbackRange={content.playbackRange}

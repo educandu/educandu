@@ -1,11 +1,17 @@
+import memoizee from 'memoizee';
 import HttpClient from './http-client.js';
 import urlUtils from '../utils/url-utils.js';
+
+const MEDIA_LIBRARY_ITEM_CACHE_SIZE = 100;
 
 class MediaLibraryApiClient {
   static dependencies = [HttpClient];
 
   constructor(httpClient) {
     this.httpClient = httpClient;
+    this._memoizedFindMediaLibraryItem = memoizee(url => {
+      return this.findMediaLibraryItem({ url, cached: false });
+    }, { promise: true, max: MEDIA_LIBRARY_ITEM_CACHE_SIZE });
   }
 
   queryMediaLibraryItems({ query, resourceTypes }) {
@@ -17,13 +23,25 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
-  findMediaLibraryItem({ url }) {
+  findMediaLibraryItem({ url, cached = false }) {
+    if (cached) {
+      return this._memoizedFindMediaLibraryItem(url);
+    }
+
     return this.httpClient
       .get(
         `/api/v1/media-library/items/${encodeURIComponent(url)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
+  }
+
+  pruneMediaItemFromCache({ url }) {
+    this._memoizedFindMediaLibraryItem.delete(url);
+  }
+
+  pruneAllMediaItemsFromCache() {
+    this._memoizedFindMediaLibraryItem.clear();
   }
 
   createMediaLibraryItem({ file, shortDescription, languages, allRightsReserved, licenses, tags, onProgress = () => {} }) {
