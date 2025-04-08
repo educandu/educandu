@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import UrlInput from '../url-input.js';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import MarkdownInput from '../markdown-input.js';
 import MediaRangeSelector from './media-range-selector.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
+import CopyrightNoticeEditor from '../copyright-notice-editor.js';
 import MediaRangeReadonlyInput from './media-range-readonly-input.js';
-import { createCopyrightForSource } from '../../utils/source-utils.js';
 
 const FormItem = Form.Item;
 
@@ -25,18 +24,8 @@ function TrackEditor({ content, onContentChange, useName, usePlaybackRange }) {
     changeContent({ name: event.target.value });
   };
 
-  const handleSourceUrlChange = (value, metadata) => {
-    const newContent = {
-      sourceUrl: value,
-      playbackRange: [0, 1],
-      copyrightNotice: createCopyrightForSource({
-        oldSourceUrl: sourceUrl,
-        oldCopyrightNotice: copyrightNotice,
-        sourceUrl: value,
-        metadata,
-        t
-      })
-    };
+  const handleSourceUrlChange = value => {
+    const newContent = { sourceUrl: value, playbackRange: [0, 1] };
 
     changeContent(newContent);
   };
@@ -45,8 +34,8 @@ function TrackEditor({ content, onContentChange, useName, usePlaybackRange }) {
     changeContent({ playbackRange: newRange });
   };
 
-  const handleCopyrightNoticeChanged = event => {
-    changeContent({ copyrightNotice: event.target.value });
+  const handleCopyrightNoticeChanged = newCopyrightNotice => {
+    changeContent({ copyrightNotice: newCopyrightNotice });
   };
 
   return (
@@ -68,7 +57,7 @@ function TrackEditor({ content, onContentChange, useName, usePlaybackRange }) {
         </FormItem>
       )}
       <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-        <MarkdownInput value={copyrightNotice} debounced onChange={handleCopyrightNoticeChanged} />
+        <CopyrightNoticeEditor value={copyrightNotice} sourceUrl={sourceUrl} debounced onChange={handleCopyrightNoticeChanged} />
       </FormItem>
     </Fragment>
   );

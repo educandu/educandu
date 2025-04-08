@@ -85,8 +85,8 @@ function MatchingCardsEditor({ content, onContentChanged }) {
         sourceUrl={tile.sourceUrl}
         playbackRange={tile.playbackRange}
         onTextChange={event => handleTileTextChange(event, tileIndex)}
-        onSourceUrlChange={event => handleTileSourceUrlChange(event, tileIndex)}
-        onPlaybackRangeChange={event => handleTilePlaybackRangeChange(event, tileIndex)}
+        onSourceUrlChange={value => handleTileSourceUrlChange(value, tileIndex)}
+        onPlaybackRangeChange={value => handleTilePlaybackRangeChange(value, tileIndex)}
         />
     );
   };

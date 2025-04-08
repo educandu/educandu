@@ -35,6 +35,7 @@ export function useResolvedMediaLibraryItemForSource(sourceUrl) {
     if (isMediaLibrarySourceType({ url: portableUrl, cdnRootUrl: clientConfig.cdnRootUrl })) {
       setCurrentItem(DEFAULT_RESOLVABLE_MEDIA_LIBRARY_ITEM);
       (async () => {
+        await new Promise(resolve => { setTimeout(resolve, 5000); });
         const foundItem = await mediaLibraryApiClient.findMediaLibraryItem({ url: portableUrl, cached: true });
         if (isMountedRef.current && currentSourceUrlRef.current === portableUrl) {
           setCurrentItem({ ...DEFAULT_RESOLVABLE_MEDIA_LIBRARY_ITEM, isResolving: false, resolvedItem: foundItem });

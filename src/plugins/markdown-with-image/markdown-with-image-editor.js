@@ -8,10 +8,10 @@ import StepSlider from '../../components/step-slider.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import { useNumberWithUnitFormat } from '../../components/locale-context.js';
+import CopyrightNoticeEditor from '../../components/copyright-notice-editor.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -40,23 +40,12 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
     changeContent({ width: value });
   };
 
-  const handleImageSourceUrlChange = (value, metadata) => {
-    const newImage = {
-      ...image,
-      sourceUrl: value,
-      copyrightNotice: createCopyrightForSource({
-        oldSourceUrl: image.sourceUrl,
-        oldCopyrightNotice: image.copyrightNotice,
-        sourceUrl: value,
-        metadata,
-        t
-      })
-    };
+  const handleImageSourceUrlChange = value => {
+    const newImage = { ...image, sourceUrl: value };
     changeContent({ image: newImage });
   };
 
-  const handleImageCopyrightNoticeChange = event => {
-    const { value } = event.target;
+  const handleImageCopyrightNoticeChange = value => {
     changeContent({ image: { ...image, copyrightNotice: value } });
   };
 
@@ -100,7 +89,11 @@ export default function MarkdownWithImageEditor({ content, onContentChanged }) {
             />
         </FormItem>
         <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput value={image.copyrightNotice} onChange={handleImageCopyrightNoticeChange} />
+          <CopyrightNoticeEditor
+            value={image.copyrightNotice}
+            sourceUrl={image.sourceUrl}
+            onChange={handleImageCopyrightNoticeChange}
+            />
         </Form.Item>
         <FormItem label={t('imagePosition')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={image.position} onChange={handleImagePositionChange}>

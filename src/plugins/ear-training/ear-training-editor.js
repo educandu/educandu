@@ -12,9 +12,9 @@ import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { SOUND_MODE, TESTS_ORDER, TEST_MODE } from './constants.js';
-import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import DragAndDropContainer from '../../components/drag-and-drop-container.js';
+import CopyrightNoticeEditor from '../../components/copyright-notice-editor.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
@@ -137,56 +137,33 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleQuestionImageSourceUrlChange = (value, metadata, index) => {
+  const handleQuestionImageSourceUrlChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].questionImage.sourceUrl = value;
-    newTests[index].questionImage.copyrightNotice = createCopyrightForSource({
-      oldSourceUrl: tests[index].questionImage.sourceUrl,
-      oldCopyrightNotice: tests[index].questionImage.copyrightNotice,
-      sourceUrl: value,
-      metadata,
-      t
-    });
     changeContent({ tests: newTests });
   };
 
-  const handleQuestionImageCopyrightNoticeChange = (event, index) => {
-    const { value } = event.target;
+  const handleQuestionImageCopyrightNoticeChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].questionImage.copyrightNotice = value;
     changeContent({ tests: newTests });
   };
 
-  const handleAnswerImageSourceUrlChange = (value, metadata, index) => {
+  const handleAnswerImageSourceUrlChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].answerImage.sourceUrl = value;
-    newTests[index].answerImage.copyrightNotice = createCopyrightForSource({
-      oldSourceUrl: tests[index].answerImage.sourceUrl,
-      oldCopyrightNotice: tests[index].answerImage.copyrightNotice,
-      sourceUrl: value,
-      metadata,
-      t
-    });
     changeContent({ tests: newTests });
   };
 
-  const handleAnswerImageCopyrightNoticeChange = (event, index) => {
-    const { value } = event.target;
+  const handleAnswerImageCopyrightNoticeChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].answerImage.copyrightNotice = value;
     changeContent({ tests: newTests });
   };
 
-  const handleSourceSoundSourceUrlChange = (value, metadata, index) => {
+  const handleSourceSoundSourceUrlChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].sourceSound.sourceUrl = value;
-    newTests[index].sourceSound.copyrightNotice = createCopyrightForSource({
-      oldSourceUrl: tests[index].sourceSound.sourceUrl,
-      oldCopyrightNotice: tests[index].sourceSound.copyrightNotice,
-      sourceUrl: value,
-      metadata,
-      t
-    });
     changeContent({ tests: newTests });
   };
 
@@ -215,10 +192,15 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const renderCopyrightNoticeInput = (index, value, handleValueChange) => {
+  const renderCopyrightNoticeInput = (index, value, sourceUrl, handleValueChange) => {
     return (
       <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-        <MarkdownInput debounced value={value} onChange={event => handleValueChange(event, index)} />
+        <CopyrightNoticeEditor
+          debounced
+          value={value}
+          sourceUrl={sourceUrl}
+          onChange={newValue => handleValueChange(newValue, index)}
+          />
       </FormItem>
     );
   };
@@ -250,21 +232,21 @@ function EarTrainingEditor({ content, onContentChanged }) {
             <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
               <UrlInput
                 value={test.questionImage.sourceUrl}
-                onChange={(value, metadata) => handleQuestionImageSourceUrlChange(value, metadata, index)}
+                onChange={value => handleQuestionImageSourceUrlChange(value, index)}
                 allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
                 />
             </FormItem>
-            {renderCopyrightNoticeInput(index, test.questionImage.copyrightNotice, handleQuestionImageCopyrightNoticeChange)}
+            {renderCopyrightNoticeInput(index, test.questionImage.copyrightNotice, test.questionImage.sourceUrl, handleQuestionImageCopyrightNoticeChange)}
 
             <Divider plain>{t('testAnswer')}</Divider>
             <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
               <UrlInput
                 value={test.answerImage.sourceUrl}
-                onChange={(value, metadata) => handleAnswerImageSourceUrlChange(value, metadata, index)}
+                onChange={value => handleAnswerImageSourceUrlChange(value, index)}
                 allowedSourceTypes={ensureIsExcluded(Object.values(SOURCE_TYPE), SOURCE_TYPE.youtube)}
                 />
             </FormItem>
-            {renderCopyrightNoticeInput(index, test.answerImage.copyrightNotice, handleAnswerImageCopyrightNoticeChange)}
+            {renderCopyrightNoticeInput(index, test.answerImage.copyrightNotice, test.answerImage.sourceUrl, handleAnswerImageCopyrightNoticeChange)}
           </Fragment>
         )}
 
@@ -301,7 +283,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
         {test.soundMode === SOUND_MODE.source && (
           <Fragment>
             <FormItem label={t('common:url')} {...FORM_ITEM_LAYOUT}>
-              <UrlInput value={test.sourceSound.sourceUrl} onChange={(value, metadata) => handleSourceSoundSourceUrlChange(value, metadata, index)} />
+              <UrlInput value={test.sourceSound.sourceUrl} onChange={value => handleSourceSoundSourceUrlChange(value, index)} />
             </FormItem>
             <FormItem label={t('common:playbackRange')} {...FORM_ITEM_LAYOUT}>
               <div className="u-input-and-button">
@@ -309,7 +291,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 <MediaRangeSelector sourceUrl={test.sourceSound.sourceUrl} range={test.sourceSound.playbackRange} onRangeChange={value => handleSourceSoundPlaybackRangeChange(value, index)} />
               </div>
             </FormItem>
-            {renderCopyrightNoticeInput(index, test.sourceSound.copyrightNotice, handleSourceSoundCopyrightNoticeChange)}
+            {renderCopyrightNoticeInput(index, test.sourceSound.copyrightNotice, test.sourceSound.sourceUrl, handleSourceSoundCopyrightNoticeChange)}
             <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
               <MediaVolumeSlider
                 value={test.sourceSound.initialVolume}

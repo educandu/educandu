@@ -11,6 +11,7 @@ import { CHAPTER_TYPE, IMAGE_FIT } from './constants.js';
 import MediaSlideshowInfo from './media-slideshow-info.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import Timeline from '../../components/media-player/timeline.js';
 import { formatMediaPosition } from '../../utils/media-utils.js';
 import { useService } from '../../components/container-context.js';
@@ -20,9 +21,9 @@ import MediaPlayer from '../../components/media-player/media-player.js';
 import TrackEditor from '../../components/media-player/track-editor.js';
 import { usePercentageFormat } from '../../components/locale-context.js';
 import { ensureIsExcluded, removeItemAt } from '../../utils/array-utils.js';
+import CopyrightNoticeEditor from '../../components/copyright-notice-editor.js';
 import { useMediaDurations } from '../../components/media-player/media-hooks.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../../components/empty-state.js';
-import { createCopyrightForSource, getAccessibleUrl } from '../../utils/source-utils.js';
 import PlayerSettingsEditor from '../../components/media-player/player-settings-editor.js';
 import { FORM_ITEM_LAYOUT, MEDIA_SCREEN_MODE, SOURCE_TYPE } from '../../domain/constants.js';
 
@@ -113,16 +114,9 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterImageSourceUrlChange = (value, metadata) => {
+  const handleChapterImageSourceUrlChange = value => {
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].image.sourceUrl = value;
-    newChapters[selectedChapterIndex].image.copyrightNotice = createCopyrightForSource({
-      oldSourceUrl: chapters[selectedChapterIndex].image.sourceUrl,
-      oldCopyrightNotice: chapters[selectedChapterIndex].image.copyrightNotice,
-      sourceUrl: value,
-      metadata,
-      t
-    });
     changeContent({ chapters: newChapters });
   };
 
@@ -133,8 +127,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChapterImageCopyrightNoticeChanged = event => {
-    const { value } = event.target;
+  const handleChapterImageCopyrightNoticeChanged = value => {
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].image.copyrightNotice = value;
     changeContent({ chapters: newChapters });
@@ -236,7 +229,7 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
             />
 
           {!!chapters.length && (
-          <Fragment>
+          <Fragment key={selectedChapterIndex}>
             <FormItem label={t('common:startTimecode')} {...FORM_ITEM_LAYOUT}>
               <span className="MediaSlideshowEditor-readonlyValue">
                 {formatMediaPosition({ formatPercentage, position: chapters[selectedChapterIndex].startPosition, duration: playbackDuration })}
@@ -275,7 +268,11 @@ function MediaSlideshowEditor({ content, onContentChanged }) {
                   </RadioGroup>
                 </FormItem>
                 <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-                  <MarkdownInput value={chapters[selectedChapterIndex].image.copyrightNotice} onChange={handleChapterImageCopyrightNoticeChanged} />
+                  <CopyrightNoticeEditor
+                    value={chapters[selectedChapterIndex].image.copyrightNotice}
+                    sourceUrl={chapters[selectedChapterIndex].image.sourceUrl}
+                    onChange={handleChapterImageCopyrightNoticeChanged}
+                    />
                 </FormItem>
               </Fragment>
             )}

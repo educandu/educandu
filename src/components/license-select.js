@@ -11,10 +11,9 @@ function LicenseSelect({ multi, value, onChange, ...selectProps }) {
   }, [licenseManager]);
 
   const handleLicenseChange = keyOrKeys => {
-    const allLicenses = licenseManager.getLicenses();
     const licenseOrLicenses = Array.isArray(keyOrKeys)
-      ? keyOrKeys.map(key => allLicenses.find(license => license.key === key))
-      : allLicenses.find(license => license.key === keyOrKeys);
+      ? keyOrKeys.map(key => licenseManager.getLicenseByKey(key))
+      : licenseManager.getLicenseByKey(keyOrKeys);
     onChange(keyOrKeys, licenseOrLicenses);
   };
 

@@ -157,7 +157,6 @@ class MediaLibraryController {
 
     router.get(
       '/api/v1/media-library/items/:url',
-      needsPermission(permissions.BROWSE_STORAGE),
       validateParams(mediaLibraryFindParamsSchema),
       (req, res) => this.handleFindMediaLibraryItemByUrl(req, res)
     );

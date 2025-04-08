@@ -2,7 +2,6 @@
 import urlUtils from './url-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import { determineMediaDuration } from './media-utils.js';
-import { getWikimediaPageFromUrl } from './wikimedia-utils.js';
 import {
   SOURCE_TYPE,
   CDN_URL_PREFIX,
@@ -117,42 +116,4 @@ export async function getSourceDuration({ url, cdnRootUrl }) {
   } catch (error) {
     return 0;
   }
-}
-
-export function createMetadataForSource({ url, cdnRootUrl }) {
-  const sourceType = getSourceType({ url, cdnRootUrl });
-
-  let copyrightLink;
-  switch (sourceType) {
-    case SOURCE_TYPE.youtube:
-      copyrightLink = url;
-      break;
-    case SOURCE_TYPE.wikimedia:
-      copyrightLink = getWikimediaPageFromUrl(url);
-      break;
-    default:
-      copyrightLink = null;
-      break;
-  }
-
-  return { sourceType, copyrightLink };
-}
-
-export function createCopyrightForSource({ oldSourceUrl, oldCopyrightNotice, sourceUrl, metadata, t }) {
-  if (oldSourceUrl === sourceUrl) {
-    return oldCopyrightNotice;
-  }
-
-  if (!sourceUrl) {
-    return '';
-  }
-
-  if (metadata.sourceType === SOURCE_TYPE.youtube && metadata.copyrightLink) {
-    return t('common:youtubeCopyrightNotice', { link: metadata.copyrightLink });
-  }
-  if (metadata.sourceType === SOURCE_TYPE.wikimedia && metadata.copyrightLink) {
-    return t('common:wikimediaCopyrightNotice', { link: metadata.copyrightLink });
-  }
-
-  return '';
 }

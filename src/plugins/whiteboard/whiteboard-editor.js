@@ -7,8 +7,8 @@ import { ensureIsExcluded } from '../../utils/array-utils.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { OPTIMAL_VIEWPORT_WIDTH_FACTOR } from './constants.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import CopyrightNoticeEditor from '../../components/copyright-notice-editor.js';
 import { FORM_ITEM_LAYOUT, MEDIA_ASPECT_RATIO, SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
@@ -42,24 +42,13 @@ export default function WhiteboardEditor({ content, onContentChanged }) {
     updateContent({ isBorderVisible: checked });
   };
 
-  const handleImageSourceUrlChange = (value, metadata) => {
-    const newImage = {
-      ...image,
-      sourceUrl: value,
-      copyrightNotice: createCopyrightForSource({
-        oldSourceUrl: image.sourceUrl,
-        oldCopyrightNotice: image.copyrightNotice,
-        sourceUrl: value,
-        metadata,
-        t
-      })
-    };
+  const handleImageSourceUrlChange = value => {
+    const newImage = { ...image, sourceUrl: value };
 
     updateContent({ image: newImage });
   };
 
-  const handleImageCopyrightNoticeChange = event => {
-    const { value } = event.target;
+  const handleImageCopyrightNoticeChange = value => {
     updateContent({ image: { ...image, copyrightNotice: value } });
   };
   return (
@@ -76,7 +65,11 @@ export default function WhiteboardEditor({ content, onContentChanged }) {
             />
         </FormItem>
         <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput value={image.copyrightNotice} onChange={handleImageCopyrightNoticeChange} />
+          <CopyrightNoticeEditor
+            value={image.copyrightNotice}
+            sourceUrl={image.sourceUrl}
+            onChange={handleImageCopyrightNoticeChange}
+            />
         </FormItem>
         <Form.Item label={t('common:border')} {...FORM_ITEM_LAYOUT}>
           <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />

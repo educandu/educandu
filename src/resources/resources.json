@@ -1088,14 +1088,6 @@
       "en": "The tests are arranged in random order",
       "de": "Die Tests sind in einer zufälligen Reihenfolge angeordnet"
     },
-    "youtubeCopyrightNotice": {
-      "en": "Source: [YouTube]({link})",
-      "de": "Quelle: [YouTube]({link})"
-    },
-    "wikimediaCopyrightNotice": {
-      "en": "Source: [Wikimedia]({link})",
-      "de": "Quelle: [Wikimedia]({link})"
-    },
     "verifiedDocumentBadge": {
       "en": "This document was verified by a maintainer",
       "de": "Dieses Dokument wurde von einem Maintainer überprüft"
@@ -1331,6 +1323,10 @@
     "mediaLibraryEmptyStateSubtitle": {
       "en": "Enter your search term in the field above and choose what kind of media you're looking for.",
       "de": "Gib deinen Suchbegriff in das Feld oben ein und wähle aus, was für eine Art von Medien du suchst."
+    },
+    "license": {
+      "en": "License",
+      "de": "Lizenz"
     },
     "licenses": {
       "en": "Licenses",
@@ -1873,6 +1869,16 @@
     "usageInfoMarkdown": {
       "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used.\n",
       "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden hierbei als nicht länger benutzt betrachtet.\n"
+    }
+  },
+  "copyrightNoticeEditor": {
+    "youtubeCopyrightNotice": {
+      "en": "Source: [YouTube]({link})",
+      "de": "Quelle: [YouTube]({link})"
+    },
+    "wikimediaCopyrightNotice": {
+      "en": "Source: [Wikimedia]({link})",
+      "de": "Quelle: [Wikimedia]({link})"
     }
   },
   "creditsFooter": {

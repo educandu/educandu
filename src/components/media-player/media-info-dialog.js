@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import React, { Fragment, useMemo } from 'react';
 import { useService } from '../container-context.js';
 import LicenseManager from '../../resources/license-manager.js';
 import ResourceUrl from '../resource-selector/shared/resource-url.js';
@@ -10,10 +10,6 @@ import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 export default function MediaInfoDialog({ mediaInfo, isOpen, onClose }) {
   const { t } = useTranslation('mediaInfoDialog');
   const licenseManager = useService(LicenseManager);
-
-  const licenseMap = useMemo(() => {
-    return new Map(licenseManager.getLicenses().map(l => [l.key, l]));
-  }, [licenseManager]);
 
   const renderMissingData = () => <i>{t('common:missingDataPlaceholder')}</i>;
 
@@ -24,7 +20,7 @@ export default function MediaInfoDialog({ mediaInfo, isOpen, onClose }) {
 
     for (let i = 0; i < licenses.length; i += 1) {
       const licenseKey = licenses[i];
-      const foundLicense = licenseMap.get(licenseKey);
+      const foundLicense = licenseManager.getLicenseByKey(licenseKey);
 
       const licenseElement = foundLicense
         ? <a key={licenseKey} href={foundLicense.url} target='_blank' rel="noreferrer">{licenseKey}</a>

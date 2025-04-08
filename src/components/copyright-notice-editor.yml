@@ -1,0 +1,8 @@
+copyrightNoticeEditor:
+  youtubeCopyrightNotice:
+    en: "Source: [YouTube]({link})"
+    de: "Quelle: [YouTube]({link})"
+  wikimediaCopyrightNotice:
+    en: "Source: [Wikimedia]({link})"
+    de: "Quelle: [Wikimedia]({link})"
+
