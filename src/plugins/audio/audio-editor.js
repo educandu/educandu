@@ -4,10 +4,9 @@ import Info from '../../components/info.js';
 import { useTranslation } from 'react-i18next';
 import UrlInput from '../../components/url-input.js';
 import { FORM_ITEM_LAYOUT } from '../../domain/constants.js';
-import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { createCopyrightForSource } from '../../utils/source-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import CopyrightNoticeEditor from '../../components/copyright-notice-editor.js';
 import MediaVolumeSlider from '../../components/media-player/media-volume-slider.js';
 import MediaRangeSelector from '../../components/media-player/media-range-selector.js';
 import MediaRangeReadonlyInput from '../../components/media-player/media-range-readonly-input.js';
@@ -23,26 +22,15 @@ function AudioEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = (value, metadata) => {
-    changeContent({
-      sourceUrl: value,
-      playbackRange: [0, 1],
-      copyrightNotice: createCopyrightForSource({
-        oldSourceUrl: sourceUrl,
-        oldCopyrightNotice: copyrightNotice,
-        sourceUrl: value,
-        metadata,
-        t
-      })
-    });
+  const handleSourceUrlChange = value => {
+    changeContent({ sourceUrl: value, playbackRange: [0, 1] });
   };
 
-  const handlePlaybackRangeChange = newRange => {
-    changeContent({ playbackRange: newRange });
+  const handlePlaybackRangeChange = newValue => {
+    changeContent({ playbackRange: newValue });
   };
 
-  const handleCopyrightNoticeChange = event => {
-    const newValue = event.target.value;
+  const handleCopyrightNoticeChange = newValue => {
     changeContent({ copyrightNotice: newValue });
   };
 
@@ -67,7 +55,7 @@ function AudioEditor({ content, onContentChanged }) {
           </div>
         </FormItem>
         <FormItem label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-          <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChange} />
+          <CopyrightNoticeEditor value={copyrightNotice} sourceUrl={sourceUrl} onChange={handleCopyrightNoticeChange} />
         </FormItem>
         <FormItem label={t('common:initialVolume')} {...FORM_ITEM_LAYOUT} >
           <MediaVolumeSlider

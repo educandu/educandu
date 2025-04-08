@@ -5,14 +5,14 @@ import { Form, Radio, InputNumber } from 'antd';
 import UrlInput from '../../components/url-input.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
-import MarkdownInput from '../../components/markdown-input.js';
+import { getAccessibleUrl } from '../../utils/source-utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { FORM_ITEM_LAYOUT, SOURCE_TYPE } from '../../domain/constants.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import CopyrightNoticeEditor from '../../components/copyright-notice-editor.js';
 import { EFFECT_TYPE, HOVER_OR_REVEAL_ACTION, ORIENTATION } from './constants.js';
-import { createCopyrightForSource, getAccessibleUrl } from '../../utils/source-utils.js';
 import {
   createDefaultClipEffect,
   createDefaultHoverEffect,
@@ -75,22 +75,11 @@ function ImageEditor({ content, onContentChanged }) {
     onContentChanged(newContent);
   };
 
-  const handleSourceUrlChange = (value, metadata) => {
-    changeContent({
-      sourceUrl: value,
-      copyrightNotice: createCopyrightForSource({
-        oldSourceUrl: sourceUrl,
-        oldCopyrightNotice: copyrightNotice,
-        sourceUrl: value,
-        metadata,
-        t
-      }),
-      clipEffect: resetClipEffect(effectType)
-    });
+  const handleSourceUrlChange = value => {
+    changeContent({ sourceUrl: value, clipEffect: resetClipEffect(effectType) });
   };
 
-  const handleCopyrightNoticeChange = event => {
-    const { value } = event.target;
+  const handleCopyrightNoticeChange = value => {
     changeContent({ copyrightNotice: value });
   };
 
@@ -108,23 +97,12 @@ function ImageEditor({ content, onContentChanged }) {
     });
   };
 
-  const handleHoverEffectSourceUrlChange = (value, metadata) => {
-    const newHoverEffect = {
-      ...hoverEffect,
-      sourceUrl: value,
-      copyrightNotice: createCopyrightForSource({
-        oldSourceUrl: hoverEffect.sourceUrl,
-        oldCopyrightNotice: hoverEffect.copyrightNotice,
-        sourceUrl: value,
-        metadata,
-        t
-      })
-    };
+  const handleHoverEffectSourceUrlChange = value => {
+    const newHoverEffect = { ...hoverEffect, sourceUrl: value };
     changeContent({ hoverEffect: newHoverEffect });
   };
 
-  const handleHoverEffectCopyrightNoticeChange = event => {
-    const { value } = event.target;
+  const handleHoverEffectCopyrightNoticeChange = value => {
     const newHoverEffect = { ...hoverEffect, copyrightNotice: value };
     changeContent({ hoverEffect: newHoverEffect });
   };
@@ -135,23 +113,12 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ hoverEffect: newHoverEffect });
   };
 
-  const handleRevealEffectSourceUrlChange = (value, metadata) => {
-    const newRevealEffect = {
-      ...revealEffect,
-      sourceUrl: value,
-      copyrightNotice: createCopyrightForSource({
-        oldSourceUrl: revealEffect.sourceUrl,
-        oldCopyrightNotice: revealEffect.copyrightNotice,
-        sourceUrl: value,
-        metadata,
-        t
-      })
-    };
+  const handleRevealEffectSourceUrlChange = value => {
+    const newRevealEffect = { ...revealEffect, sourceUrl: value };
     changeContent({ revealEffect: newRevealEffect });
   };
 
-  const handleRevealEffectCopyrightNoticeChange = event => {
-    const { value } = event.target;
+  const handleRevealEffectCopyrightNoticeChange = value => {
     const newRevealEffect = { ...revealEffect, copyrightNotice: value };
     changeContent({ revealEffect: newRevealEffect });
   };
@@ -188,9 +155,9 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ clipEffect: newClipEffect });
   };
 
-  const renderCopyrightNoticeInput = (value, onChangeHandler) => (
+  const renderCopyrightNoticeInput = (value, sourceUrlValue, onChangeHandler) => (
     <Form.Item label={t('common:copyrightNotice')} {...FORM_ITEM_LAYOUT}>
-      <MarkdownInput value={value} onChange={onChangeHandler} />
+      <CopyrightNoticeEditor value={value} sourceUrl={sourceUrlValue} onChange={onChangeHandler} />
     </Form.Item>
   );
 
@@ -206,7 +173,7 @@ function ImageEditor({ content, onContentChanged }) {
             onChange={handleSourceUrlChange}
             />
         </FormItem>
-        {renderCopyrightNoticeInput(copyrightNotice, handleCopyrightNoticeChange)}
+        {renderCopyrightNoticeInput(copyrightNotice, sourceUrl, handleCopyrightNoticeChange)}
 
         <Form.Item label={t('effectTypeLabel')} {...FORM_ITEM_LAYOUT}>
           <RadioGroup value={effectType} onChange={handleEffectTypeChange}>
@@ -228,7 +195,7 @@ function ImageEditor({ content, onContentChanged }) {
                   onChange={handleHoverEffectSourceUrlChange}
                   />
               </FormItem>
-              {renderCopyrightNoticeInput(hoverEffect.copyrightNotice, handleHoverEffectCopyrightNoticeChange)}
+              {renderCopyrightNoticeInput(hoverEffect.copyrightNotice, hoverEffect.sourceUrl, handleHoverEffectCopyrightNoticeChange)}
               <Form.Item label={t('hoverActionLabel')} {...FORM_ITEM_LAYOUT}>
                 <RadioGroup value={hoverEffect.hoverAction} onChange={handleHoverEffectHoverActionChange}>
                   <RadioButton value={HOVER_OR_REVEAL_ACTION.switch}>{t('hoverOrRevealActionOptionSwitch')}</RadioButton>
@@ -247,7 +214,7 @@ function ImageEditor({ content, onContentChanged }) {
                   onChange={handleRevealEffectSourceUrlChange}
                   />
               </FormItem>
-              {renderCopyrightNoticeInput(revealEffect.copyrightNotice, handleRevealEffectCopyrightNoticeChange)}
+              {renderCopyrightNoticeInput(revealEffect.copyrightNotice, revealEffect.sourceUrl, handleRevealEffectCopyrightNoticeChange)}
               <Form.Item label={t('revealActionLabel')} {...FORM_ITEM_LAYOUT}>
                 <RadioGroup value={revealEffect.revealAction} onChange={handleRevealEffectRevealActionChange}>
                   <RadioButton value={HOVER_OR_REVEAL_ACTION.switch}>{t('hoverOrRevealActionOptionSwitch')}</RadioButton>

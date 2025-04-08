@@ -13,7 +13,7 @@ import { analyzeMediaUrl } from '../utils/media-utils.js';
 import WikimediaIcon from './icons/wikimedia/wikimedia-icon.js';
 import ResourceSelectorDialog from './resource-selector/resource-selector-dialog.js';
 import { GlobalOutlined, WarningOutlined, YoutubeOutlined } from '@ant-design/icons';
-import { getSourceType, getPortableUrl, getAccessibleUrl, createMetadataForSource } from '../utils/source-utils.js';
+import { getSourceType, getPortableUrl, getAccessibleUrl } from '../utils/source-utils.js';
 
 function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   const { t } = useTranslation('urlInput');
@@ -55,11 +55,8 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
     }
 
     url = getPortableUrl({ url, cdnRootUrl: clientConfig.cdnRootUrl });
-
-    const metadata = createMetadataForSource({ url, cdnRootUrl: clientConfig.cdnRootUrl });
-
     if (value !== url) {
-      onChange(url, metadata);
+      onChange(url);
     }
   };
 
