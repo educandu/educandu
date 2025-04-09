@@ -20,6 +20,11 @@ export default {
     {
       name: '_idx_resourceType_name_tags_',
       key: { resourceType: 1, name: 1, tags: 1 }
+    },
+    {
+      name: '_idx_url_',
+      key: { url: 1 },
+      unique: true
     }
   ]
 };
