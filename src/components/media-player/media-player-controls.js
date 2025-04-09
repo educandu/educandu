@@ -2,15 +2,13 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
+import React, { Fragment, useId } from 'react';
 import { useIsIOS } from '../request-context.js';
 import { CheckOutlined } from '@ant-design/icons';
-import MediaInfoDialog from './media-info-dialog.js';
 import { useNumberFormat } from '../locale-context.js';
 import MediaVolumeSlider from './media-volume-slider.js';
-import React, { Fragment, useId, useState } from 'react';
 import PlayIcon from '../icons/media-player/play-icon.js';
 import PauseIcon from '../icons/media-player/pause-icon.js';
-import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, DEFAULT_MEDIA_PLAYBACK_RATE, MEDIA_PLAYBACK_RATES } from '../../domain/constants.js';
 import { DownloadIcon, EnterFullscreenIcon, ExitFullscreenIcon, InfoIcon, PlaybackRateIcon, RepeatIcon, RepeatOffIcon, SpinIcon } from '../icons/icons.js';
@@ -38,7 +36,7 @@ function MediaPlayerControls({
   loopMedia,
   isFullscreen,
   playbackRate,
-  mediaInfo,
+  onShowMediaInfoClick,
   onDownloadClick,
   onPauseClick,
   onPlaybackRateChange,
@@ -51,7 +49,6 @@ function MediaPlayerControls({
   const componentInstanceId = useId();
   const formatNumber = useNumberFormat();
   const { t } = useTranslation('mediaPlayerControls');
-  const [isMediaInfoDialogOpen, setIsMediaInfoDialogOpen] = useState(false);
 
   const handlePlaybackRateMenuItemClick = ({ key }) => {
     onPlaybackRateChange(Number(key));
@@ -63,14 +60,6 @@ function MediaPlayerControls({
 
   const handleFullscreenButtonClick = () => {
     onFullscreenChange(!isFullscreen);
-  };
-
-  const handleMediaInfoButtonClick = () => {
-    setIsMediaInfoDialogOpen(true);
-  };
-
-  const handleMediaInfoDialogClose = () => {
-    setIsMediaInfoDialogOpen(false);
   };
 
   const getPlaybackRateMenuItems = () => {
@@ -177,7 +166,7 @@ function MediaPlayerControls({
               type="link"
               icon={<InfoIcon />}
               disabled={disableSecondaryControls}
-              onClick={handleMediaInfoButtonClick}
+              onClick={onShowMediaInfoClick}
               />
           )}
           {!!allowDownload && (
@@ -196,11 +185,6 @@ function MediaPlayerControls({
           )}
         </div>
       </div>
-      <MediaInfoDialog
-        mediaInfo={mediaInfo}
-        isOpen={isMediaInfoDialogOpen}
-        onClose={handleMediaInfoDialogClose}
-        />
     </div>
   );
 }
@@ -220,7 +204,7 @@ MediaPlayerControls.propTypes = {
   volume: PropTypes.number,
   loopMedia: PropTypes.bool,
   playbackRate: PropTypes.oneOf(MEDIA_PLAYBACK_RATES),
-  mediaInfo: mediaLibraryItemShape,
+  onShowMediaInfoClick: PropTypes.func,
   onDownloadClick: PropTypes.func,
   onFullscreenChange: PropTypes.func,
   onPauseClick: PropTypes.func,
@@ -245,7 +229,7 @@ MediaPlayerControls.defaultProps = {
   volume: 1,
   loopMedia: false,
   playbackRate: DEFAULT_MEDIA_PLAYBACK_RATE,
-  mediaInfo: null,
+  onShowMediaInfoClick: () => {},
   onPauseClick: () => {},
   onPlayClick: () => {},
   onPlaybackRateChange: () => {},

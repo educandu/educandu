@@ -1,15 +1,77 @@
 import { Modal } from 'antd';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import Spinner from '../spinner.js';
 import { useTranslation } from 'react-i18next';
+import { useIsMounted } from '../../ui/hooks.js';
 import { useService } from '../container-context.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import LicenseManager from '../../resources/license-manager.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import EmptyState, { EMPTY_STATE_STATUS } from '../empty-state.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import ResourceUrl from '../resource-selector/shared/resource-url.js';
-import { mediaLibraryItemShape } from '../../ui/default-prop-types.js';
+import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
+import { getPortableUrl, isMediaLibrarySourceType } from '../../utils/source-utils.js';
 
-export default function MediaInfoDialog({ mediaInfo, isOpen, onClose }) {
+const VIEW = {
+  item: 'item',
+  error: 'error',
+  loading: 'loading',
+  notAvailable: 'notAvailable'
+};
+
+const getCurrentViewFromItem = item => {
+  if (item.error) {
+    return VIEW.error;
+  }
+  if (item.isResolving) {
+    return VIEW.loading;
+  }
+  if (item.resolvedItem) {
+    return VIEW.item;
+  }
+  return VIEW.notAvailable;
+};
+
+const DEFAULT_RESOLVABLE_MEDIA_LIBRARY_ITEM = { canResolve: true, isResolving: true, resolvedItem: null, error: null };
+const DEFAULT_UNRESOLVABLE_MEDIA_LIBRARY_ITEM = { canResolve: false, isResolving: false, resolvedItem: null, error: null };
+
+export default function MediaInfoDialog({ sourceUrl, isOpen, onClose }) {
+  const isMountedRef = useIsMounted();
+  const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('mediaInfoDialog');
+  const currentLoadingSourceUrlRef = useRef(null);
   const licenseManager = useService(LicenseManager);
+  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const [currentItem, setCurrentItem] = useState(DEFAULT_UNRESOLVABLE_MEDIA_LIBRARY_ITEM);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    if (isMediaLibrarySourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl })) {
+      const portableUrl = getPortableUrl({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+      currentLoadingSourceUrlRef.current = portableUrl;
+      setCurrentItem(DEFAULT_RESOLVABLE_MEDIA_LIBRARY_ITEM);
+      (async () => {
+        let error;
+        let resolvedItem;
+        try {
+          error = null;
+          resolvedItem = await mediaLibraryApiClient.findMediaLibraryItem({ url: portableUrl });
+        } catch (err) {
+          error = err;
+          resolvedItem = null;
+        }
+        if (isMountedRef.current && currentLoadingSourceUrlRef.current === portableUrl) {
+          setCurrentItem({ ...DEFAULT_RESOLVABLE_MEDIA_LIBRARY_ITEM, isResolving: false, resolvedItem, error });
+        }
+      })();
+    } else {
+      setCurrentItem(DEFAULT_UNRESOLVABLE_MEDIA_LIBRARY_ITEM);
+    }
+  }, [isOpen, sourceUrl, clientConfig.cdnRootUrl, mediaLibraryApiClient, isMountedRef]);
 
   const renderMissingData = () => <i>{t('common:missingDataPlaceholder')}</i>;
 
@@ -36,6 +98,12 @@ export default function MediaInfoDialog({ mediaInfo, isOpen, onClose }) {
     return elements;
   };
 
+  const handleClose = () => {
+    setCurrentItem(DEFAULT_UNRESOLVABLE_MEDIA_LIBRARY_ITEM);
+  };
+
+  const currentView = getCurrentViewFromItem(currentItem);
+
   return (
     <Modal
       centered
@@ -44,40 +112,60 @@ export default function MediaInfoDialog({ mediaInfo, isOpen, onClose }) {
       onCancel={onClose}
       title={t('title')}
       className='u-modal'
+      onClose={handleClose}
       >
       <div className="u-modal-body">
-        {!!mediaInfo && (
-          <Fragment>
-            <div className="MediaInfoDialog-metadata">
-              <div>
-                <b>{t('common:name')}</b>
-                <div>{mediaInfo.name}</div>
+        <div className="MediaInfoDialog-body">
+          {currentView === VIEW.error && (
+            <EmptyState
+              title={t('common:error')}
+              subtitle={t('errorSubtitle')}
+              status={EMPTY_STATE_STATUS.error}
+              />
+          )}
+          {currentView === VIEW.loading && (
+            <Spinner tip={t('loadingTip')} />
+          )}
+          {currentView === VIEW.notAvailable && (
+            <EmptyState
+              title={t('notAvailableTitle')}
+              subtitle={t('notAvailableSubtitle')}
+              status={EMPTY_STATE_STATUS.warning}
+              />
+          )}
+          {currentView === VIEW.item && (
+            <Fragment>
+              <div className="MediaInfoDialog-itemMetadata">
+                <div>
+                  <b>{t('common:name')}</b>
+                  <div>{currentItem.resolvedItem.name}</div>
+                </div>
+                <div>
+                  <b>{t('common:shortDescription')}</b>
+                  <div>{currentItem.resolvedItem.shortDescription || renderMissingData()}</div>
+                </div>
+                <div>
+                  <b>{t('common:licenses')}</b>
+                  <div>{currentItem.resolvedItem.allRightsReserved ? renderAllRightsReserved() : renderLicenses(currentItem.resolvedItem.licenses)}</div>
+                </div>
               </div>
-              <div>
-                <b>{t('common:shortDescription')}</b>
-                <div>{mediaInfo.shortDescription || renderMissingData()}</div>
+              <div className="MediaInfoDialog-itemUrl">
+                <ResourceUrl url={currentItem.resolvedItem.url} />
               </div>
-              <div>
-                <b>{t('common:licenses')}</b>
-                <div>{mediaInfo.allRightsReserved ? renderAllRightsReserved() : renderLicenses(mediaInfo.licenses)}</div>
-              </div>
-            </div>
-            <div className="MediaInfoDialog-url">
-              <ResourceUrl url={mediaInfo.url} />
-            </div>
-          </Fragment>
-        )}
+            </Fragment>
+          )}
+        </div>
       </div>
     </Modal>
   );
 }
 
 MediaInfoDialog.propTypes = {
-  mediaInfo: mediaLibraryItemShape,
+  sourceUrl: PropTypes.string,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired
 };
 
 MediaInfoDialog.defaultProps = {
-  mediaInfo: null
+  sourceUrl: null
 };
