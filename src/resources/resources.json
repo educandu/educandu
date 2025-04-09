@@ -3177,6 +3177,22 @@
     "title": {
       "en": "Media information",
       "de": "Medien-Informationen"
+    },
+    "errorSubtitle": {
+      "en": "An error occurred while retrieving media information for this ressource.",
+      "de": "Beim Abrufen der Medien-Informationen für diese Resource ist ein Fehler aufgetreten."
+    },
+    "loadingTip": {
+      "en": "Loading media information",
+      "de": "Lade Medien-Informationen"
+    },
+    "notAvailableTitle": {
+      "en": "Not available",
+      "de": "Nicht verfügbar"
+    },
+    "notAvailableSubtitle": {
+      "en": "Media information for this ressource is not available.",
+      "de": "Medien-Informationen für diese Resource sind nicht verfügbar."
     }
   },
   "mediaLibraryEditScreen": {

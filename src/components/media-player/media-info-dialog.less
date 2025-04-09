@@ -1,11 +1,15 @@
 .MediaInfoDialog {}
 
-.MediaInfoDialog-metadata {
+.MediaInfoDialog-body {
+  min-height: 250px;
+}
+
+.MediaInfoDialog-itemMetadata {
   display: grid;
   grid-auto-flow: row;
   gap: @edu-content-padding;
 }
 
-.MediaInfoDialog-url {
+.MediaInfoDialog-itemUrl {
   .m-overflow-ellipsis;
 }

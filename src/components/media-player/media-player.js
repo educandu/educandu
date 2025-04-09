@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import Html5Player from './html5-player.js';
 import YoutubePlayer from './youtube-player.js';
 import { useService } from '../container-context.js';
+import MediaInfoDialog from './media-info-dialog.js';
 import AudioIcon from '../icons/general/audio-icon.js';
 import HttpClient from '../../api-clients/http-client.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -10,10 +11,9 @@ import { remountOnPropChanges } from '../../ui/react-helper.js';
 import { useIsFullscreenSupported } from '../request-context.js';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
-import { useResolvedMediaLibraryItemForSource } from './media-hooks.js';
-import { isInternalSourceType, isYoutubeSourceType } from '../../utils/source-utils.js';
+import { getSourceType, isInternalSourceType } from '../../utils/source-utils.js';
 import MediaPlayerControls, { MEDIA_PLAYER_CONTROLS_STATE } from './media-player-controls.js';
-import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS, DEFAULT_MEDIA_PLAYBACK_RATE } from '../../domain/constants.js';
+import { MEDIA_SCREEN_MODE, MEDIA_ASPECT_RATIO, MEDIA_PROGRESS_INTERVAL_IN_MILLISECONDS, DEFAULT_MEDIA_PLAYBACK_RATE, SOURCE_TYPE } from '../../domain/constants.js';
 
 const getCurrentPositionInfo = (parts, durationInMilliseconds, playedMilliseconds) => {
   const info = { currentPartIndex: -1, isPartEndReached: false };
@@ -102,7 +102,7 @@ function MediaPlayer({
   const [lastPlayedPartIndex, setLastPlayedPartIndex] = useState(-1);
   const [lastReachedPartEndIndex, setLastReachedPartEndIndex] = useState(-1);
 
-  const resolvedMediaLibraryItem = useResolvedMediaLibraryItemForSource(sourceUrl);
+  const [mediaInfoDialogProps, setMediaInfoDialogProps] = useState({ sourceUrl: null, isOpen: false });
 
   const appliedVolume = volume ?? internalVolume;
   const appliedPlaybackRate = playbackRate ?? internalPlaybackRate;
@@ -162,6 +162,14 @@ function MediaPlayer({
   const handleSeekEnd = () => {
     setIsSeeking(false);
     onSeekEnd();
+  };
+
+  const handleShowMediaInfoClick = () => {
+    setMediaInfoDialogProps({ sourceUrl, isOpen: true });
+  };
+
+  const handleMediaInfoDialogClose = () => {
+    setMediaInfoDialogProps(oldProps => ({ ...oldProps, isOpen: false }));
   };
 
   const handleDownloadClick = () => {
@@ -235,8 +243,10 @@ function MediaPlayer({
     }
     : null;
 
-  const Player = isYoutubeSourceType(sourceUrl) ? YoutubePlayer : Html5Player;
+  const sourceType = getSourceType({ url: sourceUrl, cdnRootUrl: clientConfig.cdnRootUrl });
+  const Player = sourceType === SOURCE_TYPE.youtube ? YoutubePlayer : Html5Player;
   const noScreen = screenMode === MEDIA_SCREEN_MODE.none;
+  const canShowMediaInfo = sourceType === SOURCE_TYPE.mediaLibrary;
   const canEnterFullscreen = isFullscreenSupported && allowFullscreen && screenMode !== MEDIA_SCREEN_MODE.none;
 
   const mainClasses = classNames(
@@ -317,7 +327,7 @@ function MediaPlayer({
           <MediaPlayerControls
             allowDownload={allowDownload}
             allowLoop={allowLoop}
-            allowMediaInfo={!!allowMediaInfo && resolvedMediaLibraryItem.canResolve}
+            allowMediaInfo={!!allowMediaInfo && canShowMediaInfo}
             allowFullscreen={canEnterFullscreen}
             allowPlaybackRate={allowPlaybackRate}
             durationInMilliseconds={durationInMilliseconds}
@@ -329,7 +339,7 @@ function MediaPlayer({
             loopMedia={loopMedia}
             isFullscreen={isFullscreen}
             playbackRate={internalPlaybackRate}
-            mediaInfo={resolvedMediaLibraryItem.resolvedItem}
+            onShowMediaInfoClick={handleShowMediaInfoClick}
             onDownloadClick={allowDownload ? handleDownloadClick : null}
             onPauseClick={handlePauseClick}
             onPlaybackRateChange={setInternaPlaybackRate}
@@ -341,6 +351,10 @@ function MediaPlayer({
         )}
         {customUnderControlsContent}
       </div>
+      <MediaInfoDialog
+        {...mediaInfoDialogProps}
+        onClose={handleMediaInfoDialogClose}
+        />
     </div>
   );
 }
