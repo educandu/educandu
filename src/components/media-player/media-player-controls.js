@@ -93,23 +93,23 @@ function MediaPlayerControls({
   let disableSecondaryControls;
   switch (state) {
     case MEDIA_PLAYER_CONTROLS_STATE.paused:
-      primaryButton = <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />;
+      primaryButton = <Button type="link" size="large" icon={<PlayIcon />} onClick={onPlayClick} />;
       disableSecondaryControls = false;
       break;
     case MEDIA_PLAYER_CONTROLS_STATE.playing:
-      primaryButton = <Button type="link" icon={<PauseIcon />} onClick={onPauseClick} />;
+      primaryButton = <Button type="link" size="large" icon={<PauseIcon />} onClick={onPauseClick} />;
       disableSecondaryControls = false;
       break;
     case MEDIA_PLAYER_CONTROLS_STATE.loading:
-      primaryButton = <Button type="link" icon={<SpinIcon className="u-spin" />} />;
+      primaryButton = <Button type="link" size="large" icon={<SpinIcon className="u-spin" />} />;
       disableSecondaryControls = true;
       break;
     case MEDIA_PLAYER_CONTROLS_STATE.waiting:
-      primaryButton = <Button type="link" icon={<PlayIcon />} onClick={onPlayClick} />;
+      primaryButton = <Button type="link" size="large" icon={<PlayIcon />} onClick={onPlayClick} />;
       disableSecondaryControls = true;
       break;
     case MEDIA_PLAYER_CONTROLS_STATE.disabled:
-      primaryButton = <Button type="link" icon={<PlayIcon />} disabled />;
+      primaryButton = <Button type="link" size="large" icon={<PlayIcon />} disabled />;
       disableSecondaryControls = true;
       break;
     default:
