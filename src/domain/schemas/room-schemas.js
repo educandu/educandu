@@ -3,7 +3,7 @@ import { ROOM_USER_ROLE } from '../constants.js';
 import { maxRoomShortDescriptionLength } from '../validation-constants.js';
 import { emailSchema, idOrKeySchema, slugSchema } from './shared-schemas.js';
 
-export const getSingeRoomMediaOverviewParamsSchema = joi.object({
+export const getSingleRoomMediaOverviewParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 });
 

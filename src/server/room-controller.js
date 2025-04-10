@@ -42,7 +42,7 @@ import {
   getAuthorizeResourcesAccessParamsSchema,
   getRoomMembershipConfirmationParamsSchema,
   deleteRoomMediaParamsSchema,
-  getSingeRoomMediaOverviewParamsSchema,
+  getSingleRoomMediaOverviewParamsSchema,
   postRoomMediaParamsSchema,
   patchRoomContentBodySchema
 } from '../domain/schemas/room-schemas.js';
@@ -494,7 +494,7 @@ export default class RoomController {
     router.get(
       '/api/v1/room-media-overview/:roomId',
       needsPermission(permissions.BROWSE_STORAGE),
-      validateParams(getSingeRoomMediaOverviewParamsSchema),
+      validateParams(getSingleRoomMediaOverviewParamsSchema),
       (req, res) => this.handleGetSingleRoomMediaOverview(req, res)
     );
 
