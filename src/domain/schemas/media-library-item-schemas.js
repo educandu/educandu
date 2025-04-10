@@ -1,5 +1,6 @@
 import joi from 'joi';
 import spdxLicenseList from 'spdx-license-list';
+import { MAX_SEARCH_QUERY_LENGTH } from '../constants.js';
 import { commonMediaItemProperties, idOrKeySchema } from './shared-schemas.js';
 import { maxMediaLibraryItemShortDescriptionLength } from '../validation-constants.js';
 
@@ -45,7 +46,7 @@ export const mediaLibraryTagSearchQuerySchema = joi.object({
 });
 
 export const mediaLibrarySearchQuerySchema = joi.object({
-  query: joi.string().required(),
+  query: joi.string().min(0).max(MAX_SEARCH_QUERY_LENGTH).required(),
   resourceTypes: joi.string().required()
 });
 

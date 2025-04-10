@@ -245,6 +245,8 @@ export const FORM_ITEM_LAYOUT_VERTICAL = {
   wrapperCol: { span: 24 }
 };
 
+export const MAX_SEARCH_QUERY_LENGTH = 250;
+
 export const PARTIAL_SEARCH_THRESHOLD = 3;
 
 export const DOCUMENT_VERIFIED_RELEVANCE_POINTS = 3;
