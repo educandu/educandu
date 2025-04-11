@@ -10,6 +10,7 @@ describe('search-controller', () => {
 
   let clientDataMappingService;
   let documentRatingService;
+  let searchRequestService;
   let mediaLibraryService;
   let documentService;
   let user;
@@ -27,12 +28,15 @@ describe('search-controller', () => {
     documentRatingService = {
       getDocumentRatingsByDocumentIds: sandbox.stub()
     };
+    searchRequestService = {
+      saveSearchRequest: sandbox.stub()
+    };
     clientDataMappingService = {
       mapSearchableResults: sandbox.stub()
     };
     user = { _id: uniqueId.create() };
 
-    sut = new SearchController(documentService, mediaLibraryService, documentRatingService, clientDataMappingService, {});
+    sut = new SearchController(documentService, mediaLibraryService, documentRatingService, searchRequestService, clientDataMappingService, {});
   });
 
   afterEach(() => {
@@ -69,6 +73,7 @@ describe('search-controller', () => {
 
       documentService.getSearchableDocumentsMetadataByTags.resolves(documents);
       documentRatingService.getDocumentRatingsByDocumentIds.resolves(documentRatings);
+      searchRequestService.saveSearchRequest.resolves({});
       mediaLibraryService.getSearchableMediaLibraryItems.resolves(mediaLibraryItems);
       clientDataMappingService.mapSearchableResults.resolves(mappedResults);
 
