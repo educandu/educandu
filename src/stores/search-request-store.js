@@ -4,8 +4,7 @@ import { combineQueryConditions } from '../utils/query-utils.js';
 import { searchRequestDBSchema } from '../domain/schemas/search-request-schemas.js';
 
 const searchRequestsProjection = {
-  _id: -1,
-  expiresOn: -1
+  expiresOn: 0
 };
 
 class SearchRequestStore {

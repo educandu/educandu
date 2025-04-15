@@ -5,8 +5,10 @@ import UserRoleInfo from '../user-role-info.js';
 import React, { useMemo, useState } from 'react';
 import { TAB } from '../statistics/constants.js';
 import { useRequest } from '../request-context.js';
+import { SearchOutlined } from '@ant-design/icons';
 import StatisticsTagsTab from '../statistics/statistics-tags-tab.js';
 import { ClickIcon, TagIcon, UserContributionsIcon } from '../icons/icons.js';
+import StatisticsSearchRequestsTab from '../statistics/statistics-search-requests-tab.js';
 import StatisticsDocumentRequestsTab from '../statistics/statistics-document-requests-tab.js';
 import StatisticsUserContributionsTab from '../statistics/statistics-user-contributions-tab.js';
 
@@ -36,6 +38,16 @@ function Statistics({ PageTemplate }) {
       children: (
         <div className="Tabs-tabPane">
           <StatisticsDocumentRequestsTab />
+        </div>
+      )
+    },
+    {
+      key: TAB.searchRequests,
+      icon: <SearchOutlined />,
+      label: t('searchRequestsTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <StatisticsSearchRequestsTab />
         </div>
       )
     },

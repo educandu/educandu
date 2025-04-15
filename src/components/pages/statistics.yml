@@ -8,6 +8,9 @@ statistics:
   documentRequestsTabTitle:
     en: Document requests
     de: Dokument-Requests
+  searchRequestsTabTitle:
+    en: Search requests
+    de: Such-Requests
   userContributionsTabTitle:
     en: User contributions
     de: Nutzerbeiträge

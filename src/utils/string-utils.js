@@ -1,4 +1,5 @@
 import escapeStringRegexp from 'escape-string-regexp';
+import transliterate from '@sindresorhus/transliterate';
 
 const HTML_REPLACEMENT_MAP = {
   '&': '&amp;',
@@ -146,4 +147,24 @@ function renderBlockValue(value) {
 export function prettyPrintValue(value) {
   const [isInlineValue, renderedInlineValue] = tryRenderInlineValue(value);
   return isInlineValue ? renderedInlineValue : renderBlockValue(value).join('\n');
+}
+
+export function tokenizeForSearch(value) {
+  const tokens = (value || '').trim().split(/\s+/);
+
+  const allTokens = new Set();
+  const positiveTokens = new Set();
+  const negativeTokens = new Set();
+
+  for (const token of tokens) {
+    const isNegative = token.startsWith('-');
+    const rawToken = token.slice(isNegative ? 1 : 0);
+    if (rawToken) {
+      const tokenToAdd = transliterate(rawToken).toLowerCase();
+      allTokens.add(tokenToAdd);
+      (isNegative ? negativeTokens : positiveTokens).add(tokenToAdd);
+    }
+  }
+
+  return { allTokens, positiveTokens, negativeTokens };
 }
