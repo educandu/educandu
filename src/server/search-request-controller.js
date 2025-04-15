@@ -18,12 +18,12 @@ class SearchRequestController {
     const parsedRegisteredFrom = parseDate(registeredFrom);
     const parsedRegisteredUntil = parseDate(registeredUntil);
 
-    const searchRequestCounters = await this.searchRequestService.getSearchRequests({
+    const searchRequests = await this.searchRequestService.getSearchRequests({
       registeredFrom: parsedRegisteredFrom,
       registeredUntil: parsedRegisteredUntil
     });
 
-    return res.send({ searchRequestCounters });
+    return res.send({ searchRequests });
   }
 
   registerApi(router) {

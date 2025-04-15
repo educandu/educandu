@@ -1,0 +1,58 @@
+statisticsSearchRequestsTab:
+  query:
+    en: Search terms
+    de: Suchbegriffe
+  sortedByQuery:
+    en: Sorted by search terms
+    de: Nach Suchbegriffen sortiert
+  registeredOn:
+    en: Date/time
+    de: Datum/Uhrzeit
+  sortedByRegisteredOn:
+    en: Sorted by date/time
+    de: Nach Datum/Uhrzeit sortiert
+  totalMatchCount:
+    en: Total match count
+    de: Gesamt-Trefferanzahl
+  sortedByTotalMatchCount:
+    en: Sorted by total match count
+    de: Nach Gesamt-Trefferanzahl sortiert
+  documentMatchCount:
+    en: Document match count
+    de: Dokument-Trefferanzahl
+  sortedByDocumentMatchCount:
+    en: Sorted by document match count
+    de: Nach Dokument-Trefferanzahl sortiert
+  mediaLibraryItemMatchCount:
+    en: Media match count
+    de: Medien-Trefferanzahl
+  sortedByMediaLibraryItemMatchCount:
+    en: Sorted by media match count
+    de: Nach Medien-Trefferanzahl sortiert
+  searchTokens:
+    en: Search tokens
+    de: Such-Tokens
+  totalMatchCountColumnHeader:
+    en: Match count (total)
+    de: Trefferanzahl (insgesamt)
+  categorizedMatchCountColumnHeader:
+    en: Match count (categorized)
+    de: Trefferanzahl (kategorisiert)
+  documentMatchCountColumnHeader:
+    en: Documents
+    de: Dokumente
+  mediaLibraryItemMatchCountColumnHeader:
+    en: Media
+    de: Medien
+  queryPlaceholder:
+    en: Filter by search terms
+    de: Nach Suchbegriffen filtern
+  fromDatePlaceholder:
+    en: From date
+    de: Ab Datum
+  untilDatePlaceholder:
+    en: To date
+    de: Bis Datum
+  exportAsCsv:
+    en: Export as CSV file
+    de: Als CSV-Datei exportieren
