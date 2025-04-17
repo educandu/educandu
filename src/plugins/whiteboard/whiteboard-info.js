@@ -3,8 +3,8 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import WhiteboardIcon from './whiteboard-icon.js';
 import { OPTIMAL_VIEWPORT_WIDTH_FACTOR } from './constants.js';
-import { MEDIA_ASPECT_RATIO, PLUGIN_GROUP } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { EXTENDED_ASPECT_RATIO, PLUGIN_GROUP } from '../../domain/constants.js';
 import { couldAccessUrlFromRoom, isInternalSourceType } from '../../utils/source-utils.js';
 
 class WhiteboardInfo {
@@ -44,7 +44,7 @@ class WhiteboardInfo {
       label: '',
       width: defaultWidth,
       viewportWidth: defaultWidth * OPTIMAL_VIEWPORT_WIDTH_FACTOR,
-      aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
+      aspectRatio: EXTENDED_ASPECT_RATIO.sixteenToNine,
       image: {
         sourceUrl: '',
         copyrightNotice: ''
@@ -58,7 +58,7 @@ class WhiteboardInfo {
       label: joi.string().allow('').required(),
       width: joi.number().integer().min(0).max(100).required(),
       viewportWidth: joi.number().min(0).max(1000).required(),
-      aspectRatio: joi.string().valid(...Object.values(MEDIA_ASPECT_RATIO)).required(),
+      aspectRatio: joi.string().valid(...Object.values(EXTENDED_ASPECT_RATIO)).required(),
       image: joi.object({
         sourceUrl: joi.string().allow('').required(),
         copyrightNotice: joi.string().allow('').required()

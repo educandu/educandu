@@ -130,6 +130,21 @@ export const MEDIA_ASPECT_RATIO = {
   fourToThree: '4:3'
 };
 
+export const EXTENDED_ASPECT_RATIO = {
+  fifteenToOne: '15:1',
+  tenToOne: '10:1',
+  sevenToOne: '7:1',
+  fiveToOne: '5:1',
+  threeToOne: '3:1',
+  sevenToThree: '7:3',
+  sixteenToNine: '16:9',
+  threeToTwo: '3:2',
+  fourToThree: '4:3',
+  fiveToFour: '5:4',
+  sixToFive: '6:5',
+  oneToOne: '1:1'
+};
+
 export const MULTITRACK_PLAYER_TYPE = {
   default: 'default',
   precise: 'precise'
