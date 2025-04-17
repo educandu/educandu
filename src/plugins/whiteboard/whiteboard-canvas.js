@@ -1,3 +1,4 @@
+import { fabric } from 'fabric';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import deepEqual from 'fast-deep-equal';
@@ -13,7 +14,6 @@ import { drawImageToCanvas } from '../../utils/image-utils.js';
 import { useService } from '../../components/container-context.js';
 import { isInternalSourceType } from '../../utils/source-utils.js';
 import { confirmWhiteboardReset } from '../../components/confirmation-dialogs.js';
-import { Canvas, Textbox, Line, Triangle, Group, Rect, Circle, PencilBrush } from 'fabric';
 import { DEFAULT_STROKE_COLOR, FONT_SIZE, MODE, STROKE_WIDTH, TRANSPARENT_FILL_COLOR, WhiteboardToolbar } from './whiteboard-toolbar.js';
 
 const useDimensions = useDimensionsNs.default || useDimensionsNs;
@@ -41,7 +41,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
       return () => {};
     }
 
-    const newCanvas = new Canvas(canvasRef.current, {
+    const newCanvas = new fabric.Canvas(canvasRef.current, {
       selectionLineWidth: 2,
       isDrawingMode: false
     });
@@ -140,12 +140,11 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
 
     if (newToolbarMode === MODE.select) {
       canvas.isDrawingMode = false;
-      delete canvas.freeDrawingBrush;
+      canvas.discardActiveObject().renderAll();
     }
 
     if (newToolbarMode === MODE.freeDraw) {
       canvas.isDrawingMode = true;
-      canvas.freeDrawingBrush = new PencilBrush(canvas);
       canvas.freeDrawingBrush.width = strokeWidth;
       canvas.freeDrawingBrush.color = strokeColor;
     }
@@ -155,7 +154,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
-    const textbox = new Textbox(t('text'), {
+    const textbox = new fabric.Textbox(t('text'), {
       fill: strokeColor,
       fontSize
     });
@@ -169,7 +168,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
-    const line = new Line([50, 100, 200, 100], {
+    const line = new fabric.Line([50, 100, 200, 100], {
       strokeWidth,
       stroke: strokeColor
     });
@@ -183,7 +182,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
-    const triangle = new Triangle({
+    const triangle = new fabric.Triangle({
       strokeWidth,
       stroke: strokeColor,
       fill: strokeColor,
@@ -194,14 +193,14 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
       angle: 90
     });
 
-    const line = new Line([50, 100, 200, 100], {
+    const line = new fabric.Line([50, 100, 200, 100], {
       strokeWidth,
       stroke: strokeColor,
       left: 75,
       top: 70
     });
 
-    const arrow = new Group([line, triangle]);
+    const arrow = new fabric.Group([line, triangle]);
 
     canvas.centerObject(arrow);
     canvas.add(arrow);
@@ -212,7 +211,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
-    const rectangle = new Rect({
+    const rectangle = new fabric.Rect({
       strokeWidth,
       stroke: strokeColor,
       fill: fillColor,
@@ -229,7 +228,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
-    const circle = new Circle({
+    const circle = new fabric.Circle({
       strokeWidth,
       stroke: strokeColor,
       fill: fillColor,
@@ -245,7 +244,7 @@ export function WhiteboardCanvas({ data, disabled, viewportWidth, viewportHeight
     setToolbarMode(MODE.select);
     canvas.isDrawingMode = false;
 
-    const triangle = new Triangle({
+    const triangle = new fabric.Triangle({
       stroke: strokeColor,
       strokeWidth,
       fill: fillColor,
