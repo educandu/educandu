@@ -69,7 +69,7 @@ function CreditsFooter({ doc, revision }) {
               <br />
             </Fragment>
           )}
-          <b>{t('common:source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
+          <b>{t('quoting')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
           <br />
           {!!doc && renderDocumentContributors()}
           {!!revision && renderRevisionAuthor()}

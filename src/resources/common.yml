@@ -358,9 +358,6 @@ common:
   copyrightNotice:
     en: Copyright
     de: Urheberrecht
-  source:
-    en: Source
-    de: Quelle
   imageSource:
     en: Image source
     de: Bild-Quelle
