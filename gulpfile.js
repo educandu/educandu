@@ -60,7 +60,7 @@ const testAppEnv = {
   TEST_APP_ENABLE_SAML_AUTH: false.toString(),
   TEST_APP_SAML_AUTH_DECRYPTION: String(null),
   EDUCANDU_LOG_COLOR: true.toString(),
-  EDUCANDU_LOG_LEVEL: 'debug'
+  EDUCANDU_LOG_LEVEL: 'info'
 };
 
 const mongoContainer = new MongoContainer({
