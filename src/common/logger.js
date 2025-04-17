@@ -2,8 +2,8 @@ import { getCookie } from './cookie.js';
 import { isBrowser } from '../ui/browser-helper.js';
 import { LOG_LEVEL_COOKIE_NAME } from '../domain/constants.js';
 
-const getServerLevel = () => process.env.EDUCANDU_LOG_LEVEL || 'debug';
-const getBrowserLevel = () => getCookie(LOG_LEVEL_COOKIE_NAME) || 'debug';
+const getServerLevel = () => process.env.EDUCANDU_LOG_LEVEL || 'info';
+const getBrowserLevel = () => getCookie(LOG_LEVEL_COOKIE_NAME) || 'info';
 
 const supportsColor = isBrowser() || process.env.EDUCANDU_LOG_COLOR === true.toString();
 

@@ -5,5 +5,5 @@ if (!process.env.EDUCANDU_SKIP_MONGO_CHECKS) {
   process.env.EDUCANDU_SKIP_MONGO_CHECKS = true.toString();
 }
 if (!process.env.EDUCANDU_LOG_LEVEL) {
-  process.env.EDUCANDU_LOG_LEVEL = 'error';
+  process.env.EDUCANDU_LOG_LEVEL = 'fatal';
 }
