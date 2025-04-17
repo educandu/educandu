@@ -1,0 +1,40 @@
+.ExtendedAspectRatioPicker {
+  .m-antd-slider-mobile-enhancements();
+}
+
+.ExtendedAspectRatioPicker-mark {
+
+  &.ExtendedAspectRatioPicker-mark--special {
+    font-weight: bold;
+  }
+
+  &:not(.ExtendedAspectRatioPicker-mark--special):not(.ExtendedAspectRatioPicker-mark--firstOrLast) {
+    @media @edu-media-phone {
+      display: none;
+    }
+  }
+}
+
+.ExtendedAspectRatioPicker-toolTip {
+  color: @edu-tooltip-color;
+}
+
+.ExtendedAspectRatioPicker-toolTipExampleBox {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  width: 70px;
+  height: 70px;
+  border: 1px dotted fade(@edu-tooltip-color, 50%);
+  padding: 4px;
+  margin-bottom: 5px;
+}
+
+.ExtendedAspectRatioPicker-toolTipExample {
+  border: 1px solid @edu-tooltip-color;
+  background-color: fade(@edu-tooltip-color, 25%);
+}
+
+.ExtendedAspectRatioPicker-toolTipLabel {
+  text-align: center;
+}

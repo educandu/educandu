@@ -3,10 +3,10 @@ import Markdown from '../../components/markdown.js';
 import { WhiteboardCanvas } from './whiteboard-canvas.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getAccessibleUrl } from '../../utils/source-utils.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { getHeightForAspectRatio } from '../../utils/aspect-ratio-utils.js';
 
 const createInitialData = () => ({ canvasData: null });
 
@@ -23,8 +23,7 @@ export default function WhiteboardDisplay({ content, input, canModifyInput, onIn
     onInputChanged({ canvasData: newCanvasData });
   }, [onInputChanged]);
 
-  const numericalAspectRatio = aspectRatio === MEDIA_ASPECT_RATIO.fourToThree ? 4 / 3 : 16 / 9;
-  const viewportHeight = Math.round(viewportWidth / numericalAspectRatio);
+  const viewportHeight = getHeightForAspectRatio(viewportWidth, aspectRatio);
 
   return (
     <div className={`WhiteboardDisplay u-horizontally-centered u-width-${width}`}>
