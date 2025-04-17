@@ -82,7 +82,6 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
   };
 
   const renderInputPrefix = () => {
-    const tooltipTitle = `${t('common:source')}: ${t(`tooltip_${sourceType}`)}`;
     const classes = classNames(
       'UrlInput-prefix',
       { 'UrlInput-prefix--error': sourceType === SOURCE_TYPE.unsupported },
@@ -90,7 +89,7 @@ function UrlInput({ value, allowedSourceTypes, disabled, onChange }) {
     );
 
     return (
-      <Tooltip title={tooltipTitle}>
+      <Tooltip title={t(`tooltip_${sourceType}`)}>
         <div className={classes}>
           {inputPrefixIcon}
         </div>
