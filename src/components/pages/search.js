@@ -8,13 +8,13 @@ import FilterInput from '../filter-input.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
-import { Collapse, Radio, Table, Tag } from 'antd';
 import SortingSelector from '../sorting-selector.js';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import ResourceTypeCell from '../resource-type-cell.js';
 import ResourceInfoCell from '../resource-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { Collapse, Empty, Radio, Table, Tag } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
@@ -214,6 +214,13 @@ function Search({ PageTemplate }) {
     </Tag>
   ));
 
+  const renderEmptyState = () => (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description={isSearching ? t('emptyStateSearchingText') : t('emptyStateNoDataText')}
+      />
+  );
+
   const columns = [
     {
       title: t('common:type'),
@@ -295,6 +302,7 @@ function Search({ PageTemplate }) {
           columns={columns}
           loading={isSearching}
           dataSource={[...displayedRows]}
+          locale={{ emptyText: renderEmptyState() }}
           rowClassName={() => 'SearchPage-tableRow'}
           className="SearchPage-table u-table-with-pagination"
           pagination={{

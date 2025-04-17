@@ -4247,6 +4247,14 @@
     "textFilterPlaceholder": {
       "en": "Filter by title or description",
       "de": "Nach Titel oder Beschreibung filtern"
+    },
+    "emptyStateSearchingText": {
+      "en": "Searching",
+      "de": "Suchen"
+    },
+    "emptyStateNoDataText": {
+      "en": "Nothing found. Typo?",
+      "de": "Nichts gefunden. Vertippt?"
     }
   },
   "searchBar": {
