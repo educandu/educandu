@@ -173,8 +173,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleSourceSoundCopyrightNoticeChange = (event, index) => {
-    const { value } = event.target;
+  const handleSourceSoundCopyrightNoticeChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].sourceSound.copyrightNotice = value;
     changeContent({ tests: newTests });
