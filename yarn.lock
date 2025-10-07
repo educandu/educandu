@@ -779,10 +779,10 @@
   dependencies:
     abc-notation-transposition "^1.0.5"
 
-"@educandu/dev-tools@^14.0.0":
-  version "14.0.0"
-  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-14.0.0.tgz#4157519a8d6a80af74eb45899cfebe941784465b"
-  integrity sha512-303DhWhD3VHftiU8z3ZfW9tpUq0Cw3DqBrTS0twkxYXw+CtfRA5PFSU0NLuWHs3ADGlh7993ML4mo7A2ieg/cw==
+"@educandu/dev-tools@^14.2.0":
+  version "14.2.0"
+  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-14.2.0.tgz#e8e5deb30dc70f76be3031ab07fcbe2ceb259d8e"
+  integrity sha512-QiE5nBZWOJch8N0/VQ0zv5O+ba3WVarsT1vMru6BHBS1gh4LiViEwW43kXQFsHOayWo5h6+9+q1W29a0ECpZBQ==
   dependencies:
     "@rauschma/stringio" "^1.4.0"
     axios "^1.6.2"
