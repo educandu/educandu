@@ -10,7 +10,7 @@ jobs:
       NODE_ENV: development
     services:
       mongo:
-        image: educandu/mongo:5.0.6-multiplatform.2
+        image: educandu/mongo:8.0.0
         ports:
           - 27017:27017
         env:
