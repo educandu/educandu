@@ -829,17 +829,16 @@
   dependencies:
     esbuild "^0.19.8"
 
-"@educandu/rooms-auth-lambda@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@educandu/rooms-auth-lambda/-/rooms-auth-lambda-7.0.0.tgz#e4e88dd8bd8885c83ea7ab550fc9c4b4f175848b"
-  integrity sha512-yB7eE2O/KVwlII1/ZSsiD1Ja96drF5hDryKgwd3D76l0vBOGEZYsD5LPLJUC+xofbmMKGEWDPsMOgDzGi/pdww==
+"@educandu/rooms-auth-lambda@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@educandu/rooms-auth-lambda/-/rooms-auth-lambda-9.0.0.tgz#3f0705982058ec2ebb11a8cf2d995fc873fe2bf5"
+  integrity sha512-1yX1V6ofpQS4JJHGQV5xyE3VYymcD+kIN9rSg/8Ch9/nPkdVVDRlyncyIg5L7P0IHvLS6bNQrT3VPXT8LAh/IQ==
   dependencies:
     cors "^2.8.5"
     envalid "^8.0.0"
     express "^4.18.2"
     http-proxy "^1.18.1"
     node-graceful "^3.1.0"
-    phin "^3.7.0"
 
 "@emotion/hash@^0.8.0":
   version "0.8.0"
@@ -3560,13 +3559,6 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==
 
-centra@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/centra/-/centra-2.7.0.tgz#4c8312a58436e8a718302011561db7e6a2b0ec18"
-  integrity sha512-PbFMgMSrmgx6uxCdm57RUos9Tc3fclMvhLSATYN39XsDV29B89zZ3KA89jmY0vwSGazyU+uerqwa6t+KaodPcg==
-  dependencies:
-    follow-redirects "^1.15.6"
-
 chai@^4.3.10:
   version "4.3.10"
   resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.10.tgz#d784cec635e3b7e2ffb66446a63b4e33bd390384"
@@ -5396,7 +5388,7 @@ flush-write-stream@^1.0.2:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-follow-redirects@^1.0.0, follow-redirects@^1.15.6:
+follow-redirects@^1.0.0:
   version "1.15.9"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.9.tgz#a604fa10e443bf98ca94228d9eebcc2e8a2c8ee1"
   integrity sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==
@@ -8628,13 +8620,6 @@ performance-now@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-0.2.0.tgz#33ef30c5c77d4ea21c5a53869d91b56d8f2555e5"
   integrity sha512-YHk5ez1hmMR5LOkb9iJkLKqoBlL7WD5M8ljC75ZfzXriuBIVNuecaXuU7e+hOwyqf24Wxhh7Vxgt7Hnw9288Tg==
-
-phin@^3.7.0:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/phin/-/phin-3.7.1.tgz#bf841da75ee91286691b10e41522a662aa628fd6"
-  integrity sha512-GEazpTWwTZaEQ9RhL7Nyz0WwqilbqgLahDM3D0hxWwmVDI52nXEybHqiN6/elwpkJBhcuj+WbBu+QfT0uhPGfQ==
-  dependencies:
-    centra "^2.7.0"
 
 picocolors@^1.0.0:
   version "1.0.0"

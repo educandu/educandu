@@ -118,7 +118,7 @@
   "devDependencies": {
     "@educandu/dev-tools": "^14.3.0",
     "@educandu/node-jsx-loader": "^4.0.0",
-    "@educandu/rooms-auth-lambda": "^7.0.0",
+    "@educandu/rooms-auth-lambda": "^9.0.0",
     "@vitest/coverage-v8": "^1.0.4",
     "del": "^7.1.0",
     "eslint": "^8.55.0",
