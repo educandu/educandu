@@ -99,7 +99,8 @@ describe('permissions', () => {
           permissions.DELETE_PUBLIC_CONTENT,
           permissions.MANAGE_ASSIGNED_EDITORS,
           permissions.MANAGE_PROTECTED_CONTENT,
-          permissions.UPLOAD_WITHOUT_RESTRICTION
+          permissions.UPLOAD_WITHOUT_RESTRICTION,
+          permissions.MANAGE_DELETED_PUBLIC_CONTENT
         ]);
       });
     });
@@ -123,6 +124,7 @@ describe('permissions', () => {
           permissions.MANAGE_ASSIGNED_EDITORS,
           permissions.MANAGE_PROTECTED_CONTENT,
           permissions.UPLOAD_WITHOUT_RESTRICTION,
+          permissions.MANAGE_DELETED_PUBLIC_CONTENT,
           permissions.MANAGE_USERS,
           permissions.MANAGE_SETUP,
           permissions.BATCH_PROCESS_DATA,
