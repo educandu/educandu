@@ -829,10 +829,10 @@
   dependencies:
     esbuild "^0.19.8"
 
-"@educandu/rooms-auth-lambda@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@educandu/rooms-auth-lambda/-/rooms-auth-lambda-6.2.1.tgz#1c2ed1cf38a10f38c3a5a54cd4c27b50822ee534"
-  integrity sha512-wRS/Vlmjlc4HOiCXxMI2ipUBsWNpc8IFxcuQu4jMSBapexBTndTRFhXzngQ5Z39APFCyu1qS92xM1TYRhneVPw==
+"@educandu/rooms-auth-lambda@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@educandu/rooms-auth-lambda/-/rooms-auth-lambda-7.0.0.tgz#e4e88dd8bd8885c83ea7ab550fc9c4b4f175848b"
+  integrity sha512-yB7eE2O/KVwlII1/ZSsiD1Ja96drF5hDryKgwd3D76l0vBOGEZYsD5LPLJUC+xofbmMKGEWDPsMOgDzGi/pdww==
   dependencies:
     cors "^2.8.5"
     envalid "^8.0.0"

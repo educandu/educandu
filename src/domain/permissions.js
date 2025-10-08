@@ -15,6 +15,7 @@ const PROTECT_OWN_PUBLIC_CONTENT = 'protect-own-public-content';
 const DELETE_OWN_PRIVATE_CONTENT = 'delete-own-private-content';
 const DELETE_ANY_PRIVATE_CONTENT = 'delete-any-private-content';
 const UPLOAD_WITHOUT_RESTRICTION = 'upload-without-restriction';
+const MANAGE_DELETED_PUBLIC_CONTENT = 'manage-deleted-public-content';
 
 const userPermissions = [
   CREATE_CONTENT,
@@ -45,7 +46,8 @@ const maintainerPermissions = [
     DELETE_PUBLIC_CONTENT,
     MANAGE_ASSIGNED_EDITORS,
     MANAGE_PROTECTED_CONTENT,
-    UPLOAD_WITHOUT_RESTRICTION
+    UPLOAD_WITHOUT_RESTRICTION,
+    MANAGE_DELETED_PUBLIC_CONTENT
   ])
 ];
 
@@ -93,5 +95,6 @@ export default {
   PROTECT_OWN_PUBLIC_CONTENT,
   DELETE_OWN_PRIVATE_CONTENT,
   DELETE_ANY_PRIVATE_CONTENT,
-  UPLOAD_WITHOUT_RESTRICTION
+  UPLOAD_WITHOUT_RESTRICTION,
+  MANAGE_DELETED_PUBLIC_CONTENT
 };
