@@ -1,14 +1,14 @@
 import Logger from '../../../common/logger.js';
-import MediaTrashService from '../../media-trash-service.js';
+import MediaLibraryService from '../../media-library-service.js';
 import { MEDIA_TRASH_CLEANUP_CRON_PATTERN } from '../../../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
 export default class CleanupMediaTrashJob {
-  static dependencies = [MediaTrashService];
+  static dependencies = [MediaLibraryService];
 
-  constructor(mediaTrashService) {
-    this.mediaTrashService = mediaTrashService;
+  constructor(mediaLibraryService) {
+    this.mediaLibraryService = mediaLibraryService;
     this.name = 'cleanup-media-trash';
     this.cronExpression = MEDIA_TRASH_CLEANUP_CRON_PATTERN;
     this.preventOverrun = true;
@@ -16,7 +16,7 @@ export default class CleanupMediaTrashJob {
 
   async process(context) {
     try {
-      await this.mediaTrashService.cleanupMediaTrash(context);
+      await this.mediaLibraryService.cleanupMediaTrash(context);
     } catch (error) {
       logger.error(error);
     }

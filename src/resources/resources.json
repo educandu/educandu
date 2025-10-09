@@ -748,6 +748,14 @@
       "en": "Updated on {date} by",
       "de": "Geändert am {date} von"
     },
+    "deletionDate": {
+      "en": "Deletion date",
+      "de": "Löschdatum"
+    },
+    "deletedOnDateBy": {
+      "en": "Deleted on {date} by",
+      "de": "Gelöscht am {date} von"
+    },
     "invitedOnDate": {
       "en": "Invited on {date}.",
       "de": "Eingeladen am {date}."
@@ -951,6 +959,14 @@
     "sortedByUpdatedOn": {
       "en": "Sorted by update date",
       "de": "Nach Änderungsdatum sortiert"
+    },
+    "sortedByDeletedOn": {
+      "en": "Sorted by deletion date",
+      "de": "Nach Löschdatum sortiert"
+    },
+    "sortedBySize": {
+      "en": "Sorted by size",
+      "de": "Nach Größe sortiert"
     },
     "sortedByType": {
       "en": "Sorted by type",
@@ -1662,7 +1678,11 @@
       "en": "Do you really want to cancel your membership in room \"{roomName}\"?",
       "de": "Möchtest du deine Mitgliedschaft im Raum \"{roomName}\" wirklich beenden?"
     },
-    "deleteMediaFileConfirmation": {
+    "softDeleteMediaFileConfirmation": {
+      "en": "Do you really want to move the file \"{fileName}\" to the trash bin?",
+      "de": "Möchtest du die Datei \"{fileName}\" wirklich in den Papierkorb verschieben?"
+    },
+    "hardDeleteMediaFileConfirmation": {
       "en": "Do you really want to irreversibly delete the file \"{fileName}\"?",
       "de": "Möchtest du die Datei \"{fileName}\" wirklich unwiderruflich löschen?"
     },
@@ -1743,8 +1763,8 @@
       "de": "Möchtest du das Whiteboard wirklich zurücksetzen?"
     },
     "bulkDeleteMediaItemsConfirmation": {
-      "en": "Do you really want to irreversibly delete {count, plural, =1 {# media resource} other {# media resources}}?",
-      "de": "Möchtest du {count, plural, =1 {# Mediathek-Ressource} other {# Mediathek-Ressourcen}} wirklich unwiderruflich löschen?"
+      "en": "Do you really want to move {count, plural, =1 {# media resource} other {# media resources}} to the trash bin?",
+      "de": "Möchtest du {count, plural, =1 {# Mediathek-Ressource} other {# Mediathek-Ressourcen}} wirklich in den Papierkorb verschieben?"
     }
   },
   "connectExternalAccount": {

@@ -150,6 +150,12 @@ common:
   updatedOnDateBy:
     en: Updated on {date} by
     de: Geändert am {date} von
+  deletionDate:
+    en: Deletion date
+    de: Löschdatum
+  deletedOnDateBy:
+    en: Deleted on {date} by
+    de: Gelöscht am {date} von
   invitedOnDate:
     en: Invited on {date}.
     de: Eingeladen am {date}.
@@ -307,6 +313,12 @@ common:
   sortedByUpdatedOn:
     en: Sorted by update date
     de: Nach Änderungsdatum sortiert
+  sortedByDeletedOn:
+    en: Sorted by deletion date
+    de: Nach Löschdatum sortiert
+  sortedBySize:
+    en: Sorted by size
+    de: Nach Größe sortiert
   sortedByType:
     en: Sorted by type
     de: Nach Typ sortiert

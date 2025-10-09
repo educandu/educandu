@@ -32,8 +32,20 @@ const fillUserIdSetForMediaLibraryItems = (mediaLibraryItem, set) => {
   return set;
 };
 
+const fillUserIdSetForMediaTrashItems = (mediaTrashItem, set) => {
+  set.add(mediaTrashItem.createdBy);
+  set.add(mediaTrashItem.originalItem.createdBy);
+  set.add(mediaTrashItem.originalItem.updatedBy);
+  return set;
+};
+
 export const extractUserIdsFromMediaLibraryItems = mediaLibraryItems => {
   const idsSet = mediaLibraryItems.reduce((set, item) => fillUserIdSetForMediaLibraryItems(item, set), new Set());
+  return [...idsSet];
+};
+
+export const extractUserIdsFromMediaTrashItems = mediaTrashItems => {
+  const idsSet = mediaTrashItems.reduce((set, item) => fillUserIdSetForMediaTrashItems(item, set), new Set());
   return [...idsSet];
 };
 

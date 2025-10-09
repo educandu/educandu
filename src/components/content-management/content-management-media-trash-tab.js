@@ -22,7 +22,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import { ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
+import MediaTrashApiClient from '../../api-clients/media-trash-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import MediaLibaryItemsModal, { MEDIA_LIBRARY_ITEMS_MODAL_MODE } from '../resource-selector/media-library/media-library-items-modal.js';
 
@@ -32,7 +32,8 @@ const SORTING_VALUE = {
   name: 'name',
   createdOn: 'createdOn',
   updatedOn: 'updatedOn',
-  user: 'user',
+  deletedOn: 'deletedOn',
+  creator: 'creator',
   size: 'size',
   type: 'type'
 };
@@ -45,7 +46,7 @@ const getSanitizedQueryFromRequest = request => {
 
   return {
     filter: (query.filter || '').trim(),
-    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.updatedOn,
+    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.deletedOn,
     direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
     page: !isNaN(pageNumber) ? pageNumber : 1,
     pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
@@ -56,16 +57,20 @@ function createTableRows(mediaTrashItems, t) {
   return mediaTrashItems.map(item => ({
     ...item,
     key: item._id,
-    translatedResourceType: getResourceTypeTranslation({ resourceType: item.resourceType, t })
+    translatedResourceType: getResourceTypeTranslation({ resourceType: item.resourceType, t }),
+    originalItem: {
+      ...item.originalItem,
+      translatedResourceType: getResourceTypeTranslation({ resourceType: item.originalItem.resourceType, t })
+    }
   }));
 }
 
 function filterRow(row, lowerCasedFilter) {
-  return row.name.toLowerCase().includes(lowerCasedFilter)
-    || row.tags.some(tag => tag.toLowerCase().includes(lowerCasedFilter))
-    || row.licenses.some(license => license.toLowerCase().includes(lowerCasedFilter))
-    || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilter)
-    || row.updatedBy.displayName.toLowerCase().includes(lowerCasedFilter);
+  return row.originalItem.name.toLowerCase().includes(lowerCasedFilter)
+    || row.originalItem.tags.some(tag => tag.toLowerCase().includes(lowerCasedFilter))
+    || row.originalItem.createdBy.displayName.toLowerCase().includes(lowerCasedFilter)
+    || row.originalItem.updatedBy.displayName.toLowerCase().includes(lowerCasedFilter)
+    || row.createdBy.displayName.toLowerCase().includes(lowerCasedFilter);
 }
 
 function filterRows(rows, filter) {
@@ -87,7 +92,7 @@ function ContentManagementMediaTrashTab() {
   const [mediaTrashItems, setMediaTrashItems] = useState([]);
   const { t } = useTranslation('contentManagementMediaTrashTab');
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
-  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
+  const mediaTrashApiClient = useSessionAwareApiClient(MediaTrashApiClient);
   const [mediaLibraryItemsModalState, setMediaLibraryItemsModalState] = useState(getMediaLibraryItemsModalDefaultState());
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
@@ -102,12 +107,12 @@ function ContentManagementMediaTrashTab() {
   const fetchData = useCallback(async () => {
     try {
       setFetchingData(true);
-      const apiClientResponse = await mediaLibraryApiClient.getContentManagementMediaLibraryItems();
-      setMediaTrashItems(apiClientResponse.mediaLibraryItems);
+      const apiClientResponse = await mediaTrashApiClient.getContentManagementMediaTrashItems();
+      setMediaTrashItems(apiClientResponse.mediaTrashItems);
     } finally {
       setFetchingData(false);
     }
-  }, [setFetchingData, mediaLibraryApiClient]);
+  }, [setFetchingData, mediaTrashApiClient]);
 
   useEffect(() => {
     fetchData();
@@ -138,7 +143,8 @@ function ContentManagementMediaTrashTab() {
       { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: SORTING_VALUE.name },
       { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
       { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn },
-      { label: t('common:user'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.user },
+      { label: t('common:deletionDate'), appliedLabel: t('common:sortedByDeletedOn'), value: SORTING_VALUE.deletedOn },
+      { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.creator },
       { label: t('common:size'), appliedLabel: t('common:sortedBySize'), value: SORTING_VALUE.size },
       { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: SORTING_VALUE.type }
     ];
@@ -147,12 +153,13 @@ function ContentManagementMediaTrashTab() {
   }, [t]);
 
   const tableSorters = useMemo(() => ({
-    name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.name, { direction, ignoreCase: true })),
-    createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
-    updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
-    user: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
-    size: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.size, direction)),
-    type: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.translatedResourceType, { direction, ignoreCase: true }))
+    name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.name, { direction, ignoreCase: true })),
+    createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.createdOn, direction)),
+    updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.updatedOn, direction)),
+    deletedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
+    creator: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.createdBy.displayName, { direction, ignoreCase: true })),
+    size: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.size, direction)),
+    type: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.translatedResourceType, { direction, ignoreCase: true }))
   }), []);
 
   useEffect(() => {
@@ -178,16 +185,16 @@ function ContentManagementMediaTrashTab() {
   };
 
   const handlePreviewItemClick = row => {
-    const mediaLibraryItem = mediaTrashItems.find(item => item._id === row.key);
-    setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview, mediaLibraryItem, isOpen: true });
+    const mediaTrashItem = mediaTrashItems.find(item => item._id === row.key);
+    setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.trashPreview, mediaTrashItem, mediaLibraryItem: mediaTrashItem.originalItem, isOpen: true });
   };
 
   const handleDeleteItemClick = row => {
-    const mediaLibraryItem = mediaTrashItems.find(item => item._id === row.key);
-    confirmMediaFileHardDelete(t, mediaLibraryItem.name, async () => {
+    const mediaTrashItem = mediaTrashItems.find(item => item._id === row.key);
+    confirmMediaFileHardDelete(t, mediaTrashItem.originalItem.name, async () => {
       try {
-        await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: mediaLibraryItem._id });
-        setMediaTrashItems(oldItems => ensureIsExcluded(oldItems, mediaLibraryItem));
+        await mediaTrashApiClient.deleteMediaTrashItem({ mediaTrashItemId: mediaTrashItem._id });
+        setMediaTrashItems(oldItems => ensureIsExcluded(oldItems, mediaTrashItem));
         message.success(t('common:changesSavedSuccessfully'));
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -209,25 +216,26 @@ function ContentManagementMediaTrashTab() {
   };
 
   const renderType = (_, row) => (
-    <ResourceTypeCell searchResourceType={row.resourceType} />
+    <ResourceTypeCell searchResourceType={row.originalItem.resourceType} />
   );
 
   const renderName = (_, row) => {
     return (
       <ResourceTitleCell
-        title={row.name}
-        shortDescription={row.shortDescription}
-        url={routes.getMediaLibraryItemUrl(row._id)}
-        createdOn={row.createdOn}
-        createdBy={row.createdBy}
-        updatedOn={row.updatedOn}
-        updatedBy={row.updatedBy}
+        title={row.originalItem.name}
+        shortDescription={row.originalItem.shortDescription}
+        createdOn={row.originalItem.createdOn}
+        createdBy={row.originalItem.createdBy}
+        updatedOn={row.originalItem.updatedOn}
+        updatedBy={row.originalItem.updatedBy}
+        deletedOn={row.createdOn}
+        deletedBy={row.createdBy}
         />
     );
   };
 
-  const renderTags = tagsOrLicenses => (
-    <TagsExpander tags={tagsOrLicenses} />
+  const renderTags = (_, row) => (
+    <TagsExpander tags={row.originalItem.tags} />
   );
 
   const renderActions = (_actions, row) => {
@@ -270,13 +278,11 @@ function ContentManagementMediaTrashTab() {
     },
     {
       title: t('common:name'),
-      dataIndex: 'name',
       key: 'name',
       render: renderName
     },
     {
       title: t('common:tags'),
-      dataIndex: 'tags',
       key: 'tags',
       render: renderTags,
       responsive: ['lg'],
@@ -284,7 +290,6 @@ function ContentManagementMediaTrashTab() {
     },
     {
       title: t('common:licenses'),
-      dataIndex: 'licenses',
       key: 'licenses',
       render: () => 'TODO',
       responsive: ['md'],
@@ -292,7 +297,6 @@ function ContentManagementMediaTrashTab() {
     },
     {
       title: t('common:actions'),
-      dataIndex: 'actions',
       key: 'actions',
       render: renderActions,
       width: '100px'
