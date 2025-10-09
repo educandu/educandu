@@ -130,7 +130,7 @@ function ContentManagementMediaTrashTab() {
       pageSize: pagination.pageSize
     };
 
-    history.replaceState(null, '', routes.getContentManagementUrl(TAB.mediaLibrary, queryParams));
+    history.replaceState(null, '', routes.getContentManagementUrl(TAB.mediaTrash, queryParams));
   }, [filter, sorting, pagination]);
 
   const sortingOptions = useMemo(() => {
@@ -281,6 +281,14 @@ function ContentManagementMediaTrashTab() {
       render: renderTags,
       responsive: ['lg'],
       width: '300px'
+    },
+    {
+      title: t('common:licenses'),
+      dataIndex: 'licenses',
+      key: 'licenses',
+      render: () => 'TODO',
+      responsive: ['md'],
+      width: '150px'
     },
     {
       title: t('common:actions'),

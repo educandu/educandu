@@ -759,3 +759,9 @@ common:
   previewArea:
     en: Preview area
     de: Vorschaubereich
+  neverUsed:
+    en: never used
+    de: nie benutzt
+  noLongerUsed:
+    en: no longer used
+    de: nicht mehr benutzt

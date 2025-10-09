@@ -1,10 +1,4 @@
 contentManagementMediaTrashTab:
   filterPlaceholder:
-    en: Filter by title, tag, license or user
-    de: Nach Titel, Tag, Lizenz oder Benutzer filtern
-  unused:
-    en: never used
-    de: nie benutzt
-  deprecated:
-    en: no longer used
-    de: nicht mehr benutzt
+    en: Filter by name, tag or user
+    de: Nach Name, Tag oder Benutzer filtern

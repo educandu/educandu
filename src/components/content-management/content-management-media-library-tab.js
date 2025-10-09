@@ -398,7 +398,7 @@ function ContentManagementMediaLibraryTab() {
                   <DatePicker
                     showTime={false}
                     format={dateFormat}
-                    placeholder={t('datePlaceholder')}
+                    placeholder={t('common:date')}
                     disabledDate={determineDisabledDate}
                     value={createdBefore ? dayjs(createdBefore) : null}
                     onChange={handleCreatedBeforeFilterChange}
@@ -410,8 +410,8 @@ function ContentManagementMediaLibraryTab() {
                     className="ContentManagementMediaLibraryTab-bulkDeletePanelRadios"
                     >
                     <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
-                      <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
-                      <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
+                      <Radio.Button value={RESOURCE_USAGE.unused}>{t('common:neverUsed')}</Radio.Button>
+                      <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('common:noLongerUsed')}</Radio.Button>
                     </Radio.Group>
                   </Info>
                 </div>

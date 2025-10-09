@@ -1551,6 +1551,14 @@
     "previewArea": {
       "en": "Preview area",
       "de": "Vorschaubereich"
+    },
+    "neverUsed": {
+      "en": "never used",
+      "de": "nie benutzt"
+    },
+    "noLongerUsed": {
+      "en": "no longer used",
+      "de": "nicht mehr benutzt"
     }
   },
   "comparison": {
@@ -1831,8 +1839,8 @@
   },
   "contentManagementMediaLibraryTab": {
     "filterPlaceholder": {
-      "en": "Filter by title, tag, license or user",
-      "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
+      "en": "Filter by name, tag, license or user",
+      "de": "Nach Name, Tag, Lizenz oder Benutzer filtern"
     },
     "bulkDeletePanelHeader": {
       "en": "Bulk deletion",
@@ -1842,21 +1850,9 @@
       "en": "Created before",
       "de": "Erstellt vor"
     },
-    "datePlaceholder": {
-      "en": "Date",
-      "de": "Datum"
-    },
     "and": {
       "en": "and",
       "de": "und"
-    },
-    "unused": {
-      "en": "never used",
-      "de": "nie benutzt"
-    },
-    "deprecated": {
-      "en": "no longer used",
-      "de": "nicht mehr benutzt"
     },
     "delete": {
       "en": "Delete media resources",
@@ -1867,22 +1863,14 @@
       "de": "{count, plural, =1 {# Medien-Resource} other {# Medien-Resourcen}} löschen"
     },
     "usageInfoMarkdown": {
-      "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used.\n",
-      "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden hierbei als nicht länger benutzt betrachtet.\n"
+      "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used, too.\n",
+      "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden ebenfalls als nicht mehr benutzt betrachtet.\n"
     }
   },
   "contentManagementMediaTrashTab": {
     "filterPlaceholder": {
-      "en": "Filter by title, tag, license or user",
-      "de": "Nach Titel, Tag, Lizenz oder Benutzer filtern"
-    },
-    "unused": {
-      "en": "never used",
-      "de": "nie benutzt"
-    },
-    "deprecated": {
-      "en": "no longer used",
-      "de": "nicht mehr benutzt"
+      "en": "Filter by name, tag or user",
+      "de": "Nach Name, Tag oder Benutzer filtern"
     }
   },
   "copyrightNoticeEditor": {
