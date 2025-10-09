@@ -5,9 +5,12 @@ contentManagement:
   documentsTabTitle:
     en: Documents
     de: Dokumente
-  mediaLibraryTabTitle:
-    en: Media center
-    de: Mediathek
   documentCategoriesTabTitle:
     en: Document categories
     de: Dokument-Kategorien
+  mediaLibraryTabTitle:
+    en: Media center
+    de: Mediathek
+  mediaTrashTabTitle:
+    en: Media trash
+    de: Mediathek-Papierkorb
