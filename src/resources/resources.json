@@ -1891,6 +1891,14 @@
     "filterPlaceholder": {
       "en": "Filter by name, tag or user",
       "de": "Nach Name, Tag oder Benutzer filtern"
+    },
+    "expirationDate": {
+      "en": "Expiration date",
+      "de": "Ablaufdatum"
+    },
+    "sortedByExpiresOn": {
+      "en": "Sorted by expiration date",
+      "de": "Nach Ablaufdatum sortiert"
     }
   },
   "copyrightNoticeEditor": {
@@ -3923,6 +3931,12 @@
     "sourceType_wikimedia": {
       "en": "Wikimedia",
       "de": "Wikimedia"
+    }
+  },
+  "resourceTitleCell": {
+    "expiresOn": {
+      "en": "Expires on {date}",
+      "de": "Läuft ab am {date}"
     }
   },
   "room": {

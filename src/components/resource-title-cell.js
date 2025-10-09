@@ -6,7 +6,7 @@ import { useDateFormat } from './locale-context.js';
 import ResourceInfoCell from './resource-info-cell.js';
 import { documentRatingShape, otherUserShape } from '../ui/default-prop-types.js';
 
-function ResourceTitleCell({ title, shortDescription, url, documentRating, createdOn, createdBy, updatedOn, updatedBy, deletedOn, deletedBy }) {
+function ResourceTitleCell({ title, shortDescription, url, documentRating, createdOn, createdBy, updatedOn, updatedBy, deletedOn, deletedBy, expiresOn }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('resourceTitleCell');
 
@@ -32,6 +32,11 @@ function ResourceTitleCell({ title, shortDescription, url, documentRating, creat
               <a href={routes.getUserProfileUrl(deletedBy._id)}>{deletedBy.displayName}</a>
             </div>
           )}
+          {!!expiresOn && (
+            <div className="ResourceTitleCell-warningSubtext">
+              <span>{`${t('expiresOn', { date: formatDate(expiresOn) })} `}</span>
+            </div>
+          )}
         </div>
       }
       />
@@ -48,14 +53,16 @@ ResourceTitleCell.propTypes = {
   updatedOn: PropTypes.string.isRequired,
   updatedBy: otherUserShape.isRequired,
   deletedOn: PropTypes.string,
-  deletedBy: otherUserShape
+  deletedBy: otherUserShape,
+  expiresOn: PropTypes.string
 };
 
 ResourceTitleCell.defaultProps = {
   url: null,
   documentRating: null,
   deletedOn: null,
-  deletedBy: null
+  deletedBy: null,
+  expiresOn: null
 };
 
 export default ResourceTitleCell;

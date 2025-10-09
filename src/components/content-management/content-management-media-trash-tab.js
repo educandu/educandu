@@ -33,6 +33,7 @@ const SORTING_VALUE = {
   createdOn: 'createdOn',
   updatedOn: 'updatedOn',
   deletedOn: 'deletedOn',
+  expiresOn: 'expiresOn',
   creator: 'creator',
   size: 'size',
   type: 'type'
@@ -55,8 +56,8 @@ const getSanitizedQueryFromRequest = request => {
 
 function createTableRows(mediaTrashItems, t) {
   return mediaTrashItems.map(item => ({
-    ...item,
     key: item._id,
+    ...item,
     translatedResourceType: getResourceTypeTranslation({ resourceType: item.resourceType, t }),
     originalItem: {
       ...item.originalItem,
@@ -144,6 +145,7 @@ function ContentManagementMediaTrashTab() {
       { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
       { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn },
       { label: t('common:deletionDate'), appliedLabel: t('common:sortedByDeletedOn'), value: SORTING_VALUE.deletedOn },
+      { label: t('expirationDate'), appliedLabel: t('sortedByExpiresOn'), value: SORTING_VALUE.expiresOn },
       { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.creator },
       { label: t('common:size'), appliedLabel: t('common:sortedBySize'), value: SORTING_VALUE.size },
       { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: SORTING_VALUE.type }
@@ -157,6 +159,7 @@ function ContentManagementMediaTrashTab() {
     createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.createdOn, direction)),
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.updatedOn, direction)),
     deletedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
+    expiresOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.expiresOn, direction)),
     creator: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.createdBy.displayName, { direction, ignoreCase: true })),
     size: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.size, direction)),
     type: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.originalItem.translatedResourceType, { direction, ignoreCase: true }))
@@ -230,6 +233,7 @@ function ContentManagementMediaTrashTab() {
         updatedBy={row.originalItem.updatedBy}
         deletedOn={row.createdOn}
         deletedBy={row.createdBy}
+        expiresOn={row.expiresOn}
         />
     );
   };

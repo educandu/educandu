@@ -1,0 +1,4 @@
+resourceTitleCell:
+  expiresOn:
+    en: Expires on {date}
+    de: Läuft ab am {date}

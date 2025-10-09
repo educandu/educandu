@@ -129,6 +129,7 @@ class MediaLibraryService {
 
     return items.map(item => ({
       ...item,
+      expiresOn: moment(item.createdOn).add(this.serverConfig.mediaTrashExpiryTimeoutInDays, 'days').toDate(),
       usage: this._getMediaLibraryItemResourceUsage(
         item.originalItem,
         docCdnResources,
