@@ -44,6 +44,9 @@ common:
   pasteFromClipboard:
     en: Paste from clipboard
     de: Aus der Zwischenablage einfügen
+  restore:
+    en: Restore
+    de: Wiederherstellen
   delete:
     en: Delete
     de: Löschen
@@ -603,6 +606,9 @@ common:
   licenses:
     en: Licenses
     de: Lizenzen
+  usage:
+    en: Usage
+    de: Benutzung
   setting:
     en: Setting
     de: Einstellung
@@ -771,6 +777,9 @@ common:
   previewArea:
     en: Preview area
     de: Vorschaubereich
+  used:
+    en: used
+    de: benutzt
   neverUsed:
     en: never used
     de: nie benutzt

@@ -7,6 +7,6 @@ export const mediaTrashItemDbSchema = joi.object({
   originalItem: mediaLibraryItemDbSchema.required()
 });
 
-export const mediaTrashItemIdParamsSchema = joi.object({
+export const mediaTrashItemIdParamsOrBodySchema = joi.object({
   mediaTrashItemId: idOrKeySchema.required()
 });

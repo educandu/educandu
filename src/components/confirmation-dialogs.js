@@ -175,6 +175,18 @@ export function confirmMediaFileHardDelete(t, fileName, onOk, onCancel = () => {
   });
 }
 
+export function confirmMediaFileRestore(t, fileName, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:restoreMediaFileConfirmation', { fileName }),
+    okText: t('common:yes'),
+    okType: 'primary',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmSectionHardDelete(
   t,
   onOk,

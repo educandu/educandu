@@ -1,9 +1,12 @@
-import { validateParams } from '../domain/validation-middleware.js';
+import express from 'express';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import MediaLibraryService from '../services/media-library-service.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { mediaTrashItemIdParamsSchema } from '../domain/schemas/media-trash-item-schemas.js';
+import { validateBody, validateParams } from '../domain/validation-middleware.js';
+import { mediaTrashItemIdParamsOrBodySchema } from '../domain/schemas/media-trash-item-schemas.js';
+
+const jsonParser = express.json();
 
 class MediaTrashController {
   static dependencies = [MediaLibraryService, ClientDataMappingService];
@@ -39,6 +42,13 @@ class MediaTrashController {
     return res.status(204).end();
   }
 
+  async handleRestoreMediaTrashItem(req, res) {
+    const { mediaTrashItemId } = req.body;
+
+    await this.mediaLibraryService.restoreMediaTrashItem({ mediaTrashItemId });
+    return res.status(201).end();
+  }
+
   registerApi(router) {
     router.get(
       '/api/v1/media-trash/items/content-management',
@@ -54,8 +64,16 @@ class MediaTrashController {
     router.delete(
       '/api/v1/media-trash/items/:mediaTrashItemId',
       needsPermission(permissions.MANAGE_DELETED_PUBLIC_CONTENT),
-      validateParams(mediaTrashItemIdParamsSchema),
+      validateParams(mediaTrashItemIdParamsOrBodySchema),
       (req, res) => this.handleDeleteMediaTrashItem(req, res)
+    );
+
+    router.post(
+      '/api/v1/media-trash/restored-items',
+      needsPermission(permissions.MANAGE_DELETED_PUBLIC_CONTENT),
+      jsonParser,
+      validateBody(mediaTrashItemIdParamsOrBodySchema),
+      (req, res) => this.handleRestoreMediaTrashItem(req, res)
     );
   }
 }

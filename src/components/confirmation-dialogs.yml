@@ -44,6 +44,9 @@ confirmationDialogs:
   hardDeleteMediaFileConfirmation:
     en: Do you really want to irreversibly delete the file "{fileName}"?
     de: Möchtest du die Datei "{fileName}" wirklich unwiderruflich löschen?
+  restoreMediaFileConfirmation:
+    en: Do you really want to restore the file "{fileName}"?
+    de: Möchtest du die Datei "{fileName}" wirklich wiederherstellen?
   thisActionIsIrreversible:
     en: This action is irreversible!
     de: Diese Aktion ist unwiderrufbar!

@@ -28,6 +28,10 @@ class MediaTrashItemStore {
     return this.collection.findOne({ _id: mediaTrashItemId }, { projection: mediaTrashItemMetadataProjection, session });
   }
 
+  getMediaTrashItemWithSearchTokensById(mediaTrashItemId, { session } = {}) {
+    return this.collection.findOne({ _id: mediaTrashItemId }, { session });
+  }
+
   getMediaTrashItemsMetadataCreatedBefore(beforeDate, { session } = {}) {
     return this.collection.find({ createdOn: { $lt: beforeDate } }, { projection: mediaTrashItemMetadataProjection, session }).toArray();
   }

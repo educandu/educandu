@@ -24,6 +24,16 @@ class MediaTrashApiClient {
       )
       .then(res => res.data);
   }
+
+  restoreMediaTrashItem({ mediaTrashItemId }) {
+    return this.httpClient
+      .post(
+        '/api/v1/media-trash/restored-items',
+        { mediaTrashItemId },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default MediaTrashApiClient;

@@ -4,26 +4,26 @@ import { message, Table } from 'antd';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
-import { useUser } from '../user-context.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
+import { RestoreIcon } from '../icons/icons.js';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import ResourceTypeCell from '../resource-type-cell.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import ResourceTitleCell from '../resource-title-cell.js';
+import ResourceUsageCell from '../resource-usage-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import { SORTING_DIRECTION } from '../../domain/constants.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import { ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import MediaTrashApiClient from '../../api-clients/media-trash-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
+import { confirmMediaFileHardDelete, confirmMediaFileRestore } from '../confirmation-dialogs.js';
 import MediaLibaryItemsModal, { MEDIA_LIBRARY_ITEMS_MODAL_MODE } from '../resource-selector/media-library/media-library-items-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -88,7 +88,6 @@ function getMediaLibraryItemsModalDefaultState() {
 }
 
 function ContentManagementMediaTrashTab() {
-  const user = useUser();
   const request = useRequest();
   const [mediaTrashItems, setMediaTrashItems] = useState([]);
   const { t } = useTranslation('contentManagementMediaTrashTab');
@@ -192,6 +191,19 @@ function ContentManagementMediaTrashTab() {
     setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.trashPreview, mediaTrashItem, mediaLibraryItem: mediaTrashItem.originalItem, isOpen: true });
   };
 
+  const handleRestoreItemClick = row => {
+    const mediaTrashItem = mediaTrashItems.find(item => item._id === row.key);
+    confirmMediaFileRestore(t, mediaTrashItem.originalItem.name, async () => {
+      try {
+        await mediaTrashApiClient.restoreMediaTrashItem({ mediaTrashItemId: mediaTrashItem._id });
+        setMediaTrashItems(oldItems => ensureIsExcluded(oldItems, mediaTrashItem));
+        message.success(t('common:changesSavedSuccessfully'));
+      } catch (error) {
+        handleApiError({ error, logger, t });
+      }
+    });
+  };
+
   const handleDeleteItemClick = row => {
     const mediaTrashItem = mediaTrashItems.find(item => item._id === row.key);
     confirmMediaFileHardDelete(t, mediaTrashItem.originalItem.name, async () => {
@@ -242,6 +254,10 @@ function ContentManagementMediaTrashTab() {
     <TagsExpander tags={row.originalItem.tags} />
   );
 
+  const renderUsage = (_, row) => (
+    <ResourceUsageCell resourceUsage={row.usage} />
+  );
+
   const renderActions = (_actions, row) => {
     return (
       <div>
@@ -252,22 +268,18 @@ function ContentManagementMediaTrashTab() {
             intent={ACTION_BUTTON_INTENT.default}
             onClick={() => handlePreviewItemClick(row)}
             />
-          {/* {hasUserPermission(user, permissions.MANAGE_DELETED_PUBLIC_CONTENT) && (
-            <ActionButton
-              title={t('common:delete')}
-              icon={<DeleteIcon />}
-              intent={ACTION_BUTTON_INTENT.success}
-              onClick={() => handleDeleteItemClick(row)}
-              />
-          )} */}
-          {hasUserPermission(user, permissions.DELETE_PUBLIC_CONTENT) && (
-            <ActionButton
-              title={t('common:delete')}
-              icon={<DeleteIcon />}
-              intent={ACTION_BUTTON_INTENT.error}
-              onClick={() => handleDeleteItemClick(row)}
-              />
-          )}
+          <ActionButton
+            title={t('common:restore')}
+            icon={<RestoreIcon />}
+            intent={ACTION_BUTTON_INTENT.success}
+            onClick={() => handleRestoreItemClick(row)}
+            />
+          <ActionButton
+            title={t('common:delete')}
+            icon={<DeleteIcon />}
+            intent={ACTION_BUTTON_INTENT.error}
+            onClick={() => handleDeleteItemClick(row)}
+            />
         </ActionButtonGroup>
       </div>
     );
@@ -293,17 +305,17 @@ function ContentManagementMediaTrashTab() {
       width: '300px'
     },
     {
-      title: t('common:licenses'),
-      key: 'licenses',
-      render: () => 'TODO',
+      title: t('common:usage'),
+      key: 'usage',
+      render: renderUsage,
       responsive: ['md'],
-      width: '150px'
+      width: '115px'
     },
     {
       title: t('common:actions'),
       key: 'actions',
       render: renderActions,
-      width: '100px'
+      width: '115px'
     }
   ];
 

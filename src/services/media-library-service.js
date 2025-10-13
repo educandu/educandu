@@ -285,6 +285,27 @@ class MediaLibraryService {
     }
   }
 
+  async restoreMediaTrashItem({ mediaTrashItemId }) {
+    const oldMediaTrashItem = await this.mediaTrashItemStore.getMediaTrashItemWithSearchTokensById(mediaTrashItemId);
+    if (oldMediaTrashItem) {
+      const newMediaLibraryItem = cloneDeep(oldMediaTrashItem.originalItem);
+
+      const oldStoragePath = urlUtils.concatParts(getMediaTrashPath(), oldMediaTrashItem.name);
+      const newStoragePath = urlUtils.concatParts(getMediaLibraryPath(), newMediaLibraryItem.name);
+
+      await this.transactionRunner.run(async session => {
+        await this.mediaLibraryItemStore.insertMediaLibraryItem(newMediaLibraryItem, { session });
+        await this.mediaTrashItemStore.deleteMediaTrashItem(oldMediaTrashItem, { session });
+      });
+
+      try {
+        await this.cdn.moveObject(oldStoragePath, newStoragePath);
+      } catch (error) {
+        logger.error(`Error moving ${oldStoragePath} to ${newStoragePath} while restoring media trash item with ID ${mediaTrashItemId}`, error);
+      }
+    }
+  }
+
   async cleanupMediaTrash(context) {
     const now = new Date();
     const beforeDate = moment(now).add(this.serverConfig.mediaTrashExpiryTimeoutInDays, 'days').toDate();
