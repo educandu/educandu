@@ -1,5 +1,6 @@
 import by from 'thenby';
 import mime from 'mime';
+import moment from 'moment';
 import Cdn from '../stores/cdn.js';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
@@ -12,10 +13,11 @@ import SettingStore from '../stores/setting-store.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import transliterate from '@sindresorhus/transliterate';
+import ServerConfig from '../bootstrap/server-config.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
-import MediaTrashStore from '../stores/media-trash-item-store.js';
+import MediaTrashItemStore from '../stores/media-trash-item-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import DocumentCategoryStore from '../stores/document-category-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
@@ -32,12 +34,13 @@ class MediaLibraryService {
     MediaLibraryItemStore,
     DocumentCategoryStore,
     DocumentRevisionStore,
-    MediaTrashStore,
+    MediaTrashItemStore,
     DocumentStore,
     UserStore,
     RoomStore,
     SettingStore,
-    TransactionRunner
+    TransactionRunner,
+    ServerConfig
   ];
 
   constructor(
@@ -45,23 +48,25 @@ class MediaLibraryService {
     mediaLibraryItemStore,
     documentCategoryStore,
     documentRevisionStore,
-    mediaTrashStore,
+    mediaTrashItemStore,
     documentStore,
     userStore,
     roomStore,
     settingStore,
-    transactionRunner
+    transactionRunner,
+    serverConfig
   ) {
     this.cdn = cdn;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
     this.documentCategoryStore = documentCategoryStore;
     this.documentRevisionStore = documentRevisionStore;
-    this.mediaTrashStore = mediaTrashStore;
+    this.mediaTrashItemStore = mediaTrashItemStore;
     this.documentStore = documentStore;
     this.userStore = userStore;
     this.roomStore = roomStore;
     this.settingStore = settingStore;
     this.transactionRunner = transactionRunner;
+    this.serverConfig = serverConfig;
   }
 
   getAllMediaLibraryItems() {
@@ -90,8 +95,43 @@ class MediaLibraryService {
 
     return items.map(item => ({
       ...item,
-      usage: this._getResourceUsage(
+      usage: this._getMediaLibraryItemResourceUsage(
         item,
+        docCdnResources,
+        revCdnResources,
+        categoryResources,
+        userCdnResources,
+        roomCdnResources,
+        settingCdnResources
+      )
+    }));
+  }
+
+  async getAllMediaTrashItemsWithUsage() {
+    const [
+      items,
+      docCdnResources,
+      revCdnResources,
+      categoryResources,
+      userCdnResources,
+      roomCdnResources,
+      settingCdnResources
+    ]
+    = await Promise.all([
+      this.mediaTrashItemStore.getAllMediaTrashItems(),
+      this.documentStore.getAllCdnResourcesReferencedFromNonArchivedDocuments().then(x => new Set(x)),
+      this.documentRevisionStore.getAllCdnResourcesReferencedFromDocumentRevisions().then(x => new Set(x)),
+      this.documentCategoryStore.getAllCdnResourcesReferencedFromDocumentCategories().then(x => new Set(x)),
+      this.userStore.getAllCdnResourcesReferencedFromUsers().then(x => new Set(x)),
+      this.roomStore.getAllCdnResourcesReferencedFromRoomsMetadata().then(x => new Set(x)),
+      this.settingStore.getAllCdnResourcesReferencedFromSettings().then(x => new Set(x)),
+    ]);
+
+    return items.map(item => ({
+      ...item,
+      expiresOn: moment(item.createdOn).add(this.serverConfig.mediaTrashExpiryTimeoutInDays, 'days').toDate(),
+      usage: this._getMediaLibraryItemResourceUsage(
+        item.originalItem,
         docCdnResources,
         revCdnResources,
         categoryResources,
@@ -226,7 +266,7 @@ class MediaLibraryService {
       };
 
       await this.transactionRunner.run(async session => {
-        await this.mediaTrashStore.insertMediaTrashItem(newMediaTrashItem, { session });
+        await this.mediaTrashItemStore.insertMediaTrashItem(newMediaTrashItem, { session });
         await this.mediaLibraryItemStore.deleteMediaLibraryItem(mediaLibraryItemId, { session });
       });
 
@@ -235,6 +275,65 @@ class MediaLibraryService {
       } catch (error) {
         logger.error(`Error moving ${oldStoragePath} to ${newStoragePath} while deleting media library item with ID ${mediaLibraryItemId}`, error);
       }
+    }
+  }
+
+  async deleteMediaTrashItem({ mediaTrashItemId }) {
+    const itemToDelete = await this.mediaTrashItemStore.getMediaTrashItemMetadataById(mediaTrashItemId);
+    if (itemToDelete) {
+      await this._deleteMediaTrashItem(itemToDelete);
+    }
+  }
+
+  async restoreMediaTrashItem({ mediaTrashItemId }) {
+    const oldMediaTrashItem = await this.mediaTrashItemStore.getMediaTrashItemWithSearchTokensById(mediaTrashItemId);
+    if (oldMediaTrashItem) {
+      const newMediaLibraryItem = cloneDeep(oldMediaTrashItem.originalItem);
+
+      const oldStoragePath = urlUtils.concatParts(getMediaTrashPath(), oldMediaTrashItem.name);
+      const newStoragePath = urlUtils.concatParts(getMediaLibraryPath(), newMediaLibraryItem.name);
+
+      await this.transactionRunner.run(async session => {
+        await this.mediaLibraryItemStore.insertMediaLibraryItem(newMediaLibraryItem, { session });
+        await this.mediaTrashItemStore.deleteMediaTrashItem(oldMediaTrashItem, { session });
+      });
+
+      try {
+        await this.cdn.moveObject(oldStoragePath, newStoragePath);
+      } catch (error) {
+        logger.error(`Error moving ${oldStoragePath} to ${newStoragePath} while restoring media trash item with ID ${mediaTrashItemId}`, error);
+      }
+    }
+  }
+
+  async cleanupMediaTrash(context) {
+    const now = new Date();
+    const beforeDate = moment(now).add(this.serverConfig.mediaTrashExpiryTimeoutInDays, 'days').toDate();
+
+    const itemsToDelete = await this.mediaTrashItemStore.getMediaTrashItemsMetadataCreatedBefore(beforeDate);
+    if (!itemsToDelete.length) {
+      logger.info('Cleaning up media trash: no items to delete');
+      return;
+    }
+
+    for (const itemToDelete of itemsToDelete) {
+      if (context.cancellationRequested) {
+        logger.info('Cleaning up media trash has been cancelled');
+        return;
+      }
+
+      await this._deleteMediaTrashItem(itemToDelete);
+    }
+  }
+
+  async _deleteMediaTrashItem(itemToDelete) {
+    const storagePath = urlUtils.concatParts(getMediaTrashPath(), itemToDelete.name);
+    try {
+      await this.cdn.deleteObject(storagePath);
+      await this.mediaTrashItemStore.deleteMediaTrashItem(itemToDelete._id);
+      logger.info(`Successfully deleted ${storagePath} and media trash item with ID ${itemToDelete._id}`);
+    } catch (error) {
+      logger.error(`Error deleting ${storagePath} and media trash item with ID ${itemToDelete._id}`, error);
     }
   }
 
@@ -250,7 +349,7 @@ class MediaLibraryService {
     return result[0]?.uniqueTags || [];
   }
 
-  _getResourceUsage(
+  _getMediaLibraryItemResourceUsage(
     mediaLibraryItem,
     documentCdnResourcesSet,
     documentRevisionsCdnResourcesSet,

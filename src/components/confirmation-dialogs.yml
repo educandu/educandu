@@ -38,9 +38,15 @@ confirmationDialogs:
   leaveRoomConfirmation:
     en: Do you really want to cancel your membership in room "{roomName}"?
     de: Möchtest du deine Mitgliedschaft im Raum "{roomName}" wirklich beenden?
-  deleteMediaFileConfirmation:
+  softDeleteMediaFileConfirmation:
+    en: Do you really want to move the file "{fileName}" to the trash bin?
+    de: Möchtest du die Datei "{fileName}" wirklich in den Papierkorb verschieben?
+  hardDeleteMediaFileConfirmation:
     en: Do you really want to irreversibly delete the file "{fileName}"?
     de: Möchtest du die Datei "{fileName}" wirklich unwiderruflich löschen?
+  restoreMediaFileConfirmation:
+    en: Do you really want to restore the file "{fileName}"?
+    de: Möchtest du die Datei "{fileName}" wirklich wiederherstellen?
   thisActionIsIrreversible:
     en: This action is irreversible!
     de: Diese Aktion ist unwiderrufbar!
@@ -99,5 +105,5 @@ confirmationDialogs:
     en: Do you really want to reset the whiteboard?
     de: Möchtest du das Whiteboard wirklich zurücksetzen?
   bulkDeleteMediaItemsConfirmation:
-    en: Do you really want to irreversibly delete {count, plural, =1 {# media resource} other {# media resources}}?
-    de: Möchtest du {count, plural, =1 {# Mediathek-Ressource} other {# Mediathek-Ressourcen}} wirklich unwiderruflich löschen?
+    en: Do you really want to move {count, plural, =1 {# media resource} other {# media resources}} to the trash bin?
+    de: Möchtest du {count, plural, =1 {# Mediathek-Ressource} other {# Mediathek-Ressourcen}} wirklich in den Papierkorb verschieben?

@@ -16,6 +16,7 @@ import { BATCH_TYPE, SEARCH_RESOURCE_TYPE, EVENT_TYPE, FAVORITE_TYPE, TASK_TYPE 
 import {
   extractUserIdsFromDocsOrRevisions,
   extractUserIdsFromMediaLibraryItems,
+  extractUserIdsFromMediaTrashItems,
   extractUserIdsFromRoomMediaItems
 } from '../domain/data-extractors.js';
 
@@ -219,6 +220,17 @@ class ClientDataMappingService {
       return mediaLibraryItem
         ? this._mapMediaLibraryItem(mediaLibraryItem, userMap, grantedPermissions)
         : mediaLibraryItem;
+    });
+  }
+
+  async mapMediaTrashItems(mediaTrashItems, user) {
+    const grantedPermissions = getUserPermissions(user);
+    const userMap = await this._getUserMapForMediaTrashItems(mediaTrashItems.filter(x => !!x));
+
+    return mediaTrashItems.map(mediaTrashItem => {
+      return mediaTrashItem
+        ? this._mapMediaTrashItem(mediaTrashItem, userMap, grantedPermissions)
+        : mediaTrashItem;
     });
   }
 
@@ -679,6 +691,37 @@ class ClientDataMappingService {
     return result;
   }
 
+  _mapMediaTrashItem(mediaTrashItem, userMap, grantedPermissions) {
+    if (!mediaTrashItem) {
+      return mediaTrashItem;
+    }
+
+    const result = {};
+
+    for (const [key, value] of Object.entries(mediaTrashItem)) {
+      switch (key) {
+        case 'url':
+          result.url = getAccessibleUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
+          result.portableUrl = getPortableUrl({ url: value, cdnRootUrl: this.serverConfig.cdnRootUrl });
+          break;
+        case 'createdOn':
+          result[key] = value ? value.toISOString() : value;
+          break;
+        case 'createdBy':
+          result[key] = value ? this._mapOtherUser({ user: userMap.get(value), grantedPermissions }) : value;
+          break;
+        case 'originalItem':
+          result[key] = value ? this._mapMediaLibraryItem(value, userMap, grantedPermissions) : value;
+          break;
+        default:
+          result[key] = value;
+          break;
+      }
+    }
+
+    return result;
+  }
+
   _mapRoomMediaItem(roomMediaItem, userMap, grantedPermissions) {
     if (!roomMediaItem) {
       return roomMediaItem;
@@ -813,6 +856,16 @@ class ClientDataMappingService {
 
   async _getUserMapForMediaLibraryItems(mediaLibraryItems) {
     const userIds = extractUserIdsFromMediaLibraryItems(mediaLibraryItems);
+    const users = await this.userStore.getUsersByIds(userIds);
+    if (users.length !== userIds.length) {
+      throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
+    }
+
+    return new Map(users.map(u => [u._id, u]));
+  }
+
+  async _getUserMapForMediaTrashItems(mediaTrashItems) {
+    const userIds = extractUserIdsFromMediaTrashItems(mediaTrashItems);
     const users = await this.userStore.getUsersByIds(userIds);
     if (users.length !== userIds.length) {
       throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);

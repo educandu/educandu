@@ -6,7 +6,7 @@ import { useDateFormat } from './locale-context.js';
 import ResourceInfoCell from './resource-info-cell.js';
 import { documentRatingShape, otherUserShape } from '../ui/default-prop-types.js';
 
-function ResourceTitleCell({ title, shortDescription, url, documentRating, createdOn, createdBy, updatedOn, updatedBy }) {
+function ResourceTitleCell({ title, shortDescription, url, documentRating, createdOn, createdBy, updatedOn, updatedBy, deletedOn, deletedBy, expiresOn }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('resourceTitleCell');
 
@@ -26,6 +26,17 @@ function ResourceTitleCell({ title, shortDescription, url, documentRating, creat
             <span>{`${t('common:updatedOnDateBy', { date: formatDate(updatedOn) })} `}</span>
             <a href={routes.getUserProfileUrl(updatedBy._id)}>{updatedBy.displayName}</a>
           </div>
+          {!!deletedOn && !!deletedBy && (
+            <div>
+              <span>{`${t('common:deletedOnDateBy', { date: formatDate(deletedOn) })} `}</span>
+              <a href={routes.getUserProfileUrl(deletedBy._id)}>{deletedBy.displayName}</a>
+            </div>
+          )}
+          {!!expiresOn && (
+            <div className="ResourceTitleCell-warningSubtext">
+              <span>{`${t('expiresOn', { date: formatDate(expiresOn) })} `}</span>
+            </div>
+          )}
         </div>
       }
       />
@@ -35,16 +46,23 @@ function ResourceTitleCell({ title, shortDescription, url, documentRating, creat
 ResourceTitleCell.propTypes = {
   title: PropTypes.string.isRequired,
   shortDescription: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
+  url: PropTypes.string,
   documentRating: documentRatingShape,
   createdOn: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
   updatedOn: PropTypes.string.isRequired,
-  updatedBy: otherUserShape.isRequired
+  updatedBy: otherUserShape.isRequired,
+  deletedOn: PropTypes.string,
+  deletedBy: otherUserShape,
+  expiresOn: PropTypes.string
 };
 
 ResourceTitleCell.defaultProps = {
-  documentRating: null
+  url: null,
+  documentRating: null,
+  deletedOn: null,
+  deletedBy: null,
+  expiresOn: null
 };
 
 export default ResourceTitleCell;

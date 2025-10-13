@@ -151,12 +151,36 @@ export function confirmLeaveRoom(t, roomName, onOk, onCancel = () => {}) {
   });
 }
 
+export function confirmMediaFileSoftDelete(t, fileName, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:softDeleteMediaFileConfirmation', { fileName }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmMediaFileHardDelete(t, fileName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:deleteMediaFileConfirmation', { fileName }),
+    content: t('confirmationDialogs:hardDeleteMediaFileConfirmation', { fileName }),
     okText: t('common:yes'),
     okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
+export function confirmMediaFileRestore(t, fileName, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:restoreMediaFileConfirmation', { fileName }),
+    okText: t('common:yes'),
+    okType: 'primary',
     cancelText: t('common:no'),
     onOk,
     onCancel

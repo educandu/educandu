@@ -1,0 +1,10 @@
+contentManagementMediaTrashTab:
+  filterPlaceholder:
+    en: Filter by name, tag or user
+    de: Nach Name, Tag oder Benutzer filtern
+  expirationDate:
+    en: Expiration date
+    de: Ablaufdatum
+  sortedByExpiresOn:
+    en: Sorted by expiration date
+    de: Nach Ablaufdatum sortiert

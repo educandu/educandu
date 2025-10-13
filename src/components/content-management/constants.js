@@ -1,5 +1,6 @@
 export const TAB = {
   documents: 'documents',
+  documentCategories: 'document-categories',
   mediaLibrary: 'media-library',
-  documentCategories: 'document-categories'
+  mediaTrash: 'media-trash'
 };

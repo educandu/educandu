@@ -2,6 +2,10 @@ import Database from './database.js';
 import { validate } from '../domain/validation.js';
 import { mediaTrashItemDbSchema } from '../domain/schemas/media-trash-item-schemas.js';
 
+const mediaTrashItemProjection = {
+  'originalItem.searchTokens': 0
+};
+
 const mediaTrashItemMetadataProjection = {
   _id: 1,
   size: 1,
@@ -14,6 +18,18 @@ class MediaTrashItemStore {
 
   constructor(db) {
     this.collection = db.mediaTrashItems;
+  }
+
+  getAllMediaTrashItems({ session } = {}) {
+    return this.collection.find({}, { projection: mediaTrashItemProjection, session }).toArray();
+  }
+
+  getMediaTrashItemMetadataById(mediaTrashItemId, { session } = {}) {
+    return this.collection.findOne({ _id: mediaTrashItemId }, { projection: mediaTrashItemMetadataProjection, session });
+  }
+
+  getMediaTrashItemWithSearchTokensById(mediaTrashItemId, { session } = {}) {
+    return this.collection.findOne({ _id: mediaTrashItemId }, { session });
   }
 
   getMediaTrashItemsMetadataCreatedBefore(beforeDate, { session } = {}) {

@@ -28,7 +28,7 @@ import { RESOURCE_USAGE, SORTING_DIRECTION } from '../../domain/constants.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { ensureAreExcluded, ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
-import { confirmBulkDeleteMediaItems, confirmMediaFileHardDelete } from '../confirmation-dialogs.js';
+import { confirmBulkDeleteMediaItems, confirmMediaFileSoftDelete } from '../confirmation-dialogs.js';
 import MediaLibaryItemsModal, { MEDIA_LIBRARY_ITEMS_MODAL_MODE } from '../resource-selector/media-library/media-library-items-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -37,7 +37,7 @@ const SORTING_VALUE = {
   name: 'name',
   createdOn: 'createdOn',
   updatedOn: 'updatedOn',
-  user: 'user',
+  creator: 'creator',
   size: 'size',
   type: 'type'
 };
@@ -155,7 +155,7 @@ function ContentManagementMediaLibraryTab() {
       { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: SORTING_VALUE.name },
       { label: t('common:creationDate'), appliedLabel: t('common:sortedByCreatedOn'), value: SORTING_VALUE.createdOn },
       { label: t('common:updateDate'), appliedLabel: t('common:sortedByUpdatedOn'), value: SORTING_VALUE.updatedOn },
-      { label: t('common:user'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.user },
+      { label: t('common:creator'), appliedLabel: t('common:sortedByCreator'), value: SORTING_VALUE.creator },
       { label: t('common:size'), appliedLabel: t('common:sortedBySize'), value: SORTING_VALUE.size },
       { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: SORTING_VALUE.type }
     ];
@@ -167,7 +167,7 @@ function ContentManagementMediaLibraryTab() {
     name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.name, { direction, ignoreCase: true })),
     createdOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdOn, direction)),
     updatedOn: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.updatedOn, direction)),
-    user: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
+    creator: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.createdBy.displayName, { direction, ignoreCase: true })),
     size: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.size, direction)),
     type: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.translatedResourceType, { direction, ignoreCase: true }))
   }), []);
@@ -224,7 +224,7 @@ function ContentManagementMediaLibraryTab() {
 
   const handleDeleteItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
-    confirmMediaFileHardDelete(t, mediaLibraryItem.name, async () => {
+    confirmMediaFileSoftDelete(t, mediaLibraryItem.name, async () => {
       try {
         await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: mediaLibraryItem._id });
         setMediaLibraryItems(oldItems => ensureIsExcluded(oldItems, mediaLibraryItem));
@@ -398,7 +398,7 @@ function ContentManagementMediaLibraryTab() {
                   <DatePicker
                     showTime={false}
                     format={dateFormat}
-                    placeholder={t('datePlaceholder')}
+                    placeholder={t('common:date')}
                     disabledDate={determineDisabledDate}
                     value={createdBefore ? dayjs(createdBefore) : null}
                     onChange={handleCreatedBeforeFilterChange}
@@ -410,8 +410,8 @@ function ContentManagementMediaLibraryTab() {
                     className="ContentManagementMediaLibraryTab-bulkDeletePanelRadios"
                     >
                     <Radio.Group value={usage} disabled={!createdBefore} onChange={handleUsageChange}>
-                      <Radio.Button value={RESOURCE_USAGE.unused}>{t('unused')}</Radio.Button>
-                      <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('deprecated')}</Radio.Button>
+                      <Radio.Button value={RESOURCE_USAGE.unused}>{t('common:neverUsed')}</Radio.Button>
+                      <Radio.Button value={RESOURCE_USAGE.deprecated}>{t('common:noLongerUsed')}</Radio.Button>
                     </Radio.Group>
                   </Info>
                 </div>

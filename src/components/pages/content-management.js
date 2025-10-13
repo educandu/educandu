@@ -6,8 +6,10 @@ import React, { useMemo, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import FileIcon from '../icons/general/file-icon.js';
 import { TAB } from '../content-management/constants.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
 import { CategoryIcon, MediaLibraryIcon } from '../icons/icons.js';
 import ContentManagementDocumentsTab from '../content-management/content-management-documents-tab.js';
+import ContentManagementMediaTrashTab from '../content-management/content-management-media-trash-tab.js';
 import ContentManagementMediaLibraryTab from '../content-management/content-management-media-library-tab.js';
 import ContentManagementDocumentCategoriesTab from '../content-management/content-management-document-categories-tab.js';
 
@@ -31,6 +33,16 @@ function ContentManagement({ PageTemplate }) {
       )
     },
     {
+      key: TAB.documentCategories,
+      icon: <CategoryIcon />,
+      label: t('documentCategoriesTabTitle'),
+      children: (
+        <div className="Tabs-tabPane">
+          <ContentManagementDocumentCategoriesTab />
+        </div>
+      )
+    },
+    {
       key: TAB.mediaLibrary,
       icon: <MediaLibraryIcon />,
       label: t('mediaLibraryTabTitle'),
@@ -41,12 +53,12 @@ function ContentManagement({ PageTemplate }) {
       )
     },
     {
-      key: TAB.documentCategories,
-      icon: <CategoryIcon />,
-      label: t('documentCategoriesTabTitle'),
+      key: TAB.mediaTrash,
+      icon: <DeleteIcon />,
+      label: t('mediaTrashTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <ContentManagementDocumentCategoriesTab />
+          <ContentManagementMediaTrashTab />
         </div>
       )
     }

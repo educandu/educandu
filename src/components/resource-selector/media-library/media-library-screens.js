@@ -15,7 +15,7 @@ import ResourcePreviewScreen from '../shared/resource-preview-screen.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { MEDIA_SEARCH_RESOURCE_TYPE } from '../../../domain/constants.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
-import { confirmMediaFileHardDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
+import { confirmMediaFileSoftDelete, confirmPublicUploadLiability } from '../../confirmation-dialogs.js';
 import { mapMediaSearchResourceTypeToMediaLibraryResourceTypes } from '../../../utils/media-library-utils.js';
 
 const SCREEN = {
@@ -107,7 +107,7 @@ function MediaLibraryScreens({ initialUrl, onSelect, onCancel }) {
   };
 
   const handleDeleteFileClick = file => {
-    confirmMediaFileHardDelete(t, file.name, async () => {
+    confirmMediaFileSoftDelete(t, file.name, async () => {
       await mediaLibraryApiClient.deleteMediaLibraryItem({ mediaLibraryItemId: file._id });
       setFiles(oldItems => oldItems.filter(item => item.portableUrl !== file.portableUrl));
       setHighlightedFile(oldFile => oldFile.portableUrl !== file.portableUrl ? oldFile : null);

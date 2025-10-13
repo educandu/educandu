@@ -7,7 +7,7 @@ import { SEARCH_RESOURCE_TYPE } from '../domain/constants.js';
 import { getResourceIconByResourceType } from '../utils/resource-utils.js';
 
 function ResourceTypeCell({ searchResourceType }) {
-  const { t } = useTranslation('resourceTypeCell');
+  const { t } = useTranslation();
 
   const Icon = searchResourceType === SEARCH_RESOURCE_TYPE.document
     ? DocumentIcon

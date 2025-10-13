@@ -9,10 +9,10 @@ import { handleApiError } from '../../../ui/error-helper.js';
 import { useSessionAwareApiClient } from '../../../ui/api-helper.js';
 import MediaLibraryUploadScreen from './media-library-upload-screen.js';
 import MediaLibraryMetadataForm from './media-library-metadata-form.js';
-import { mediaLibraryItemShape } from '../../../ui/default-prop-types.js';
 import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
+import { mediaLibraryItemShape, mediaTrashItemShape } from '../../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -20,12 +20,19 @@ export const MEDIA_LIBRARY_ITEMS_MODAL_MODE = {
   none: 'none',
   create: 'create',
   update: 'update',
-  preview: 'preview'
+  preview: 'preview',
+  trashPreview: 'trashPreview',
 };
+
+const modesRequiringMediaLibraryItem = [
+  MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview,
+  MEDIA_LIBRARY_ITEMS_MODAL_MODE.update
+];
 
 function MediaLibaryItemsModal({
   mode,
   isOpen,
+  mediaTrashItem,
   mediaLibraryItem,
   onCreated,
   onUpdated,
@@ -38,7 +45,6 @@ function MediaLibaryItemsModal({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isFinishedUploading, setIsFinishedUploading] = useState(false);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const modesRequiringMediaLibraryItem = [MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview, MEDIA_LIBRARY_ITEMS_MODAL_MODE.update];
 
   if (!!isVisible && modesRequiringMediaLibraryItem.includes(mode) && !mediaLibraryItem) {
     throw new Error(`mediaLibraryItem needs to be provided in '${mode}' mode!`);
@@ -148,6 +154,23 @@ function MediaLibaryItemsModal({
       );
     }
 
+    if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.trashPreview) {
+      return (
+        <div className="MediaLibaryItemsModal">
+          <div className="MediaLibaryItemsModal-name">
+            {mediaLibraryItem.name}
+          </div>
+          <div className="MediaLibaryItemsModal-splitView">
+            <ResourcePreviewWithMetadata urlOrFile={mediaTrashItem.url} size={mediaTrashItem.size} />
+            <MediaLibraryMetadataDisplay mediaLibraryItem={mediaLibraryItem} />
+          </div>
+          <div className="MediaLibaryItemsModal-url">
+            <ResourceUrl url={mediaTrashItem.url} />
+          </div>
+        </div>
+      );
+    }
+
     if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.update) {
       return (
         <div className="MediaLibaryItemsModal">
@@ -173,7 +196,7 @@ function MediaLibaryItemsModal({
         </div>
       );
     }
-    if (isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview) {
+    if (isVisible && (mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview || mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.trashPreview)) {
       return (
         <div className="MediaLibaryItemsModal-footer">
           <Button type="primary" onClick={onClose}>{t('common:ok')}</Button>
@@ -191,7 +214,7 @@ function MediaLibaryItemsModal({
     return null;
   };
 
-  const isDialogClosable = isVisible && mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview;
+  const isDialogClosable = isVisible && (mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview || mode === MEDIA_LIBRARY_ITEMS_MODAL_MODE.trashPreview);
 
   return !!isMounted.current && (
     <Modal
@@ -215,6 +238,7 @@ function MediaLibaryItemsModal({
 MediaLibaryItemsModal.propTypes = {
   mode: PropTypes.oneOf(Object.values(MEDIA_LIBRARY_ITEMS_MODAL_MODE)).isRequired,
   isOpen: PropTypes.bool.isRequired,
+  mediaTrashItem: mediaTrashItemShape,
   mediaLibraryItem: mediaLibraryItemShape,
   onClose: PropTypes.func.isRequired,
   onCreated: PropTypes.func,
@@ -222,6 +246,7 @@ MediaLibaryItemsModal.propTypes = {
 };
 
 MediaLibaryItemsModal.defaultProps = {
+  mediaTrashItem: null,
   mediaLibraryItem: null,
   onCreated: () => {},
   onUpdated: () => {}
