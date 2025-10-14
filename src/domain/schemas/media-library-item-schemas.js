@@ -41,6 +41,10 @@ export const mediaLibraryItemIdParamsSchema = joi.object({
   mediaLibraryItemId: idOrKeySchema.required()
 });
 
+export const mediaLibraryItemNameParamsSchema = joi.object({
+  mediaLibraryItemName: joi.string().required()
+});
+
 export const mediaLibraryTagSearchQuerySchema = joi.object({
   query: joi.string().required()
 });

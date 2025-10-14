@@ -14,7 +14,8 @@ import {
   mediaLibrarySearchQuerySchema,
   mediaLibraryTagSearchQuerySchema,
   mediaLibraryFindParamsSchema,
-  mediaLibraryBulkDeleteBodySchema
+  mediaLibraryBulkDeleteBodySchema,
+  mediaLibraryItemNameParamsSchema
 } from '../domain/schemas/media-library-item-schemas.js';
 
 const jsonParser = express.json();
@@ -78,6 +79,16 @@ class MediaLibraryController {
     const mappedMediaLibraryItem = mediaLibraryItem ? await this.clientDataMappingService.mapMediaLibraryItem(mediaLibraryItem, user) : null;
 
     return res.send(mappedMediaLibraryItem);
+  }
+
+  async handleGetMediaLibraryUsageItemByName(req, res) {
+    const { user } = req;
+    const { mediaLibraryItemName } = req.params;
+
+    const mediaLibraryItemUsage = await this.mediaLibraryService.getMediaLibraryItemUsageByName({ mediaLibraryItemName });
+    const mappedMediaLibraryItemUsage = mediaLibraryItemUsage ? await this.clientDataMappingService.mapMediaLibraryItemUsage(mediaLibraryItemUsage, user) : null;
+
+    return res.send(mappedMediaLibraryItemUsage);
   }
 
   async handleCreateMediaLibraryItem(req, res) {
@@ -153,6 +164,13 @@ class MediaLibraryController {
       '/api/v1/media-library/items/statistics',
       needsPermission(permissions.VIEW_STATISTICS),
       (req, res) => this.handleGetMediaLibraryItemsForStatistics(req, res)
+    );
+
+    router.get(
+      '/api/v1/media-library/items/usage/:mediaLibraryItemName',
+      needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      validateParams(mediaLibraryItemNameParamsSchema),
+      (req, res) => this.handleGetMediaLibraryUsageItemByName(req, res)
     );
 
     router.get(

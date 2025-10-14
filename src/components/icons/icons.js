@@ -51,7 +51,8 @@ import {
   IconRestore,
   IconX,
   IconHistory,
-  IconFileAlert
+  IconFileAlert,
+  IconExternalLink
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -141,6 +142,7 @@ export const EnterFullscreenIcon = createIconFromTablerIconComponent(IconMaximiz
 export const ArrowsDownUpIcon = createIconFromTablerIconComponent(IconArrowsDownUp);
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
+export const ExternalLinkIcon = createIconFromTablerIconComponent(IconExternalLink);
 export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomScan);
 export const UserContributionsIcon = createIconFromTablerIconComponent(IconUserEdit);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);

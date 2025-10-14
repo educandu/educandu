@@ -6,7 +6,6 @@ import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
-import { RestoreIcon } from '../icons/icons.js';
 import { useRequest } from '../request-context.js';
 import SortingSelector from '../sorting-selector.js';
 import ResourceTypeCell from '../resource-type-cell.js';
@@ -14,6 +13,7 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import ResourceTitleCell from '../resource-title-cell.js';
 import ResourceUsageCell from '../resource-usage-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { InfoIcon, RestoreIcon } from '../icons/icons.js';
 import PreviewIcon from '../icons/general/preview-icon.js';
 import { SORTING_DIRECTION } from '../../domain/constants.js';
 import { useDebouncedFetchingState } from '../../ui/hooks.js';
@@ -21,6 +21,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import { ensureIsExcluded, replaceItem } from '../../utils/array-utils.js';
+import MediaLibraryItemUsageModal from './media-library-item-usage-modal.js';
 import MediaTrashApiClient from '../../api-clients/media-trash-api-client.js';
 import ActionButton, { ActionButtonGroup, ACTION_BUTTON_INTENT } from '../action-button.js';
 import { confirmMediaFileHardDelete, confirmMediaFileRestore } from '../confirmation-dialogs.js';
@@ -87,6 +88,13 @@ function getMediaLibraryItemsModalDefaultState() {
   };
 }
 
+function getMediaLibraryItemUsageModalDefaultState() {
+  return {
+    mediaLibraryItemName: null,
+    isOpen: false
+  };
+}
+
 function ContentManagementMediaTrashTab() {
   const request = useRequest();
   const [mediaTrashItems, setMediaTrashItems] = useState([]);
@@ -94,6 +102,7 @@ function ContentManagementMediaTrashTab() {
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaTrashApiClient = useSessionAwareApiClient(MediaTrashApiClient);
   const [mediaLibraryItemsModalState, setMediaLibraryItemsModalState] = useState(getMediaLibraryItemsModalDefaultState());
+  const [mediaLibraryItemUsageModalState, setMediaLibraryItemUsageModalState] = useState(getMediaLibraryItemUsageModalDefaultState());
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
@@ -186,6 +195,11 @@ function ContentManagementMediaTrashTab() {
     setFilter(newFilter);
   };
 
+  const handleViewItemUsageClick = row => {
+    const mediaTrashItem = mediaTrashItems.find(item => item._id === row.key);
+    setMediaLibraryItemUsageModalState({ mediaLibraryItemName: mediaTrashItem.originalItem.name, isOpen: true });
+  };
+
   const handlePreviewItemClick = row => {
     const mediaTrashItem = mediaTrashItems.find(item => item._id === row.key);
     setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.trashPreview, mediaTrashItem, mediaLibraryItem: mediaTrashItem.originalItem, isOpen: true });
@@ -230,6 +244,10 @@ function ContentManagementMediaTrashTab() {
     setMediaLibraryItemsModalState(getMediaLibraryItemsModalDefaultState());
   };
 
+  const handleMediaLibraryItemUsageModalClose = () => {
+    setMediaLibraryItemUsageModalState(getMediaLibraryItemUsageModalDefaultState());
+  };
+
   const renderType = (_, row) => (
     <ResourceTypeCell searchResourceType={row.originalItem.resourceType} />
   );
@@ -262,6 +280,12 @@ function ContentManagementMediaTrashTab() {
     return (
       <div>
         <ActionButtonGroup>
+          <ActionButton
+            title={t('common:usageOverview')}
+            icon={<InfoIcon />}
+            intent={ACTION_BUTTON_INTENT.info}
+            onClick={() => handleViewItemUsageClick(row)}
+            />
           <ActionButton
             title={t('common:preview')}
             icon={<PreviewIcon />}
@@ -309,13 +333,13 @@ function ContentManagementMediaTrashTab() {
       key: 'usage',
       render: renderUsage,
       responsive: ['md'],
-      width: '115px'
+      width: '112px'
     },
     {
       title: t('common:actions'),
       key: 'actions',
       render: renderActions,
-      width: '115px'
+      width: '148px'
     }
   ];
 
@@ -353,6 +377,10 @@ function ContentManagementMediaTrashTab() {
         onCreated={handleMediaLibraryItemsModalCreated}
         onUpdated={handleMediaLibraryItemsModalUpdated}
         onClose={handleMediaLibraryItemsModalClose}
+        />
+      <MediaLibraryItemUsageModal
+        {...mediaLibraryItemUsageModalState}
+        onClose={handleMediaLibraryItemUsageModalClose}
         />
     </div>
   );

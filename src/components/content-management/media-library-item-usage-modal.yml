@@ -1,0 +1,46 @@
+mediaLibraryItemUsageModal:
+  title:
+    en: Media usage
+    de: Mediennutzung
+  publicUsage:
+    en: Public usage
+    de: Öffentliche Nutzung
+  privateUsage:
+    en: Private usage
+    de: Private Nutzung
+  nonArchivedDocuments:
+    en: Documents
+    de: Dokumente
+  nonArchivedDocumentsTooltip:
+    en: Usage in currently non-archived public documents (including the latest version)
+    de: Benutzung in derzeit nicht-archivierten, öffentlichen Dokumenten (einschließlich der aktuellen Version)
+  documentsWithHistoricUsageOnly:
+    en: Documents (usage in history only)
+    de: Dokumente (Nutzung nur in Historie)
+  documentsWithHistoricUsageOnlyTooltip:
+    en: Usage in earlier versions of currently non-archived public documents only
+    de: Benutzung ausschließlich in früheren Versionen von derzeit nicht-archivierten, öffentlichen Dokumenten
+  archivedDocuments:
+    en: Archived documents
+    de: Archivierte Dokumente
+  archivedDocumentsTooltip:
+    en: Usage in currently archived public documents (including document history)
+    de: Benutzung in öffentlichen Dokumenten (einschließlich der Dokument-Historie), die derzeit archiviert sind
+  documentCategories:
+    en: Document categories
+    de: Dokument-Kategorien
+  users:
+    en: User profiles
+    de: Benutzerprofile
+  settings:
+    en: Settings
+    de: Einstellungen
+  settingsUsageDetails:
+    en: "Usage in <0>{count, plural, =1 {# setting} other {# settings}}</0>"
+    de: "Nutzung in <0>{count, plural, =1 {# Einstellung} other {# Einstellungen}}</0>"
+  privateUsageDetails:
+    en: "Usage in <0>{roomDocumentCount, plural, =1 {# room document} other {# room documents}}</0> and <0>{roomContentCount, plural, =1 {# room content} other {# room contents}}</0> within <0>{roomCount, plural, =1 {# room} other {# rooms}}</0> in total"
+    de: "Nutzung in <0>{roomDocumentCount, plural, =1 {# Raum-Dokument} other {# Raum-Dokumenten}}</0> und <0>{roomContentCount, plural, =1 {# Raum-Inhalt} other {# Raum-Inhalten}}</0> in insgesamt <0>{roomCount, plural, =1 {# Raum} other {# Räumen}}</0>"
+  notUsed:
+    en: none
+    de: keine

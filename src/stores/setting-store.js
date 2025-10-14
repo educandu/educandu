@@ -1,5 +1,9 @@
 import Database from './database.js';
 
+const cdnResourceUsageMetadataProjection = {
+  _id: 1
+};
+
 class SettingStore {
   static dependencies = [Database];
 
@@ -21,6 +25,10 @@ class SettingStore {
 
   getAllCdnResourcesReferencedFromSettings() {
     return this.collection.distinct('cdnResources');
+  }
+
+  getAllSettingsByReferencedCdnResourceName(cdnResourceName, { session } = {}) {
+    return this.collection.find({ cdnResources: cdnResourceName }, { projection: cdnResourceUsageMetadataProjection, session }).toArray();
   }
 
   saveSetting(setting, { session } = {}) {

@@ -142,6 +142,83 @@ class MediaLibraryService {
     }));
   }
 
+  async getMediaLibraryItemUsageByName({ mediaLibraryItemName }) {
+    await new Promise(resolve => {
+      setTimeout(() => resolve(), 5000);
+    });
+
+    const storagePath = urlUtils.concatParts(getMediaLibraryPath(), mediaLibraryItemName);
+    const cdnResourceName = `${CDN_URL_PREFIX}${storagePath}`;
+
+    const [
+      affectedFirstDocumentRevisions,
+      documentCategories,
+      users,
+      rooms,
+      settings
+    ]
+    = await Promise.all([
+      this.documentRevisionStore.getFirstAffectedDocumentRevisionsPerDocumentByReferencedCdnResourceName(cdnResourceName),
+      this.documentCategoryStore.getAllDocumentCategoriesByReferencedCdnResourceName(cdnResourceName),
+      this.userStore.getAllUsersByReferencedCdnResourceName(cdnResourceName),
+      this.roomStore.getAllRoomsByReferencedCdnResourceName(cdnResourceName),
+      this.settingStore.getAllSettingsByReferencedCdnResourceName(cdnResourceName)
+    ]);
+
+    const affectedRoomIds = new Set();
+    const affectedRoomDocumentIds = new Set();
+    const affectedPublicDocumentIds = new Set();
+
+    const archivedDocuments = [];
+    const nonArchivedDocuments = [];
+    const documentsWithHistoricUsageOnly = [];
+
+    for (const revision of affectedFirstDocumentRevisions) {
+      const resultDoc = {
+        _id: revision.documentId,
+        title: revision.documentTitle,
+        slug: revision.documentSlug,
+        firstAffectedRevisionId: revision._id,
+        affectedRevisionCount: revision.affectedRevisionCount
+      };
+
+      if (revision.roomId) {
+        affectedRoomIds.add(revision.roomId);
+        affectedRoomDocumentIds.add(revision.documentId);
+      } else{
+        affectedPublicDocumentIds.add(revision.documentId);
+        if (revision.isDocumentArchived) {
+          archivedDocuments.push(resultDoc);
+        } else if (revision.isResourceUsedInDocument) {
+          nonArchivedDocuments.push(resultDoc);
+        } else {
+          documentsWithHistoricUsageOnly.push(resultDoc);
+        }
+      }
+    }
+
+    for (const room of rooms) {
+      affectedRoomIds.add(room._id);
+    }
+
+    return {
+      publicUsage: {
+        nonArchivedDocuments,
+        documentsWithHistoricUsageOnly,
+        archivedDocuments,
+        documentCategories,
+        users,
+        settingCount: settings.length,
+        documentCount: affectedPublicDocumentIds.size
+      },
+      privateUsage: {
+        roomContentCount: rooms.length,
+        roomDocumentCount: affectedRoomDocumentIds.size,
+        roomCount: affectedRoomIds.size
+      }
+    };
+  }
+
   async getMediaLibraryItemsCount() {
     const count = await this.mediaLibraryItemStore.getMediaLibraryItemsCount();
     return count;

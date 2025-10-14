@@ -234,6 +234,17 @@ class ClientDataMappingService {
     });
   }
 
+  mapMediaLibraryItemUsage(mediaLibraryItemUsage, viewingUser) {
+    const grantedPermissions = getUserPermissions(viewingUser);
+    return {
+      ...mediaLibraryItemUsage,
+      publicUsage: {
+        ...mediaLibraryItemUsage.publicUsage,
+        users: mediaLibraryItemUsage.publicUsage.users.map(user => this._mapOtherUser({ user, grantedPermissions }))
+      }
+    };
+  }
+
   async mapSingleRoomMediaOverview(singleRoomMediaOverview, user) {
     const grantedPermissions = getUserPermissions(user);
     const mappedSingleRoomMediaOverview = cloneDeep(singleRoomMediaOverview);

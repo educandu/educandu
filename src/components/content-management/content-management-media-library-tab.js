@@ -7,6 +7,7 @@ import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import FilterInput from '../filter-input.js';
 import { useUser } from '../user-context.js';
+import { InfoIcon } from '../icons/icons.js';
 import TagsExpander from '../tags-expander.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
@@ -23,6 +24,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getResourceTypeTranslation } from '../../utils/resource-utils.js';
 import { Button, Collapse, message, Table, Radio, DatePicker } from 'antd';
+import MediaLibraryItemUsageModal from './media-library-item-usage-modal.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { RESOURCE_USAGE, SORTING_DIRECTION } from '../../domain/constants.js';
 import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
@@ -93,6 +95,13 @@ function getMediaLibraryItemsModalDefaultState() {
   };
 }
 
+function getMediaLibraryItemUsageModalDefaultState() {
+  return {
+    mediaLibraryItemName: null,
+    isOpen: false
+  };
+}
+
 function ContentManagementMediaLibraryTab() {
   const user = useUser();
   const request = useRequest();
@@ -102,6 +111,7 @@ function ContentManagementMediaLibraryTab() {
   const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
   const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
   const [mediaLibraryItemsModalState, setMediaLibraryItemsModalState] = useState(getMediaLibraryItemsModalDefaultState());
+  const [mediaLibraryItemUsageModalState, setMediaLibraryItemUsageModalState] = useState(getMediaLibraryItemUsageModalDefaultState());
 
   const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
 
@@ -208,6 +218,11 @@ function ContentManagementMediaLibraryTab() {
     setUsage(event.target.value);
   };
 
+  const handleViewItemUsageClick = row => {
+    const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
+    setMediaLibraryItemUsageModalState({ mediaLibraryItemName: mediaLibraryItem.name, isOpen: true });
+  };
+
   const handlePreviewItemClick = row => {
     const mediaLibraryItem = mediaLibraryItems.find(item => item._id === row.key);
     setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview, mediaLibraryItem, isOpen: true });
@@ -246,6 +261,10 @@ function ContentManagementMediaLibraryTab() {
 
   const handleMediaLibraryItemsModalClose = () => {
     setMediaLibraryItemsModalState(getMediaLibraryItemsModalDefaultState());
+  };
+
+  const handleMediaLibraryItemUsageModalClose = () => {
+    setMediaLibraryItemUsageModalState(getMediaLibraryItemUsageModalDefaultState());
   };
 
   const determineDisabledDate = dayjsValue => {
@@ -294,6 +313,12 @@ function ContentManagementMediaLibraryTab() {
     return (
       <div>
         <ActionButtonGroup>
+          <ActionButton
+            title={t('common:usageOverview')}
+            icon={<InfoIcon />}
+            intent={ACTION_BUTTON_INTENT.info}
+            onClick={() => handleViewItemUsageClick(row)}
+            />
           <ActionButton
             title={t('common:preview')}
             icon={<PreviewIcon />}
@@ -346,14 +371,14 @@ function ContentManagementMediaLibraryTab() {
       key: 'licenses',
       render: renderTagsOrLicenses,
       responsive: ['md'],
-      width: '150px'
+      width: '148px'
     },
     {
       title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
       render: renderActions,
-      width: '100px'
+      width: '148px'
     }
   ];
 
@@ -443,6 +468,10 @@ function ContentManagementMediaLibraryTab() {
         onCreated={handleMediaLibraryItemsModalCreated}
         onUpdated={handleMediaLibraryItemsModalUpdated}
         onClose={handleMediaLibraryItemsModalClose}
+        />
+      <MediaLibraryItemUsageModal
+        {...mediaLibraryItemUsageModalState}
+        onClose={handleMediaLibraryItemUsageModalClose}
         />
     </div>
   );
