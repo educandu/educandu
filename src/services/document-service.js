@@ -27,8 +27,8 @@ import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { canRestoreDocumentRevisions } from '../utils/document-utils.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { DOCUMENT_VERIFIED_RELEVANCE_POINTS } from '../domain/constants.js';
-import { ensureIsExcluded, ensureIsIncluded } from '../utils/array-utils.js';
 import DocumentInputMediaItemStore from '../stores/document-input-media-item-store.js';
+import { ensureIsExcluded, ensureIsIncluded, ensureIsUnique } from '../utils/array-utils.js';
 import { documentDBSchema, documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 import { checkRevisionOnDocumentCreation, checkRevisionOnDocumentUpdate } from '../utils/revision-utils.js';
 import { createSectionRevision, extractCdnResources, validateSection, validateSections } from './section-helper.js';
@@ -819,8 +819,8 @@ class DocumentService {
       }
       : null;
 
-    const tags = data.tags || [];
-    const searchTokens = tags.map(tag => transliterate(tag));
+    const tags = ensureIsUnique(data.tags || []);
+    const searchTokens = ensureIsUnique(tags.map(tag => transliterate(tag)));
 
     return {
       _id: data._id || uniqueId.create(),
