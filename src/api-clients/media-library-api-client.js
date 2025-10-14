@@ -85,6 +85,15 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
+  getMediaLibraryItemUsage({ mediaLibraryItemName }) {
+    return this.httpClient
+      .get(
+        `/api/v1/media-library/items/usage/${encodeURIComponent(mediaLibraryItemName)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   getContentManagementMediaLibraryItems() {
     return this.httpClient
       .get(

@@ -2,6 +2,11 @@ import Database from './database.js';
 import { validate } from '../domain/validation.js';
 import { documentCategoryDbSchema } from '../domain/schemas/document-category-schemas.js';
 
+const cdnResourceUsageMetadataProjection = {
+  _id: 1,
+  name: 1
+};
+
 class DocumentCategoryStore {
   static dependencies = [Database];
 
@@ -23,6 +28,10 @@ class DocumentCategoryStore {
 
   getAllCdnResourcesReferencedFromDocumentCategories() {
     return this.collection.distinct('cdnResources');
+  }
+
+  getAllDocumentCategoriesByReferencedCdnResourceName(cdnResourceName, { session } = {}) {
+    return this.collection.find({ cdnResources: cdnResourceName }, { projection: cdnResourceUsageMetadataProjection, session }).toArray();
   }
 
   getDocumentCategoriesByDocumentId(documentId, { session } = {}) {

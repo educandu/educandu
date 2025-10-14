@@ -1,0 +1,44 @@
+.MediaLibraryItemUsageModal {}
+
+.MediaLibraryItemUsageModal-itemName {
+  margin-top: 2 * @edu-content-padding;
+  font-weight: bold;
+  text-align: center;
+  .m-line-clamp(1);
+}
+
+.MediaLibraryItemUsageModal-sectionTitle {
+  margin-top: 2 * @edu-content-padding;
+  margin-bottom: @edu-control-spacing-wide;
+  color: @edu-primary-color-dark;
+  border-bottom: 1px solid @edu-primary-color-dark;
+  font-weight: bold;
+}
+
+.MediaLibraryItemUsageModal-sectionSubtitle {
+  margin-top: @edu-control-spacing-wide;
+  font-size: @edu-font-size-sm;
+  font-weight: bold;
+}
+
+.MediaLibraryItemUsageModal-spinner {
+  min-height: 600px;
+  display: grid;
+}
+
+.MediaLibraryItemUsageModal-usage {
+  font-size: @edu-font-size-sm;
+
+  &.MediaLibraryItemUsageModal-usage--link {
+    .m-line-clamp(1);
+  }
+
+  &.MediaLibraryItemUsageModal-usage--none {
+    font-style: italic;
+  }
+}
+
+.MediaLibraryItemUsageModal-infoIcon {
+  cursor: help !important;
+  color: @edu-secondary-color-dark !important;
+}

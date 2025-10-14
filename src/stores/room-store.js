@@ -10,6 +10,10 @@ import {
   roomDocumentsDBSchema
 } from '../domain/schemas/room-schemas.js';
 
+const cdnResourceUsageMetadataProjection = {
+  _id: 1
+};
+
 class RoomStore {
   static dependencies = [Database];
 
@@ -31,6 +35,10 @@ class RoomStore {
 
   getAllCdnResourcesReferencedFromRoomsMetadata() {
     return this.collection.distinct('cdnResources');
+  }
+
+  getAllRoomsByReferencedCdnResourceName(cdnResourceName, { session } = {}) {
+    return this.collection.find({ cdnResources: cdnResourceName }, { projection: cdnResourceUsageMetadataProjection, session }).toArray();
   }
 
   deleteRoomById(roomId, { session } = {}) {

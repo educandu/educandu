@@ -786,3 +786,6 @@ common:
   noLongerUsed:
     en: no longer used
     de: nicht mehr benutzt
+  usageOverview:
+    en: Usage overview
+    de: Benutzungsübersicht
