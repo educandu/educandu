@@ -14,6 +14,7 @@ import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import transliterate from '@sindresorhus/transliterate';
 import ServerConfig from '../bootstrap/server-config.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
@@ -269,6 +270,7 @@ class MediaLibraryService {
     const resourceType = getResourceType(storageUrl);
     const contentType = mime.getType(storageUrl) || DEFAULT_CONTENT_TYPE;
     const size = file.size;
+    const tags = ensureIsUnique(metadata.tags || []);
 
     const newMediaLibraryItem = {
       _id: mediaLibraryItemId,
@@ -285,8 +287,8 @@ class MediaLibraryService {
       languages: metadata.languages,
       allRightsReserved: metadata.allRightsReserved,
       licenses: metadata.licenses,
-      tags: metadata.tags,
-      searchTokens: [...metadata.tags.map(tag => transliterate(tag)), transliterate(storageFileName)]
+      tags,
+      searchTokens: ensureIsUnique([...tags.map(tag => transliterate(tag)), transliterate(storageFileName)])
     };
 
     try {
@@ -305,6 +307,7 @@ class MediaLibraryService {
     }
 
     const now = new Date();
+    const tags = ensureIsUnique(data.tags || []);
 
     const newMediaLibraryItemMetadata = {
       updatedBy: user._id,
@@ -313,8 +316,8 @@ class MediaLibraryService {
       languages: data.languages,
       allRightsReserved: data.allRightsReserved,
       licenses: data.licenses,
-      tags: data.tags,
-      searchTokens: [...data.tags.map(tag => transliterate(tag)), transliterate(mediaLibraryItem.name)]
+      tags,
+      searchTokens: ensureIsUnique([...tags.map(tag => transliterate(tag)), transliterate(mediaLibraryItem.name)])
     };
 
     return this.mediaLibraryItemStore.updateMediaLibraryItem(mediaLibraryItemId, newMediaLibraryItemMetadata);
