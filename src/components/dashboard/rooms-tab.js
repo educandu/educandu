@@ -9,54 +9,50 @@ import { useTranslation } from 'react-i18next';
 import { Button, Switch, Tooltip } from 'antd';
 import FilterIcon from '../icons/general/filter-icon.js';
 import RoomCreationModal from '../room-creation-modal.js';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import RoomJoinedIcon from '../icons/user-activities/room-joined-icon.js';
 import RoomCreatedIcon from '../icons/user-activities/room-created-icon.js';
+import { roomInvitationShape, roomShape } from '../../ui/default-prop-types.js';
 import { EyeInvisibleOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 
-function RoomsTab({ rooms, invitations, loading }) {
+function RoomsTab({ rooms, roomInvitations, loading }) {
   const user = useUser();
 
   const { t } = useTranslation('roomsTab');
 
-  const [ownedRooms, setOwnedRooms] = useState([]);
-  const [filterText, setFilterText] = useState(null);
-  const [memberOfRooms, setMemberOfRooms] = useState([]);
-  const [filteredOwnedRooms, setFilteredOwnedRooms] = useState([]);
-  const [filteredInvitations, setFilteredInvitations] = useState([]);
+  const [filterText, setFilterText] = useState('');
   const [includeHiddenRooms, setIncludeHiddenRooms] = useState(false);
-  const [filteredMemberOfRooms, setFilteredMemberOfRooms] = useState([]);
   const [isRoomCreationModalOpen, setIsRoomCreationModalOpen] = useState(false);
 
-  useEffect(() => {
-    const lowerCasedFilter = (filterText || '').toLowerCase();
+  const displayData = useMemo(() => {
+    const lowerCasedFilter = (filterText || '').toLowerCase().trim();
+    const hiddenRoomIds = new Set((!includeHiddenRooms && user.dashboardSettings.rooms.hiddenRooms) || []);
 
-    const newOwnedRooms = rooms
+    const ownedRooms = rooms
       .filter(room => room.ownedBy === user._id)
       .sort(by(room => room.createdOn));
 
-    const newFilteredOwnedRooms = newOwnedRooms
-      .filter(room => filterText ? room.name.toLowerCase().includes(lowerCasedFilter) : true)
-      .filter(room => includeHiddenRooms ? true : !user.dashboardSettings.rooms.hiddenRooms.includes(room._id));
+    const filteredOwnedRooms = ownedRooms
+      .filter(room => room.name.toLowerCase().includes(lowerCasedFilter) && !hiddenRoomIds.has(room._id));
 
-    const newMemberOfRooms = rooms
+    const memberOfRooms = rooms
       .filter(room => room.ownedBy !== user._id)
       .sort(by(room => room.members.find(member => member.userId === user._id).joinedOn));
 
-    const newFilteredMemberOfRooms = newMemberOfRooms
-      .filter(room => filterText ? room.name.toLowerCase().includes(lowerCasedFilter) : true)
-      .filter(room => includeHiddenRooms ? true : !user.dashboardSettings.rooms.hiddenRooms.includes(room._id));
+    const filteredMemberOfRooms = memberOfRooms
+      .filter(room => room.name.toLowerCase().includes(lowerCasedFilter) && !hiddenRoomIds.has(room._id));
 
-    const newFilteredInvitations = filterText
-      ? invitations.filter(invitation => invitation.room.name.toLowerCase().includes(lowerCasedFilter))
-      : invitations;
+    const filteredRoomInvitations = roomInvitations
+      .filter(invitation => invitation.room.name.toLowerCase().includes(lowerCasedFilter));
 
-    setOwnedRooms(newOwnedRooms);
-    setMemberOfRooms(newMemberOfRooms);
-    setFilteredOwnedRooms(newFilteredOwnedRooms);
-    setFilteredMemberOfRooms(newFilteredMemberOfRooms);
-    setFilteredInvitations(newFilteredInvitations);
-  }, [user, rooms, invitations, filterText, includeHiddenRooms]);
+    return {
+      ownedRooms,
+      memberOfRooms,
+      filteredOwnedRooms,
+      filteredMemberOfRooms,
+      filteredRoomInvitations
+    };
+  }, [rooms, roomInvitations, filterText, includeHiddenRooms, user]);
 
   const handleCreateRoomClick = () => {
     setIsRoomCreationModalOpen(true);
@@ -67,16 +63,15 @@ function RoomsTab({ rooms, invitations, loading }) {
   };
 
   const handleFilterTextChange = event => {
-    const { value } = event.target;
-    setFilterText(value);
+    setFilterText(event.target.value);
   };
 
   const handleIncludeHiddenRoomsChange = checked => {
     setIncludeHiddenRooms(checked);
   };
 
-  const showOwnedRoomsEmptyState = !ownedRooms.length;
-  const showMemberRoomsEmptyState = !memberOfRooms.length && !invitations.length;
+  const showOwnedRoomsEmptyState = !displayData.ownedRooms.length;
+  const showMemberRoomsEmptyState = !displayData.memberOfRooms.length && !roomInvitations.length;
 
   return (
     <div className="RoomsTab">
@@ -122,10 +117,10 @@ function RoomsTab({ rooms, invitations, loading }) {
           )}
           {!showOwnedRoomsEmptyState && (
             <section className="RoomsTab-roomsGroup">
-              {filteredOwnedRooms.map(room => (
+              {displayData.filteredOwnedRooms.map(room => (
                 <RoomCard key={room._id} room={room} useHidden />
               ))}
-              {!filteredOwnedRooms.length && (
+              {!displayData.filteredOwnedRooms.length && (
                 <div className="RoomsTab-roomsGroupFilterEmptyState">
                   <EmptyState
                     icon={<FilterIcon />}
@@ -147,13 +142,13 @@ function RoomsTab({ rooms, invitations, loading }) {
           )}
           {!showMemberRoomsEmptyState && (
             <section className="RoomsTab-roomsGroup">
-              {filteredMemberOfRooms.map(room => (
+              {displayData.filteredMemberOfRooms.map(room => (
                 <RoomCard key={room._id} room={room} useHidden />
               ))}
-              {filteredInvitations.map(invitation => (
+              {displayData.filteredRoomInvitations.map(invitation => (
                 <RoomCard key={invitation._id} roomInvitation={invitation} />
               ))}
-              {!filteredMemberOfRooms.length && !filteredInvitations.length && (
+              {!displayData.filteredMemberOfRooms.length && !displayData.filteredRoomInvitations.length && (
                 <div className="RoomsTab-roomsGroupFilterEmptyState">
                   <EmptyState
                     icon={<FilterIcon />}
@@ -172,15 +167,15 @@ function RoomsTab({ rooms, invitations, loading }) {
   );
 }
 
-RoomsTab.defaultProps = {
-  invitations: [],
-  rooms: []
+RoomsTab.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  rooms: PropTypes.arrayOf(roomShape),
+  roomInvitations: PropTypes.arrayOf(roomInvitationShape)
 };
 
-RoomsTab.propTypes = {
-  invitations: PropTypes.arrayOf(PropTypes.object),
-  rooms: PropTypes.arrayOf(PropTypes.object),
-  loading: PropTypes.bool.isRequired
+RoomsTab.defaultProps = {
+  rooms: [],
+  roomInvitations: []
 };
 
 export default RoomsTab;

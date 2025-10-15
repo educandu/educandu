@@ -487,7 +487,7 @@ class UserController {
 
   async handleGetActivities(req, res) {
     const { user } = req;
-    const activities = await this.userService.getActivities({ userId: user._id, limit: 25 });
+    const activities = await this.userService.getActivities({ userId: user._id });
 
     const mappedActivities = await this.clientDataMappingService.mapUserActivities(activities);
     return res.send({ activities: mappedActivities });
