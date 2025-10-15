@@ -119,14 +119,14 @@ function Dashboard({ PageTemplate, initialState }) {
   const fetchRooms = useCallback(async () => {
     try {
       setFetchingRoomsAndInvitations(true);
-      const roomApiClientResponse = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrMember });
-      const userApiClientResponse = await userApiClient.getRoomsInvitations();
-      setRooms(roomApiClientResponse.rooms);
-      setRoomInvitations(userApiClientResponse.invitations);
+      const roomsResponse = await roomApiClient.getRooms({ userRole: ROOM_USER_ROLE.ownerOrMember });
+      const roomInvitationsResponse = await roomApiClient.getRoomInvitations();
+      setRooms(roomsResponse.rooms);
+      setRoomInvitations(roomInvitationsResponse.invitations);
     } finally {
       setFetchingRoomsAndInvitations(false);
     }
-  }, [setFetchingRoomsAndInvitations, roomApiClient, userApiClient]);
+  }, [setFetchingRoomsAndInvitations, roomApiClient]);
 
   const fetchRoomMediaOverview = useCallback(async () => {
     try {

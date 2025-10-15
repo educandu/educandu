@@ -239,15 +239,6 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  getRoomsInvitations() {
-    return this.httpClient
-      .get(
-        '/api/v1/users/rooms-invitations',
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
   postContactRequest({ toUserId, contactEmailAddress }) {
     return this.httpClient
       .post(

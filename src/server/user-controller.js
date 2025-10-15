@@ -493,14 +493,6 @@ class UserController {
     return res.send({ activities: mappedActivities });
   }
 
-  async handleGetRoomsInvitations(req, res) {
-    const { user } = req;
-    const invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
-    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapUserOwnRoomInvitations(invitation)));
-
-    return res.send({ invitations: mappedInvitations });
-  }
-
   async handlePostContactRequest(req, res) {
     const { user } = req;
     let createdContactRequest;
@@ -831,12 +823,6 @@ class UserController {
       '/api/v1/users/activities',
       needsAuthentication(),
       (req, res) => this.handleGetActivities(req, res)
-    );
-
-    router.get(
-      '/api/v1/users/rooms-invitations',
-      needsAuthentication(),
-      (req, res) => this.handleGetRoomsInvitations(req, res)
     );
 
     router.post(

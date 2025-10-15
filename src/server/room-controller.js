@@ -304,6 +304,14 @@ export default class RoomController {
     return res.send({ invitations: mappedInvitations });
   }
 
+  async handleGetRoomInvitations(req, res) {
+    const { user } = req;
+    const invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
+    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapUserOwnRoomInvitations(invitation)));
+
+    return res.send({ invitations: mappedInvitations });
+  }
+
   async handlePostRoomInvitations(req, res) {
     const { user } = req;
     const { roomId, emails } = req.body;
@@ -511,6 +519,12 @@ export default class RoomController {
       needsPermission(permissions.DELETE_OWN_PRIVATE_CONTENT),
       validateParams(deleteRoomMediaParamsSchema),
       (req, res) => this.handleDeleteRoomMedia(req, res)
+    );
+
+    router.get(
+      '/api/v1/room-invitations',
+      needsAuthentication(),
+      (req, res) => this.handleGetRoomInvitations(req, res)
     );
 
     router.post(
