@@ -1,14 +1,15 @@
-import routes from '../utils/routes.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import UserService from '../services/user-service.js';
 import RoomService from '../services/room-service.js';
 import { DASHBOARD_TAB_KEY } from '../domain/constants.js';
 import DocumentService from '../services/document-service.js';
+import { validateQuery } from '../domain/validation-middleware.js';
 import NotificationService from '../services/notification-service.js';
 import DocumentInputService from '../services/document-input-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
+import { getDashboardPageQuerySchema } from '../domain/schemas/dashboard-schemas.js';
 
 class DashboardController {
   static dependencies = [UserService, RoomService, DocumentService, DocumentInputService, NotificationService, ClientDataMappingService, PageRenderer];
@@ -26,12 +27,7 @@ class DashboardController {
   async handleGetDashboardPage(req, res) {
     const { user } = req;
 
-    const tabFromQuery = req.query.tab;
-    if (tabFromQuery && !Object.values(DASHBOARD_TAB_KEY).includes(tabFromQuery)) {
-      return res.redirect(301, routes.getDashboardUrl());
-    }
-
-    const initialTab = tabFromQuery || DASHBOARD_TAB_KEY.activities;
+    const initialTab = req.query.tab || DASHBOARD_TAB_KEY.activities;
 
     const initialState = {
       initialTab,
@@ -91,6 +87,7 @@ class DashboardController {
     router.get(
       '/dashboard',
       needsAuthentication(),
+      validateQuery(getDashboardPageQuerySchema),
       (req, res) => this.handleGetDashboardPage(req, res)
     );
   }
