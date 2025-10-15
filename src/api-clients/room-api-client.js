@@ -151,6 +151,15 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
+  getRoomInvitations() {
+    return this.httpClient
+      .get(
+        '/api/v1/room-invitations',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   addRoomInvitations({ emails, roomId }) {
     return this.httpClient
       .post(

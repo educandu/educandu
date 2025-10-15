@@ -7,7 +7,8 @@ import {
   USER_ACTIVITY_TYPE,
   RESOURCE_TYPE,
   EVENT_TYPE,
-  CDN_RESOURCES_CONSOLIDATION_TYPE
+  CDN_RESOURCES_CONSOLIDATION_TYPE,
+  FAVORITE_TYPE
 } from '../domain/constants.js';
 
 const File = isBrowser() ? window.File : class File {};
@@ -123,10 +124,14 @@ export const userStorageShape = PropTypes.shape({
   }))
 });
 
-const favoriteItemShape = PropTypes.shape({
-  type: PropTypes.string.isRequired,
+const favoriteItemProps = {
+  type: PropTypes.oneOf(Object.values(FAVORITE_TYPE)).isRequired,
   id: PropTypes.string.isRequired,
   setOn: PropTypes.string.isRequired
+};
+
+const favoriteItemShape = PropTypes.shape({
+  ...favoriteItemProps
 });
 
 export const userShape = PropTypes.shape({
@@ -648,4 +653,9 @@ export const documentCategoryShape = PropTypes.shape({
   updatedOn: PropTypes.string.isRequired,
   createdBy: otherUserDisplayNameOnlyShape.isRequired,
   updatedBy: otherUserDisplayNameOnlyShape.isRequired
+});
+
+export const favoriteItemWithDataShape = PropTypes.shape({
+  ...favoriteItemProps,
+  data: PropTypes.oneOfType([favoriteUserShape, favoriteRoomShape, favoriteDocumentShape]).isRequired
 });

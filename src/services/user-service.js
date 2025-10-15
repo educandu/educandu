@@ -326,7 +326,7 @@ class UserService {
     return updatedUser;
   }
 
-  async getActivities({ userId, limit = 30 }) {
+  async getActivities({ userId, limit = 25 }) {
     const user = await this.userStore.getUserById(userId);
 
     const createdRooms = await this.roomStore.getLatestRoomsCreatedByUser(userId, { limit });
