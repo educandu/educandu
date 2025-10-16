@@ -70,6 +70,39 @@ class MediaLibraryItemStore {
     };
   }
 
+  getAllMediaLibraryItemsWithUsageNew() {
+    const pipeline = [
+      {
+        $lookup: {
+          from: 'documentRevisions',
+          let: {
+            url: '$url'
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    '$$url', '$cdnResources'
+                  ]
+                }
+              }
+            }, {
+              $limit: 1
+            }, {
+              $project: {
+                _id: 1
+              }
+            }
+          ],
+          as: 'documentRevisions'
+        }
+      }
+    ];
+
+    return this.collection.aggregate(pipeline).toArray();
+  }
+
   async insertMediaLibraryItem(mediaLibraryItem, { session } = {}) {
     validate(mediaLibraryItem, mediaLibraryItemDbSchema);
 

@@ -108,6 +108,10 @@ class MediaLibraryService {
     }));
   }
 
+  getAllMediaLibraryItemsWithUsageNew() {
+    return this.mediaLibraryItemStore.getAllMediaLibraryItemsWithUsageNew();
+  }
+
   async getAllMediaTrashItemsWithUsage() {
     const [
       items,
