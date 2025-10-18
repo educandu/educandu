@@ -860,6 +860,7 @@ class DocumentService {
     const firstRevision = revisions[0];
     const lastRevision = revisions[revisions.length - 1];
     const contributors = [...new Set(revisions.map(r => r.createdBy))];
+    const trackedCdnResources = [...new Set(revisions.flatMap(r => r.cdnResources))];
 
     return {
       _id: lastRevision.documentId,
@@ -880,7 +881,8 @@ class DocumentService {
       searchTokens: lastRevision.searchTokens,
       publicContext: cloneDeep(lastRevision.publicContext) || null,
       roomContext: cloneDeep(lastRevision.roomContext) || null,
-      cdnResources: lastRevision.cdnResources
+      cdnResources: lastRevision.cdnResources,
+      trackedCdnResources
     };
   }
 }

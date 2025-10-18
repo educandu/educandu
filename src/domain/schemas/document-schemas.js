@@ -172,7 +172,8 @@ export const documentDBSchema = joi.object({
   searchTokens: joi.array().items(joi.string()).required(),
   publicContext: publicContextConditionalSchema,
   roomContext: roomContextConditionalSchema,
-  cdnResources: joi.array().items(joi.string()).required()
+  cdnResources: joi.array().items(joi.string()).required(),
+  trackedCdnResources: joi.array().items(joi.string()).required(),
 });
 
 export const getDocumentParamsSchema = joi.object({

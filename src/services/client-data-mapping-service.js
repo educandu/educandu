@@ -801,6 +801,7 @@ class ClientDataMappingService {
             : value;
           break;
         case 'cdnResources':
+        case 'trackedCdnResources':
         default:
           result[key] = value;
           break;

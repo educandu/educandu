@@ -10,8 +10,8 @@ import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import DocumentInputStore from '../stores/document-input-store.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, EVENT_TYPE, FAVORITE_TYPE, ROLE, SEARCH_RESOURCE_TYPE, TASK_TYPE } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, createTestUser } from '../test-helper.js';
+import { BATCH_TYPE, EMAIL_NOTIFICATION_FREQUENCY, EVENT_TYPE, FAVORITE_TYPE, ROLE, SEARCH_RESOURCE_TYPE, TASK_TYPE } from '../domain/constants.js';
 
 describe('client-data-mapping-service', () => {
   const sandbox = createSandbox();
