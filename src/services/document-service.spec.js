@@ -204,6 +204,14 @@ describe('document-service', () => {
       expect(createdDocument).toBeDefined();
     });
 
+    it('saves all referenced cdn resources from the revision to the document', () => {
+      expect(createdDocument.cdnResources).toEqual(['cdn://media-library/image-1.png', 'cdn://media-library/image-2.png', 'cdn://media-library/video-1.mp4']);
+    });
+
+    it('saves a copy of all referenced cdn resources in `trackedCdnResources`', () => {
+      expect(createdDocument.trackedCdnResources).toEqual(createdDocument.cdnResources);
+    });
+
     it('updates the room containing the document', async () => {
       const updatedRoom = await db.rooms.findOne({ _id: room._id });
       expect(updatedRoom.documents).toEqual([createdDocument._id]);
@@ -250,20 +258,23 @@ describe('document-service', () => {
   });
 
   describe('updateDocument', () => {
-    let data;
-    let secondTick;
-    let secondUser;
-    let updatedData;
-    let updatedDocument;
-    let persistedFirstRevision;
-    let persistedSecondRevision;
+    let rev1Data;
+    let rev2Data;
+    let rev2Tick;
+    let rev1CreatingUser;
+    let rev2CreatingUser;
+    let documentAfterRev1;
+    let documentAfterRev2;
+    let persistedRevision1;
+    let persistedRevision2;
 
     beforeEach(async () => {
       sandbox.stub(eventStore, 'recordDocumentRevisionCreatedEvent').resolves();
 
-      secondUser = await createTestUser(container);
+      rev1CreatingUser = await createTestUser(container, { email: 'user1@test.com' });
+      rev2CreatingUser = await createTestUser(container, { email: 'user2@test.com' });
 
-      data = {
+      rev1Data = {
         title: 'Title',
         slug: 'my-doc',
         language: 'en',
@@ -326,18 +337,22 @@ describe('document-service', () => {
         }
       };
 
-      const initialData = { ...data };
+      documentAfterRev1 = await sut.createDocument({
+        data: rev1Data,
+        user: rev1CreatingUser
+      });
 
-      const initialDocument = await sut.createDocument({ data: initialData, user });
-      persistedFirstRevision = await db.documentRevisions.findOne({ _id: initialDocument.revision });
+      persistedRevision1 = await db.documentRevisions.findOne({ _id: documentAfterRev1.revision });
 
-      updatedData = {
-        ...initialData,
+      rev2Data = {
+        ...rev1Data,
         title: 'Title 2',
         slug: 'my-doc-2',
         language: 'de',
         sections: [
-          ...initialData.sections,
+          {
+            ...rev1Data.sections[1]
+          },
           {
             ...createDefaultSection(),
             type: 'video',
@@ -356,95 +371,88 @@ describe('document-service', () => {
         ]
       };
 
-      secondTick = new Date(sandbox.clock.tick(1000));
+      rev2Tick = new Date(sandbox.clock.tick(1000));
 
-      updatedDocument = await sut.updateDocument({
-        documentId: initialDocument._id,
-        data: updatedData,
+      documentAfterRev2 = await sut.updateDocument({
+        documentId: documentAfterRev1._id,
+        data: rev2Data,
         revisionCreatedBecause: 'My reason',
-        user: secondUser,
+        user: rev2CreatingUser,
         silentUpdate: true
       });
-      persistedSecondRevision = await db.documentRevisions.findOne({ _id: updatedDocument.revision });
+
+      persistedRevision2 = await db.documentRevisions.findOne({ _id: documentAfterRev2.revision });
     });
 
     it('creates an _id', () => {
-      expect(persistedSecondRevision._id).toMatch(/\w+/);
+      expect(persistedRevision2._id).toMatch(/\w+/);
     });
 
     it('sets the same document id', () => {
-      expect(persistedSecondRevision.documentId).toBe(persistedFirstRevision.documentId);
+      expect(persistedRevision2.documentId).toBe(persistedRevision1.documentId);
     });
 
     it('saves the second revision', () => {
-      const expectedResult = {
-        ...updatedData,
+      expect(persistedRevision2).toMatchObject({
+        ...rev2Data,
         createdBecause: 'My reason',
         sections: [
           {
-            ...updatedData.sections[0],
+            ...rev2Data.sections[0],
             revision: expect.stringMatching(/\w+/)
           },
           {
-            ...updatedData.sections[1],
-            revision: expect.stringMatching(/\w+/)
-          },
-          {
-            ...updatedData.sections[2],
+            ...rev2Data.sections[1],
             revision: expect.stringMatching(/\w+/)
           }
         ],
-        createdOn: secondTick,
-        createdBy: secondUser._id,
+        createdOn: rev2Tick,
+        createdBy: rev2CreatingUser._id,
         order: 2,
         restoredFrom: null
-      };
-      delete expectedResult.appendTo;
-      expect(persistedSecondRevision).toMatchObject(expectedResult);
-    });
-
-    it('generates ids for the sections revisions', () => {
-      persistedSecondRevision.sections.forEach((section, index) => {
-        expect(section.revision).toMatch(/\w+/);
-        expect(section.revision).not.toEqual(updatedData.sections[index].revision);
       });
     });
 
-    it('saves all referenced cdn resources with the revision', () => {
-      expect(persistedSecondRevision.cdnResources).toEqual(['cdn://media-library/image-1.png', 'cdn://media-library/image-2.png', 'cdn://media-library/video-1.mp4', 'cdn://media-library/video-2.mp4']);
+    it('generates ids for the sections revisions', () => {
+      persistedRevision2.sections.forEach((section, index) => {
+        expect(section.revision).toMatch(/\w+/);
+        expect(section.revision).not.toEqual(rev2Data.sections[index].revision);
+      });
+    });
+
+    it('updates the referenced cdn resources to only the used ones', () => {
+      expect(persistedRevision2.cdnResources).toEqual(['cdn://media-library/video-1.mp4', 'cdn://media-library/video-2.mp4']);
     });
 
     it('saves the second revision data onto the document', () => {
-      const expectedResult = {
-        ...updatedData,
+      expect(documentAfterRev2).toMatchObject({
+        ...rev2Data,
         sections: [
           {
-            ...updatedData.sections[0],
+            ...rev2Data.sections[0],
             revision: expect.stringMatching(/\w+/)
           },
           {
-            ...updatedData.sections[1],
-            revision: expect.stringMatching(/\w+/)
-          },
-          {
-            ...updatedData.sections[2],
+            ...rev2Data.sections[1],
             revision: expect.stringMatching(/\w+/)
           }
         ],
-        revision: persistedSecondRevision._id,
+        revision: persistedRevision2._id,
         createdOn: now,
-        createdBy: user._id,
-        updatedOn: secondTick,
-        updatedBy: secondUser._id,
+        createdBy: rev1CreatingUser._id,
+        updatedOn: rev2Tick,
+        updatedBy: rev2CreatingUser._id,
         order: 2,
-        contributors: [user._id, secondUser._id]
-      };
-      delete expectedResult.appendTo;
-      expect(updatedDocument).toMatchObject(expectedResult);
+        contributors: [rev1CreatingUser._id, rev2CreatingUser._id]
+      });
     });
 
-    it('saves all referenced cdn resources with the document', () => {
-      expect(updatedDocument.cdnResources).toEqual(['cdn://media-library/image-1.png', 'cdn://media-library/image-2.png', 'cdn://media-library/video-1.mp4', 'cdn://media-library/video-2.mp4']);
+    it('saves only the currently referenced cdn resources in `cdnResources` on the document', () => {
+      expect(documentAfterRev2.cdnResources).toEqual(['cdn://media-library/video-1.mp4', 'cdn://media-library/video-2.mp4']);
+    });
+
+    it('saves all historically referenced cdn resources in `trackedCdnResources` on the document', () => {
+      expect(documentAfterRev2.trackedCdnResources).toEqual(['cdn://media-library/image-1.png', 'cdn://media-library/image-2.png', 'cdn://media-library/video-1.mp4', 'cdn://media-library/video-2.mp4']);
     });
 
     it('creates an event', () => {
@@ -621,7 +629,8 @@ describe('document-service', () => {
               posterImage: { sourceUrl: '' }
             }
           }],
-          cdnResources: ['cdn://media-library/video.mp4']
+          cdnResources: ['cdn://media-library/video.mp4'],
+          trackedCdnResources: ['cdn://media-library/video.mp4']
         });
       });
 
