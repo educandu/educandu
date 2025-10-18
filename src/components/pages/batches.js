@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
+import { Table, List } from 'antd';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
-import { Table, List, Checkbox } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useIsMounted } from '../../ui/hooks.js';
 import { useDateFormat } from '../locale-context.js';
@@ -9,15 +9,17 @@ import { handleApiError } from '../../ui/error-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import BatchApiClient from '../../api-clients/batch-api-client.js';
+import { WarningOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TYPE } from '../../domain/constants.js';
-import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   documentValidationBatchDetailsShape,
   documentRegenerationBatchDetailsShape,
   cdnResourcesConsolidationBatchDetailsShape
 } from '../../ui/default-prop-types.js';
 
-const POLL_INTERVAL_IN_MS = 500;
+const MAX_ERROR_COUNT = 3;
+const POLL_INTERVAL_IN_MS = 2000;
+const POLL_ERROR_INTERVAL_IN_MS = 10000;
 const logger = new Logger(import.meta.url);
 
 export const STATUS = {
@@ -49,9 +51,8 @@ function Batches({ initialState, PageTemplate }) {
   const batchApiClient = useSessionAwareApiClient(BatchApiClient);
 
   const [batch, setBatch] = useState(initialState.batch);
-  const [taskTableItems, setTaskTableItems] = useState([]);
   const [overallBatchStatus, setOverallBatchStatus] = useState(null);
-  const [hideSuccessfullyCompletedTasks, setHideSuccessfullyCompletedTasks] = useState(true);
+  const [taskErrorAndWarningTableItems, setTaskErrorAndWarningTableItems] = useState([]);
 
   useEffect(() => {
     let errorCount = 0;
@@ -59,36 +60,24 @@ function Batches({ initialState, PageTemplate }) {
 
     const taskItems = [];
     for (const task of batch.tasks) {
-      if (!task.processed) {
-        taskItems.push({
-          ...task,
-          status: STATUS.pending,
-          localizedStatus: localizeStatus(STATUS.pending, t)
-        });
-      } else if (task.attempts[task.attempts.length - 1].errors.length) {
+      if (task.processed && task.attempts[task.attempts.length - 1].errors.length) {
         taskItems.push({
           ...task,
           status: STATUS.error,
           localizedStatus: localizeStatus(STATUS.error, t)
         });
         errorCount += 1;
-      } else if (task.attempts.some(attempt => attempt.errors.length)) {
+      } else if (task.processed && task.attempts.some(attempt => attempt.errors.length)) {
         taskItems.push({
           ...task,
           status: STATUS.warning,
           localizedStatus: localizeStatus(STATUS.warning, t)
         });
         warningCount += 1;
-      } else if (!hideSuccessfullyCompletedTasks) {
-        taskItems.push({
-          ...task,
-          status: STATUS.success,
-          localizedStatus: localizeStatus(STATUS.success, t)
-        });
       }
     }
 
-    setTaskTableItems(taskItems);
+    setTaskErrorAndWarningTableItems(taskItems);
 
     let batchStatus;
     if (batch.progress < 1) {
@@ -102,10 +91,12 @@ function Batches({ initialState, PageTemplate }) {
     }
 
     setOverallBatchStatus(batchStatus);
-  }, [batch, hideSuccessfullyCompletedTasks, t]);
+  }, [batch, t]);
 
   useEffect(() => {
+    let errorCount = 0;
     let nextTimeout = null;
+
     const getUpdate = async () => {
       if (batch.progress === 1) {
         return;
@@ -116,7 +107,16 @@ function Batches({ initialState, PageTemplate }) {
         setBatch(updatedBatchDetails.batch);
         nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
       } catch (error) {
-        handleApiError({ error, logger, t });
+        errorCount += 1;
+        if (nextTimeout) {
+          clearTimeout(nextTimeout);
+          nextTimeout = null;
+        }
+        if (errorCount > MAX_ERROR_COUNT) {
+          handleApiError({ error, logger, t });
+        } else {
+          nextTimeout = setTimeout(getUpdate, POLL_ERROR_INTERVAL_IN_MS);
+        }
       }
     };
 
@@ -125,17 +125,13 @@ function Batches({ initialState, PageTemplate }) {
     return () => {
       if (nextTimeout) {
         clearTimeout(nextTimeout);
+        nextTimeout = null;
       }
     };
   }, [t, batchApiClient, batch._id, batch.progress]);
 
-  const handleHideSuccessfullyCompletedTasksChange = event => {
-    setHideSuccessfullyCompletedTasks(event.target.checked);
-  };
-
   const renderBatchType = batchType => {
     switch (batchType) {
-
       case BATCH_TYPE.documentValidation:
         return t('batchTypeDocumentValidation');
       case BATCH_TYPE.documentRegeneration:
@@ -244,14 +240,10 @@ function Batches({ initialState, PageTemplate }) {
 
   const renderTaskStatus = (_, taskItem) => {
     switch (taskItem.status) {
-      case STATUS.pending:
-        return <span><SyncOutlined spin /> {taskItem.localizedStatus}</span>;
       case STATUS.warning:
         return <span><WarningOutlined className="BatchesPage-warningIcon" /> {taskItem.localizedStatus}</span>;
       case STATUS.error:
         return <span><ExclamationCircleOutlined className="BatchesPage-errorIcon" /> {taskItem.localizedStatus}</span>;
-      case STATUS.success:
-        return <span><CheckOutlined className="BatchesPage-successIcon" /> {taskItem.localizedStatus}</span>;
       default:
         throw new Error(`Invalid status '${taskItem.status}'`);
     }
@@ -302,8 +294,7 @@ function Batches({ initialState, PageTemplate }) {
     {
       title: t('taskStatus'),
       dataIndex: 'localizedStatus',
-      render: renderTaskStatus,
-      sorter: (a, b) => a.localizedStatus.localeCompare(b.localizedStatus)
+      render: renderTaskStatus
     }
   ];
 
@@ -338,28 +329,27 @@ function Batches({ initialState, PageTemplate }) {
             renderItem={error => <List.Item>{JSON.stringify(error)}</List.Item>}
             />
         )}
-        <h2>{t('tasks')}</h2>
-        <div className="BatchesPage-tableFilter">
-          <Checkbox
-            checked={hideSuccessfullyCompletedTasks}
-            onChange={handleHideSuccessfullyCompletedTasksChange}
-            >
-            {t('hideSuccessfullyCompletedTasks')}
-          </Checkbox>
-        </div>
-        <Table
-          size="small"
-          bordered
-          rowKey="_id"
-          dataSource={taskTableItems}
-          columns={taskTableColumns}
-          pagination={false}
-          showSorterTooltip={false}
-          expandable={{
-            expandedRowRender: renderAttemptsSubTable,
-            rowExpandable: task => task.attempts?.length
-          }}
-          />
+        <h3>{t('taskErrorsAndWarnings')}</h3>
+        {!!taskErrorAndWarningTableItems.length && (
+          <Table
+            size="small"
+            bordered
+            rowKey="_id"
+            dataSource={taskErrorAndWarningTableItems}
+            columns={taskTableColumns}
+            pagination={false}
+            showSorterTooltip={false}
+            expandable={{
+              expandedRowRender: renderAttemptsSubTable,
+              rowExpandable: task => task.attempts?.length
+            }}
+            />
+        )}
+        {!taskErrorAndWarningTableItems.length && (
+          <div>
+            {t('noTaskErrorsOrWarnings')}
+          </div>
+        )}
       </div>
     </PageTemplate>
   );

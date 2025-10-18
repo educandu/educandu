@@ -394,9 +394,13 @@
       "en": "Batch errors",
       "de": "Chargenfehler"
     },
-    "tasks": {
-      "en": "Tasks",
-      "de": "Tasks"
+    "taskErrorsAndWarnings": {
+      "en": "Task errors and warnings",
+      "de": "Task-Fehler und Warnungen"
+    },
+    "noTaskErrorsOrWarnings": {
+      "en": "No errors or warnings",
+      "de": "Keine Fehler oder Warnungen"
     },
     "taskType": {
       "en": "Task type",
