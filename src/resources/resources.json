@@ -744,6 +744,10 @@
       "en": "Creation date",
       "de": "Erstellungsdatum"
     },
+    "expirationDate": {
+      "en": "Expiration date",
+      "de": "Ablaufdatum"
+    },
     "createdOnDateBy": {
       "en": "Created on {date} by",
       "de": "Erstellt am {date} von"
@@ -763,6 +767,10 @@
     "deletedOnDateBy": {
       "en": "Deleted on {date} by",
       "de": "Gelöscht am {date} von"
+    },
+    "expiresOnDate": {
+      "en": "Expires on {date}",
+      "de": "Läuft ab am {date}"
     },
     "invitedOnDate": {
       "en": "Invited on {date}.",
@@ -1354,7 +1362,7 @@
     },
     "usage": {
       "en": "Usage",
-      "de": "Benutzung"
+      "de": "Nutzung"
     },
     "setting": {
       "en": "Setting",
@@ -1595,6 +1603,14 @@
     "usageOverview": {
       "en": "Usage overview",
       "de": "Benutzungsübersicht"
+    },
+    "fromDate": {
+      "en": "From date",
+      "de": "Ab Datum"
+    },
+    "untilDate": {
+      "en": "To date",
+      "de": "Bis Datum"
     }
   },
   "comparison": {
@@ -1702,13 +1718,25 @@
       "en": "Do you really want to move the file \"{fileName}\" to the trash bin?",
       "de": "Möchtest du die Datei \"{fileName}\" wirklich in den Papierkorb verschieben?"
     },
+    "bulkSoftDeleteMediaFileConfirmation": {
+      "en": "Do you really want to move {count, plural, =1 {# file} other {# files}} to the trash bin?",
+      "de": "Möchtest du {count, plural, =1 {# Datei} other {# Dateien}} wirklich in den Papierkorb verschieben?"
+    },
     "hardDeleteMediaFileConfirmation": {
       "en": "Do you really want to irreversibly delete the file \"{fileName}\"?",
       "de": "Möchtest du die Datei \"{fileName}\" wirklich unwiderruflich löschen?"
     },
+    "bulkHardDeleteMediaFileConfirmation": {
+      "en": "Do you really want to irreversibly delete {count, plural, =1 {# file} other {# files}}?",
+      "de": "Möchtest du {count, plural, =1 {# Datei} other {# Dateien}} wirklich unwiderruflich löschen?"
+    },
     "restoreMediaFileConfirmation": {
       "en": "Do you really want to restore the file \"{fileName}\"?",
       "de": "Möchtest du die Datei \"{fileName}\" wirklich wiederherstellen?"
+    },
+    "bulkRestoreMediaFileConfirmation": {
+      "en": "Do you really want to restore {count, plural, =1 {# file} other {# files}}?",
+      "de": "Möchtest du {count, plural, =1 {# Datei} other {# Dateien}} wirklich wiederherstellen?"
     },
     "thisActionIsIrreversible": {
       "en": "This action is irreversible!",
@@ -1785,10 +1813,6 @@
     "whiteboardResetConfirmation": {
       "en": "Do you really want to reset the whiteboard?",
       "de": "Möchtest du das Whiteboard wirklich zurücksetzen?"
-    },
-    "bulkDeleteMediaItemsConfirmation": {
-      "en": "Do you really want to move {count, plural, =1 {# media resource} other {# media resources}} to the trash bin?",
-      "de": "Möchtest du {count, plural, =1 {# Mediathek-Ressource} other {# Mediathek-Ressourcen}} wirklich in den Papierkorb verschieben?"
     }
   },
   "connectExternalAccount": {
@@ -1881,48 +1905,34 @@
       "de": "Nach Dokument-Titel oder Anzeigename des Bearbeiters filtern"
     }
   },
-  "contentManagementMediaLibraryTab": {
-    "filterPlaceholder": {
-      "en": "Filter by name, tag, license or user",
-      "de": "Nach Name, Tag, Lizenz oder Benutzer filtern"
+  "contentManagementMediaItemsTab": {
+    "textFilterLabel": {
+      "en": "Text filter",
+      "de": "Textfilter"
     },
-    "bulkDeletePanelHeader": {
-      "en": "Bulk deletion",
-      "de": "Stapelweise löschen"
-    },
-    "createdBefore": {
-      "en": "Created before",
-      "de": "Erstellt vor"
-    },
-    "and": {
-      "en": "and",
-      "de": "und"
-    },
-    "delete": {
-      "en": "Delete media resources",
-      "de": "Medien-Resourcen löschen"
-    },
-    "deleteCount": {
-      "en": "Delete {count, plural, =1 {# media resource} other {# media resources}}",
-      "de": "{count, plural, =1 {# Medien-Resource} other {# Medien-Resourcen}} löschen"
-    },
-    "usageInfoMarkdown": {
-      "en": "**Never used** media is not present in any website content, including document history.\n\n**No longer used** media is not present in any current website content, but is referenced in documents history.\\\nArchived documents are considered no longer used, too.\n",
-      "de": "**Nie benutzt**e Medien werden von keinem Website-Inhalt (einschließlich Dokumenthistorie) referenziert.\n\n**Nicht mehr benutzt**e Medien werden von keinem aktuellen Website-Inhalt referenziert, befinden sich jedoch in der Dokumenthistorie.\\\nArchivierte Dokumente werden ebenfalls als nicht mehr benutzt betrachtet.\n"
-    }
-  },
-  "contentManagementMediaTrashTab": {
-    "filterPlaceholder": {
+    "textFilterPlaceholder": {
       "en": "Filter by name, tag or user",
       "de": "Nach Name, Tag oder Benutzer filtern"
     },
-    "expirationDate": {
-      "en": "Expiration date",
-      "de": "Ablaufdatum"
+    "licenseFilterPlaceholder": {
+      "en": "Filter by license",
+      "de": "Nach Lizenz filtern"
     },
-    "sortedByExpiresOn": {
-      "en": "Sorted by expiration date",
-      "de": "Nach Ablaufdatum sortiert"
+    "softDeleteItems": {
+      "en": "Move to the trash bin",
+      "de": "In den Papierkorb verschieben"
+    },
+    "hardDeleteItems": {
+      "en": "Irreversibly delete",
+      "de": "Unwiederruflich löschen"
+    },
+    "restoreItems": {
+      "en": "Restore",
+      "de": "Wiederherstellen"
+    },
+    "itemColumnHeader": {
+      "en": "Resource",
+      "de": "Ressource"
     }
   },
   "copyrightNoticeEditor": {
@@ -3293,26 +3303,26 @@
       "de": "Private Nutzung"
     },
     "nonArchivedDocuments": {
-      "en": "Documents",
-      "de": "Dokumente"
+      "en": "Non-archived documents (latest version)",
+      "de": "Nicht-Archivierte Dokumente (aktuelle Version)"
     },
     "nonArchivedDocumentsTooltip": {
       "en": "Usage in currently non-archived public documents (including the latest version)",
       "de": "Benutzung in derzeit nicht-archivierten, öffentlichen Dokumenten (einschließlich der aktuellen Version)"
     },
-    "documentsWithHistoricUsageOnly": {
-      "en": "Documents (usage in history only)",
-      "de": "Dokumente (Nutzung nur in Historie)"
+    "nonArchivedDocumentsWithHistory": {
+      "en": "Non-archived documents (entire history)",
+      "de": "Nicht-Archivierte Dokumente (gesamte Historie)"
     },
-    "documentsWithHistoricUsageOnlyTooltip": {
-      "en": "Usage in earlier versions of currently non-archived public documents only",
-      "de": "Benutzung ausschließlich in früheren Versionen von derzeit nicht-archivierten, öffentlichen Dokumenten"
+    "nonArchivedDocumentsWithHistoryTooltip": {
+      "en": "Usage in at least one version of currently non-archived public documents. The link leads to the first document version that references the resource.",
+      "de": "Benutzung in mindestens einer Version von derzeit nicht-archivierten, öffentlichen Dokumenten. Der Link führt auf die erste Dokument-Version, die die Ressource referenziert."
     },
-    "archivedDocuments": {
-      "en": "Archived documents",
-      "de": "Archivierte Dokumente"
+    "archivedDocumentsWithHistory": {
+      "en": "Archived documents (entire history)",
+      "de": "Archivierte Dokumente (gesamte Historie)"
     },
-    "archivedDocumentsTooltip": {
+    "archivedDocumentsWithHistoryTooltip": {
       "en": "Usage in currently archived public documents (including document history)",
       "de": "Benutzung in öffentlichen Dokumenten (einschließlich der Dokument-Historie), die derzeit archiviert sind"
     },
@@ -3465,6 +3475,60 @@
     "imageFitInfoMarkdown": {
       "en": "__cover__\n\nScales the image (while preserving its ratio) to the smallest possible\nsize to fill the display area, leaving no empty space.\n\n__contain__\n\nScales the image as large as possible within the display\narea without cropping or stretching the image.\n",
       "de": "__Abdecken__\n\nSkaliert das Bild (unter Beibehaltung der Proportionen) auf die kleinstmögliche\nGröße, um den Anzeigebereich so auszufüllen, dass kein Leerraum bleibt.\n\n__Umfassen__\n\nSkaliert das Bild so groß wie möglich innerhalb des Anzeigebereichs,\nohne das Bild zu beschneiden oder zu strecken.\n"
+    }
+  },
+  "mediaUsageSelect": {
+    "editorPopoverTitle": {
+      "en": "Edit usage filter",
+      "de": "Nutzungsfilter bearbeiten"
+    },
+    "usageOptionStartingPhrase": {
+      "en": "Please select from the following criteria for the usage filter",
+      "de": "Bitte wähle aus den folgenden Kriterien für den Nutzungsfilter"
+    },
+    "usageOptionEditorOptionText_X": {
+      "en": "never used",
+      "de": "nie benutzt"
+    },
+    "usageOptionEditorOptionText_D": {
+      "en": "used in currently non-archived documents (latest version)",
+      "de": "in derzeit nicht-archivierten Dokumenten (aktuelle Version) benutzt"
+    },
+    "usageOptionEditorOptionText_H": {
+      "en": "used in currently non-archived documents (entire history)",
+      "de": "in derzeit nicht-archivierten Dokumenten (gesamte Historie) benutzt"
+    },
+    "usageOptionEditorOptionText_A": {
+      "en": "used in currently archived public documents (entire history)",
+      "de": "in derzeit archivierten öffentlichen Dokumenten (gesamte Historie) benutzt"
+    },
+    "usageOptionEditorOptionText_C": {
+      "en": "used in document categories",
+      "de": "in Dokument-Kategorien benutzt"
+    },
+    "usageOptionEditorOptionText_U": {
+      "en": "used in user profiles",
+      "de": "in Benutzer-Profilen benutzt"
+    },
+    "usageOptionEditorOptionText_S": {
+      "en": "used in settings",
+      "de": "in Einstellungen benutzt"
+    },
+    "usageOptionEditorOptionText_R": {
+      "en": "used in rooms or room documents (entire history)",
+      "de": "in Räumen oder Raum-Dokumenten (gesamte Historie) benutzt"
+    },
+    "usageOptionRadioLabel_i": {
+      "en": "optional",
+      "de": "optional"
+    },
+    "usageOptionRadioLabel_y": {
+      "en": "required",
+      "de": "erforderlich"
+    },
+    "usageOptionRadioLabel_n": {
+      "en": "exclude",
+      "de": "ausschließen"
     }
   },
   "mediaVolumeSlider": {
@@ -4682,14 +4746,6 @@
       "en": "Filter by document title",
       "de": "Nach Dokument-Titel filtern"
     },
-    "fromDatePlaceholder": {
-      "en": "From date",
-      "de": "Ab Datum"
-    },
-    "untilDatePlaceholder": {
-      "en": "To date",
-      "de": "Bis Datum"
-    },
     "mondayCheckbox": {
       "en": "Mo",
       "de": "Mo"
@@ -4799,14 +4855,6 @@
     "queryPlaceholder": {
       "en": "Filter by search terms",
       "de": "Nach Suchbegriffen filtern"
-    },
-    "fromDatePlaceholder": {
-      "en": "From date",
-      "de": "Ab Datum"
-    },
-    "untilDatePlaceholder": {
-      "en": "To date",
-      "de": "Bis Datum"
     },
     "exportAsCsv": {
       "en": "Export as CSV file",
@@ -4919,14 +4967,6 @@
     "userNamePlaceholder": {
       "en": "Filter by user name",
       "de": "Nach Benutzername filtern"
-    },
-    "fromDatePlaceholder": {
-      "en": "From date",
-      "de": "Ab Datum"
-    },
-    "untilDatePlaceholder": {
-      "en": "To date",
-      "de": "Bis Datum"
     },
     "exportAsCsv": {
       "en": "Export as CSV file",

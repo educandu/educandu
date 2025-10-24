@@ -1,3 +1,5 @@
+import { isBrowser } from '../ui/browser-helper.js';
+
 export function swapItemsAt(items, index1, index2) {
   const lastIndex = items.length - 1;
   if (index1 < 0 || index2 < 0 || index1 > lastIndex || index2 > lastIndex || index1 === index2) {
@@ -140,3 +142,10 @@ export function getSymmetricalDifference(arrayA, arrayB) {
     ...arrayB.filter(x => !arrayA.includes(x))
   ];
 }
+
+export function processAsIteratorIfAvailable(array, func) {
+  const gt = globalThis || (isBrowser() ? window : global);
+  return typeof gt.Iterator === 'function'
+    ? func(gt.Iterator.from(array)).toArray()
+    : func(array);
+};

@@ -1,0 +1,40 @@
+mediaUsageSelect:
+  editorPopoverTitle:
+    en: Edit usage filter
+    de: Nutzungsfilter bearbeiten
+  usageOptionStartingPhrase:
+    en: Please select from the following criteria for the usage filter
+    de: Bitte wähle aus den folgenden Kriterien für den Nutzungsfilter
+  usageOptionEditorOptionText_X:
+    en: never used
+    de: nie benutzt
+  usageOptionEditorOptionText_D:
+    en: used in currently non-archived documents (latest version)
+    de: in derzeit nicht-archivierten Dokumenten (aktuelle Version) benutzt
+  usageOptionEditorOptionText_H:
+    en: used in currently non-archived documents (entire history)
+    de: in derzeit nicht-archivierten Dokumenten (gesamte Historie) benutzt
+  usageOptionEditorOptionText_A:
+    en: used in currently archived public documents (entire history)
+    de: in derzeit archivierten öffentlichen Dokumenten (gesamte Historie) benutzt
+  usageOptionEditorOptionText_C:
+    en: used in document categories
+    de: in Dokument-Kategorien benutzt
+  usageOptionEditorOptionText_U:
+    en: used in user profiles
+    de: in Benutzer-Profilen benutzt
+  usageOptionEditorOptionText_S:
+    en: used in settings
+    de: in Einstellungen benutzt
+  usageOptionEditorOptionText_R:
+    en: used in rooms or room documents (entire history)
+    de: in Räumen oder Raum-Dokumenten (gesamte Historie) benutzt
+  usageOptionRadioLabel_i:
+    en: optional
+    de: optional
+  usageOptionRadioLabel_y:
+    en: required
+    de: erforderlich
+  usageOptionRadioLabel_n:
+    en: exclude
+    de: ausschließen

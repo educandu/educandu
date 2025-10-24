@@ -9,21 +9,21 @@ mediaLibraryItemUsageModal:
     en: Private usage
     de: Private Nutzung
   nonArchivedDocuments:
-    en: Documents
-    de: Dokumente
+    en: Non-archived documents (latest version)
+    de: Nicht-Archivierte Dokumente (aktuelle Version)
   nonArchivedDocumentsTooltip:
     en: Usage in currently non-archived public documents (including the latest version)
     de: Benutzung in derzeit nicht-archivierten, öffentlichen Dokumenten (einschließlich der aktuellen Version)
-  documentsWithHistoricUsageOnly:
-    en: Documents (usage in history only)
-    de: Dokumente (Nutzung nur in Historie)
-  documentsWithHistoricUsageOnlyTooltip:
-    en: Usage in earlier versions of currently non-archived public documents only
-    de: Benutzung ausschließlich in früheren Versionen von derzeit nicht-archivierten, öffentlichen Dokumenten
-  archivedDocuments:
-    en: Archived documents
-    de: Archivierte Dokumente
-  archivedDocumentsTooltip:
+  nonArchivedDocumentsWithHistory:
+    en: Non-archived documents (entire history)
+    de: Nicht-Archivierte Dokumente (gesamte Historie)
+  nonArchivedDocumentsWithHistoryTooltip:
+    en: Usage in at least one version of currently non-archived public documents. The link leads to the first document version that references the resource.
+    de: Benutzung in mindestens einer Version von derzeit nicht-archivierten, öffentlichen Dokumenten. Der Link führt auf die erste Dokument-Version, die die Ressource referenziert.
+  archivedDocumentsWithHistory:
+    en: Archived documents (entire history)
+    de: Archivierte Dokumente (gesamte Historie)
+  archivedDocumentsWithHistoryTooltip:
     en: Usage in currently archived public documents (including document history)
     de: Benutzung in öffentlichen Dokumenten (einschließlich der Dokument-Historie), die derzeit archiviert sind
   documentCategories:

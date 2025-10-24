@@ -2,6 +2,10 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
+
+  &.TagsExpander--small {
+    font-size: @edu-font-size-sm;
+  }
 }
 
 .TagsExpander-expandLink {
@@ -10,4 +14,8 @@
   height: 20px;
   padding: 3px;
   margin: 3px 3px 3px 12px;
+
+  &.TagsExpander-expandLink--small {
+    margin: 3px;
+  }
 }

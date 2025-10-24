@@ -40,10 +40,6 @@ class DocumentRevisionStore {
     return this.collection.find(filter, { projection: documentRevisionCreationProjection, session }).toArray();
   }
 
-  getAllCdnResourcesReferencedFromDocumentRevisions() {
-    return this.collection.distinct('cdnResources', {});
-  }
-
   getFirstAffectedDocumentRevisionsPerDocumentByReferencedCdnResourceName(cdnResourceName) {
     const pipeline = [
       {

@@ -4,12 +4,21 @@ import { useUser } from '../components/user-context.js';
 import { hasUserPermission } from '../domain/permissions.js';
 import { useRequest } from '../components/request-context.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { getCurrentUrlFromLocation, isBrowser } from './browser-helper.js';
 import { LOADING_SPINNER_MINIMUM_PERIOD_IN_MILLISECONDS } from '../domain/constants.js';
+import { getCurrentQueryFromLocation, getCurrentUrlFromLocation, isBrowser } from './browser-helper.js';
 
 export function useGetCurrentUrl() {
   const req = useRequest();
   return useMemo(() => () => isBrowser() ? getCurrentUrlFromLocation() : req.originalUrl, [req]);
+}
+
+export function useInitialQuery(sanitize = x => x) {
+  const request = useRequest();
+  const sanitizeRef = useRef(sanitize);
+  return useMemo(() => {
+    const rawQuery = isBrowser() ? getCurrentQueryFromLocation() : request.query;
+    return sanitizeRef.current(rawQuery);
+  }, [request, sanitizeRef]);
 }
 
 export function usePermission(permissionToCheck) {

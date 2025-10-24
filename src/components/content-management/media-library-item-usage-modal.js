@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
-import Spinner from '../spinner.js';
-import { Modal, Tooltip } from 'antd';
 import routes from '../../utils/routes.js';
 import slugify from '@sindresorhus/slugify';
+import { Modal, Spin, Tooltip } from 'antd';
 import { ExternalLinkIcon } from '../icons/icons.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -78,7 +77,7 @@ function MediaLibraryItemUsageModal({ mediaLibraryItemName, isOpen, onClose }) {
 
   const renderFirstAffectedRevisions = documents => renderPublicUsages(documents.map(document => ({
     key: document._id,
-    href: routes.getDocumentRevisionUrl({ id: document.firstAffectedRevisionId }),
+    href: routes.getDocumentRevisionUrl(document.firstAffectedRevisionId),
     text: document.title
   })));
 
@@ -178,10 +177,10 @@ function MediaLibraryItemUsageModal({ mediaLibraryItemName, isOpen, onClose }) {
             <div className="MediaLibraryItemUsageModal-sectionTitle">{t('publicUsage')}</div>
             {renderSubtitle(t('nonArchivedDocuments'), t('nonArchivedDocumentsTooltip'))}
             {renderDocuments(usage.publicUsage.nonArchivedDocuments)}
-            {renderSubtitle(t('documentsWithHistoricUsageOnly'), t('documentsWithHistoricUsageOnlyTooltip'))}
-            {renderFirstAffectedRevisions(usage.publicUsage.documentsWithHistoricUsageOnly)}
-            {renderSubtitle(t('archivedDocuments'), t('archivedDocumentsTooltip'))}
-            {renderDocuments(usage.publicUsage.archivedDocuments)}
+            {renderSubtitle(t('nonArchivedDocumentsWithHistory'), t('nonArchivedDocumentsWithHistoryTooltip'))}
+            {renderFirstAffectedRevisions(usage.publicUsage.nonArchivedDocumentsWithHistory)}
+            {renderSubtitle(t('archivedDocumentsWithHistory'), t('archivedDocumentsWithHistoryTooltip'))}
+            {renderDocuments(usage.publicUsage.archivedDocumentsWithHistory)}
             {renderSubtitle(t('documentCategories'))}
             {renderDocumentCategories(usage.publicUsage.documentCategories)}
             {renderSubtitle(t('users'))}
@@ -194,7 +193,7 @@ function MediaLibraryItemUsageModal({ mediaLibraryItemName, isOpen, onClose }) {
         )}
         {!usage && (
           <div className="MediaLibraryItemUsageModal-spinner">
-            <Spinner />
+            <Spin size="large">&nbsp;</Spin>
           </div>
         )}
       </div>

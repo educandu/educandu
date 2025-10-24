@@ -354,7 +354,7 @@ function StatisticsUserContributionsTab() {
           format={dateFormat}
           disabled={fetchingData}
           disabledDate={determineDisabledDate}
-          placeholder={[t('fromDatePlaceholder'), t('untilDatePlaceholder')]}
+          placeholder={[t('common:fromDate'), t('common:untilDate')]}
           value={[
             contributedFrom ? dayjs(contributedFrom) : null,
             contributedUntil ? dayjs(contributedUntil) : null

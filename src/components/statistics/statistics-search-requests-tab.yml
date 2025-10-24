@@ -47,12 +47,6 @@ statisticsSearchRequestsTab:
   queryPlaceholder:
     en: Filter by search terms
     de: Nach Suchbegriffen filtern
-  fromDatePlaceholder:
-    en: From date
-    de: Ab Datum
-  untilDatePlaceholder:
-    en: To date
-    de: Bis Datum
   exportAsCsv:
     en: Export as CSV file
     de: Als CSV-Datei exportieren

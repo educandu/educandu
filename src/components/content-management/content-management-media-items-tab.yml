@@ -1,0 +1,22 @@
+contentManagementMediaItemsTab:
+  textFilterLabel:
+    en: Text filter
+    de: Textfilter
+  textFilterPlaceholder:
+    en: Filter by name, tag or user
+    de: Nach Name, Tag oder Benutzer filtern
+  licenseFilterPlaceholder:
+    en: Filter by license
+    de: Nach Lizenz filtern
+  softDeleteItems:
+    en: Move to the trash bin
+    de: In den Papierkorb verschieben
+  hardDeleteItems:
+    en: Irreversibly delete
+    de: Unwiederruflich löschen
+  restoreItems:
+    en: Restore
+    de: Wiederherstellen
+  itemColumnHeader:
+    en: Resource
+    de: Ressource

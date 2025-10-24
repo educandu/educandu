@@ -1,0 +1,172 @@
+.ContentManagementMediaItemsTab {}
+
+.ContentManagementMediaItemsTab-filters {
+  display: grid;
+
+  &.ContentManagementMediaItemsTab-filters--mediaLibraryItems {
+    gap: 20px 40px;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "creationDate updateDate ."
+      "text         license    usage";
+
+    @media @edu-media-phone-tablet {
+      gap: 20px 40px;
+      grid-template-rows: repeat(3, auto);
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas:
+        "text    creationDate"
+        "license updateDate"
+        "usage   .";
+    }
+
+    @media @edu-media-phone {
+      gap: 20px 0;
+      grid-template-rows: repeat(5, auto);
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "creationDate"
+        "updateDate"
+        "text"
+        "license"
+        "usage";
+    }
+  }
+
+  &.ContentManagementMediaItemsTab-filters--mediaTrashItems {
+    gap: 20px 40px;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "creationDate deletionDate expirationDate"
+      "text         license      usage";
+
+    @media @edu-media-phone-tablet {
+      gap: 20px 40px;
+      grid-template-rows: repeat(3, auto);
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas:
+        "text    creationDate"
+        "license deletionDate"
+        "usage   expirationDate";
+    }
+
+
+    @media @edu-media-phone {
+      gap: 20px 0;
+      grid-template-rows: repeat(6, auto);
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "creationDate"
+        "deletionDate"
+        "expirationDate"
+        "text"
+        "license"
+        "usage";
+    }
+  }
+}
+
+.ContentManagementMediaItemsTab-filter {
+
+  &.ContentManagementMediaItemsTab-filter--text {
+    grid-area: text;
+  }
+  &.ContentManagementMediaItemsTab-filter--license {
+    grid-area: license;
+  }
+  &.ContentManagementMediaItemsTab-filter--usage {
+    grid-area: usage;
+  }
+  &.ContentManagementMediaItemsTab-filter--creationDate {
+    grid-area: creationDate;
+  }
+  &.ContentManagementMediaItemsTab-filter--updateDate {
+    grid-area: updateDate;
+  }
+  &.ContentManagementMediaItemsTab-filter--deletionDate {
+    grid-area: deletionDate;
+  }
+  &.ContentManagementMediaItemsTab-filter--expirationDate {
+    grid-area: expirationDate;
+  }
+}
+
+.ContentManagementMediaItemsTab-filterControl {
+  width: 100%;
+}
+
+.ContentManagementMediaItemsTab-sorting {
+  margin: 20px 0;
+  display: grid;
+  justify-content: end;
+}
+
+.ContentManagementMediaItemsTab-buttons {
+  margin: 20px 0;
+  display: grid;
+  gap: @edu-control-spacing-wide;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(2, auto);
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: auto;
+    justify-content: stretch;
+  }
+}
+
+.ContentManagementMediaItemsTab-buttonsLeft {
+  display: grid;
+  gap: @edu-control-spacing-wide;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(2, auto);
+  justify-content: start;
+
+  @media @edu-media-phone {
+    grid-auto-flow: row;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: auto;
+    justify-content: stretch;
+  }
+}
+
+.ContentManagementMediaItemsTab-buttonsRight {
+  display: grid;
+  justify-content: end;
+
+  @media @edu-media-phone {
+    justify-content: stretch;
+  }
+}
+
+.ContentManagementMediaItemsTab-iconAndName {
+  gap: 10px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-columns: auto 1fr;
+}
+
+.ContentManagementMediaItemsTab-name {
+  .m-line-clamp(1);
+}
+
+.ContentManagementMediaItemsTab-datesAndUsers {
+  font-size: 0.9em;
+  color: @edu-text-color-secondary;
+
+  @media @edu-media-phone {
+    display: none;
+  }
+}
+
+.ContentManagementMediaItemsTab-tags {
+  @media @edu-media-phone {
+    display: none;
+  }
+}

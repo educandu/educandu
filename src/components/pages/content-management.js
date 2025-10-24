@@ -9,8 +9,7 @@ import { TAB } from '../content-management/constants.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { CategoryIcon, MediaLibraryIcon } from '../icons/icons.js';
 import ContentManagementDocumentsTab from '../content-management/content-management-documents-tab.js';
-import ContentManagementMediaTrashTab from '../content-management/content-management-media-trash-tab.js';
-import ContentManagementMediaLibraryTab from '../content-management/content-management-media-library-tab.js';
+import ContentManagementMediaItemsTab from '../content-management/content-management-media-items-tab.js';
 import ContentManagementDocumentCategoriesTab from '../content-management/content-management-document-categories-tab.js';
 
 const determineTab = query => Object.values(TAB)
@@ -48,7 +47,7 @@ function ContentManagement({ PageTemplate }) {
       label: t('mediaLibraryTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <ContentManagementMediaLibraryTab />
+          <ContentManagementMediaItemsTab tab={TAB.mediaLibrary} />
         </div>
       )
     },
@@ -58,7 +57,7 @@ function ContentManagement({ PageTemplate }) {
       label: t('mediaTrashTabTitle'),
       children: (
         <div className="Tabs-tabPane">
-          <ContentManagementMediaTrashTab />
+          <ContentManagementMediaItemsTab tab={TAB.mediaTrash} />
         </div>
       )
     }

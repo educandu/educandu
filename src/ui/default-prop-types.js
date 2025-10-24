@@ -395,13 +395,13 @@ export const mediaLibraryItemWithRelevanceShape = PropTypes.shape({
   relevance: PropTypes.number.isRequired
 });
 
-export const mediaTrashItemShape = PropTypes.shape({
+export const mediaTrashItemWithOptionalOriginalItemShape = PropTypes.shape({
   ...commonMediaFileProps,
   _id: PropTypes.string.isRequired,
   resourceType: PropTypes.oneOf(Object.values(RESOURCE_TYPE)).isRequired,
   contentType: PropTypes.string.isRequired,
   createdBy: otherUserShape.isRequired,
-  originalItem: mediaLibraryItemShape.isRequired
+  originalItem: mediaLibraryItemShape
 });
 
 export const wikimediaFileShape = PropTypes.shape({

@@ -1,6 +1,9 @@
 @tag-font-size: @edu-font-size-sm;
+@tag-font-size-sm: @edu-font-size-xs;
 @tag-padding: 3px 16px;
+@tag-padding-sm: 0 6px;
 @tag-border-radius: 22px;
+@tag-border-radius-sm: 6px;
 @tag-margin: 3px @edu-control-spacing-base 3px 0;
 
 .Tag {
@@ -13,6 +16,12 @@
   font-size: @tag-font-size;
   margin: @tag-margin !important;
   border: none !important;
+
+  &.Tag--small {
+    padding: @tag-padding-sm !important;
+    border-radius: @tag-border-radius-sm !important;
+    font-size: @tag-font-size-sm;
+  }
 
   &:last-of-type {
     margin-right: 0;

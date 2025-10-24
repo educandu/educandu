@@ -64,18 +64,6 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
-  bulkDeleteMediaLibraryItems({ mediaLibraryItemIds }) {
-    return this.httpClient
-      .delete(
-        '/api/v1/media-library/items',
-        {
-          data: { mediaLibraryItemIds },
-          responseType: 'json'
-        }
-      )
-      .then(res => res.data);
-  }
-
   getMediaLibraryTagSuggestions(query) {
     return this.httpClient
       .get(
@@ -94,10 +82,10 @@ class MediaLibraryApiClient {
       .then(res => res.data);
   }
 
-  getContentManagementMediaLibraryItems() {
+  getContentManagementMediaLibraryItems({ fromTrash }) {
     return this.httpClient
       .get(
-        '/api/v1/media-library/items/content-management',
+        `/api/v1/media-library/items/content-management?fromTrash=${encodeURIComponent(fromTrash)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

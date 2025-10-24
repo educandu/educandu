@@ -4,8 +4,8 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import { assert, createSandbox } from 'sinon';
 import MediaLibraryService from './media-library-service.js';
+import { RESOURCE_TYPE, ROLE } from '../domain/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
-import { RESOURCE_TYPE, RESOURCE_USAGE, ROLE } from '../domain/constants.js';
 import { getMediaLibraryPath, getMediaTrashPath } from '../utils/storage-utils.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -54,8 +54,6 @@ describe('media-library-service', () => {
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    maintainerUser = await createTestUser(container, { email: 'maintaner@test.com', role: ROLE.maintainer });
-    user = await createTestUser(container, { email: 'user@test.com', role: ROLE.user });
     markdownInfo = container.get(MarkdownInfo);
     sut = container.get(MediaLibraryService);
     cdn = container.get(Cdn);
@@ -66,7 +64,9 @@ describe('media-library-service', () => {
     await destroyTestEnvironment(container);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    maintainerUser = await createTestUser(container, { email: 'maintaner@test.com', role: ROLE.maintainer });
+    user = await createTestUser(container, { email: 'user@test.com', role: ROLE.user });
     sandbox.useFakeTimers(now);
     sandbox.stub(cdn, 'moveObject').resolves();
   });
@@ -80,192 +80,320 @@ describe('media-library-service', () => {
     let result;
     let createdMediaLibraryItem;
 
-    describe('when an item is referenced from an unarchived document', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        const section = createTestSection({
-          key: uniqueId.create(),
-          type: MarkdownInfo.typeName,
-          content: {
-            ...markdownInfo.getDefaultContent(),
-            text: `I [link this](${createdMediaLibraryItem.url})`
-          }
+    describe('when fromTrash is false', () => {
+      describe('when an item is not referenced from anywhere at all', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'unused-item.txt' });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
         });
-        await createTestDocument(container, user, { sections: [section] });
-        result = await sut.getAllMediaLibraryItemsWithUsage();
-      });
-      it('has usage `used`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.used);
-      });
-    });
-
-    describe('when an item is referenced from an archived document only', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        const section = createTestSection({
-          key: uniqueId.create(),
-          type: MarkdownInfo.typeName,
-          content: {
-            ...markdownInfo.getDefaultContent(),
-            text: `I [link this](${createdMediaLibraryItem.url})`
-          }
+        it('has usage `X`', () => {
+          expect(result.find(x => x.key === createdMediaLibraryItem._id).usage).toBe('X');
         });
-        const doc = await createTestDocument(container, user, { sections: [section] });
-        await updateTestDocument({
-          container,
-          user: maintainerUser,
-          documentId: doc._id,
-          data: {
-            publicContext: { archived: true }
-          }
+        it('has the correct structure', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item).toHaveProperty('key');
+          expect(item).toHaveProperty('mediaLibraryItem');
+          expect(item).toHaveProperty('mediaTrashItem');
+          expect(item).toHaveProperty('usage');
+          expect(item.mediaTrashItem).toBeNull();
         });
-        result = await sut.getAllMediaLibraryItemsWithUsage();
-      });
-      it('has usage `deprecated`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.deprecated);
-      });
-    });
-
-    describe('when an item is referenced from an earlier document revision only', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        const section = createTestSection({
-          key: uniqueId.create(),
-          type: MarkdownInfo.typeName,
-          content: {
-            ...markdownInfo.getDefaultContent(),
-            text: `I [link this](${createdMediaLibraryItem.url})`
-          }
+        it('includes user details in createdBy and updatedBy', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.mediaLibraryItem.createdBy).toHaveProperty('_id');
+          expect(item.mediaLibraryItem.createdBy).toHaveProperty('displayName');
+          expect(item.mediaLibraryItem.updatedBy).toHaveProperty('_id');
+          expect(item.mediaLibraryItem.updatedBy).toHaveProperty('displayName');
         });
-        const doc = await createTestDocument(container, user, { sections: [section] });
-        await updateTestDocument({
-          container,
-          user: maintainerUser,
-          documentId: doc._id,
-          data: {
-            sections: [
-              {
-                ...doc.sections[0],
-                content: {
-                  ...doc.sections[0].content,
-                  text: 'I do not link it anymore!'
-                }
-              }
-            ]
-          }
-        });
-        result = await sut.getAllMediaLibraryItemsWithUsage();
-      });
-      it('has usage `deprecated`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.deprecated);
-      });
-    });
-
-    describe('when an item is not referenced from anywhere at all', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        result = await sut.getAllMediaLibraryItemsWithUsage();
-      });
-      it('has usage `unused`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.unused);
-      });
-    });
-
-    describe('when an item is referenced from a document category', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        await createTestDocumentCategory(
-          container,
-          user,
-          {
-            description: `Download [this file](${createdMediaLibraryItem.url}), please!`
-          }
-        );
-
-        result = await sut.getAllMediaLibraryItemsWithUsage();
       });
 
-      it('has usage `used`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.used);
-      });
-    });
-
-    describe('when an item is referenced from a user', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        await createTestUser(
-          container,
-          {
-            email: 'other-user@test.com',
-            role: ROLE.user,
-            profileOverview:  `I [link this](${createdMediaLibraryItem.url})`
-          });
-
-        result = await sut.getAllMediaLibraryItemsWithUsage();
-      });
-
-      it('has usage `used`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.used);
-      });
-    });
-
-    describe('when an item is referenced from a room', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        await createTestRoom(
-          container,
-          {
-            ownedBy: user._id,
-            overview: `I [link this](${createdMediaLibraryItem.url})`
-          });
-
-        result = await sut.getAllMediaLibraryItemsWithUsage();
-      });
-
-      it('has usage `used`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.used);
-      });
-    });
-
-    describe('when an item is referenced from a consentText setting', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        await createTestSetting(
-          container,
-          {
-            name: 'consentText',
-            value: {
-              en: `I [link this](${createdMediaLibraryItem.url})`
+      describe('when an item is referenced from an unarchived document', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'doc-item.txt' });
+          const section = createTestSection({
+            key: uniqueId.create(),
+            type: MarkdownInfo.typeName,
+            content: {
+              ...markdownInfo.getDefaultContent(),
+              text: `I [link this](${createdMediaLibraryItem.url})`
             }
           });
-
-        result = await sut.getAllMediaLibraryItemsWithUsage();
+          await createTestDocument(container, user, { sections: [section] });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `DH`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('DH');
+        });
       });
 
-      it('has usage `used`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.used);
+      describe('when an item is referenced from an archived document only', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'archived-doc-item.txt' });
+          const section = createTestSection({
+            key: uniqueId.create(),
+            type: MarkdownInfo.typeName,
+            content: {
+              ...markdownInfo.getDefaultContent(),
+              text: `I [link this](${createdMediaLibraryItem.url})`
+            }
+          });
+          const doc = await createTestDocument(container, user, { sections: [section] });
+          await updateTestDocument({
+            container,
+            user: maintainerUser,
+            documentId: doc._id,
+            data: {
+              publicContext: { archived: true }
+            }
+          });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `A`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('A');
+        });
       });
-    });
 
-    describe('when an item is referenced from a pluginsHelpTexts setting', () => {
-      beforeEach(async () => {
-        createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
-        await createTestSetting(
-          container,
-          {
-            name: 'pluginsHelpTexts',
-            value: {
-              markdown: {
+      describe('when an item is referenced from an earlier document revision only', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'history-item.txt' });
+          const section = createTestSection({
+            key: uniqueId.create(),
+            type: MarkdownInfo.typeName,
+            content: {
+              ...markdownInfo.getDefaultContent(),
+              text: `I [link this](${createdMediaLibraryItem.url})`
+            }
+          });
+          const doc = await createTestDocument(container, user, { sections: [section] });
+          await updateTestDocument({
+            container,
+            user: maintainerUser,
+            documentId: doc._id,
+            data: {
+              sections: [
+                {
+                  ...doc.sections[0],
+                  content: {
+                    ...doc.sections[0].content,
+                    text: 'I do not link it anymore!'
+                  }
+                }
+              ]
+            }
+          });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `H`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('H');
+        });
+      });
+
+      describe('when an item is referenced from a document category', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'category-item.txt' });
+          await createTestDocumentCategory(
+            container,
+            user,
+            {
+              description: `Download [this file](${createdMediaLibraryItem.url}), please!`
+            }
+          );
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `C`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('C');
+        });
+      });
+
+      describe('when an item is referenced from a user', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'user-profile-item.txt' });
+          await createTestUser(
+            container,
+            {
+              email: 'other-user@test.com',
+              role: ROLE.user,
+              profileOverview: `I [link this](${createdMediaLibraryItem.url})`
+            });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `U`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('U');
+        });
+      });
+
+      describe('when an item is referenced from a room', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'room-item.txt' });
+          await createTestRoom(
+            container,
+            {
+              ownedBy: user._id,
+              overview: `I [link this](${createdMediaLibraryItem.url})`
+            });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `R`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('R');
+        });
+      });
+
+      describe('when an item is referenced from a consentText setting', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'consent-item.txt' });
+          await createTestSetting(
+            container,
+            {
+              name: 'consentText',
+              value: {
                 en: `I [link this](${createdMediaLibraryItem.url})`
               }
-            }
-          });
-
-        result = await sut.getAllMediaLibraryItemsWithUsage();
+            });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `S`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('S');
+        });
       });
 
-      it('has usage `used`', () => {
-        expect(result.find(x => x.url === createdMediaLibraryItem.url).usage).toBe(RESOURCE_USAGE.used);
+      describe('when an item is referenced from a pluginsHelpTexts setting', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'help-item.txt' });
+          await createTestSetting(
+            container,
+            {
+              name: 'pluginsHelpTexts',
+              value: {
+                markdown: {
+                  en: `I [link this](${createdMediaLibraryItem.url})`
+                }
+              }
+            });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `S`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('S');
+        });
+      });
+
+      describe('when an item is referenced from multiple places', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'multi-ref-item.txt' });
+          const section = createTestSection({
+            key: uniqueId.create(),
+            type: MarkdownInfo.typeName,
+            content: {
+              ...markdownInfo.getDefaultContent(),
+              text: `I [link this](${createdMediaLibraryItem.url})`
+            }
+          });
+          await createTestDocument(container, user, { sections: [section] });
+          await createTestDocumentCategory(
+            container,
+            user,
+            {
+              description: `Download [this file](${createdMediaLibraryItem.url}), please!`
+            }
+          );
+          await createTestUser(
+            container,
+            {
+              email: 'other-user@test.com',
+              role: ROLE.user,
+              profileOverview: `I [link this](${createdMediaLibraryItem.url})`
+            });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: false });
+        });
+        it('has usage `DHCU`', () => {
+          const item = result.find(x => x.key === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('DHCU');
+        });
+      });
+    });
+
+    describe('when fromTrash is true', () => {
+      let deletedMediaLibraryItem;
+
+      describe('when a trash item is not referenced from anywhere at all', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item1.txt' });
+          deletedMediaLibraryItem = await db.mediaLibraryItems.findOne({ _id: createdMediaLibraryItem._id });
+          await sut.deleteMediaLibraryItem({ mediaLibraryItemId: createdMediaLibraryItem._id, user });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: true });
+        });
+        it('has usage `X`', () => {
+          expect(result.find(x => x.mediaLibraryItem._id === createdMediaLibraryItem._id).usage).toBe('X');
+        });
+        it('has the correct structure', () => {
+          const item = result.find(x => x.mediaLibraryItem._id === createdMediaLibraryItem._id);
+          expect(item).toHaveProperty('key');
+          expect(item).toHaveProperty('mediaLibraryItem');
+          expect(item).toHaveProperty('mediaTrashItem');
+          expect(item).toHaveProperty('usage');
+          expect(item.mediaTrashItem).not.toBeNull();
+          expect(item.mediaTrashItem).toHaveProperty('expiresOn');
+        });
+        it('includes the original item data in mediaLibraryItem', () => {
+          const item = result.find(x => x.mediaLibraryItem._id === createdMediaLibraryItem._id);
+          expect(item.mediaLibraryItem.name).toBe(deletedMediaLibraryItem.name);
+          expect(item.mediaLibraryItem.size).toBe(deletedMediaLibraryItem.size);
+          expect(item.mediaLibraryItem.resourceType).toBe(deletedMediaLibraryItem.resourceType);
+        });
+      });
+
+      describe('when a trash item is referenced from an unarchived document', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item2.txt' });
+          const section = createTestSection({
+            key: uniqueId.create(),
+            type: MarkdownInfo.typeName,
+            content: {
+              ...markdownInfo.getDefaultContent(),
+              text: `I [link this](${createdMediaLibraryItem.url})`
+            }
+          });
+          await createTestDocument(container, user, { sections: [section] });
+          await sut.deleteMediaLibraryItem({ mediaLibraryItemId: createdMediaLibraryItem._id, user });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: true });
+        });
+        it('has usage `DH`', () => {
+          const item = result.find(x => x.mediaLibraryItem._id === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('DH');
+        });
+      });
+
+      describe('when a trash item is referenced from multiple places', () => {
+        beforeEach(async () => {
+          createdMediaLibraryItem = await createTestMediaLibraryItem(sut, user, { name: 'item3.txt' });
+          const section = createTestSection({
+            key: uniqueId.create(),
+            type: MarkdownInfo.typeName,
+            content: {
+              ...markdownInfo.getDefaultContent(),
+              text: `I [link this](${createdMediaLibraryItem.url})`
+            }
+          });
+          await createTestDocument(container, user, { sections: [section] });
+          await createTestRoom(
+            container,
+            {
+              ownedBy: user._id,
+              overview: `I [link this](${createdMediaLibraryItem.url})`
+            });
+          await sut.deleteMediaLibraryItem({ mediaLibraryItemId: createdMediaLibraryItem._id, user });
+          result = await sut.getAllMediaLibraryItemsWithUsage({ fromTrash: true });
+        });
+        it('has usage `DHR`', () => {
+          const item = result.find(x => x.mediaLibraryItem._id === createdMediaLibraryItem._id);
+          expect(item.usage).toBe('DHR');
+        });
       });
     });
   });

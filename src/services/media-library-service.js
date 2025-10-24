@@ -16,13 +16,16 @@ import transliterate from '@sindresorhus/transliterate';
 import ServerConfig from '../bootstrap/server-config.js';
 import { ensureIsUnique } from '../utils/array-utils.js';
 import { getResourceType } from '../utils/resource-utils.js';
+import { ensureKeyIsExcluded } from '../utils/object-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { createTextSearchQuery } from '../utils/query-utils.js';
 import MediaTrashItemStore from '../stores/media-trash-item-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import DocumentCategoryStore from '../stores/document-category-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
-import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE, RESOURCE_USAGE } from '../domain/constants.js';
+import { getAccessibleUrl, getPortableUrl } from '../utils/source-utils.js';
+import { CDN_URL_PREFIX, DEFAULT_CONTENT_TYPE } from '../domain/constants.js';
+import { MEDIA_USAGE_KEY, MEDIA_USAGE_KEYS } from '../utils/media-usage-utils.js';
 import { createUniqueStorageFileName, getMediaLibraryPath, getMediaTrashPath } from '../utils/storage-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -74,73 +77,87 @@ class MediaLibraryService {
     return this.mediaLibraryItemStore.getAllMediaLibraryItems();
   }
 
-  async getAllMediaLibraryItemsWithUsage() {
-    const [
-      items,
-      docCdnResources,
-      revCdnResources,
-      categoryResources,
-      userCdnResources,
-      roomCdnResources,
-      settingCdnResources
-    ]
-    = await Promise.all([
-      this.mediaLibraryItemStore.getAllMediaLibraryItems(),
-      this.documentStore.getAllCdnResourcesReferencedFromNonArchivedDocuments().then(x => new Set(x)),
-      this.documentRevisionStore.getAllCdnResourcesReferencedFromDocumentRevisions().then(x => new Set(x)),
-      this.documentCategoryStore.getAllCdnResourcesReferencedFromDocumentCategories().then(x => new Set(x)),
-      this.userStore.getAllCdnResourcesReferencedFromUsers().then(x => new Set(x)),
-      this.roomStore.getAllCdnResourcesReferencedFromRoomsMetadata().then(x => new Set(x)),
-      this.settingStore.getAllCdnResourcesReferencedFromSettings().then(x => new Set(x)),
+  async getAllMediaLibraryItemsWithUsage({ fromTrash = false }) {
+    const userMap = new Map();
+    const usageMap = new Map();
+    const mediaLibraryUrlPrefix = `${CDN_URL_PREFIX}${getMediaLibraryPath()}/`;
+    const emptyUsageMapEntry = Object.fromEntries(MEDIA_USAGE_KEYS.filter(key => key !== MEDIA_USAGE_KEY.X).map(key => [key, false]));
+
+    const addToUserMap = users => {
+      for (const user of users) {
+        userMap.set(user._id, user);
+      }
+    };
+
+    const addToUsageMap = (urls, usageCharCode) => {
+      for (const url of urls) {
+        if (url.startsWith(mediaLibraryUrlPrefix)) {
+          let entry = usageMap.get(url);
+          if (!entry) {
+            entry = { ...emptyUsageMapEntry };
+            usageMap.set(url, entry);
+          }
+          entry[usageCharCode] = true;
+        }
+      }
+    };
+
+    const mapUser = userId => {
+      const entry = userMap.get(userId);
+      if (!entry) {
+        throw new Error(`User with ID '${userId}' could not be found`);
+      }
+      return entry;
+    };
+
+    const mapMediaLibraryItem = item => {
+      const { url } = item;
+      return {
+        ...item,
+        createdBy: mapUser(item.createdBy),
+        updatedBy: mapUser(item.updatedBy),
+        url: getAccessibleUrl({ url, cdnRootUrl: this.serverConfig.cdnRootUrl }),
+        portableUrl: getPortableUrl({ url, cdnRootUrl: this.serverConfig.cdnRootUrl })
+      };
+    };
+
+    const mapMediaTrashItem = item => {
+      const { url } = item;
+      return {
+        ...ensureKeyIsExcluded(item, 'originalItem'),
+        createdBy: mapUser(item.createdBy),
+        expiresOn: moment(item.createdOn).add(this.serverConfig.mediaTrashExpiryTimeoutInDays, 'days').toDate(),
+        url: getAccessibleUrl({ url, cdnRootUrl: this.serverConfig.cdnRootUrl }),
+        portableUrl: getPortableUrl({ url, cdnRootUrl: this.serverConfig.cdnRootUrl })
+      };
+    };
+
+    const [items] = await Promise.all([
+      fromTrash ? this.mediaTrashItemStore.getAllMediaTrashItems() : this.mediaLibraryItemStore.getAllMediaLibraryItems(),
+      this.userStore.getAllUserIdsAndDisplayNames().then(addToUserMap),
+      this.documentStore.getAllCdnResourcesReferencedFromNonArchivedDocuments().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.D)),
+      this.documentStore.getAllTrackedCdnResourcesReferencedFromNonArchivedDocuments().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.H)),
+      this.documentStore.getAllTrackedCdnResourcesReferencedFromArchivedDocuments().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.A)),
+      this.documentStore.getAllTrackedCdnResourcesReferencedFromRoomDocuments().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.R)),
+      this.documentCategoryStore.getAllCdnResourcesReferencedFromDocumentCategories().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.C)),
+      this.userStore.getAllCdnResourcesReferencedFromUsers().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.U)),
+      this.roomStore.getAllCdnResourcesReferencedFromRoomsMetadata().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.R)),
+      this.settingStore.getAllCdnResourcesReferencedFromSettings().then(url => addToUsageMap(url, MEDIA_USAGE_KEY.S)),
     ]);
 
-    return items.map(item => ({
-      ...item,
-      usage: this._getMediaLibraryItemResourceUsage(
-        item,
-        docCdnResources,
-        revCdnResources,
-        categoryResources,
-        userCdnResources,
-        roomCdnResources,
-        settingCdnResources
-      )
-    }));
-  }
-
-  async getAllMediaTrashItemsWithUsage() {
-    const [
-      items,
-      docCdnResources,
-      revCdnResources,
-      categoryResources,
-      userCdnResources,
-      roomCdnResources,
-      settingCdnResources
-    ]
-    = await Promise.all([
-      this.mediaTrashItemStore.getAllMediaTrashItems(),
-      this.documentStore.getAllCdnResourcesReferencedFromNonArchivedDocuments().then(x => new Set(x)),
-      this.documentRevisionStore.getAllCdnResourcesReferencedFromDocumentRevisions().then(x => new Set(x)),
-      this.documentCategoryStore.getAllCdnResourcesReferencedFromDocumentCategories().then(x => new Set(x)),
-      this.userStore.getAllCdnResourcesReferencedFromUsers().then(x => new Set(x)),
-      this.roomStore.getAllCdnResourcesReferencedFromRoomsMetadata().then(x => new Set(x)),
-      this.settingStore.getAllCdnResourcesReferencedFromSettings().then(x => new Set(x)),
-    ]);
-
-    return items.map(item => ({
-      ...item,
-      expiresOn: moment(item.createdOn).add(this.serverConfig.mediaTrashExpiryTimeoutInDays, 'days').toDate(),
-      usage: this._getMediaLibraryItemResourceUsage(
-        item.originalItem,
-        docCdnResources,
-        revCdnResources,
-        categoryResources,
-        userCdnResources,
-        roomCdnResources,
-        settingCdnResources
-      )
-    }));
+    return fromTrash
+      ? items.map(item => ({
+        key: item._id,
+        mediaLibraryItem: mapMediaLibraryItem(item.originalItem),
+        mediaTrashItem: mapMediaTrashItem(item),
+        usage: this._getMediaLibraryItemResourceUsage(item.originalItem, usageMap)
+      }))
+      : items.map(item => ({
+        key: item._id,
+        mediaLibraryItem: mapMediaLibraryItem(item),
+        mediaTrashItem: null,
+        usage: this._getMediaLibraryItemResourceUsage(item, usageMap)
+      }));
   }
 
   async getMediaLibraryItemUsageByName({ mediaLibraryItemName }) {
@@ -170,9 +187,9 @@ class MediaLibraryService {
     const affectedRoomDocumentIds = new Set();
     const affectedPublicDocumentIds = new Set();
 
-    const archivedDocuments = [];
     const nonArchivedDocuments = [];
-    const documentsWithHistoricUsageOnly = [];
+    const nonArchivedDocumentsWithHistory = [];
+    const archivedDocumentsWithHistory = [];
 
     for (const revision of affectedFirstDocumentRevisions) {
       const resultDoc = {
@@ -189,11 +206,12 @@ class MediaLibraryService {
       } else{
         affectedPublicDocumentIds.add(revision.documentId);
         if (revision.isDocumentArchived) {
-          archivedDocuments.push(resultDoc);
-        } else if (revision.isResourceUsedInDocument) {
-          nonArchivedDocuments.push(resultDoc);
+          archivedDocumentsWithHistory.push(resultDoc);
         } else {
-          documentsWithHistoricUsageOnly.push(resultDoc);
+          nonArchivedDocumentsWithHistory.push(resultDoc);
+          if (revision.isResourceUsedInDocument) {
+            nonArchivedDocuments.push(resultDoc);
+          }
         }
       }
     }
@@ -205,8 +223,8 @@ class MediaLibraryService {
     return {
       publicUsage: {
         nonArchivedDocuments,
-        documentsWithHistoricUsageOnly,
-        archivedDocuments,
+        nonArchivedDocumentsWithHistory,
+        archivedDocumentsWithHistory,
         documentCategories,
         users,
         settingCount: settings.length,
@@ -375,7 +393,7 @@ class MediaLibraryService {
 
       await this.transactionRunner.run(async session => {
         await this.mediaLibraryItemStore.insertMediaLibraryItem(newMediaLibraryItem, { session });
-        await this.mediaTrashItemStore.deleteMediaTrashItem(oldMediaTrashItem, { session });
+        await this.mediaTrashItemStore.deleteMediaTrashItem(oldMediaTrashItem._id, { session });
       });
 
       try {
@@ -417,42 +435,27 @@ class MediaLibraryService {
     }
   }
 
-  async bulkDeleteMediaLibraryItems({ mediaLibraryItemIds, user }) {
-    for (const mediaLibraryItemId of mediaLibraryItemIds) {
-      await this.deleteMediaLibraryItem({ mediaLibraryItemId, user });
-    }
-  }
-
   async getMediaLibraryItemTagsMatchingText(searchString) {
     const sanitizedSearchString = escapeStringRegexp((searchString || '').trim());
     const result = await this.mediaLibraryItemStore.getMediaLibraryItemTagsMatchingText(sanitizedSearchString);
     return result[0]?.uniqueTags || [];
   }
 
-  _getMediaLibraryItemResourceUsage(
-    mediaLibraryItem,
-    documentCdnResourcesSet,
-    documentRevisionsCdnResourcesSet,
-    documentCategoryResourcesSet,
-    userCdnResourcesSet,
-    roomCdnResourcesSet,
-    settingCdnResourcesSet
-  ) {
-    if (
-      documentCdnResourcesSet.has(mediaLibraryItem.url)
-      || documentCategoryResourcesSet.has(mediaLibraryItem.url)
-      || userCdnResourcesSet.has(mediaLibraryItem.url)
-      || roomCdnResourcesSet.has(mediaLibraryItem.url)
-      || settingCdnResourcesSet.has(mediaLibraryItem.url)
-    ) {
-      return RESOURCE_USAGE.used;
+  _getMediaLibraryItemResourceUsage(mediaLibraryItem, usageMap) {
+    let usage = '';
+    const urlEntry = usageMap.get(mediaLibraryItem.url);
+
+    if (urlEntry) {
+      for (const mediaUsageKey of MEDIA_USAGE_KEYS) {
+        if (urlEntry[mediaUsageKey]) {
+          usage += mediaUsageKey;
+        }
+      }
     }
 
-    if (documentRevisionsCdnResourcesSet.has(mediaLibraryItem.url)) {
-      return RESOURCE_USAGE.deprecated;
-    }
-
-    return RESOURCE_USAGE.unused;
+    // X is not used in `usageMap`, because it is the natural
+    // result in case no other usage key can be applied:
+    return usage || MEDIA_USAGE_KEY.X;
   }
 }
 
