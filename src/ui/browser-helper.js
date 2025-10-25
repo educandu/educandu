@@ -19,6 +19,10 @@ export function getCurrentUrlFromLocation() {
   return `${pathname}${search}${hash}`;
 }
 
+export function getCurrentQueryFromLocation() {
+  return Object.fromEntries(new URL(window.location).searchParams);
+}
+
 export function ensureFormValuesAfterHydration(antForm, fieldNames) {
   for (const fieldName of fieldNames) {
     antForm.setFieldsValue({ [fieldName]: antForm.getFieldInstance(fieldName).input.value });

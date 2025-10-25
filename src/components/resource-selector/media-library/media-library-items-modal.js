@@ -12,7 +12,7 @@ import MediaLibraryMetadataForm from './media-library-metadata-form.js';
 import MediaLibraryMetadataDisplay from './media-library-metadata-display.js';
 import MediaLibraryApiClient from '../../../api-clients/media-library-api-client.js';
 import ResourcePreviewWithMetadata from '../shared/resource-preview-with-metadata.js';
-import { mediaLibraryItemShape, mediaTrashItemShape } from '../../../ui/default-prop-types.js';
+import { mediaLibraryItemShape, mediaTrashItemWithOptionalOriginalItemShape } from '../../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -238,7 +238,7 @@ function MediaLibaryItemsModal({
 MediaLibaryItemsModal.propTypes = {
   mode: PropTypes.oneOf(Object.values(MEDIA_LIBRARY_ITEMS_MODAL_MODE)).isRequired,
   isOpen: PropTypes.bool.isRequired,
-  mediaTrashItem: mediaTrashItemShape,
+  mediaTrashItem: mediaTrashItemWithOptionalOriginalItemShape,
   mediaLibraryItem: mediaLibraryItemShape,
   onClose: PropTypes.func.isRequired,
   onCreated: PropTypes.func,

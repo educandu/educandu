@@ -49,10 +49,8 @@ import {
   IconWorldUpload,
   IconInfoCircle,
   IconRestore,
-  IconX,
-  IconHistory,
-  IconFileAlert,
-  IconExternalLink
+  IconExternalLink,
+  IconCircleFilled
 } from '@tabler/icons-react';
 
 const Icon = iconNs.default || iconNs;
@@ -99,7 +97,6 @@ function createIconFromTablerIconComponents(
 
 export const TagIcon = createIconFromTablerIconComponent(IconTag);
 export const ToolIcon = createIconFromTablerIconComponent(IconTool);
-export const NotUsedIcon = createIconFromTablerIconComponent(IconX);
 export const LineIcon = createIconFromSvgComponent(LineIconComponent);
 export const ClickIcon = createIconFromTablerIconComponent(IconClick);
 export const SpinIcon = createIconFromTablerIconComponent(IconLoader2);
@@ -108,7 +105,6 @@ export const CircleIcon = createIconFromTablerIconComponent(IconCircle);
 export const EraserIcon = createIconFromTablerIconComponent(IconEraser);
 export const RepeatIcon = createIconFromTablerIconComponent(IconRepeat);
 export const SquareIcon = createIconFromTablerIconComponent(IconSquare);
-export const UsedIcon = createIconFromTablerIconComponent(IconFileAlert);
 export const FavoriteIcon = createIconFromTablerIconComponent(IconHeart);
 export const InfoIcon = createIconFromTablerIconComponent(IconInfoCircle);
 export const StarIcon = createIconFromTablerIconComponent(IconStarFilled);
@@ -130,7 +126,6 @@ export const CategoryIcon = createIconFromTablerIconComponent(IconCategory2);
 export const StrokeWidthIcon = createIconFromTablerIconComponent(IconRuler3);
 export const FontSizeIcon = createIconFromTablerIconComponent(IconTextResize);
 export const RepeatOffIcon = createIconFromTablerIconComponent(IconRepeatOff);
-export const NoLongerUsedIcon = createIconFromTablerIconComponent(IconHistory);
 export const SourceCodeIcon = createIconFromTablerIconComponent(IconSourceCode);
 export const TableExportIcon = createIconFromTablerIconComponent(IconTableDown);
 export const StatisticsIcon = createIconFromTablerIconComponent(IconReportSearch);
@@ -143,6 +138,7 @@ export const ArrowsDownUpIcon = createIconFromTablerIconComponent(IconArrowsDown
 export const ChevronRightIcon = createIconFromTablerIconComponent(IconChevronRight);
 export const MediaLibraryIcon = createIconFromTablerIconComponent(IconBuildingBank);
 export const ExternalLinkIcon = createIconFromTablerIconComponent(IconExternalLink);
+export const CircleFilledIcon = createIconFromTablerIconComponent(IconCircleFilled);
 export const ContentManagementIcon = createIconFromTablerIconComponent(IconZoomScan);
 export const UserContributionsIcon = createIconFromTablerIconComponent(IconUserEdit);
 export const PlaybackRateIcon = createIconFromTablerIconComponent(IconBrandSpeedtest);

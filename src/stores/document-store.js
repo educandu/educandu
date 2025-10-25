@@ -226,7 +226,19 @@ class DocumentStore {
   }
 
   getAllCdnResourcesReferencedFromNonArchivedDocuments() {
-    return this.collection.distinct('cdnResources', { 'publicContext.archived': false });
+    return this.collection.distinct('cdnResources', { 'roomId': null, 'publicContext.archived': false });
+  }
+
+  getAllTrackedCdnResourcesReferencedFromNonArchivedDocuments() {
+    return this.collection.distinct('trackedCdnResources', { 'roomId': null, 'publicContext.archived': false });
+  }
+
+  getAllTrackedCdnResourcesReferencedFromArchivedDocuments() {
+    return this.collection.distinct('trackedCdnResources', { 'roomId': null, 'publicContext.archived': true });
+  }
+
+  getAllTrackedCdnResourcesReferencedFromRoomDocuments() {
+    return this.collection.distinct('trackedCdnResources', { roomId: { $ne: null } });
   }
 
   getLatestDocumentsMetadataCreatedByUser(createdBy, { session, limit } = {}) {

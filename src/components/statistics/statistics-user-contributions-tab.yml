@@ -41,12 +41,6 @@ statisticsUserContributionsTab:
   userNamePlaceholder:
     en: Filter by user name
     de: Nach Benutzername filtern
-  fromDatePlaceholder:
-    en: From date
-    de: Ab Datum
-  untilDatePlaceholder:
-    en: To date
-    de: Bis Datum
   exportAsCsv:
     en: Export as CSV file
     de: Als CSV-Datei exportieren

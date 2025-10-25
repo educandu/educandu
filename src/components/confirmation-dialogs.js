@@ -151,10 +151,13 @@ export function confirmLeaveRoom(t, roomName, onOk, onCancel = () => {}) {
   });
 }
 
-export function confirmMediaFileSoftDelete(t, fileName, onOk, onCancel = () => {}) {
+export function confirmMediaFileSoftDelete(t, fileNameOrFileNames, onOk, onCancel = () => {}) {
+  const fileNames = Array.isArray(fileNameOrFileNames) ? fileNameOrFileNames : [fileNameOrFileNames];
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:softDeleteMediaFileConfirmation', { fileName }),
+    content: fileNames.length === 1
+      ? t('confirmationDialogs:softDeleteMediaFileConfirmation', { fileName: fileNames[0] })
+      : t('confirmationDialogs:bulkSoftDeleteMediaFileConfirmation', { count: fileNames.length }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
@@ -163,10 +166,13 @@ export function confirmMediaFileSoftDelete(t, fileName, onOk, onCancel = () => {
   });
 }
 
-export function confirmMediaFileHardDelete(t, fileName, onOk, onCancel = () => {}) {
+export function confirmMediaFileHardDelete(t, fileNameOrFileNames, onOk, onCancel = () => {}) {
+  const fileNames = Array.isArray(fileNameOrFileNames) ? fileNameOrFileNames : [fileNameOrFileNames];
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:hardDeleteMediaFileConfirmation', { fileName }),
+    content: fileNames.length === 1
+      ? t('confirmationDialogs:hardDeleteMediaFileConfirmation', { fileName: fileNames[0] })
+      : t('confirmationDialogs:bulkHardDeleteMediaFileConfirmation', { count: fileNames.length }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
@@ -175,10 +181,13 @@ export function confirmMediaFileHardDelete(t, fileName, onOk, onCancel = () => {
   });
 }
 
-export function confirmMediaFileRestore(t, fileName, onOk, onCancel = () => {}) {
+export function confirmMediaFileRestore(t, fileNameOrFileNames, onOk, onCancel = () => {}) {
+  const fileNames = Array.isArray(fileNameOrFileNames) ? fileNameOrFileNames : [fileNameOrFileNames];
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:restoreMediaFileConfirmation', { fileName }),
+    content: fileNames.length === 1
+      ? t('confirmationDialogs:restoreMediaFileConfirmation', { fileName: fileNames[0] })
+      : t('confirmationDialogs:bulkRestoreMediaFileConfirmation', { count: fileNames.length }),
     okText: t('common:yes'),
     okType: 'primary',
     cancelText: t('common:no'),
@@ -565,18 +574,6 @@ export function confirmWhiteboardReset(t, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
     content: t('confirmationDialogs:whiteboardResetConfirmation'),
-    okText: t('common:yes'),
-    okType: 'danger',
-    cancelText: t('common:no'),
-    onOk,
-    onCancel
-  });
-}
-
-export function confirmBulkDeleteMediaItems(t, count, onOk, onCancel = () => {}) {
-  confirm({
-    title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:bulkDeleteMediaItemsConfirmation', { count }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),

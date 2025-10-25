@@ -3,9 +3,8 @@ import { validate } from '../domain/validation.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import { favoriteDBSchema, userDBSchema } from '../domain/schemas/user-schemas.js';
 
-const cdnResourceUsageMetadataProjection = {
+const idAndDisplayNameProjection = {
   _id: 1,
-  email: 1,
   displayName: 1
 };
 
@@ -42,8 +41,12 @@ class UserStore {
     return this.collection.distinct('cdnResources');
   }
 
+  getAllUserIdsAndDisplayNames({ session } = {}) {
+    return this.collection.find({}, { projection: idAndDisplayNameProjection, session }).toArray();
+  }
+
   getAllUsersByReferencedCdnResourceName(cdnResourceName, { session } = {}) {
-    return this.collection.find({ cdnResources: cdnResourceName }, { projection: cdnResourceUsageMetadataProjection, session }).toArray();
+    return this.collection.find({ cdnResources: cdnResourceName }, { projection: idAndDisplayNameProjection, session }).toArray();
   }
 
   findUserByVerificationCode(verificationCode, { session } = {}) {

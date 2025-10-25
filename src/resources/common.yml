@@ -144,6 +144,9 @@ common:
   creationDate:
     en: Creation date
     de: Erstellungsdatum
+  expirationDate:
+    en: Expiration date
+    de: Ablaufdatum
   createdOnDateBy:
     en: Created on {date} by
     de: Erstellt am {date} von
@@ -159,6 +162,9 @@ common:
   deletedOnDateBy:
     en: Deleted on {date} by
     de: Gelöscht am {date} von
+  expiresOnDate:
+    en: Expires on {date}
+    de: Läuft ab am {date}
   invitedOnDate:
     en: Invited on {date}.
     de: Eingeladen am {date}.
@@ -608,7 +614,7 @@ common:
     de: Lizenzen
   usage:
     en: Usage
-    de: Benutzung
+    de: Nutzung
   setting:
     en: Setting
     de: Einstellung
@@ -789,3 +795,9 @@ common:
   usageOverview:
     en: Usage overview
     de: Benutzungsübersicht
+  fromDate:
+    en: From date
+    de: Ab Datum
+  untilDate:
+    en: To date
+    de: Bis Datum

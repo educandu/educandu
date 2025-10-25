@@ -14,8 +14,8 @@ import {
   mediaLibrarySearchQuerySchema,
   mediaLibraryTagSearchQuerySchema,
   mediaLibraryFindParamsSchema,
-  mediaLibraryBulkDeleteBodySchema,
-  mediaLibraryItemNameParamsSchema
+  mediaLibraryItemNameParamsSchema,
+  mediaLibraryItemsFromTrashQuerySchema
 } from '../domain/schemas/media-library-item-schemas.js';
 
 const jsonParser = express.json();
@@ -53,13 +53,22 @@ class MediaLibraryController {
     return res.send(mappedMediaLibraryItems);
   }
 
+  // async handleGetMediaLibraryItemsForContentManagement(req, res) {
+  //   const { user } = req;
+
+  //   const mediaLibraryItems = await this.mediaLibraryService.getAllMediaLibraryItemsWithUsage();
+  //   const mappedMediaLibraryItems = await this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user);
+
+  //   return res.send({ mediaLibraryItems: mappedMediaLibraryItems });
+  // }
+
   async handleGetMediaLibraryItemsForContentManagement(req, res) {
-    const { user } = req;
+    const fromTrash = req.query.fromTrash === true.toString();
 
-    const mediaLibraryItems = await this.mediaLibraryService.getAllMediaLibraryItemsWithUsage();
-    const mappedMediaLibraryItems = await this.clientDataMappingService.mapMediaLibraryItems(mediaLibraryItems, user);
+    const items = await this.mediaLibraryService.getAllMediaLibraryItemsWithUsage({ fromTrash });
 
-    return res.send({ mediaLibraryItems: mappedMediaLibraryItems });
+    // No client data mapping, the data is already mapped by the service!
+    return res.send({ items });
   }
 
   async handleGetMediaLibraryItemsForStatistics(req, res) {
@@ -121,15 +130,6 @@ class MediaLibraryController {
     return res.status(204).end();
   }
 
-  async handleBulkDeleteMediaLibraryItems(req, res) {
-    const { user } = req;
-    const { mediaLibraryItemIds } = req.body;
-
-    await this.mediaLibraryService.bulkDeleteMediaLibraryItems({ mediaLibraryItemIds, user });
-
-    return res.status(204).end();
-  }
-
   async handleGetMediaLibraryTagSuggestions(req, res) {
     const { query } = req.query;
 
@@ -157,6 +157,7 @@ class MediaLibraryController {
     router.get(
       '/api/v1/media-library/items/content-management',
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
+      validateQuery(mediaLibraryItemsFromTrashQuerySchema),
       (req, res) => this.handleGetMediaLibraryItemsForContentManagement(req, res)
     );
 
@@ -201,14 +202,6 @@ class MediaLibraryController {
       needsPermission(permissions.DELETE_PUBLIC_CONTENT),
       validateParams(mediaLibraryItemIdParamsSchema),
       (req, res) => this.handleDeleteMediaLibraryItem(req, res)
-    );
-
-    router.delete(
-      '/api/v1/media-library/items',
-      jsonParser,
-      needsPermission(permissions.DELETE_PUBLIC_CONTENT),
-      validateBody(mediaLibraryBulkDeleteBodySchema),
-      (req, res) => this.handleBulkDeleteMediaLibraryItems(req, res)
     );
 
     router.get(

@@ -38,12 +38,6 @@ statisticsDocumentRequestsTab:
   titlePlaceholder:
     en: Filter by document title
     de: Nach Dokument-Titel filtern
-  fromDatePlaceholder:
-    en: From date
-    de: Ab Datum
-  untilDatePlaceholder:
-    en: To date
-    de: Bis Datum
   mondayCheckbox:
     en: Mo
     de: Mo

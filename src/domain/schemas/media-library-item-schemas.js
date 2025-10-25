@@ -1,8 +1,8 @@
 import joi from 'joi';
 import spdxLicenseList from 'spdx-license-list';
 import { MAX_SEARCH_QUERY_LENGTH } from '../constants.js';
-import { commonMediaItemProperties, idOrKeySchema } from './shared-schemas.js';
 import { maxMediaLibraryItemShortDescriptionLength } from '../validation-constants.js';
+import { boolStringSchema, commonMediaItemProperties, idOrKeySchema } from './shared-schemas.js';
 
 const licenseSchema = joi.string().valid(...Object.keys(spdxLicenseList));
 
@@ -54,10 +54,10 @@ export const mediaLibrarySearchQuerySchema = joi.object({
   resourceTypes: joi.string().required()
 });
 
-export const mediaLibraryFindParamsSchema = joi.object({
-  url: joi.string().required()
+export const mediaLibraryItemsFromTrashQuerySchema = joi.object({
+  fromTrash: boolStringSchema.required()
 });
 
-export const mediaLibraryBulkDeleteBodySchema = joi.object({
-  mediaLibraryItemIds: joi.array().items(idOrKeySchema).required()
+export const mediaLibraryFindParamsSchema = joi.object({
+  url: joi.string().required()
 });
