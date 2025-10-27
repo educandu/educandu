@@ -15,6 +15,15 @@ class StatisticsApiClient {
       )
       .then(res => res.data);
   }
+
+  getTagDetails({ tag }) {
+    return this.httpClient
+      .get(
+        `/api/v1/statistics/tags/${encodeURIComponent(tag)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default StatisticsApiClient;

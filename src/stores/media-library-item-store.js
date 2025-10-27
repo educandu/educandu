@@ -7,6 +7,12 @@ const mediaLibraryItemProjection = {
   searchTokens: 0
 };
 
+const mediaLibraryItemNameAndTagsProjection = {
+  _id: 1,
+  name: 1,
+  tags: 1
+};
+
 class MediaLibraryItemStore {
   static dependencies = [Database];
 
@@ -57,6 +63,12 @@ class MediaLibraryItemStore {
         }
       }
     ], { session });
+  }
+
+  getMediaLibraryItemsNameAndTagsCursorByTag(tag, { session } = {}) {
+    return this.collection.find({
+      tags: tag
+    }, { projection: mediaLibraryItemNameAndTagsProjection, session });
   }
 
   async getMediaLibraryItemsPageByConditions(conditions, { page, pageSize }, { session } = {}) {

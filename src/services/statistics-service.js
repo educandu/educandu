@@ -1,3 +1,4 @@
+import by from 'thenby';
 import DocumentStore from '../stores/document-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 
@@ -9,9 +10,14 @@ class StatisticsService {
     this.mediaLibraryItemStore = mediaLibraryItemStore;
   }
 
-  async getItemsWithTagsCount() {
+  async getTagsWithUsageCounts() {
     const tagMap = new Map();
-    const addToMap = async (cursor, tagMapEntryKey) => {
+    const totals = {
+      documents: 0,
+      mediaLibraryItems: 0,
+      total: 0
+    };
+    const addToMap = async (cursor, tagMapEntryKey, totalsEntry) => {
       for await (const item of cursor) {
         let entry = tagMap.get(item._id);
         if (!entry) {
@@ -23,17 +29,70 @@ class StatisticsService {
           };
           tagMap.set(item._id, entry);
         }
-        entry[tagMapEntryKey] = item.count;
-        entry.totalCount += item.count;
+        if (item.count) {
+          entry[tagMapEntryKey] = item.count;
+          entry.totalCount += item.count;
+          totals[totalsEntry] += 1;
+          totals.total += 1;
+        }
       }
     };
 
     await Promise.all([
-      this.documentStore.getPublicNonArchivedDocumentTagsWithCountsCursor().then(cursor => addToMap(cursor, 'documentCount')),
-      this.mediaLibraryItemStore.getMediaLibraryItemTagsWithCountsCursor().then(cursor => addToMap(cursor, 'mediaLibraryItemCount'))
+      addToMap(this.documentStore.getPublicNonArchivedDocumentTagsWithCountsCursor(), 'documentCount', 'documents'),
+      addToMap(this.mediaLibraryItemStore.getMediaLibraryItemTagsWithCountsCursor(), 'mediaLibraryItemCount', 'mediaLibraryItems')
     ]);
 
-    return [...tagMap.values()];
+    return { tags: [...tagMap.values()], totals };
+  }
+
+  async getTagDetails({ tag }) {
+    const documents = [];
+    const mediaLibraryItems = [];
+    const companionTagMap = new Map();
+
+    const countCompanionTags = tagsFromDocumentOrMediaLibraryItem => {
+      for (const otherTag of tagsFromDocumentOrMediaLibraryItem) {
+        if (otherTag !== tag) {
+          const currentCount = companionTagMap.get(otherTag) || 0;
+          companionTagMap.set(otherTag, currentCount + 1);
+        }
+      }
+    };
+
+    const addDocuments = async documentsCursor => {
+      for await (const document of documentsCursor) {
+        documents.push({
+          _id: document._id,
+          slug: document.slug,
+          title: document.title
+        });
+        countCompanionTags(document.tags);
+      }
+    };
+
+    const addMediaLibraryItem = async mediaLibraryItemsCursor => {
+      for await (const mediaLibraryItem of mediaLibraryItemsCursor) {
+        mediaLibraryItems.push({
+          _id: mediaLibraryItem._id,
+          name: mediaLibraryItem.name
+        });
+        countCompanionTags(mediaLibraryItem.tags);
+      }
+    };
+
+    await Promise.all([
+      addDocuments(this.documentStore.getPublicNonArchivedDocumentsMinimalMetadataWithTagsCursorByTag(tag)),
+      addMediaLibraryItem(this.mediaLibraryItemStore.getMediaLibraryItemsNameAndTagsCursorByTag(tag))
+    ]);
+
+    return {
+      documents: documents.sort(by(doc => doc.title)),
+      mediaLibraryItems: mediaLibraryItems.sort(by(item => item.name)),
+      companionTags: [...companionTagMap.entries()]
+        .map(([key, value]) => ({ tag: key, count: value }))
+        .sort(by(entry => entry.count, 'desc'))
+    };
   }
 }
 

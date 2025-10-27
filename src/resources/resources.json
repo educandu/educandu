@@ -4862,29 +4862,65 @@
     }
   },
   "statisticsTagsTab": {
-    "filterPlaceholder": {
-      "en": "Filter by name",
-      "de": "Nach Name filtern"
+    "frequencyHeaderTotal": {
+      "en": "Frequency (total)",
+      "de": "Häufigkeit (gesamt)"
+    },
+    "frequencyHeaderBySource": {
+      "en": "Frequency (by source)",
+      "de": "Häufigkeit (nach Quelle)"
+    },
+    "frequencyHeaderDocuments": {
+      "en": "Documents",
+      "de": "Dokumente"
+    },
+    "frequencyHeaderMediaLibraryItems": {
+      "en": "Media library",
+      "de": "Mediathek"
+    },
+    "tag": {
+      "en": "Tag",
+      "de": "Tag"
     },
     "sortedByTag": {
       "en": "Sorted by tag",
       "de": "Nach Tag sortiert"
     },
-    "frequency": {
-      "en": "Frequency",
-      "de": "Häufigkeit"
+    "length": {
+      "en": "Length",
+      "de": "Länge"
     },
-    "sortedByFrequency": {
-      "en": "Sorted by frequency",
-      "de": "Nach Häufigkeit sortiert"
+    "sortedByLength": {
+      "en": "Sorted by length",
+      "de": "Nach Länge sortiert"
     },
-    "companionTagCount": {
-      "en": "Companion tags count",
-      "de": "Anzahl von Begleit-Tags"
+    "totalCount": {
+      "en": "Frequency (total)",
+      "de": "Häufigkeit (gesamt)"
     },
-    "sortedByCompanionTagCount": {
-      "en": "Sorted by companion tags count",
-      "de": "Nach Anzahl von Begleit-Tags sortiert"
+    "sortedByTotalCount": {
+      "en": "Sorted by frequency (total)",
+      "de": "Nach Häufigkeit (gesamt) sortiert"
+    },
+    "documentCount": {
+      "en": "Frequency (documents)",
+      "de": "Häufigkeit (Dokumente)"
+    },
+    "sortedByDocumentCount": {
+      "en": "Sorted by frequency (documents)",
+      "de": "Nach Häufigkeit (Dokumente) sortiert"
+    },
+    "mediaLibraryItemCount": {
+      "en": "Frequency (media library)",
+      "de": "Häufigkeit (Mediathek)"
+    },
+    "sortedByMediaLibraryItemCount": {
+      "en": "Sorted by frequency (media library)",
+      "de": "Nach Häufigkeit (Mediathek) sortiert"
+    },
+    "tagDetailsErrorMessage": {
+      "en": "Error loading tag details",
+      "de": "Fehler beim Laden der Tag-Details"
     },
     "documents": {
       "en": "Documents",
@@ -4897,6 +4933,10 @@
     "companionTags": {
       "en": "Companion tags",
       "de": "Begleit-Tags"
+    },
+    "textFilterPlaceholder": {
+      "en": "Filter by tag",
+      "de": "Nach Tag filtern"
     },
     "tagCategoryFilter_documentsAndMedia": {
       "en": "Documents and media",

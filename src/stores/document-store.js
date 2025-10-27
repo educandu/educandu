@@ -8,6 +8,13 @@ const documentTagsProjection = {
   tags: 1
 };
 
+const documentMinimalMetadataWithTagsProjection = {
+  _id: 1,
+  title: 1,
+  slug: 1,
+  tags: 1
+};
+
 const documentCreationMetadataProjection = {
   _id: 1,
   createdOn: 1,
@@ -216,6 +223,14 @@ class DocumentStore {
       'publicContext.archived': false,
       '$expr': { $gt: [{ $size: '$tags' }, 0] }
     }, { projection: documentExtendedMetadataProjection, session }).toArray();
+  }
+
+  getPublicNonArchivedDocumentsMinimalMetadataWithTagsCursorByTag(tag, { session } = {}) {
+    return this.collection.find({
+      'roomId': null,
+      'publicContext.archived': false,
+      'tags': tag
+    }, { projection: documentMinimalMetadataWithTagsProjection, session });
   }
 
   getDocumentTagsMatchingText(text) {

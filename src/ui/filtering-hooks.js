@@ -2,20 +2,24 @@ import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { processAsIteratorIfAvailable } from '../utils/array-utils.js';
 
-export const createTextFilter = (name, filterFunc, { treatEmptyAsNull = false, prepareFilterValue = x => x } = { treatEmptyAsNull: false, prepareFilterValue: x => x }) => ({
+export const createTextFilter = (name, filterFunc, {
+  defaultValue = '',
+  prepareFilterValue = filterValue => filterValue,
+  skipFilterIf = filterValue => !filterValue
+} = {
+  defaultValue: '',
+  prepareFilterValue: filterValue => filterValue,
+  skipFilterIf: filterValue => !filterValue
+}) => ({
   name,
-  queryToValues: query => ({ [name]: (query[name] || '').trim() || (treatEmptyAsNull ? null : '') }),
+  queryToValues: query => ({ [name]: (query[name] || '').trim() || defaultValue }),
   valuesToQuery: filteringValues => ({ [name]: filteringValues[name] || '' }),
   filterItems: (itemsIterator, filteringValues) => {
     const trimmedValue = (filteringValues[name] || '').trim();
-    if (treatEmptyAsNull && !trimmedValue) {
-      return itemsIterator;
-    }
-
     const filterValue = prepareFilterValue(trimmedValue);
-    return filterValue
-      ? itemsIterator.filter(item => filterFunc(item, filterValue))
-      : itemsIterator;
+    return skipFilterIf(filterValue)
+      ? itemsIterator
+      : itemsIterator.filter(item => filterFunc(item, filterValue));
   }
 });
 
