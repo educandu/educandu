@@ -119,14 +119,16 @@ export function copyToDist() {
 export const build = gulp.parallel(copyToDist, buildJs);
 
 export async function buildTestAppCss() {
+  await deleteAsync('test-app/dist/**/*.{css,css.map}');
   await less.compile({
     inputFile: 'test-app/src/main.less',
-    outputFile: 'test-app/dist/main.css',
+    outputFile: 'test-app/dist/[name]-[hash].css',
     optimize: !!cliArgs.optimize
   });
 }
 
 export async function buildTestAppJs() {
+  await deleteAsync('test-app/dist/**/*.{js,js.map}');
   if (currentAppBuildContext) {
     await currentAppBuildContext.rebuild();
   } else {
@@ -136,9 +138,8 @@ export async function buildTestAppJs() {
       outdir: './test-app/dist',
       minify: !!cliArgs.optimize,
       incremental: isInWatchMode,
-      environment: 'development',
       inject: ['./test-app/src/polyfills.js'],
-      metaFilePath: './test-app/dist/meta.json'
+      metaFilePath: './test-app/dist/.esbuild-meta.json'
     });
   }
 }

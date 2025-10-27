@@ -779,10 +779,10 @@
   dependencies:
     abc-notation-transposition "^1.0.5"
 
-"@educandu/dev-tools@^14.3.0":
-  version "14.3.0"
-  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-14.3.0.tgz#914dbd5494ac5141584f5b1a1f29f9e40a854fdd"
-  integrity sha512-GLvY0i7MgJYiRAikGpUQMeqNApEp7YjX7Rb0Vg4WstELhwLG/G0kU9+RKo1kfxwOOxBpU9j3uoEtM2qS4UhrGA==
+"@educandu/dev-tools@^15.0.0":
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/@educandu/dev-tools/-/dev-tools-15.0.0.tgz#f1ca456525e492abe448815410b52d5d97f1aac6"
+  integrity sha512-pwSJMTXTH70zSK/xMznL1UrFvSoBHAlqizhaN67dY7YRu+GBtjn0MqgrTPAVDzdVgsmXy4JtF/DWWnT+6zHC7w==
   dependencies:
     "@rauschma/stringio" "^1.4.0"
     axios "^1.6.2"
@@ -793,6 +793,7 @@
     docker-cli-js "^2.10.0"
     envalid "^8.0.0"
     esbuild "^0.19.8"
+    escape-string-regexp "^5.0.0"
     eslint "^8.55.0"
     execa "^8.0.1"
     fs-extra "^11.2.0"

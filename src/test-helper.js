@@ -55,6 +55,10 @@ export async function setupTestEnvironment() {
       resolveCustomSiteLogo: null,
       resolveCustomPluginInfos: null
     },
+    entryPoints: {
+      scripts: ['/main.js'],
+      styles: ['/main.css']
+    },
     plugins: [
       'markdown',
       'markdown-with-image',
