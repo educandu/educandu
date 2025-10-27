@@ -23,7 +23,8 @@ import {
   MongoContainer,
   NodeProcess,
   runInteractiveMigrations,
-  TunnelProxyContainer
+  TunnelProxyContainer,
+  compressFiles
 } from '@educandu/dev-tools';
 
 let currentApp = null;
@@ -116,10 +117,18 @@ export function copyToDist() {
   return gulp.src(['src/**', '!src/**/*.{js,yml}'], { base: 'src' }).pipe(gulp.dest('dist'));
 }
 
+export async function buildTranslations() {
+  await mergeYamlFilesToJson({ inputFilesPattern: './src/**/*.yml', outputFile: './src/resources/resources.json' });
+}
+
+export async function compressStaticFiles() {
+  await compressFiles({ sourceDir: ['./src/images', 'test-app/static'] });
+}
+
 export const build = gulp.parallel(copyToDist, buildJs);
 
 export async function buildTestAppCss() {
-  await deleteAsync('test-app/dist/**/*.{css,css.map}');
+  await deleteAsync('test-app/dist/**/*.{css,css.br,css.gz,css.map,css.map.br,css.map.gz}');
   await less.compile({
     inputFile: 'test-app/src/main.less',
     outputFile: 'test-app/dist/[name]-[hash].css',
@@ -128,7 +137,7 @@ export async function buildTestAppCss() {
 }
 
 export async function buildTestAppJs() {
-  await deleteAsync('test-app/dist/**/*.{js,js.map}');
+  await deleteAsync('test-app/dist/**/*.{js,js.br,js.gz,js.map,js.map.br,js.map.gz}');
   if (currentAppBuildContext) {
     await currentAppBuildContext.rebuild();
   } else {
@@ -144,11 +153,14 @@ export async function buildTestAppJs() {
   }
 }
 
-export async function buildTranslations() {
-  await mergeYamlFilesToJson({ inputFilesPattern: './src/**/*.yml', outputFile: './src/resources/resources.json' });
+export async function optimizeTestAppAssets() {
+  if (cliArgs.optimize) {
+    await compressFiles({ sourceDir: ['./test-app/dist'] });
+  }
 }
 
-export const buildTestApp = gulp.parallel(buildTestAppCss, buildTranslations, buildTestAppJs);
+export const compileTestApp = gulp.parallel(buildTestAppCss, buildTranslations, buildTestAppJs);
+export const buildTestApp = gulp.series(compileTestApp, optimizeTestAppAssets);
 
 export async function maildevUp() {
   await maildevContainer.ensureIsRunning();
@@ -330,7 +342,7 @@ export const up = gulp.parallel(mongoUp, minioUp, maildevUp);
 
 export const down = gulp.parallel(mongoDown, minioDown, maildevDown);
 
-export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startServer);
+export const serve = gulp.series(clean, gulp.parallel(up, build), buildTestApp, startServer);
 
 export const verify = gulp.series(lint, test, build);
 
