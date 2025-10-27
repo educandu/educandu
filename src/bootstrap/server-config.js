@@ -28,6 +28,10 @@ const configSchema = joi.object({
     destination: joi.string().required(),
     setHeaders: joi.function().optional().default(null)
   })).optional().default([]),
+  entryPoints: joi.object({
+    scripts: joi.array().items(joi.string()).min(1).required(),
+    styles: joi.array().items(joi.string()).min(1).required(),
+  }).required(),
   resources: joi.array().items(joi.string()).default([]),
   themeFile: joi.string().default(''),
   additionalControllers: joi.array().items(joi.function().class()).default([]),

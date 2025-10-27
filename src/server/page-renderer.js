@@ -30,7 +30,6 @@ class PageRenderer {
     this.themeManager = themeManager;
     this.licenseManager = licenseManager;
     this.pageResolver = pageResolver;
-    this.timestamp = Date.now().toString();
   }
 
   renderHtml({ uiLanguage, title, styles, scripts, ContentRoot, contentProps, additionalHeadHtml }) {
@@ -113,9 +112,9 @@ class PageRenderer {
       `window.__licenses__=${htmlescape(licenses)};`
     ].join('');
 
-    const styles = [{ href: `/main.css?ts=${this.timestamp}` }];
+    const styles = [...this.serverConfig.entryPoints.styles.map(style => ({ href: style }))];
 
-    const scripts = [{ content: inlineScript }, { src: `/main.js?ts=${this.timestamp}` }];
+    const scripts = [{ content: inlineScript }, ...this.serverConfig.entryPoints.scripts.map(script => ({ src: script }))];
 
     const html = this.renderHtml({
       uiLanguage,

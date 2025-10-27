@@ -1,4 +1,5 @@
 import url from 'node:url';
+import { glob } from 'glob';
 import path from 'node:path';
 import parseBool from 'parseboolean';
 import educandu from '../../src/index.js';
@@ -79,8 +80,6 @@ const samlAuth = parseBool(process.env.TEST_APP_ENABLE_SAML_AUTH)
   }
   : null;
 
-const jsWithChecksumPathPattern = /\w+-[A-Z0-9]{8}\.js$/;
-
 const config = {
   appName: 'educandu',
   appRootUrl: process.env.TEST_APP_APP_ROOT_URL,
@@ -99,9 +98,8 @@ const config = {
     {
       publicPath: '/',
       destination: path.resolve(thisDir, '../dist'),
-      setHeaders: (res, requestPath) => {
-        const maxAge = jsWithChecksumPathPattern.test(requestPath) ? 604800 : 0;
-        res.setHeader('Cache-Control', `public, max-age=${maxAge}`);
+      setHeaders: res => {
+        res.setHeader('Cache-Control', 'public, max-age=604800');
       }
     },
     {
@@ -109,6 +107,10 @@ const config = {
       destination: path.resolve(thisDir, '../static')
     }
   ],
+  entryPoints: {
+    scripts: (await glob(`main-${'[A-Z0-9]'.repeat(8)}.js`, { cwd: path.resolve(thisDir, '../dist') })).map(x => `/${x}`),
+    styles: (await glob(`main-${'[A-Z0-9]'.repeat(8)}.css`, { cwd: path.resolve(thisDir, '../dist') })).map(x => `/${x}`)
+  },
   resources: ['./resources.json', './custom-plugin/server-time.json'].map(x => path.resolve(thisDir, x)),
   themeFile: path.resolve(thisDir, './theme.less'),
   allowedLicenses: ['CC0-1.0', 'CC-BY-4.0', 'CC-BY-SA-4.0', 'CC-BY-NC-4.0', 'CC-BY-NC-SA-4.0', 'CC-BY-ND-4.0', 'CC-BY-NC-ND-4.0', 'MIT'],
