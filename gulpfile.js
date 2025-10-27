@@ -353,7 +353,7 @@ export function setupWatchMode(done) {
 
 export function startWatchers(done) {
   gulp.watch(['src/**/*.{js,json}', 'test-app/src/**/*.{js,json}'], gulp.series(buildTestAppJs, restartServer));
-  gulp.watch(['src/**/*.less', 'test-app/src/**/*.less'], gulp.series(copyToDist, buildTestAppCss));
+  gulp.watch(['src/**/*.less', 'test-app/src/**/*.less'], gulp.series(copyToDist, buildTestAppCss, restartServer));
   gulp.watch(['src/**/*.yml'], buildTranslations);
   done();
 }

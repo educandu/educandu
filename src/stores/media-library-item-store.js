@@ -7,6 +7,12 @@ const mediaLibraryItemProjection = {
   searchTokens: 0
 };
 
+const mediaLibraryItemNameAndTagsProjection = {
+  _id: 1,
+  name: 1,
+  tags: 1
+};
+
 class MediaLibraryItemStore {
   static dependencies = [Database];
 
@@ -43,6 +49,26 @@ class MediaLibraryItemStore {
     return isValid
       ? this.collection.aggregate(query).toArray()
       : Promise.resolve([]);
+  }
+
+  getMediaLibraryItemTagsWithCountsCursor({ session } = {}) {
+    return this.collection.aggregate([
+      {
+        $unwind: '$tags'
+      },
+      {
+        $group: {
+          _id: '$tags',
+          count: { $sum: 1 }
+        }
+      }
+    ], { session });
+  }
+
+  getMediaLibraryItemsNameAndTagsCursorByTag(tag, { session } = {}) {
+    return this.collection.find({
+      tags: tag
+    }, { projection: mediaLibraryItemNameAndTagsProjection, session });
   }
 
   async getMediaLibraryItemsPageByConditions(conditions, { page, pageSize }, { session } = {}) {

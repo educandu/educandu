@@ -8,6 +8,13 @@ const documentTagsProjection = {
   tags: 1
 };
 
+const documentMinimalMetadataWithTagsProjection = {
+  _id: 1,
+  title: 1,
+  slug: 1,
+  tags: 1
+};
+
 const documentCreationMetadataProjection = {
   _id: 1,
   createdOn: 1,
@@ -218,11 +225,39 @@ class DocumentStore {
     }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 
+  getPublicNonArchivedDocumentsMinimalMetadataWithTagsCursorByTag(tag, { session } = {}) {
+    return this.collection.find({
+      'roomId': null,
+      'publicContext.archived': false,
+      'tags': tag
+    }, { projection: documentMinimalMetadataWithTagsProjection, session });
+  }
+
   getDocumentTagsMatchingText(text) {
     const { isValid, query } = createTagsPipelineQuery(text);
     return isValid
       ? this.collection.aggregate(query).toArray()
       : Promise.resolve([]);
+  }
+
+  getPublicNonArchivedDocumentTagsWithCountsCursor({ session } = {}) {
+    return this.collection.aggregate([
+      {
+        $match: {
+          'roomId': null,
+          'publicContext.archived': false
+        }
+      },
+      {
+        $unwind: '$tags'
+      },
+      {
+        $group: {
+          _id: '$tags',
+          count: { $sum: 1 }
+        }
+      }
+    ], { session });
   }
 
   getAllCdnResourcesReferencedFromNonArchivedDocuments() {

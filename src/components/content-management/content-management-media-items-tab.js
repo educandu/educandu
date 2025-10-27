@@ -42,20 +42,6 @@ const logger = new Logger(import.meta.url);
 
 const usageFilterValueToRegExpMemoized = memoizee(usageFilterValueToRegExp, { max: 1 });
 
-// Common sorters:
-const nameSorter = createSorter('name', 'common:name', 'common:sortedByName', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.name, { direction, ignoreCase: true })));
-const createdOnSorter = createSorter('createdOn', 'common:creationDate', 'common:sortedByCreatedOn', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.createdOn, { direction })));
-const creatorSorter = createSorter('creator', 'common:creator', 'common:sortedByCreator', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.createdBy.displayName, { direction, ignoreCase: true })));
-const sizeSorter = createSorter('size', 'common:size', 'common:sortedBySize', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.size, { direction })));
-const typeSorter = createSorter('type', 'common:type', 'common:sortedByType', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.resourceType, { direction })));
-
-// Library only sorters:
-const updatedOnSorter = createSorter('updatedOn', 'common:updateDate', 'common:sortedByUpdatedOn', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.updatedOn, { direction })));
-
-// Trash only sorters:
-const deletedOnSorter = createSorter('deletedOn', 'common:deletionDate', 'common:sortedByDeletedOn', (items, direction) => [...items].sort(by(item => item.mediaTrashItem.createdOn, { direction })));
-const expiresOnSorter = createSorter('expiresOn', 'common:expirationDate', 'common:sortedByExpiresOn', (items, direction) => [...items].sort(by(item => item.mediaTrashItem.expiresOn, { direction })));
-
 // Common filters:
 const textFilter = createTextFilter('text', (item, filterValue) => {
   return item.mediaLibraryItem.name.toLowerCase().includes(filterValue)
@@ -64,10 +50,10 @@ const textFilter = createTextFilter('text', (item, filterValue) => {
     || item.mediaLibraryItem.createdBy.displayName.toLowerCase().includes(filterValue)
     || item.mediaLibraryItem.updatedBy.displayName.toLowerCase().includes(filterValue)
     || (item.mediaTrashItem && item.mediaTrashItem.createdBy.displayName.toLowerCase().includes(filterValue));
-}, { prepareFilterValue: filterValue => filterValue.toLowerCase() });
+}, { prepareFilterValue: filterValue => filterValue.toLowerCase(), skipFilterIf: filterValue => !filterValue });
 const licenseFilter = createTextFilter('license', (item, filterValue) => {
   return filterValue === ALL_RIGHTS_RESERVED_KEY ? item.mediaLibraryItem.allRightsReserved : item.mediaLibraryItem.licenses.includes(filterValue);
-}, { treatEmptyAsNull: true });
+}, { defaultValue: null, skipFilterIf: filterValue => !filterValue });
 const usageFilter = createTextFilter('usage', (item, filterValue) => filterValue.test(item.usage), { prepareFilterValue: filterValue => usageFilterValueToRegExpMemoized(filterValue) });
 const createdFromFilter = createDateFilter('createdFrom', (item, filterValue) => new Date(item.mediaLibraryItem.createdOn) >= filterValue);
 const createdUntilFilter = createDateFilter('createdUntil', (item, filterValue) => new Date(item.mediaLibraryItem.createdOn) <= filterValue);
@@ -82,9 +68,27 @@ const deletedUntilFilter = createDateFilter('deletedUntil', (item, filterValue) 
 const expiresFromFilter = createDateFilter('expiresFrom', (item, filterValue) => new Date(item.mediaLibraryItem.expiresOn) >= filterValue);
 const expiresUntilFilter = createDateFilter('expiresUntil', (item, filterValue) => new Date(item.mediaLibraryItem.expiresOn) <= filterValue);
 
-const mediaLibraryFilters = [createdFromFilter, createdUntilFilter, updatedFromFilter, updatedUntilFilter, licenseFilter, textFilter, usageFilter];
+const mediaLibraryFilteringParams = {
+  mediaLibraryFilters: [createdFromFilter, createdUntilFilter, updatedFromFilter, updatedUntilFilter, licenseFilter, textFilter, usageFilter]
+};
 
-const mediaTrashFilters = [createdFromFilter, createdUntilFilter, deletedFromFilter, deletedUntilFilter, expiresFromFilter, expiresUntilFilter, licenseFilter, textFilter, usageFilter];
+const mediaTrashFilteringParams = {
+  mediaTrashFilters: [createdFromFilter, createdUntilFilter, deletedFromFilter, deletedUntilFilter, expiresFromFilter, expiresUntilFilter, licenseFilter, textFilter, usageFilter]
+};
+
+// Common sorters:
+const nameSorter = createSorter('name', 'common:name', 'common:sortedByName', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.name, { direction, ignoreCase: true })));
+const createdOnSorter = createSorter('createdOn', 'common:creationDate', 'common:sortedByCreatedOn', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.createdOn, { direction })));
+const creatorSorter = createSorter('creator', 'common:creator', 'common:sortedByCreator', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.createdBy.displayName, { direction, ignoreCase: true })));
+const sizeSorter = createSorter('size', 'common:size', 'common:sortedBySize', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.size, { direction })));
+const typeSorter = createSorter('type', 'common:type', 'common:sortedByType', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.resourceType, { direction })));
+
+// Library only sorters:
+const updatedOnSorter = createSorter('updatedOn', 'common:updateDate', 'common:sortedByUpdatedOn', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.updatedOn, { direction })));
+
+// Trash only sorters:
+const deletedOnSorter = createSorter('deletedOn', 'common:deletionDate', 'common:sortedByDeletedOn', (items, direction) => [...items].sort(by(item => item.mediaTrashItem.createdOn, { direction })));
+const expiresOnSorter = createSorter('expiresOn', 'common:expirationDate', 'common:sortedByExpiresOn', (items, direction) => [...items].sort(by(item => item.mediaTrashItem.expiresOn, { direction })));
 
 const mediaLibrarySortingParams = {
   sorters: [nameSorter, createdOnSorter, updatedOnSorter, creatorSorter, sizeSorter, typeSorter],
@@ -132,7 +136,8 @@ function ContentManagementMediaItemsTab({ tab }) {
 
   const initialQuery = useInitialQuery(query => query.tab === tab ? query : {});
 
-  const { filteringConfiguration } = useFilteringConfiguration(isTrashTab ? mediaTrashFilters : mediaLibraryFilters);
+  const filteringParams = isTrashTab ? mediaTrashFilteringParams : mediaLibraryFilteringParams;
+  const { filteringConfiguration } = useFilteringConfiguration(filteringParams.filters);
 
   const sortingParams = isTrashTab ? mediaTrashSortingParams : mediaLibrarySortingParams;
   const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorter, sortingParams.defaultDirection, t);

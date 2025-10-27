@@ -1,18 +1,19 @@
 import by from 'thenby';
 import { TAB } from './constants.js';
-import { Select, Table, Tag } from 'antd';
 import routes from '../../utils/routes.js';
 import FilterInput from '../filter-input.js';
 import { useTranslation } from 'react-i18next';
-import { useRequest } from '../request-context.js';
+import { Select, Spin, Table, Tag } from 'antd';
 import SortingSelector from '../sorting-selector.js';
+import { usePaging } from '../../ui/paging-hooks.js';
 import { SORTING_DIRECTION } from '../../domain/constants.js';
-import { useDebouncedFetchingState } from '../../ui/hooks.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import DocumentApiClient from '../../api-clients/document-api-client.js';
-import MediaLibraryApiClient from '../../api-clients/media-library-api-client.js';
+import StatisticsApiClient from '../../api-clients/statistics-api-client.js';
+import { useDebouncedFetchingState, useInitialQuery } from '../../ui/hooks.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import MediaLibaryItemsModal, { MEDIA_LIBRARY_ITEMS_MODAL_MODE } from '../resource-selector/media-library/media-library-items-modal.js';
+import { createSorter, useSorting, useSortingConfiguration } from '../../ui/sorting-hooks.js';
+import { createTextFilter, useFiltering, useFilteringConfiguration } from '../../ui/filtering-hooks.js';
+import { useNumberFormat } from '../locale-context.js';
 
 const TAG_CATEGORY_FILTER = {
   documentsAndMedia: 'documentsAndMedia',
@@ -20,220 +21,141 @@ const TAG_CATEGORY_FILTER = {
   mediaOnly: 'mediaOnly'
 };
 
-const SORTING_VALUE = {
-  name: 'name',
-  frequency: 'frequency',
-  companionTagCount: 'companionTagCount'
+const textFilter = createTextFilter('text', (item, filterValue) => {
+  return item.tag.toLowerCase().includes(filterValue);
+}, { prepareFilterValue: filterValue => filterValue.toLowerCase(), skipFilterIf: filterValue => !filterValue });
+const tagCategoryFilter = createTextFilter('tagCategory', (item, filterValue) => {
+  return (filterValue === TAG_CATEGORY_FILTER.documentsOnly && item.documentCount)
+    || (filterValue === TAG_CATEGORY_FILTER.mediaOnly && item.mediaLibraryItemCount);
+}, { defaultValue: TAG_CATEGORY_FILTER.documentsAndMedia, skipFilterIf: filterValue => !filterValue || filterValue === TAG_CATEGORY_FILTER.documentsAndMedia });
+
+const filteringParams = {
+  filters: [textFilter, tagCategoryFilter]
 };
 
-function createTableRow(tag) {
-  return {
-    key: tag,
-    name: tag,
-    frequency: 0,
-    documents: [],
-    mediaLibraryItems: [],
-    companionTags: [],
-    companionTagCount: 0,
-    companionTagFrequencies: {}
-  };
-}
+const tagSorter = createSorter('tag', 'tag', 'sortedByTag', (items, direction) => [...items].sort(by(item => item.tag, { direction, ignoreCase: true })));
+const lengthSorter = createSorter('length', 'length', 'sortedByLength', (items, direction) => [...items].sort(by(item => item.tag.length, { direction })));
+const totalCountSorter = createSorter('totalCount', 'totalCount', 'sortedByTotalCount', (items, direction) => [...items].sort(by(item => item.totalCount, { direction })));
+const documentCountSorter = createSorter('documentCount', 'documentCount', 'sortedByDocumentCount', (items, direction) => [...items].sort(by(item => item.documentCount, { direction })));
+const mediaLibraryItemCountSorter = createSorter('mediaLibraryItemCount', 'mediaLibraryItemCount', 'sortedByMediaLibraryItemCount', (items, direction) => [...items].sort(by(item => item.mediaLibraryItemCount, { direction })));
 
-function createTableRows(documents, mediaLibraryItems, tagCategoryFilter) {
-  const rowMap = new Map();
-
-  if (tagCategoryFilter !== TAG_CATEGORY_FILTER.mediaOnly) {
-    for (const doc of documents) {
-      if (doc.publicContext?.archived === false) {
-        for (const tag of doc.tags) {
-          const row = rowMap.get(tag) || createTableRow(tag);
-          row.documents = [...row.documents, doc];
-          row.frequency = row.documents.length + row.mediaLibraryItems.length;
-          for (const otherTag of doc.tags) {
-            if (tag !== otherTag) {
-              row.companionTagFrequencies[otherTag] = (row.companionTagFrequencies[otherTag] || 0) + 1;
-            }
-          }
-          rowMap.set(tag, row);
-        }
-      }
-    }
-  }
-
-  if (tagCategoryFilter !== TAG_CATEGORY_FILTER.documentsOnly) {
-    for (const item of mediaLibraryItems) {
-      for (const tag of item.tags) {
-        const row = rowMap.get(tag) || createTableRow(tag);
-        row.mediaLibraryItems = [...row.mediaLibraryItems, item];
-        row.frequency = row.documents.length + row.mediaLibraryItems.length;
-        for (const otherTag of item.tags) {
-          if (tag !== otherTag) {
-            row.companionTagFrequencies[otherTag] = (row.companionTagFrequencies[otherTag] || 0) + 1;
-          }
-        }
-        rowMap.set(tag, row);
-      }
-    }
-  }
-
-  const finalRows = [...rowMap.values()];
-
-  for (const row of finalRows) {
-    row.documents.sort(by(x => x.title, { ignoreCase: true }));
-    row.mediaLibraryItems.sort(by(x => x.name, { ignoreCase: true }));
-    row.companionTags = Object.entries(row.companionTagFrequencies)
-      .map(([name, frequency]) => ({ name, frequency }))
-      .sort(by(x => x.frequency, SORTING_DIRECTION.desc).thenBy(x => x.name, { ignoreCase: true }));
-    row.companionTagCount = row.companionTags.length;
-  }
-
-  return finalRows;
-}
-
-const getSanitizedQueryFromRequest = request => {
-  const query = request.query.tab === TAB.tags ? request.query : {};
-
-  const pageNumber = Number(query.page);
-  const pageSizeNumber = Number(query.pageSize);
-
-  return {
-    filter: (query.filter || '').trim(),
-    tagCategoryFilter: Object.values(TAG_CATEGORY_FILTER).includes(query.tagCategoryFilter) ? query.tagCategoryFilter : TAG_CATEGORY_FILTER.documentsAndMedia,
-    sorting: Object.values(SORTING_VALUE).includes(query.sorting) ? query.sorting : SORTING_VALUE.frequency,
-    direction: Object.values(SORTING_DIRECTION).includes(query.direction) ? query.direction : SORTING_DIRECTION.desc,
-    page: !isNaN(pageNumber) ? pageNumber : 1,
-    pageSize: !isNaN(pageSizeNumber) ? pageSizeNumber : 10
-  };
+const sortingParams = {
+  sorters: [tagSorter, lengthSorter, totalCountSorter, documentCountSorter, mediaLibraryItemCountSorter],
+  defaultSorter: totalCountSorter,
+  defaultDirection: SORTING_DIRECTION.desc
 };
-
-function getMediaLibraryItemsModalDefaultState() {
-  return {
-    mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.none,
-    mediaLibraryItem: null,
-    isOpen: false
-  };
-}
 
 function StatisticsTagsTab() {
-  const request = useRequest();
-  const [documents, setDocuments] = useState([]);
+  const formatNumber = useNumberFormat();
   const { t } = useTranslation('statisticsTagsTab');
-  const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
-  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
-  const [fetchingData, setFetchingData] = useDebouncedFetchingState(true);
-  const mediaLibraryApiClient = useSessionAwareApiClient(MediaLibraryApiClient);
-  const [mediaLibraryItemsModalState, setMediaLibraryItemsModalState] = useState(getMediaLibraryItemsModalDefaultState());
+  const statisticsApiClient = useSessionAwareApiClient(StatisticsApiClient);
+  const [isFetchingItems, setIsFetchingItems] = useDebouncedFetchingState(true);
 
-  const requestQuery = useMemo(() => getSanitizedQueryFromRequest(request), [request]);
+  const initialQuery = useInitialQuery(query => query.tab === TAB.tags ? query : {});
 
-  const [filter, setFilter] = useState(requestQuery.filter);
-  const [tagCategoryFilter, setTagCategoryFilter] = useState(requestQuery.tagCategoryFilter);
-  const [pagination, setPagination] = useState({ page: requestQuery.page, pageSize: requestQuery.pageSize });
-  const [sorting, setSorting] = useState({ value: requestQuery.sorting, direction: requestQuery.direction });
+  const { filteringConfiguration } = useFilteringConfiguration(filteringParams.filters);
 
-  const [allRows, setAllRows] = useState([]);
-  const [displayedRows, setDisplayedRows] = useState([]);
+  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorter, sortingParams.defaultDirection, t);
 
-  const fetchData = useCallback(async () => {
+  const { filtering, getTextFilterValue, handleTextFilterChange, filterItems } = useFiltering(initialQuery, filteringConfiguration);
+  const { sorting, handleSortingSelectorChange, sortItems } = useSorting(initialQuery, sortingConfiguration);
+  const { paging, handleAntdTableChange, adjustPagingToItems } = usePaging(initialQuery);
+
+  const [totals, setTotals] = useState({});
+  const [allItems, setAllItems] = useState([]);
+  const [tagDetailsMap, setTagDetailsMap] = useState({});
+  const [displayedItems, setDisplayedItems] = useState([]);
+
+  const fetchItems = useCallback(async () => {
     try {
-      setFetchingData(true);
-
-      const [documentApiResponse, mediaLibraryApiResponse] = await Promise.all([
-        documentApiClient.getStatisticsDocuments(),
-        mediaLibraryApiClient.getStatisticsMediaLibraryItems()
-      ]);
-
-      setDocuments(documentApiResponse.documents);
-      setMediaLibraryItems(mediaLibraryApiResponse.mediaLibraryItems);
+      setIsFetchingItems(true);
+      const apiClientResponse = await statisticsApiClient.getTags();
+      setAllItems(apiClientResponse.tags);
+      setTotals(apiClientResponse.totals);
     } finally {
-      setFetchingData(false);
+      setIsFetchingItems(false);
     }
-  }, [setFetchingData, documentApiClient, mediaLibraryApiClient]);
+  }, [setIsFetchingItems, statisticsApiClient]);
+
+  const fetchTagDetails = useCallback(async tag => {
+    setTagDetailsMap(oldValue => ({
+      ...oldValue,
+      [tag]: { isLoading: true, hasError: false, tagDetails: null }
+    }));
+    try {
+      const apiClientResponse = await statisticsApiClient.getTagDetails({ tag });
+      setTagDetailsMap(oldValue => ({
+        ...oldValue,
+        [tag]: { isLoading: false, hasError: false, tagDetails: apiClientResponse.tagDetails }
+      }));
+    } catch (error) {
+      setTagDetailsMap(oldValue => ({
+        ...oldValue,
+        [tag]: { isLoading: false, hasError: true, tagDetails: null }
+      }));
+    }
+  }, [statisticsApiClient]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    setAllRows(createTableRows(documents, mediaLibraryItems, tagCategoryFilter));
-  }, [documents, mediaLibraryItems, tagCategoryFilter]);
+    fetchItems();
+  }, [fetchItems]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [pagination]);
+  }, [paging]);
 
   useEffect(() => {
-    const queryParams = {
-      filter,
-      tagCategoryFilter,
-      page: pagination.page,
-      pageSize: pagination.pageSize,
-      sorting: sorting.value,
-      direction: sorting.direction
-    };
+    history.replaceState(null, '', routes.getStatisticsUrl(TAB.tags, {
+      ...filtering.query,
+      ...sorting.query,
+      ...paging.query
+    }));
+  }, [filtering, sorting, paging]);
 
-    history.replaceState(null, '', routes.getStatisticsUrl(TAB.tags, queryParams));
-  }, [filter, tagCategoryFilter, sorting, pagination]);
+  useEffect(() => {
+    if (isFetchingItems) {
+      return;
+    }
+
+    const newDisplayedItems = sortItems(filterItems(allItems));
+
+    setDisplayedItems(newDisplayedItems);
+    adjustPagingToItems(newDisplayedItems);
+  }, [isFetchingItems, allItems, filterItems, sortItems, adjustPagingToItems]);
 
   const tagCategoryFilterOptions = useMemo(() => {
     return Object.values(TAG_CATEGORY_FILTER).map(value => ({ value, label: t(`tagCategoryFilter_${value}`) }));
   }, [t]);
 
-  const sortingOptions = useMemo(() => [
-    { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: SORTING_VALUE.name },
-    { label: t('frequency'), appliedLabel: t('sortedByFrequency'), value: SORTING_VALUE.frequency },
-    { label: t('companionTagCount'), appliedLabel: t('sortedByCompanionTagCount'), value: SORTING_VALUE.companionTagCount }
-  ], [t]);
+  const renderExpandedRow = ({ tag }) => {
+    const entry = tagDetailsMap[tag];
+    if (!entry) {
+      setTimeout(() => fetchTagDetails(tag), 0);
+    }
 
-  const tableSorters = useMemo(() => ({
-    name: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.name, { direction, ignoreCase: true })),
-    frequency: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.frequency, direction)),
-    companionTagCount: (rowsToSort, direction) => [...rowsToSort].sort(by(row => row.companionTagCount, direction))
-  }), []);
+    if (!entry || entry.isLoading) {
+      return (
+        <div className="StatisticsTagsTab-expandedRow StatisticsTagsTab-expandedRow--loading">
+          <Spin />
+        </div>
+      );
+    }
 
-  useEffect(() => {
-    const lowerCasedFilter = filter.toLowerCase().trim();
+    if (entry.hasError) {
+      return (
+        <div className="StatisticsTagsTab-expandedRow StatisticsTagsTab-expandedRow--error">
+          {t('tagDetailsErrorMessage')}
+        </div>
+      );
+    }
 
-    const filteredRows = lowerCasedFilter
-      ? allRows.filter(row => row.name.toLowerCase().includes(lowerCasedFilter))
-      : allRows;
-
-    const sorter = tableSorters[sorting.value];
-    const sortedRows = sorter(filteredRows, sorting.direction);
-
-    setDisplayedRows(sortedRows);
-  }, [allRows, filter, sorting, tableSorters]);
-
-  const handleTableChange = ({ current, pageSize }) => {
-    setPagination({ page: current, pageSize });
-  };
-
-  const handleCurrentTableSortingChange = newSorting => {
-    setSorting(newSorting);
-  };
-
-  const handleFilterChange = event => {
-    const newFilter = event.target.value;
-    setFilter(newFilter);
-  };
-
-  const handleMediaLibraryItemPreviewClick = (mediaLibraryItem, event) => {
-    event.preventDefault();
-    setMediaLibraryItemsModalState({ mode: MEDIA_LIBRARY_ITEMS_MODAL_MODE.preview, mediaLibraryItem, isOpen: true });
-  };
-
-  const handleMediaLibraryItemsModalClose = () => {
-    setMediaLibraryItemsModalState(getMediaLibraryItemsModalDefaultState());
-  };
-
-  const renderExpandedRow = row => {
     return (
-      <div className="StatisticsTagsTab-expandedRow">
-        {!!row.documents.length && (
+      <div className="StatisticsTagsTab-expandedRow StatisticsTagsTab-expandedRow--data">
+        {!!entry.tagDetails.documents.length && (
           <Fragment>
             <div className="StatisticsTagsTab-expandedRowHeader">{t('documents')}:</div>
             <ul className="StatisticsTagsTab-documentList">
-              {row.documents.map(doc => (
+              {entry.tagDetails.documents.map(doc => (
                 <li key={doc._id}>
                   <a href={routes.getDocUrl({ id: doc._id, slug: doc.slug })}>{doc.title}</a>
                 </li>
@@ -241,26 +163,26 @@ function StatisticsTagsTab() {
             </ul>
           </Fragment>
         )}
-        {!!row.mediaLibraryItems.length && (
+        {!!entry.tagDetails.mediaLibraryItems.length && (
           <Fragment>
             <div className="StatisticsTagsTab-expandedRowHeader">{t('mediaLibraryItems')}:</div>
             <ul className="StatisticsTagsTab-documentList">
-              {row.mediaLibraryItems.map(item => (
+              {entry.tagDetails.mediaLibraryItems.map(item => (
                 <li key={item._id}>
-                  <a href={item.url} onClick={event => handleMediaLibraryItemPreviewClick(item, event)}>{item.name}</a>
+                  <a href={routes.getMediaLibraryItemUrl(item._id)}>{item.name}</a>
                 </li>
               ))}
             </ul>
           </Fragment>
         )}
-        {!!row.companionTags.length && (
+        {!!entry.tagDetails.companionTags.length && (
           <Fragment>
             <div className="StatisticsTagsTab-expandedRowHeader">{t('companionTags')}:</div>
             <div className="StatisticsTagsTab-companionTags">
-              {row.companionTags.map(ctag => (
-                <span key={ctag.name} className="StatisticsTagsTab-companionTag">
-                  <Tag>{ctag.name}</Tag>
-                  <span className="StatisticsTagsTab-companionTagFrequency">({ctag.frequency})</span>
+              {entry.tagDetails.companionTags.map(ctag => (
+                <span key={ctag.tag} className="StatisticsTagsTab-companionTag">
+                  <Tag>{ctag.tag}</Tag>
+                  <span className="StatisticsTagsTab-companionTagFrequency">({ctag.count})</span>
                 </span>
               ))}
             </div>
@@ -270,61 +192,100 @@ function StatisticsTagsTab() {
     );
   };
 
+  const renderColumnTitleWithCountSubtitle = ({ title, count = 0 }) => {
+    return (
+      <div className="StatisticsTagsTab-titleCell">
+        <div>
+          {title}
+        </div>
+        <div className='StatisticsTagsTab-titleCellSubtitle'>
+          ({formatNumber(count)})
+        </div>
+      </div>
+    );
+  };
+
   const tableColumns = [
     {
-      title: t('common:name'),
-      dataIndex: 'name',
-      key: 'name'
+      title: t('tag'),
+      dataIndex: 'tag',
+      key: 'tag'
     },
     {
-      title: t('frequency'),
-      dataIndex: 'frequency',
-      key: 'frequency'
+      title: () => renderColumnTitleWithCountSubtitle({
+        title: t('frequencyHeaderTotal'),
+        count: totals?.total
+      }),
+      dataIndex: 'totalCount',
+      key: 'totalCount',
+      align: 'center',
+      width: '140px'
     },
     {
-      title: t('companionTagCount'),
-      dataIndex: 'companionTagCount',
-      key: 'companionTagCount'
+      title: t('frequencyHeaderBySource'),
+      responsive: ['sm'],
+      align: 'center',
+      children: [
+        {
+          title: () => renderColumnTitleWithCountSubtitle({
+            title: t('frequencyHeaderDocuments'),
+            count: totals?.documents
+          }),
+          dataIndex: 'documentCount',
+          key: 'documentCount',
+          align: 'center',
+          width: '140px'
+        },
+        {
+          title: () => renderColumnTitleWithCountSubtitle({
+            title: t('frequencyHeaderMediaLibraryItems'),
+            count: totals?.mediaLibraryItems
+          }),
+          dataIndex: 'mediaLibraryItemCount',
+          key: 'mediaLibraryItemCount',
+          align: 'center',
+          width: '140px'
+        }
+      ]
     }
   ];
 
   return (
     <div className="StatisticsTagsTab">
-      <div className="StatisticsTagsTab-controls">
+      <div className="StatisticsTagsTab-filters">
         <FilterInput
-          size="large"
+          disabled={isFetchingItems}
+          value={getTextFilterValue('text')}
+          placeholder={t('textFilterPlaceholder')}
           className="StatisticsTagsTab-textFilter"
-          value={filter}
-          onChange={handleFilterChange}
-          placeholder={t('filterPlaceholder')}
-          />
-        <SortingSelector
-          size="large"
-          options={sortingOptions}
-          sorting={sorting}
-          onChange={handleCurrentTableSortingChange}
+          onChange={event => handleTextFilterChange('text', event.target.value)}
           />
         <Select
-          value={tagCategoryFilter}
+          disabled={isFetchingItems}
           options={tagCategoryFilterOptions}
+          value={getTextFilterValue('tagCategory')}
           className="StatisticsTagsTab-tagCategoryFilter"
-          onChange={setTagCategoryFilter}
+          onChange={newValue => handleTextFilterChange('tagCategory', newValue)}
           />
+        <div className="StatisticsTagsTab-sortingSelector">
+          <SortingSelector
+            size="large"
+            options={sortingSelectorOptions}
+            sorting={sorting.sortingSelectorSorting}
+            onChange={handleSortingSelectorChange}
+            />
+        </div>
       </div>
       <Table
-        className="u-table-with-pagination"
+        rowKey="tag"
         columns={tableColumns}
-        dataSource={displayedRows}
+        loading={isFetchingItems}
+        dataSource={displayedItems}
+        className="u-table-with-pagination"
+        pagination={paging.antdTablePagination}
         expandable={{ expandedRowRender: renderExpandedRow }}
-        pagination={{
-          current: pagination.page,
-          pageSize: pagination.pageSize,
-          showSizeChanger: true
-        }}
-        loading={fetchingData}
-        onChange={handleTableChange}
+        onChange={handleAntdTableChange}
         />
-      <MediaLibaryItemsModal {...mediaLibraryItemsModalState} onClose={handleMediaLibraryItemsModalClose} />
     </div>
   );
 }
