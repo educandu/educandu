@@ -45,6 +45,20 @@ class MediaLibraryItemStore {
       : Promise.resolve([]);
   }
 
+  getMediaLibraryItemTagsWithCountsCursor({ session } = {}) {
+    return this.collection.aggregate([
+      {
+        $unwind: '$tags'
+      },
+      {
+        $group: {
+          _id: '$tags',
+          count: { $sum: 1 }
+        }
+      }
+    ], { session });
+  }
+
   async getMediaLibraryItemsPageByConditions(conditions, { page, pageSize }, { session } = {}) {
     const aggregatedArray = await this.collection
       .aggregate([

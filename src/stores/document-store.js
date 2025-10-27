@@ -225,6 +225,26 @@ class DocumentStore {
       : Promise.resolve([]);
   }
 
+  getPublicNonArchivedDocumentTagsWithCountsCursor({ session } = {}) {
+    return this.collection.aggregate([
+      {
+        $match: {
+          'roomId': null,
+          'publicContext.archived': false
+        }
+      },
+      {
+        $unwind: '$tags'
+      },
+      {
+        $group: {
+          _id: '$tags',
+          count: { $sum: 1 }
+        }
+      }
+    ], { session });
+  }
+
   getAllCdnResourcesReferencedFromNonArchivedDocuments() {
     return this.collection.distinct('cdnResources', { 'roomId': null, 'publicContext.archived': false });
   }
