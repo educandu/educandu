@@ -4852,13 +4852,17 @@
       "en": "Media",
       "de": "Medien"
     },
-    "queryPlaceholder": {
+    "textFilterPlaceholder": {
       "en": "Filter by search terms",
       "de": "Nach Suchbegriffen filtern"
     },
     "exportAsCsv": {
       "en": "Export as CSV file",
       "de": "Als CSV-Datei exportieren"
+    },
+    "noSearchTokens": {
+      "en": "no search tokens",
+      "de": "keine Such-Tokens"
     }
   },
   "statisticsTagsTab": {

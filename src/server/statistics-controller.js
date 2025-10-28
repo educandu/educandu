@@ -19,14 +19,19 @@ class StatisticsController {
   }
 
   async handleGetTags(req, res) {
-    const { tags, totals } = await this.statisticsService.getTagsWithUsageCounts();
-    return res.send({ tags, totals });
+    const { tags } = await this.statisticsService.getTagsWithUsageCounts();
+    return res.send({ tags });
   }
 
   async handleGetTagDetails(req, res) {
     const { tag } = req.params;
-    const tagDetails = await this.statisticsService.getTagDetails({ tag });
+    const tagDetails = await this.statisticsService.getTagUsageDetails({ tag });
     return res.send({ tagDetails });
+  }
+
+  async handleGetSearchRequests(req, res) {
+    const searchRequests = await this.statisticsService.getSearchRequests();
+    return res.send({ searchRequests });
   }
 
   registerPages(router) {
@@ -49,6 +54,12 @@ class StatisticsController {
       validateParams(getTagDetailsParamsSchema),
       needsPermission(permissions.VIEW_STATISTICS),
       (req, res) => this.handleGetTagDetails(req, res)
+    );
+
+    router.get(
+      '/api/v1/statistics/search-requests',
+      needsPermission(permissions.VIEW_STATISTICS),
+      (req, res) => this.handleGetSearchRequests(req, res)
     );
   }
 }

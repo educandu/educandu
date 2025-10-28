@@ -1,23 +1,20 @@
 import by from 'thenby';
 import DocumentStore from '../stores/document-store.js';
+import SearchRequestStore from '../stores/search-request-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 
 class StatisticsService {
-  static dependencies = [DocumentStore, MediaLibraryItemStore];
+  static dependencies = [DocumentStore, MediaLibraryItemStore, SearchRequestStore];
 
-  constructor(documentStore, mediaLibraryItemStore) {
+  constructor(documentStore, mediaLibraryItemStore, searchRequestStore) {
     this.documentStore = documentStore;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
+    this.searchRequestStore = searchRequestStore;
   }
 
   async getTagsWithUsageCounts() {
     const tagMap = new Map();
-    const totals = {
-      documents: 0,
-      mediaLibraryItems: 0,
-      total: 0
-    };
-    const addToMap = async (cursor, tagMapEntryKey, totalsEntry) => {
+    const addToMap = async (cursor, tagMapKey) => {
       for await (const item of cursor) {
         let entry = tagMap.get(item._id);
         if (!entry) {
@@ -30,23 +27,21 @@ class StatisticsService {
           tagMap.set(item._id, entry);
         }
         if (item.count) {
-          entry[tagMapEntryKey] = item.count;
+          entry[tagMapKey] = item.count;
           entry.totalCount += item.count;
-          totals[totalsEntry] += 1;
-          totals.total += 1;
         }
       }
     };
 
     await Promise.all([
-      addToMap(this.documentStore.getPublicNonArchivedDocumentTagsWithCountsCursor(), 'documentCount', 'documents'),
-      addToMap(this.mediaLibraryItemStore.getMediaLibraryItemTagsWithCountsCursor(), 'mediaLibraryItemCount', 'mediaLibraryItems')
+      addToMap(this.documentStore.getPublicNonArchivedDocumentTagsWithCountsCursor(), 'documentCount'),
+      addToMap(this.mediaLibraryItemStore.getMediaLibraryItemTagsWithCountsCursor(), 'mediaLibraryItemCount')
     ]);
 
-    return { tags: [...tagMap.values()], totals };
+    return { tags: [...tagMap.values()] };
   }
 
-  async getTagDetails({ tag }) {
+  async getTagUsageDetails({ tag }) {
     const documents = [];
     const mediaLibraryItems = [];
     const companionTagMap = new Map();
@@ -93,6 +88,10 @@ class StatisticsService {
         .map(([key, value]) => ({ tag: key, count: value }))
         .sort(by(entry => entry.count, 'desc'))
     };
+  }
+
+  getSearchRequests() {
+    return this.searchRequestStore.getAllSearchRequests();
   }
 }
 

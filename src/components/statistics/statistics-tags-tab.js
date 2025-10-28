@@ -71,7 +71,6 @@ function StatisticsTagsTab() {
       setIsFetchingItems(true);
       const apiClientResponse = await statisticsApiClient.getTags();
       setAllItems(apiClientResponse.tags);
-      setTotals(apiClientResponse.totals);
     } finally {
       setIsFetchingItems(false);
     }
@@ -119,6 +118,19 @@ function StatisticsTagsTab() {
 
     const newDisplayedItems = sortItems(filterItems(allItems));
 
+    const newTotals = {
+      totalCount: 0,
+      documentCount: 0,
+      mediaLibraryItemCount: 0
+    };
+
+    for (const item of newDisplayedItems) {
+      newTotals.totalCount += item.totalCount;
+      newTotals.documentCount += item.documentCount;
+      newTotals.mediaLibraryItemCount += item.mediaLibraryItemCount;
+    }
+
+    setTotals(newTotals);
     setDisplayedItems(newDisplayedItems);
     adjustPagingToItems(newDisplayedItems);
   }, [isFetchingItems, allItems, filterItems, sortItems, adjustPagingToItems]);
@@ -214,7 +226,7 @@ function StatisticsTagsTab() {
     {
       title: () => renderColumnTitleWithCountSubtitle({
         title: t('frequencyHeaderTotal'),
-        count: totals?.total
+        count: totals?.totalCount
       }),
       dataIndex: 'totalCount',
       key: 'totalCount',
@@ -229,7 +241,7 @@ function StatisticsTagsTab() {
         {
           title: () => renderColumnTitleWithCountSubtitle({
             title: t('frequencyHeaderDocuments'),
-            count: totals?.documents
+            count: totals?.documentCount
           }),
           dataIndex: 'documentCount',
           key: 'documentCount',
@@ -239,7 +251,7 @@ function StatisticsTagsTab() {
         {
           title: () => renderColumnTitleWithCountSubtitle({
             title: t('frequencyHeaderMediaLibraryItems'),
-            count: totals?.mediaLibraryItems
+            count: totals?.mediaLibraryItemCount
           }),
           dataIndex: 'mediaLibraryItemCount',
           key: 'mediaLibraryItemCount',

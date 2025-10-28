@@ -30,11 +30,11 @@
   }
 }
 
-.StatisticsSearchRequestsTab-controls {
-  margin-bottom: 10px;
+.StatisticsSearchRequestsTab-filters {
+  margin-bottom: 40px;
   display: grid;
   gap: 15px;
-  grid-template-columns: 5fr 3fr auto;
+  grid-template-columns: 2fr 1fr auto;
   grid-template-rows: auto;
   align-items: center;
 
@@ -42,6 +42,19 @@
     grid-template-columns: 100%;
     grid-template-rows: repeat(3, auto);
   }
+}
+
+.StatisticsSearchRequestsTab-textFilter {
+  width: 100%;
+}
+
+.StatisticsSearchRequestsTab-registeredDateFilter {
+  min-width: 320px;
+}
+
+.StatisticsSearchRequestsTab-sortingSelector {
+  display: grid;
+  justify-content: end;
 }
 
 .StatisticsSearchRequestsTab-csvExportButton {

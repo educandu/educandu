@@ -1,6 +1,5 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
-import { combineQueryConditions } from '../utils/query-utils.js';
 import { searchRequestDBSchema } from '../domain/schemas/search-request-schemas.js';
 
 const searchRequestsProjection = {
@@ -14,19 +13,8 @@ class SearchRequestStore {
     this.collection = db.searchRequests;
   }
 
-  getSearchRequests({ registeredFrom, registeredUntil } = {}) {
-    const conditions = [];
-
-    if (registeredFrom) {
-      conditions.push({ registeredOn: { $gte: registeredFrom } });
-    }
-
-    if (registeredUntil) {
-      conditions.push({ registeredOn: { $lt: registeredUntil } });
-    }
-
-    const filter = combineQueryConditions('$and', conditions, true) || {};
-    return this.collection.find(filter, { projection: searchRequestsProjection }).toArray();
+  getAllSearchRequests({ session } = {}) {
+    return this.collection.find({}, { projection: searchRequestsProjection, session }).toArray();
   }
 
   saveSearchRequest(searchRequest, { session } = {}) {
