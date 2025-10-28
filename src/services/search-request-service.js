@@ -11,10 +11,6 @@ class SearchRequestService {
     this.serverConfig = serverConfig;
   }
 
-  getSearchRequests({ registeredFrom, registeredUntil } = {}) {
-    return this.searchRequestStore.getSearchRequests({ registeredFrom, registeredUntil });
-  }
-
   async createSearchRequest({ query, documentMatchCount, mediaLibraryItemMatchCount }) {
     const registeredOn = new Date();
     const expiresOn = moment(registeredOn).add(this.serverConfig.searchRequestExpiryTimeoutInDays, 'days').toDate();
