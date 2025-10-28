@@ -8,17 +8,17 @@
     grid-template-rows: repeat(2, auto);
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas:
-      "creationDate updateDate ."
-      "text         license    usage";
+      "text         text       license"
+      "creationDate updateDate usage";
 
     @media @edu-media-phone-tablet {
       gap: 20px 40px;
       grid-template-rows: repeat(3, auto);
       grid-template-columns: repeat(2, 1fr);
       grid-template-areas:
-        "text    creationDate"
-        "license updateDate"
-        "usage   .";
+        "text         text"
+        "creationDate license"
+        "updateDate   usage";
     }
 
     @media @edu-media-phone {
@@ -26,9 +26,9 @@
       grid-template-rows: repeat(5, auto);
       grid-template-columns: 1fr;
       grid-template-areas:
+        "text"
         "creationDate"
         "updateDate"
-        "text"
         "license"
         "usage";
     }
@@ -39,8 +39,8 @@
     grid-template-rows: repeat(2, auto);
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas:
-      "creationDate deletionDate expirationDate"
-      "text         license      usage";
+      "text         license      usage"
+      "creationDate deletionDate expirationDate";
 
     @media @edu-media-phone-tablet {
       gap: 20px 40px;
@@ -58,10 +58,10 @@
       grid-template-rows: repeat(6, auto);
       grid-template-columns: 1fr;
       grid-template-areas:
+        "text"
         "creationDate"
         "deletionDate"
         "expirationDate"
-        "text"
         "license"
         "usage";
     }

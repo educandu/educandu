@@ -69,11 +69,11 @@ const expiresFromFilter = createDateFilter('expiresFrom', (item, filterValue) =>
 const expiresUntilFilter = createDateFilter('expiresUntil', (item, filterValue) => new Date(item.mediaLibraryItem.expiresOn) <= filterValue);
 
 const mediaLibraryFilteringParams = {
-  mediaLibraryFilters: [createdFromFilter, createdUntilFilter, updatedFromFilter, updatedUntilFilter, licenseFilter, textFilter, usageFilter]
+  filters: [createdFromFilter, createdUntilFilter, updatedFromFilter, updatedUntilFilter, licenseFilter, textFilter, usageFilter]
 };
 
 const mediaTrashFilteringParams = {
-  mediaTrashFilters: [createdFromFilter, createdUntilFilter, deletedFromFilter, deletedUntilFilter, expiresFromFilter, expiresUntilFilter, licenseFilter, textFilter, usageFilter]
+  filters: [createdFromFilter, createdUntilFilter, deletedFromFilter, deletedUntilFilter, expiresFromFilter, expiresUntilFilter, licenseFilter, textFilter, usageFilter]
 };
 
 // Common sorters:
