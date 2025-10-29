@@ -33,6 +33,30 @@ class StatisticsApiClient {
       )
       .then(res => res.data);
   }
+
+  getUserContributions({ contributedFrom, contributedUntil }) {
+    return this.httpClient
+      .get(
+        '/api/v1/statistics/user-contributions',
+        {
+          params: { contributedFrom, contributedUntil },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
+  getUserContributionsDetails({ userId, contributedFrom, contributedUntil }) {
+    return this.httpClient
+      .get(
+        `/api/v1/statistics/user-contributions/${encodeURIComponent(userId)}`,
+        {
+          params: { contributedFrom, contributedUntil },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default StatisticsApiClient;

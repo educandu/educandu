@@ -6,6 +6,8 @@ export const idOrKeySchema = joi.string().alphanum().min(15).max(30);
 
 export const boolStringSchema = joi.any().valid('true', 'false', true, false);
 
+export const millisecondsStringSchema = joi.string().pattern(/^\d+$/);
+
 export const slugSchema = joi.string().pattern(slugValidationPattern).allow('');
 
 export const emailSchema = joi.string().pattern(emailValidationPattern);

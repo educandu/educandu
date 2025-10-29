@@ -8,6 +8,12 @@ const documentTagsProjection = {
   tags: 1
 };
 
+const documentMinimalMetadataProjection = {
+  _id: 1,
+  title: 1,
+  slug: 1
+};
+
 const documentMinimalMetadataWithTagsProjection = {
   _id: 1,
   title: 1,
@@ -18,9 +24,7 @@ const documentMinimalMetadataWithTagsProjection = {
 const documentCreationMetadataProjection = {
   _id: 1,
   createdOn: 1,
-  createdBy: 1,
-  title: 1,
-  slug: 1
+  createdBy: 1
 };
 
 const documentMetadataProjection = {
@@ -110,6 +114,10 @@ class DocumentStore {
     return this.collection.findOne({ _id: id }, { projection: documentMetadataProjection, session });
   }
 
+  getAllPublicDocumentsCreationMetadata({ session } = {}) {
+    return this.collection.find({ roomId: null }, { projection: documentCreationMetadataProjection, session }).toArray();
+  }
+
   getDocumentsCreationMetadataByIds(ids, { session } = {}) {
     return this.collection.find({ _id: { $in: ids } }, { projection: documentCreationMetadataProjection, session }).toArray();
   }
@@ -124,6 +132,10 @@ class DocumentStore {
 
   getDocumentsExtendedMetadataByIds(ids, { session } = {}) {
     return this.collection.find({ _id: { $in: ids } }, { projection: documentExtendedMetadataProjection, session }).toArray();
+  }
+
+  getDocumentsMinimalMetadataByIds(ids, { session } = {}) {
+    return this.collection.find({ _id: { $in: ids } }, { projection: documentMinimalMetadataProjection, session }).toArray();
   }
 
   getDocumentsMetadataBySlug(slug, { session } = {}) {

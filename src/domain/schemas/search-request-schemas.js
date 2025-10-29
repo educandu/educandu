@@ -9,8 +9,3 @@ export const searchRequestDBSchema = joi.object({
   registeredOn: joi.date().required(),
   expiresOn: joi.date().required()
 });
-
-export const getSearchRequestsForStatisticsQuerySchema = joi.object({
-  registeredFrom: joi.string(),
-  registeredUntil: joi.string()
-});

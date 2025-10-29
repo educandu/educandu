@@ -402,6 +402,7 @@ function StatisticsDocumentRequestsTab() {
       <div className="StatisticsDocumentRequestsTab-csvExportButton">
         <Tooltip title={t('exportAsCsv')}>
           <Button
+            disabled={fetchingData}
             icon={<TableExportIcon />}
             onClick={handleExportToCsvButtonClick}
             />

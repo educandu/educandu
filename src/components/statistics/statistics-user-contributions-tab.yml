@@ -2,6 +2,9 @@ statisticsUserContributionsTab:
   distinctCount:
     en: "{count, select, 0 {0} 1 {1 in total} other {{count} distinct}}"
     de: "{count, select, 0 {0} 1 {1 insgesamt} other {{count} verschiedene}}"
+  userNameColumnHeader:
+    en: User name
+    de: Benutzername
   editedDocumentsCountColumnHeader:
     en: Edited documents (total)
     de: Bearbeitete Dokumente (insgesamt)
@@ -14,28 +17,28 @@ statisticsUserContributionsTab:
   otherEditedDocumentsCountColumnHeader:
     en: Other documents
     de: Andere Dokumente
-  createdDocumentsCountColumnHeader:
-    en: Created documents
-    de: Erstellte Dokumente
   ownEditedDocumentsCountSortingHeader:
     en: Edited own documents
     de: Bearbeitete eigene Dokumente
   otherEditedDocumentsCountSortingHeader:
     en: Edited other documents
     de: Bearbeitete andere Dokumente
+  createdDocumentsCountColumnHeader:
+    en: Created documents
+    de: Erstellte Dokumente
   sortedByUserName:
     en: Sorted by user name
     de: Nach Benutzername sortiert
-  sortedByEditedDocumentsCountColumnHeader:
+  sortedByEditedDocuments:
     en: Sorted by edited documents (total)
     de: Nach bearbeiteten Dokumenten (insgesamt) sortiert
-  sortedByOwnEditedDocumentsCountColumnHeader:
+  sortedByOwnEditedDocuments:
     en: Sorted by edited own documents
     de: Nach bearbeiteten eigenen Dokumenten sortiert
-  sortedByOtherEditedDocumentsCountColumnHeader:
+  sortedByOtherEditedDocuments:
     en: Sorted by edited other documents
     de: Nach bearbeiteten anderen Dokumenten sortiert
-  sortedByCreatedDocumentsCountColumnHeader:
+  sortedByCreatedDocuments:
     en: Sorted by created documents
     de: Nach erstellten Dokumenten sortiert
   userNamePlaceholder:
