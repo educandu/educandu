@@ -1,5 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
+import { combineQueryConditions } from '../utils/query-utils.js';
 import { documentRequestDBSchema } from '../domain/schemas/document-request-schemas.js';
 
 class DocumentRequestStore {
@@ -9,7 +10,7 @@ class DocumentRequestStore {
     this.collection = db.documentRequests;
   }
 
-  getAllDocumentRequestCounters({ registeredFrom, registeredUntil, daysOfWeek } = {}) {
+  getAllDocumentRequestCountersCursor({ registeredFrom, registeredUntil, daysOfWeek } = {}) {
     const filters = [];
     let matchStage;
 
@@ -26,7 +27,7 @@ class DocumentRequestStore {
     }
 
     if (filters.length) {
-      matchStage = { $match: { $and: filters } };
+      matchStage = { $match: combineQueryConditions('$and', filters, false) };
     }
 
     const groupStage = {
@@ -69,7 +70,7 @@ class DocumentRequestStore {
 
     const stages = [matchStage, groupStage, projectStage].filter(stage => stage);
 
-    return this.collection.aggregate(stages).toArray();
+    return this.collection.aggregate(stages);
   }
 
   saveDocumentRequest(documentRequest, { session } = {}) {

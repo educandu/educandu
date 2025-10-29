@@ -4,7 +4,6 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import StatisticsService from '../services/statistics-service.js';
 import { parseDate, parseDaysOfWeek } from '../utils/query-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import DocumentRequestService from '../services/document-request-service.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
@@ -15,12 +14,11 @@ import {
 } from '../domain/schemas/statistics-schemas.js';
 
 class StatisticsController {
-  static dependencies = [StatisticsService, PageRenderer, DocumentRequestService, ClientDataMappingService];
+  static dependencies = [StatisticsService, PageRenderer, ClientDataMappingService];
 
-  constructor(statisticsService, pageRenderer, documentRequestService, clientDataMappingService) {
+  constructor(statisticsService, pageRenderer, clientDataMappingService) {
     this.statisticsService = statisticsService;
     this.pageRenderer = pageRenderer;
-    this.documentRequestService = documentRequestService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
@@ -46,15 +44,13 @@ class StatisticsController {
     const parsedRegisteredUntil = parseDate(registeredUntil);
     const parsedDaysOfWeek = parseDaysOfWeek(daysOfWeek);
 
-    const documentRequestCounters = await this.documentRequestService.getAllDocumentRequestCounters({
+    const documentRequestCounters = await this.statisticsService.getAllDocumentRequestCounters({
       registeredFrom: parsedRegisteredFrom,
       registeredUntil: parsedRegisteredUntil,
       daysOfWeek: parsedDaysOfWeek
     });
 
-    const mappedDocumentRequestCounters = await this.clientDataMappingService.mapDocumentRequestCounters({ documentRequestCounters });
-
-    return res.send({ documentRequestCounters: mappedDocumentRequestCounters });
+    return res.send({ documentRequestCounters });
   }
 
   async handleGetSearchRequests(req, res) {
@@ -65,10 +61,14 @@ class StatisticsController {
   async handleGetUserContributions(req, res) {
     const { contributedFrom, contributedUntil } = req.query;
 
-    const from = parseDate(contributedFrom);
-    const until = parseDate(contributedUntil);
+    const parsedDontributedFrom = parseDate(contributedFrom);
+    const parsedContributedUntil = parseDate(contributedUntil);
 
-    const userContributions = await this.statisticsService.getUserContributions({ from, until });
+    const userContributions = await this.statisticsService.getUserContributions({
+      contributedFrom: parsedDontributedFrom,
+      contributedUntil: parsedContributedUntil
+    });
+
     return res.send({ userContributions });
   }
 
@@ -76,10 +76,15 @@ class StatisticsController {
     const { userId } = req.params;
     const { contributedFrom, contributedUntil } = req.query;
 
-    const from = parseDate(contributedFrom);
-    const until = parseDate(contributedUntil);
+    const parsedContributedFrom = parseDate(contributedFrom);
+    const parsedContributedUntil = parseDate(contributedUntil);
 
-    const { contributions, documents } = await this.statisticsService.getUserContributionsDetails({ userId, from, until });
+    const { contributions, documents } = await this.statisticsService.getUserContributionsDetails({
+      userId,
+      contributedFrom: parsedContributedFrom,
+      contributedUntil: parsedContributedUntil
+    });
+
     return res.send({ contributions, documents });
   }
 

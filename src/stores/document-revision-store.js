@@ -25,19 +25,19 @@ class DocumentRevisionStore {
     return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }
 
-  getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ createdBy, from, until }, { session } = {}) {
+  getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ createdBy, contributedFrom, contributedUntil }, { session } = {}) {
     const conditions = [{ roomId: null }];
 
     if (createdBy) {
       conditions.push({ createdBy });
     }
 
-    if (from) {
-      conditions.push({ createdOn: { $gt: from } });
+    if (contributedFrom) {
+      conditions.push({ createdOn: { $gt: contributedFrom } });
     }
 
-    if (until) {
-      conditions.push({ createdOn: { $lt: until } });
+    if (contributedUntil) {
+      conditions.push({ createdOn: { $lt: contributedUntil } });
     }
 
     const filter = combineQueryConditions('$and', conditions, false);

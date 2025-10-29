@@ -265,28 +265,6 @@ class ClientDataMappingService {
     return mappedAllRoomMediaOverview;
   }
 
-  async mapDocumentRequestCounters({ documentRequestCounters }) {
-    const documentIds = documentRequestCounters.map(counter => counter.documentId);
-    const documents = await this.documentStore.getDocumentsMetadataByIds(documentIds);
-
-    const mappedDocumentsWithRequestCounters = documentRequestCounters.map(counter => {
-      const document = documents.find(doc => doc._id === counter.documentId);
-
-      return {
-        _id: counter.documentId,
-        slug: document.slug,
-        title: document.title,
-        totalCount: counter.totalCount,
-        readCount: counter.readCount,
-        writeCount: counter.writeCount,
-        anonymousCount: counter.anonymousCount,
-        loggedInCount: counter.loggedInCount
-      };
-    });
-
-    return mappedDocumentsWithRequestCounters;
-  }
-
   _mapNotificationEventParams(eventType, eventParams, allowedDocumentsById, allowedRoomsById, allowedDocumentInputsById) {
     switch (eventType) {
       case EVENT_TYPE.documentRevisionCreated:

@@ -9,10 +9,6 @@ class DocumentRequestService {
     this.documentRequestStore = documentRequestStore;
   }
 
-  getAllDocumentRequestCounters({ registeredFrom, registeredUntil, daysOfWeek } = {}) {
-    return this.documentRequestStore.getAllDocumentRequestCounters({ registeredFrom, registeredUntil, daysOfWeek });
-  }
-
   async createDocumentRequest({ document, user, isWriteRequest }) {
     const registeredOn = new Date();
 

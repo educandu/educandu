@@ -134,6 +134,10 @@ class DocumentStore {
     return this.collection.find({ _id: { $in: ids } }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }
 
+  getAllPublicDocumentsMinimalMetadata({ session } = {}) {
+    return this.collection.find({ roomId: null }, { projection: documentMinimalMetadataProjection, session }).toArray();
+  }
+
   getDocumentsMinimalMetadataByIds(ids, { session } = {}) {
     return this.collection.find({ _id: { $in: ids } }, { projection: documentMinimalMetadataProjection, session }).toArray();
   }

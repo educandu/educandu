@@ -2,15 +2,17 @@ import by from 'thenby';
 import UserStore from '../stores/user-store.js';
 import DocumentStore from '../stores/document-store.js';
 import SearchRequestStore from '../stores/search-request-store.js';
+import DocumentRequestStore from '../stores/document-request-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 
 class StatisticsService {
-  static dependencies = [DocumentStore, DocumentRevisionStore, MediaLibraryItemStore, UserStore, SearchRequestStore];
+  static dependencies = [DocumentStore, DocumentRevisionStore, DocumentRequestStore, MediaLibraryItemStore, UserStore, SearchRequestStore];
 
-  constructor(documentStore, documentRevisionStore, mediaLibraryItemStore, userStore, searchRequestStore) {
+  constructor(documentStore, documentRevisionStore, documentRequestStore, mediaLibraryItemStore, userStore, searchRequestStore) {
     this.documentStore = documentStore;
     this.documentRevisionStore = documentRevisionStore;
+    this.documentRequestStore = documentRequestStore;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
     this.userStore = userStore;
     this.searchRequestStore = searchRequestStore;
@@ -94,18 +96,45 @@ class StatisticsService {
     };
   }
 
+  async getAllDocumentRequestCounters({ registeredFrom, registeredUntil, daysOfWeek } = {}) {
+    const documentsById = await this.documentStore.getAllPublicDocumentsMinimalMetadata().then(documents => {
+      return new Map(documents.map(document => [document._id, document]));
+    });
+
+    const mergedCounters = [];
+    const countersCursor = this.documentRequestStore.getAllDocumentRequestCountersCursor({ registeredFrom, registeredUntil, daysOfWeek });
+
+    for await (const counter of countersCursor) {
+      const document = documentsById.get(counter.documentId);
+      if (document) {
+        mergedCounters.push({
+          _id: counter.documentId,
+          slug: document.slug,
+          title: document.title,
+          totalCount: counter.totalCount,
+          readCount: counter.readCount,
+          writeCount: counter.writeCount,
+          anonymousCount: counter.anonymousCount,
+          loggedInCount: counter.loggedInCount
+        });
+      }
+    }
+
+    return mergedCounters;
+  }
+
   getSearchRequests() {
     return this.searchRequestStore.getAllSearchRequests();
   }
 
-  async getUserContributions({ from, until }) {
+  async getUserContributions({ contributedFrom, contributedUntil }) {
     const [usersById, documentsById] = await Promise.all([
       this.userStore.getAllUserIdsAndDisplayNames().then(users => new Map(users.map(user => [user._id, user]))),
       this.documentStore.getAllPublicDocumentsCreationMetadata().then(documents => new Map(documents.map(document => [document._id, document])))
     ]);
 
     const contributionsByUserId = new Map();
-    const revisionsCursor = await this.documentRevisionStore.getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ from, until });
+    const revisionsCursor = await this.documentRevisionStore.getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ contributedFrom, contributedUntil });
 
     for await (const revision of revisionsCursor) {
       const user = usersById.get(revision.createdBy);
@@ -154,7 +183,7 @@ class StatisticsService {
     return userContributions;
   }
 
-  async getUserContributionsDetails({ userId, from, until }) {
+  async getUserContributionsDetails({ userId, contributedFrom, contributedUntil }) {
     const documentsById = await this.documentStore.getAllPublicDocumentsCreationMetadata().then(documents => {
       return new Map(documents.map(document => [document._id, document]));
     });
@@ -164,7 +193,7 @@ class StatisticsService {
     const documentsCreated = new Set();
     const affectedDocumentIds = new Set();
 
-    const revisionsCursor = await this.documentRevisionStore.getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ createdBy: userId, from, until });
+    const revisionsCursor = await this.documentRevisionStore.getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ createdBy: userId, contributedFrom, contributedUntil });
 
     for await (const revision of revisionsCursor) {
       const document = documentsById.get(revision.documentId);
