@@ -76,11 +76,11 @@ export function createTagsPipelineQuery(searchString = '', tagsKey = 'tags') {
   };
 }
 
-export function parseNumberArrayFromCsv(value) {
+export function parseDaysOfWeek(value) {
   return (value || '')
-    .split(',')
-    .map(stringItem => Number.parseInt(stringItem, 10))
-    .filter(numberItem => !isNaN(numberItem));
+    .split('')
+    .map(stringValue => Number.parseInt(stringValue, 10))
+    .filter(numberValue => !isNaN(numberValue) && numberValue > 0 && numberValue < 8);
 }
 
 export function parseDate(value) {

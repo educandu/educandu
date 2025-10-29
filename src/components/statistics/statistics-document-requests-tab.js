@@ -17,8 +17,8 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { Table, DatePicker, Checkbox, Button, Tooltip } from 'antd';
 import { useDateFormat, useNumberFormat } from '../locale-context.js';
 import { DAY_OF_WEEK, SORTING_DIRECTION } from '../../domain/constants.js';
+import StatisticsApiClient from '../../api-clients/statistics-api-client.js';
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import DocumentRequestApiClient from '../../api-clients/document-request-api-client.js';
 
 const { RangePicker } = DatePicker;
 
@@ -58,7 +58,7 @@ const getSanitizedQueryFromRequest = request => {
   const registeredFrom = !isNaN(registeredFromMilliseconds) ? new Date(registeredFromMilliseconds) : null;
   const registeredUntilMilliseconds = parseInt((query.registeredUntil || '').trim(), 10);
   const registeredUntil = !isNaN(registeredUntilMilliseconds) ? new Date(registeredUntilMilliseconds) : null;
-  const daysOfWeek = query.daysOfWeek ? query.daysOfWeek.trim().split(',').map(text => Number(text)) : Object.values(DAY_OF_WEEK);
+  const daysOfWeek = query.daysOfWeek ? query.daysOfWeek.trim().split('').map(text => Number(text)) : Object.values(DAY_OF_WEEK);
   const sortingPairTexts = query.sortingPairs ? query.sortingPairs.trim().split(',') : [];
   const sortingPairs = sortingPairTexts
     .map(pairText => pairText.split('_'))
@@ -81,7 +81,7 @@ function StatisticsDocumentRequestsTab() {
   const formatNumber = useNumberFormat();
   const httpClient = useService(HttpClient);
   const { t } = useTranslation('statisticsDocumentRequestsTab');
-  const documentRequestApiClient = useSessionAwareApiClient(DocumentRequestApiClient);
+  const statisticsApiClient = useSessionAwareApiClient(StatisticsApiClient);
 
   const daysOfWeekOptions = [
     { label: t('mondayCheckbox'), value: DAY_OF_WEEK.monday },
@@ -119,12 +119,16 @@ function StatisticsDocumentRequestsTab() {
   const fetchData = useCallback(async () => {
     try {
       setFetchingData(true);
-      const apiClientResponse = await documentRequestApiClient.getStatisticsDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek });
+      const apiClientResponse = await statisticsApiClient.getStatisticsDocumentRequests({
+        registeredFrom: registeredFrom?.getTime() ?? null,
+        registeredUntil: registeredUntil?.getTime() ?? null,
+        daysOfWeek: daysOfWeek.join('')
+      });
       setDocumentRequestCounters(apiClientResponse.documentRequestCounters);
     } finally {
       setFetchingData(false);
     }
-  }, [registeredFrom, registeredUntil, daysOfWeek, setFetchingData, documentRequestApiClient]);
+  }, [registeredFrom, registeredUntil, daysOfWeek, setFetchingData, statisticsApiClient]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -135,7 +139,7 @@ function StatisticsDocumentRequestsTab() {
       filter,
       registeredFrom: registeredFrom?.getTime(),
       registeredUntil: registeredUntil?.getTime(),
-      daysOfWeek,
+      daysOfWeek: daysOfWeek.join(''),
       page: pagination.page,
       pageSize: pagination.pageSize,
       sortingPairs: sortingPairs.map(pair => pair.join('_')).join(',')

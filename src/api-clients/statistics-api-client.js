@@ -25,6 +25,18 @@ class StatisticsApiClient {
       .then(res => res.data);
   }
 
+  getStatisticsDocumentRequests({ registeredFrom, registeredUntil, daysOfWeek }) {
+    return this.httpClient
+      .get(
+        '/api/v1/statistics/document-requests',
+        {
+          params: { registeredFrom, registeredUntil, daysOfWeek },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
   getSearchRequests() {
     return this.httpClient
       .get(

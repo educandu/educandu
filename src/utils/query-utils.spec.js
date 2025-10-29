@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createTextSearchQuery, createTagsPipelineQuery, parseNumberArrayFromCsv, parseDate } from './query-utils.js';
+import { createTextSearchQuery, createTagsPipelineQuery, parseDaysOfWeek, parseDate } from './query-utils.js';
 
 describe('query-utils', () => {
 
@@ -158,22 +158,23 @@ describe('query-utils', () => {
     });
   });
 
-  describe('parseNumberArrayFromCsv', () => {
+  describe('parseDaysOfWeek', () => {
     let result;
 
     const testCases = [
       { value: '', expectedResult: [] },
-      { value: '1,2 ', expectedResult: [1,2] },
-      { value: '1,NaN', expectedResult: [1] },
+      { value: '12 ', expectedResult: [1, 2] },
+      { value: '1NaN', expectedResult: [1] },
+      { value: '03568', expectedResult: [3, 5, 6] }
     ];
 
     testCases.forEach(({ value, expectedResult }) => {
       describe(`when the value is '${value}'`, () => {
         beforeEach(() => {
-          result = parseNumberArrayFromCsv(value);
+          result = parseDaysOfWeek(value);
         });
 
-        it(`should return [${expectedResult}]`, () => {
+        it(`should return [${expectedResult.join(', ')}]`, () => {
           expect(result).toStrictEqual(expectedResult);
         });
       });
@@ -196,7 +197,7 @@ describe('query-utils', () => {
           result = parseDate(value);
         });
 
-        it(`should return [${expectedResult}]`, () => {
+        it(`should return ${expectedResult?.toISOString() ?? expectedResult}`, () => {
           expect(result).toStrictEqual(expectedResult);
         });
       });
