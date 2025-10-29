@@ -2,17 +2,17 @@ import by from 'thenby';
 import UserStore from '../stores/user-store.js';
 import DocumentStore from '../stores/document-store.js';
 import SearchRequestStore from '../stores/search-request-store.js';
-import DocumentRequestStore from '../stores/document-request-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
+import DailyDocumentRequestStore from '../stores/daily-document-request-store.js';
 
 class StatisticsService {
-  static dependencies = [DocumentStore, DocumentRevisionStore, DocumentRequestStore, MediaLibraryItemStore, UserStore, SearchRequestStore];
+  static dependencies = [DocumentStore, DocumentRevisionStore, DailyDocumentRequestStore, MediaLibraryItemStore, UserStore, SearchRequestStore];
 
-  constructor(documentStore, documentRevisionStore, documentRequestStore, mediaLibraryItemStore, userStore, searchRequestStore) {
+  constructor(documentStore, documentRevisionStore, dailyDocumentRequestStore, mediaLibraryItemStore, userStore, searchRequestStore) {
     this.documentStore = documentStore;
     this.documentRevisionStore = documentRevisionStore;
-    this.documentRequestStore = documentRequestStore;
+    this.dailyDocumentRequestStore = dailyDocumentRequestStore;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
     this.userStore = userStore;
     this.searchRequestStore = searchRequestStore;
@@ -102,7 +102,7 @@ class StatisticsService {
     });
 
     const mergedCounters = [];
-    const countersCursor = this.documentRequestStore.getAllDocumentRequestCountersCursor({ registeredFrom, registeredUntil, daysOfWeek });
+    const countersCursor = this.dailyDocumentRequestStore.getAllDocumentRequestCountersCursor({ registeredFrom, registeredUntil, daysOfWeek });
 
     for await (const counter of countersCursor) {
       const document = documentsById.get(counter.documentId);

@@ -2,7 +2,7 @@ import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import StatisticsService from '../services/statistics-service.js';
-import { parseDate, parseDaysOfWeek } from '../utils/query-utils.js';
+import { parseTime, parseDaysOfWeek } from '../utils/date-utils.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -40,8 +40,8 @@ class StatisticsController {
   async handleGetDocumentRequests(req, res) {
     const { registeredFrom, registeredUntil, daysOfWeek } = req.query;
 
-    const parsedRegisteredFrom = parseDate(registeredFrom);
-    const parsedRegisteredUntil = parseDate(registeredUntil);
+    const parsedRegisteredFrom = parseTime(registeredFrom);
+    const parsedRegisteredUntil = parseTime(registeredUntil);
     const parsedDaysOfWeek = parseDaysOfWeek(daysOfWeek);
 
     const documentRequestCounters = await this.statisticsService.getAllDocumentRequestCounters({
@@ -61,11 +61,11 @@ class StatisticsController {
   async handleGetUserContributions(req, res) {
     const { contributedFrom, contributedUntil } = req.query;
 
-    const parsedDontributedFrom = parseDate(contributedFrom);
-    const parsedContributedUntil = parseDate(contributedUntil);
+    const parsedContributedFrom = parseTime(contributedFrom);
+    const parsedContributedUntil = parseTime(contributedUntil);
 
     const userContributions = await this.statisticsService.getUserContributions({
-      contributedFrom: parsedDontributedFrom,
+      contributedFrom: parsedContributedFrom,
       contributedUntil: parsedContributedUntil
     });
 
@@ -76,8 +76,8 @@ class StatisticsController {
     const { userId } = req.params;
     const { contributedFrom, contributedUntil } = req.query;
 
-    const parsedContributedFrom = parseDate(contributedFrom);
-    const parsedContributedUntil = parseDate(contributedUntil);
+    const parsedContributedFrom = parseTime(contributedFrom);
+    const parsedContributedUntil = parseTime(contributedUntil);
 
     const { contributions, documents } = await this.statisticsService.getUserContributionsDetails({
       userId,

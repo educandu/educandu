@@ -75,15 +75,3 @@ export function createTagsPipelineQuery(searchString = '', tagsKey = 'tags') {
     ]
   };
 }
-
-export function parseDaysOfWeek(value) {
-  return (value || '')
-    .split('')
-    .map(stringValue => Number.parseInt(stringValue, 10))
-    .filter(numberValue => !isNaN(numberValue) && numberValue > 0 && numberValue < 8);
-}
-
-export function parseDate(value) {
-  const date = Date.parse(value || '');
-  return isNaN(date) ? null : new Date(date);
-}

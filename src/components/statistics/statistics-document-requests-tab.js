@@ -206,8 +206,8 @@ function StatisticsDocumentRequestsTab() {
   };
 
   const handleDateRangeChange = newDateRange => {
-    setRegisteredFrom(newDateRange ? newDateRange[0].startOf('date').toDate() : null);
-    setRegisteredUntil(newDateRange ? newDateRange[1].endOf('date').toDate() : null);
+    setRegisteredFrom(newDateRange?.[0]?.startOf('date').toDate() ?? null);
+    setRegisteredUntil(newDateRange?.[1]?.endOf('date').toDate() ?? null);
   };
 
   const handleDaysOfWeekChange = newCheckedValues => {

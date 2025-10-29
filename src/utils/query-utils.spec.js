@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createTextSearchQuery, createTagsPipelineQuery, parseDaysOfWeek, parseDate } from './query-utils.js';
+import { createTextSearchQuery, createTagsPipelineQuery } from './query-utils.js';
 
 describe('query-utils', () => {
 
@@ -153,52 +153,6 @@ describe('query-utils', () => {
               }
             } }
           ]
-        });
-      });
-    });
-  });
-
-  describe('parseDaysOfWeek', () => {
-    let result;
-
-    const testCases = [
-      { value: '', expectedResult: [] },
-      { value: '12 ', expectedResult: [1, 2] },
-      { value: '1NaN', expectedResult: [1] },
-      { value: '03568', expectedResult: [3, 5, 6] }
-    ];
-
-    testCases.forEach(({ value, expectedResult }) => {
-      describe(`when the value is '${value}'`, () => {
-        beforeEach(() => {
-          result = parseDaysOfWeek(value);
-        });
-
-        it(`should return [${expectedResult.join(', ')}]`, () => {
-          expect(result).toStrictEqual(expectedResult);
-        });
-      });
-    });
-  });
-
-  describe('parseDate', () => {
-    let result;
-
-    const testCases = [
-      { value: '', expectedResult: null },
-      { value: 0, expectedResult: null },
-      { value: 'invalid format', expectedResult: null },
-      { value: '2024-04-03T00:00:00.000Z', expectedResult: new Date('2024-04-03T00:00:00.000Z') }
-    ];
-
-    testCases.forEach(({ value, expectedResult }) => {
-      describe(`when the value is '${value}'`, () => {
-        beforeEach(() => {
-          result = parseDate(value);
-        });
-
-        it(`should return ${expectedResult?.toISOString() ?? expectedResult}`, () => {
-          expect(result).toStrictEqual(expectedResult);
         });
       });
     });
