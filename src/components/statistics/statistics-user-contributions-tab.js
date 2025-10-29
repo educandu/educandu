@@ -32,16 +32,15 @@ const filteringParams = {
   filters: [textFilter, contributedFromFilter, contributedUntilFilter]
 };
 
-const querySorter = createSorter('user', 'userNameColumnHeader', 'sortedByUserName', (items, direction) => [...items].sort(by(item => item.userDisplayName, { direction, ignoreCase: true })));
-const documentsCreatedSorter = createSorter('documentsCreated', 'createdDocumentsCountColumnHeader', 'sortedByCreatedDocuments', (items, direction) => [...items].sort(by(item => item.documentsCreatedCount, { direction })));
-const documentsContributedToSorter = createSorter('documentsContributedTo', 'editedDocumentsCountColumnHeader', 'sortedByEditedDocuments', (items, direction) => [...items].sort(by(item => item.documentsContributedToCount, { direction })));
-const ownDocumentsContributedToSorter = createSorter('ownDocumentsContributedTo', 'ownEditedDocumentsCountSortingHeader', 'sortedByOwnEditedDocuments', (items, direction) => [...items].sort(by(item => item.ownDocumentsContributedToCount, { direction })));
-const otherDocumentsContributedToSorter = createSorter('otherDocumentsContributedTo', 'otherEditedDocumentsCountSortingHeader', 'sortedByOtherEditedDocuments', (items, direction) => [...items].sort(by(item => item.otherDocumentsContributedToCount, { direction })));
+const querySorter = createSorter('user', 'userNameColumnHeader', 'sortedByUserName', direction => by(item => item.userDisplayName, { direction, ignoreCase: true }));
+const documentsCreatedSorter = createSorter('documentsCreated', 'createdDocumentsCountColumnHeader', 'sortedByCreatedDocuments', direction => by(item => item.documentsCreatedCount, { direction }));
+const documentsContributedToSorter = createSorter('documentsContributedTo', 'editedDocumentsCountColumnHeader', 'sortedByEditedDocuments', direction => by(item => item.documentsContributedToCount, { direction }));
+const ownDocumentsContributedToSorter = createSorter('ownDocumentsContributedTo', 'ownEditedDocumentsCountSortingHeader', 'sortedByOwnEditedDocuments', direction => by(item => item.ownDocumentsContributedToCount, { direction }));
+const otherDocumentsContributedToSorter = createSorter('otherDocumentsContributedTo', 'otherEditedDocumentsCountSortingHeader', 'sortedByOtherEditedDocuments', direction => by(item => item.otherDocumentsContributedToCount, { direction }));
 
 const sortingParams = {
   sorters: [querySorter, documentsCreatedSorter, documentsContributedToSorter, ownDocumentsContributedToSorter, otherDocumentsContributedToSorter],
-  defaultSorter: documentsContributedToSorter,
-  defaultDirection: SORTING_DIRECTION.desc
+  defaultSorting: [['documentsContributedTo', SORTING_DIRECTION.desc]]
 };
 
 function StatisticsUserContributionsTab() {
@@ -56,7 +55,7 @@ function StatisticsUserContributionsTab() {
 
   const { filteringConfiguration } = useFilteringConfiguration(filteringParams.filters);
 
-  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorter, sortingParams.defaultDirection, t);
+  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorting, t);
 
   const { filtering, getTextFilterValue, getDateFilterValuesAsMilliseconds, getRangePickerFilterValues, handleTextFilterChange, handleDateRangeFilterChange, filterItems } = useFiltering(initialQuery, filteringConfiguration);
   const { sorting, handleSortingSelectorChange, sortItems } = useSorting(initialQuery, sortingConfiguration);

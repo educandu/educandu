@@ -77,29 +77,27 @@ const mediaTrashFilteringParams = {
 };
 
 // Common sorters:
-const nameSorter = createSorter('name', 'common:name', 'common:sortedByName', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.name, { direction, ignoreCase: true })));
-const createdOnSorter = createSorter('createdOn', 'common:creationDate', 'common:sortedByCreatedOn', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.createdOn, { direction })));
-const creatorSorter = createSorter('creator', 'common:creator', 'common:sortedByCreator', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.createdBy.displayName, { direction, ignoreCase: true })));
-const sizeSorter = createSorter('size', 'common:size', 'common:sortedBySize', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.size, { direction })));
-const typeSorter = createSorter('type', 'common:type', 'common:sortedByType', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.resourceType, { direction })));
+const nameSorter = createSorter('name', 'common:name', 'common:sortedByName', direction => by(item => item.mediaLibraryItem.name, { direction, ignoreCase: true }));
+const createdOnSorter = createSorter('createdOn', 'common:creationDate', 'common:sortedByCreatedOn', direction => by(item => item.mediaLibraryItem.createdOn, { direction }));
+const creatorSorter = createSorter('creator', 'common:creator', 'common:sortedByCreator', direction => by(item => item.mediaLibraryItem.createdBy.displayName, { direction, ignoreCase: true }));
+const sizeSorter = createSorter('size', 'common:size', 'common:sortedBySize', direction => by(item => item.mediaLibraryItem.size, { direction }));
+const typeSorter = createSorter('type', 'common:type', 'common:sortedByType', direction => by(item => item.mediaLibraryItem.resourceType, { direction }));
 
 // Library only sorters:
-const updatedOnSorter = createSorter('updatedOn', 'common:updateDate', 'common:sortedByUpdatedOn', (items, direction) => [...items].sort(by(item => item.mediaLibraryItem.updatedOn, { direction })));
+const updatedOnSorter = createSorter('updatedOn', 'common:updateDate', 'common:sortedByUpdatedOn', direction => by(item => item.mediaLibraryItem.updatedOn, { direction }));
 
 // Trash only sorters:
-const deletedOnSorter = createSorter('deletedOn', 'common:deletionDate', 'common:sortedByDeletedOn', (items, direction) => [...items].sort(by(item => item.mediaTrashItem.createdOn, { direction })));
-const expiresOnSorter = createSorter('expiresOn', 'common:expirationDate', 'common:sortedByExpiresOn', (items, direction) => [...items].sort(by(item => item.mediaTrashItem.expiresOn, { direction })));
+const deletedOnSorter = createSorter('deletedOn', 'common:deletionDate', 'common:sortedByDeletedOn', direction => by(item => item.mediaTrashItem.createdOn, { direction }));
+const expiresOnSorter = createSorter('expiresOn', 'common:expirationDate', 'common:sortedByExpiresOn', direction => by(item => item.mediaTrashItem.expiresOn, { direction }));
 
 const mediaLibrarySortingParams = {
   sorters: [nameSorter, createdOnSorter, updatedOnSorter, creatorSorter, sizeSorter, typeSorter],
-  defaultSorter: updatedOnSorter,
-  defaultDirection: SORTING_DIRECTION.desc
+  defaultSorting: [['updatedOn', SORTING_DIRECTION.desc]]
 };
 
 const mediaTrashSortingParams = {
   sorters: [nameSorter, createdOnSorter, deletedOnSorter, expiresOnSorter, creatorSorter, sizeSorter, typeSorter],
-  defaultSorter: deletedOnSorter,
-  defaultDirection: SORTING_DIRECTION.desc
+  defaultSorting: [['deletedOn', SORTING_DIRECTION.desc]]
 };
 
 function getMediaLibraryItemsModalDefaultState() {
@@ -140,7 +138,7 @@ function ContentManagementMediaItemsTab({ tab }) {
   const { filteringConfiguration } = useFilteringConfiguration(filteringParams.filters);
 
   const sortingParams = isTrashTab ? mediaTrashSortingParams : mediaLibrarySortingParams;
-  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorter, sortingParams.defaultDirection, t);
+  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorting, t);
 
   const { filtering, getTextFilterValue, getRangePickerFilterValues, handleTextFilterChange, handleDateRangeFilterChange, filterItems } = useFiltering(initialQuery, filteringConfiguration);
   const { sorting, handleSortingSelectorChange, sortItems } = useSorting(initialQuery, sortingConfiguration);
