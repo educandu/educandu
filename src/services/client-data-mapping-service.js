@@ -149,14 +149,6 @@ class ClientDataMappingService {
     });
   }
 
-  mapUserContributionsData(userContributions, user) {
-    const grantedPermissions = getUserPermissions(user);
-    return userContributions.map(userContribution => ({
-      ...userContribution,
-      user: this._mapOtherUser({ user: userContribution.user, grantedPermissions })
-    }));
-  }
-
   mapSearchableResults({ documents, documentRatings, mediaLibraryItems }) {
     const mappedDocuments = documents.map(document => {
       const documentRating = documentRatings.find(rating => rating.documentId === document._id);

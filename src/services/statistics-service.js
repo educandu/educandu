@@ -1,14 +1,18 @@
 import by from 'thenby';
+import UserStore from '../stores/user-store.js';
 import DocumentStore from '../stores/document-store.js';
 import SearchRequestStore from '../stores/search-request-store.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 import MediaLibraryItemStore from '../stores/media-library-item-store.js';
 
 class StatisticsService {
-  static dependencies = [DocumentStore, MediaLibraryItemStore, SearchRequestStore];
+  static dependencies = [DocumentStore, DocumentRevisionStore, MediaLibraryItemStore, UserStore, SearchRequestStore];
 
-  constructor(documentStore, mediaLibraryItemStore, searchRequestStore) {
+  constructor(documentStore, documentRevisionStore, mediaLibraryItemStore, userStore, searchRequestStore) {
     this.documentStore = documentStore;
+    this.documentRevisionStore = documentRevisionStore;
     this.mediaLibraryItemStore = mediaLibraryItemStore;
+    this.userStore = userStore;
     this.searchRequestStore = searchRequestStore;
   }
 
@@ -38,7 +42,7 @@ class StatisticsService {
       addToMap(this.mediaLibraryItemStore.getMediaLibraryItemTagsWithCountsCursor(), 'mediaLibraryItemCount')
     ]);
 
-    return { tags: [...tagMap.values()] };
+    return [...tagMap.values()];
   }
 
   async getTagUsageDetails({ tag }) {
@@ -92,6 +96,106 @@ class StatisticsService {
 
   getSearchRequests() {
     return this.searchRequestStore.getAllSearchRequests();
+  }
+
+  async getUserContributions({ from, until }) {
+    const [usersById, documentsById] = await Promise.all([
+      this.userStore.getAllUserIdsAndDisplayNames().then(users => new Map(users.map(user => [user._id, user]))),
+      this.documentStore.getAllPublicDocumentsCreationMetadata().then(documents => new Map(documents.map(document => [document._id, document])))
+    ]);
+
+    const contributionsByUserId = new Map();
+    const revisionsCursor = await this.documentRevisionStore.getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ from, until });
+
+    for await (const revision of revisionsCursor) {
+      const user = usersById.get(revision.createdBy);
+      const document = documentsById.get(revision.documentId);
+
+      if (user && document) {
+        let resultEntry = contributionsByUserId.get(user._id);
+
+        if (!resultEntry) {
+          resultEntry = {
+            userId: user._id,
+            userDisplayName: user.displayName,
+            ownDocumentsContributedTo: new Set(),
+            otherDocumentsContributedTo: new Set(),
+            documentsCreated: new Set()
+          };
+          contributionsByUserId.set(user._id, resultEntry);
+        }
+
+        const isFirstRevision = document.createdOn.valueOf() === revision.createdOn.valueOf();
+        const isOwnDocument = document.createdBy === user._id;
+
+        if (isOwnDocument) {
+          resultEntry.ownDocumentsContributedTo.add(document._id);
+        } else {
+          resultEntry.otherDocumentsContributedTo.add(document._id);
+        }
+
+        if (isFirstRevision) {
+          resultEntry.documentsCreated.add(document._id);
+        }
+      }
+    }
+
+    const userContributions = [];
+    for (const element of contributionsByUserId.values()) {
+      userContributions.push({
+        userId: element.userId,
+        userDisplayName: element.userDisplayName,
+        ownDocumentsContributedToCount: element.ownDocumentsContributedTo.size,
+        otherDocumentsContributedToCount: element.otherDocumentsContributedTo.size,
+        documentsCreatedCount: element.documentsCreated.size
+      });
+    }
+
+    return userContributions;
+  }
+
+  async getUserContributionsDetails({ userId, from, until }) {
+    const documentsById = await this.documentStore.getAllPublicDocumentsCreationMetadata().then(documents => {
+      return new Map(documents.map(document => [document._id, document]));
+    });
+
+    const ownDocumentsContributedTo = new Set();
+    const otherDocumentsContributedTo = new Set();
+    const documentsCreated = new Set();
+    const affectedDocumentIds = new Set();
+
+    const revisionsCursor = await this.documentRevisionStore.getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ createdBy: userId, from, until });
+
+    for await (const revision of revisionsCursor) {
+      const document = documentsById.get(revision.documentId);
+      if (document) {
+        affectedDocumentIds.add(document._id);
+
+        const isFirstRevision = document.createdOn.valueOf() === revision.createdOn.valueOf();
+        const isOwnDocument = document.createdBy === userId;
+
+        if (isOwnDocument) {
+          ownDocumentsContributedTo.add(document._id);
+        } else {
+          otherDocumentsContributedTo.add(document._id);
+        }
+
+        if (isFirstRevision) {
+          documentsCreated.add(document._id);
+        }
+      }
+    }
+
+    const documents = await this.documentStore.getDocumentsMinimalMetadataByIds([...affectedDocumentIds]);
+
+    return {
+      contributions: {
+        ownDocumentsContributedTo: [...ownDocumentsContributedTo],
+        otherDocumentsContributedTo: [...otherDocumentsContributedTo],
+        documentsCreated: [...documentsCreated]
+      },
+      documents
+    };
   }
 }
 

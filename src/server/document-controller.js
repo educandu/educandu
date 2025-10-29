@@ -4,7 +4,6 @@ import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { parseDate } from '../utils/query-utils.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
 import ServerConfig from '../bootstrap/server-config.js';
@@ -33,7 +32,6 @@ import {
   getPublicNonArchivedDocumentsByContributingUserParams,
   getPublicNonArchivedDocumentsByContributingUserQuery,
   getSearchableDocumentsTitlesQuerySchema,
-  getUserContributionsForStatisticsQuerySchema,
   publishDocumentBodySchema
 } from '../domain/schemas/document-schemas.js';
 
@@ -230,24 +228,6 @@ class DocumentController {
     return res.send({ documents: mappedDocuments });
   }
 
-  async handleGetUserContributionsForStatistics(req, res) {
-    const { user } = req;
-    const { contributedFrom, contributedUntil } = req.query;
-
-    const from = parseDate(contributedFrom);
-    const until = parseDate(contributedUntil);
-
-    const { userContributions, documents } = await this.documentService.getUserContributions({ from, until });
-
-    const mappedUserContributions = this.clientDataMappingService.mapUserContributionsData(userContributions, user);
-    const mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents, user);
-
-    return res.send({
-      userContributions: mappedUserContributions,
-      documents: mappedDocuments
-    });
-  }
-
   async handleGetDocsForContentManagementOrStatistics(req, res) {
     const { user } = req;
 
@@ -414,13 +394,6 @@ class DocumentController {
       '/api/v1/docs/content-management',
       needsPermission(permissions.MANAGE_PUBLIC_CONTENT),
       (req, res) => this.handleGetDocsForContentManagementOrStatistics(req, res)
-    );
-
-    router.get(
-      '/api/v1/docs/statistics/user-contributions',
-      needsPermission(permissions.VIEW_STATISTICS),
-      validateQuery(getUserContributionsForStatisticsQuerySchema),
-      (req, res) => this.handleGetUserContributionsForStatistics(req, res)
     );
 
     router.get(

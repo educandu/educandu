@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { processAsIteratorIfAvailable } from '../utils/array-utils.js';
 
-export const createTextFilter = (name, filterFunc, {
+export const createTextFilter = (name, filterFunc = null, {
   defaultValue = '',
   prepareFilterValue = filterValue => filterValue,
   skipFilterIf = filterValue => !filterValue
@@ -15,6 +15,10 @@ export const createTextFilter = (name, filterFunc, {
   queryToValues: query => ({ [name]: (query[name] || '').trim() || defaultValue }),
   valuesToQuery: filteringValues => ({ [name]: filteringValues[name] || '' }),
   filterItems: (itemsIterator, filteringValues) => {
+    if (!filterFunc) {
+      return itemsIterator;
+    }
+
     const trimmedValue = (filteringValues[name] || '').trim();
     const filterValue = prepareFilterValue(trimmedValue);
     return skipFilterIf(filterValue)
@@ -23,7 +27,7 @@ export const createTextFilter = (name, filterFunc, {
   }
 });
 
-export const createDateFilter = (name, filterFunc) => ({
+export const createDateFilter = (name, filterFunc = null) => ({
   name,
   queryToValues: query => {
     const valueInMilliseconds = parseInt((query[name] || '').trim(), 10);
@@ -35,6 +39,10 @@ export const createDateFilter = (name, filterFunc) => ({
     return { [name]: value };
   },
   filterItems: (itemsIterator, filteringValues) => {
+    if (!filterFunc) {
+      return itemsIterator;
+    }
+
     const filterValue = filteringValues[name];
     return filterValue
       ? itemsIterator.filter(item => filterFunc(item, filterValue))
@@ -70,6 +78,13 @@ export function useFiltering(initialQuery, filteringConfiguration) {
     return filtering.values[filterName];
   }, [filtering]);
 
+  const getDateFilterValuesAsMilliseconds = useCallback(([filterName1, filterName2]) => {
+    return {
+      [filterName1]: filtering.values[filterName1]?.getTime() ?? null,
+      [filterName2]: filtering.values[filterName2]?.getTime() ?? null
+    };
+  }, [filtering]);
+
   const getRangePickerFilterValues = useCallback(([filterName1, filterName2]) => {
     return [
       filtering.values[filterName1] ? dayjs(filtering.values[filterName1]) : null,
@@ -96,5 +111,5 @@ export function useFiltering(initialQuery, filteringConfiguration) {
     );
   }, [filtering, filteringConfiguration]);
 
-  return { filtering, getTextFilterValue, getRangePickerFilterValues, handleTextFilterChange, handleDateRangeFilterChange, filterItems };
+  return { filtering, getTextFilterValue, getDateFilterValuesAsMilliseconds, getRangePickerFilterValues, handleTextFilterChange, handleDateRangeFilterChange, filterItems };
 }

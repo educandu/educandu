@@ -269,6 +269,7 @@ function StatisticsSearchRequestsTab() {
         <Tooltip title={t('exportAsCsv')}>
           <Button
             icon={<TableExportIcon />}
+            disabled={isFetchingItems}
             onClick={handleExportToCsvButtonClick}
             />
         </Tooltip>

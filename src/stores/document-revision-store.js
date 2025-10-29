@@ -1,5 +1,6 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
+import { combineQueryConditions } from '../utils/query-utils.js';
 import { documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 
 const documentRevisionCreationProjection = {
@@ -24,8 +25,12 @@ class DocumentRevisionStore {
     return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
   }
 
-  getAllPublicDocumentRevisionCreationMetadataInInterval({ from, until }, { session } = {}) {
+  getAllPublicDocumentRevisionCreationMetadataCursorInInterval({ createdBy, from, until }, { session } = {}) {
     const conditions = [{ roomId: null }];
+
+    if (createdBy) {
+      conditions.push({ createdBy });
+    }
 
     if (from) {
       conditions.push({ createdOn: { $gt: from } });
@@ -35,9 +40,9 @@ class DocumentRevisionStore {
       conditions.push({ createdOn: { $lt: until } });
     }
 
-    const filter = conditions.length ? { $and: conditions } : {};
+    const filter = combineQueryConditions('$and', conditions, false);
 
-    return this.collection.find(filter, { projection: documentRevisionCreationProjection, session }).toArray();
+    return this.collection.find(filter, { projection: documentRevisionCreationProjection, session });
   }
 
   getFirstAffectedDocumentRevisionsPerDocumentByReferencedCdnResourceName(cdnResourceName) {
