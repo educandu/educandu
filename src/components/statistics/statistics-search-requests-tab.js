@@ -32,16 +32,15 @@ const filteringParams = {
   filters: [textFilter, registeredFromFilter, registeredUntilFilter]
 };
 
-const querySorter = createSorter('query', 'query', 'sortedByQuery', (items, direction) => [...items].sort(by(item => item.query, { direction, ignoreCase: true })));
-const registeredOnSorter = createSorter('registeredOn', 'registeredOn', 'sortedByRegisteredOn', (items, direction) => [...items].sort(by(item => item.registeredOn, { direction })));
-const totalMatchCountSorter = createSorter('totalMatchCount', 'totalMatchCount', 'sortedByTotalMatchCount', (items, direction) => [...items].sort(by(item => item.totalMatchCount, { direction })));
-const documentMatchCountSorter = createSorter('documentMatchCount', 'documentMatchCount', 'sortedByDocumentMatchCount', (items, direction) => [...items].sort(by(item => item.documentMatchCount, { direction })));
-const mediaLibraryItemMatchCountSorter = createSorter('mediaLibraryItemMatchCount', 'mediaLibraryItemMatchCount', 'sortedByMediaLibraryItemMatchCount', (items, direction) => [...items].sort(by(item => item.mediaLibraryItemMatchCount, { direction })));
+const querySorter = createSorter('query', 'query', 'sortedByQuery', direction => by(item => item.query, { direction, ignoreCase: true }));
+const registeredOnSorter = createSorter('registeredOn', 'registeredOn', 'sortedByRegisteredOn', direction => by(item => item.registeredOn, { direction }));
+const totalMatchCountSorter = createSorter('totalMatchCount', 'totalMatchCount', 'sortedByTotalMatchCount', direction => by(item => item.totalMatchCount, { direction }));
+const documentMatchCountSorter = createSorter('documentMatchCount', 'documentMatchCount', 'sortedByDocumentMatchCount', direction => by(item => item.documentMatchCount, { direction }));
+const mediaLibraryItemMatchCountSorter = createSorter('mediaLibraryItemMatchCount', 'mediaLibraryItemMatchCount', 'sortedByMediaLibraryItemMatchCount', direction => by(item => item.mediaLibraryItemMatchCount, { direction }));
 
 const sortingParams = {
   sorters: [querySorter, registeredOnSorter, totalMatchCountSorter, documentMatchCountSorter, mediaLibraryItemMatchCountSorter],
-  defaultSorter: registeredOnSorter,
-  defaultDirection: SORTING_DIRECTION.desc
+  defaultSorting: [['registeredOn', SORTING_DIRECTION.desc]]
 };
 
 function StatisticsSearchRequestsTab() {
@@ -56,7 +55,7 @@ function StatisticsSearchRequestsTab() {
 
   const { filteringConfiguration } = useFilteringConfiguration(filteringParams.filters);
 
-  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorter, sortingParams.defaultDirection, t);
+  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorting, t);
 
   const { filtering, getTextFilterValue, getRangePickerFilterValues, handleTextFilterChange, handleDateRangeFilterChange, filterItems } = useFiltering(initialQuery, filteringConfiguration);
   const { sorting, handleSortingSelectorChange, sortItems } = useSorting(initialQuery, sortingConfiguration);

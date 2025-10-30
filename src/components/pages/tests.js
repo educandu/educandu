@@ -39,6 +39,7 @@ import {
   DEFAULT_WAVEFORM_PEN_WIDTH,
   DEFAULT_WAVEFORM_SMOOTHING
 } from '../../plugins/audio-waveform/constants.js';
+import DaysOfWeekSelect from '../days-of-week-select.js';
 
 const { Search, TextArea } = Input;
 
@@ -60,6 +61,9 @@ function Tests({ PageTemplate, initialState }) {
     await window.navigator.clipboard.writeText(clipboardText);
     message.success('Copied to clipboard');
   };
+
+  // DaysOfWeekSelect
+  const [daysOfWeekSelectValue, setDaysOfWeekSelectValue] = useState('');
 
   // DocumentRequests
   const [documentRequestsYear, setDocumentRequestsYear] = useState('2023');
@@ -268,6 +272,16 @@ function Tests({ PageTemplate, initialState }) {
             onChange={handleTabChange}
             destroyInactiveTabPane
             items={[
+              {
+                key: 'DaysOfWeekSelect',
+                label: 'DaysOfWeekSelect',
+                children: (
+                  <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: '400px 1fr', gridAutoFlow: 'column' }}>
+                    <DaysOfWeekSelect value={daysOfWeekSelectValue} onChange={setDaysOfWeekSelectValue} />
+                    <span>Current value: {JSON.stringify(daysOfWeekSelectValue)}</span>
+                  </div>
+                )
+              },
               {
                 key: 'DocumentRequests',
                 label: 'DocumentRequests',

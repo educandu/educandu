@@ -33,16 +33,15 @@ const filteringParams = {
   filters: [textFilter, tagCategoryFilter]
 };
 
-const tagSorter = createSorter('tag', 'tag', 'sortedByTag', (items, direction) => [...items].sort(by(item => item.tag, { direction, ignoreCase: true })));
-const lengthSorter = createSorter('length', 'length', 'sortedByLength', (items, direction) => [...items].sort(by(item => item.tag.length, { direction })));
-const totalCountSorter = createSorter('totalCount', 'totalCount', 'sortedByTotalCount', (items, direction) => [...items].sort(by(item => item.totalCount, { direction })));
-const documentCountSorter = createSorter('documentCount', 'documentCount', 'sortedByDocumentCount', (items, direction) => [...items].sort(by(item => item.documentCount, { direction })));
-const mediaLibraryItemCountSorter = createSorter('mediaLibraryItemCount', 'mediaLibraryItemCount', 'sortedByMediaLibraryItemCount', (items, direction) => [...items].sort(by(item => item.mediaLibraryItemCount, { direction })));
+const tagSorter = createSorter('tag', 'tag', 'sortedByTag', direction => by(item => item.tag, { direction, ignoreCase: true }));
+const lengthSorter = createSorter('length', 'length', 'sortedByLength', direction => by(item => item.tag.length, { direction }));
+const totalCountSorter = createSorter('totalCount', 'totalCount', 'sortedByTotalCount', direction => by(item => item.totalCount, { direction }));
+const documentCountSorter = createSorter('documentCount', 'documentCount', 'sortedByDocumentCount', direction => by(item => item.documentCount, { direction }));
+const mediaLibraryItemCountSorter = createSorter('mediaLibraryItemCount', 'mediaLibraryItemCount', 'sortedByMediaLibraryItemCount', direction => by(item => item.mediaLibraryItemCount, { direction }));
 
 const sortingParams = {
   sorters: [tagSorter, lengthSorter, totalCountSorter, documentCountSorter, mediaLibraryItemCountSorter],
-  defaultSorter: totalCountSorter,
-  defaultDirection: SORTING_DIRECTION.desc
+  defaultSorting: [['totalCount', SORTING_DIRECTION.desc]]
 };
 
 function StatisticsTagsTab() {
@@ -55,7 +54,7 @@ function StatisticsTagsTab() {
 
   const { filteringConfiguration } = useFilteringConfiguration(filteringParams.filters);
 
-  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorter, sortingParams.defaultDirection, t);
+  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorting, t);
 
   const { filtering, getTextFilterValue, handleTextFilterChange, filterItems } = useFiltering(initialQuery, filteringConfiguration);
   const { sorting, handleSortingSelectorChange, sortItems } = useSorting(initialQuery, sortingConfiguration);

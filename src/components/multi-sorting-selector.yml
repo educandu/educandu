@@ -1,0 +1,10 @@
+multiSortingSelector:
+  sortersJoiningText:
+    en: then
+    de: danach
+  addSorterButton:
+    en: Add sorter
+    de: Sortierer hinzufügen
+  resetSortersButton:
+    en: Reset sorters
+    de: Zurücksetzen

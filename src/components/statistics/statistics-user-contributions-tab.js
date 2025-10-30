@@ -32,16 +32,15 @@ const filteringParams = {
   filters: [textFilter, contributedFromFilter, contributedUntilFilter]
 };
 
-const querySorter = createSorter('user', 'userNameColumnHeader', 'sortedByUserName', (items, direction) => [...items].sort(by(item => item.userDisplayName, { direction, ignoreCase: true })));
-const documentsCreatedSorter = createSorter('documentsCreated', 'createdDocumentsCountColumnHeader', 'sortedByCreatedDocuments', (items, direction) => [...items].sort(by(item => item.documentsCreatedCount, { direction })));
-const documentsContributedToSorter = createSorter('documentsContributedTo', 'editedDocumentsCountColumnHeader', 'sortedByEditedDocuments', (items, direction) => [...items].sort(by(item => item.documentsContributedToCount, { direction })));
-const ownDocumentsContributedToSorter = createSorter('ownDocumentsContributedTo', 'ownEditedDocumentsCountSortingHeader', 'sortedByOwnEditedDocuments', (items, direction) => [...items].sort(by(item => item.ownDocumentsContributedToCount, { direction })));
-const otherDocumentsContributedToSorter = createSorter('otherDocumentsContributedTo', 'otherEditedDocumentsCountSortingHeader', 'sortedByOtherEditedDocuments', (items, direction) => [...items].sort(by(item => item.otherDocumentsContributedToCount, { direction })));
+const querySorter = createSorter('user', 'userNameColumnHeader', 'sortedByUserName', direction => by(item => item.userDisplayName, { direction, ignoreCase: true }));
+const documentsCreatedSorter = createSorter('documentsCreated', 'createdDocumentsCountColumnHeader', 'sortedByCreatedDocuments', direction => by(item => item.documentsCreatedCount, { direction }));
+const documentsContributedToSorter = createSorter('documentsContributedTo', 'editedDocumentsCountColumnHeader', 'sortedByEditedDocuments', direction => by(item => item.documentsContributedToCount, { direction }));
+const ownDocumentsContributedToSorter = createSorter('ownDocumentsContributedTo', 'ownEditedDocumentsCountSortingHeader', 'sortedByOwnEditedDocuments', direction => by(item => item.ownDocumentsContributedToCount, { direction }));
+const otherDocumentsContributedToSorter = createSorter('otherDocumentsContributedTo', 'otherEditedDocumentsCountSortingHeader', 'sortedByOtherEditedDocuments', direction => by(item => item.otherDocumentsContributedToCount, { direction }));
 
 const sortingParams = {
   sorters: [querySorter, documentsCreatedSorter, documentsContributedToSorter, ownDocumentsContributedToSorter, otherDocumentsContributedToSorter],
-  defaultSorter: documentsContributedToSorter,
-  defaultDirection: SORTING_DIRECTION.desc
+  defaultSorting: [['documentsContributedTo', SORTING_DIRECTION.desc]]
 };
 
 function StatisticsUserContributionsTab() {
@@ -56,7 +55,7 @@ function StatisticsUserContributionsTab() {
 
   const { filteringConfiguration } = useFilteringConfiguration(filteringParams.filters);
 
-  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorter, sortingParams.defaultDirection, t);
+  const { sortingConfiguration, sortingSelectorOptions } = useSortingConfiguration(sortingParams.sorters, sortingParams.defaultSorting, t);
 
   const { filtering, getTextFilterValue, getDateFilterValuesAsMilliseconds, getRangePickerFilterValues, handleTextFilterChange, handleDateRangeFilterChange, filterItems } = useFiltering(initialQuery, filteringConfiguration);
   const { sorting, handleSortingSelectorChange, sortItems } = useSorting(initialQuery, sortingConfiguration);
@@ -68,12 +67,12 @@ function StatisticsUserContributionsTab() {
   const [displayedItems, setDisplayedItems] = useState([]);
   const [userContributionsDetailsMap, setUserContributionsDetailsMap] = useState({});
 
-  const [searchDateRange, setSearchDateRange] = useState(getDateFilterValuesAsMilliseconds(['contributedFrom', 'contributedUntil']));
+  const [serverSideFilters, setServerSideFilters] = useState(getDateFilterValuesAsMilliseconds(['contributedFrom', 'contributedUntil']));
 
   const fetchItems = useCallback(async () => {
     try {
       setIsFetchingItems(true);
-      const apiClientResponse = await statisticsApiClient.getUserContributions({ ...searchDateRange });
+      const apiClientResponse = await statisticsApiClient.getUserContributions({ ...serverSideFilters });
 
       const { userContributions } = apiClientResponse;
 
@@ -86,7 +85,7 @@ function StatisticsUserContributionsTab() {
     } finally {
       setIsFetchingItems(false);
     }
-  }, [searchDateRange, setIsFetchingItems, statisticsApiClient]);
+  }, [serverSideFilters, setIsFetchingItems, statisticsApiClient]);
 
   const fetchUserContributionsDetails = useCallback(async userId => {
     setUserContributionsDetailsMap(oldValue => ({
@@ -94,7 +93,7 @@ function StatisticsUserContributionsTab() {
       [userId]: { isLoading: true, hasError: false, contributions: null }
     }));
     try {
-      const apiClientResponse = await statisticsApiClient.getUserContributionsDetails({ userId, ...searchDateRange });
+      const apiClientResponse = await statisticsApiClient.getUserContributionsDetails({ userId, ...serverSideFilters });
       const { contributions, documents } = apiClientResponse;
       setUserContributionsDetailsMap(oldValue => ({
         ...oldValue,
@@ -110,7 +109,7 @@ function StatisticsUserContributionsTab() {
         [userId]: { isLoading: false, hasError: true, contributions: null }
       }));
     }
-  }, [searchDateRange, statisticsApiClient]);
+  }, [serverSideFilters, statisticsApiClient]);
 
   useEffect(() => {
     fetchItems();
@@ -133,7 +132,7 @@ function StatisticsUserContributionsTab() {
       return;
     }
 
-    setSearchDateRange(oldRange => {
+    setServerSideFilters(oldRange => {
       const newRange = getDateFilterValuesAsMilliseconds(['contributedFrom', 'contributedUntil']);
       return deepEqual(oldRange, newRange) ? oldRange : newRange;
     });

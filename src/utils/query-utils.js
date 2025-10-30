@@ -75,15 +75,3 @@ export function createTagsPipelineQuery(searchString = '', tagsKey = 'tags') {
     ]
   };
 }
-
-export function parseNumberArrayFromCsv(value) {
-  return (value || '')
-    .split(',')
-    .map(stringItem => Number.parseInt(stringItem, 10))
-    .filter(numberItem => !isNaN(numberItem));
-}
-
-export function parseDate(value) {
-  const date = Date.parse(value || '');
-  return isNaN(date) ? null : new Date(date);
-}

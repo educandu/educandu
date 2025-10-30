@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Dropdown, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { SORTING_DIRECTION } from '../domain/constants.js';
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 
 function SortingSelector({ sorting, options, size, onChange }) {
@@ -65,7 +66,7 @@ SortingSelector.propTypes = {
   size: PropTypes.oneOf(['small', 'middle', 'large']),
   sorting: PropTypes.shape({
     value: PropTypes.string.isRequired,
-    direction: PropTypes.oneOf(['asc', 'desc']).isRequired
+    direction: PropTypes.oneOf(Object.values(SORTING_DIRECTION)).isRequired
   }).isRequired
 };
 

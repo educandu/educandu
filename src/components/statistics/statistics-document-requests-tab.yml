@@ -38,36 +38,6 @@ statisticsDocumentRequestsTab:
   titlePlaceholder:
     en: Filter by document title
     de: Nach Dokument-Titel filtern
-  mondayCheckbox:
-    en: Mo
-    de: Mo
-  tuesdayCheckbox:
-    en: Tu
-    de: Di
-  wednesdayCheckbox:
-    en: We
-    de: Mi
-  thursdayCheckbox:
-    en: Th
-    de: Do
-  fridayCheckbox:
-    en: Fr
-    de: Fr
-  saturdayCheckbox:
-    en: Sa
-    de: Sa
-  sundayCheckbox:
-    en: Su
-    de: So
-  sortersJoiningText:
-    en: then
-    de: danach
-  addSorterButton:
-    en: Add sorter
-    de: Sortierer hinzufügen
-  resetSortersButton:
-    en: Reset sorters
-    de: Zurücksetzen
   exportAsCsv:
     en: Export as CSV file
     de: Als CSV-Datei exportieren

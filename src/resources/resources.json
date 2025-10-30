@@ -1973,6 +1973,44 @@
       "de": "Hilfe"
     }
   },
+  "daysOfWeekSelect": {
+    "editorTitle": {
+      "en": "Edit weekday filter",
+      "de": "Wochentag-Filter bearbeiten"
+    },
+    "editorSubtitle": {
+      "en": "Please select the weekdays by which you want to filter",
+      "de": "Bitte wähle aus, nach welchen Wochentagen du filtern möchtest"
+    },
+    "dayOfWeek_1": {
+      "en": "Mo",
+      "de": "Mo"
+    },
+    "dayOfWeek_2": {
+      "en": "Tu",
+      "de": "Di"
+    },
+    "dayOfWeek_3": {
+      "en": "We",
+      "de": "Mi"
+    },
+    "dayOfWeek_4": {
+      "en": "Th",
+      "de": "Do"
+    },
+    "dayOfWeek_5": {
+      "en": "Fr",
+      "de": "Fr"
+    },
+    "dayOfWeek_6": {
+      "en": "Sa",
+      "de": "Sa"
+    },
+    "dayOfWeek_7": {
+      "en": "Su",
+      "de": "So"
+    }
+  },
   "defaultMultitrackMediaPlayer": {
     "emptyStateSubtitle": {
       "en": "Make sure that a URL is provided for each track.",
@@ -3621,6 +3659,20 @@
       "de": "Unbekannt"
     }
   },
+  "multiSortingSelector": {
+    "sortersJoiningText": {
+      "en": "then",
+      "de": "danach"
+    },
+    "addSorterButton": {
+      "en": "Add sorter",
+      "de": "Sortierer hinzufügen"
+    },
+    "resetSortersButton": {
+      "en": "Reset sorters",
+      "de": "Zurücksetzen"
+    }
+  },
   "multitrackMedia": {
     "name": {
       "en": "Multitrack media",
@@ -4745,46 +4797,6 @@
     "titlePlaceholder": {
       "en": "Filter by document title",
       "de": "Nach Dokument-Titel filtern"
-    },
-    "mondayCheckbox": {
-      "en": "Mo",
-      "de": "Mo"
-    },
-    "tuesdayCheckbox": {
-      "en": "Tu",
-      "de": "Di"
-    },
-    "wednesdayCheckbox": {
-      "en": "We",
-      "de": "Mi"
-    },
-    "thursdayCheckbox": {
-      "en": "Th",
-      "de": "Do"
-    },
-    "fridayCheckbox": {
-      "en": "Fr",
-      "de": "Fr"
-    },
-    "saturdayCheckbox": {
-      "en": "Sa",
-      "de": "Sa"
-    },
-    "sundayCheckbox": {
-      "en": "Su",
-      "de": "So"
-    },
-    "sortersJoiningText": {
-      "en": "then",
-      "de": "danach"
-    },
-    "addSorterButton": {
-      "en": "Add sorter",
-      "de": "Sortierer hinzufügen"
-    },
-    "resetSortersButton": {
-      "en": "Reset sorters",
-      "de": "Zurücksetzen"
     },
     "exportAsCsv": {
       "en": "Export as CSV file",

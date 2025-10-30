@@ -32,6 +32,7 @@ import documentRevisionsSpec from './collection-specs/document-revisions.js';
 import mediaLibraryItemsSpec from './collection-specs/media-library-items.js';
 import documentCategoriesSpec from './collection-specs/document-categories.js';
 import requestLimitRecordsSpec from './collection-specs/request-limit-records.js';
+import dailyDocumentRequestsSpec from './collection-specs/daily-document-requests.js';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests.js';
 import documentInputMediaItemsSpec from './collection-specs/document-input-media-items.js';
 
@@ -67,6 +68,7 @@ const collectionSpecs = [
   mediaLibraryItemsSpec,
   documentCategoriesSpec,
   requestLimitRecordsSpec,
+  dailyDocumentRequestsSpec,
   passwordResetRequestsSpec,
   documentInputMediaItemsSpec
 ];

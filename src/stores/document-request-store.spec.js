@@ -35,7 +35,7 @@ describe('document-request-store', () => {
     sandbox.restore();
   });
 
-  describe('getAllDocumentRequestCounters', () => {
+  describe('getAllDocumentRequestCountersCursor', () => {
     const documentId1 = uniqueId.create();
     const documentId2 = uniqueId.create();
 
@@ -80,7 +80,7 @@ describe('document-request-store', () => {
 
     describe('called without filters', () => {
       beforeEach(async () => {
-        result = await sut.getAllDocumentRequestCounters();
+        result = await sut.getAllDocumentRequestCountersCursor().toArray();
       });
 
       it('should return the aggregated requests', () => {
@@ -112,7 +112,7 @@ describe('document-request-store', () => {
 
     describe('called with daysOfWeek filter', () => {
       beforeEach(async () => {
-        result = await sut.getAllDocumentRequestCounters({ daysOfWeek: [DAY_OF_WEEK.monday] });
+        result = await sut.getAllDocumentRequestCountersCursor({ daysOfWeek: [DAY_OF_WEEK.monday] }).toArray();
       });
 
       it('should return the requests that match the filters, aggregated', () => {
@@ -132,7 +132,7 @@ describe('document-request-store', () => {
 
     describe('called with registeredFrom filter', () => {
       beforeEach(async () => {
-        result = await sut.getAllDocumentRequestCounters({ registeredFrom: yesterday });
+        result = await sut.getAllDocumentRequestCountersCursor({ registeredFrom: yesterday }).toArray();
       });
 
       it('should return the requests that match the filters, aggregated', () => {
@@ -165,7 +165,7 @@ describe('document-request-store', () => {
 
     describe('called with registeredUntil filter', () => {
       beforeEach(async () => {
-        result = await sut.getAllDocumentRequestCounters({ registeredUntil: today });
+        result = await sut.getAllDocumentRequestCountersCursor({ registeredUntil: today }).toArray();
       });
 
       it('should return the requests that match the filters, aggregated', () => {

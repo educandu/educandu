@@ -44,7 +44,8 @@ The output of this repository is an npm package (`@educandu/educandu`).
  | xFrameOptions | Value for the `x-frame-options` header set on pages response | `string` ('DENY' or 'SAMEORIGIN') | no, by default the header is not set |
  | xRoomsAuthSecret | Value for the `x-rooms-auth-secret` header expected from `rooms-auth-lambda` authorization requests upon accessing rooms CDN resources | `string` | no, when not provided the effect of the request is an automatic session cookie invalidation/regeneration |
  | mediaTrashExpiryTimeoutInDays | The time after that an item should be cleared from the media trash | `number`, minumum 1 | no, defaults to 365 |
- | searchRequestExpiryTimeoutInDays | The time after that an item should be cleared from the media search request statistics | `number`, minumum 1 | no, defaults to 365 |
+ | searchRequestExpiryTimeoutInDays | The time after that an item should be cleared from the search request statistics | `number`, minumum 1 | no, defaults to 365 |
+ | dailyDocumentRequestExpiryTimeoutInDays | The time after that an item should be cleared from the document request statistics | `number`, minumum 1 | no, defaults to 365 |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
  | adminEmailAddress | The email address to show to users as the admin email address | `string` | no |
