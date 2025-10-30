@@ -108,9 +108,9 @@ class StatisticsService {
       const document = documentsById.get(counter.documentId);
       if (document) {
         mergedCounters.push({
-          _id: counter.documentId,
-          slug: document.slug,
-          title: document.title,
+          documentId: counter._id,
+          documentSlug: document.slug,
+          documentTitle: document.title,
           totalCount: counter.totalCount,
           readCount: counter.readCount,
           writeCount: counter.writeCount,

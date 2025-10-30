@@ -29,39 +29,60 @@
   }
 }
 
-.StatisticsDocumentRequestsTab-controls {
+.StatisticsDocumentRequestsTab-filters {
+  margin-bottom: 40px;
   display: grid;
-  gap: 50px;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: auto;
+  gap: 20px 40px;
   align-items: start;
-  margin-bottom: 10px;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "text         text       sorting"
+    "registerDate daysOfWeek sorting";
+
+  @media @edu-media-phone-tablet {
+    gap: 20px 40px;
+    grid-template-rows: repeat(2, auto) 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "text         sorting"
+      "registerDate sorting"
+      "daysOfWeek   sorting";
+  }
 
   @media @edu-media-phone {
-    gap: 20px;
-    grid-template-columns: 100%;
-    grid-template-rows: repeat(2, auto);
+    gap: 20px 0;
+    grid-template-rows: repeat(4, auto);
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "text"
+      "registerDate"
+      "daysOfWeek"
+      "sorting";
   }
 }
 
-.StatisticsDocumentRequestsTab-controlsColumn {
+.StatisticsDocumentRequestsTab-textFilter {
+  grid-area: text;
+}
+
+.StatisticsDocumentRequestsTab-registerDateFilter {
+  grid-area: registerDate;
+}
+
+.StatisticsDocumentRequestsTab-daysOfWeekFilter {
+  grid-area: daysOfWeek;
+}
+
+.StatisticsDocumentRequestsTab-sortingSelector {
+  grid-area: sorting;
   display: grid;
-  gap: 15px;
-  grid-template-rows: auto;
-  align-items: start;
+  justify-content: end;
 }
 
-.StatisticsDocumentRequestsTab-controlsColumnFilters {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  .m-fake-flex-gap(15px);
-  flex-wrap: wrap;
-}
-
-.StatisticsDocumentRequestsTab-controlsColumnCheckboxes {
-  display: flex;
-  flex-wrap: wrap;
+.StatisticsDocumentRequestsTab-csvExportButton {
+  text-align: right;
+  margin-bottom: 10px;
 }
 
 .StatisticsDocumentRequestsTab-titleCell {
@@ -76,26 +97,4 @@
 .StatisticsDocumentRequestsTab-documentTitleCell {
   .m-line-clamp(1);
   text-decoration: none;
-}
-
-.StatisticsDocumentRequestsTab-sortersSeparator {
-  padding-left: 15px;
-  font-size: @edu-font-size-xs;
-}
-
-.StatisticsDocumentRequestsTab-sorterButtons {
-  display: grid;
-  grid-auto-flow: column;
-  justify-content: start;
-  padding: 5px 15px;
-  gap: 10px;
-
-  button {
-    font-size: @edu-font-size-xs !important;
-  }
-}
-
-.StatisticsDocumentRequestsTab-csvExportButton {
-  text-align: right;
-  margin-bottom: 10px;
 }

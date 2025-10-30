@@ -1,0 +1,28 @@
+daysOfWeekSelect:
+  editorTitle:
+    en: Edit weekday filter
+    de: Wochentag-Filter bearbeiten
+  editorSubtitle:
+    en: Please select the weekdays by which you want to filter
+    de: Bitte wähle aus, nach welchen Wochentagen du filtern möchtest
+  dayOfWeek_1:
+    en: Mo
+    de: Mo
+  dayOfWeek_2:
+    en: Tu
+    de: Di
+  dayOfWeek_3:
+    en: We
+    de: Mi
+  dayOfWeek_4:
+    en: Th
+    de: Do
+  dayOfWeek_5:
+    en: Fr
+    de: Fr
+  dayOfWeek_6:
+    en: Sa
+    de: Sa
+  dayOfWeek_7:
+    en: Su
+    de: So

@@ -1,0 +1,72 @@
+.DaysOfWeekSelect {}
+
+.DaysOfWeekSelect-mainButton {
+  width: 100%;
+  justify-content: flex-start !important;
+
+  &:hover, &:active, &:focus {
+    color: unset !important;
+  }
+}
+
+.DaysOfWeekSelect-display {
+  gap: 10px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(7, auto);
+}
+
+.DaysOfWeekSelect-displayItem {
+  gap: 2px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(2, auto);
+  align-items: center;
+}
+
+.DaysOfWeekSelect-displayLetter {
+  font-weight: bold;
+}
+
+.DaysOfWeekSelect-displayIcon {
+  font-size: @edu-font-size-sm;
+
+  &.DaysOfWeekSelect-displayIcon--on {
+    color: @edu-success-color;
+  }
+  &.DaysOfWeekSelect-displayIcon--off {
+    color: @edu-error-color;
+  }
+  &.is-disabled {
+    color: @edu-disabled-color;
+  }
+}
+
+.DaysOfWeekSelect-editorTitle {
+  padding: @edu-control-spacing-wide;
+  font-size: @edu-font-size-lg;
+}
+
+.DaysOfWeekSelect-editorContent {
+  padding: @edu-control-spacing-wide;
+}
+
+.DaysOfWeekSelect-editorSubtitle {
+  margin-bottom: 25px;
+}
+
+.DaysOfWeekSelect-editorControls {
+  margin-bottom: 25px;
+}
+
+.DaysOfWeekSelect-editorCheckboxes {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.DaysOfWeekSelect-editorCloseButton {
+  margin-top: 25px;
+  text-align: right;
+}

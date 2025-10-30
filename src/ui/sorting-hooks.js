@@ -61,7 +61,14 @@ export function useSortingConfiguration(sorters, defaultSorting, t, allowMultipl
     }));
   }, [sortingConfiguration, t]);
 
-  return { sortingConfiguration, sortingSelectorOptions };
+  const multiSortingSelectorDefaultSorting = useMemo(() => {
+    return {
+      value: sortingConfiguration.defaultSorting[0][0],
+      direction: sortingConfiguration.defaultSorting[0][1]
+    };
+  }, [sortingConfiguration]);
+
+  return { sortingConfiguration, sortingSelectorOptions, multiSortingSelectorDefaultSorting };
 }
 
 const createSorting = (sortingConfiguration, values) => {
@@ -80,6 +87,10 @@ const createSorting = (sortingConfiguration, values) => {
       value: values[0][0],
       direction: values[0][1]
     },
+    multiSortingSelectorSorting: values.map(vals => ({
+      value: vals[0],
+      direction: vals[1]
+    })),
     sortingConfiguration
   };
 };
@@ -97,8 +108,12 @@ export function useSorting(initialQuery, sortingConfiguration) {
     });
   }, [sortingConfiguration]);
 
-  const handleSortingSelectorChange = useCallback(({ value, direction }) => {
-    setSorting(createSorting(sortingConfiguration, [[value, direction]]));
+  const handleSortingSelectorChange = useCallback(valueDirectionPair => {
+    setSorting(createSorting(sortingConfiguration, [[valueDirectionPair.value, valueDirectionPair.direction]]));
+  }, [sortingConfiguration]);
+
+  const handleMultiSortingSelectorChange = useCallback(valueDirectionPairs => {
+    setSorting(createSorting(sortingConfiguration, valueDirectionPairs.map(valueDirectionPair => [valueDirectionPair.value, valueDirectionPair.direction])));
   }, [sortingConfiguration]);
 
   const sortItems = useCallback(items => {
@@ -109,5 +124,5 @@ export function useSorting(initialQuery, sortingConfiguration) {
     return [...items].sort(aggregatedComparer);
   }, [sorting, sortingConfiguration]);
 
-  return { sorting, setSortingValues, handleSortingSelectorChange, sortItems };
+  return { sorting, setSortingValues, handleSortingSelectorChange, handleMultiSortingSelectorChange, sortItems };
 }

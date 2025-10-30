@@ -67,12 +67,12 @@ function StatisticsUserContributionsTab() {
   const [displayedItems, setDisplayedItems] = useState([]);
   const [userContributionsDetailsMap, setUserContributionsDetailsMap] = useState({});
 
-  const [searchDateRange, setSearchDateRange] = useState(getDateFilterValuesAsMilliseconds(['contributedFrom', 'contributedUntil']));
+  const [serverSideFilters, setServerSideFilters] = useState(getDateFilterValuesAsMilliseconds(['contributedFrom', 'contributedUntil']));
 
   const fetchItems = useCallback(async () => {
     try {
       setIsFetchingItems(true);
-      const apiClientResponse = await statisticsApiClient.getUserContributions({ ...searchDateRange });
+      const apiClientResponse = await statisticsApiClient.getUserContributions({ ...serverSideFilters });
 
       const { userContributions } = apiClientResponse;
 
@@ -85,7 +85,7 @@ function StatisticsUserContributionsTab() {
     } finally {
       setIsFetchingItems(false);
     }
-  }, [searchDateRange, setIsFetchingItems, statisticsApiClient]);
+  }, [serverSideFilters, setIsFetchingItems, statisticsApiClient]);
 
   const fetchUserContributionsDetails = useCallback(async userId => {
     setUserContributionsDetailsMap(oldValue => ({
@@ -93,7 +93,7 @@ function StatisticsUserContributionsTab() {
       [userId]: { isLoading: true, hasError: false, contributions: null }
     }));
     try {
-      const apiClientResponse = await statisticsApiClient.getUserContributionsDetails({ userId, ...searchDateRange });
+      const apiClientResponse = await statisticsApiClient.getUserContributionsDetails({ userId, ...serverSideFilters });
       const { contributions, documents } = apiClientResponse;
       setUserContributionsDetailsMap(oldValue => ({
         ...oldValue,
@@ -109,7 +109,7 @@ function StatisticsUserContributionsTab() {
         [userId]: { isLoading: false, hasError: true, contributions: null }
       }));
     }
-  }, [searchDateRange, statisticsApiClient]);
+  }, [serverSideFilters, statisticsApiClient]);
 
   useEffect(() => {
     fetchItems();
@@ -132,7 +132,7 @@ function StatisticsUserContributionsTab() {
       return;
     }
 
-    setSearchDateRange(oldRange => {
+    setServerSideFilters(oldRange => {
       const newRange = getDateFilterValuesAsMilliseconds(['contributedFrom', 'contributedUntil']);
       return deepEqual(oldRange, newRange) ? oldRange : newRange;
     });
