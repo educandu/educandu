@@ -205,3 +205,25 @@ export function useDebouncedFetchingState(initialValue, timeLimit = 250) {
     conditionallyDebouncedSetIsFetching
   ];
 }
+
+export function useIsFullscreenSupported() {
+  const request = useRequest();
+  const { isMobile, isSafari, version } = request.useragent;
+
+  if (isMobile && isSafari) {
+    const versionParts = version.split('.');
+    const majorVersion = parseInt(versionParts[0], 10);
+    const minorVersion = parseInt(versionParts[1], 10);
+
+    return majorVersion > 17 || (majorVersion === 17 && minorVersion >= 2);
+  }
+
+  return true;
+}
+
+export function useIsIOS() {
+  const request = useRequest();
+  const { isiPhone, isiPad } = request.useragent;
+
+  return isiPhone || isiPad;
+}

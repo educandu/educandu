@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Dropdown } from 'antd';
+import { useIsIOS } from '../../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
 import React, { Fragment, useId } from 'react';
-import { useIsIOS } from '../request-context.js';
 import { CheckOutlined } from '@ant-design/icons';
 import { useNumberFormat } from '../locale-context.js';
 import MediaVolumeSlider from './media-volume-slider.js';
