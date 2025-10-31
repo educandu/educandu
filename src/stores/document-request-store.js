@@ -1,7 +1,8 @@
 import Database from './database.js';
 import { validate } from '../domain/validation.js';
+import { dateToNumericDay } from '../utils/date-utils.js';
 import { combineQueryConditions } from '../utils/query-utils.js';
-import { documentRequestDBSchema } from '../domain/schemas/document-request-schemas.js';
+import { documentRequestDbInsertSchema } from '../domain/schemas/document-request-schemas.js';
 
 class DocumentRequestStore {
   static dependencies = [Database];
@@ -15,15 +16,15 @@ class DocumentRequestStore {
     let matchStage;
 
     if (registeredFrom) {
-      filters.push({ registeredOn: { $gt: registeredFrom } });
+      filters.push({ day: { $gt: dateToNumericDay(registeredFrom) } });
     }
 
     if (registeredUntil) {
-      filters.push({ registeredOn: { $lt: registeredUntil } });
+      filters.push({ day: { $lt: dateToNumericDay(registeredUntil) } });
     }
 
     if (daysOfWeek) {
-      filters.push({ registeredOnDayOfWeek: { $in: daysOfWeek } });
+      filters.push({ dayOfWeek: { $in: daysOfWeek } });
     }
 
     if (filters.length) {
@@ -33,27 +34,11 @@ class DocumentRequestStore {
     const groupStage = {
       $group: {
         _id: '$documentId',
-        totalCount: { $sum: 1 },
-        readCount: {
-          $sum: {
-            $cond: [{ $eq: ['$isWriteRequest', false] }, 1, 0 ]
-          }
-        },
-        writeCount: {
-          $sum: {
-            $cond: [{ $eq: ['$isWriteRequest', true] }, 1, 0 ]
-          }
-        },
-        anonymousCount: {
-          $sum: {
-            $cond: [{ $eq: ['$isLoggedInRequest', false] }, 1, 0 ]
-          }
-        },
-        loggedInCount: {
-          $sum: {
-            $cond: [{ $eq: ['$isLoggedInRequest', true] }, 1, 0 ]
-          }
-        },
+        totalCount: { $sum: '$totalCount' },
+        readCount: { $sum: '$readCount' },
+        writeCount: { $sum: '$writeCount' },
+        anonymousCount: { $sum: '$anonymousCount' },
+        loggedInCount: { $sum: '$loggedInCount' }
       }
     };
 
@@ -73,9 +58,30 @@ class DocumentRequestStore {
     return this.collection.aggregate(stages);
   }
 
-  saveDocumentRequest(documentRequest, { session } = {}) {
-    validate(documentRequest, documentRequestDBSchema);
-    return this.collection.insertOne(documentRequest, { session });
+  async incrementDocumentRequestCounters({ documentId, day, dayOfWeek, expiresOn, increments }) {
+    const defaultValuesOnInsert = {
+      documentId,
+      day,
+      dayOfWeek,
+      expiresOn
+    };
+
+    validate({ ...defaultValuesOnInsert, ...increments }, documentRequestDbInsertSchema);
+
+    await this.collection.updateOne(
+      {
+        documentId,
+        day,
+        dayOfWeek
+      },
+      {
+        $inc: increments,
+        $setOnInsert: defaultValuesOnInsert
+      },
+      {
+        upsert: true
+      }
+    );
   }
 }
 

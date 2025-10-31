@@ -10,12 +10,12 @@ describe('document-request-service', () => {
   let db;
   let sut;
   let user;
-  let result;
   let document;
   let container;
   let documentRevision;
 
   const now = new Date('2024-04-04T16:00:00.000Z');
+  const nowDay = 20240404;
   const nowDayOfWeek = DAY_OF_WEEK.thursday;
 
   const sandbox = createSandbox();
@@ -46,11 +46,12 @@ describe('document-request-service', () => {
         const room = await createTestRoom(container, { ownedBy: user._id });
         document = await createTestDocument(container, user, { roomId: room._id });
 
-        result = await sut.tryRegisterDocumentReadRequest({ document, user });
+        await sut.tryRegisterDocumentReadRequest({ document, user });
       });
 
-      it('should not create a document request', () => {
-        expect(result).toEqual(null);
+      it('should not create a document request', async () => {
+        const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+        expect(counter).toEqual(null);
       });
     });
 
@@ -58,48 +59,57 @@ describe('document-request-service', () => {
       describe('and a user is not provided', () => {
         beforeEach(async () => {
           document = await createTestDocument(container, user, {});
-          result = await sut.tryRegisterDocumentReadRequest({ document });
+          await sut.tryRegisterDocumentReadRequest({ document });
         });
 
-        it('should create a document request', () => {
-          expect(result).toEqual({
+        it('should increment anonymous read counters', async () => {
+          const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+          expect(counter).toMatchObject({
             _id: expect.any(ObjectId),
             documentId: document._id,
-            documentRevisionId: document.revision,
-            registeredOn: now,
-            registeredOnDayOfWeek: nowDayOfWeek,
-            isLoggedInRequest: false,
-            isWriteRequest: false
+            day: nowDay,
+            dayOfWeek: nowDayOfWeek,
+            totalCount: 1,
+            readCount: 1,
+            writeCount: 0,
+            anonymousCount: 1,
+            loggedInCount: 0
           });
         });
 
-        it('should write it to the database', async () => {
-          const retrievedDocumentRequest = await db.documentRequests.findOne({ documentId: document._id });;
-          expect(result).toEqual(retrievedDocumentRequest);
+        it('should increment counters on repeated calls', async () => {
+          await sut.tryRegisterDocumentReadRequest({ document });
+          const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+          expect(counter).toMatchObject({
+            _id: expect.any(ObjectId),
+            totalCount: 2,
+            readCount: 2,
+            writeCount: 0,
+            anonymousCount: 2,
+            loggedInCount: 0
+          });
         });
       });
 
       describe('and a user is provided', () => {
         beforeEach(async () => {
           document = await createTestDocument(container, user, {});
-          result = await sut.tryRegisterDocumentReadRequest({ document, user });
+          await sut.tryRegisterDocumentReadRequest({ document, user });
         });
 
-        it('should create a document request', () => {
-          expect(result).toEqual({
+        it('should increment logged-in read counters', async () => {
+          const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+          expect(counter).toMatchObject({
             _id: expect.any(ObjectId),
             documentId: document._id,
-            documentRevisionId: document.revision,
-            registeredOn: now,
-            registeredOnDayOfWeek: nowDayOfWeek,
-            isLoggedInRequest: true,
-            isWriteRequest: false
+            day: nowDay,
+            dayOfWeek: nowDayOfWeek,
+            totalCount: 1,
+            readCount: 1,
+            writeCount: 0,
+            anonymousCount: 0,
+            loggedInCount: 1
           });
-        });
-
-        it('should write it to the database', async () => {
-          const retrievedDocumentRequest = await db.documentRequests.findOne({ documentId: document._id });;
-          expect(result).toEqual(retrievedDocumentRequest);
         });
       });
     });
@@ -111,11 +121,12 @@ describe('document-request-service', () => {
         const room = await createTestRoom(container, { ownedBy: user._id });
         document = await createTestDocument(container, user, { roomId: room._id });
 
-        result = await sut.tryRegisterDocumentWriteRequest({ document, user });
+        await sut.tryRegisterDocumentWriteRequest({ document, user });
       });
 
-      it('should not create a document request', () => {
-        expect(result).toEqual(null);
+      it('should not create a document request', async () => {
+        const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+        expect(counter).toEqual(null);
       });
     });
 
@@ -123,48 +134,44 @@ describe('document-request-service', () => {
       describe('and a user is not provided', () => {
         beforeEach(async () => {
           document = await createTestDocument(container, user, {});
-          result = await sut.tryRegisterDocumentWriteRequest({ document });
+          await sut.tryRegisterDocumentWriteRequest({ document });
         });
 
-        it('should create a document request', () => {
-          expect(result).toEqual({
+        it('should increment anonymous write counters', async () => {
+          const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+          expect(counter).toMatchObject({
             _id: expect.any(ObjectId),
             documentId: document._id,
-            documentRevisionId: document.revision,
-            registeredOn: now,
-            registeredOnDayOfWeek: nowDayOfWeek,
-            isLoggedInRequest: false,
-            isWriteRequest: true
+            day: nowDay,
+            dayOfWeek: nowDayOfWeek,
+            totalCount: 1,
+            readCount: 0,
+            writeCount: 1,
+            anonymousCount: 1,
+            loggedInCount: 0
           });
-        });
-
-        it('should write it to the database', async () => {
-          const retrievedDocumentRequest = await db.documentRequests.findOne({ documentId: document._id });;
-          expect(result).toEqual(retrievedDocumentRequest);
         });
       });
 
       describe('and a user is provided', () => {
         beforeEach(async () => {
           document = await createTestDocument(container, user, {});
-          result = await sut.tryRegisterDocumentWriteRequest({ document, user });
+          await sut.tryRegisterDocumentWriteRequest({ document, user });
         });
 
-        it('should create a document request', () => {
-          expect(result).toEqual({
+        it('should increment logged-in write counters', async () => {
+          const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+          expect(counter).toMatchObject({
             _id: expect.any(ObjectId),
             documentId: document._id,
-            documentRevisionId: document.revision,
-            registeredOn: now,
-            registeredOnDayOfWeek: nowDayOfWeek,
-            isLoggedInRequest: true,
-            isWriteRequest: true
+            day: nowDay,
+            dayOfWeek: nowDayOfWeek,
+            totalCount: 1,
+            readCount: 0,
+            writeCount: 1,
+            anonymousCount: 0,
+            loggedInCount: 1
           });
-        });
-
-        it('should write it to the database', async () => {
-          const retrievedDocumentRequest = await db.documentRequests.findOne({ documentId: document._id });;
-          expect(result).toEqual(retrievedDocumentRequest);
         });
       });
     });
@@ -177,11 +184,12 @@ describe('document-request-service', () => {
         document = await createTestDocument(container, user, { roomId: room._id });
         documentRevision = await db.documentRevisions.findOne({ documentId: document._id });
 
-        result = await sut.tryRegisterDocumentRevisionReadRequest({ documentRevision, user });
+        await sut.tryRegisterDocumentRevisionReadRequest({ documentRevision, user });
       });
 
-      it('should not create a document request', () => {
-        expect(result).toEqual(null);
+      it('should not create a document request', async () => {
+        const counter = await db.documentRequests.findOne({ documentId: document._id, day: nowDay, dayOfWeek: nowDayOfWeek });
+        expect(counter).toEqual(null);
       });
     });
 
@@ -190,24 +198,22 @@ describe('document-request-service', () => {
         beforeEach(async () => {
           document = await createTestDocument(container, user, {});
           documentRevision = await db.documentRevisions.findOne({ documentId: document._id });
-          result = await sut.tryRegisterDocumentRevisionReadRequest({ documentRevision });
+          await sut.tryRegisterDocumentRevisionReadRequest({ documentRevision });
         });
 
-        it('should create a document request', () => {
-          expect(result).toEqual({
+        it('should increment anonymous read counters', async () => {
+          const counter = await db.documentRequests.findOne({ documentId: documentRevision.documentId, day: nowDay, dayOfWeek: nowDayOfWeek });
+          expect(counter).toMatchObject({
             _id: expect.any(ObjectId),
             documentId: documentRevision.documentId,
-            documentRevisionId: documentRevision._id,
-            registeredOn: now,
-            registeredOnDayOfWeek: nowDayOfWeek,
-            isLoggedInRequest: false,
-            isWriteRequest: false
+            day: nowDay,
+            dayOfWeek: nowDayOfWeek,
+            totalCount: 1,
+            readCount: 1,
+            writeCount: 0,
+            anonymousCount: 1,
+            loggedInCount: 0
           });
-        });
-
-        it('should write it to the database', async () => {
-          const retrievedDocumentRequest = await db.documentRequests.findOne({ documentId: documentRevision.documentId });;
-          expect(result).toEqual(retrievedDocumentRequest);
         });
       });
 
@@ -215,24 +221,22 @@ describe('document-request-service', () => {
         beforeEach(async () => {
           document = await createTestDocument(container, user, {});
           documentRevision = await db.documentRevisions.findOne({ documentId: document._id });
-          result = await sut.tryRegisterDocumentRevisionReadRequest({ documentRevision, user });
+          await sut.tryRegisterDocumentRevisionReadRequest({ documentRevision, user });
         });
 
-        it('should create a document request', () => {
-          expect(result).toEqual({
+        it('should increment logged-in read counters', async () => {
+          const counter = await db.documentRequests.findOne({ documentId: documentRevision.documentId, day: nowDay, dayOfWeek: nowDayOfWeek });
+          expect(counter).toMatchObject({
             _id: expect.any(ObjectId),
             documentId: documentRevision.documentId,
-            documentRevisionId: documentRevision._id,
-            registeredOn: now,
-            registeredOnDayOfWeek: nowDayOfWeek,
-            isLoggedInRequest: true,
-            isWriteRequest: false
+            day: nowDay,
+            dayOfWeek: nowDayOfWeek,
+            totalCount: 1,
+            readCount: 1,
+            writeCount: 0,
+            anonymousCount: 0,
+            loggedInCount: 1
           });
-        });
-
-        it('should write it to the database', async () => {
-          const retrievedDocumentRequest = await db.documentRequests.findOne({ documentId: documentRevision.documentId });;
-          expect(result).toEqual(retrievedDocumentRequest);
         });
       });
     });
