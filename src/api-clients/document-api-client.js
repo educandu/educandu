@@ -55,11 +55,8 @@ class DocumentApiClient {
   getDocumentRevisions(documentId) {
     return this.httpClient
       .get(
-        '/api/v1/docs',
-        {
-          params: { documentId },
-          responseType: 'json'
-        }
+        `/api/v1/docs/${encodeURIComponent(documentId)}/revisions`,
+        { responseType: 'json' }
       )
       .then(res => res.data);
   }

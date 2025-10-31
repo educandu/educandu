@@ -4,19 +4,19 @@ import routes from '../utils/routes.js';
 import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { isRoomOwner } from '../utils/room-utils.js';
 import RoomService from '../services/room-service.js';
 import { shuffleItems } from '../utils/array-utils.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import SettingService from '../services/setting-service.js';
-import { canEditDocument } from '../utils/document-utils.js';
 import DocumentService from '../services/document-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import DocumentRatingService from '../services/document-rating-service.js';
 import DocumentRequestService from '../services/document-request-service.js';
+import { canEditDocument, canViewDocument } from '../utils/document-utils.js';
 import DocumentCategoryService from '../services/document-category-service.js';
-import { isRoomOwner, isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
@@ -115,7 +115,7 @@ class DocumentController {
 
         const templateDocumentRoom = await this.roomService.getRoomById(templateDocument.roomId);
 
-        if (!isRoomOwnerOrInvitedMember({ room: templateDocumentRoom, userId: user._id })) {
+        if (!canViewDocument({ doc: templateDocument, room: templateDocumentRoom, user })) {
           throw new Forbidden();
         }
       }
@@ -132,11 +132,7 @@ class DocumentController {
 
       room = await this.roomService.getRoomById(doc.roomId);
 
-      if (!isRoomOwnerOrInvitedMember({ room, userId: user._id })) {
-        throw new Forbidden();
-      }
-
-      if (doc.roomContext.draft && !isRoomOwner({ room, userId: user._id })) {
+      if (!canViewDocument({ doc, room, user })) {
         throw new Forbidden();
       }
 
@@ -200,6 +196,12 @@ class DocumentController {
       throw new NotFound();
     }
 
+    const room = doc.roomId ? await this.roomService.getRoomById(doc.roomId) : null;
+
+    if (!canViewDocument({ doc, room, user })) {
+      throw new Forbidden();
+    }
+
     const mappedDoc = await this.clientDataMappingService.mapDocOrRevision(doc, user);
     return res.send({ doc: mappedDoc });
   }
@@ -214,6 +216,8 @@ class DocumentController {
   }
 
   async handleGetDocsForHomepage(req, res) {
+    const { user } = req;
+
     const settings = await this.settingService.getAllSettings();
 
     const shuffledDocumentIds = shuffleItems(settings.homepageDocuments || []);
@@ -222,7 +226,8 @@ class DocumentController {
 
     if (idsOfDocumentsToShow.length) {
       const documents = await this.documentService.getDocumentsExtendedMetadataByIds(idsOfDocumentsToShow);
-      mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(documents);
+      const allowedDocuments = documents.filter(doc => !doc.roomId && canViewDocument({ doc, room: null, user }));
+      mappedDocuments = await this.clientDataMappingService.mapDocsOrRevisions(allowedDocuments);
     }
 
     return res.send({ documents: mappedDocuments });
@@ -316,7 +321,7 @@ class DocumentController {
     return res.status(201).send(mappedDocument);
   }
 
-  async handleGetDocs(req, res) {
+  async handleGetDocumentRevisions(req, res) {
     const { user } = req;
     const { documentId } = req.query;
 
@@ -326,8 +331,11 @@ class DocumentController {
       throw new NotFound();
     }
 
-    if (document.roomId && !user) {
-      throw new Forbidden();
+    if (document.roomId) {
+      const room = await this.roomService.getRoomById(document.roomId);
+      if (!canViewDocument({ doc: document, room, user })) {
+        throw new Forbidden();
+      }
     }
 
     const documentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(revisions, user);
@@ -374,12 +382,6 @@ class DocumentController {
 
   registerApi(router) {
     router.get(
-      '/api/v1/docs',
-      validateQuery(documentIdParamsOrQuerySchema),
-      (req, res) => this.handleGetDocs(req, res)
-    );
-
-    router.get(
       '/api/v1/docs/titles',
       validateQuery(getSearchableDocumentsTitlesQuerySchema),
       (req, res) => this.handleGetSearchableDocsTitles(req, res)
@@ -403,12 +405,6 @@ class DocumentController {
     );
 
     router.get(
-      '/api/v1/docs/:documentId',
-      validateParams(documentIdParamsOrQuerySchema),
-      (req, res) => this.handleGetDoc(req, res)
-    );
-
-    router.get(
       '/api/v1/docs/users/:userId',
       validateQuery(getPublicNonArchivedDocumentsByContributingUserQuery),
       validateParams(getPublicNonArchivedDocumentsByContributingUserParams),
@@ -418,6 +414,18 @@ class DocumentController {
     router.get(
       '/api/v1/docs/tags/*',
       (req, res) => this.handleGetDocTags(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/:documentId/revisions',
+      validateParams(documentIdParamsOrQuerySchema),
+      (req, res) => this.handleGetDocumentRevisions(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/:documentId',
+      validateParams(documentIdParamsOrQuerySchema),
+      (req, res) => this.handleGetDoc(req, res)
     );
 
     router.post(
