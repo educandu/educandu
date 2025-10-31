@@ -1,8 +1,8 @@
 import { Spin } from 'antd';
 import PropTypes from 'prop-types';
 import MediaPlayer from './media-player.js';
+import { useIsIOS } from '../../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
-import { useIsIOS } from '../request-context.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import TrackMixerDisplay from './track-mixer-display.js';
 import EmptyState, { EMPTY_STATE_STATUS } from '../empty-state.js';
