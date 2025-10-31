@@ -722,11 +722,7 @@ class DocumentService {
         this.documentStore.getDocumentById(documentId)
       ]);
 
-      const updatedDocumentRevisions = existingDocumentRevisions.map(revision => ({
-        ...revision,
-        cdnResources: extractCdnResources(revision.sections, this.pluginRegistry)
-      }));
-
+      const updatedDocumentRevisions = existingDocumentRevisions.map(revision => this._buildDocumentRevision({ ...revision }));
       const updatedDocument = this._buildDocumentFromRevisions(updatedDocumentRevisions);
 
       if (!deepEqual(existingDocumentRevisions, updatedDocumentRevisions) || !deepEqual(existingDocument, updatedDocument)) {
