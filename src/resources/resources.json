@@ -4522,7 +4522,7 @@
   "sectionsDisplay": {
     "emptyStateTitle": {
       "en": "This document is empty",
-      "de": "Dieses Dokument is leer"
+      "de": "Dieses Dokument ist leer"
     },
     "emptyStateSubtitle": {
       "en": "You can add various types of content, from text, image, video, audio, to sections with interactive features.",
