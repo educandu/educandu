@@ -48,7 +48,7 @@ const configSchema = joi.object({
   xRoomsAuthSecret: joi.string().allow(null).default(null),
   mediaTrashExpiryTimeoutInDays: joi.number().min(1).default(365),
   searchRequestExpiryTimeoutInDays: joi.number().min(1).default(365),
-  dailyDocumentRequestExpiryTimeoutInDays: joi.number().min(1).default(365),
+  documentRequestExpiryTimeoutInDays: joi.number().min(1).default(365),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
   adminEmailAddress: joi.string().allow(null).default(null),
