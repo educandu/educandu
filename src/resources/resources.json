@@ -701,16 +701,16 @@
       "de": "nicht angegeben"
     },
     "copySectionToClipboardError": {
-      "en": "Error copying the section to the clipboard due to missing access permissions.",
-      "de": "Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung."
+      "en": "Error copying the section to the clipboard due to missing access permissions",
+      "de": "Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung"
     },
     "pasteSectionFromClipboardError": {
       "en": "Error pasting the section from the clipboard. Either the clipboard contains content that cannot\nbe pasted as a new section or the browser denies access to the clipboard.\n",
-      "de": "Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht\nals neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.\n"
+      "de": "Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Entweder enthält die Zwischenablage Inhalt,\nder nicht als neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.\n"
     },
     "sectionCopiedToClipboard": {
-      "en": "The section was copied to the clipboard",
-      "de": "Der Abschnitt wurde in die Zwischenablage kopiert"
+      "en": "The section was copied to the clipboard.",
+      "de": "Der Abschnitt wurde in die Zwischenablage kopiert."
     },
     "clipboardPasteNotSupported": {
       "en": "Pasting from the clipboard is not supported by this browser.",
@@ -721,12 +721,12 @@
       "de": "URL in die Zwischenablage kopieren"
     },
     "urlCopiedToClipboard": {
-      "en": "The URL was copied to the clipboard",
-      "de": "Die URL wurde in die Zwischenablage kopiert"
+      "en": "The URL was copied to the clipboard.",
+      "de": "Die URL wurde in die Zwischenablage kopiert."
     },
     "copyUrlToClipboardError": {
-      "en": "Error copying the URL to the clipboard due to missing access permissions.",
-      "de": "Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung."
+      "en": "Error copying the URL to the clipboard due to missing access permissions",
+      "de": "Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung"
     },
     "logIn": {
       "en": "Log in",
@@ -773,12 +773,12 @@
       "de": "Läuft ab am {date}"
     },
     "invitedOnDate": {
-      "en": "Invited on {date}.",
-      "de": "Eingeladen am {date}."
+      "en": "Invited on {date}",
+      "de": "Eingeladen am {date}"
     },
     "joinedOnDate": {
-      "en": "Joined on {date}.",
-      "de": "Eingetreten am {date}."
+      "en": "Joined on {date}",
+      "de": "Eingetreten am {date}"
     },
     "relevance": {
       "en": "Relevance",
@@ -817,7 +817,7 @@
       "de": "Slug"
     },
     "slugInfo": {
-      "en": "The slug is added to the end of the URL and can contain one or more parts separated by slashed.\nEach part and can only contain lower case letters (a-z), digits and hyphens.\n",
+      "en": "The slug is added to the end of the URL and can contain one or more parts separated by slashes.\nEach part can only contain lower case letters (a-z), digits and hyphens.\n",
       "de": "Der Slug wird am Ende des URLs hinzugefügt und darf einen oder mehrere durch Schrägstriche getrennte Teile enthalten.\nJeder Teil darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten.\n"
     },
     "invalidSlug": {
@@ -930,7 +930,7 @@
     },
     "shift": {
       "en": "Shift",
-      "de": "Umschalt"
+      "de": "Umschalten"
     },
     "alt": {
       "en": "Alt",
@@ -1046,7 +1046,7 @@
     },
     "widthInfo": {
       "en": "Is applied to all screen sizes except for mobile phones",
-      "de": "Trifft auf alle Bildschirmgrößen zu, außer auf Mobilgeräte"
+      "de": "Trifft auf alle Bildschirmgrößen zu, außer auf Mobiltelefone"
     },
     "copyrightNotice": {
       "en": "Copyright",
@@ -1105,20 +1105,20 @@
       "de": "Antwort"
     },
     "targetDeletedMessage": {
-      "en": "The target of this link has been deleted",
-      "de": "Das Ziel dieses Links wurde gelöscht"
+      "en": "The target of this link has been deleted.",
+      "de": "Das Ziel dieses Links wurde gelöscht."
     },
     "reset": {
       "en": "Reset",
       "de": "Zurücksetzen"
     },
     "randomizedTests": {
-      "en": "The tests are arranged in random order",
-      "de": "Die Tests sind in einer zufälligen Reihenfolge angeordnet"
+      "en": "The tests are arranged in random order.",
+      "de": "Die Tests sind in einer zufälligen Reihenfolge angeordnet."
     },
     "verifiedDocumentBadge": {
-      "en": "This document was verified by a maintainer",
-      "de": "Dieses Dokument wurde von einem Maintainer überprüft"
+      "en": "This document was verified by a maintainer.",
+      "de": "Dieses Dokument wurde von einem Maintainer überprüft."
     },
     "duration": {
       "en": "Duration",
@@ -1177,8 +1177,8 @@
       "de": "Anzeigemodus"
     },
     "searchTextTooShort": {
-      "en": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long",
-      "de": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein"
+      "en": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long.",
+      "de": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein."
     },
     "searchOngoing": {
       "en": "Searching ...",
@@ -1234,7 +1234,7 @@
     },
     "favoritedByTooltip": {
       "en": "Favorited by {count, plural, =1 {# user} other {# users}}.",
-      "de": "Als Favorit markiert von {count} Benutzer."
+      "de": "Als Favorit markiert von {count} Benutzern."
     },
     "createDocument": {
       "en": "Create document",
@@ -1269,8 +1269,8 @@
       "de": "Bearbeitungen durch"
     },
     "changesSavedSuccessfully": {
-      "en": "Your changes have been saved",
-      "de": "Deine Änderungen wurden gespeichert"
+      "en": "Your changes have been saved.",
+      "de": "Deine Änderungen wurden gespeichert."
     },
     "filter": {
       "en": "Filter",
@@ -1286,7 +1286,7 @@
     },
     "posterImageUrl": {
       "en": "Preview image URL",
-      "de": "Vorschau-Bild-URL"
+      "de": "Vorschaubild-URL"
     },
     "mediaUploadEmptyStateTitle": {
       "en": "Upload a file",
@@ -1329,8 +1329,8 @@
       "de": "(max. {limit}{maxFiles, plural, =1 {} other {, max. # Dateien}})"
     },
     "uploadLimitAdminContactInfo": {
-      "en": "(if you would like to upload bigger files, please contact an <0>administrator</0>)",
-      "de": "(falls du größere Dateien hochladen möchtest, wende dich bitte an einen <0>Administrator</0>)"
+      "en": "(If you would like to upload bigger files, please contact an <0>administrator</0>)",
+      "de": "(Falls du größere Dateien hochladen möchtest, wende dich bitte an einen <0>Administrator</0>)"
     },
     "fileIsTooBig": {
       "en": "The file is too big. The upload limit is {limit}.",
@@ -1373,8 +1373,8 @@
       "de": "Einstellungen"
     },
     "hello": {
-      "en": "Hello",
-      "de": "Hallo"
+      "en": "Welcome to OMA!",
+      "de": "Willkommen bei der OMA!"
     },
     "addDocument": {
       "en": "Add document",
@@ -1457,12 +1457,12 @@
       "de": "Permalink kopieren"
     },
     "permalinkCopied": {
-      "en": "The permalink was copied to the clipboard",
-      "de": "Der Permalink wurde in die Zwischenablage kopiert"
+      "en": "The permalink was copied to the clipboard.",
+      "de": "Der Permalink wurde in die Zwischenablage kopiert."
     },
     "permalinkCouldNotBeCopied": {
-      "en": "The permalink could not be copied to the clipboard",
-      "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
+      "en": "The permalink could not be copied to the clipboard.",
+      "de": "Der Permalink konnte nicht in die Zwischenablage kopiert werden."
     },
     "documentInputs": {
       "en": "Document inputs",
