@@ -329,7 +329,7 @@ describe('document-controller', () => {
 
     describe('when the template document belongs to a room and the user is not a room owner or member', () => {
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create(), roomId: room._id };
+        templateDocument = { _id: uniqueId.create(), roomId: room._id, roomContext: { draft: false } };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -372,7 +372,7 @@ describe('document-controller', () => {
 
     describe('when the template document belongs to a room and the user is the room owner', () => {
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create(), roomId: room._id };
+        templateDocument = { _id: uniqueId.create(), roomId: room._id, roomContext: { draft: false } };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },
@@ -423,7 +423,7 @@ describe('document-controller', () => {
 
     describe('when the template document belongs to a room and the user is a room member', () => {
       beforeEach(() => {
-        templateDocument = { _id: uniqueId.create(), roomId: room._id };
+        templateDocument = { _id: uniqueId.create(), roomId: room._id, roomContext: { draft: false } };
         req = {
           user,
           params: { 0: '/doc-slug', documentId: doc._id },

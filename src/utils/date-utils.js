@@ -1,7 +1,7 @@
 import { DAY_OF_WEEK } from '../domain/constants.js';
 
 export function getDayOfWeek(date) {
-  const day = date.getDay();
+  const day = date.getUTCDay();
   switch (day) {
     case 0:
       return DAY_OF_WEEK.sunday;
@@ -23,9 +23,9 @@ export function getDayOfWeek(date) {
 }
 
 export function dateToNumericDay(date) {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1;
+  const day = date.getUTCDate();
   return year * 10000 + month * 100 + day;
 }
 

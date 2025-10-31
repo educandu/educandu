@@ -1,7 +1,7 @@
 import by from 'thenby';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { isRoomOwner, isRoomOwnerOrInvitedCollaborator } from './room-utils.js';
 import { getViewportMeasurementsForElement, tryBringElementIntoView } from '../ui/browser-helper.js';
+import { isRoomOwner, isRoomOwnerOrInvitedCollaborator, isRoomOwnerOrInvitedMember } from './room-utils.js';
 
 const DATA_ATTRIBUTE_SECTION_KEY = 'data-section-key';
 const DATA_ATTRIBUTE_SECTION_TYPE = 'data-section-type';
@@ -24,7 +24,7 @@ function userIsAllowedEditor({ user, doc }) {
 }
 
 function getEditDocumentRestrictionReason({ user, doc, room }) {
-  if (!doc || (doc.roomId && !room)) {
+  if (!doc || (doc.roomId && !room) || (!doc.roomId && room)) {
     throw new Error('Inconsistent arguments');
   }
 
@@ -79,6 +79,24 @@ export function getFavoriteActionTooltip({ t, user, doc }) {
   }
   const isFavoriteDocument = user?.favorites.find(favorite => favorite.id === doc._id);
   return isFavoriteDocument ? t('common:removeFavorite') : t('common:addFavorite');
+}
+
+export function canViewDocument({ user, doc, room }) {
+  if (!doc || (doc.roomId && !room) || (!doc.roomId && room)) {
+    throw new Error('Inconsistent arguments');
+  }
+
+  if (room) {
+    return doc.roomContext.draft
+      ? isRoomOwner({ room, userId: user?._id })
+      : isRoomOwnerOrInvitedMember({ room, userId: user?._id });
+  }
+
+  if (doc.publicContext.archived && !hasUserPermission(user, permissions.MANAGE_PUBLIC_CONTENT)) {
+    return false;
+  }
+
+  return true;
 }
 
 export function canEditDocument({ user, doc, room }) {

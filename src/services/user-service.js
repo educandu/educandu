@@ -8,8 +8,11 @@ import UserStore from '../stores/user-store.js';
 import LockStore from '../stores/lock-store.js';
 import RoomStore from '../stores/room-store.js';
 import DocumentStore from '../stores/document-store.js';
+import { ensureIsUnique } from '../utils/array-utils.js';
+import { canViewDocument } from '../utils/document-utils.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import { isRoomOwnerOrInvitedMember } from '../utils/room-utils.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 import { consolidateCdnResourcesForSaving } from '../utils/cdn-resource-utils.js';
@@ -277,6 +280,18 @@ class UserService {
       userIds.length ? await this.userStore.getUsersByIds(userIds) : []
     ]);
 
+    const docRoomIds = ensureIsUnique(documents.map(doc => doc.roomId).filter(roomId => !!roomId));
+    const docRooms = docRoomIds.length ? await this.roomStore.getRoomsByIds(docRoomIds) : [];
+
+    const allowedDocuments = documents.filter(doc => {
+      const room = doc.roomId ? docRooms.find(r => r._id === doc.roomId) : null;
+      return canViewDocument({ user, doc, room });
+    });
+
+    const allowedRooms = rooms.filter(room => {
+      return isRoomOwnerOrInvitedMember({ room, userId: user._id });
+    });
+
     const mappedFavorites = [];
 
     for (const favorite of user.favorites) {
@@ -288,10 +303,10 @@ class UserService {
           Object.assign(mappedFavorite, { data: users.find(u => u._id === favorite.id) });
           break;
         case FAVORITE_TYPE.room:
-          Object.assign(mappedFavorite, { data: rooms.find(r => r._id === favorite.id) });
+          Object.assign(mappedFavorite, { data: allowedRooms.find(r => r._id === favorite.id) });
           break;
         case FAVORITE_TYPE.document:
-          Object.assign(mappedFavorite, { data: documents.find(d => d._id === favorite.id) });
+          Object.assign(mappedFavorite, { data: allowedDocuments.find(d => d._id === favorite.id) });
           break;
         default:
           break;
@@ -299,7 +314,8 @@ class UserService {
 
       mappedFavorites.push(mappedFavorite);
     }
-    return mappedFavorites;
+
+    return mappedFavorites.filter(fav => !!fav.data);
   }
 
   async addFavorite({ type, id, user }) {

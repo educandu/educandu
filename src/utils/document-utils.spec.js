@@ -1,12 +1,157 @@
 import uniqueId from './unique-id.js';
 import { ROLE } from '../domain/constants.js';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { canEditDocument, canRestoreDocumentRevisions } from './document-utils.js';
+import { canEditDocument, canRestoreDocumentRevisions, canViewDocument } from './document-utils.js';
 
 describe('document-utils', () => {
   let doc;
   let user;
   let room;
+
+  describe('canViewDocument', () => {
+    beforeEach(() => {
+      doc = {};
+      room = null;
+      user = { _id: uniqueId.create(), role: '' };
+    });
+
+    it('should throw when no document is provided', () => {
+      doc = null;
+      expect(() => canViewDocument({ user, doc, room })).toThrow('Inconsistent arguments');
+    });
+
+    it('should throw when the document has a room ID but the room is not provided', () => {
+      doc.roomId = uniqueId.create();
+      expect(() => canViewDocument({ user, doc, room })).toThrow('Inconsistent arguments');
+    });
+
+    it('should throw when the document has no room ID but the room is provided', () => {
+      doc.roomId = null;
+      room = { _id: uniqueId.create() };
+      expect(() => canViewDocument({ user, doc, room })).toThrow('Inconsistent arguments');
+    });
+
+    describe('if the document is in a room', () => {
+      beforeEach(() => {
+        room = { _id: uniqueId.create(), ownedBy: uniqueId.create(), members: [], isCollaborative: false };
+        doc.roomContext = { draft: false, inputSubmittingDisabled: false };
+        doc.roomId = room._id;
+      });
+
+      describe('when the document is not a draft', () => {
+        it('should return false when the user is not provided', () => {
+          user = null;
+          expect(canViewDocument({ user, doc, room })).toBe(false);
+        });
+
+        it('should return false when the user is not owner or member of the room', () => {
+          expect(canViewDocument({ user, doc, room })).toBe(false);
+        });
+
+        it('should return true when the user is owner of the room', () => {
+          room.ownedBy = user._id;
+          expect(canViewDocument({ user, doc, room })).toBe(true);
+        });
+
+        it('should return true when the user is a member of the room', () => {
+          room.members = [{ userId: user._id }];
+          expect(canViewDocument({ user, doc, room })).toBe(true);
+        });
+
+        it('should return true when the user is a member of a non-collaborative room', () => {
+          room.members = [{ userId: user._id }];
+          room.isCollaborative = false;
+          expect(canViewDocument({ user, doc, room })).toBe(true);
+        });
+
+        it('should return true when the user is a member of a collaborative room', () => {
+          room.members = [{ userId: user._id }];
+          room.isCollaborative = true;
+          expect(canViewDocument({ user, doc, room })).toBe(true);
+        });
+      });
+
+      describe('when the document is a draft', () => {
+        beforeEach(() => {
+          doc.roomContext.draft = true;
+        });
+
+        it('should return false when the user is not provided', () => {
+          user = null;
+          expect(canViewDocument({ user, doc, room })).toBe(false);
+        });
+
+        it('should return false when the user is not owner or member of the room', () => {
+          expect(canViewDocument({ user, doc, room })).toBe(false);
+        });
+
+        it('should return true when the user is owner of the room', () => {
+          room.ownedBy = user._id;
+          expect(canViewDocument({ user, doc, room })).toBe(true);
+        });
+
+        it('should return false when the user is a member but not the owner of the room', () => {
+          room.members = [{ userId: user._id }];
+          expect(canViewDocument({ user, doc, room })).toBe(false);
+        });
+
+        it('should return false when the user is a member of a non-collaborative room', () => {
+          room.members = [{ userId: user._id }];
+          room.isCollaborative = false;
+          expect(canViewDocument({ user, doc, room })).toBe(false);
+        });
+
+        it('should return false when the user is a member of a collaborative room', () => {
+          room.members = [{ userId: user._id }];
+          room.isCollaborative = true;
+          expect(canViewDocument({ user, doc, room })).toBe(false);
+        });
+      });
+    });
+
+    describe('if the document is public', () => {
+      beforeEach(() => {
+        doc.publicContext = { archived: false, protected: false };
+      });
+
+      it('should return true when the document is not archived', () => {
+        expect(canViewDocument({ user, doc, room: null })).toBe(true);
+      });
+
+      it('should return true when the document is not archived and user is not provided', () => {
+        user = null;
+        expect(canViewDocument({ user, doc, room: null })).toBe(true);
+      });
+
+      it('should return true when the document is protected but not archived', () => {
+        doc.publicContext.protected = true;
+        expect(canViewDocument({ user, doc, room: null })).toBe(true);
+      });
+
+      it('should return false when the document is archived and user has no permission', () => {
+        doc.publicContext.archived = true;
+        expect(canViewDocument({ user, doc, room: null })).toBe(false);
+      });
+
+      it('should return false when the document is archived and user is not provided', () => {
+        doc.publicContext.archived = true;
+        user = null;
+        expect(canViewDocument({ user, doc, room: null })).toBe(false);
+      });
+
+      it(`should return true when the document is archived and the user is a ${ROLE.maintainer}`, () => {
+        doc.publicContext.archived = true;
+        user.role = ROLE.maintainer;
+        expect(canViewDocument({ user, doc, room: null })).toBe(true);
+      });
+
+      it('should return false when the document is archived and user is a regular user', () => {
+        doc.publicContext.archived = true;
+        user.role = ROLE.user;
+        expect(canViewDocument({ user, doc, room: null })).toBe(false);
+      });
+    });
+  });
 
   describe('canEditDocument', () => {
     beforeEach(() => {
