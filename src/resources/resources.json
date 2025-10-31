@@ -2493,12 +2493,12 @@
       "de": "Speichern (erweitert)"
     },
     "publishingInfoMarkdown": {
-      "en": "After publishing, the document is\n  - publicly searchable by its tags\n  - no longer deletable\n  - removed from the room\n  - free of room media resources (they are removed because they are private)\n",
-      "de": "Nach der Veröffentlichung ist das Dokument\n  - öffentlich über seine Tags suchbar\n  - nicht mehr löschbar\n  - aus dem Raum entfernt\n  - frei von Raum-Medien-Ressourcen (sie werden entfernt, weil sie privat sind)\n"
+      "en": "After publishing, the document is\n  - publicly searchable by its tags\n  - no longer deletable\n  - removed from the room\n  - free of room media (they are removed because they are private)\n",
+      "de": "Nach der Veröffentlichung ist das Dokument\n  - öffentlich über seine Tags suchbar\n  - nicht mehr löschbar\n  - aus dem Raum entfernt\n  - frei von Raum-Medien (sie werden entfernt, weil sie privat sind)\n"
     },
     "publishingInfoWarning": {
-      "en": "The document contains {count, plural, =1 {# room media resource} other {# room media resources}}.",
-      "de": "Das Dokument enthält {count, plural, =1 {# Raum-Medien-Ressource} other {# Raum-Medien-Ressourcen}}."
+      "en": "The document contains {count, plural, =1 {# room medium} other {# room media}}.",
+      "de": "Das Dokument enthält {count, plural, =1 {# Raum-Medium} other {# Raum-Medien}}."
     }
   },
   "documentRating": {
