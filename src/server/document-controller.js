@@ -323,7 +323,7 @@ class DocumentController {
 
   async handleGetDocumentRevisions(req, res) {
     const { user } = req;
-    const { documentId } = req.query;
+    const { documentId } = req.params;
 
     const document = await this.documentService.getDocumentById(documentId);
     const revisions = await this.documentService.getAllDocumentRevisionsByDocumentId(documentId);
