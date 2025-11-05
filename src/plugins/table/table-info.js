@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import TableIcon from './table-icon.js';
+import TableDisplay from './table-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -32,7 +33,7 @@ class TableInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./table-display.js')).default;
+    return await Promise.resolve(TableDisplay);
   }
 
   async resolveEditorComponent() {

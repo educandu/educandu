@@ -1,32 +1,58 @@
 import { PAGE_NAME } from './page-name.js';
 import DefaultSiteLogoComponent from '../components/default-site-logo.js';
 import DefaultPageTemplateComponent from '../components/default-page-template.js';
+import {
+  browserNotSupportedPage,
+  connectExternalAccountPage,
+  dashboardPage,
+  documentCategoryPage,
+  documentInputPage,
+  documentPage,
+  errorPage,
+  indexPage,
+  loginPage,
+  mediaLibraryItemPage,
+  recentContributionsPage,
+  registerPage,
+  resetPasswordPage,
+  revisionPage,
+  roomMembershipConfirmationPage,
+  roomPage,
+  searchPage,
+  userProfilePage
+} from './page-resolver-primary-pages.js';
+import {
+  adminPage,
+  batchesPage,
+  contentManagementPage,
+  statisticsPage
+} from './page-resolver-secondary-pages.js';
 
 const pageImporters = {
-  [PAGE_NAME.room]: async () => (await import('../components/pages/room.js')).default,
-  [PAGE_NAME.error]: async () => (await import('../components/pages/error.js')).default,
-  [PAGE_NAME.index]: async () => (await import('../components/pages/index.js')).default,
-  [PAGE_NAME.login]: async () => (await import('../components/pages/login.js')).default,
-  [PAGE_NAME.admin]: async () => (await import('../components/pages/admin.js')).default,
+  [PAGE_NAME.room]: async () => await Promise.resolve(roomPage),
+  [PAGE_NAME.error]: async () => await Promise.resolve(errorPage),
+  [PAGE_NAME.index]: async () => await Promise.resolve(indexPage),
+  [PAGE_NAME.login]: async () => await Promise.resolve(loginPage),
+  [PAGE_NAME.admin]: async () => await Promise.resolve(adminPage),
+  [PAGE_NAME.search]: async () => await Promise.resolve(searchPage),
+  [PAGE_NAME.batches]: async () => await Promise.resolve(batchesPage),
+  [PAGE_NAME.register]: async () => await Promise.resolve(registerPage),
+  [PAGE_NAME.document]: async () => await Promise.resolve(documentPage),
+  [PAGE_NAME.revision]: async () => await Promise.resolve(revisionPage),
+  [PAGE_NAME.dashboard]: async () => await Promise.resolve(dashboardPage),
+  [PAGE_NAME.statistics]: async () => await Promise.resolve(statisticsPage),
+  [PAGE_NAME.userProfile]: async () => await Promise.resolve(userProfilePage),
+  [PAGE_NAME.documentInput]: async () => await Promise.resolve(documentInputPage),
+  [PAGE_NAME.resetPassword]: async () => await Promise.resolve(resetPasswordPage),
   [PAGE_NAME.tests]: async () => (await import('../components/pages/tests.js')).default,
-  [PAGE_NAME.search]: async () => (await import('../components/pages/search.js')).default,
-  [PAGE_NAME.batches]: async () => (await import('../components/pages/batches.js')).default,
-  [PAGE_NAME.register]: async () => (await import('../components/pages/register.js')).default,
-  [PAGE_NAME.document]: async () => (await import('../components/pages/document.js')).default,
-  [PAGE_NAME.revision]: async () => (await import('../components/pages/revision.js')).default,
-  [PAGE_NAME.dashboard]: async () => (await import('../components/pages/dashboard.js')).default,
+  [PAGE_NAME.documentCategory]: async () => await Promise.resolve(documentCategoryPage),
+  [PAGE_NAME.mediaLibraryItem]: async () => await Promise.resolve(mediaLibraryItemPage),
+  [PAGE_NAME.contentManagement]: async () => await Promise.resolve(contentManagementPage),
+  [PAGE_NAME.recentContributions]: async () => await Promise.resolve(recentContributionsPage),
+  [PAGE_NAME.browserNotSupported]: async () => await Promise.resolve(browserNotSupportedPage),
   [PAGE_NAME.comparison]: async () => (await import('../components/pages/comparison.js')).default,
-  [PAGE_NAME.statistics]: async () => (await import('../components/pages/statistics.js')).default,
-  [PAGE_NAME.userProfile]: async () => (await import('../components/pages/user-profile.js')).default,
-  [PAGE_NAME.documentInput]: async () => (await import('../components/pages/document-input.js')).default,
-  [PAGE_NAME.resetPassword]: async () => (await import('../components/pages/reset-password.js')).default,
-  [PAGE_NAME.documentCategory]: async () => (await import('../components/pages/document-category.js')).default,
-  [PAGE_NAME.mediaLibraryItem]: async () => (await import('../components/pages/media-library-item.js')).default,
-  [PAGE_NAME.contentManagement]: async () => (await import('../components/pages/content-management.js')).default,
-  [PAGE_NAME.recentContributions]: async () => (await import('../components/pages/recent-contributions.js')).default,
-  [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default,
-  [PAGE_NAME.connectExternalAccount]: async () => (await import('../components/pages/connect-external-account.js')).default,
-  [PAGE_NAME.roomMembershipConfirmation]: async () => (await import('../components/pages/room-membership-confirmation.js')).default
+  [PAGE_NAME.connectExternalAccount]: async () => await Promise.resolve(connectExternalAccountPage),
+  [PAGE_NAME.roomMembershipConfirmation]: async () => await Promise.resolve(roomMembershipConfirmationPage),
 };
 
 export default class PageResolver {

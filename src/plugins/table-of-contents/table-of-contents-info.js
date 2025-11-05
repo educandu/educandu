@@ -3,6 +3,7 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
 import TableOfContentsIcon from './table-of-contents-icon.js';
+import TableOfContentsDisplay from './table-of-contents-display.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -28,7 +29,7 @@ class TableOfContentsInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./table-of-contents-display.js')).default;
+    return await Promise.resolve(TableOfContentsDisplay);
   }
 
   async resolveEditorComponent() {

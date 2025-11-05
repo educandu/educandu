@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import SeparatorIcon from './separator-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import SeparatorDisplay from './separator-display.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { COLOR_INTENSITY, TITLE_POSITION } from './constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
@@ -29,7 +30,7 @@ class SeparatorInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./separator-display.js')).default;
+    return await Promise.resolve(SeparatorDisplay);
   }
 
   async resolveEditorComponent() {

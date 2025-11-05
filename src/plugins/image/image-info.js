@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import ImageIcon from './image-icon.js';
+import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -30,7 +31,7 @@ class ImageInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./image-display.js')).default;
+    return await Promise.resolve(ImageDisplay);
   }
 
   async resolveEditorComponent() {
