@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import VideoIcon from './video-icon.js';
+import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { MEDIA_ASPECT_RATIO, PLUGIN_GROUP } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -28,7 +29,7 @@ class VideoInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./video-display.js')).default;
+    return await Promise.resolve(VideoDisplay);
   }
 
   async resolveEditorComponent() {

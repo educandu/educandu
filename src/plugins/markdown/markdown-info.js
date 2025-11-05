@@ -2,6 +2,7 @@ import joi from 'joi';
 import React from 'react';
 import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import MarkdownDisplay from './markdown-display.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
 import { couldAccessUrlFromRoom } from '../../utils/source-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -28,7 +29,7 @@ class MarkdownInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./markdown-display.js')).default;
+    return await Promise.resolve(MarkdownDisplay);
   }
 
   async resolveEditorComponent() {

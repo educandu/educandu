@@ -3,6 +3,7 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import DiagramNetIcon from './diagram-net-icon.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
+import DiagramNetDisplay from './diagram-net-display.js';
 
 class DiagramNetInfo {
   static typeName = 'diagram-net';
@@ -20,7 +21,7 @@ class DiagramNetInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./diagram-net-display.js')).default;
+    return await Promise.resolve(DiagramNetDisplay);
   }
 
   async resolveEditorComponent() {

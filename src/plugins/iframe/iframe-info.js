@@ -1,6 +1,7 @@
 import joi from 'joi';
 import React from 'react';
 import IframeIcon from './iframe-icon.js';
+import IframeDisplay from './iframe-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { PLUGIN_GROUP } from '../../domain/constants.js';
 
@@ -20,7 +21,7 @@ class IframeInfo {
   }
 
   async resolveDisplayComponent() {
-    return (await import('./iframe-display.js')).default;
+    return await Promise.resolve(IframeDisplay);
   }
 
   async resolveEditorComponent() {
