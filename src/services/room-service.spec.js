@@ -135,14 +135,14 @@ describe('room-service', () => {
   describe('deleteRoom', () => {
     let room;
     let userLock;
-    let roomDocuments;
     let remainingRooms;
+    let roomDocumentIds;
     let remainingRoomsMediaItems;
 
     beforeEach(async () => {
       room = { _id: uniqueId.create() };
       userLock = { id: uniqueId.create() };
-      roomDocuments = [{ _id: uniqueId.create() }, { _id: uniqueId.create() }];
+      roomDocumentIds = [uniqueId.create(), uniqueId.create()];
 
       remainingRooms = [{ _id: uniqueId.create() }, { _id: uniqueId.create() }];
       remainingRoomsMediaItems = [
@@ -153,7 +153,7 @@ describe('room-service', () => {
       lockStore.takeUserLock.resolves(userLock);
       lockStore.releaseLock.resolves();
 
-      sandbox.stub(documentStore, 'getDocumentsMetadataByRoomId').resolves(roomDocuments);
+      sandbox.stub(documentStore, 'getDocumentIdsByRoomId').resolves(roomDocumentIds);
       sandbox.stub(documentCommentStore, 'deleteDocumentCommentsByDocumentIds').resolves();
       sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId').resolves();
       sandbox.stub(documentStore, 'deleteDocumentsByRoomId').resolves();
@@ -176,12 +176,12 @@ describe('room-service', () => {
       assert.calledWith(lockStore.takeUserLock, myUser._id);
     });
 
-    it('should call documentStore.getDocumentsMetadataByRoomId', () => {
-      assert.calledWith(documentStore.getDocumentsMetadataByRoomId, room._id, { session: match.object });
+    it('should call documentStore.getDocumentIdsByRoomId', () => {
+      assert.calledWith(documentStore.getDocumentIdsByRoomId, room._id, { session: match.object });
     });
 
     it('should call commentStore.deleteDocumentCommentsByDocumentIds', () => {
-      assert.calledWith(documentCommentStore.deleteDocumentCommentsByDocumentIds, roomDocuments.map(d => d._id), { session: match.object });
+      assert.calledWith(documentCommentStore.deleteDocumentCommentsByDocumentIds, roomDocumentIds, { session: match.object });
     });
 
     it('should call documentStore.deleteDocumentsByRoomId', () => {
@@ -189,8 +189,7 @@ describe('room-service', () => {
     });
 
     it('should call documentInputStore.deleteDocumentInputsByDocumentIds', () => {
-      const documentIds = roomDocuments.map(doc => doc._id);
-      assert.calledWith(documentInputStore.deleteDocumentInputsByDocumentIds, documentIds, { session: match.object });
+      assert.calledWith(documentInputStore.deleteDocumentInputsByDocumentIds, roomDocumentIds, { session: match.object });
     });
 
     it('should call documentRevisionStore.deleteDocumentsByRoomId', () => {

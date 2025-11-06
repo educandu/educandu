@@ -187,8 +187,8 @@ class DocumentStore {
     return this.collection.distinct('_id', {}, { session });
   }
 
-  getDocumentsMetadataByRoomId(roomId, { session } = {}) {
-    return this.collection.find({ roomId }, { session }).toArray();
+  getDocumentIdsByRoomId(roomId, { session } = {}) {
+    return this.collection.distinct('_id', { roomId }, { session });
   }
 
   getDocumentsTagsByConditions(conditions, { session } = {}) {

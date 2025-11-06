@@ -200,10 +200,6 @@ class DocumentService {
     return this.documentRevisionStore.getAllDocumentRevisionsByDocumentId(documentId);
   }
 
-  getDocumentsMetadataByRoomId(roomId) {
-    return this.documentStore.getDocumentsMetadataByRoomId(roomId);
-  }
-
   getDocumentsMetadataByIds(documentIds) {
     return this.documentStore.getDocumentsMetadataByIds(documentIds);
   }

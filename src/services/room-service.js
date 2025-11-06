@@ -221,8 +221,7 @@ export default class RoomService {
       logger.info(`Deleting room with ID ${room._id}`);
 
       await this.transactionRunner.run(async session => {
-        const documents = await this.documentStore.getDocumentsMetadataByRoomId(room._id, { session });
-        const documentIds = documents.map(doc => doc._id);
+        const documentIds = await this.documentStore.getDocumentIdsByRoomId(room._id, { session });
 
         await this.documentCommentStore.deleteDocumentCommentsByDocumentIds(documentIds, { session });
         await this.documentRevisionStore.deleteDocumentsByRoomId(room._id, { session });
