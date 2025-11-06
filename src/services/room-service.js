@@ -224,7 +224,7 @@ export default class RoomService {
         const documentIds = await this.documentStore.getDocumentIdsByRoomId(room._id, { session });
 
         await this.documentCommentStore.deleteDocumentCommentsByDocumentIds(documentIds, { session });
-        await this.documentRevisionStore.deleteDocumentsByRoomId(room._id, { session });
+        await this.documentRevisionStore.deleteDocumentRevisionsByRoomId(room._id, { session });
         await this.documentStore.deleteDocumentsByRoomId(room._id, { session });
         await this.documentInputStore.deleteDocumentInputsByDocumentIds(documentIds, { session });
         await this.roomInvitationStore.deleteRoomInvitationsByRoomId(room._id, { session });

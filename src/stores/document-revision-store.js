@@ -170,7 +170,7 @@ class DocumentRevisionStore {
     return this.collection.deleteMany({ documentId }, { session });
   }
 
-  deleteDocumentsByRoomId(roomId, { session }) {
+  deleteDocumentRevisionsByRoomId(roomId, { session }) {
     return this.collection.deleteMany({ roomId }, { session });
   }
 }
