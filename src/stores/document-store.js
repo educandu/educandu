@@ -179,10 +179,6 @@ class DocumentStore {
     ).toArray();
   }
 
-  getAllDocumentRevisionsByDocumentId(documentId, { session } = {}) {
-    return this.collection.find({ documentId }, { sort: [['order', 1]], session }).toArray();
-  }
-
   getAllDocumentIds({ session } = {}) {
     return this.collection.distinct('_id', {}, { session });
   }

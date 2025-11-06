@@ -155,7 +155,7 @@ describe('room-service', () => {
 
       sandbox.stub(documentStore, 'getDocumentIdsByRoomId').resolves(roomDocumentIds);
       sandbox.stub(documentCommentStore, 'deleteDocumentCommentsByDocumentIds').resolves();
-      sandbox.stub(documentRevisionStore, 'deleteDocumentsByRoomId').resolves();
+      sandbox.stub(documentRevisionStore, 'deleteDocumentRevisionsByRoomId').resolves();
       sandbox.stub(documentStore, 'deleteDocumentsByRoomId').resolves();
       sandbox.stub(documentInputStore, 'deleteDocumentInputsByDocumentIds').resolves();
       sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId').resolves();
@@ -192,8 +192,8 @@ describe('room-service', () => {
       assert.calledWith(documentInputStore.deleteDocumentInputsByDocumentIds, roomDocumentIds, { session: match.object });
     });
 
-    it('should call documentRevisionStore.deleteDocumentsByRoomId', () => {
-      assert.calledWith(documentRevisionStore.deleteDocumentsByRoomId, room._id, { session: match.object });
+    it('should call documentRevisionStore.deleteDocumentRevisionsByRoomId', () => {
+      assert.calledWith(documentRevisionStore.deleteDocumentRevisionsByRoomId, room._id, { session: match.object });
     });
 
     it('should call roomInvitationStore.deleteRoomInvitationsByRoomId', () => {
