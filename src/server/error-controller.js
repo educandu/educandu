@@ -9,6 +9,8 @@ import { ERROR_CODES, HTTP_STATUS } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
+const IGNORED_NOT_FOUND_PATH_PATTERN = /(^\/\.well-known\/appspecific\/)|(^\/favicon\.ico)/;
+
 class ErrorController {
   static dependencies = [ServerConfig, PageRenderer];
 
@@ -33,7 +35,9 @@ class ErrorController {
         return;
       }
 
-      this.log(consolidatedErr);
+      if (this.shouldLog(consolidatedErr)) {
+        logger.fatal(consolidatedErr);
+      }
 
       if (isApiCall) {
         this.sendErrorJson(res, consolidatedErr);
@@ -41,10 +45,6 @@ class ErrorController {
         this.sendErrorPage(req, res, consolidatedErr);
       }
     });
-  }
-
-  log(err) {
-    logger.fatal(err);
   }
 
   transformToErrorObject(err) {
@@ -68,6 +68,19 @@ class ErrorController {
 
   acceptsJson(req) {
     return req.accepts(['html', 'json']) === 'json';
+  }
+
+  shouldLog(error) {
+    if (
+      error.status === HTTP_STATUS.notFound
+      && error.request
+      && error.request.path
+      && IGNORED_NOT_FOUND_PATH_PATTERN.test(error.request.path)
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   tryRespondToApiError(req, res, err) {
