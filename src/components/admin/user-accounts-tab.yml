@@ -79,7 +79,7 @@ userAccountsTab:
       Select the storage plan you want to assign. No selection means deletion of storage plans previously
       assigned to the user {selectedItemCount, plural, =1 {account} other {accounts}}.
     de: |
-      Wähle den Speicherplan aus, den du zuweisen möchtest. Keine Auswahl bedeuted
+      Wähle den Speicherplan aus, den du zuweisen möchtest. Keine Auswahl bedeutet
       Löschung {selectedItemCount, plural, =1 {eines im Benutzerkonto vorhandenen Speicherplans} other {von in den Benutzerkonten vorhandenen Speicherplänen}}.
   roleInfoTitle:
     en: Roles in {appName}

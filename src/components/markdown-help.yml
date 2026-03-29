@@ -152,7 +152,7 @@ markdownHelp:
   
       Um einen Link einzufügen, musst du den Link-Text mit eckigen Klammern umschließen, direkt gefolgt von der Link-Adresse in runden Klammern, so wie [hier](https://de.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart).
   
-      Das Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwichen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:
+      Das Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwischen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:
   
       ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)
       ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)

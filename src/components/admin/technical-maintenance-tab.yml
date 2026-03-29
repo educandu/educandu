@@ -33,11 +33,11 @@ technicalMaintenanceTab:
     de: Dieser Task aktualisiert die Datenbank. Bei der Ausführung werden möglicherweise bestimmte Datensätze korrigiert.
   batchSectionDescription_cdn-resources-consolidation:
     en: |
-      CDN resources are referenced from varioues website content (e.g. documents, rooms, user profiles, etc.).
+      CDN resources are referenced from various website content (e.g. documents, rooms, user profiles, etc.).
       By running this task, these references are re-collected and consolidated in order to insure a correct and consistent list.
       Note that this task does not verify that the collected links actually point to an existing CDN resource.
     de: |
-      CDN-Ressourcen werden von diversen Website-Inhalten (z.B. Dokumenten, Räumen, Benutzerprofilen, etc.) aus refernziert.
+      CDN-Ressourcen werden von diversen Website-Inhalten (z.B. Dokumenten, Räumen, Benutzerprofilen, etc.) aus referenziert.
       Bei der Ausführung dieses Tasks werden diese Referenzen neu gesammelt und konsolidiert, um eine korrekte und konsistente Liste sicherzustellen.
       Bitte beachte, dass dieser Task nicht verifiziert, dass die gesammelten Links tatsächlich auf eine existierende CDN-Ressource zeigen.
   lastExecution:
