@@ -121,13 +121,13 @@ documentMetadataModal:
     de: Speichern (erweitert)
   publishingInfoMarkdown:
     en: |
-      After publishing, the document is
+      Ensure that your publication does **not result in duplicate content** in the public area. After publishing, the document is
         - publicly searchable by its tags
         - no longer deletable
         - removed from the room
         - free of room media (they are removed because they are private)
     de: |
-      Nach der Veröffentlichung ist das Dokument
+      Stelle sicher, dass deine Veröffentlichung **keine doppelten Inhalte** im öffentlichen Bereich erzeugt. Nach der Veröffentlichung ist das Dokument
         - öffentlich über seine Tags suchbar
         - nicht mehr löschbar
         - aus dem Raum entfernt

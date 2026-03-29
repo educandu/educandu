@@ -28,14 +28,14 @@ export function getCloningOptions({ mode, documentToClone, availableRooms, t }) 
     value: room._id
   }));
 
-  const strategyOptions = [
-    {
-      label: documentToClone.roomId
-        ? t('cloningStrategy_cloneWithinArea_fromRoom')
-        : t('cloningStrategy_cloneWithinArea_fromPublicArea'),
+  const strategyOptions = [];
+
+  if (documentToClone.roomId) {
+    strategyOptions.push({
+      label: t('cloningStrategy_cloneWithinArea_fromRoom'),
       value: CLONING_STRATEGY.cloneWithinArea
-    }
-  ];
+    });
+  }
 
   strategyOptions.push({
     label: documentToClone.roomId
