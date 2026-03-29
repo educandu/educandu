@@ -151,11 +151,14 @@ function DocumentMetadataModal({
     setGenerateSequence(false);
     setSequenceCount(2);
     setUseTemplateDocument(false);
-    setCloningStrategy(CLONING_STRATEGY.cloneWithinArea);
+    setCloningStrategy(mode === DOCUMENT_METADATA_MODAL_MODE.clone && !documentToClone?.roomId
+      ? CLONING_STRATEGY.crossCloneIntoRoom
+      : CLONING_STRATEGY.cloneWithinArea
+    );
     setCloningTargetRoomId('');
     setShowExtendedSaveScreen(false);
     setRevisionCreatedBecause('');
-  }, [initialDocumentMetadata, mode, t, uiLanguage]);
+  }, [initialDocumentMetadata, documentToClone, mode, t, uiLanguage]);
 
   const loadRooms = useCallback(async () => {
     if (mode !== DOCUMENT_METADATA_MODAL_MODE.clone) {
@@ -465,7 +468,7 @@ function DocumentMetadataModal({
               <Select value={cloningStrategy} options={cloningOptions.strategyOptions} onChange={handleCloningStrategyChange} />
             </FormItem>
           )}
-          {!!canSelectCloningStrategy && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
+          {mode === DOCUMENT_METADATA_MODAL_MODE.clone && cloningStrategy === CLONING_STRATEGY.crossCloneIntoRoom && (
             <FormItem label={t('common:room')} {...validationState.cloningTargetRoomId}>
               <Select
                 value={cloningTargetRoomId}

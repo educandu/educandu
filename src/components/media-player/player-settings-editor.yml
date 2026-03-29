@@ -20,7 +20,7 @@ playerSettingsEditor:
       Only the currently played back parts of the tracks are downloaded.
     de: |
       Dieser Player nutzt die im Browser eingebauten Audio/Video-Wiedergabefunktionen.
-      Nur die zu einem Zeitpunkt wiedergegebenen Teile eines Tracks werden herundergeladen.
+      Nur die zu einem Zeitpunkt wiedergegebenen Teile eines Tracks werden heruntergeladen.
   multitrackPlayerTypeWarning1_default:
     en: Tracks could play out of sync in certain circumstances.
     de: Spuren können unter Umständen zeitlich verschoben abgespielt werden.
