@@ -5,6 +5,40 @@ Commit: 67fb9ab4
 
 Liste von Auffälligkeiten aus der ersten Durchsicht. Keine Bugs, die User melden, sondern Dinge, die einem neuen Entwickler (oder Claude in einer späteren Session) sofort Kontext geben sollen. Einträge bei Erledigung in Abschnitt `## Erledigt` verschieben (mit Commit-Hash).
 
+## Priorisierung
+
+Subjektive Einschätzung aus der ersten Durchsicht – zu diskutieren, nicht gesetzt.
+
+**Markierungen:**
+
+- `[Instanz]` – betrifft unsere laufende Instanz direkt (Laufzeitverhalten, Sicherheit, Betrieb).
+- `[Repo]` – betrifft den Framework-Code bzw. Entwickler-Erfahrung; für andere Integratoren relevanter als für uns, weil unsere Konfig den Fall bereits abdeckt oder der Punkt nur Code-Hygiene ist.
+- `[Beides]` – Framework-Code mit realer Laufzeit-Auswirkung auf uns.
+
+### Kurzfristig (Wochen, geringer Aufwand, konkreter Nutzen)
+
+- `[Repo]` **Session-Secret in Produktion erzwingen.** Der zufällige Fallback in `ServerConfig` ist für Produktion unbrauchbar (Neustart / Multi-Instance → Sessions invalide). Bei uns ist `sessionSecret` gesetzt – der Fix schützt andere Integratoren. → Abschnitt _Sicherheit_.
+- `[Repo]` **`smtpOptions` validieren.** Das `joi.any()` im `ServerConfig`-Schema durch eine konkrete Struktur ersetzen. Uns betrifft das nur, falls wir SMTP mal umkonfigurieren und uns vertippen. → _Validierungs-Lücken_.
+- `[Repo]` **`.nvmrc` anlegen.** Node-Version explizit festhalten, Drift zwischen Maschinen/CI vermeiden. → _Versionen & Pinning_.
+- `[Repo]` **Auskommentierten Code entfernen** in `media-library-controller.js` oder aufklären, was dort geplant war. → _Code-Stil & Legacy_.
+- `[Repo]` **Un-gated `console.error()`** in `components/pages/tests.js` sauber hinter Dev-Flag oder weg. → _Logging / Dev-Output_.
+
+### Mittelfristig (Monate, klar umrissen, braucht Planung)
+
+- `[Repo]` **Test-Abdeckung auf kritische Middleware ausdehnen:** `multipart-middleware`, `rate-limit-middleware`, `needs-permission-middleware`, Session-Ablauf, `LoadSamlMetadataJob`. Die Stellen, an denen ein Regress richtig weh tut. → _Test-Abdeckung_.
+- `[Beides]` **Joi-Schemata härten.** `joi.any().allow(null)`-Vorkommen in `src/domain/schemas/` durch konkrete Typen ersetzen. Wirkt sich direkt auf Laufzeit-Validierung unserer Instanz aus (weniger Müll in DB). → _Validierungs-Lücken_.
+- `[Repo]` **Beispiel-Custom-Plugin** ins Repo (oder als separates Repo dokumentieren). Macht Custom-Plugin-Entwicklung von „Code lesen" zu „Template kopieren". → _Dokumentations-Lücken_.
+- `[Beides]` **MIME-Sniffing bei Uploads.** Zusätzlich zur Dateiendung den Content-Type aus dem Dateiinhalt bestimmen (z. B. `file-type`). Verschleierte Uploads sind ein Angriffsvektor auf *jede* Instanz. → _Sicherheit_.
+- `[Beides]` **CSRF-Strategie explizit machen.** Dokumentiertes Setup oder Token-basiertes CSRF. Betrifft uns, weil unsere Instanz dem Angriffsvektor genauso ausgesetzt ist. → _Sicherheit_.
+
+### Langfristig (Refactor / strukturell, mit Migrationsaufwand)
+
+- `[Repo]` **Typo `__initalState__` beheben.** Koordiniertes Rename Server + Client + ggf. aller einbettenden Apps. Nur Kosmetik, aber mit Migrationspfad. → _Code-Stil & Legacy_.
+- `[Repo]` **`boolStringSchema` ausphasen.** Legacy-String-Booleans identifizieren, Clients umstellen, Schema entfernen. → _Code-Stil & Legacy_.
+- `[Beides]` **Ant-Design-Update-Pfad.** Exakt-Pinning auf `5.21.2` blockiert auch uns bei Sicherheitsupdates. Ein Plan für regelmäßige UI-Lib-Updates fehlt. → _Versionen & Pinning_.
+- `[Repo]` **Plugin-Contract verdokumentieren und versionieren.** Relevant, sobald Custom-Plugins in fremden Apps leben (`typeName`-Stabilität + Migrations-Hooks). Für unsere Instanz nur relevant, wenn wir selbst Custom-Plugins entwickeln. → _Dokumentations-Lücken_ / `plugins.md`.
+- `[Beides]` **Markdown-Sanitizing im Detail prüfen.** Audit-Thema: Wenn Nutzer-Input auf unserer Instanz gerendert wird (und das ist Kernfunktion), ist das ein direktes XSS-Risiko. → _Sicherheit_.
+
 ## Code-Stil & Legacy
 
 - **Typo im Globals-Key:** `window.__initalState__` (fehlendes „i") ist auf Server- **und** Client-Seite hart verdrahtet. Rename erfordert koordinierte Änderung in [src/server/page-renderer.js](../../src/server/page-renderer.js) und [src/bootstrap/client-bootstrapper.js](../../src/bootstrap/client-bootstrapper.js). Bis dahin: nicht anfassen.
