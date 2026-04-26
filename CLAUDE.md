@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Deeper analysis in `docs/analysis/`
+
+Before doing non-trivial work, read the matching file(s) in [docs/analysis/](docs/analysis/):
+
+- [architecture.md](docs/analysis/architecture.md) – DI, controllers, SSR/hydration, job scheduler
+- [security.md](docs/analysis/security.md) – auth, permissions, sessions, uploads, validation
+- [plugins.md](docs/analysis/plugins.md) – plugin contract and registration
+- [open-issues.md](docs/analysis/open-issues.md) – known caveats and gaps
+
+**Keep them current.** When your change invalidates a statement in one of those files, update the file in the same PR and bump the `Stand:` / `Commit:` header. Rules: [docs/analysis/README.md](docs/analysis/README.md).
+
 ## Project Overview
 
 Educandu is an open-source educational content framework for creating and managing OER (Open Educational Resources) learning platforms. The repository produces an npm package (`@educandu/educandu`) that can be integrated into applications to provide a complete learning management system with support for interactive educational content, user management, SAML authentication, and multimedia plugins.
